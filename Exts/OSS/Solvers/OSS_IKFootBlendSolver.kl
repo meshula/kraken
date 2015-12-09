@@ -1,0 +1,79 @@
+require InlineDrawing;
+require Geometry;
+require Kraken;
+
+object OSS_IKFootBlendSolver : KrakenSolver {
+};
+
+
+
+// Default Constructor
+function OSS_IKFootBlendSolver()
+{
+
+}
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_IKFootBlendSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('blend', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('ikFoot', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('fkFoot', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('ikToe', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('fkToe', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('foot', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('toe', 'Out', 'Mat44'));
+
+  return args;
+}
+
+
+// Solve
+function OSS_IKFootBlendSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Scalar blend,
+  in Mat44 ikFoot,
+  in Mat44 fkFoot,
+  in Mat44 ikToe,
+  in Mat44 fkToe,
+  io Mat44 foot,
+  io Mat44 toe
+  )
+{
+  // The position of the fk foot is always the position we want the foot to be in
+  // because the parent of the fk foot control is a product of the leg IK operator which
+  // takes ik blend value into account.
+
+  Xfo ikFootXfo = Xfo(ikFoot);
+  Xfo fkFootXfo = Xfo(fkFoot);
+
+  Xfo ikToeXfo = Xfo(ikToe);
+  Xfo fkToeXfo = Xfo(fkToe);
+
+  //Foot
+  Xfo resultFootXfo = ikFootXfo;
+  // Copy the position (fkFoot will always have the right position because the FK controls for the foot
+  //  are constrained to the output of the IK solver )
+  resultFootXfo.tr = fkFootXfo.tr;
+  resultFootXfo.ori = fkFootXfo.ori.sphericalLinearInterpolate(resultFootXfo.ori, blend);
+  foot = resultFootXfo.toMat44();
+
+  //Toe
+  Xfo resultToeXfo =  resultFootXfo * ikFootXfo.inverse() * ikToeXfo;
+  resultToeXfo.ori = fkToeXfo.ori.sphericalLinearInterpolate(resultToeXfo.ori, blend);
+  toe = resultToeXfo.toMat44();
+
+  // Set debugging visibility.
+  this.setDebug(drawDebug);
+  if(this.drawDebug){
+
+    drawXfo(this.handle.rootTransform, "footXfo", resultFootXfo);
+    drawXfo(this.handle.rootTransform, "toeXfo", resultToeXfo);
+  }
+
+}
+
+

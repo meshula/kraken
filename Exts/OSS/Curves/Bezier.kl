@@ -1,0 +1,147 @@
+/*
+The :kl-ref:`Bezier` type represents a Bezier interpolation of three dimensional control points.
+*/
+require Math;
+
+
+struct Bezier {
+	UInt32 numSegs;
+	BezierKnot knots[];
+	Vec3 points[];
+	Scalar distances[];
+};
+
+
+/// Default constructor
+inline Bezier(BezierKnot knots[]) {
+	this.numSegs = 50;
+	this.knots = knots;
+	this.buildPointsFromKnots();
+	this.buildDistanceVector();
+}
+
+inline Vec3[] bezierCoeffs(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3){
+	Vec3 coeffs[];
+	coeffs.push( -1.0*p0 +3.0*p1 -3.0*p2 + p3 );
+	coeffs.push( +3.0*p0 -6.0*p1 +3.0*p2);
+	coeffs.push( -3.0*p0 +3.0*p1);
+	coeffs.push( +1.0*p0);
+	return coeffs;
+}
+
+inline Vec3[] Bezier.bezierCoeffs(Scalar t){
+
+	UInt32 startPoint = this.getSegmentFromT(t)*4;
+	
+	Vec3 p1 = this.points[startPoint];
+	Vec3 p2 = this.points[startPoint+1];
+	Vec3 p3 = this.points[startPoint+2];
+	Vec3 p4 = this.points[startPoint+3];
+
+	Vec3 coeffs[];
+	coeffs.resize(4);
+	coeffs = bezierCoeffs(p1,p2,p3,p4);
+
+	return coeffs;
+}
+
+inline Vec3[] Bezier.bezierCoeffs(UInt32 segment){
+
+	UInt32 startPoint = segment*4;
+	Vec3 p1 = this.points[startPoint];
+	Vec3 p2 = this.points[startPoint+1];
+	Vec3 p3 = this.points[startPoint+2];
+	Vec3 p4 = this.points[startPoint+3];
+
+	Vec3 coeffs[];
+	coeffs.resize(4);
+	coeffs = bezierCoeffs(p1,p2,p3,p4);
+
+	return coeffs;
+}
+
+inline Vec3 evalPosition(in Scalar t,in Vec3 coeffs[]) {
+	return (coeffs[0]*pow(t,3) + coeffs[1]*pow(t,2) + coeffs[2]*t + coeffs[3]);
+}
+
+inline Vec3 Bezier.evalPosition(in Scalar t) {
+	Vec3 coeffs[];
+	coeffs.resize(4);
+	coeffs = this.bezierCoeffs(t);
+	Scalar normt = this.normalizeT(t);
+	return evalPosition(normt, coeffs);
+}
+
+
+inline Vec3 Bezier.evalTangent(in Scalar t,in Vec3 coeffs[]) {
+	Vec3 tangent =  3.0*coeffs[0]*pow(t,2) + 2.0*coeffs[1]*t + coeffs[2];
+	return tangent.normalize();
+}
+
+// todo - figure out actual tangent and normal calculation - bound/lerped by the two end orientations of the Bezier curve 
+inline Quat Bezier.evalOri(Scalar tUnclamped, Xfo xfoA, Xfo xfoB, Vec3 coeffs[]) {
+	Scalar t = Math_clamp(tUnclamped,0.0,1.0);
+	Quat ori;
+	Vec3 tangent = this.evalTangent(t, coeffs);
+	// to determine upvec, use linear rotation inperpolation for simplicity - this could be better
+	Quat upVecOri =  xfoA.ori.sphericalLinearInterpolate(xfoB.ori, t);
+	Vec3 upVecTemp = upVecOri.getYaxis();
+
+	Vec3 side = upVecTemp.cross(-tangent);
+	Vec3 up = side.cross(tangent);
+	// Set the quat to represent the direction as the Z axis and the upvector pointing along the XY plane.
+	return ori.setFromDirectionAndUpvector(side,up);
+}
+
+inline Bezier.buildDistanceVector!() {
+	Vec3 p_prev;
+	Vec3 coeffs[];
+	coeffs.resize(4);
+	
+	for(UInt32 k=1; k<this.knots.size(); k++){
+		// adding some random tangents for now
+		UInt32 segment =0;
+		coeffs = this.bezierCoeffs(segment);
+
+		// Accumulatively store lengths in distance array
+		// the last value is the total approximated length of the curve
+		for(UInt32 i=0; i<this.numSegs; i++){
+			Scalar t = Scalar(i)/Scalar(this.numSegs-1);
+			Vec3 p = this.evalPosition(t);
+			if(i == 0)
+					this.distances.push(0.0);
+			else
+					this.distances.push(this.distances[i-1] + p.distanceTo(p_prev));
+			p_prev = p;
+		}   
+	}
+}
+
+inline Bezier.buildPointsFromKnots!() {
+	for(UInt32 k=1; k<this.knots.size(); k++){
+			// Setting points
+			this.points.push(this.knots[k-1].knot.tr);
+			this.points.push(this.knots[k-1].knot.toMat44()*this.knots[k-1].out_tangent);
+			this.points.push(this.knots[k].knot.toMat44()*this.knots[k].in_tangent);
+			this.points.push(this.knots[k].knot.tr);
+	}
+}
+
+inline UInt32 Bezier.getSegmentFromT(Scalar t) {
+	UInt32 pointsPerDomain = 4;
+	UInt32 noSegments = this.points.size()/pointsPerDomain;
+	Scalar normt = t * noSegments;
+	UInt32 segment = floor(normt);
+	// if t goes over point count, use last segment for valuation
+	if (segment*4>=this.points.size()){
+		segment = segment-1;
+	}
+	return segment;
+}
+
+inline Scalar Bezier.normalizeT(Scalar t) {
+	UInt32 segment;
+	UInt32 pointsPerDomain = 4;	
+	UInt32 noSegments = this.points.size()/pointsPerDomain;
+	return (t * noSegments- this.getSegmentFromT(t));
+}

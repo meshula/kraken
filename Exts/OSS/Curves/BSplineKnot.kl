@@ -1,0 +1,29 @@
+/*
+The :kl-ref:`BSpline` type represents a B-spline interpolation of control points of any dimensionality using de Boor's algorithm.
+
+The interpolator can take an optional weight vector, making the resulting curve a Non-Uniform Rational B-Spline (NURBS) curve if you wish so.
+
+The knot vector is optional too, and when not provided an unclamped uniform knot vector will be generated internally.
+
+Shamelessly adapted/extended from - https://github.com/thibauts/b-splines.
+
+*/
+require Math;
+
+struct BSplineKnot {
+	Boolean clamped;
+	Boolean segmentStart;
+	Scalar weight;
+	Scalar twist;
+	Xfo xfo;
+};
+
+/// Default constructor - set to identity
+inline BSplineKnot() {
+  this.clamped = 0;
+  this.segmentStart = 0;
+  this.weight =1.0;
+  this.twist =1.0;
+  this.xfo.setIdentity();
+}
+

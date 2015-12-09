@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "code": [
+    "BSplineKnot.kl",
+    "BSpline.kl",
+    
+    "BezierKnot.kl",
+    "Bezier.kl",
+    
+    "ZSpline.kl"
+  ],
+  "dfgPresets": {
+    "dir": "DFG",
+    "presetPath": "OSS.Exts.Curves",
+    }
+}

@@ -1,0 +1,123 @@
+/*
+The :kl-ref:`BSpline` type represents a B-spline interpolation of control points of any dimensionality using de Boor's algorithm.
+
+The interpolator can take an optional weight vector, making the resulting curve a Non-Uniform Rational B-Spline (NURBS) curve if you wish so.
+
+The knot vector is optional too, and when not provided an unclamped uniform knot vector will be generated internally.
+
+Shamelessly adapted/extended from - https://github.com/thibauts/b-splines.
+
+*/
+require Math;
+
+struct ZSpline {
+	BSpline BSplines[];
+	Boolean closed;
+	Scalar distances[];
+};
+
+/// Default constructor - set to identity
+inline ZSpline() {
+  this.closed = 0;
+}
+
+// inline ZSpline.setFromBSplineKnot!(in BSplineKnot knots[]) {
+// 	this.BSplines.push()
+// 	for(UInt32 k=1; k<knots.size(); k++){
+// 		BSplines.
+// 		if (k>0 && knots[k].segmentStart) {
+
+// 		}
+// 	}
+// }
+
+inline UInt32 ZSpline.getSegmentFromT(in Scalar t) {
+	Scalar normt = t * this.BSplines.size();
+	UInt32 segment = Math_clamp(floor(normt),0.0,this.BSplines.size()-1);
+	return segment;
+}
+
+inline Scalar ZSpline.normalizeT(Scalar t) {
+	UInt32 noSegments = this.BSplines.size();
+	return (t * noSegments-this.getSegmentFromT(t));
+}
+
+function Vec3 ZSpline.evalPosition(Scalar t) {
+	UInt32 segment = this.getSegmentFromT(t);
+	Scalar segmentT = this.normalizeT(t);
+	return this.BSplines[segment].evalPosition(segmentT);
+}
+
+
+function Vec3 ZSpline.evalTangent(Scalar t) {
+	UInt32 segment = this.getSegmentFromT(t);
+	Scalar segmentT = this.normalizeT(t);
+	return this.BSplines[segment].evalTangent(segmentT);
+}
+
+
+function Quat ZSpline.evalOri(Scalar t, Xfo xfoA, Xfo xfoB) {
+	UInt32 segment = this.getSegmentFromT(t);
+	Scalar segmentT = this.normalizeT(t);
+	Xfo XfoA, XfoB;
+	return this.BSplines[segment].evalOri(segmentT, XfoA, XfoB);
+}
+
+inline ZSpline.initiate!() {
+	this.setDistanceVector();
+}
+
+inline ZSpline.setDistanceVector!() {
+  this.distances.resize(0);
+  Scalar lastVal = 0;
+  if (this.BSplines.size()) {
+	  for(UInt32 b=0;b<this.BSplines.size();b++) {
+	  	 for(UInt32 v=0;b<this.BSplines[b].distances.size();v++) {
+	  		this.distances.push(this.BSplines[b].distances[v] + lastVal);
+	  	}
+	  	lastVal = this.BSplines[b].distances[this.BSplines[b].distances.size()];
+	  }
+  }
+}
+
+// function Scalar ZSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepCurveLength, Scalar restLength) {
+// 	UInt32 segment = this.getSegmentFromT(t);
+// 	Scalar segmentT = this.normalizeT(t);
+// 	return this.BSplines[segment].arcLengthParam(t, keepArcLength, keepCurveLength, restLength);
+// }
+
+
+function Scalar ZSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepCurveLength, Scalar restLength) {
+  if (keepArcLength == 0) {
+    return t;
+  }
+  UInt32 len = this.distances.size()-1;
+  // the last value of the distance array is the total approximated length of the curve
+  // tipLength is the approximated curvelength at incoming param t
+  Scalar curveLength = restLength;//distances[len];
+  // tipLength is t multiplied by the maximum length
+  Scalar tipLength = t*keepCurveLength*curveLength;
+  // tipLength = Math_clamp(tipLength, 0, curveLength);
+  
+  // do a fast, binary search for the closest matching distance index
+  Scalar low = 0, high = len, index = 0;
+  while (low < high) {
+    index = low + (((high - low) / 2) | 0);  
+    if (this.distances[index] < tipLength) {
+      low = index + 1;
+    } else {
+      high = index;
+    }
+  }
+  if (this.distances[index] > tipLength) {
+    index -= 1;
+  }
+  
+  // from the distance index, extrapolate 
+  Scalar lengthBefore = this.distances[index];
+  Scalar arcLenghtT   = (index + (tipLength - lengthBefore) / (this.distances[index + 1] - lengthBefore)) / len;
+  
+  // return lerped parameterization using the blend value keepArcLength
+  return (keepArcLength*arcLenghtT) + (1.0-keepArcLength)*t;
+}
+
