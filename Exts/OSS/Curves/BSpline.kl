@@ -21,6 +21,7 @@ struct BSpline {
 	Quat ori[];
 	Scalar knotVector[];
 	Scalar weights[];
+	Scalar restLength;
 	// distance vector array
 	Scalar distances[];
 	// are curve Ends clamped
@@ -128,8 +129,8 @@ inline BSpline.initiate!() {
 	}
 
 	if(this.order > numpoints) {
-		report(this.order);
-		report(numpoints);
+		report('order:  ' + this.order);
+		report('points: ' + numpoints);
 		setError('order must be less than point count, if curve is open');
 	}
 	
@@ -209,6 +210,10 @@ inline BSpline.setDistanceVector!() {
 			this.distances[i] = this.distances[i-1] + p.distanceTo(p_prev);
 		p_prev = p;
 	}
+}
+
+inline BSpline.setRestLength!(Scalar length) {
+  this.restLength = length;
 }
 
 // function BSpline.buildKnotDistanceVector!() {
@@ -296,6 +301,10 @@ function Vec3 BSpline.evalPosition(Scalar tUnclamped) {
 	return result;
 }
 
+function Vec3 BSpline.evalPosition(Scalar t, Scalar keepArcLength, Scalar keepRestLength) {
+	Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepRestLength);
+	return this.evalPosition(arcLenT);
+}
 
 function Vec3 BSpline.evalTangent(Scalar tUnclamped) {
 	// this should be a straight deriviative look-up
@@ -309,6 +318,17 @@ function Vec3 BSpline.evalTangent(Scalar tUnclamped) {
 	return tangent.normalize();
 }
 
+function Vec3 BSpline.evalScale(Scalar t, Xfo xfoA, Xfo xfoB) {
+	return xfoA.sc.linearInterpolate(xfoB.sc, t);
+}
+
+
+function Vec3 BSpline.evalScale(Scalar t) {
+	Xfo XfoA, XfoB;
+	XfoA.setFromMat44(this.controlPoints[0]);
+  	XfoB.setFromMat44(this.controlPoints[this.controlPoints.size()-1]);
+	return this.evalScale(t, XfoA, XfoB);
+}
 
 function Quat BSpline.evalOri(Scalar t, Xfo xfoA, Xfo xfoB) {
 	Vec3 tangent = this.evalTangent(t);
@@ -325,20 +345,32 @@ function Quat BSpline.evalOri(Scalar t, Xfo xfoA, Xfo xfoB) {
 }
 
 
-function Scalar BSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepCurveLength, Scalar restLength) {
+function Quat BSpline.evalOri(Scalar t) {
+	Xfo XfoA, XfoB;
+	XfoA.setFromMat44(this.controlPoints[0]);
+  	XfoB.setFromMat44(this.controlPoints[this.controlPoints.size()-1]);
+	return this.evalOri(t, XfoA, XfoB);
+}
+
+
+function Scalar BSpline.getCurveLength(Scalar keepRestLength) {
+  Scalar curveLength = this.distances.size()-1;
+  return (1-keepRestLength)*curveLength + keepRestLength*this.restLength;
+}
+
+
+function Scalar BSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepRestLength) {
   if (keepArcLength == 0) {
     return t;
   }
-  UInt32 len = this.distances.size()-1;
-  // the last value of the distance array is the total approximated length of the curve
-  // tipLength is the approximated curvelength at incoming param t
-  Scalar curveLength = restLength;//distances[len];
+
   // tipLength is t multiplied by the maximum length
-  Scalar tipLength = t*keepCurveLength*curveLength;
-  // tipLength = Math_clamp(tipLength, 0, curveLength);
-  
+  // tipLength is the approximated curvelength at incoming param t
+  UInt32 curveLength = this.distances.size()-1;
+  Scalar tipLength = t*this.getCurveLength(keepRestLength);
+
   // do a fast, binary search for the closest matching distance index
-  Scalar low = 0, high = len, index = 0;
+  Scalar low = 0, high = curveLength, index = 0;
   while (low < high) {
     index = low + (((high - low) / 2) | 0);  
     if (this.distances[index] < tipLength) {
@@ -353,7 +385,7 @@ function Scalar BSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar ke
   
   // from the distance index, extrapolate 
   Scalar lengthBefore = this.distances[index];
-  Scalar arcLenghtT   = (index + (tipLength - lengthBefore) / (this.distances[index + 1] - lengthBefore)) / len;
+  Scalar arcLenghtT   = (index + (tipLength - lengthBefore) / (this.distances[index + 1] - lengthBefore)) / curveLength;
   
   // return lerped parameterization using the blend value keepArcLength
   return (keepArcLength*arcLenghtT) + (1.0-keepArcLength)*t;
