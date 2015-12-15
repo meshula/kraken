@@ -7,6 +7,7 @@ Control - Base Control.
 
 from kraken.core.configs.config import Config
 from kraken.core.maths import Euler, Quat, Vec3, Xfo
+from kraken.core.maths.xfo import axisStrToTupleMapping
 from kraken.core.maths import Math_degToRad
 from kraken.core.objects.curve import Curve
 
@@ -183,6 +184,32 @@ class Control(Curve):
         self.setCurveData(curveData)
 
         return True
+
+
+    # ==============
+    # Scale Methods
+    # ==============
+    def scalePointsOnAxis(self, scale, scaleAxis="POSX"):
+        """Scales the point positions from it's center on the given axes.
+
+        Args:
+            scale: scale value to apply to the points.
+            scaleAxis: which axes to scale and by what direction
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        # would be great if vec3 was iterable
+        axis = axisStrToTupleMapping[scaleAxis]
+
+        scaleList = [1.0, 1.0, 1.0]
+        for i, x in enumerate(axis):
+            if x:
+                scaleList[i] = scale * axis[i]
+
+        return self.scalePoints(Vec3(scaleList[0], scaleList[1], scaleList[2]))
 
 
     # ==============
