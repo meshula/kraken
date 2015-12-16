@@ -119,9 +119,6 @@ inline ZSpline.setDistanceVector!() {
   }
 }
 
-inline ZSpline.setRestLength!(Scalar length) {
-  this.restLength = length;
-}
 
 // function Scalar ZSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepCurveLen, Scalar restLength) {
 // 	UInt32 segment = this.getSegmentFromT(t);
@@ -169,5 +166,109 @@ function Scalar ZSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar ke
   return (keepArcLength*arcLenghtT) + (1.0-keepArcLength)*nonArcLengthT;
 }
 
+function UInt32[].resizeWithDefault!(UInt32 size, UInt32 defaultVal) {
+  UInt32 currentSize;
+  currentSize = this.size();
+  this.resize(size);
+  for(UInt32 i=0; i>=currentSize && i<size;i++){
+    this[i] = defaultVal;
+  }
+}
 
+function Scalar[].resizeWithDefault!(UInt32 size, Scalar defaultVal) {
+  UInt32 currentSize;
+  currentSize = this.size();
+  this.resize(size);
+  for(UInt32 i=0; i>=currentSize && i<size;i++){
+    this[i] = defaultVal;
+  }
+}
+
+function Boolean[].resizeWithDefault!(UInt32 size, Boolean defaultVal) {
+  UInt32 currentSize;
+  currentSize = this.size();
+  this.resize(size);
+  for(UInt32 i=0; i>=currentSize && i<size;i++){
+    this[i] = defaultVal;
+  }
+}
+
+// initiate 
+function ZSpline.buildZSpline!(Mat44 mat44s[], io Boolean zeroKnots[], io Scalar weights[],  io UInt32 order[] , io UInt32 numSegs[], io Boolean clamped[], Boolean closed) {
+  UInt32 s = mat44s.size();
+
+  zeroKnots.resizeWithDefault(s,0);
+  order.resizeWithDefault(s,4);
+  weights.resizeWithDefault(s,1);
+  numSegs.resizeWithDefault(s,25);
+  order.resizeWithDefault(s,4);
+  clamped.resizeWithDefault(s,1);
+
+
+  Mat44 controlPoints[];
+  Scalar bweights[];
+
+  for(UInt32 m=0; m<s;m++){
+    controlPoints.push(mat44s[m]);
+    bweights.push(weights[m]);
+
+    if ((!m==0 && zeroKnots[m]==1) || m==(s-1)) {
+      BSpline b;
+      
+      // need to get this to work
+      // b(controlPoints.clone(), order, closed, clamped);
+      
+      b.setOrder(order[m]);
+      b.setClosed(closed);
+      b.setClamped(clamped[m]);
+      b.setNumSegs(numSegs[m]);
+      b.setControlPoints(controlPoints.clone());
+      b.setWeightVector(bweights.clone());
+
+      this.BSplines.push(b);
+
+      // reset control points and repeat last point for enxt curve segment
+      controlPoints.resize(0);
+      controlPoints.push(mat44s[m]);
+    }
+  }
+  // result.setRestLength(restLength);
+  this.initiate();
+}
+
+
+// initiate 
+function ZSpline.buildZSpline!(Mat44 mat44s[]) {
+  UInt32 s = mat44s.size();
+  Boolean zeroKnots[];
+  zeroKnots.resize(s);
+  Mat44 controlPoints[];
+  Boolean closed = 0;
+  Boolean clamped = 1;
+  UInt32 order = 4;
+  UInt32 numSegs = 100;
+  for(UInt32 m=0; m<s;m++){
+    controlPoints.push(mat44s[m]);
+    if ((!m==0 && zeroKnots[m]==1) || m==(s-1)) {
+      BSpline b;
+      
+      // need to get this to work
+      // b(controlPoints.clone(), order, closed, clamped);
+      
+      b.setOrder(order);
+      b.setClosed(closed);
+      b.setClamped(clamped);
+      b.setNumSegs(numSegs);
+      b.setControlPoints(controlPoints.clone());
+
+      this.BSplines.push(b);
+
+      // reset control points and repeat last point for enxt curve segment
+      controlPoints.resize(0);
+      controlPoints.push(mat44s[m]);
+    }
+  }
+  // result.setRestLength(restLength);
+  this.initiate();
+}
 

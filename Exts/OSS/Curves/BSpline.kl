@@ -64,6 +64,7 @@ inline BSpline.setControlPoints!(in Mat44 controlPoints[]){
 	this.controlPoints.resize(controlPoints.size());
 	this.controlPoints = controlPoints;
 	this.setPointsFromControlPoints(controlPoints);
+	this.initiate();
 }
 
 inline BSpline.setPoints!(in Vec3 points[]){
@@ -82,6 +83,10 @@ inline BSpline.setClamped!(in Boolean clamped) {
 
 inline BSpline.setClosed!(in Boolean closed) {
 	this.closed=closed;
+}
+
+inline BSpline.setNumSegs!(in UInt32 numSegs) {
+	this.numSegs= Math_max(2,numSegs);
 }
 
 inline BSpline.setControlPointsFromPoints!(in Vec3 points[]){
@@ -107,11 +112,11 @@ inline BSpline.initiate!() {
 	// error if no points given
 	if (!numpoints) setError("no points");
 
-	if(this.order < 2) {
-			this.order = 2;
-			setError('order set to minimum of 2, must be at least 2 (linear)');
-	}
+	// set order, set to possible value, minimum of 2
+    this.order = Math_max(2,this.order);
+    this.order = Math_min(this.order,numpoints);
 
+    // calculate weight Vector
 	this.setWeightVector();
 	
 	// adjust for closed curve, adding the curve order number of points
@@ -128,11 +133,6 @@ inline BSpline.initiate!() {
 		}
 	}
 
-	if(this.order > numpoints) {
-		report('order:  ' + this.order);
-		report('points: ' + numpoints);
-		setError('order must be less than point count, if curve is open');
-	}
 	
 	this.setKnotVector();
 	this.setDistanceVector();
@@ -184,6 +184,22 @@ inline BSpline.setKnotVector!() {
 	} else if(this.knotVector.size() != n+this.order) {
 		setError('bad knot vector length');
 		report("Should be " + (n+this.order) + " but is " + this.knotVector);
+	}
+}
+
+inline BSpline.setWeightVectorAtPoint!(Scalar weight, UInt32 point) {
+	// report("Rebuilding Weight Vector");
+	UInt32 n = this.points.size();
+	this.weights.resize(n);
+	this.weights[point] = weight;
+}
+
+inline BSpline.setWeightVector!(Scalar weights[]) {
+	// report("Rebuilding Weight Vector");
+	UInt32 n = this.points.size();
+	this.weights.resize(n);
+	for(UInt32 i=0; i<n; i++) {
+		this.weights[i] = Math_max(0.001,weights[i]);
 	}
 }
 
@@ -336,7 +352,7 @@ function Quat BSpline.evalOri(Scalar t, Xfo xfoA, Xfo xfoB) {
 	
 	Quat ori = xfoA.ori.sphericalLinearInterpolate(xfoB.ori, t);
 
-	Vec3 upVecTemp = ori.getYaxis();
+	Vec3 upVecTemp = ori.getXaxis();
 	
 	Vec3 side = upVecTemp.cross(-tangent);
 	Vec3 up = side.cross(tangent);
@@ -390,4 +406,3 @@ function Scalar BSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar ke
   // return lerped parameterization using the blend value keepArcLength
   return (keepArcLength*arcLenghtT) + (1.0-keepArcLength)*t;
 }
-

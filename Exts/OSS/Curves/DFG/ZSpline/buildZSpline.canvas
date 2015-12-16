@@ -1,0 +1,168 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "buildZSpline",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "mat44s",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "ZSpline"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "zeroKnot",
+      "execPortType" : "IO",
+      "typeSpec" : "Boolean[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Float32" : 100
+        },
+      "name" : "restLength",
+      "execPortType" : "IO",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "clamped",
+      "execPortType" : "IO",
+      "typeSpec" : "Boolean[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "weights",
+      "execPortType" : "IO",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "numSegs",
+      "execPortType" : "IO",
+      "typeSpec" : "UInt32[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "order",
+      "execPortType" : "IO",
+      "typeSpec" : "UInt32[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "closed",
+      "execPortType" : "IO",
+      "typeSpec" : "Boolean"
+      }
+    ],
+  "extDeps" : {
+    "Curves" : "*"
+    },
+  "presetGUID" : "5AA234C54FE4D68927E0116F6A2C3CCD",
+  "code" : "dfgEntry { 
+  result.buildZSpline(mat44s, zeroKnot, weights, order, numSegs, clamped, closed);
+}",
+  "requiredPresets" : {
+    "OSS.Exts.Curves.BSpline.buildZSpline" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "buildZSpline",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "mat44s",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "ZSpline"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "zeroKnot",
+          "execPortType" : "IO",
+          "typeSpec" : "Boolean[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Float32" : 100
+            },
+          "name" : "restLength",
+          "execPortType" : "IO",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "clamped",
+          "execPortType" : "IO",
+          "typeSpec" : "Boolean[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "weights",
+          "execPortType" : "IO",
+          "typeSpec" : "Scalar[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "numSegs",
+          "execPortType" : "IO",
+          "typeSpec" : "UInt32[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "order",
+          "execPortType" : "IO",
+          "typeSpec" : "UInt32[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "closed",
+          "execPortType" : "IO",
+          "typeSpec" : "Boolean"
+          }
+        ],
+      "extDeps" : {
+        "Curves" : "*"
+        },
+      "presetGUID" : "5AA234C54FE4D68927E0116F6A2C3CCD",
+      "code" : "dfgEntry { 
+  result.buildZSpline(mat44s, zeroKnot, weights, order, numSegs, clamped, closed);
+}"
+      }
+    }
+  }

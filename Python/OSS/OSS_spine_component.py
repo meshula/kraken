@@ -49,7 +49,6 @@ class OSSSpineComponent(BaseExampleComponent):
         # Declare Input Attrs
         self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
         self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
-        self.lengthInputAttr = self.createInput('length', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
         # Declare Output Attrs
 
@@ -280,26 +279,31 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
 
         # ===============
-        # Add Splice Ops
+        # Add Fabric Ops
         # ===============
-        # Add Spine Splice Op
-        self.bezierSpineKLOp = KLOperator('spineKLOp', 'BezierSpineSolver', 'Kraken')
-        self.addOperator(self.bezierSpineKLOp)
+        # Add Spine Canvas Op
+
+
+        self.ZSplineSpineCanvasOp = CanvasOperator('ZSplineSpineCanvasOp', 'OSS.Solvers.ZSplineSpineSolver')
+        self.addOperator(self.ZSplineSpineCanvasOp)
 
         # Add Att Inputs
-        self.bezierSpineKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.bezierSpineKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.bezierSpineKLOp.setInput('length', self.lengthInputAttr)
+        self.ZSplineSpineCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.ZSplineSpineCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
-        self.bezierSpineKLOp.setInput('base', self.torsoCtrl)
-        self.bezierSpineKLOp.setInput('baseHandle', self.chestCtrl)
-        self.bezierSpineKLOp.setInput('tipHandle', self.upChestCtrl)
+        self.ZSplineSpineCanvasOp.setInput('torso', self.torsoCtrl)
+        self.ZSplineSpineCanvasOp.setInput('chest', self.chestCtrl)
+        self.ZSplineSpineCanvasOp.setInput('upChest', self.upChestCtrl)
         # temp now until handles are swapped
-        self.bezierSpineKLOp.setInput('tip', self.upChestCtrl)
+        self.ZSplineSpineCanvasOp.setInput('neck', self.upChestCtrl)
+
 
         # Add Xfo Outputs
-        self.bezierSpineKLOp.setOutput('outputs', self.spineOutputs)
+        self.ZSplineSpineCanvasOp.setOutput('outputs', self.spineOutputs)
+
+
+
 
         # Add Deformer Splice Op
         self.deformersToOutputsKLOp = KLOperator('spineDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
@@ -385,10 +389,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.upChestCtrl.xfo.tr = upChestPosition
 
 
-        length = torsoPosition.distanceTo(chestPosition) + chestPosition.distanceTo(upChestPosition)
-        self.lengthInputAttr.setMax(length * 3.0)
-        self.lengthInputAttr.setValue(length)
-
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers)
 
@@ -403,7 +403,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Evaluate Splice Ops
         # ====================
         # evaluate the spine op so that all the output transforms are updated.
-        self.bezierSpineKLOp.evaluate()
+        self.ZSplineSpineCanvasOp.evaluate()
 
         # evaluate the constraint op so that all the joint transforms are updated.
         self.deformersToOutputsKLOp.evaluate()
