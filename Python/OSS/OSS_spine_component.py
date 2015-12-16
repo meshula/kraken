@@ -70,15 +70,15 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
 
         # Guide Controls
-        self.cog = Control('cogPosition', parent=self.ctrlCmpGrp, shape="sphere")
-        self.cog.scalePoints(Vec3(1, 1, 1))
+        self.cog = Control('cogPosition', parent=self.ctrlCmpGrp, shape="circle")
+        self.cog.scalePoints(Vec3(2, 2, 2))
         self.cog.setColor('red')
 
-        self.pelvisCtrl = Control('pelvisPosition', parent=self.ctrlCmpGrp, shape='sphere')
+        self.pelvisCtrl = Control('pelvisPosition', parent=self.ctrlCmpGrp, shape='null')
         self.torsoCtrl = Control('torsoPosition', parent=self.ctrlCmpGrp, shape='sphere')
         self.chestCtrl = Control('chestPosition', parent=self.ctrlCmpGrp, shape='sphere')
         self.upChestCtrl = Control('upChestPosition', parent=self.ctrlCmpGrp, shape='sphere')
-        self.neckCtrl = Control('neckPosition', parent=self.ctrlCmpGrp, shape='sphere')
+        self.neckCtrl = Control('neckPosition', parent=self.ctrlCmpGrp, shape='null')
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
         self.loadData({
@@ -225,7 +225,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Hip
         self.hipCtrlSpace = CtrlSpace('hip', parent=self.cogCtrl)
         self.hipCtrl = Control('hip', parent=self.cogCtrl, shape="cube")
-        self.hipCtrl.setColor("green")
         height = 2.0
         self.hipCtrl.scalePoints(Vec3(4.5, height, 2.5))
         self.hipCtrl.translatePoints(Vec3(0, -height/2, 0))
@@ -253,9 +252,9 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # Neck
         self.neckCtrlSpace = CtrlSpace('neck', parent=self.upChestCtrl)
-        self.neckCtrl = Control('neck', parent=self.upChestCtrl, shape="cube")
-        self.neckCtrl.setColor("green")
-        self.neckCtrl.scalePoints(Vec3(1, 1, 1))
+        # self.neckCtrl = Control('neck', parent=self.upChestCtrl, shape="cube")
+        # self.neckCtrl.setColor("green")
+        # self.neckCtrl.scalePoints(Vec3(1, 1, 1))
 
         # ==========
         # Deformers
@@ -319,7 +318,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.ZSplineSpineCanvasOp.setInput('torso', self.torsoCtrl)
         self.ZSplineSpineCanvasOp.setInput('chest', self.chestCtrl)
         self.ZSplineSpineCanvasOp.setInput('upChest', self.upChestCtrl)
-        self.ZSplineSpineCanvasOp.setInput('neck', self.neckCtrl)
+        self.ZSplineSpineCanvasOp.setInput('neck', self.neckCtrlSpace)
         # temp now until handles are swapped
 
 
@@ -405,7 +404,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.upChestCtrl.xfo.tr = upChestPosition
 
         self.neckCtrlSpace.xfo.tr = neckPosition
-        self.neckCtrl.xfo.tr = neckPosition
+        # self.neckCtrl.xfo.tr = neckPosition
 
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers)
@@ -437,7 +436,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # self.pelvisCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
         self.chestCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
         self.upChestCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], 1.0, data['globalComponentCtrlSize']))
-        self.neckCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], 1.0, data['globalComponentCtrlSize']))
+        # self.neckCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], 1.0, data['globalComponentCtrlSize']))
 
 
 from kraken.core.kraken_system import KrakenSystem
