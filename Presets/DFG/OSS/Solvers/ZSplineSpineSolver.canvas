@@ -1,31 +1,10 @@
 {
   "objectType" : "Graph",
   "metadata" : {
-    "maya_id" : "1"
+    "maya_id" : "5"
     },
   "title" : "ZSplineSpineSolver",
   "ports" : [
-    {
-      "objectType" : "Port",
-      "nodePortType" : "In",
-      "name" : "instance",
-      "execPortType" : "Out",
-      "typeSpec" : "InlineInstance"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "In",
-      "name" : "this",
-      "execPortType" : "Out",
-      "typeSpec" : "InlineDebugShape"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "In",
-      "name" : "dummyResult",
-      "execPortType" : "Out",
-      "typeSpec" : "Vec3"
-      },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
@@ -86,6 +65,24 @@
       "name" : "drawDebug",
       "execPortType" : "In",
       "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {},
+      "nodePortType" : "In",
+      "name" : "Outputs",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "numDeformers",
+      "execPortType" : "In",
+      "typeSpec" : "Integer"
       }
     ],
   "extDeps" : {},
@@ -93,7 +90,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":57.42,\"y\":495.838}"
+        "uiGraphPos" : "{\"x\":115.42,\"y\":273.838}"
         },
       "name" : "assemble",
       "ports" : [
@@ -193,7 +190,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":843.646,\"y\":197.259}"
+        "uiGraphPos" : "{\"x\":815.646,\"y\":221.259}"
         },
       "name" : "GetEmptyDebugShape2",
       "ports" : [
@@ -225,7 +222,7 @@
       "objectType" : "User",
       "metadata" : {
         "uiTitle" : "Drawing",
-        "uiGraphPos" : "{\"x\":591.8730000000001,\"y\":161.022}",
+        "uiGraphPos" : "{\"x\":599.8730000000001,\"y\":186.022}",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiGraphSize" : "{\"w\":496.591,\"h\":531.547}"
@@ -236,7 +233,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":607.4690000000001,\"y\":197.315}"
+        "uiGraphPos" : "{\"x\":583.4690000000001,\"y\":212.315}"
         },
       "name" : "EmptyDrawingHandle",
       "ports" : [
@@ -252,7 +249,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":412.476,\"y\":319.532}",
+        "uiGraphPos" : "{\"x\":680.476,\"y\":374.532}",
         "uiCollapsedState" : "0"
         },
       "name" : "CreateSegs",
@@ -273,13 +270,63 @@
           "name" : "color"
           }
         ],
-      "executable" : "OSS.Exts.Curves.BSpline.CreateSegsOnZSpline",
-      "presetGUID" : "CFCC834DCA71AE6EA70EC4DFC47B367A"
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "CreateSegsOnZSpline",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "this",
+            "execPortType" : "In",
+            "typeSpec" : "ZSpline"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "color",
+            "execPortType" : "Out",
+            "typeSpec" : "Color[]"
+            }
+          ],
+        "extDeps" : {
+          "Math" : "*"
+          },
+        "origPresetGUID" : "CFCC834DCA71AE6EA70EC4DFC47B367A",
+        "code" : "dfgEntry {
+  result.resize(0);
+  color.resize(0);
+  for(UInt32 n=0;n<this.BSplines.size();n++){
+    BSpline b = this.BSplines[n];
+    UInt32 numSegs = b.numSegs;
+    
+    // Color Settings
+    Scalar hue = mathRandomScalar(n,1);
+    Scalar saturation = 2;
+    
+    for(UInt32 k=0; k<=numSegs; k++) {
+      Scalar t =  Scalar(k)/(numSegs);
+      t = (t+n)/(this.BSplines.size());
+      Color c = randomColor(hue*180,saturation,this.normalizeT(t));
+      result.push(this.evalPosition(t));
+      color.push(c);
+    }
+  }
+}
+"
+        }
       },
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":868.854,\"y\":337.122}",
+        "uiGraphPos" : "{\"x\":888.854,\"y\":349.122}",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiCollapsedState" : "0"
@@ -305,15 +352,91 @@
           "objectType" : "InstPort",
           "nodePortType" : "IO",
           "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "dummyResult"
           }
         ],
-      "executable" : "OSS.Exts.Curves.BSpline.DrawCurve",
-      "presetGUID" : "47F4F9EE9F286E15650A5E9294D8D8B4"
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+          },
+        "title" : "DrawCurve",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "points",
+            "execPortType" : "In",
+            "typeSpec" : "Vec3[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "color",
+            "execPortType" : "In",
+            "typeSpec" : "Color[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "InlineDebugShape"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "InlineDebugShape"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "dummyResult",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3"
+            }
+          ],
+        "extDeps" : {},
+        "origPresetGUID" : "47F4F9EE9F286E15650A5E9294D8D8B4",
+        "code" : "dfgEntry {
+  Index firstIndex = this.allocateLines(points.size(), points.size()-1);
+  Index colorIndex = firstIndex;
+  Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
+  Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
+  ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
+  
+
+  for( Integer i=0; i<points.size(); i++){
+    vertexColorsAttr.values[firstIndex] = color[i];
+    positionsAttr.values[firstIndex] = points[i];
+    normalsAttr.values[firstIndex++] = this.defaultNormal;
+    if(i > 0){
+      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 2;
+      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 1;
+    }
+  }
+
+  positionsAttr.incrementVersion();
+  normalsAttr.incrementVersion();
+  vertexColorsAttr.incrementVersion();
+  //this.drawPenColors(colorIndex);
+
+  result = this;
+}
+"
+        }
       },
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":192.727,\"y\":336.179}"
+        "uiGraphPos" : "{\"x\":341.727,\"y\":303.179}"
         },
       "name" : "buildZSpline",
       "ports" : [
@@ -372,7 +495,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":869.609,\"y\":489.432}"
+        "uiGraphPos" : "{\"x\":877.609,\"y\":507.432}"
         },
       "name" : "DrawAxesInstances",
       "ports" : [
@@ -413,7 +536,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":375.743,\"y\":477.876}",
+        "uiGraphPos" : "{\"x\":381.743,\"y\":638.876}",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiCollapsedState" : "0"
@@ -442,7 +565,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "UInt32" : 7
+            "UInt32" : 6
             },
           "name" : "numXfos"
           },
@@ -531,7 +654,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":653.0,\"y\":491.0}"
+        "uiGraphPos" : "{\"x\":707.0,\"y\":553.0}"
         },
       "name" : "Convert_1",
       "ports" : [
@@ -548,6 +671,32 @@
         ],
       "executable" : "Fabric.Core.Array.Convert",
       "presetGUID" : "5608B273990B641C3179497AC2B81FD4"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1123.0,\"y\":357.0}"
+        },
+      "name" : "Add_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "lhs"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "rhs"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Core.Math.Add",
+      "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7"
       }
     ],
   "connections" : {
@@ -573,8 +722,8 @@
       "DrawCurve.this"
       ],
     "EmptyDrawingHandle.handle" : [
-      "GetEmptyDebugShape2.this",
-      "DrawAxesInstances.this"
+      "DrawAxesInstances.this",
+      "GetEmptyDebugShape2.this"
       ],
     "CreateSegs.result" : [
       "DrawCurve.points"
@@ -582,28 +731,26 @@
     "CreateSegs.color" : [
       "DrawCurve.color"
       ],
-    "DrawCurve.this" : [
-      "this"
+    "DrawCurve.dummyResult" : [
+      "Add_1.lhs"
       ],
     "buildZSpline.result" : [
-      "CreateSegs.this",
-      "createXfosOnZSpline.this"
+      "createXfosOnZSpline.this",
+      "CreateSegs.this"
       ],
     "DrawAxesInstances.dummyResult" : [
-      "dummyResult"
-      ],
-    "DrawAxesInstances.instance" : [
-      "instance"
+      "Add_1.rhs"
       ],
     "createXfosOnZSpline.result" : [
-      "Convert_1.array"
+      "Convert_1.array",
+      "Outputs"
       ],
     "Convert_1.result" : [
       "DrawAxesInstances.transforms"
       ]
     },
   "metadata" : {
-    "maya_id" : "1"
+    "maya_id" : "5"
     },
   "requiredPresets" : {
     "Fabric.Exts.InlineDrawing.DrawingHandle.GetEmptyDebugShape" : {
@@ -777,126 +924,6 @@ dfgEntry {
 
 dfgEntry {
   this.clear();
-}
-"
-      },
-    "OSS.Exts.Curves.BSpline.CreateSegsOnZSpline" : {
-      "objectType" : "Func",
-      "title" : "CreateSegsOnZSpline",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec3[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "this",
-          "execPortType" : "In",
-          "typeSpec" : "ZSpline"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "color",
-          "execPortType" : "Out",
-          "typeSpec" : "Color[]"
-          }
-        ],
-      "extDeps" : {
-        "Math" : "*"
-        },
-      "presetGUID" : "CFCC834DCA71AE6EA70EC4DFC47B367A",
-      "code" : "dfgEntry {
-  result.resize(0);
-  color.resize(0);
-  
-  for(UInt32 n=0;n<this.BSplines.size();n++){
-    BSpline b = this.BSplines[n];
-    UInt32 numSegs = b.numSegs;
-    
-    // Color Settings
-    Scalar hue = mathRandomScalar(n,1);
-    Scalar saturation = 2;
-    
-    for(UInt32 k=0; k<=numSegs; k++) {
-      Scalar t =  Scalar(k)/(numSegs);
-      t = (t+n)/(this.BSplines.size());
-      Color c = randomColor(hue*180,saturation,this.normalizeT(t));
-      result.push(this.evalPosition(t));
-      color.push(c);
-    }
-  }
-}
-"
-      },
-    "OSS.Exts.Curves.BSpline.DrawCurve" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
-        },
-      "title" : "DrawCurve",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "points",
-          "execPortType" : "In",
-          "typeSpec" : "Vec3[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "color",
-          "execPortType" : "In",
-          "typeSpec" : "Color[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "InlineDebugShape"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "this",
-          "execPortType" : "IO",
-          "typeSpec" : "InlineDebugShape"
-          }
-        ],
-      "extDeps" : {},
-      "presetGUID" : "47F4F9EE9F286E15650A5E9294D8D8B4",
-      "code" : "dfgEntry {
-  Index firstIndex = this.allocateLines(points.size(), points.size()-1);
-  Index colorIndex = firstIndex;
-  Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
-  Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
-  ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
-  
-
-  for( Integer i=0; i<points.size(); i++){
-    vertexColorsAttr.values[firstIndex] = color[i];
-    positionsAttr.values[firstIndex] = points[i];
-    normalsAttr.values[firstIndex++] = this.defaultNormal;
-    if(i > 0){
-      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 2;
-      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 1;
-    }
-  }
-
-  positionsAttr.incrementVersion();
-  normalsAttr.incrementVersion();
-  vertexColorsAttr.incrementVersion();
-
-  //this.drawPenColors(colorIndex);
-
-  result = this;
 }
 "
       },
@@ -1093,24 +1120,43 @@ dfgEntry {
   }
 }
 "
+      },
+    "Fabric.Core.Math.Add" : {
+      "objectType" : "Func",
+      "title" : "Add",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "lhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "rhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7",
+      "code" : "
+dfgEntry {
+	result = lhs + rhs;
+}
+"
       }
     },
   "args" : [
-    {
-      "type" : "InlineInstance",
-      "value" : null,
-      "ext" : "InlineDrawing"
-      },
-    {
-      "type" : "InlineDebugShape",
-      "value" : null,
-      "ext" : "InlineDrawing"
-      },
-    {
-      "type" : "Vec3",
-      "value" : null,
-      "ext" : "Math"
-      },
     {
       "type" : "Mat44",
       "value" : null,
@@ -1133,19 +1179,19 @@ dfgEntry {
           "x" : 1,
           "y" : 0,
           "z" : 0,
-          "t" : -9.401402473449707
+          "t" : -0.9547837972640991
           },
         "row1" : {
           "x" : 0,
           "y" : 1,
           "z" : 0,
-          "t" : 17.3868408203125
+          "t" : 18.1765022277832
           },
         "row2" : {
           "x" : 0,
           "y" : 0,
           "z" : 1,
-          "t" : -2.995510578155518
+          "t" : 1.118929028511047
           },
         "row3" : {
           "x" : 0,
@@ -1163,19 +1209,19 @@ dfgEntry {
           "x" : 1,
           "y" : 0,
           "z" : 0,
-          "t" : -9.401402473449707
+          "t" : 6.259926319122315
           },
         "row1" : {
           "x" : 0,
           "y" : 1,
           "z" : 0,
-          "t" : 22.3868408203125
+          "t" : 21.90998458862305
           },
         "row2" : {
           "x" : 0,
           "y" : 0,
           "z" : 1,
-          "t" : -2.995510578155518
+          "t" : 4.135005474090576
           },
         "row3" : {
           "x" : 0,
@@ -1193,6 +1239,15 @@ dfgEntry {
     {
       "type" : "Boolean",
       "value" : false
+      },
+    {
+      "type" : "Mat44[]",
+      "value" : null,
+      "ext" : "Math"
+      },
+    {
+      "type" : "SInt32",
+      "value" : 5
       }
     ]
   }

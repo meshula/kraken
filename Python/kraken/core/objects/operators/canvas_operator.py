@@ -92,7 +92,7 @@ class CanvasOperator(Operator):
             portName = port['name']
             portConnectionType = port['execPortType']
             portDataType = port['typeSpec']
-
+            print portName
             if portDataType == '$TYPE$':
                 return
 
@@ -124,7 +124,10 @@ class CanvasOperator(Operator):
                     portVals.append(rtValArray)
                 else:
                     portVals.append(getRTVal(self.outputs[portName]))
-
+        # Debugging
+        print "CanvasPreset: %s" % self.canvasPresetPath
+        for i in xrange(len(portVals)):
+            print "portvals: %s: %s" %(i,portVals[i]) 
 
         host = ks.getCoreClient().DFG.host
         binding = host.createBindingToPreset(self.canvasPresetPath, portVals)
