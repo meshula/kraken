@@ -1,16 +1,18 @@
 require InlineDrawing;
+require Geometry;
+require Kraken;
 
-object TwoBoneIKSolver : KrakenSolver {
+object OSS_TwoBoneIKSolver : KrakenSolver {
   Xfo initPose[];
 };
 
 // Default Constructor
-function TwoBoneIKSolver()
+function OSS_TwoBoneIKSolver()
 {
 
 }
 
-function TwoBoneIKSolver(
+function OSS_TwoBoneIKSolver(
   Xfo initPose[])
 {
   this.initPose = initPose;
@@ -18,15 +20,13 @@ function TwoBoneIKSolver(
 
 
 // Return Arguments for Kraken
-function KrakenSolverArg[] TwoBoneIKSolver.getArguments(){
+function KrakenSolverArg[] OSS_TwoBoneIKSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('rightSide', 'In', 'Boolean'));
 
-  args.push(KrakenSolverArg('ikblend', 'In', 'Scalar'));
-  args.push(KrakenSolverArg('softIK', 'In', 'Boolean'));
+  args.push(KrakenSolverArg('ikBlend', 'In', 'Scalar'));
   args.push(KrakenSolverArg('softDist', 'In', 'Scalar'));
-  args.push(KrakenSolverArg('stretch', 'In', 'Boolean'));
-  args.push(KrakenSolverArg('stretchBlend', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('stretch', 'In', 'Scalar'));
 
   args.push(KrakenSolverArg('root', 'In', 'Mat44'));
   args.push(KrakenSolverArg('bone0FK', 'In', 'Mat44'));
@@ -47,14 +47,14 @@ require Math;
 require Animation;
 
 
-function solve2BoneIK(
+function oss_solve2BoneIK(
   in Scalar bone0Length,
   in Scalar bone1Length,
   in Vec3 rootPosition,
   in Vec3 upVPosition,
   in Vec3 goalPosition,
   io Xfo bone0Xfo,
-  io Xfo bone1Xfo,
+  io Xfo bone1Xfo
 ) {
 
   Vec3 rootToGoal = goalPosition - rootPosition;
@@ -86,19 +86,37 @@ function solve2BoneIK(
 }
 
 
+// Make this take in a specific aim and upvector later
+function from_aimXupZ(
+  in Xfo inXfo,
+  in Boolean rightSide,
+  io Xfo outXfo
+  ) {
+
+    Vec3 aimAxis = inXfo.ori.getXaxis().unit();
+    if (rightSide)
+    {
+      aimAxis = aimAxis.negate();
+    }
+    Vec3 upAxis = inXfo.ori.getYaxis().unit();
+    Vec3 normalAxis = upAxis.cross(aimAxis).unit();
+    Mat33 mat(aimAxis, normalAxis, upAxis);
+
+    outXfo.ori.setFromMat33(mat.transpose());
+
+}
+
 
 // Solve
-function TwoBoneIKSolver.solve!
+function OSS_TwoBoneIKSolver.solve!
 (
   Boolean drawDebug,
   Scalar rigScale,
   Boolean rightSide,
 
-  Scalar ikblend,
-  Boolean softIK,
+  Scalar ikBlend,
   Scalar softDist,
-  Boolean stretch,
-  Scalar stretchBlend,
+  Scalar stretch,
 
   Mat44 root,
   Mat44 bone0FK,
@@ -118,27 +136,118 @@ function TwoBoneIKSolver.solve!
   Xfo bone1Xfo = bone1FkXfo;
   Xfo bone2Xfo;
 
-  Scalar scaledBone0Len = bone0Len * rigScale;
-  Scalar scaledBone1Len = bone1Len * rigScale;
+  Xfo ikHandleXfo = Xfo(ikHandle);
 
-  if(ikblend > 0.0){
-    solve2BoneIK(
-      scaledBone0Len,
-      scaledBone1Len,
+  Scalar bone0Length = bone0Len;
+  Scalar bone1Length = bone1Len;
+
+  Scalar bone0LenRigScaled = bone0Length * rigScale;
+  Scalar bone1LenRigScaled = bone1Length * rigScale;
+
+  Scalar softDistRigScaled = softDist * rigScale;  //Make sure
+
+  Scalar stretchedRatio = 1.0;  //De;ete this
+
+  Vec3 ikGoalPos = ikHandleXfo.tr;
+  Vec3 straightLegGoalPos = ikGoalPos;
+
+  Xfo debugXfo;
+  Xfo debugXfo2;
+  Xfo ikGoalPosXfoDebug;
+
+  //bone0Xfo.ori = bone0FkXfo.ori.sphericalLinearInterpolate(bone0Xfo.ori, ikBlend);
+  Scalar negater = 1.0;
+  if (rightSide)
+  {
+    negater = -1.0;
+  }
+
+  if(ikBlend > 0) {
+
+    Scalar distanceOrig = ikHandleXfo.tr.distanceTo(bone0Xfo.tr);
+    Scalar distance = distanceOrig;
+
+    if (softDist > 0 && (bone0LenRigScaled + bone1LenRigScaled) - distance < softDist)
+    {
+
+      //
+      Scalar hardDist = bone0LenRigScaled + bone1LenRigScaled - softDist;
+
+      distance = softDist * (1-exp (-(distance-hardDist) / softDist)) + hardDist;
+
+      // Move ik goal position
+      Vec3 difference = ikHandleXfo.tr - bone0FkXfo.tr;
+      difference = difference * (distance / distanceOrig);
+
+      if (difference.length()) {
+        difference.unit();
+        straightLegGoalPos = bone0FkXfo.tr + (difference.unit() * (bone0LenRigScaled + bone1LenRigScaled));
+        debugXfo2.tr =   straightLegGoalPos;
+      }
+
+      ikGoalPos = bone0FkXfo.tr + difference;
+
+      Vec3 ikGoalDiff =  ikGoalPos - straightLegGoalPos;
+
+      Scalar legLength = (straightLegGoalPos - bone0FkXfo.tr).length();
+      Scalar IKLength = (ikHandleXfo.tr - bone0FkXfo.tr).length();
+
+      // If the ik handle is farther away than a straight-leg
+      if (IKLength > legLength)
+      {
+        ikGoalPos = ikHandleXfo.tr + ikGoalDiff;
+        ikGoalPosXfoDebug.tr = ikGoalPos;
+      }
+
+      //bone0Length *= (newDist / hardDist);
+      //bone1Length *= (newDist / hardDist);
+      //bone0LenRigScaled = bone0Length * rigScale;
+      //bone1LenRigScaled = bone1Length * rigScale;
+    }
+
+
+    if(stretch > 0)
+    {
+      if (distanceOrig > bone0LenRigScaled + bone1LenRigScaled)
+      {
+        Scalar distance2 = (stretch * (distanceOrig - (bone0LenRigScaled + bone1LenRigScaled))) + (bone0LenRigScaled + bone1LenRigScaled);
+
+        bone0Length *= (distance2 / (bone0LenRigScaled + bone1LenRigScaled));
+        bone1Length *= (distance2 / (bone0LenRigScaled + bone1LenRigScaled));
+        bone0LenRigScaled = bone0Length * rigScale;
+        bone1LenRigScaled = bone1Length * rigScale;
+      }
+
+    } else
+    {
+      //distance = bone0LenRigScaled + bone1LenRigScaled;
+    }
+
+
+    oss_solve2BoneIK(
+      bone0LenRigScaled,
+      bone1LenRigScaled,
       root.translation(),
       upV.translation(),
-      ikHandle.translation(),
+      ikGoalPos,
       bone0Xfo,
       bone1Xfo
     );
-    bone0Xfo.ori = bone0FkXfo.ori.sphericalLinearInterpolate(bone0Xfo.ori, ikblend);
-    bone1Xfo.tr = bone0Xfo.transformVector(Vec3(bone0Len, 0.0, 0.0));
-    bone1Xfo.ori = bone1FkXfo.ori.sphericalLinearInterpolate(bone1Xfo.ori, ikblend);
+
+    from_aimXupZ(bone0Xfo, rightSide, bone0Xfo);
+    from_aimXupZ(bone1Xfo, rightSide, bone1Xfo);
+    from_aimXupZ(bone2Xfo, rightSide, bone2Xfo);
+
+    bone0Xfo.ori = bone0FkXfo.ori.sphericalLinearInterpolate(bone0Xfo.ori, ikBlend);
+    bone1Xfo.tr = bone0Xfo.transformVector(Vec3(stretchedRatio * bone0Length * negater, 0.0, 0.0));
+    bone1Xfo.ori = bone1FkXfo.ori.sphericalLinearInterpolate(bone1Xfo.ori, ikBlend);
   }
 
   // project bone2 to the end of bone 1
   bone2Xfo = bone1Xfo;
-  bone2Xfo.tr = bone1Xfo.transformVector(Vec3(bone1Len, 0.0, 0.0));
+  bone2Xfo.tr = bone1Xfo.transformVector(Vec3(stretchedRatio * bone1Length * negater, 0.0, 0.0));
+  // softdist may pull the foot away from ik goal, put it back
+  //bone2Xfo.tr = ikHandleXfo.tr;
 
   // Set scaling
   Vec3 outScaling = Vec3(rigScale, rigScale, rigScale);
@@ -150,12 +259,19 @@ function TwoBoneIKSolver.solve!
   bone1Out = bone1Xfo.toMat44();
   bone2Out = bone2Xfo.toMat44();
 
+  debugXfo.tr = ikHandleXfo.tr;
+
   // Set debugging visibility.
   this.setDebug(drawDebug);
   if(this.drawDebug){
 
-    Color boneColor(1.0, 1.0, 0);
-    etDrawBone(this.handle.rootTransform, 'bone0', bone0Xfo, scaledBone0Len, scaledBone0Len * 0.15, boneColor);
-    etDrawBone(this.handle.rootTransform, 'bone1', bone1Xfo, scaledBone1Len, scaledBone1Len * 0.15, boneColor);
+    Color blueColor(0.0, 0.0, 1.0);
+    Color redColor(1.0, 0.0, 0.0);
+    Color greenColor(0.0, 1.0, 0.0);
+    etDrawBone(this.handle.rootTransform, 'debug', debugXfo, 0.2,  0.2, blueColor);
+    etDrawBone(this.handle.rootTransform, 'debug2', debugXfo2, 0.2,  0.2, redColor);
+    etDrawBone(this.handle.rootTransform, 'debug3', ikGoalPosXfoDebug, 0.2,  0.2, greenColor);
+
+    //etDrawBone(this.handle.rootTransform, 'bone1', bone1Xfo, bone1LenRigScaled, bone1LenRigScaled * 0.15, boneColor);
   }
 }
