@@ -534,7 +534,7 @@ class OSSLegComponentRig(OSSLegComponent):
         self.legIKKLOp.setInput('bone0Len', self.legBone0LenInputAttr)
         self.legIKKLOp.setInput('bone1Len', self.legBone1LenInputAttr)
         self.legIKKLOp.setInput('ikBlend', legIKBlendInputAttr)
-        self.legIKKLOp.setInput('mocapBlend', mocapBlendInputAttr)
+        #self.legIKKLOp.setInput('mocapBlend', mocapBlendInputAttr)
         #self.legIKKLOp.setInput('footIK', footIKInputAttr)
         #self.legIKKLOp.setInput('softIK', legSoftIKInputAttr)
         self.legIKKLOp.setInput('softDist', legSoftDistInputAttr)
