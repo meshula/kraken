@@ -67,25 +67,29 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         # Controls
         # ========
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.numDeformersAttr = IntegerAttribute('numDeformers', value=1, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
+        self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
 
         # Guide Controls
-        self.cog = Control('cogPosition', parent=self.ctrlCmpGrp, shape="sphere")
-        self.cog.scalePoints(Vec3(1.2, 1.2, 1.2))
+        self.cog = Control('cogPosition', parent=self.ctrlCmpGrp, shape="circle")
+        self.cog.scalePoints(Vec3(2, 2, 2))
         self.cog.setColor('red')
 
+        self.pelvisCtrl = Control('pelvisPosition', parent=self.ctrlCmpGrp, shape='null')
         self.torsoCtrl = Control('torsoPosition', parent=self.ctrlCmpGrp, shape='sphere')
         self.chestCtrl = Control('chestPosition', parent=self.ctrlCmpGrp, shape='sphere')
         self.upChestCtrl = Control('upChestPosition', parent=self.ctrlCmpGrp, shape='sphere')
+        self.neckCtrl = Control('neckPosition', parent=self.ctrlCmpGrp, shape='null')
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
         self.loadData({
             'name': name,
             'location': 'M',
-            'cogPosition': Vec3(0.0, 11.1351, -0.1382),
-            'torsoPosition': Vec3(0.0, 11.1351, -0.1382),
-            'chestPosition': Vec3(0.0, 11.8013, -0.1995),
-            'upChestPosition': Vec3(0.0, 12.4496, -0.3649),
+            'pelvisPosition': Vec3(0.0, 9, 0),
+            'cogPosition': Vec3(0.0, 10, 0),
+            'torsoPosition': Vec3(0.0, 10, 0),
+            'chestPosition': Vec3(0.0, 12, 0),
+            'upChestPosition': Vec3(0.0, 14, 0),
+            'neckPosition': Vec3(0.0, 15, 0),
             'numDeformers': 6,
             'globalComponentCtrlSize': 1.0
         })
@@ -107,9 +111,11 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         data = super(OSSSpineComponentGuide, self).saveData()
 
         data['cogPosition'] = self.cog.xfo.tr
+        data['pelvisPosition'] = self.pelvisCtrl.xfo.tr
         data['torsoPosition'] = self.torsoCtrl.xfo.tr
         data['chestPosition'] = self.chestCtrl.xfo.tr
         data['upChestPosition'] = self.upChestCtrl.xfo.tr
+        data['neckPosition'] = self.neckCtrl.xfo.tr
         data['numDeformers'] = self.numDeformersAttr.getValue()
 
         return data
@@ -129,17 +135,21 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         super(OSSSpineComponentGuide, self).loadData( data )
 
         self.cog.xfo.tr = data["cogPosition"]
+        self.pelvisCtrl.xfo.tr = data["pelvisPosition"]
         self.torsoCtrl.xfo.tr = data["torsoPosition"]
         self.chestCtrl.xfo.tr = data["chestPosition"]
         self.upChestCtrl.xfo.tr = data["upChestPosition"]
+        self.neckCtrl.xfo.tr = data["neckPosition"]
         self.numDeformersAttr.setValue(data["numDeformers"])
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
 
+        self.pelvisCtrl.scalePoints(globalScaleVec)
         self.torsoCtrl.scalePoints(globalScaleVec)
         self.chestCtrl.scalePoints(globalScaleVec)
         self.upChestCtrl.scalePoints(globalScaleVec)
+        self.neckCtrl.scalePoints(globalScaleVec)
 
         return True
 
@@ -155,9 +165,12 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         data = super(OSSSpineComponentGuide, self).getRigBuildData()
 
         data['cogPosition'] = self.cog.xfo.tr
+        data['hipPosition'] = self.cog.xfo.tr
+        data['pelvisPosition'] = self.pelvisCtrl.xfo.tr
         data['torsoPosition'] = self.torsoCtrl.xfo.tr
         data['chestPosition'] = self.chestCtrl.xfo.tr
         data['upChestPosition'] = self.upChestCtrl.xfo.tr
+        data['neckPosition'] = self.neckCtrl.xfo.tr
         data['numDeformers'] = self.numDeformersAttr.getValue()
 
         return data
@@ -202,35 +215,46 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Controls
         # =========
         # COG
+        print self.ctrlCmpGrp
+
         self.cogCtrlSpace = CtrlSpace('cog', parent=self.ctrlCmpGrp)
         self.cogCtrl = Control('cog', parent=self.cogCtrlSpace, shape="circle")
         self.cogCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))
         self.cogCtrl.setColor("orange")
 
+        # Hip
+        self.hipCtrlSpace = CtrlSpace('hip', parent=self.cogCtrl)
+        self.hipCtrl = Control('hip', parent=self.cogCtrl, shape="cube")
+        height = 2.0
+        self.hipCtrl.scalePoints(Vec3(4.5, height, 2.5))
+        self.hipCtrl.translatePoints(Vec3(0, -height/2, 0))
+
+        # Pelvis
+        self.pelvisCtrlSpace = CtrlSpace('pelvis', parent=self.hipCtrl)
+        # self.pelvisCtrl = Control('pelvis', parent=self.pelvisCtrlSpace, shape="cube")
+        # self.pelvisCtrl.setColor("green")
+        # self.pelvisCtrl.scalePoints(Vec3(1, 1, 1))
+
         # Torso
         self.torsoCtrlSpace = CtrlSpace('torso', parent=self.cogCtrl)
-        self.torsoCtrl = Control('torso', parent=self.torsoCtrlSpace, shape="circle")
-        self.torsoCtrl.scalePoints(Vec3(4.0, 4.0, 4.0))
-        self.torsoCtrl.setColor("blue")
+        self.torsoCtrl = Control('torso', parent=self.torsoCtrlSpace, shape="square")
+        self.torsoCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
 
         # Chest
         self.chestCtrlSpace = CtrlSpace('chest', parent=self.torsoCtrl)
-        self.chestCtrl = Control('chest', parent=self.chestCtrlSpace, shape="circle")
-        self.chestCtrl.scalePoints(Vec3(4.5, 4.5, 4.5))
-
+        self.chestCtrl = Control('chest', parent=self.chestCtrlSpace, shape="square")
+        self.chestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
 
         # UpChest
         self.upChestCtrlSpace = CtrlSpace('upChest', parent=self.chestCtrl)
-        self.upChestCtrl = Control('upChest', parent=self.upChestCtrlSpace, shape="circle")
-        self.upChestCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))
-        self.upChestCtrl.setColor("blue")
+        self.upChestCtrl = Control('upChest', parent=self.upChestCtrlSpace, shape="square")
+        self.upChestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
 
-        # Pelvis
-        self.pelvisCtrlSpace = CtrlSpace('pelvis', parent=self.cogCtrl)
-        self.pelvisCtrl = Control('pelvis', parent=self.pelvisCtrlSpace, shape="cube")
-        self.pelvisCtrl.alignOnYAxis(negative=True)
-        self.pelvisCtrl.scalePoints(Vec3(2.0, 1.5, 1.5))
-
+        # Neck
+        self.neckCtrlSpace = CtrlSpace('neck', parent=self.upChestCtrl)
+        # self.neckCtrl = Control('neck', parent=self.upChestCtrl, shape="cube")
+        # self.neckCtrl.setColor("green")
+        # self.neckCtrl.scalePoints(Vec3(1, 1, 1))
 
         # ==========
         # Deformers
@@ -241,8 +265,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.spineOutputs = []
         self.setNumDeformers(1)
 
-        pelvisDef = Joint('pelvis', parent=self.defCmpGrp)
-        pelvisDef.setComponent(self)
 
         # =====================
         # Create Component I/O
@@ -269,8 +291,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.spineBaseOutputConstraint.addConstrainer(self.spineOutputs[0])
         self.spineBaseOutputTgt.addConstraint(self.spineBaseOutputConstraint)
 
-        self.pelvisOutputConstraint = PoseConstraint('_'.join([self.pelvisOutputTgt.getName(), 'To', self.pelvisCtrl.getName()]))
-        self.pelvisOutputConstraint.addConstrainer(self.pelvisCtrl)
+        self.pelvisOutputConstraint = PoseConstraint('_'.join([self.pelvisOutputTgt.getName(), 'To', self.pelvisCtrlSpace.getName()]))
+        self.pelvisOutputConstraint.addConstrainer(self.pelvisCtrlSpace)
         self.pelvisOutputTgt.addConstraint(self.pelvisOutputConstraint)
 
         self.spineEndOutputConstraint = PoseConstraint('_'.join([self.spineEndOutputTgt.getName(), 'To', 'spineEnd']))
@@ -290,18 +312,18 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Add Att Inputs
         self.ZSplineSpineCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.ZSplineSpineCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-
+        self.ZSplineSpineCanvasOp.setInput('numDeformers', self.rigScaleInputAttr)
         # Add Xfo Inputs
+        self.ZSplineSpineCanvasOp.setInput('pelvis', self.pelvisCtrlSpace)
         self.ZSplineSpineCanvasOp.setInput('torso', self.torsoCtrl)
         self.ZSplineSpineCanvasOp.setInput('chest', self.chestCtrl)
         self.ZSplineSpineCanvasOp.setInput('upChest', self.upChestCtrl)
+        self.ZSplineSpineCanvasOp.setInput('neck', self.neckCtrlSpace)
         # temp now until handles are swapped
-        self.ZSplineSpineCanvasOp.setInput('neck', self.upChestCtrl)
 
 
         # Add Xfo Outputs
-        self.ZSplineSpineCanvasOp.setOutput('outputs', self.spineOutputs)
-
+        self.ZSplineSpineCanvasOp.setOutput('Outputs', self.spineOutputs)
 
 
 
@@ -319,19 +341,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Add Xfo Outputs
         self.deformersToOutputsKLOp.setOutput('constrainees', self.deformerJoints)
 
-        # Add Pelvis Splice Op
-        self.pelvisDefKLOp = KLOperator('pelvisDeformerKLOp', 'PoseConstraintSolver', 'Kraken')
-        self.addOperator(self.pelvisDefKLOp)
-
-        # Add Att Inputs
-        self.pelvisDefKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.pelvisDefKLOp.setInput('rigScale', self.rigScaleInputAttr)
-
-        # Add Xfo Inputs
-        self.pelvisDefKLOp.setInput('constrainer', self.pelvisOutputTgt)
-
-        # Add Xfo Outputs
-        self.pelvisDefKLOp.setOutput('constrainee', pelvisDef)
 
 
         Profiler.getInstance().pop()
@@ -368,16 +377,22 @@ class OSSSpineComponentRig(OSSSpineComponent):
         super(OSSSpineComponentRig, self).loadData( data )
 
         cogPosition = data['cogPosition']
+        hipPosition = data['hipPosition']
+        pelvisPosition = data['pelvisPosition']
         torsoPosition = data['torsoPosition']
         chestPosition = data['chestPosition']
         upChestPosition = data['upChestPosition']
+        neckPosition = data['neckPosition']
         numDeformers = data['numDeformers']
 
         self.cogCtrlSpace.xfo.tr = cogPosition
         self.cogCtrl.xfo.tr = cogPosition
 
-        self.pelvisCtrlSpace.xfo.tr = cogPosition
-        self.pelvisCtrl.xfo.tr = cogPosition
+        self.hipCtrlSpace.xfo.tr = hipPosition
+        self.hipCtrl.xfo.tr = hipPosition
+
+        self.pelvisCtrlSpace.xfo.tr = pelvisPosition
+        # self.pelvisCtrl.xfo.tr = pelvisPosition
 
         self.torsoCtrlSpace.xfo.tr = torsoPosition
         self.torsoCtrl.xfo.tr = torsoPosition
@@ -388,6 +403,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.upChestCtrlSpace.xfo.tr = upChestPosition
         self.upChestCtrl.xfo.tr = upChestPosition
 
+        self.neckCtrlSpace.xfo.tr = neckPosition
+        # self.neckCtrl.xfo.tr = neckPosition
 
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers)
@@ -395,9 +412,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Updating constraint to use the updated last output.
         self.spineEndOutputConstraint.setConstrainer(self.spineOutputs[-1], index=0)
 
-        # ============
-        # Set IO Xfos
-        # ============
 
         # ====================
         # Evaluate Splice Ops
@@ -407,7 +421,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # evaluate the constraint op so that all the joint transforms are updated.
         self.deformersToOutputsKLOp.evaluate()
-        self.pelvisDefKLOp.evaluate()
 
         # evaluate the constraints to ensure the outputs are now in the correct location.
         self.spineCogOutputConstraint.evaluate()
@@ -419,9 +432,11 @@ class OSSSpineComponentRig(OSSSpineComponent):
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
         self.cogCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
-        self.pelvisCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
+        self.hipCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
+        # self.pelvisCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
         self.chestCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
         self.upChestCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], 1.0, data['globalComponentCtrlSize']))
+        # self.neckCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], 1.0, data['globalComponentCtrlSize']))
 
 
 from kraken.core.kraken_system import KrakenSystem
