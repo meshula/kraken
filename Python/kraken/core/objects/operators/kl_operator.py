@@ -132,6 +132,8 @@ class KLOperator(Operator):
                 return obj.xfo.getRTVal().toMat44('Mat44')
             elif isinstance(obj, Attribute):
                 return obj.getRTVal()
+            else: # Must be a numerical, or string, etc.
+                return obj  ###### TTHACK Pass this through, we are setting a value directly, not makeing a connection
 
         argVals = []
         for i in xrange(len(self.args)):
@@ -152,7 +154,7 @@ class KLOperator(Operator):
 
             if argConnectionType == 'In':
                 if str(argDataType).endswith('[]'):
-                    rtValArray = ks.rtVal(argDataType[:-2]+'Array')
+                    rtValArray = ks.rtVal(argDataType[:-2]+'[]')
                     rtValArray.resize(len(self.inputs[argName]))
                     for j in xrange(len(self.inputs[argName])):
                         rtValArray[j] = getRTVal(self.inputs[argName][j])
@@ -161,7 +163,7 @@ class KLOperator(Operator):
                     argVals.append(getRTVal(self.inputs[argName]))
             else:
                 if str(argDataType).endswith('[]'):
-                    rtValArray = ks.rtVal(argDataType[:-2]+'Array')
+                    rtValArray = ks.rtVal(argDataType[:-2]+'[]')
                     rtValArray.resize(len(self.outputs[argName]))
                     for j in xrange(len(self.outputs[argName])):
                         rtValArray[j] = getRTVal(self.outputs[argName][j])
