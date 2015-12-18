@@ -50,7 +50,7 @@
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
-      "name" : "controlPoints",
+      "name" : "controlMat44s",
       "execPortType" : "In",
       "typeSpec" : "Mat44[]"
       }
@@ -59,7 +59,7 @@
     "Curves" : "*"
     },
   "presetGUID" : "9836B3714DA145A6A6D45B528D6EEDFE",
-  "code" : "dfgEntry {\n\tresult.setOrder(order);\n\tresult.setClosed(closed);\n\tresult.setClamped(clamped);\n\tresult.setControlPoints(controlPoints);\n\tresult.initiate();\n  length = result.distances[result.distances.size()-1];\n}\n",
+  "code" : "dfgEntry {\n\tresult.setOrder(order);\n\tresult.setClosed(closed);\n\tresult.setClamped(clamped);\n\tresult.setcontrolMat44s(controlMat44s);\n\tresult.initiate();\n  length = result.distances[result.distances.size()-1];\n}\n",
   "requiredPresets" : {
     "OSS.Exts.Curves.BSpline.BSpline" : {
       "objectType" : "Func",
@@ -113,7 +113,7 @@
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
-          "name" : "controlPoints",
+          "name" : "controlMat44s",
           "execPortType" : "In",
           "typeSpec" : "Mat44[]"
           }
@@ -122,7 +122,7 @@
         "Curves" : "*"
         },
       "presetGUID" : "9836B3714DA145A6A6D45B528D6EEDFE",
-      "code" : "dfgEntry {\n\tresult.setOrder(order);\n\tresult.setClosed(closed);\n\tresult.setClamped(clamped);\n\tresult.setControlPoints(controlPoints);\n\tresult.initiate();\n  length = result.distances[result.distances.size()-1];\n}\n"
+      "code" : "dfgEntry {\n\tresult.setOrder(order);\n\tresult.setClosed(closed);\n\tresult.setClamped(clamped);\n\tresult.setcontrolMat44s(controlMat44s);\n\tresult.initiate();\n  length = result.distances[result.distances.size()-1];\n}\n"
       }
     }
   }

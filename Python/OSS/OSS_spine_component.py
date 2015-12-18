@@ -49,8 +49,10 @@ class OSSSpineComponent(BaseExampleComponent):
         # Declare Input Attrs
         self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
         self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
+        self.numDeformersAttr = self.createInput('numDeformers', dataType='Integer', value=6, parent=self.cmpInputAttrGrp).getTarget()
 
         # Declare Output Attrs
+
 
         # Use this color for OSS components (should maybe get this color from a central source eventually)
         self.setComponentColor(155, 155, 200, 255)
@@ -67,7 +69,6 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         # Controls
         # ========
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
 
         # Guide Controls
         self.cog = Control('cogPosition', parent=self.ctrlCmpGrp, shape="circle")
@@ -80,6 +81,8 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         self.upChestCtrl = Control('upChestPosition', parent=self.ctrlCmpGrp, shape='sphere')
         self.neckCtrl = Control('neckPosition', parent=self.ctrlCmpGrp, shape='null')
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        # self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
+
 
         self.loadData({
             'name': name,
@@ -252,6 +255,9 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # Neck
         self.neckCtrlSpace = CtrlSpace('neck', parent=self.upChestCtrl)
+
+
+
         # self.neckCtrl = Control('neck', parent=self.upChestCtrl, shape="cube")
         # self.neckCtrl.setColor("green")
         # self.neckCtrl.scalePoints(Vec3(1, 1, 1))
@@ -259,6 +265,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # ==========
         # Deformers
         # ==========
+
+
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
         self.deformerJoints = []
@@ -304,15 +312,13 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Add Fabric Ops
         # ===============
         # Add Spine Canvas Op
-
-
         self.ZSplineSpineCanvasOp = CanvasOperator('ZSplineSpineCanvasOp', 'OSS.Solvers.ZSplineSpineSolver')
         self.addOperator(self.ZSplineSpineCanvasOp)
 
         # Add Att Inputs
         self.ZSplineSpineCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.ZSplineSpineCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.ZSplineSpineCanvasOp.setInput('numDeformers', self.rigScaleInputAttr)
+        self.ZSplineSpineCanvasOp.setInput('numDeformers',  self.numDeformersAttr)
         # Add Xfo Inputs
         self.ZSplineSpineCanvasOp.setInput('pelvis', self.pelvisCtrlSpace)
         self.ZSplineSpineCanvasOp.setInput('torso', self.torsoCtrl)
@@ -323,9 +329,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
 
         # Add Xfo Outputs
-        self.ZSplineSpineCanvasOp.setOutput('Outputs', self.spineOutputs)
-
-
+        self.ZSplineSpineCanvasOp.setOutput('outputs', self.spineOutputs)
 
         # Add Deformer Splice Op
         self.deformersToOutputsKLOp = KLOperator('spineDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')

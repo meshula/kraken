@@ -34,16 +34,6 @@
       "objectType" : "Port",
       "nodePortType" : "Out",
       "defaultValues" : {
-        "UInt32" : 13
-        },
-      "name" : "numXfos",
-      "execPortType" : "In",
-      "typeSpec" : "UInt32"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
-      "defaultValues" : {
         "Float32" : 1
         },
       "name" : "keepArcLen",
@@ -52,56 +42,31 @@
       },
     {
       "objectType" : "Port",
-      "nodePortType" : "Out",
-      "defaultValues" : {
-        "Boolean" : true
-        },
-      "name" : "addMedianXform",
-      "execPortType" : "In",
-      "typeSpec" : "Boolean"
-      },
-    {
-      "objectType" : "Port",
       "nodePortType" : "In",
       "name" : "medianXfos",
       "execPortType" : "Out",
       "typeSpec" : "Xfo[]"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "In",
-      "name" : "medianEulers",
-      "execPortType" : "Out",
-      "typeSpec" : "Euler[]"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
-      "name" : "RotOrder",
-      "execPortType" : "In",
-      "typeSpec" : "RotationOrder "
       }
     ],
   "extDeps" : {
     "Math" : "*"
     },
-  "presetGUID" : "26337935ED40C0C030C4F5BA699E2D33",
+  "presetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B",
   "code" : "dfgEntry {
   result.resize(0);
   for(UInt32 n=0;n<this.BSplines.size();n++){
-    BSpline b = this.BSplines[n];
-    for(UInt32 k=0; k<numXfos; k++) {
-        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(numXfos-1)));
+    for(UInt32 k=0; k<this.BSplines[n].defSegs; k++) {
+        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(this.BSplines[n].defSegs-1)));
         Xfo outXfo = Xfo(
-                b.evalPosition(t,keepArcLen,keepCurveLen),
-                b.evalOri(t,keepArcLen,keepCurveLen),
-                b.evalScale(t,keepArcLen,keepCurveLen));
+                this.BSplines[n].evalPosition(t,keepArcLen,keepCurveLen),
+                this.BSplines[n].evalOri(t,keepArcLen,keepCurveLen),
+                this.BSplines[n].evalScale(t,keepArcLen,keepCurveLen));
         result.push(outXfo);
         
         // export on mid segments
-        if(k==0 && n!=0 && addMedianXform) {
+        if(k==0 && n!=0) {
             medianXfos.push(outXfo.linearInterpolate(result[result.size()-2], 0.5));
-           // mediannEulers.push(
+           // ToDo Export defrobulated Euler Angles on segment Joints
         }
     }
   }
@@ -143,16 +108,6 @@
           "objectType" : "Port",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "UInt32" : 13
-            },
-          "name" : "numXfos",
-          "execPortType" : "In",
-          "typeSpec" : "UInt32"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
             "Float32" : 1
             },
           "name" : "keepArcLen",
@@ -161,56 +116,31 @@
           },
         {
           "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Boolean" : true
-            },
-          "name" : "addMedianXform",
-          "execPortType" : "In",
-          "typeSpec" : "Boolean"
-          },
-        {
-          "objectType" : "Port",
           "nodePortType" : "In",
           "name" : "medianXfos",
           "execPortType" : "Out",
           "typeSpec" : "Xfo[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "medianEulers",
-          "execPortType" : "Out",
-          "typeSpec" : "Euler[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "RotOrder",
-          "execPortType" : "In",
-          "typeSpec" : "RotationOrder "
           }
         ],
       "extDeps" : {
         "Math" : "*"
         },
-      "presetGUID" : "26337935ED40C0C030C4F5BA699E2D33",
+      "presetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B",
       "code" : "dfgEntry {
   result.resize(0);
   for(UInt32 n=0;n<this.BSplines.size();n++){
-    BSpline b = this.BSplines[n];
-    for(UInt32 k=0; k<numXfos; k++) {
-        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(numXfos-1)));
+    for(UInt32 k=0; k<this.BSplines[n].defSegs; k++) {
+        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(this.BSplines[n].defSegs-1)));
         Xfo outXfo = Xfo(
-                b.evalPosition(t,keepArcLen,keepCurveLen),
-                b.evalOri(t,keepArcLen,keepCurveLen),
-                b.evalScale(t,keepArcLen,keepCurveLen));
+                this.BSplines[n].evalPosition(t,keepArcLen,keepCurveLen),
+                this.BSplines[n].evalOri(t,keepArcLen,keepCurveLen),
+                this.BSplines[n].evalScale(t,keepArcLen,keepCurveLen));
         result.push(outXfo);
         
         // export on mid segments
-        if(k==0 && n!=0 && addMedianXform) {
+        if(k==0 && n!=0) {
             medianXfos.push(outXfo.linearInterpolate(result[result.size()-2], 0.5));
-           // mediannEulers.push(
+           // ToDo Export defrobulated Euler Angles on segment Joints
         }
     }
   }
