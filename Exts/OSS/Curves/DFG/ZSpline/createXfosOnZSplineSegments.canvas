@@ -1,0 +1,220 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "createXfosOnZSplineSegments",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "ZSpline"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 0
+        },
+      "name" : "keepCurveLen",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 13
+        },
+      "name" : "numXfos",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 1
+        },
+      "name" : "keepArcLen",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Boolean" : true
+        },
+      "name" : "addMedianXform",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "medianXfos",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "medianEulers",
+      "execPortType" : "Out",
+      "typeSpec" : "Euler[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "RotOrder",
+      "execPortType" : "In",
+      "typeSpec" : "RotationOrder "
+      }
+    ],
+  "extDeps" : {
+    "Math" : "*"
+    },
+  "presetGUID" : "26337935ED40C0C030C4F5BA699E2D33",
+  "code" : "dfgEntry {
+  result.resize(0);
+  for(UInt32 n=0;n<this.BSplines.size();n++){
+    BSpline b = this.BSplines[n];
+    for(UInt32 k=0; k<numXfos; k++) {
+        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(numXfos-1)));
+        Xfo outXfo = Xfo(
+                b.evalPosition(t,keepArcLen,keepCurveLen),
+                b.evalOri(t,keepArcLen,keepCurveLen),
+                b.evalScale(t,keepArcLen,keepCurveLen));
+        result.push(outXfo);
+        
+        // export on mid segments
+        if(k==0 && n!=0 && addMedianXform) {
+            medianXfos.push(outXfo.linearInterpolate(result[result.size()-2], 0.5));
+           // mediannEulers.push(
+        }
+    }
+  }
+}  ",
+  "requiredPresets" : {
+    "OSS.Exts.Curves.ZSpline.createXfosOnZSplineSegments" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "createXfosOnZSplineSegments",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "ZSpline"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 0
+            },
+          "name" : "keepCurveLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "UInt32" : 13
+            },
+          "name" : "numXfos",
+          "execPortType" : "In",
+          "typeSpec" : "UInt32"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "keepArcLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : true
+            },
+          "name" : "addMedianXform",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "medianXfos",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "medianEulers",
+          "execPortType" : "Out",
+          "typeSpec" : "Euler[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "RotOrder",
+          "execPortType" : "In",
+          "typeSpec" : "RotationOrder "
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "26337935ED40C0C030C4F5BA699E2D33",
+      "code" : "dfgEntry {
+  result.resize(0);
+  for(UInt32 n=0;n<this.BSplines.size();n++){
+    BSpline b = this.BSplines[n];
+    for(UInt32 k=0; k<numXfos; k++) {
+        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(numXfos-1)));
+        Xfo outXfo = Xfo(
+                b.evalPosition(t,keepArcLen,keepCurveLen),
+                b.evalOri(t,keepArcLen,keepCurveLen),
+                b.evalScale(t,keepArcLen,keepCurveLen));
+        result.push(outXfo);
+        
+        // export on mid segments
+        if(k==0 && n!=0 && addMedianXform) {
+            medianXfos.push(outXfo.linearInterpolate(result[result.size()-2], 0.5));
+           // mediannEulers.push(
+        }
+    }
+  }
+}  "
+      }
+    }
+  }
