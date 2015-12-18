@@ -1,6 +1,6 @@
 {
   "objectType" : "Func",
-  "title" : "createSegsOnZSpline",
+  "title" : "createZSplineSegs",
   "ports" : [
     {
       "objectType" : "Port",
@@ -27,7 +27,7 @@
   "extDeps" : {
     "Math" : "*"
     },
-  "presetGUID" : "D8E844DE0169A7D9BB304C9F8DDF30A2",
+  "presetGUID" : "F15CA016C4228059A5429A3D38303F4A",
   "code" : "dfgEntry {
   result.resize(0);
   color.resize(0);
@@ -50,9 +50,9 @@
 }
 ",
   "requiredPresets" : {
-    "OSS.Exts.Curves.ZSpline.createSegsOnZSpline" : {
+    "OSS.Exts.Curves.ZSpline.createZSplineSegs" : {
       "objectType" : "Func",
-      "title" : "createSegsOnZSpline",
+      "title" : "createZSplineSegs",
       "ports" : [
         {
           "objectType" : "Port",
@@ -79,7 +79,7 @@
       "extDeps" : {
         "Math" : "*"
         },
-      "presetGUID" : "D8E844DE0169A7D9BB304C9F8DDF30A2",
+      "presetGUID" : "F15CA016C4228059A5429A3D38303F4A",
       "code" : "dfgEntry {
   result.resize(0);
   color.resize(0);

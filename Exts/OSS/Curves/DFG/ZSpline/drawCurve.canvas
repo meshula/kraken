@@ -33,14 +33,20 @@
       "name" : "this",
       "execPortType" : "IO",
       "typeSpec" : "InlineDebugShape"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "dummyResult",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "47F4F9EE9F286E15650A5E9294D8D8B4",
+  "presetGUID" : "B3D1DFFCE15CC7040DCD73D99F2C3098",
   "code" : "dfgEntry {
   Index firstIndex = this.allocateLines(points.size(), points.size()-1);
   Index colorIndex = firstIndex;
-
   Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
   Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
   ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
@@ -60,19 +66,17 @@
   normalsAttr.incrementVersion();
   vertexColorsAttr.incrementVersion();
 
-  //this.drawPenColors(colorIndex);
-
   result = this;
 }
 ",
   "requiredPresets" : {
-    "OSS.Exts.Curves.BSpline.DrawCurve" : {
+    "OSS.Exts.Curves.ZSpline.drawCurve" : {
       "objectType" : "Func",
       "metadata" : {
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
         },
-      "title" : "DrawCurve",
+      "title" : "drawCurve",
       "ports" : [
         {
           "objectType" : "Port",
@@ -101,14 +105,20 @@
           "name" : "this",
           "execPortType" : "IO",
           "typeSpec" : "InlineDebugShape"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "dummyResult",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "47F4F9EE9F286E15650A5E9294D8D8B4",
+      "presetGUID" : "B3D1DFFCE15CC7040DCD73D99F2C3098",
       "code" : "dfgEntry {
   Index firstIndex = this.allocateLines(points.size(), points.size()-1);
   Index colorIndex = firstIndex;
-
   Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
   Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
   ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
@@ -127,8 +137,6 @@
   positionsAttr.incrementVersion();
   normalsAttr.incrementVersion();
   vertexColorsAttr.incrementVersion();
-
-  //this.drawPenColors(colorIndex);
 
   result = this;
 }

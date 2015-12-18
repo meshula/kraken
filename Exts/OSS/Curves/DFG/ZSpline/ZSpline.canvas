@@ -4,7 +4,7 @@
     "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
     "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
     },
-  "title" : "buildZSpline",
+  "title" : "ZSpline",
   "ports" : [
     {
       "objectType" : "Port",
@@ -23,19 +23,9 @@
     {
       "objectType" : "Port",
       "nodePortType" : "IO",
-      "name" : "zeroKnot",
+      "name" : "isSegmentStart",
       "execPortType" : "IO",
       "typeSpec" : "Boolean[]"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "IO",
-      "defaultValues" : {
-        "Float32" : 100
-        },
-      "name" : "restLength",
-      "execPortType" : "IO",
-      "typeSpec" : "Scalar"
       },
     {
       "objectType" : "Port",
@@ -71,23 +61,31 @@
       "name" : "closed",
       "execPortType" : "IO",
       "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "defSegs",
+      "execPortType" : "IO",
+      "typeSpec" : "UInt32[]"
       }
     ],
   "extDeps" : {
-    "Curves" : "*"
+    "Curves" : "*",
+    "Math" : "*"
     },
-  "presetGUID" : "5AA234C54FE4D68927E0116F6A2C3CCD",
+  "presetGUID" : "1A4FC39528C5CC9C3EF2B16480BD4E7B",
   "code" : "dfgEntry { 
-  result.buildZSpline(mat44s, zeroKnot, weights, order, numSegs, clamped, closed);
+  result.buildZSpline(mat44s, isSegmentStart, weights, order, numSegs, defSegs, clamped, closed);
 }",
   "requiredPresets" : {
-    "OSS.Exts.Curves.BSpline.buildZSpline" : {
+    "OSS.Exts.Curves.ZSpline.ZSpline" : {
       "objectType" : "Func",
       "metadata" : {
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
         },
-      "title" : "buildZSpline",
+      "title" : "ZSpline",
       "ports" : [
         {
           "objectType" : "Port",
@@ -106,19 +104,9 @@
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
-          "name" : "zeroKnot",
+          "name" : "isSegmentStart",
           "execPortType" : "IO",
           "typeSpec" : "Boolean[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "defaultValues" : {
-            "Float32" : 100
-            },
-          "name" : "restLength",
-          "execPortType" : "IO",
-          "typeSpec" : "Scalar"
           },
         {
           "objectType" : "Port",
@@ -154,14 +142,22 @@
           "name" : "closed",
           "execPortType" : "IO",
           "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "defSegs",
+          "execPortType" : "IO",
+          "typeSpec" : "UInt32[]"
           }
         ],
       "extDeps" : {
-        "Curves" : "*"
+        "Curves" : "*",
+        "Math" : "*"
         },
-      "presetGUID" : "5AA234C54FE4D68927E0116F6A2C3CCD",
+      "presetGUID" : "1A4FC39528C5CC9C3EF2B16480BD4E7B",
       "code" : "dfgEntry { 
-  result.buildZSpline(mat44s, zeroKnot, weights, order, numSegs, clamped, closed);
+  result.buildZSpline(mat44s, isSegmentStart, weights, order, numSegs, defSegs, clamped, closed);
 }"
       }
     }
