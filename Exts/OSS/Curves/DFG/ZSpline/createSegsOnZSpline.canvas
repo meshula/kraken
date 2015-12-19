@@ -33,14 +33,14 @@
   color.resize(0);
   for(UInt32 n=0;n<this.BSplines.size();n++){
     BSpline b = this.BSplines[n];
-    UInt32 numSegs = b.numSegs;
+    UInt32 resolution = b.resolution;
     
     // Color Settings
     Scalar hue = mathRandomScalar(n,1);
     Scalar saturation = 2;
     
-    for(UInt32 k=0; k<=numSegs; k++) {
-      Scalar t =  Scalar(k)/(numSegs);
+    for(UInt32 k=0; k<=resolution; k++) {
+      Scalar t =  Scalar(k)/(resolution);
       t = (t+n)/(this.BSplines.size());
       Color c = randomColor(hue*180,saturation,this.normalizeT(t));
       result.push(this.evalPosition(t));
@@ -85,14 +85,14 @@
   color.resize(0);
   for(UInt32 n=0;n<this.BSplines.size();n++){
     BSpline b = this.BSplines[n];
-    UInt32 numSegs = b.numSegs;
+    UInt32 resolution = b.resolution;
     
     // Color Settings
     Scalar hue = mathRandomScalar(n,1);
     Scalar saturation = 2;
     
-    for(UInt32 k=0; k<=numSegs; k++) {
-      Scalar t =  Scalar(k)/(numSegs);
+    for(UInt32 k=0; k<=resolution; k++) {
+      Scalar t =  Scalar(k)/(resolution);
       t = (t+n)/(this.BSplines.size());
       Color c = randomColor(hue*180,saturation,this.normalizeT(t));
       result.push(this.evalPosition(t));

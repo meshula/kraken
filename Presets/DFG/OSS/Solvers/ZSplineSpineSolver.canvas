@@ -357,7 +357,7 @@
         {
           "objectType" : "InstPort",
           "nodePortType" : "IO",
-          "name" : "numSegs"
+          "name" : "resolution"
           },
         {
           "objectType" : "InstPort",
@@ -945,14 +945,14 @@ dfgEntry {
   color.resize(0);
   for(UInt32 n=0;n<this.BSplines.size();n++){
     BSpline b = this.BSplines[n];
-    UInt32 numSegs = b.numSegs;
+    UInt32 resolution = b.resolution;
     
     // Color Settings
     Scalar hue = mathRandomScalar(n,1);
     Scalar saturation = 2;
     
-    for(UInt32 k=0; k<=numSegs; k++) {
-      Scalar t =  Scalar(k)/(numSegs);
+    for(UInt32 k=0; k<=resolution; k++) {
+      Scalar t =  Scalar(k)/(resolution);
       t = (t+n)/(this.BSplines.size());
       Color c = randomColor(hue*180,saturation,this.normalizeT(t));
       result.push(this.evalPosition(t));
@@ -1080,7 +1080,7 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
-          "name" : "numSegs",
+          "name" : "resolution",
           "execPortType" : "IO",
           "typeSpec" : "UInt32[]"
           },
@@ -1112,7 +1112,7 @@ dfgEntry {
         },
       "presetGUID" : "1A4FC39528C5CC9C3EF2B16480BD4E7B",
       "code" : "dfgEntry { 
-  result.buildZSpline(mat44s, isSegmentStart, weights, order, numSegs, defSegs, clamped, closed);
+  result.buildZSpline(mat44s, isSegmentStart, weights, order, resolution, defSegs, clamped, closed);
 }"
       },
     "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances" : {

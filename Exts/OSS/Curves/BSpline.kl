@@ -14,7 +14,7 @@ require Math;
 
 
 struct BSpline {
-	UInt32 numSegs;
+	UInt32 resolution;
 	UInt32 order;
 	Mat44 controlMat44s[];
 	Vec3 points[];
@@ -86,8 +86,8 @@ inline BSpline.setClosed!(in Boolean closed) {
 	this.closed = closed;
 }
 
-inline BSpline.setNumSegs!(in UInt32 numSegs) {
-	this.numSegs = Math_max(2,numSegs);
+inline BSpline.setresolution!(in UInt32 resolution) {
+	this.resolution = Math_max(2,resolution);
 }
 
 inline BSpline.setDefSegs!(in UInt32 defSegs) {
@@ -145,7 +145,7 @@ inline BSpline.initiate!() {
 
 /// Sets this transform to the identity
 inline BSpline.setIdentity!() {
-	this.numSegs = 25;
+	this.resolution = 25;
 	this.defSegs = 5;
 	this.order = 2;
 	this.closed = 0;
@@ -219,12 +219,12 @@ inline BSpline.setWeightVector!() {
 }
 
 inline BSpline.setDistanceVector!() {
-	this.distances.resize(this.numSegs);
+	this.distances.resize(this.resolution);
 	Vec3 p_prev;
 	// Accumulatively store lengths in distance array
 	// the last value is the total approximated length of the curve
-	for(UInt32 i=0; i<this.numSegs; i++){
-		Scalar t = Scalar(i)/Scalar(this.numSegs-1);
+	for(UInt32 i=0; i<this.resolution; i++){
+		Scalar t = Scalar(i)/Scalar(this.resolution-1);
 		Vec3 p = this.evalPosition(t);
 		if(i == 0)
 			this.distances[0] = 0.0;
@@ -311,8 +311,8 @@ function Vec3 BSpline.evalScale(Scalar t, Xfo xfoA, Xfo xfoB) {
 	return xfoA.sc.linearInterpolate(xfoB.sc, t);
 }
 
-function Vec3 BSpline.evalScale(Scalar t, Scalar keepArcLength, Scalar keepRestLength) {
-	Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepRestLength);
+function Vec3 BSpline.evalScale(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
+	Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepCurveLen);
 	return this.evalScale(arcLenT);
 }
 
@@ -321,6 +321,21 @@ function Vec3 BSpline.evalScale(Scalar t) {
 	XfoA.setFromMat44(this.controlMat44s[0]);
   	XfoB.setFromMat44(this.controlMat44s[this.controlMat44s.size()-1]);
 	return this.evalScale(t, XfoA, XfoB);
+}
+
+function Scalar BSpline.evalCompression(Scalar t, BSpline referenceCurve, Scalar keepArcLength, Scalar keepCurveLen) {
+  Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepCurveLen);
+  return this.evalCompression(t,referenceCurve);
+}
+
+
+function Scalar BSpline.evalCompression(Scalar t, BSpline referenceCurve) {
+  Scalar keepCurveLen = 0;
+  UInt32 index = this.getClosestDistanceIndex(t,keepCurveLen)+1;
+  Scalar lengthSample = this.distances[index];
+  Scalar lengthSampleRef = referenceCurve.distances[index];
+  if(lengthSample == 0) return 1.0;
+  return lengthSampleRef/lengthSample;
 }
 
 
@@ -369,26 +384,14 @@ function Quat BSpline.evalOri(Scalar t) {
 
 // LENGTH
 
-function Scalar BSpline.getCurveLength(Scalar keepCurveLen) {
-  Scalar Length =  (1-keepCurveLen)*(this.distances[this.distances.size()-1]) + keepCurveLen*this.restLength;
-  return Length;
-}
-
-function Scalar BSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
-  UInt32 curveLength = this.distances.size()-1;
-  Scalar actualLength = this.distances[this.distances.size()-1];
+// do a fast, binary search for the closest matching distance index
+inline UInt32 BSpline.getClosestDistanceIndex(Scalar t, Scalar keepCurveLen) {
+  // tipLength is the approximated, curvelength at incoming param t, considering attenuated restDistance
   Scalar tipLength   = t*this.getCurveLength(keepCurveLen);
-  Scalar nonArcLengthT = tipLength/actualLength;
 
-  if (keepArcLength == 0) {
-    return nonArcLengthT;
-  }
-  
-  // tipLength is t multiplied by the maximum length
-  // tipLength is the approximated curvelength at incoming param t
-  
   // do a fast, binary search for the closest matching distance index
-  Scalar low = 0, high = curveLength, index = 0;
+  Scalar low = 0, high = this.distances.size()-1, index = 0;
+
   while (low < high) {
     index = low + (((high - low) / 2) | 0);  
     if (this.distances[index] < tipLength) {
@@ -400,10 +403,30 @@ function Scalar BSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar ke
   if (this.distances[index] > tipLength) {
     index -= 1;
   }
-  
+  return index;
+}
+
+
+function Scalar BSpline.getCurveLength(Scalar keepCurveLen) {
+  Scalar Length =  (1-keepCurveLen)*(this.distances[this.distances.size()-1]) + keepCurveLen*this.restLength;
+  return Length;
+}
+
+
+function Scalar BSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
+  UInt32 distanceVectorSize = this.distances.size()-1;
+  Scalar actualLength = this.distances[this.distances.size()-1];
+  Scalar tipLength   = t*this.getCurveLength(keepCurveLen);
+  Scalar nonArcLengthT = tipLength/actualLength;
+
+  if (keepArcLength == 0) {
+    return nonArcLengthT;
+  }
+  UInt32 index = this.getClosestDistanceIndex(t,keepCurveLen);
+
   // from the distance index, extrapolate 
   Scalar lengthBefore = this.distances[index];
-  Scalar arcLenghtT   = (index + (tipLength - lengthBefore) / (this.distances[index + 1] - lengthBefore)) / curveLength;
+  Scalar arcLenghtT   = (index + (tipLength - lengthBefore) / (this.distances[index + 1] - lengthBefore)) / distanceVectorSize;
   
   // return lerped parameterization using the blend value keepArcLength
   return (keepArcLength*arcLenghtT) + (1.0-keepArcLength)*nonArcLengthT;

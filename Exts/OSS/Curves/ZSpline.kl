@@ -32,7 +32,7 @@ inline Scalar ZSpline.normalizeT(Scalar t) {
 
 // CONSTRUCTORS
 
-function ZSpline.buildZSpline!(Mat44 mat44s[], io Boolean isSegmentStarts[], io Scalar weights[],  io UInt32 order[] , io UInt32 numSegs[], io UInt32 defSegs[], io Boolean clamped[], Boolean closed) {
+function ZSpline.buildZSpline!(Mat44 mat44s[], io Boolean isSegmentStarts[], io Scalar weights[],  io UInt32 order[] , io UInt32 resolution[], io UInt32 defSegs[], io Boolean clamped[], Boolean closed) {
   UInt32 s = mat44s.size();
   // isSegmentStart defines the beginning of a new Segment
   isSegmentStarts.resizeWithDefault(s,0);
@@ -40,8 +40,8 @@ function ZSpline.buildZSpline!(Mat44 mat44s[], io Boolean isSegmentStarts[], io 
   order.resizeWithDefault(s,4);
   // weight sets the weight of this controlPoint
   weights.resizeWithDefault(s,1);
-  // NumSegs defines the resolution of the curve segment that begin with this controlPoint
-  numSegs.resizeWithDefault(s,25);
+  // resolution defines the resolution of the curve segment that begin with this controlPoint
+  resolution.resizeWithDefault(s,25);
   // defSegs defines the number of deformation/export Xfo's that begin with this controlPoint
   defSegs.resizeWithDefault(s,5);
   // clamped defines whether this curve is clamped (TODO - set clamping to END/Beginning, set order and controlMat44s accordingly)
@@ -64,7 +64,7 @@ function ZSpline.buildZSpline!(Mat44 mat44s[], io Boolean isSegmentStarts[], io 
       b.setOrder(order[m]);
       b.setClosed(closed);
       b.setClamped(clamped[m]);
-      b.setNumSegs(numSegs[m]);
+      b.setresolution(resolution[m]);
       b.setDefSegs(defSegs[m]);
       
       b.setcontrolMat44s(controlMat44s.clone());
@@ -90,7 +90,7 @@ function ZSpline.buildZSpline!(Mat44 mat44s[]) {
   Boolean closed = 0;
   Boolean clamped = 1;
   UInt32 order = 4;
-  UInt32 numSegs = 100;
+  UInt32 resolution = 100;
   UInt32 defSegs = 10;
   for(UInt32 m=0; m<s;m++){
     controlMat44s.push(mat44s[m]);
@@ -103,7 +103,7 @@ function ZSpline.buildZSpline!(Mat44 mat44s[]) {
       b.setOrder(order);
       b.setClosed(closed);
       b.setClamped(clamped);
-      b.setNumSegs(numSegs);
+      b.setresolution(resolution);
       b.setDefSegs(defSegs);
       b.setcontrolMat44s(controlMat44s.clone());
 
@@ -163,7 +163,18 @@ function Vec3 ZSpline.evalScale(Scalar t) {
   return this.BSplines[segment].evalScale(segmentT);
 }
 
+function Scalar ZSpline.evalCompression(Scalar t, ZSpline referenceCurve, Scalar keepArcLength, Scalar keepCurveLen) {
+  Scalar arct = this.arcLengthParam(t,keepArcLength,keepCurveLen);
+  UInt32 segment = this.getSegmentFromT(arct);
+  Scalar segmentT = this.normalizeT(arct);
+  return this.BSplines[segment].evalCompression(segmentT, referenceCurve.BSplines[segment]);
+}
 
+function Scalar ZSpline.evalCompression(Scalar t, ZSpline referenceCurve) {
+  UInt32 segment = this.getSegmentFromT(t);
+  Scalar segmentT = this.normalizeT(t);
+  return this.BSplines[segment].evalCompression(segmentT, referenceCurve.BSplines[segment]);
+}
 
 // ORIENTATION
 
@@ -210,7 +221,7 @@ function Scalar ZSpline.getCurveLength(Scalar keepCurveLen) {
 
 
 function Scalar ZSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
-  UInt32 curveLength = this.distances.size()-1;
+  UInt32 distanceVectorSize = this.distances.size()-1;
   Scalar actualLength = this.distances[this.distances.size()-1];
   Scalar tipLength   = t*this.getCurveLength(keepCurveLen);
   Scalar nonArcLengthT = tipLength/actualLength;
@@ -219,10 +230,10 @@ function Scalar ZSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar ke
   }
   
   // tipLength is t multiplied by the maximum length
-  // tipLength is the approximated curvelength at incoming param t
+  // tipLength is the approximated distanceVectorSize at incoming param t
   
   // do a fast, binary search for the closest matching distance index
-  Scalar low = 0, high = curveLength, index = 0;
+  Scalar low = 0, high = distanceVectorSize, index = 0;
   while (low < high) {
     index = low + (((high - low) / 2) | 0);  
     if (this.distances[index] < tipLength) {
@@ -237,7 +248,7 @@ function Scalar ZSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar ke
   
   // from the distance index, extrapolate 
   Scalar lengthBefore = this.distances[index];
-  Scalar arcLenghtT   = (index + (tipLength - lengthBefore) / (this.distances[index + 1] - lengthBefore)) / curveLength;
+  Scalar arcLenghtT   = (index + (tipLength - lengthBefore) / (this.distances[index + 1] - lengthBefore)) / distanceVectorSize;
   
   // return lerped parameterization using the blend value keepArcLength
   return (keepArcLength*arcLenghtT) + (1.0-keepArcLength)*nonArcLengthT;

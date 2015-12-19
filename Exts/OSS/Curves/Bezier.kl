@@ -5,7 +5,7 @@ require Math;
 
 
 struct Bezier {
-	UInt32 numSegs;
+	UInt32 resolution;
 	BezierKnot knots[];
 	Vec3 points[];
 	Scalar distances[];
@@ -14,7 +14,7 @@ struct Bezier {
 
 /// Default constructor
 inline Bezier(BezierKnot knots[]) {
-	this.numSegs = 50;
+	this.resolution = 50;
 	this.knots = knots;
 	this.buildPointsFromKnots();
 	this.buildDistanceVector();
@@ -105,8 +105,8 @@ inline Bezier.buildDistanceVector!() {
 
 		// Accumulatively store lengths in distance array
 		// the last value is the total approximated length of the curve
-		for(UInt32 i=0; i<this.numSegs; i++){
-			Scalar t = Scalar(i)/Scalar(this.numSegs-1);
+		for(UInt32 i=0; i<this.resolution; i++){
+			Scalar t = Scalar(i)/Scalar(this.resolution-1);
 			Vec3 p = this.evalPosition(t);
 			if(i == 0)
 					this.distances.push(0.0);

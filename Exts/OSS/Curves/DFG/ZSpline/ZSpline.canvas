@@ -44,7 +44,7 @@
     {
       "objectType" : "Port",
       "nodePortType" : "IO",
-      "name" : "numSegs",
+      "name" : "resolution",
       "execPortType" : "IO",
       "typeSpec" : "UInt32[]"
       },
@@ -76,7 +76,7 @@
     },
   "presetGUID" : "1A4FC39528C5CC9C3EF2B16480BD4E7B",
   "code" : "dfgEntry { 
-  result.buildZSpline(mat44s, isSegmentStart, weights, order, numSegs, defSegs, clamped, closed);
+  result.buildZSpline(mat44s, isSegmentStart, weights, order, resolution, defSegs, clamped, closed);
 }",
   "requiredPresets" : {
     "OSS.Exts.Curves.ZSpline.ZSpline" : {
@@ -125,7 +125,7 @@
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
-          "name" : "numSegs",
+          "name" : "resolution",
           "execPortType" : "IO",
           "typeSpec" : "UInt32[]"
           },
@@ -157,7 +157,7 @@
         },
       "presetGUID" : "1A4FC39528C5CC9C3EF2B16480BD4E7B",
       "code" : "dfgEntry { 
-  result.buildZSpline(mat44s, isSegmentStart, weights, order, numSegs, defSegs, clamped, closed);
+  result.buildZSpline(mat44s, isSegmentStart, weights, order, resolution, defSegs, clamped, closed);
 }"
       }
     }
