@@ -634,8 +634,9 @@ class Builder(Builder):
                         opObject = connectedObjects[i]
                         dccSceneItem = self.getDCCSceneItem(opObject)
 
-                        if dccSceneItem is None:
-                            raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' dcc item not found for item:" + opObject.getPath());
+                        # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
+                        ###########if dccSceneItem is None: TTHACK
+                        ###########   raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' dcc item not found for item:" + opObject.getPath());
                         connectionTargets.append( { 'opObject': opObject, 'dccSceneItem': dccSceneItem} )
                 else:
                     if connectedObjects is None:
@@ -658,7 +659,8 @@ class Builder(Builder):
                         elif isinstance(opObject, Object3D):
                             cmds.connectAttr(str(dccSceneItem.attr('worldMatrix')), tgt)
                         else:
-                            raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
+                            cmds.setAttr(tgt, opObject) # TTHACK Do the same for canvas operator  Maybe this should be pymel
+                            ###############raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
 
                     if argDataType.endswith('[]'):
                         for i in range(len(connectionTargets)):
@@ -762,8 +764,9 @@ class Builder(Builder):
                         opObject = connectedObjects[i]
                         dccSceneItem = self.getDCCSceneItem(opObject)
 
-                        if dccSceneItem is None:
-                            raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' dcc item not found for item:" + opObject.getPath());
+                        # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
+                        #if dccSceneItem is None:
+                        #    raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' dcc item not found for item:" + opObject.getPath());
                         connectionTargets.append( { 'opObject': opObject, 'dccSceneItem': dccSceneItem} )
                 else:
                     if connectedObjects is None:
@@ -786,7 +789,8 @@ class Builder(Builder):
                         elif isinstance(opObject, Object3D):
                             cmds.connectAttr(str(dccSceneItem.attr('worldMatrix')), tgt)
                         else:
-                            raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
+                            cmds.setAttr(tgt, opObject) # TTHACK Do the same for canvas operator  Maybe this should be pymel
+                            ###############raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
 
                     if portDataType.endswith('[]'):
                         for i in range(len(connectionTargets)):

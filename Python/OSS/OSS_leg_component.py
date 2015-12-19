@@ -9,6 +9,7 @@ from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.attributes.string_attribute import StringAttribute
+from kraken.core.objects.attributes.integer_attribute import IntegerAttribute
 
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
@@ -381,6 +382,17 @@ class OSSLegComponentRig(OSSLegComponent):
         self.toeCtrl = Control('toe', parent=self.toeCtrlSpace, shape="cube")
         self.toeCtrl.alignOnXAxis()
 
+        # Mocap Foot
+        self.footMocap = Control('footMocap', parent=self.footCtrlSpace, shape="cube")
+        self.footMocap.alignOnXAxis()
+
+        # Mocap Toe
+        self.toeMocapSpace = CtrlSpace('toeMocap', parent=self.footMocap)
+        self.toeMocap = Control('toeMocap', parent=self.toeMocapSpace, shape="cube")
+        self.toeMocap.alignOnXAxis()
+
+
+
         # Rig Ref objects
         self.footRefSrt = Locator('footRef', parent=self.ctrlCmpGrp)
 
@@ -395,6 +407,7 @@ class OSSLegComponentRig(OSSLegComponent):
         self.legBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=legSettingsAttrGrp)
         legIKBlendInputAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
         mocapBlendInputAttr = ScalarAttribute('mocapBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
+        parentIndexInputAttr = ScalarAttribute('parentIndex', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
         footIKInputAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
         #legSoftIKInputAttr = BoolAttribute('softIK', value=True, parent=legSettingsAttrGrp)
         legSoftDistInputAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=legSettingsAttrGrp)
@@ -472,21 +485,11 @@ class OSSLegComponentRig(OSSLegComponent):
         self.legRootInputConstraint.addConstrainer(self.legPelvisInputTgt)
         self.uplegFKCtrlSpace.addConstraint(self.legRootInputConstraint)
 
-        # Constraint outputs
-        self.footOutputConstraint = PoseConstraint('_'.join([self.footOutputTgt.getName(), 'To', self.footCtrl.getName()]))
-        self.footOutputConstraint.addConstrainer(self.footCtrl)
-        self.footOutputTgt.addConstraint(self.footOutputConstraint)
-
 
         self.footCtrlSpaceConstraint = PoseConstraint('_'.join([self.footCtrlSpace.getName(), 'To', self.legEndXfoOutputTgt.getName()]))
         self.footCtrlSpaceConstraint.setMaintainOffset(True)
         self.footCtrlSpaceConstraint.addConstrainer(self.legEndXfoOutputTgt)
         self.footCtrlSpace.addConstraint(self.footCtrlSpaceConstraint)
-
-
-        self.toeOutputConstraint = PoseConstraint('_'.join([self.toeOutputTgt.getName(), 'To', self.toeCtrl.getName()]))
-        self.toeOutputConstraint.addConstrainer(self.toeCtrl)
-        self.toeOutputTgt.addConstraint(self.toeOutputConstraint)
 
 
         # ===============
@@ -570,6 +573,7 @@ class OSSLegComponentRig(OSSLegComponent):
 
 
 
+
         # Add Foot Deformer KL Op
         self.IKFootBlendKLOp = KLOperator('IKFootBlendKLOp', 'OSS_IKFootBlendSolver', 'OSS_Kraken')
         self.addOperator(self.IKFootBlendKLOp)
@@ -581,12 +585,34 @@ class OSSLegComponentRig(OSSLegComponent):
 
         # Add Xfo Inputs)
         self.IKFootBlendKLOp.setInput('ikFoot', self.footRockerFootOutputTgt)
-        self.IKFootBlendKLOp.setInput('fkFoot', self.footOutputTgt)
+        self.IKFootBlendKLOp.setInput('fkFoot', self.footCtrl)
         self.IKFootBlendKLOp.setInput('ikToe', self.footRockerToeOutputTgt)
-        self.IKFootBlendKLOp.setInput('fkToe', self.toeOutputTgt)
+        self.IKFootBlendKLOp.setInput('fkToe', self.toeCtrl)
         # Add Xfo Outputs
-        self.IKFootBlendKLOp.setOutput('foot', self.footDef)
-        self.IKFootBlendKLOp.setOutput('toe', self.toeDef)
+        self.IKFootBlendKLOp.setOutput('foot', self.footOutputTgt)
+        self.IKFootBlendKLOp.setOutput('toe', self.toeOutputTgt)
+
+
+        # Add HierBlend Solver
+        self.hierBlendSolver = KLOperator('legHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+        self.addOperator(self.hierBlendSolver)
+        self.hierBlendSolver.setInput('blend', mocapBlendInputAttr)
+        #self.hierBlendSolver.resizeInput('parentIndexes', 2)
+        self.hierBlendSolver.setInput('parentIndexes', [2, 3])
+        #self.hierBlendSolver.setInput('parentIndexes', [IntegerAttribute("blah", value=2), IntegerAttribute("blah2" ,value=3)])
+
+
+        # Add Att Inputs
+        self.hierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        self.hierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+
+        # Add Xfo Inputs
+        self.hierBlendSolver.setInput('hierA', [self.footOutputTgt, self.toeOutputTgt])
+        self.hierBlendSolver.setInput('hierB', [self.footMocap, self.toeMocap])
+
+        # Add Xfo Outputs
+        self.hierBlendSolver.setOutput('hierOut', [self.footDef, self.toeDef])
+
 
 
         Profiler.getInstance().pop()
@@ -636,6 +662,14 @@ class OSSLegComponentRig(OSSLegComponent):
         self.toeCtrl.xfo = data['toeXfo']
         self.toeCtrl.scalePointsOnAxis(data['toeLen'], boneAxisStr)
 
+        self.footMocap.xfo = data['footXfo']
+        self.footMocap.scalePointsOnAxis(data['footLen'], boneAxisStr)
+
+        self.toeMocapSpace.xfo = data['toeXfo']
+        self.toeMocap.xfo = data['toeXfo']
+        self.toeMocap.scalePointsOnAxis(data['toeLen'], boneAxisStr)
+
+
         #Until later when we have better guide rigs setups, assume world Y up and Z forward to toe
         self.legIKCtrlSpace.xfo.tr = data['heelPivotXfo'].tr
         self.legIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.toeCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
@@ -683,14 +717,13 @@ class OSSLegComponentRig(OSSLegComponent):
         self.legIKCtrlSpaceInputConstraint.evaluate()
         self.legUpVCtrlSpaceInputConstraint.evaluate()
         self.legRootInputConstraint.evaluate()
-        self.footOutputConstraint.evaluate()
-        self.toeOutputConstraint.evaluate()
 
         # Eval Operators
         self.footRockerKLOp.evaluate()
         self.legIKKLOp.evaluate()
         self.outputsToDeformersKLOp.evaluate()
         self.IKFootBlendKLOp.evaluate()
+        self.hierBlendSolver.evaluate()
 
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
