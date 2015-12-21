@@ -747,6 +747,37 @@ class Object3D(SceneItem):
         return True
 
 
+
+    def constrainTo(self, constrainer, type="Pose", maintainOffset=False, name=None):
+        """Adds an constraint to this object.
+
+        Args:
+            constraint (Object): Constraint object to add to this object.
+
+        Returns:
+            string: Constraint object
+
+        """
+
+        exec("from kraken.core.objects.constraints.pose_constraint import "+type+"Constraint")
+        exec("constraint = "+type+"Constraint('')")
+
+        constraint.addConstrainer(constrainer)
+        constraint.setMaintainOffset(True)
+
+        if name is None:
+            name = ('_'.join([self.getName(), 'To', constrainer.getName(), type+'Constraint']))
+
+        constraint.setName(name)
+
+        self.addConstraint(constraint)
+
+        print("TTPrint: constraint.getConstrainee():"),
+        print(constraint.getConstrainee())
+
+        return constraint
+
+
     def addConstraint(self, constraint):
         """Adds an constraint to this object.
 

@@ -52,10 +52,8 @@ function OSS_HierBlendSolver.solve!
     {
         hierAXfos[i] = Xfo(hierA[i]);
         hierBXfos[i] = Xfo(hierB[i]);
-        hierOutXfos[i] = Xfo(hierB[i]);  // TEMP!!!!!!!!
     }
 
-    /*
     for(Integer i=0; i<size; i++)
     {
         if (parentIndexes[i] < 0)
@@ -64,16 +62,13 @@ function OSS_HierBlendSolver.solve!
         }
         else
         {
-            Xfo localAXfo = hierAXfos[i] * hierAXfos[parentIndexes[i]].inverse();
-            Xfo localBXfo = hierAXfos[i] * hierBXfos[parentIndexes[i]].inverse();
-
+            Xfo localAXfo = hierAXfos[parentIndexes[i]].inverse() * hierAXfos[i];
+            Xfo localBXfo = hierBXfos[parentIndexes[i]].inverse() * hierBXfos[i];
             Xfo localXfo = localAXfo.linearInterpolate(localBXfo, blend);
-
-            hierOutXfos[i] = localXfo * hierOutXfos[parentIndexes[i]];
-
+            hierOutXfos[i] = hierOutXfos[parentIndexes[i]] * localXfo;
         }
     }
-  */
+
     for(Integer i=0; i<size; i++)
     {
           hierOut[i] = hierOutXfos[i].toMat44();

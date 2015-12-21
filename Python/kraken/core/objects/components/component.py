@@ -559,6 +559,25 @@ class Component(Object3D):
     # =================
     # Operator Methods
     # =================
+
+
+    def evalOperators(self):
+        """Evaluates all component operators
+
+        Args:
+            None
+
+        Returns:
+            bool: True if the index is valid.
+
+        """
+
+        for op in self._operators:
+            op.evaluate()
+
+        return True
+
+
     def checkOperatorIndex(self, index):
         """Checks the supplied index is valid.
 
