@@ -769,11 +769,7 @@ class Object3D(SceneItem):
             name = ('_'.join([self.getName(), 'To', constrainer.getName(), type+'Constraint']))
 
         constraint.setName(name)
-
         self.addConstraint(constraint)
-
-        print("TTPrint: constraint.getConstrainee():"),
-        print(constraint.getConstrainee())
 
         return constraint
 
