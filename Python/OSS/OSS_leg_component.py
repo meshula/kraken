@@ -453,7 +453,7 @@ class OSSLegComponentRig(OSSLegComponent):
         # Deformers
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
 
         self.uplegDef = Joint('upleg', parent=self.defCmpGrp)
         self.uplegDef.setComponent(self)
@@ -485,7 +485,7 @@ class OSSLegComponentRig(OSSLegComponent):
         # ===============
 
         # Add FootRocker KL Op
-        self.footRockerKLOp = KLOperator('footRockerKLOp', 'OSS_FootRockerSystem', 'OSS_Kraken')
+        self.footRockerKLOp = KLOperator(self.getLocation()+self.getName()+'FootRockerKLOp', 'OSS_FootRockerSystem', 'OSS_Kraken')
         self.addOperator(self.footRockerKLOp)
         # Add Att Inputs
         self.footRockerKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -513,7 +513,7 @@ class OSSLegComponentRig(OSSLegComponent):
 
 
         # Add Leg KL Op
-        self.legIKKLOp = KLOperator('legKLOp', 'OSS_TwoBoneIKSolver', 'OSS_Kraken')
+        self.legIKKLOp = KLOperator(self.getLocation()+self.getName()+'IKFKTwoBoneIKSolver', 'OSS_TwoBoneIKSolver', 'OSS_Kraken')
         self.addOperator(self.legIKKLOp)
         # Add Att Inputs
         self.legIKKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -541,18 +541,18 @@ class OSSLegComponentRig(OSSLegComponent):
 
 
         # Add Leg HierBlend Solver for Mocap
-        self.legHierBlendSolver = KLOperator('legHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.legHierBlendSolver)
-        self.legHierBlendSolver.setInput('blend', mocapBlendInputAttr)
-        self.legHierBlendSolver.setInput('parentIndexes', [-1, 0, 1])
+        self.legMocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'MocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+        self.addOperator(self.legMocapHierBlendSolver)
+        self.legMocapHierBlendSolver.setInput('blend', mocapBlendInputAttr)
+        self.legMocapHierBlendSolver.setInput('parentIndexes', [-1, 0, 1])
         # Add Att Inputs
-        self.legHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-        self.legHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+        self.legMocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        self.legMocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.legHierBlendSolver.setInput('hierA', [self.legIKKLOp_bone0_out, self.legIKKLOp_bone1_out, self.legIKKLOp_bone2_out])
-        self.legHierBlendSolver.setInput('hierB', [self.uplegMocap, self.lolegMocap, self.legEndMocap])
+        self.legMocapHierBlendSolver.setInput('hierA', [self.legIKKLOp_bone0_out, self.legIKKLOp_bone1_out, self.legIKKLOp_bone2_out])
+        self.legMocapHierBlendSolver.setInput('hierB', [self.uplegMocap, self.lolegMocap, self.legEndMocap])
         # Add Xfo Outputs
-        self.legHierBlendSolver.setOutput('hierOut', [self.upleg_cmpOut, self.loleg_cmpOut, self.ankle_cmpOut])
+        self.legMocapHierBlendSolver.setOutput('hierOut', [self.upleg_cmpOut, self.loleg_cmpOut, self.ankle_cmpOut])
 
 
         self.footCtrlSpaceConstraint = PoseConstraint('_'.join([self.footCtrlSpace.getName(), 'To', self.ankle_cmpOut.getName()]))
@@ -563,7 +563,7 @@ class OSSLegComponentRig(OSSLegComponent):
 
         # Wait, can this be a hier blend op?
         # Add Foot Blend KL Op
-        self.IKFootBlendKLOp = KLOperator('IKFootBlendKLOp', 'OSS_IKFootBlendSolver', 'OSS_Kraken')
+        self.IKFootBlendKLOp = KLOperator(self.getLocation()+self.getName()+'IKFootBlendKLOp', 'OSS_IKFootBlendSolver', 'OSS_Kraken')
         self.addOperator(self.IKFootBlendKLOp)
         # Add Att Inputs
         self.IKFootBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -582,22 +582,22 @@ class OSSLegComponentRig(OSSLegComponent):
 
 
         # Add Foot Toe HierBlend Solver for Mocap
-        self.footHierBlendSolver = KLOperator('footHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.footHierBlendSolver)
-        self.footHierBlendSolver.setInput('blend', mocapBlendInputAttr)
-        self.footHierBlendSolver.setInput('parentIndexes', [-1, 0])
+        self.footMocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'footMocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+        self.addOperator(self.footMocapHierBlendSolver)
+        self.footMocapHierBlendSolver.setInput('blend', mocapBlendInputAttr)
+        self.footMocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
         # Add Att Inputs
-        self.footHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-        self.footHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+        self.footMocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        self.footMocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.footHierBlendSolver.setInput('hierA', [self.IKFootBlendKLOpFoot_out, self.IKFootBlendKLOpToe_out])
-        self.footHierBlendSolver.setInput('hierB', [self.footMocap, self.toeMocap])
+        self.footMocapHierBlendSolver.setInput('hierA', [self.IKFootBlendKLOpFoot_out, self.IKFootBlendKLOpToe_out])
+        self.footMocapHierBlendSolver.setInput('hierB', [self.footMocap, self.toeMocap])
         # Add Xfo Outputs
-        self.footHierBlendSolver.setOutput('hierOut', [self.foot_cmpOut, self.toe_cmpOut])
+        self.footMocapHierBlendSolver.setOutput('hierOut', [self.foot_cmpOut, self.toe_cmpOut])
 
 
         # Add Deformer Joint Constrain
-        self.outputsToDeformersKLOp = KLOperator('legDeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
         # Add Att Inputs
         self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
