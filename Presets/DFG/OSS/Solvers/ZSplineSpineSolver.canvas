@@ -187,14 +187,7 @@
             }
           ],
         "extDeps" : {},
-        "code" : "dfgEntry {
-  result.push(pelvis);
-  result.push(torso);
-  result.push(chest);
-  result.push(upchest);
-  result.push(neck);
-}
-"
+        "code" : "dfgEntry {\n  result.push(pelvis);\n  result.push(torso);\n  result.push(chest);\n  result.push(upchest);\n  result.push(neck);\n}\n"
         }
       },
     {
@@ -531,13 +524,7 @@
             }
           ],
         "extDeps" : {},
-        "code" : "dfgEntry {
-  for(UInt32 i=0;i<xfoArray.size();i++)
-  {
-    mat44Array.push(xfoArray[i].toMat44());
-  }
-}
-"
+        "code" : "dfgEntry {\n  for(UInt32 i=0;i<xfoArray.size();i++)\n  {\n    mat44Array.push(xfoArray[i].toMat44());\n  }\n}\n"
         }
       },
     {
@@ -578,13 +565,7 @@
             }
           ],
         "extDeps" : {},
-        "code" : "dfgEntry {
-  for(UInt32 i=0;i<xfoArray.size();i++)
-  {
-    mat44Array.push(xfoArray[i].toMat44());
-  }
-}
-"
+        "code" : "dfgEntry {\n  for(UInt32 i=0;i<xfoArray.size();i++)\n  {\n    mat44Array.push(xfoArray[i].toMat44());\n  }\n}\n"
         }
       },
     {
@@ -638,13 +619,7 @@
           ],
         "extDeps" : {},
         "origPresetGUID" : "5608B273990B641C3179497AC2B81FD4",
-        "code" : "dfgEntry {
-  result.resize(size);
-  for(UInt32 i=0;i<size;i++){
-     result[i]=defaultVal;
-  }
-}
-"
+        "code" : "dfgEntry {\n  result.resize(size);\n  for(UInt32 i=0;i<size;i++){\n     result[i]=defaultVal;\n}\n}\n"
         }
       },
     {
@@ -781,12 +756,7 @@
         "FabricInterfaces" : "*"
         },
       "presetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6",
-      "code" : "require InlineDrawing;
-
-dfgEntry {
-  result = this.getEmptyDebugShape(name);
-}
-"
+      "code" : "require InlineDrawing;\n dfgEntry {\n  result = this.getEmptyDebugShape(name);\n}\n"
       },
     "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle" : {
       "objectType" : "Graph",
@@ -865,10 +835,7 @@ dfgEntry {
             "extDeps" : {
               "InlineDrawing" : "*"
               },
-            "code" : "dfgEntry {
-  handle = DrawingHandle();
-}
-"
+            "code" : "dfgEntry {\n  handle = DrawingHandle();\n}\n"
             }
           }
         ],
@@ -903,12 +870,7 @@ dfgEntry {
       "extDeps" : {
         "InlineDrawing" : "*"
         },
-      "code" : "require InlineDrawing;
-
-dfgEntry {
-  this.clear();
-}
-"
+      "code" : "require InlineDrawing;\n\ndfgEntry {\n  this.clear();\n}\n"
       },
     "OSS.Exts.Curves.ZSpline.createSegsOnZSpline" : {
       "objectType" : "Func",
@@ -940,27 +902,7 @@ dfgEntry {
         "Math" : "*"
         },
       "presetGUID" : "D8E844DE0169A7D9BB304C9F8DDF30A2",
-      "code" : "dfgEntry {
-  result.resize(0);
-  color.resize(0);
-  for(UInt32 n=0;n<this.BSplines.size();n++){
-    BSpline b = this.BSplines[n];
-    UInt32 resolution = b.resolution;
-    
-    // Color Settings
-    Scalar hue = mathRandomScalar(n,1);
-    Scalar saturation = 2;
-    
-    for(UInt32 k=0; k<=resolution; k++) {
-      Scalar t =  Scalar(k)/(resolution);
-      t = (t+n)/(this.BSplines.size());
-      Color c = randomColor(hue*180,saturation,this.normalizeT(t));
-      result.push(this.evalPosition(t));
-      color.push(c);
-    }
-  }
-}
-"
+      "code" : "dfgEntry {\n  result.resize(0);\n  color.resize(0);\n  for(UInt32 n=0;n<this.BSplines.size();n++){\n    BSpline b = this.BSplines[n];\n    UInt32 resolution = b.resolution;\n\n    // Color Settings\n    Scalar hue = mathRandomScalar(n,1);\n    Scalar saturation = 2;\n\n    for(UInt32 k=0; k<=resolution; k++) {\n      Scalar t =  Scalar(k)/(resolution);\n      t = (t+n)/(this.BSplines.size());\n      Color c = randomColor(hue*180,saturation,this.normalizeT(t));\n      result.push(this.evalPosition(t));\n      color.push(c);\n    }\n  }\n}\n"
       },
     "OSS.Exts.Curves.ZSpline.drawCurve" : {
       "objectType" : "Func",
@@ -1008,31 +950,7 @@ dfgEntry {
         ],
       "extDeps" : {},
       "presetGUID" : "B3D1DFFCE15CC7040DCD73D99F2C3098",
-      "code" : "dfgEntry {
-  Index firstIndex = this.allocateLines(points.size(), points.size()-1);
-  Index colorIndex = firstIndex;
-  Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
-  Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
-  ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
-  
-
-  for( Integer i=0; i<points.size(); i++){
-    vertexColorsAttr.values[firstIndex] = color[i];
-    positionsAttr.values[firstIndex] = points[i];
-    normalsAttr.values[firstIndex++] = this.defaultNormal;
-    if(i > 0){
-      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 2;
-      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 1;
-    }
-  }
-
-  positionsAttr.incrementVersion();
-  normalsAttr.incrementVersion();
-  vertexColorsAttr.incrementVersion();
-
-  result = this;
-}
-"
+      "code" : "dfgEntry {\n  Index firstIndex = this.allocateLines(points.size(), points.size()-1);\n  Index colorIndex = firstIndex;\n  Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);\n  Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);\n  ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');\n\n\n  for( Integer i=0; i<points.size(); i++){\n    vertexColorsAttr.values[firstIndex] = color[i];\n    positionsAttr.values[firstIndex] = points[i];\n    normalsAttr.values[firstIndex++] = this.defaultNormal;\n    if(i > 0){\n      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 2;\n      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 1;\n    }\n  }\n\n  positionsAttr.incrementVersion();\n  normalsAttr.incrementVersion();\n  vertexColorsAttr.incrementVersion();\n\n  result = this;\n}\n"
       },
     "OSS.Exts.Curves.ZSpline.ZSpline" : {
       "objectType" : "Func",
@@ -1111,9 +1029,7 @@ dfgEntry {
         "Math" : "*"
         },
       "presetGUID" : "1A4FC39528C5CC9C3EF2B16480BD4E7B",
-      "code" : "dfgEntry { 
-  result.buildZSpline(mat44s, isSegmentStart, weights, order, resolution, defSegs, clamped, closed);
-}"
+      "code" : "dfgEntry {\n  result.buildZSpline(mat44s, isSegmentStart, weights, order, resolution, defSegs, clamped, closed);\n}"
       },
     "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances" : {
       "objectType" : "Func",
@@ -1177,12 +1093,7 @@ dfgEntry {
         "FabricInterfaces" : "*"
         },
       "presetGUID" : "A2DAC55CB1CE7426981A13F213257B7A",
-      "code" : "require InlineDrawing;
-
-dfgEntry {
-  this.drawAxesInstances(name, transforms, dummyResult, instance);
-}
-"
+      "code" : "require InlineDrawing;\n\ndfgEntry {\n  this.drawAxesInstances(name, transforms, dummyResult, instance);\n}\n"
       },
     "OSS.Exts.Curves.ZSpline.createXfosOnZSplineSegments" : {
       "objectType" : "Func",
@@ -1238,25 +1149,7 @@ dfgEntry {
         "Math" : "*"
         },
       "presetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B",
-      "code" : "dfgEntry {
-  result.resize(0);
-  for(UInt32 n=0;n<this.BSplines.size();n++){
-    for(UInt32 k=0; k<this.BSplines[n].defSegs; k++) {
-        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(this.BSplines[n].defSegs-1)));
-        Xfo outXfo = Xfo(
-                this.BSplines[n].evalPosition(t,keepArcLen,keepCurveLen),
-                this.BSplines[n].evalOri(t,keepArcLen,keepCurveLen),
-                this.BSplines[n].evalScale(t,keepArcLen,keepCurveLen));
-        result.push(outXfo);
-        
-        // export on mid segments
-        if(k==0 && n!=0) {
-            medianXfos.push(outXfo.linearInterpolate(result[result.size()-2], 0.5));
-           // ToDo Export defrobulated Euler Angles on segment Joints
-        }
-    }
-  }
-}  "
+      "code" : "dfgEntry {\n  result.resize(0);\n  for(UInt32 n=0;n<this.BSplines.size();n++){\n    for(UInt32 k=0; k<this.BSplines[n].defSegs; k++) {\n        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(this.BSplines[n].defSegs-1)));\n        Xfo outXfo = Xfo(\n                this.BSplines[n].evalPosition(t,keepArcLen,keepCurveLen),\n                this.BSplines[n].evalOri(t,keepArcLen,keepCurveLen),\n                this.BSplines[n].evalScale(t,keepArcLen,keepCurveLen));\n        result.push(outXfo);\n\n        // export on mid segments\n        if(k==0 && n!=0) {\n            medianXfos.push(outXfo.linearInterpolate(result[result.size()-2], 0.5));\n           // ToDo Export defrobulated Euler Angles on segment Joints\n        }\n    }\n  }\n}  "
       },
     "Fabric.Core.Math.Add" : {
       "objectType" : "Func",
@@ -1286,11 +1179,7 @@ dfgEntry {
         ],
       "extDeps" : {},
       "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7",
-      "code" : "
-dfgEntry {
-	result = lhs + rhs;
-}
-"
+      "code" : "\ndfgEntry {\n result = lhs + rhs;\n}\n"
       },
     "Fabric.Exts.Geometry.Func.Size" : {
       "objectType" : "Func",
@@ -1319,12 +1208,7 @@ dfgEntry {
         "Geometry" : "*"
         },
       "presetGUID" : "3426735D9D96DD0F52A2A961A393053A",
-      "code" : "require Geometry;
-
-dfgEntry {
-  result = this.size();
-}
-"
+      "code" : "require Geometry;\n\ndfgEntry {\n  result = this.size();\n}\n"
       }
     },
   "args" : [
