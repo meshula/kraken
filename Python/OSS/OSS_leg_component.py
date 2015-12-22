@@ -358,9 +358,9 @@ class OSSLegComponentRig(OSSLegComponent):
         self.lolegFKCtrl.alignOnXAxis()
 
         # Ankle
-        self.legIKCtrlSpace = CtrlSpace('IK', parent=self.ctrlCmpGrp)
-        self.legIKCtrl = Control('IK', parent=self.legIKCtrlSpace, shape="cross")
-        self.legIKTarget = CtrlSpace('IK', parent=self.legIKCtrl)
+        self.legIKCtrlSpace = CtrlSpace('footIK', parent=self.ctrlCmpGrp)
+        self.legIKCtrl = Control('footIK', parent=self.legIKCtrlSpace, shape="cross")
+        self.legIKTarget = CtrlSpace('footIKTarget', parent=self.legIKCtrl)
 
         # FK Foot
         self.footCtrlSpace = CtrlSpace('foot', parent=self.ctrlCmpGrp)
@@ -424,10 +424,14 @@ class OSSLegComponentRig(OSSLegComponent):
         self.drawDebugInputAttr.connect(legDrawDebugInputAttr)
 
         # UpV
-        self.legUpVCtrlSpace = CtrlSpace('UpV', parent=self.ctrlCmpGrp)
-        self.legUpVCtrl = Control('UpV', parent=self.legUpVCtrlSpace, shape="triangle")
+        self.legUpVCtrlSpace = CtrlSpace('legUpV', parent=self.ctrlCmpGrp)
+        self.legUpVCtrl = Control('legUpV', parent=self.legUpVCtrlSpace, shape="triangle")
         self.legUpVCtrl.alignOnZAxis()
+        self.legUpVCtrlMasterSpace = CtrlSpace('legIKMaster', parent=self.globalSRTInputTgt)
+        self.legUpVCtrlIKSpace = CtrlSpace('legUpVIK', parent=self.legIKCtrl)
 
+        upVAttrGrp = AttributeGroup("UpVAttrs", parent=self.legUpVCtrl)
+        upVSpaceBlendInputAttr = ScalarAttribute('IKFootSpace', value=0.0, minValue=0.0, maxValue=1.0, parent=upVAttrGrp)
 
 
         # =========
@@ -477,8 +481,24 @@ class OSSLegComponentRig(OSSLegComponent):
         # ==============
         # Constraint inputs
         self.legIKCtrlSpaceInputConstraint = self.legIKCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
-        self.legUpVCtrlSpaceInputConstraint = self.legUpVCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
         self.legRootInputConstraint = self.uplegFKCtrlSpace.constrainTo(self.legPelvisInputTgt, maintainOffset=True)
+
+
+        # Blend the Spaces (should make this a sub proc)
+        self.legUpVSpaceHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'UpVSpace_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+        self.addOperator(self.legUpVSpaceHierBlendSolver)
+        self.legUpVSpaceHierBlendSolver.setInput('blend', upVSpaceBlendInputAttr)
+        upVSpaceBlendInputAttr.setValue(0.5)
+        self.legUpVSpaceHierBlendSolver.setInput('parentIndexes', [-1])
+        # Add Att Inputs
+        self.legUpVSpaceHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        self.legUpVSpaceHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+        # Add Xfo Inputs
+        self.legUpVSpaceHierBlendSolver.setInput('hierA', [self.legUpVCtrlMasterSpace])
+        self.legUpVSpaceHierBlendSolver.setInput('hierB', [self.legUpVCtrlIKSpace])
+        # Add Xfo Outputs
+        self.legUpVSpaceHierBlendSolver.setOutput('hierOut', [self.legUpVCtrlSpace])
+
 
 
         # ===============
@@ -694,8 +714,9 @@ class OSSLegComponentRig(OSSLegComponent):
             #self.legIKCtrl.rotatePoints(0, -90, 0)
             #self.legIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
 
-        self.legUpVCtrlSpace.xfo = data['upVXfo']
+        self.legUpVCtrlIKSpace.xfo = data['upVXfo']
         self.legUpVCtrl.xfo = data['upVXfo']
+        self.legUpVCtrlMasterSpace.xfo = data['upVXfo']
 
         self.rightSideInputAttr.setValue(self.getLocation() == 'R')
         self.legBone0LenInputAttr.setMin(0.0)
@@ -722,7 +743,6 @@ class OSSLegComponentRig(OSSLegComponent):
 
         # Eval Constraints
         self.legIKCtrlSpaceInputConstraint.evaluate()
-        self.legUpVCtrlSpaceInputConstraint.evaluate()
         self.legRootInputConstraint.evaluate()
 
         # Eval Operators
