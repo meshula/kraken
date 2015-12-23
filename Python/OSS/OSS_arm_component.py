@@ -35,7 +35,7 @@ class OSSArmComponent(BaseExampleComponent):
         # ===========
         # Declare Inputs Xfos
         self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.clavicleEndInputTgt = self.createInput('clavicleEnd', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.shldrEndInputTgt = self.createInput('shldrEnd', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.uparmOutputTgt = self.createOutput('uparm', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -335,9 +335,9 @@ class OSSArmComponentRig(OSSArmComponent):
         self.armUpVCtrlSpaceInputConstraint.addConstrainer(self.globalSRTInputTgt)
         self.armUpVCtrlSpace.addConstraint(self.armUpVCtrlSpaceInputConstraint)
 
-        self.armRootInputConstraint = PoseConstraint('_'.join([self.uparmFKCtrlSpace.getName(), 'To', self.clavicleEndInputTgt.getName()]))
+        self.armRootInputConstraint = PoseConstraint('_'.join([self.uparmFKCtrlSpace.getName(), 'To', self.shldrEndInputTgt.getName()]))
         self.armRootInputConstraint.setMaintainOffset(True)
-        self.armRootInputConstraint.addConstrainer(self.clavicleEndInputTgt)
+        self.armRootInputConstraint.addConstrainer(self.shldrEndInputTgt)
         self.uparmFKCtrlSpace.addConstraint(self.armRootInputConstraint)
 
         # Constraint outputs
@@ -372,7 +372,7 @@ class OSSArmComponentRig(OSSArmComponent):
         self.spliceOp.setInput('rightSide', self.rightSideInputAttr)
 
         # Add Xfo Inputs
-        self.spliceOp.setInput('root', self.clavicleEndInputTgt)
+        self.spliceOp.setInput('root', self.shldrEndInputTgt)
         self.spliceOp.setInput('bone0FK', self.uparmFKCtrl)
         self.spliceOp.setInput('bone1FK', self.loarmFKCtrl)
         self.spliceOp.setInput('ikHandle', self.armIKCtrl)
@@ -414,7 +414,7 @@ class OSSArmComponentRig(OSSArmComponent):
 
         super(OSSArmComponentRig, self).loadData( data )
 
-        self.clavicleEndInputTgt.xfo.tr = data['uparmXfo'].tr
+        self.shldrEndInputTgt.xfo.tr = data['uparmXfo'].tr
 
         self.uparmFKCtrlSpace.xfo = data['uparmXfo']
         self.uparmFKCtrl.xfo = data['uparmXfo']
