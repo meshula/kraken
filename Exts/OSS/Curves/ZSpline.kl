@@ -9,6 +9,7 @@ struct ZSpline {
 	Boolean closed;
   // distance vector array
 	Scalar distances[];
+  Vec3 positions[];
   Scalar restLength;
 };
 
@@ -194,6 +195,7 @@ function Quat ZSpline.evalOri(Scalar t) {
 
 inline ZSpline.initiate!() {
 	this.setDistanceVector();
+  this.setPositionsVector();
 }
 
 
@@ -213,6 +215,18 @@ inline ZSpline.setDistanceVector!() {
   }
 }
 
+inline ZSpline.setPositionsVector!() {
+  this.positions.resize(0);
+  if (this.BSplines.size()) {
+    for(UInt32 b=0; b<this.BSplines.size(); b++) {
+        for(UInt32 v=0; v<this.BSplines[b].positions.size(); v++) {
+          if ((v==0 && b==0) || (v>0)) {
+            this.positions.push(this.BSplines[b].positions[v]);
+          }
+        }
+    }
+  }
+}
 
 function Scalar ZSpline.getCurveLength(Scalar keepCurveLen) {
   Scalar Length =  (1-keepCurveLen)*(this.distances[this.distances.size()-1]) + keepCurveLen*this.restLength;
@@ -255,6 +269,7 @@ function Scalar ZSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar ke
 }
 
 
+
 // HELPER FUNCTIONS - shouldn't be here
 
 function UInt32[].resizeWithDefault!(UInt32 size, UInt32 defaultVal) {
@@ -283,3 +298,4 @@ function Boolean[].resizeWithDefault!(UInt32 size, Boolean defaultVal) {
     this[i] = defaultVal;
   }
 }
+
