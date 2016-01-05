@@ -58,7 +58,7 @@ class OSSConfig(Config):
                                   "ComponentInput": "cmpIn",
                                   "ComponentOutput": "cmpOut",
                                   "Container": "",
-                                  "Control": "ctrl",
+                                  "Control": "",
                                   "Curve": "crv",
                                   "HierarchyGroup": "hrc",
                                   "Joint": "def",
@@ -70,6 +70,7 @@ class OSSConfig(Config):
                                   {
                                    "Container": ["name"],
                                    "Layer": ["container", "sep", "name"],
+                                   "Control": ["location", "sep", "name"],
                                    "ComponentGroup": ["name", "sep", "location", "sep", "type"],
                                    # "default": ["location", "sep", "component", "sep", "name", "sep", "type"],
                                    "default": ["location", "sep", "name", "sep", "type"],

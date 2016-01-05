@@ -27,12 +27,12 @@ from kraken.helpers.utility_methods import logHierarchy
 
 import traceback
 
-class OSSLegComponent(BaseExampleComponent):
-    """Leg Component"""
+class OSSLimbComponent(BaseExampleComponent):
+    """Limb Component"""
 
-    def __init__(self, name='legBase', parent=None):
+    def __init__(self, name='limbBase', parent=None):
 
-        super(OSSLegComponent, self).__init__(name, parent)
+        super(OSSLimbComponent, self).__init__(name, parent)
 
         # ===========
         # Declare IO
@@ -40,16 +40,18 @@ class OSSLegComponent(BaseExampleComponent):
         # Declare Inputs Xfos
         self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.legPelvisInputTgt = self.createInput('pelvisInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        # This is the actual ik goal as offset by another component like the foot
+        self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.ikgoalRef_cmpOut = self.createOutput('ikgoalRef', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.upleg_cmpOut = self.createOutput('upleg', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.loleg_cmpOut = self.createOutput('loleg', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.foot_cmpOut = self.createOutput('foot', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.ankle_cmpOut = self.createOutput('anke', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.toe_cmpOut = self.createOutput('toe', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.ankle_cmpOut = self.createOutput('ankle', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        # Not sure how to deal with this, if we don't want another component like the foot to offset the ik goal,
+        # then can we just connect this output to its own input.  It actually would not create a cycle in the real graph
+        # don't think we can make default connections like this right now anyways
         self.ikgoal_cmpOut = self.createOutput('ikgoal', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-
-        self.legEndXfo_out = Locator('upleg', parent=self.outputHrcGrp)
 
         # Declare Input Attrs
         self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
@@ -63,13 +65,13 @@ class OSSLegComponent(BaseExampleComponent):
         self.setComponentColor(155, 155, 200, 255)
 
 
-class OSSLegComponentGuide(OSSLegComponent):
-    """Leg Component Guide"""
+class OSSLimbComponentGuide(OSSLimbComponent):
+    """Limb Component Guide"""
 
-    def __init__(self, name='leg', parent=None, data=None):
+    def __init__(self, name='limb', parent=None, data=None):
 
         Profiler.getInstance().push("Construct Leg Guide Component:" + name)
-        super(OSSLegComponentGuide, self).__init__(name, parent)
+        super(OSSLimbComponentGuide, self).__init__(name, parent)
 
 
         # =========
@@ -82,13 +84,11 @@ class OSSLegComponentGuide(OSSLegComponent):
         self.uplegCtrl = Control('upleg', parent=self.ctrlCmpGrp, shape="sphere")
         self.lolegCtrl = Control('loleg', parent=self.ctrlCmpGrp, shape="sphere")
         self.ankleCtrl = Control('ankle', parent=self.ctrlCmpGrp, shape="sphere")
-        self.toeCtrl = Control('toe', parent=self.ctrlCmpGrp, shape="sphere")
-        self.toeTipCtrl = Control('toeTip', parent=self.ctrlCmpGrp, shape="sphere")
-        self.heelPivotCtrl = Control('heelPivot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.toeTipPivotCtrl = Control('toeTipPivot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.innerPivotCtrl = Control('innerPivot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.outerPivotCtrl = Control('outerPivot', parent=self.ctrlCmpGrp, shape="sphere")
+
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+
+        self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=False, parent=guideSettingsAttrGrp)
+
 
         if data is None:
             data = {
@@ -96,17 +96,19 @@ class OSSLegComponentGuide(OSSLegComponent):
                     "location": "L",
                     "uplegXfo": Xfo(Vec3(0.9811, 9.769, -0.4572)),
                     "lolegXfo": Xfo(Vec3(1.4488, 5.4418, -0.5348)),
-                    "ankleXfo": Xfo(Vec3(1.841, 1.1516, -1.237)),
-                    "toeXfo": Xfo(Vec3(1.85, 0.4, 0.25)),
-                    "toeTipXfo": Xfo(Vec3(1.85, 0.4, 1.5)),
-                    "heelPivotXfo": Xfo(Vec3(1.85, 0.0, -0.15)),
-                    "toeTipPivotXfo": Xfo(Vec3(1.85, 0.0, -0.15)),
-                    "innerPivotXfo": Xfo(Vec3(1., 0.0, 0.0)),
-                    "outerPivotXfo": Xfo(Vec3(2.15, 0.0, 0.0)),
-                    "globalComponentCtrlSize": 1.0
+                    "ankleXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
+                    "useOtherIKGoalInput": 0,
+                    "globalComponentCtrlSize": 1.0,
                    }
 
         self.loadData(data)
+
+        """
+        Possible way to change the inputs/outputs based on component settings.  Need to change rig.py _makeConnections not raise
+        an exception, though.  Not sure it should raise an exception anyway.....
+        if not self.useOtherIKGoalInput.getValue():
+            self.removeOutputByName('ikgoalRef')
+        """
 
         Profiler.getInstance().pop()
 
@@ -123,18 +125,11 @@ class OSSLegComponentGuide(OSSLegComponent):
 
         """
 
-        data = super(OSSLegComponentGuide, self).saveData()
+        data = super(OSSLimbComponentGuide, self).saveData()
 
         data['uplegXfo'] = self.uplegCtrl.xfo
         data['lolegXfo'] = self.lolegCtrl.xfo
         data['ankleXfo'] = self.ankleCtrl.xfo
-        data['toeXfo'] = self.toeCtrl.xfo
-        data['toeTipXfo'] = self.toeTipCtrl.xfo
-        data['heelPivotXfo'] = self.heelPivotCtrl.xfo
-        data['toeTipPivotXfo'] = self.toeTipPivotCtrl.xfo
-        data['innerPivotXfo'] = self.innerPivotCtrl.xfo
-        data['outerPivotXfo'] = self.outerPivotCtrl.xfo
-
         return data
 
 
@@ -149,7 +144,7 @@ class OSSLegComponentGuide(OSSLegComponent):
 
         """
 
-        super(OSSLegComponentGuide, self).loadData( data )
+        super(OSSLimbComponentGuide, self).loadData( data )
 
 
         if "uplegXfo" in data.keys():
@@ -158,19 +153,6 @@ class OSSLegComponentGuide(OSSLegComponent):
             self.lolegCtrl.xfo = data['lolegXfo']
         if "ankleXfo" in data.keys():
             self.ankleCtrl.xfo = data['ankleXfo']
-        if "toeXfo" in data.keys():
-            self.toeCtrl.xfo = data['toeXfo']
-        if "toeTipXfo" in data.keys():
-            self.toeTipCtrl.xfo = data['toeTipXfo']
-        if "heelPivotXfo" in data.keys():
-            self.heelPivotCtrl.xfo = data['heelPivotXfo']
-        if "toeTipPivotXfo" in data.keys():
-            self.toeTipPivotCtrl.xfo = data['toeTipPivotXfo']
-        if "innerPivotXfo" in data.keys():
-            self.innerPivotCtrl.xfo = data['innerPivotXfo']
-        if "outerPivotXfo" in data.keys():
-            self.outerPivotCtrl.xfo = data['outerPivotXfo']
-
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
@@ -178,12 +160,6 @@ class OSSLegComponentGuide(OSSLegComponent):
         self.uplegCtrl.scalePoints(globalScaleVec)
         self.lolegCtrl.scalePoints(globalScaleVec)
         self.ankleCtrl.scalePoints(globalScaleVec)
-        self.toeCtrl.scalePoints(globalScaleVec)
-        self.toeTipCtrl.scalePoints(globalScaleVec)
-        self.heelPivotCtrl.scalePoints(globalScaleVec)
-        self.toeTipPivotCtrl.scalePoints(globalScaleVec)
-        self.innerPivotCtrl.scalePoints(globalScaleVec)
-        self.outerPivotCtrl.scalePoints(globalScaleVec)
 
         return True
 
@@ -197,7 +173,7 @@ class OSSLegComponentGuide(OSSLegComponent):
 
         """
 
-        data = super(OSSLegComponentGuide, self).getRigBuildData()
+        data = super(OSSLimbComponentGuide, self).getRigBuildData()
 
         boneAxisStr = "POSX"
         if self.getLocation() == 'R':
@@ -214,13 +190,6 @@ class OSSLegComponentGuide(OSSLegComponent):
         uplegPosition = self.uplegCtrl.xfo.tr
         lolegPosition = self.lolegCtrl.xfo.tr
         anklePosition = self.ankleCtrl.xfo.tr
-        toePosition = self.toeCtrl.xfo.tr
-        toeTipPosition = self.toeTipCtrl.xfo.tr
-        heelPivotPosition = self.heelPivotCtrl.xfo.tr
-        toeTipPivotPosition = self.toeTipPivotCtrl.xfo.tr
-        innerPivotPosition = self.innerPivotCtrl.xfo.tr
-        outerPivotPosition = self.outerPivotCtrl.xfo.tr
-
 
         # Calculate Upleg Xfo
         uplegXfo = Xfo(self.uplegCtrl.xfo)
@@ -240,8 +209,6 @@ class OSSLegComponentGuide(OSSLegComponent):
         # Get lengths
         uplegLen = uplegPosition.subtract(lolegPosition).length()
         lolegLen = lolegPosition.subtract(anklePosition).length()
-        footLen = anklePosition.subtract(toePosition).length()
-        toeLen = toePosition.subtract(toeTipPosition).length()
 
         handleXfo = Xfo()
         handleXfo.tr = anklePosition
@@ -250,29 +217,6 @@ class OSSLegComponentGuide(OSSLegComponent):
         ankleXfo.tr = anklePosition
         # ankleXfo.ori = lolegXfo.ori
 
-        heelPivotXfo = Xfo()
-        heelPivotXfo.tr = heelPivotPosition
-
-        toeTipPivotXfo = Xfo()
-        toeTipPivotXfo.tr = toeTipPivotPosition
-
-        innerPivotXfo = Xfo()
-        innerPivotXfo.tr = innerPivotPosition
-
-        outerPivotXfo = Xfo()
-        outerPivotXfo.tr = outerPivotPosition
-
-        footPosition = anklePosition
-        # Calculate Foot Xfo
-        footToToe = toePosition.subtract(footPosition).unit()
-
-        footTololeg = lolegPosition.subtract(footPosition).unit()
-
-        toeXfo = Xfo(self.toeCtrl.xfo)
-        toeXfo.aimAt(aimPos=self.toeTipCtrl.xfo.tr, upPos=self.lolegCtrl.xfo.tr, aimAxis=boneAxis, upAxis=upAxis)
-
-        footXfo = Xfo(ankleXfo)
-        footXfo.aimAt(aimPos=toeXfo.tr, upPos=lolegXfo.tr, aimAxis=boneAxis, upAxis=upAxis)
 
         upVXfo = Xfo()
         offset = [x * uplegLen * 2 for x in upAxis]
@@ -285,17 +229,9 @@ class OSSLegComponentGuide(OSSLegComponent):
         data['lolegXfo'] = lolegXfo
         data['handleXfo'] = handleXfo
         data['ankleXfo'] = ankleXfo
-        data['footXfo'] = footXfo
-        data['toeXfo'] = toeXfo
         data['upVXfo'] = upVXfo
         data['uplegLen'] = uplegLen
         data['lolegLen'] = lolegLen
-        data['footLen'] = footLen
-        data['toeLen'] = toeLen
-        data['heelPivotXfo'] = heelPivotXfo
-        data['toeTipPivotXfo'] = toeTipPivotXfo
-        data['innerPivotXfo'] = innerPivotXfo
-        data['outerPivotXfo'] = outerPivotXfo
 
         return data
 
@@ -322,16 +258,16 @@ class OSSLegComponentGuide(OSSLegComponent):
 
         """
 
-        return OSSLegComponentRig
+        return OSSLimbComponentRig
 
 
-class OSSLegComponentRig(OSSLegComponent):
-    """Leg Component"""
+class OSSLimbComponentRig(OSSLimbComponent):
+    """Limb Component"""
 
     def __init__(self, name='leg', parent=None):
 
         Profiler.getInstance().push("Construct Leg Rig Component:" + name)
-        super(OSSLegComponentRig, self).__init__(name, parent)
+        super(OSSLimbComponentRig, self).__init__(name, parent)
 
 
         # =========
@@ -351,17 +287,6 @@ class OSSLegComponentRig(OSSLegComponent):
         # Ankle
         self.legIKCtrlSpace = CtrlSpace('footIK', parent=self.ctrlCmpGrp)
         self.legIKCtrl = Control('footIK', parent=self.legIKCtrlSpace, shape="cross")
-        self.legIKTarget = CtrlSpace('footIKTarget', parent=self.legIKCtrl)
-
-        # FK Foot
-        self.footCtrlSpace = CtrlSpace('foot', parent=self.ctrlCmpGrp)
-        self.footCtrl = Control('foot', parent=self.footCtrlSpace, shape="cube")
-        self.footCtrl.alignOnXAxis()
-
-        # FK Toe
-        self.toeCtrlSpace = CtrlSpace('toe', parent=self.footCtrl)
-        self.toeCtrl = Control('toe', parent=self.toeCtrlSpace, shape="cube")
-        self.toeCtrl.alignOnXAxis()
 
         # =========
         # Mocap
@@ -377,19 +302,6 @@ class OSSLegComponentRig(OSSLegComponent):
         self.legend_mocapSpace = CtrlSpace('legend_mocap', parent=self.loleg_mocap)
         self.legend_mocap = Locator('legend_mocap', parent=self.legend_mocapSpace)
 
-        # Mocap Foot
-        self.foot_mocap = Control('foot_mocap', parent=self.footCtrlSpace, shape="cube")
-        self.foot_mocap.alignOnXAxis()
-        # Mocap Toe
-        self.toe_mocapSpace = CtrlSpace('toe_mocap', parent=self.foot_mocap)
-        self.toe_mocap = Control('toe_mocap', parent=self.toe_mocapSpace, shape="cube")
-        self.toe_mocap.alignOnXAxis()
-
-
-
-        # Add Component Params to IK control
-        footSettingsAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.footCtrl)
-        footLinkToWorldInputAttr = ScalarAttribute('linkToWorld', 1.0, maxValue=1.0, parent=footSettingsAttrGrp)
 
         # Add Component Params to IK control
         legSettingsAttrGrp = AttributeGroup("DisplayInfo_LegSettings", parent=self.legIKCtrl)
@@ -420,25 +332,6 @@ class OSSLegComponentRig(OSSLegComponent):
         upVSpaceBlendInputAttr = ScalarAttribute('IKFootSpace', value=0.0, minValue=0.0, maxValue=1.0, parent=upVAttrGrp)
 
 
-        # =========
-        # Locators for foot pivot
-        # =========
-        self.toeJointLocator = Locator('toeJoint', parent=self.legIKCtrl)
-        #self.toeJointLocator.setVisibility(False) # does not seem to work, but setShapeVisibility does
-        self.toeJointLocator.setShapeVisibility(False)
-        self.footJointLocator = Locator('footJoint', parent=self.legIKCtrl)
-        self.footJointLocator.setShapeVisibility(False)
-        self.heelPivotLocator = Locator('heelPivot', parent=self.legIKCtrl)
-        self.heelPivotLocator.setShapeVisibility(False)
-        self.toePivotLocator = Locator('toePivot', parent=self.legIKCtrl)
-        self.toePivotLocator.setShapeVisibility(False)
-        self.toeTipPivotLocator = Locator('toeTipPivot', parent=self.legIKCtrl)
-        self.toeTipPivotLocator.setShapeVisibility(False)
-        self.innerPivotLocator = Locator('innerPivot', parent=self.legIKCtrl)
-        self.innerPivotLocator.setShapeVisibility(False)
-        self.outerPivotLocator = Locator('outerPivot', parent=self.legIKCtrl)
-        self.outerPivotLocator.setShapeVisibility(False)
-
 
         # ==========
         # Deformers
@@ -455,12 +348,6 @@ class OSSLegComponentRig(OSSLegComponent):
         self.ankleDef = Joint('ankle', parent=self.defCmpGrp)
         self.ankleDef.setComponent(self)
 
-        self.footDef = Joint('foot', parent=self.defCmpGrp)
-        self.footDef.setComponent(self)
-
-        self.toeDef = Joint('toe', parent=self.defCmpGrp)
-        self.toeDef.setComponent(self)
-
 
         # ==============
         # Constrain I/O
@@ -468,6 +355,8 @@ class OSSLegComponentRig(OSSLegComponent):
         # Constraint inputs
         self.legIKCtrlSpaceInputConstraint = self.legIKCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
         self.legRootInputConstraint = self.uplegFKCtrlSpace.constrainTo(self.legPelvisInputTgt, maintainOffset=True)
+        self.ikGoalRefInputConstraint = self.ikgoalRef_cmpOut.constrainTo(self.legIKCtrl, maintainOffset=True)
+
 
 
         # Blend the Spaces (should make this a sub proc)
@@ -491,35 +380,8 @@ class OSSLegComponentRig(OSSLegComponent):
         # Add KL Ops
         # ===============
 
-        # Add FootRocker KL Op
-        self.footRockerKLOp = KLOperator(self.getLocation()+self.getName()+'FootRockerKLOp', 'OSS_FootRockerSystem', 'OSS_Kraken')
-        self.addOperator(self.footRockerKLOp)
-        # Add Att Inputs
-        self.footRockerKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.footRockerKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.footRockerKLOp.setInput('rightSide', self.rightSideInputAttr)
-        self.footRockerKLOp.setInput('footRocker', footRockerInputAttr)
-        self.footRockerKLOp.setInput('ballBreak', ballBreakInputAttr)
-        self.footRockerKLOp.setInput('footTilt', footTiltInputAttr)
-        # Add Xfo Inputs
-        self.footRockerKLOp.setInput('ikCtrl', self.legIKTarget)
-        self.footRockerKLOp.setInput('heelPivot', self.heelPivotLocator)
-        self.footRockerKLOp.setInput('ballPivot', self.toePivotLocator)
-        self.footRockerKLOp.setInput('toePivot', self.toeTipPivotLocator)
-        self.footRockerKLOp.setInput('footJointLoc', self.footJointLocator)
-        self.footRockerKLOp.setInput('toeJointLoc', self.toeJointLocator)
-        self.footRockerKLOp.setInput('innerPivotLoc', self.innerPivotLocator)
-        self.footRockerKLOp.setInput('outerPivotLoc', self.outerPivotLocator)
-        # Add Xfo Outputs
-        #self.legEndXfo_cmpOut = self.createOutput('legEndXfo', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.footRockerFoot_out = Locator('footRockerFoot_out', parent=self.outputHrcGrp)
-        self.footRockerToe_out = Locator('footRockerToe_out', parent=self.outputHrcGrp)
-        self.footRockerKLOp.setOutput('ikGoal', self.ikgoal_cmpOut)
-        self.footRockerKLOp.setOutput('footJoint', self.footRockerFoot_out)
-        self.footRockerKLOp.setOutput('toeJoint', self.footRockerToe_out)
 
-
-        # Add Leg KL Op
+        # Add FK/IK Blend Leg KL Op
         self.legIKKLOp = KLOperator(self.getLocation()+self.getName()+'IKFKTwoBoneIKSolver', 'OSS_TwoBoneIKSolver', 'OSS_Kraken')
         self.addOperator(self.legIKKLOp)
         # Add Att Inputs
@@ -536,7 +398,7 @@ class OSSLegComponentRig(OSSLegComponent):
         self.legIKKLOp.setInput('root', self.legPelvisInputTgt)
         self.legIKKLOp.setInput('bone0FK', self.uplegFKCtrl)
         self.legIKKLOp.setInput('bone1FK', self.lolegFKCtrl)
-        self.legIKKLOp.setInput('ikHandle', self.ikgoal_cmpOut)
+        self.legIKKLOp.setInput('ikHandle', self.ikgoal_cmpIn)
         self.legIKKLOp.setInput('upV', self.legUpVCtrl)
         # Add Xfo Outputs
         self.legIKKLOp_bone0_out = Locator('legIKKLOp_bone0_out', parent=self.outputHrcGrp)
@@ -562,47 +424,6 @@ class OSSLegComponentRig(OSSLegComponent):
         self.legMocapHierBlendSolver.setOutput('hierOut', [self.upleg_cmpOut, self.loleg_cmpOut, self.ankle_cmpOut])
 
 
-        self.footCtrlSpaceConstraint = PoseConstraint('_'.join([self.footCtrlSpace.getName(), 'To', self.ankle_cmpOut.getName()]))
-        self.footCtrlSpaceConstraint.setMaintainOffset(True)
-        self.footCtrlSpaceConstraint.addConstrainer(self.ankle_cmpOut)
-        self.footCtrlSpace.addConstraint(self.footCtrlSpaceConstraint)
-
-
-        # Wait, can this be a hier blend op?
-        # Add Foot Blend KL Op
-        self.IKFootBlendKLOp = KLOperator(self.getLocation()+self.getName()+'IKFootBlendKLOp', 'OSS_IKFootBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.IKFootBlendKLOp)
-        # Add Att Inputs
-        self.IKFootBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.IKFootBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.IKFootBlendKLOp.setInput('blend', footIKInputAttr)
-        # Add Xfo Inputs)
-        self.IKFootBlendKLOp.setInput('ikFoot', self.footRockerFoot_out)
-        self.IKFootBlendKLOp.setInput('fkFoot', self.footCtrl)
-        self.IKFootBlendKLOp.setInput('ikToe', self.footRockerToe_out)
-        self.IKFootBlendKLOp.setInput('fkToe', self.toeCtrl)
-        # Add Xfo Outputs
-        self.IKFootBlendKLOpFoot_out = Locator('IKFootBlendKLOpFoot_out', parent=self.outputHrcGrp)
-        self.IKFootBlendKLOpToe_out = Locator('IKFootBlendKLOpToe_out', parent=self.outputHrcGrp)
-        self.IKFootBlendKLOp.setOutput('foot', self.IKFootBlendKLOpFoot_out)
-        self.IKFootBlendKLOp.setOutput('toe', self.IKFootBlendKLOpToe_out)
-
-
-        # Add Foot Toe HierBlend Solver for Mocap
-        self.foot_mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'foot_mocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.foot_mocapHierBlendSolver)
-        self.foot_mocapHierBlendSolver.setInput('blend', footMocapInputAttr)
-        self.foot_mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
-        # Add Att Inputs
-        self.foot_mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-        self.foot_mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
-        # Add Xfo Inputs
-        self.foot_mocapHierBlendSolver.setInput('hierA', [self.IKFootBlendKLOpFoot_out, self.IKFootBlendKLOpToe_out])
-        self.foot_mocapHierBlendSolver.setInput('hierB', [self.foot_mocap, self.toe_mocap])
-        # Add Xfo Outputs
-        self.foot_mocapHierBlendSolver.setOutput('hierOut', [self.foot_cmpOut, self.toe_cmpOut])
-
-
         # Add Deformer Joint Constrain
         self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
@@ -610,9 +431,9 @@ class OSSLegComponentRig(OSSLegComponent):
         self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.outputsToDeformersKLOp.setInput('constrainers', [self.upleg_cmpOut, self.loleg_cmpOut, self.ankle_cmpOut, self.foot_cmpOut, self.toe_cmpOut])
+        self.outputsToDeformersKLOp.setInput('constrainers', [self.upleg_cmpOut, self.loleg_cmpOut, self.ankle_cmpOut])
         # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [self.uplegDef, self.lolegDef, self.ankleDef, self.footDef, self.toeDef])
+        self.outputsToDeformersKLOp.setOutput('constrainees', [self.uplegDef, self.lolegDef, self.ankleDef])
 
 
 
@@ -632,7 +453,7 @@ class OSSLegComponentRig(OSSLegComponent):
 
         """
 
-        super(OSSLegComponentRig, self).loadData( data )
+        super(OSSLimbComponentRig, self).loadData( data )
 
 
         # TODO: make this a property of the component
@@ -649,19 +470,13 @@ class OSSLegComponentRig(OSSLegComponent):
 
         self.upleg_cmpOut.xfo = data['uplegXfo']
         self.loleg_cmpOut.xfo = data['lolegXfo']
+        self.ikgoal_cmpOut.xfo = data['ankleXfo']
+        self.ikgoal_cmpIn.xfo = data['ankleXfo']
 
         # Loleg
         self.lolegFKCtrlSpace.xfo = data['lolegXfo']
         self.lolegFKCtrl.xfo = data['lolegXfo']
         self.lolegFKCtrl.scalePointsOnAxis(data['lolegLen'], boneAxisStr)
-
-        self.footCtrlSpace.xfo = data['footXfo']
-        self.footCtrl.xfo = data['footXfo']
-        self.footCtrl.scalePointsOnAxis(data['footLen'], boneAxisStr)
-
-        self.toeCtrlSpace.xfo = data['toeXfo']
-        self.toeCtrl.xfo = data['toeXfo']
-        self.toeCtrl.scalePointsOnAxis(data['toeLen'], boneAxisStr)
 
         self.upleg_mocap.xfo = data['uplegXfo']
         self.upleg_mocap.scalePointsOnAxis(data['uplegLen'], boneAxisStr)
@@ -674,21 +489,13 @@ class OSSLegComponentRig(OSSLegComponent):
         self.legend_mocap.xfo = data['ankleXfo']
         self.legend_mocap.xfo.ori = self.loleg_mocap.xfo.ori
 
-
-        self.foot_mocap.xfo = data['footXfo']
-        self.foot_mocap.scalePointsOnAxis(data['footLen'], boneAxisStr)
-
-        self.toe_mocapSpace.xfo = data['toeXfo']
-        self.toe_mocap.xfo = data['toeXfo']
-        self.toe_mocap.scalePointsOnAxis(data['toeLen'], boneAxisStr)
-
-
+        #ACK, can't access the foot heel pivot guide to set the ik control pos and ori.  Damn
         #Until later when we have better guide rigs setups, assume world Y up and Z forward to toe
-        self.legIKCtrlSpace.xfo.tr = data['heelPivotXfo'].tr
-        self.legIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.toeCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
+        self.legIKCtrlSpace.xfo = data['ankleXfo']
+        #self.legIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.toeCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
         self.legIKCtrl.xfo = self.legIKCtrlSpace.xfo
-        self.legIKTarget.xfo = self.legIKCtrlSpace.xfo
-        self.legIKTarget.xfo.tr = data['ankleXfo'].tr
+        self.ikgoalRef_cmpOut.xfo = self.legIKCtrlSpace.xfo
+        #self.legIKTarget.xfo.tr = data['ankleXfo'].tr
 
 
         if self.getLocation() == "R":
@@ -713,23 +520,11 @@ class OSSLegComponentRig(OSSLegComponent):
         self.legBone1LenInputAttr.setValue(data['lolegLen'])
 
         self.legPelvisInputTgt.xfo = data['uplegXfo']
-        self.toeJointLocator.xfo = data["toeXfo"]
-        self.footJointLocator.xfo = data["footXfo"]
-
-        self.heelPivotLocator.xfo = data["heelPivotXfo"]
-        self.heelPivotLocator.xfo.ori = self.legIKCtrl.xfo.ori
-        self.toeTipPivotLocator.xfo = data["toeTipPivotXfo"]
-        self.toeTipPivotLocator.xfo.ori = self.legIKCtrl.xfo.ori
-        self.innerPivotLocator.xfo = data["innerPivotXfo"]
-        self.innerPivotLocator.xfo.ori = self.legIKCtrl.xfo.ori
-        self.outerPivotLocator.xfo = data["outerPivotXfo"]
-        self.outerPivotLocator.xfo.ori = self.legIKCtrl.xfo.ori
-        self.toePivotLocator.xfo = data["toeXfo"]
-        self.toePivotLocator.xfo.ori = self.legIKCtrl.xfo.ori
 
         # Eval Constraints
         self.legIKCtrlSpaceInputConstraint.evaluate()
         self.legRootInputConstraint.evaluate()
+        self.ikGoalRefInputConstraint.evaluate()
 
         # Eval Operators
         self.evalOperators()
@@ -739,20 +534,20 @@ class OSSLegComponentRig(OSSLegComponent):
 
         self.uplegFKCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
         self.lolegFKCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
-        self.footCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
-        self.toeCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
         self.legIKCtrl.scalePoints(globalScale)
         self.legUpVCtrl.scalePoints(globalScale)
 
         footPlane = Control("TMP", shape="square")
         footPlane.alignOnZAxis()
         footPlane.scalePoints(Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], 1.0))
-        footPlane.scalePointsOnAxis(self.legIKCtrl.xfo.tr.subtract(self.toeTipPivotLocator.xfo.tr).length(), "POSZ")
+        # Damn, can't get the foot length because it is on another component
+        # Can we do this with just inputs?  We'd have to guarantee that everything was in the correct pose first
+        #footPlane.scalePointsOnAxis(self.legIKCtrl.xfo.tr.subtract(self.toeTipPivotLocator.xfo.tr).length(), "POSZ")
         self.legIKCtrl.appendCurveData(footPlane.getCurveData())
 
 
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
-ks.registerComponent(OSSLegComponentGuide)
-ks.registerComponent(OSSLegComponentRig)
+ks.registerComponent(OSSLimbComponentGuide)
+ks.registerComponent(OSSLimbComponentRig)

@@ -49,7 +49,6 @@ class OSSSpineComponent(BaseExampleComponent):
         # Declare Input Attrs
         self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
         self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
-        self.numDeformersAttr = self.createInput('numDeformers', dataType='Integer', value=6, parent=self.cmpInputAttrGrp).getTarget()
 
         # Declare Output Attrs
 
@@ -81,8 +80,9 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         self.upChestCtrl = Control('upChestPosition', parent=self.ctrlCmpGrp, shape='sphere')
         self.neckCtrl = Control('neckPosition', parent=self.ctrlCmpGrp, shape='null')
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-        # self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
 
+        self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
+        #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
 
         self.loadData({
             'name': name,
@@ -120,6 +120,7 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         data['upChestPosition'] = self.upChestCtrl.xfo.tr
         data['neckPosition'] = self.neckCtrl.xfo.tr
         data['numDeformers'] = self.numDeformersAttr.getValue()
+
 
         return data
 
@@ -313,12 +314,13 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # ===============
         # Add Spine Canvas Op
         self.ZSplineSpineCanvasOp = CanvasOperator('ZSplineSpineCanvasOp', 'OSS.Solvers.ZSplineSpineSolver')
+
         self.addOperator(self.ZSplineSpineCanvasOp)
 
         # Add Att Inputs
         self.ZSplineSpineCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.ZSplineSpineCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.ZSplineSpineCanvasOp.setInput('numDeformers',  self.numDeformersAttr)
+        self.ZSplineSpineCanvasOp.setInput('numDeformers',  1)
         # Add Xfo Inputs
         self.ZSplineSpineCanvasOp.setInput('pelvis', self.pelvisCtrlSpace)
         self.ZSplineSpineCanvasOp.setInput('torso', self.torsoCtrl)
@@ -363,6 +365,9 @@ class OSSSpineComponentRig(OSSSpineComponent):
             spineDef = Joint(name, parent=self.defCmpGrp)
             spineDef.setComponent(self)
             self.deformerJoints.append(spineDef)
+
+        if hasattr(self, 'ZSplineSpineCanvasOp'):  # Check in case this is ever called from Guide callback
+            self.ZSplineSpineCanvasOp.setInput('numDeformers',  numDeformers)
 
         return True
 

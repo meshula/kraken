@@ -86,6 +86,8 @@ class CanvasOperator(Operator):
                 return obj.xfo.getRTVal().toMat44('Mat44')
             elif isinstance(obj, Attribute):
                 return obj.getRTVal()
+            else: # Must be a numerical, or string, etc.
+                return obj  ###### TTHACK Pass this through, we are setting a value directly, not makeing a connection
 
         portVals = []
         for port in self.graphDesc['ports']:
@@ -108,22 +110,25 @@ class CanvasOperator(Operator):
 
             if portConnectionType == 'In':
                 if str(portDataType).endswith('[]'):
-                    rtValArray = ks.rtVal(portDataType[:-2]+'Array')
+                    rtValArray = ks.rtVal(portDataType)
                     rtValArray.resize(len(self.inputs[portName]))
                     for j in xrange(len(self.inputs[portName])):
                         rtValArray[j] = getRTVal(self.inputs[portName][j])
                     portVals.append(rtValArray)
                 else:
+                    value = getRTVal(self.inputs[portName])
                     portVals.append(getRTVal(self.inputs[portName]))
             else:
                 if str(portDataType).endswith('[]'):
-                    rtValArray = ks.rtVal(portDataType[:-2]+'Array')
+                    rtValArray = ks.rtVal(portDataType)
                     rtValArray.resize(len(self.outputs[portName]))
                     for j in xrange(len(self.outputs[portName])):
                         rtValArray[j] = getRTVal(self.outputs[portName][j])
                     portVals.append(rtValArray)
                 else:
                     portVals.append(getRTVal(self.outputs[portName]))
+            print("TTPrint: portVals[-1]:"),
+            print(portVals[-1])
 
 
         host = ks.getCoreClient().DFG.host

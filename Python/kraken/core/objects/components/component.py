@@ -364,6 +364,49 @@ class Component(Object3D):
         return True
 
 
+    def removeOutputByIndex(self, index):
+        """Remove ComponentOutputPort at specified index.
+
+        Args:
+            index (int): Index of the ComponentOutputPort to remove.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if self.checkOutputIndex(index) is not True:
+            return False
+
+        del self._outputs[index]
+
+        return True
+
+
+    def removeOutputByName(self, name):
+        """Removes a output from this object by name.
+
+        Args:
+            name (str): Name of output to remove.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        removeIndex = None
+
+        for i, eachOutput in enumerate(self._outputs):
+            if eachOutput.getName() == name:
+                removeIndex = i
+
+        if removeIndex is None:
+            raise ValueError("'" + name + "' is not a valid output of this object.")
+
+        self.removeOutputByIndex(removeIndex)
+
+        return True
+
     def getNumInputs(self):
         """Returns the number of inputs this component has.
 
@@ -559,6 +602,25 @@ class Component(Object3D):
     # =================
     # Operator Methods
     # =================
+
+
+    def evalOperators(self):
+        """Evaluates all component operators
+
+        Args:
+            None
+
+        Returns:
+            bool: True if the index is valid.
+
+        """
+
+        for op in self._operators:
+            op.evaluate()
+
+        return True
+
+
     def checkOperatorIndex(self, index):
         """Checks the supplied index is valid.
 

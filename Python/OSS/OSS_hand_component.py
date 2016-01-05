@@ -27,12 +27,12 @@ from kraken.helpers.utility_methods import logHierarchy
 
 import traceback
 
-class OSSFootComponent(BaseExampleComponent):
-    """Foot Component"""
+class OSSHandComponent(BaseExampleComponent):
+    """Hand Component"""
 
-    def __init__(self, name='footBase', parent=None):
+    def __init__(self, name='footBase', parent=None, data=None):
 
-        super(OSSFootComponent, self).__init__(name, parent)
+        super(OSSHandComponent, self).__init__(name=name, parent=parent, data=data)
 
         # ===========
         # Declare IO
@@ -59,13 +59,13 @@ class OSSFootComponent(BaseExampleComponent):
         self.setComponentColor(155, 155, 200, 255)
 
 
-class OSSFootComponentGuide(OSSFootComponent):
-    """Foot Component Guide"""
+class OSSHandComponentGuide(OSSHandComponent):
+    """Hand Component Guide"""
 
     def __init__(self, name='foot', parent=None, data=None):
 
-        Profiler.getInstance().push("Construct Foot Guide Component:" + name)
-        super(OSSFootComponentGuide, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct Hand Guide Component:" + name)
+        super(OSSHandComponentGuide, self).__init__(name=name, parent=parent, data=data)
 
 
         # =========
@@ -115,7 +115,7 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         """
 
-        data = super(OSSFootComponentGuide, self).saveData()
+        data = super(OSSHandComponentGuide, self).saveData()
 
         data['footXfo'] = self.footCtrl.xfo
         data['toeXfo'] = self.toeCtrl.xfo
@@ -139,7 +139,7 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         """
 
-        super(OSSFootComponentGuide, self).loadData( data )
+        super(OSSHandComponentGuide, self).loadData( data )
 
         if "footXfo" in data.keys():
             self.footCtrl.xfo = data['footXfo']
@@ -180,7 +180,7 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         """
 
-        data = super(OSSFootComponentGuide, self).getRigBuildData()
+        data = super(OSSHandComponentGuide, self).getRigBuildData()
 
         boneAxisStr = "POSX"
         if self.getLocation() == 'R':
@@ -224,7 +224,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         outerPivotXfo = Xfo()
         outerPivotXfo.tr = outerPivotPosition
 
-        # Calculate Foot Xfo
+        # Calculate Hand Xfo
         footToToe = toePosition.subtract(footPosition).unit()
 
         toeXfo = Xfo(self.toeCtrl.xfo)
@@ -278,22 +278,22 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         """
 
-        return OSSFootComponentRig
+        return OSSHandComponentRig
 
 
-class OSSFootComponentRig(OSSFootComponent):
-    """Foot Component"""
+class OSSHandComponentRig(OSSHandComponent):
+    """Hand Component"""
 
-    def __init__(self, name='leg', parent=None):
+    def __init__(self, name='leg', parent=None, data=None):
 
-        Profiler.getInstance().push("Construct Leg Rig Component:" + name)
-        super(OSSFootComponentRig, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct MainSrt Rig Component:" + name)
+        super(OSSHandComponentRig, self).__init__(name=name, parent=parent, data=data)
 
 
         # =========
         # Controls
         # =========
-        # FK Foot
+        # FK Hand
         self.footCtrlSpace = CtrlSpace('foot', parent=self.ctrlCmpGrp)
         self.footCtrl = Control('foot', parent=self.footCtrlSpace, shape="cube")
         self.footCtrl.alignOnXAxis()
@@ -306,7 +306,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # =========
         # Mocap
         # =========
-        # Mocap Foot
+        # Mocap Hand
         self.foot_mocap = Control('foot_mocap', parent=self.footCtrlSpace, shape="cube")
         self.foot_mocap.alignOnXAxis()
         # Mocap Toe
@@ -320,7 +320,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # Rig Ref objects
 
         # Add Component Params to IK control
-        footSettingsAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.footCtrl)
+        footSettingsAttrGrp = AttributeGroup("DisplayInfo_HandSettings", parent=self.footCtrl)
         footDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=footSettingsAttrGrp)
         footMocapInputAttr = ScalarAttribute('footMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
         footIKInputAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
@@ -377,8 +377,8 @@ class OSSFootComponentRig(OSSFootComponent):
         # Add KL Ops
         # ===============
 
-        # Add FootRocker KL Op
-        self.footRockerKLOp = KLOperator(self.getLocation()+self.getName()+'FootRockerKLOp', 'OSS_FootRockerSystem', 'OSS_Kraken')
+        # Add HandRocker KL Op
+        self.footRockerKLOp = KLOperator(self.getLocation()+self.getName()+'HandRockerKLOp', 'OSS_HandRockerSystem', 'OSS_Kraken')
         self.addOperator(self.footRockerKLOp)
         # Add Att Inputs
         self.footRockerKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -398,10 +398,10 @@ class OSSFootComponentRig(OSSFootComponent):
         self.footRockerKLOp.setInput('outerPivotLoc', self.outerPivotLocator)
         # Add Xfo Outputs
         #self.legEndXfo_cmpOut = self.createOutput('legEndXfo', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.footRockerFoot_out = Locator('footRockerFoot_out', parent=self.outputHrcGrp)
+        self.footRockerHand_out = Locator('footRockerHand_out', parent=self.outputHrcGrp)
         self.footRockerToe_out = Locator('footRockerToe_out', parent=self.outputHrcGrp)
         self.footRockerKLOp.setOutput('ikGoal', self.ikgoal_cmpOut)
-        self.footRockerKLOp.setOutput('footJoint', self.footRockerFoot_out)
+        self.footRockerKLOp.setOutput('footJoint', self.footRockerHand_out)
         self.footRockerKLOp.setOutput('toeJoint', self.footRockerToe_out)
 
 
@@ -410,26 +410,26 @@ class OSSFootComponentRig(OSSFootComponent):
 
 
         # Wait, can this be a hier blend op?
-        # Add Foot Blend KL Op
-        self.IKFootBlendKLOp = KLOperator(self.getLocation()+self.getName()+'IKFootBlendKLOp', 'OSS_IKFootBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.IKFootBlendKLOp)
+        # Add Hand Blend KL Op
+        self.IKHandBlendKLOp = KLOperator(self.getLocation()+self.getName()+'IKHandBlendKLOp', 'OSS_IKHandBlendSolver', 'OSS_Kraken')
+        self.addOperator(self.IKHandBlendKLOp)
         # Add Att Inputs
-        self.IKFootBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.IKFootBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.IKFootBlendKLOp.setInput('blend', footIKInputAttr)
+        self.IKHandBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.IKHandBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.IKHandBlendKLOp.setInput('blend', footIKInputAttr)
         # Add Xfo Inputs)
-        self.IKFootBlendKLOp.setInput('ikFoot', self.footRockerFoot_out)
-        self.IKFootBlendKLOp.setInput('fkFoot', self.footCtrl)
-        self.IKFootBlendKLOp.setInput('ikToe', self.footRockerToe_out)
-        self.IKFootBlendKLOp.setInput('fkToe', self.toeCtrl)
+        self.IKHandBlendKLOp.setInput('ikHand', self.footRockerHand_out)
+        self.IKHandBlendKLOp.setInput('fkHand', self.footCtrl)
+        self.IKHandBlendKLOp.setInput('ikToe', self.footRockerToe_out)
+        self.IKHandBlendKLOp.setInput('fkToe', self.toeCtrl)
         # Add Xfo Outputs
-        self.IKFootBlendKLOpFoot_out = Locator('IKFootBlendKLOpFoot_out', parent=self.outputHrcGrp)
-        self.IKFootBlendKLOpToe_out = Locator('IKFootBlendKLOpToe_out', parent=self.outputHrcGrp)
-        self.IKFootBlendKLOp.setOutput('foot', self.IKFootBlendKLOpFoot_out)
-        self.IKFootBlendKLOp.setOutput('toe', self.IKFootBlendKLOpToe_out)
+        self.IKHandBlendKLOpHand_out = Locator('IKHandBlendKLOpHand_out', parent=self.outputHrcGrp)
+        self.IKHandBlendKLOpToe_out = Locator('IKHandBlendKLOpToe_out', parent=self.outputHrcGrp)
+        self.IKHandBlendKLOp.setOutput('foot', self.IKHandBlendKLOpHand_out)
+        self.IKHandBlendKLOp.setOutput('toe', self.IKHandBlendKLOpToe_out)
 
 
-        # Add Foot Toe HierBlend Solver for Mocap
+        # Add Hand Toe HierBlend Solver for Mocap
         self.foot_mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'foot_mocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
         self.addOperator(self.foot_mocapHierBlendSolver)
         self.foot_mocapHierBlendSolver.setInput('blend', footMocapInputAttr)
@@ -438,7 +438,7 @@ class OSSFootComponentRig(OSSFootComponent):
         self.foot_mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
         self.foot_mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.foot_mocapHierBlendSolver.setInput('hierA', [self.IKFootBlendKLOpFoot_out, self.IKFootBlendKLOpToe_out])
+        self.foot_mocapHierBlendSolver.setInput('hierA', [self.IKHandBlendKLOpHand_out, self.IKHandBlendKLOpToe_out])
         self.foot_mocapHierBlendSolver.setInput('hierB', [self.foot_mocap, self.toe_mocap])
         # Add Xfo Outputs
         self.foot_mocapHierBlendSolver.setOutput('hierOut', [self.foot_cmpOut, self.toe_cmpOut])
@@ -473,7 +473,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
         """
 
-        super(OSSFootComponentRig, self).loadData( data )
+        super(OSSHandComponentRig, self).loadData( data )
 
 
         # TODO: make this a property of the component
@@ -539,5 +539,5 @@ class OSSFootComponentRig(OSSFootComponent):
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
-ks.registerComponent(OSSFootComponentGuide)
-ks.registerComponent(OSSFootComponentRig)
+ks.registerComponent(OSSHandComponentGuide)
+ks.registerComponent(OSSHandComponentRig)
