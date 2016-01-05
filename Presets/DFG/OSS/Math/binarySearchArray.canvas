@@ -1,0 +1,114 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+    "uiTooltip" : "returns the value of the closest Element to input 'key' within input 'array' via fast binary search"
+    },
+  "title" : "binarySearchArray",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 19.60690116882324
+        },
+      "name" : "key",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "array",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "73285517535B8D2926BCAC8F0EFB321E",
+  "code" : "//returns the value of the closest Element to 'key' within input 'array' via fast binary search
+dfgEntry {
+  UInt32 low = 0;
+  UInt32 high = array.size()-1;
+  UInt32 mid = 0;
+  while (low < high) {
+    mid = low + (((high - low) / 2) | 0);  
+    if (array[mid] < key) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+  if (array[mid] > key) {
+    mid -= 1;
+  }
+  result = array[mid];
+}
+",
+  "requiredPresets" : {
+    "OSS.Math.binarySearchArray" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiTooltip" : "returns the value of the closest Element to input 'key' within input 'array' via fast binary search"
+        },
+      "title" : "binarySearchArray",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 19.60690116882324
+            },
+          "name" : "key",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "array",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "73285517535B8D2926BCAC8F0EFB321E",
+      "code" : "//returns the value of the closest Element to 'key' via fast binary search
+dfgEntry {
+  UInt32 low = 0;
+  UInt32 high = array.size()-1;
+  UInt32 mid = 0;
+  while (low < high) {
+    mid = low + (((high - low) / 2) | 0);  
+    if (array[mid] < key) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+  if (array[mid] > key) {
+    mid -= 1;
+  }
+  result = array[mid];
+}
+"
+      }
+    }
+  }
