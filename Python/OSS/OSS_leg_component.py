@@ -250,11 +250,6 @@ class OSSLegComponentGuide(OSSLegComponent):
         ankleXfo.tr = anklePosition
         # ankleXfo.ori = lolegXfo.ori
 
-        ankleXfo = Xfo()
-        ankleXfo.tr = anklePosition
-        # ankleXfo.ori = lolegXfo.ori
-
-
         heelPivotXfo = Xfo()
         heelPivotXfo.tr = heelPivotPosition
 
@@ -272,10 +267,6 @@ class OSSLegComponentGuide(OSSLegComponent):
         footToToe = toePosition.subtract(footPosition).unit()
 
         footTololeg = lolegPosition.subtract(footPosition).unit()
-
-        bone2Normal = footTololeg.cross(footToToe).unit()
-
-        bone2ZAxis = footToToe.cross(bone2Normal).unit()
 
         toeXfo = Xfo(self.toeCtrl.xfo)
         toeXfo.aimAt(aimPos=self.toeTipCtrl.xfo.tr, upPos=self.lolegCtrl.xfo.tr, aimAxis=boneAxis, upAxis=upAxis)
@@ -396,10 +387,6 @@ class OSSLegComponentRig(OSSLegComponent):
 
 
 
-
-        # Rig Ref objects
-        self.footRefSrt = Locator('footRef', parent=self.ctrlCmpGrp)
-
         # Add Component Params to IK control
         footSettingsAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.footCtrl)
         footLinkToWorldInputAttr = ScalarAttribute('linkToWorld', 1.0, maxValue=1.0, parent=footSettingsAttrGrp)
@@ -412,7 +399,6 @@ class OSSLegComponentRig(OSSLegComponent):
         legIKBlendInputAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
         legMocapInputAttr = ScalarAttribute('legMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
         footMocapInputAttr = ScalarAttribute('footMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
-        parentIndexInputAttr = ScalarAttribute('parentIndex', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
         footIKInputAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
         #legSoftIKInputAttr = BoolAttribute('softIK', value=True, parent=legSettingsAttrGrp)
         legSoftDistInputAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=legSettingsAttrGrp)
@@ -528,7 +514,7 @@ class OSSLegComponentRig(OSSLegComponent):
         #self.legEndXfo_cmpOut = self.createOutput('legEndXfo', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.footRockerFoot_out = Locator('footRockerFoot_out', parent=self.outputHrcGrp)
         self.footRockerToe_out = Locator('footRockerToe_out', parent=self.outputHrcGrp)
-        self.footRockerKLOp.setOutput('ikHandle', self.ikgoal_cmpOut)
+        self.footRockerKLOp.setOutput('ikGoal', self.ikgoal_cmpOut)
         self.footRockerKLOp.setOutput('footJoint', self.footRockerFoot_out)
         self.footRockerKLOp.setOutput('toeJoint', self.footRockerToe_out)
 

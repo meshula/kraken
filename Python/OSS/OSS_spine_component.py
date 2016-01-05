@@ -366,7 +366,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
             spineDef.setComponent(self)
             self.deformerJoints.append(spineDef)
 
-        if hasattr(self, 'ZSplineSpineCanvasOp'):
+        if hasattr(self, 'ZSplineSpineCanvasOp'):  # Check in case this is ever called from Guide callback
             self.ZSplineSpineCanvasOp.setInput('numDeformers',  numDeformers)
 
         return True
@@ -426,8 +426,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Evaluate Splice Ops
         # ====================
         # evaluate the spine op so that all the output transforms are updated.
-        print("TTPrint: self.ZSplineSpineCanvasOp.inputs:"),
-        print(self.ZSplineSpineCanvasOp.inputs)
         self.ZSplineSpineCanvasOp.evaluate()
 
         # evaluate the constraint op so that all the joint transforms are updated.

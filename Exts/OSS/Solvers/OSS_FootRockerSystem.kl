@@ -36,7 +36,7 @@ function KrakenSolverArg[] OSS_FootRockerSystem.getArguments(){
   args.push(KrakenSolverArg('outerPivotLoc', 'In', 'Mat44'));
   args.push(KrakenSolverArg('footJoint', 'Out', 'Mat44'));
   args.push(KrakenSolverArg('toeJoint', 'Out', 'Mat44'));
-  args.push(KrakenSolverArg('ikHandle', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('ikGoal', 'Out', 'Mat44'));
 
   return args;
 }
@@ -79,10 +79,10 @@ function OSS_FootRockerSystem.solve!
 
   io Mat44 footJoint,
   io Mat44 toeJoint,
-  io Mat44 ikHandle
+  io Mat44 ikGoal
 )
 {
-  
+
   Xfo ikCtrlXfo = Xfo(ikCtrl);
   Xfo heelPivotXfo = Xfo(heelPivot);
   Xfo ballPivotXfo = Xfo(ballPivot);
@@ -95,16 +95,16 @@ function OSS_FootRockerSystem.solve!
   Xfo outerPivotXfo = Xfo(outerPivotLoc);
 
   Scalar heelRotation = 0;
-  Scalar ballRotation = 0;  
-  Scalar toeRotation = 0; 
-  
+  Scalar ballRotation = 0;
+  Scalar toeRotation = 0;
+
   Xfo offsetRotationXfo;
   Xfo rotateOnPivotXfo;
 
  /*
   Quat offsetRotation = Quat(Euler(3.0 * footRocker, 0, 0));
   ikCtrlXfo.ori =  ikCtrlXfo.ori * offsetRotation;
-  ikHandle = ikCtrlXfo.toMat44();
+  ikGoal = ikCtrlXfo.toMat44();
 */
   heelRotation = footRocker;
 
@@ -131,7 +131,7 @@ function OSS_FootRockerSystem.solve!
     rotateOnPivotXfo = ballPivotXfo * offsetRotationXfo * ballPivotXfo.inverse();
     ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
     footXfo = rotateOnPivotXfo * footXfo;
- 
+
 
     if (toeRotation > 0) {
       offsetRotationXfo = Xfo(Quat(Euler(Math_degToRad(toeRotation), 0, 0)));
@@ -158,15 +158,15 @@ function OSS_FootRockerSystem.solve!
 
     ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
     footXfo = rotateOnPivotXfo * footXfo;
-    toeXfo = rotateOnPivotXfo * toeXfo;  
+    toeXfo = rotateOnPivotXfo * toeXfo;
   }
 
 
-  // can we just output the foot joint if it's always going to be the same loc as ikhandle?
-  ikHandle = ikCtrlXfo.toMat44();  
-  footJoint = footXfo.toMat44();  
-  toeJoint = toeXfo.toMat44();  
+  // can we just output the foot joint if it's always going to be the same loc as ikGoal?
+  ikGoal = ikCtrlXfo.toMat44();
+  footJoint = footXfo.toMat44();
+  toeJoint = toeXfo.toMat44();
 
-  
+
   this.setDebug(drawDebug);
 }
