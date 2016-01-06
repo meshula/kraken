@@ -36,7 +36,7 @@ class OSSSpineComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.spineMainSrtInputTgt = self.createInput('mainSrt', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.spineParentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.spineCogOutputTgt = self.createOutput('cog', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -286,8 +286,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.spineSrtInputConstraint = PoseConstraint('_'.join([self.cogCtrlSpace.getName(), 'To', self.spineMainSrtInputTgt.getName()]))
-        self.spineSrtInputConstraint.addConstrainer(self.spineMainSrtInputTgt)
+        self.spineSrtInputConstraint = PoseConstraint('_'.join([self.cogCtrlSpace.getName(), 'To', self.spineParentSpaceInputTgt.getName()]))
+        self.spineSrtInputConstraint.addConstrainer(self.spineParentSpaceInputTgt)
         self.spineSrtInputConstraint.setMaintainOffset(True)
         self.cogCtrlSpace.addConstraint(self.spineSrtInputConstraint)
 
