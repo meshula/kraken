@@ -40,7 +40,6 @@ class OSSFootComponent(BaseExampleComponent):
         # Declare Inputs Xfos
         self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.footSpaceInputTgt = self.createInput('footSpaceInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.ikGoalRefInputTgt = self.createInput('ikGoalRefInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.foot_cmpOut = self.createOutput('foot', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -83,6 +82,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         self.innerPivotCtrl = Control('innerPivot', parent=self.ctrlCmpGrp, shape="sphere")
         self.outerPivotCtrl = Control('outerPivot', parent=self.ctrlCmpGrp, shape="sphere")
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
 
         if data is None:
             data = {
@@ -95,6 +95,7 @@ class OSSFootComponentGuide(OSSFootComponent):
                     "toeTipPivotXfo": Xfo(Vec3(1.85, 0.0, 1.5)),
                     "innerPivotXfo": Xfo(Vec3(1., 0.0, 0.25)),
                     "outerPivotXfo": Xfo(Vec3(2.67, 0.0, 0.25)),
+                    "handleXfo" : Xfo(Vec3(1.85, 0.0, -1.6)),
                     "globalComponentCtrlSize": 1.0
                    }
 
@@ -124,6 +125,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         data['toeTipPivotXfo'] = self.toeTipPivotCtrl.xfo
         data['innerPivotXfo'] = self.innerPivotCtrl.xfo
         data['outerPivotXfo'] = self.outerPivotCtrl.xfo
+        data['handleXfo'] = self.handleCtrl.xfo
 
         return data
 
@@ -155,6 +157,8 @@ class OSSFootComponentGuide(OSSFootComponent):
             self.innerPivotCtrl.xfo = data['innerPivotXfo']
         if "outerPivotXfo" in data.keys():
             self.outerPivotCtrl.xfo = data['outerPivotXfo']
+        if "handleXfo" in data.keys():
+            self.handleCtrl.xfo = data['handleXfo']
 
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
@@ -167,6 +171,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         self.toeTipPivotCtrl.scalePoints(globalScaleVec)
         self.innerPivotCtrl.scalePoints(globalScaleVec)
         self.outerPivotCtrl.scalePoints(globalScaleVec)
+        self.handleCtrl.scalePoints(globalScaleVec)
 
         return True
 
@@ -243,6 +248,8 @@ class OSSFootComponentGuide(OSSFootComponent):
         outerPivotXfo.ori = heelPivotXfo.ori
         toePivotXfo.ori = heelPivotXfo.ori
 
+        handleXfo = self.handleCtrl.xfo
+
         data['footXfo'] = footXfo
         data['toeXfo'] = toeXfo
         data['footLen'] = footLen
@@ -252,6 +259,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         data['toeTipPivotXfo'] = toeTipPivotXfo
         data['innerPivotXfo'] = innerPivotXfo
         data['outerPivotXfo'] = outerPivotXfo
+        data['handleXfo'] = handleXfo
 
         return data
 
@@ -293,6 +301,11 @@ class OSSFootComponentRig(OSSFootComponent):
         # =========
         # Controls
         # =========
+
+        # IK Handle
+        self.footIKCtrlSpace = CtrlSpace("footIK", parent=self.ctrlCmpGrp)
+        self.footIKCtrl = Control("footIK", parent=self.footIKCtrlSpace, shape="cross")
+
         # FK Foot
         self.footCtrlSpace = CtrlSpace('foot', parent=self.ctrlCmpGrp)
         self.footCtrl = Control('foot', parent=self.footCtrlSpace, shape="cube")
@@ -315,8 +328,6 @@ class OSSFootComponentRig(OSSFootComponent):
         self.toe_mocap.alignOnXAxis()
 
 
-
-
         # Rig Ref objects
 
         # Add Component Params to IK control
@@ -331,26 +342,26 @@ class OSSFootComponentRig(OSSFootComponent):
         self.drawDebugInputAttr.connect(footDrawDebugInputAttr)
 
 
-        self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.ikGoalRefInputTgt)
+        self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.footIKCtrl)
         self.ikGoalRefLocator.setShapeVisibility(False)
 
         # =========
         # Locators for foot pivot
         # =========
-        self.toeJointLocator = Locator('toeJoint', parent=self.ikGoalRefInputTgt)
+        self.toeJointLocator = Locator('toeJoint', parent=self.footIKCtrl)
         #self.toeJointLocator.setVisibility(False) # does not seem to work, but setShapeVisibility does
         self.toeJointLocator.setShapeVisibility(False)
-        self.footJointLocator = Locator('footJoint', parent=self.ikGoalRefInputTgt)
+        self.footJointLocator = Locator('footJoint', parent=self.footIKCtrl)
         self.footJointLocator.setShapeVisibility(False)
-        self.heelPivotLocator = Locator('heelPivot', parent=self.ikGoalRefInputTgt)
+        self.heelPivotLocator = Locator('heelPivot', parent=self.footIKCtrl)
         self.heelPivotLocator.setShapeVisibility(False)
-        self.toePivotLocator = Locator('toePivot', parent=self.ikGoalRefInputTgt)
+        self.toePivotLocator = Locator('toePivot', parent=self.footIKCtrl)
         self.toePivotLocator.setShapeVisibility(False)
-        self.toeTipPivotLocator = Locator('toeTipPivot', parent=self.ikGoalRefInputTgt)
+        self.toeTipPivotLocator = Locator('toeTipPivot', parent=self.footIKCtrl)
         self.toeTipPivotLocator.setShapeVisibility(False)
-        self.innerPivotLocator = Locator('innerPivot', parent=self.ikGoalRefInputTgt)
+        self.innerPivotLocator = Locator('innerPivot', parent=self.footIKCtrl)
         self.innerPivotLocator.setShapeVisibility(False)
-        self.outerPivotLocator = Locator('outerPivot', parent=self.ikGoalRefInputTgt)
+        self.outerPivotLocator = Locator('outerPivot', parent=self.footIKCtrl)
         self.outerPivotLocator.setShapeVisibility(False)
 
 
@@ -483,6 +494,9 @@ class OSSFootComponentRig(OSSFootComponent):
         boneAxis = axisStrToTupleMapping["NEGX"]
 
 
+        self.footIKCtrlSpace.xfo = data['handleXfo']
+        #self.footIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.toeCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
+        self.footIKCtrl.xfo = self.footIKCtrlSpace.xfo
 
         self.footCtrlSpace.xfo = data['footXfo']
         self.footCtrl.xfo = data['footXfo']
@@ -535,6 +549,17 @@ class OSSFootComponentRig(OSSFootComponent):
 
         self.footCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
         self.toeCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
+        self.footIKCtrl.scalePoints(globalScale)
+
+        """
+        footPlane = Control("TMP", shape="square")
+        footPlane.alignOnZAxis()
+        footPlane.scalePoints(Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], 1.0))
+        # Damn, can't get the foot length because it is on another component
+        # Can we do this with just inputs?  We'd have to guarantee that everything was in the correct pose first
+        #footPlane.scalePointsOnAxis(self.footIKCtrl.xfo.tr.subtract(self.toeTipPivotLocator.xfo.tr).length(), "POSZ")
+        self.footIKCtrl.appendCurveData(footPlane.getCurveData())
+        """
 
 
 from kraken.core.kraken_system import KrakenSystem

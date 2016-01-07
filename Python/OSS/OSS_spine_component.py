@@ -218,9 +218,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # =========
         # Controls
         # =========
-        # COG
-        print self.ctrlCmpGrp
 
+        # COG
         self.cogCtrlSpace = CtrlSpace('cog', parent=self.ctrlCmpGrp)
         self.cogCtrl = Control('cog', parent=self.cogCtrlSpace, shape="circle")
         self.cogCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))

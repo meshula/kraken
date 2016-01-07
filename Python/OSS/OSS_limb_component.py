@@ -39,18 +39,14 @@ class OSSLimbComponent(BaseExampleComponent):
         # ===========
         # Declare Inputs Xfos
         self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.legPelvisInputTgt = self.createInput('pelvisInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        # This is the actual ik goal as offset by another component like the foot
-        self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.ikgoalRef_cmpOut = self.createOutput('ikgoalRef', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        # If the useOtherIKGoalInput is True, this will be actual ik goal as offset by another component like the foot
+        self.ikgoal_cmpIn = None
 
         # Declare Output Xfos
-        self.upleg_cmpOut = self.createOutput('upleg', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.loleg_cmpOut = self.createOutput('loleg', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.ankle_cmpOut = self.createOutput('ankle', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        # Not sure how to deal with this, if we don't want another component like the foot to offset the ik goal,
-        # then can we just connect this output to its own input.  It actually would not create a cycle in the real graph
-        # don't think we can make default connections like this right now anyways
+        self.uplimb_cmpOut = self.createOutput('uplimb', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.lolimb_cmpOut = self.createOutput('lolimb', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.endlimb_cmpOut = self.createOutput('endlimb', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.ikgoal_cmpOut = self.createOutput('ikgoal', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
@@ -70,7 +66,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
     def __init__(self, name='limb', parent=None, data=None):
 
-        Profiler.getInstance().push("Construct Leg Guide Component:" + name)
+        Profiler.getInstance().push("Construct Limb Guide Component:" + name)
         super(OSSLimbComponentGuide, self).__init__(name, parent)
 
 
@@ -81,34 +77,35 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
 
         # Guide Controls
-        self.uplegCtrl = Control('upleg', parent=self.ctrlCmpGrp, shape="sphere")
-        self.lolegCtrl = Control('loleg', parent=self.ctrlCmpGrp, shape="sphere")
-        self.ankleCtrl = Control('ankle', parent=self.ctrlCmpGrp, shape="sphere")
+        self.uplimbCtrl = Control('uplimb', parent=self.ctrlCmpGrp, shape="sphere")
+        self.lolimbCtrl = Control('lolimb', parent=self.ctrlCmpGrp, shape="sphere")
+        self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
 
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
-        self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=False, parent=guideSettingsAttrGrp)
+        self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=guideSettingsAttrGrp)
+        self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=guideSettingsAttrGrp)
+        self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=guideSettingsAttrGrp)
+
+        self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=guideSettingsAttrGrp)
+        self.useOtherIKGoalInput.setValueChangeCallback(self.updateUseOtherIKGoal)
 
 
         if data is None:
             data = {
                     "name": name,
                     "location": "L",
-                    "uplegXfo": Xfo(Vec3(0.9811, 9.769, -0.4572)),
-                    "lolegXfo": Xfo(Vec3(1.4488, 5.4418, -0.5348)),
-                    "ankleXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
-                    "useOtherIKGoalInput": 0,
+                    "uplimbXfo": Xfo(Vec3(0.9811, 9.769, -0.4572)),
+                    "lolimbXfo": Xfo(Vec3(1.4488, 5.4418, -0.5348)),
+                    "handleXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
+                    "useOtherIKGoalInput": 1,
+                    "uplimbName": "uplimb",
+                    "lolimbName": "lolimb",
+                    "ikHandleName": "limbIK",
                     "globalComponentCtrlSize": 1.0,
                    }
 
         self.loadData(data)
-
-        """
-        Possible way to change the inputs/outputs based on component settings.  Need to change rig.py _makeConnections not raise
-        an exception, though.  Not sure it should raise an exception anyway.....
-        if not self.useOtherIKGoalInput.getValue():
-            self.removeOutputByName('ikgoalRef')
-        """
 
         Profiler.getInstance().pop()
 
@@ -127,9 +124,10 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
         data = super(OSSLimbComponentGuide, self).saveData()
 
-        data['uplegXfo'] = self.uplegCtrl.xfo
-        data['lolegXfo'] = self.lolegCtrl.xfo
-        data['ankleXfo'] = self.ankleCtrl.xfo
+        data['uplimbXfo'] = self.uplimbCtrl.xfo
+        data['lolimbXfo'] = self.lolimbCtrl.xfo
+        data['handleXfo'] = self.handleCtrl.xfo
+
         return data
 
 
@@ -146,22 +144,45 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
         super(OSSLimbComponentGuide, self).loadData( data )
 
-
-        if "uplegXfo" in data.keys():
-            self.uplegCtrl.xfo = data['uplegXfo']
-        if "lolegXfo" in data.keys():
-            self.lolegCtrl.xfo = data['lolegXfo']
-        if "ankleXfo" in data.keys():
-            self.ankleCtrl.xfo = data['ankleXfo']
+        if "uplimbXfo" in data.keys():
+            self.uplimbCtrl.xfo = data['uplimbXfo']
+        if "lolimbXfo" in data.keys():
+            self.lolimbCtrl.xfo = data['lolimbXfo']
+        if "handleXfo" in data.keys():
+            self.handleCtrl.xfo = data['handleXfo']
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
 
-        self.uplegCtrl.scalePoints(globalScaleVec)
-        self.lolegCtrl.scalePoints(globalScaleVec)
-        self.ankleCtrl.scalePoints(globalScaleVec)
+        self.uplimbCtrl.scalePoints(globalScaleVec)
+        self.lolimbCtrl.scalePoints(globalScaleVec)
+        self.handleCtrl.scalePoints(globalScaleVec)
+
+        if "uplimbName" in data.keys():
+            self.uplimbCtrl.setName(data['uplimbName'])
+        if "lolimbName" in data.keys():
+            self.lolimbCtrl.setName(data['lolimbName'])
+        if "ikHandleName" in data.keys():
+            self.handleCtrl.setName(data['ikHandleName'])
+
+        if "useOtherIKGoalInput" in data.keys():
+            self.updateUseOtherIKGoal(data["useOtherIKGoalInput"])
 
         return True
+
+
+    def updateUseOtherIKGoal(self, useOtherIKGoal):
+        """ Callback to changing the component setting 'useOtherIKGoalInput' """
+
+        if useOtherIKGoal:
+            if self.ikgoal_cmpIn is None:
+                self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        else:
+            if self.ikgoal_cmpIn is not None:
+                self.removeInputByName('ikGoalInput')
+                self.ikgoal_cmpIn = None
+
+
 
 
 
@@ -187,51 +208,42 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
 
         # Values
-        uplegPosition = self.uplegCtrl.xfo.tr
-        lolegPosition = self.lolegCtrl.xfo.tr
-        anklePosition = self.ankleCtrl.xfo.tr
+        uplimbPosition = self.uplimbCtrl.xfo.tr
+        lolimbPosition = self.lolimbCtrl.xfo.tr
+        handlePosition = self.handleCtrl.xfo.tr
 
-        # Calculate Upleg Xfo
-        uplegXfo = Xfo(self.uplegCtrl.xfo)
-        # upAxis neg Y assumes the loleg is bent forward.  To avoid this stuff, build a guide system with an actual upVector
+        # Calculate uplimb Xfo
+        uplimbXfo = Xfo(self.uplimbCtrl.xfo)
+        # upAxis neg Y assumes the lolimb is bent forward.  To avoid this stuff, build a guide system with an actual upVector
         # to get rid of any ambiguity
-        #uplegXfo.aimAt(self.lolegCtrl.xfo.tr, upPos=self.ankleCtrl.xfo.tr, aimAxis=boneAxis, upAxis=upAxis.negate())
-        uplegXfo.aimAt(aimPos=self.lolegCtrl.xfo.tr, upPos=self.ankleCtrl.xfo.tr, aimAxis=boneAxis, upAxis=tuple([-x for x in upAxis]))
+        #uplimbXfo.aimAt(self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=boneAxis, upAxis=upAxis.negate())
+        uplimbXfo.aimAt(aimPos=self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=boneAxis, upAxis=tuple([-x for x in upAxis]))
 
 
-        # Calculate loleg Xfo
-        lolegXfo = Xfo(self.lolegCtrl.xfo)
-        # upAxis neg Y assumes the loleg is bent forward.  To avoid this stuff, build a guide system with an actual upVector
+        # Calculate lolimb Xfo
+        lolimbXfo = Xfo(self.lolimbCtrl.xfo)
+        # upAxis neg Y assumes the lolimb is bent forward.  To avoid this stuff, build a guide system with an actual upVector
         # to get rid of any ambiguity
-        #lolegXfo.aimAt(self.toeCtrl.xfo.tr, upPos=self.uplegCtrl.xfo.tr, aimAxis=boneAxis, upAxis=upAxis.negate())
-        lolegXfo.aimAt(aimPos=self.ankleCtrl.xfo.tr, upPos=self.uplegCtrl.xfo.tr, aimAxis=boneAxis, upAxis=tuple([-x for x in upAxis]))
+        #lolimbXfo.aimAt(self.toeCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=boneAxis, upAxis=upAxis.negate())
+        lolimbXfo.aimAt(aimPos=self.handleCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=boneAxis, upAxis=tuple([-x for x in upAxis]))
 
         # Get lengths
-        uplegLen = uplegPosition.subtract(lolegPosition).length()
-        lolegLen = lolegPosition.subtract(anklePosition).length()
+        uplimbLen = uplimbPosition.subtract(lolimbPosition).length()
+        lolimbLen = lolimbPosition.subtract(handlePosition).length()
 
-        handleXfo = Xfo()
-        handleXfo.tr = anklePosition
-
-        ankleXfo = Xfo()
-        ankleXfo.tr = anklePosition
-        # ankleXfo.ori = lolegXfo.ori
-
+        handleXfo = self.handleCtrl.xfo
 
         upVXfo = Xfo()
-        offset = [x * uplegLen * 2 for x in upAxis]
+        offset = [x * uplimbLen * 2 for x in upAxis]
 
-        upVXfo.tr = lolegXfo.transformVector(Vec3(offset[0], offset[1], offset[2]))
+        upVXfo.tr = lolimbXfo.transformVector(Vec3(offset[0], offset[1], offset[2]))
 
-
-
-        data['uplegXfo'] = uplegXfo
-        data['lolegXfo'] = lolegXfo
+        data['uplimbXfo'] = uplimbXfo
+        data['lolimbXfo'] = lolimbXfo
         data['handleXfo'] = handleXfo
-        data['ankleXfo'] = ankleXfo
         data['upVXfo'] = upVXfo
-        data['uplegLen'] = uplegLen
-        data['lolegLen'] = lolegLen
+        data['uplimbLen'] = uplimbLen
+        data['lolimbLen'] = lolimbLen
 
         return data
 
@@ -264,72 +276,87 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 class OSSLimbComponentRig(OSSLimbComponent):
     """Limb Component"""
 
-    def __init__(self, name='leg', parent=None):
+    def __init__(self, name='limb', parent=None):
 
-        Profiler.getInstance().push("Construct Leg Rig Component:" + name)
+        Profiler.getInstance().push("Construct Limb Rig Component:" + name)
         super(OSSLimbComponentRig, self).__init__(name, parent)
 
+
+    def createControls(self, data):
+
+        name = data["name"]
+        uplimbName = data['uplimbName']
+        lolimbName = data['lolimbName']
+        ikHandleName = data['ikHandleName']
+
+        self.useOtherIKGoal = data['useOtherIKGoal']
+        if self.useOtherIKGoal:
+            self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # =========
         # Controls
         # =========
-        # upleg
-        self.uplegFKCtrlSpace = CtrlSpace('upleg', parent=self.ctrlCmpGrp)
-        self.uplegFKCtrl = Control('upleg', parent=self.uplegFKCtrlSpace, shape="cube")
-        #self.setCurveData
-        self.uplegFKCtrl.alignOnXAxis()
+        # uplimb
+        self.uplimbFKCtrlSpace = CtrlSpace(uplimbName, parent=self.ctrlCmpGrp)
+        self.uplimbFKCtrl = Control(uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
+        self.uplimbFKCtrl.alignOnXAxis()
 
-        # loleg
-        self.lolegFKCtrlSpace = CtrlSpace('loleg', parent=self.uplegFKCtrl)
-        self.lolegFKCtrl = Control('loleg', parent=self.lolegFKCtrlSpace, shape="cube")
-        self.lolegFKCtrl.alignOnXAxis()
+        # lolimb
+        self.lolimbFKCtrlSpace = CtrlSpace(lolimbName, parent=self.uplimbFKCtrl)
+        self.lolimbFKCtrl = Control(lolimbName, parent=self.lolimbFKCtrlSpace, shape="cube")
+        self.lolimbFKCtrl.alignOnXAxis()
 
-        # Ankle
-        self.legIKCtrlSpace = CtrlSpace('footIK', parent=self.ctrlCmpGrp)
-        self.legIKCtrl = Control('footIK', parent=self.legIKCtrlSpace, shape="cross")
+        # handle
+        self.limbIKCtrlSpace = CtrlSpace(ikHandleName, parent=self.ctrlCmpGrp)
+        if self.useOtherIKGoal: #Do not use this as a control, hide it
+            self.limbIKCtrl = Locator(uplimbName, parent=self.limbIKCtrlSpace)
+        else:
+            self.limbIKCtrl = Control(uplimbName, parent=self.limbIKCtrlSpace, shape="cross")
 
         # =========
         # Mocap
         # =========
-        # Mocap upleg
-        self.upleg_mocap = Control('upleg_mocap', parent=self.uplegFKCtrlSpace, shape="cube")
-        self.upleg_mocap.alignOnXAxis()
-        # Mocap loleg
-        self.loleg_mocapSpace = CtrlSpace('loleg_mocap', parent=self.upleg_mocap)
-        self.loleg_mocap = Control('loleg_mocap', parent=self.loleg_mocapSpace, shape="cube")
-        self.loleg_mocap.alignOnXAxis()
-        # Mocap Ankle
-        self.legend_mocapSpace = CtrlSpace('legend_mocap', parent=self.loleg_mocap)
-        self.legend_mocap = Locator('legend_mocap', parent=self.legend_mocapSpace)
+        # Mocap uplimb
+        self.uplimb_mocap = Control(uplimbName+'_mocap', parent=self.uplimbFKCtrlSpace, shape="cube")
+        self.uplimb_mocap.alignOnXAxis()
+        # Mocap lolimb
+        self.lolimb_mocapSpace = CtrlSpace(lolimbName+'_mocap', parent=self.uplimb_mocap)
+        self.lolimb_mocap = Control(lolimbName+'_mocap', parent=self.lolimb_mocapSpace, shape="cube")
+        self.lolimb_mocap.alignOnXAxis()
+        # Mocap handle
+        self.endlimb_mocapSpace = CtrlSpace(name+'end_mocap', parent=self.lolimb_mocap)
+        self.endlimb_mocap = Locator(name+'end_mocap', parent=self.endlimb_mocapSpace)
 
 
         # Add Component Params to IK control
-        legSettingsAttrGrp = AttributeGroup("DisplayInfo_LegSettings", parent=self.legIKCtrl)
-        legDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=legSettingsAttrGrp)
-        self.legBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=legSettingsAttrGrp)
-        self.legBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=legSettingsAttrGrp)
-        legIKBlendInputAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
-        legMocapInputAttr = ScalarAttribute('legMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
-        footMocapInputAttr = ScalarAttribute('footMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
-        footIKInputAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
-        #legSoftIKInputAttr = BoolAttribute('softIK', value=True, parent=legSettingsAttrGrp)
-        legSoftDistInputAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=legSettingsAttrGrp)
-        legStretchBlendInputAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
-        footRockerInputAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=legSettingsAttrGrp)
-        ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=legSettingsAttrGrp)
-        footTiltInputAttr = ScalarAttribute('footTilt', value=0.0, minValue=-180, maxValue=180.0, parent=legSettingsAttrGrp)
+        limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.limbIKCtrl)
+        limbDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=limbSettingsAttrGrp)
+        self.limbBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=limbSettingsAttrGrp)
+        self.limbBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=limbSettingsAttrGrp)
+        limbIKBlendInputAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+        limbMocapInputAttr = ScalarAttribute(lolimbName+'Mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+        ikHandleInputAttr = ScalarAttribute(ikHandleName, value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+        #limbSoftIKInputAttr = BoolAttribute('softIK', value=True, parent=limbSettingsAttrGrp)
+        limbSoftDistInputAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
+        limbStretchBlendInputAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
 
-        self.drawDebugInputAttr.connect(legDrawDebugInputAttr)
+
+        self.drawDebugInputAttr.connect(limbDrawDebugInputAttr)
 
         # UpV
-        self.legUpVCtrlSpace = CtrlSpace('legUpV', parent=self.ctrlCmpGrp)
-        self.legUpVCtrl = Control('legUpV', parent=self.legUpVCtrlSpace, shape="triangle")
-        self.legUpVCtrl.alignOnZAxis()
-        self.legUpVCtrlMasterSpace = CtrlSpace('legIKMaster', parent=self.globalSRTInputTgt)
-        self.legUpVCtrlIKSpace = CtrlSpace('legUpVIK', parent=self.legIKCtrl)
+        self.limbUpVCtrlSpace = CtrlSpace(name+'UpV', parent=self.ctrlCmpGrp)
+        self.limbUpVCtrl = Control(name+'UpV', parent=self.limbUpVCtrlSpace, shape="triangle")
+        self.limbUpVCtrl.alignOnZAxis()
 
-        upVAttrGrp = AttributeGroup("UpVAttrs", parent=self.legUpVCtrl)
-        upVSpaceBlendInputAttr = ScalarAttribute('IKFootSpace', value=0.0, minValue=0.0, maxValue=1.0, parent=upVAttrGrp)
+        self.limbUpVCtrlMasterSpace = CtrlSpace(name+'IKMaster', parent=self.globalSRTInputTgt)
+
+        parent = self.limbIKCtrl
+        if self.useOtherIKGoal:
+            parent = self.ikgoal_cmpIn
+        self.limbUpVCtrlIKSpace = CtrlSpace(name+'UpVIK', parent=parent)
+
+        upVAttrGrp = AttributeGroup("UpVAttrs", parent=self.limbUpVCtrl)
+        upVSpaceBlendInputAttr = ScalarAttribute(ikHandleName+'Space', value=0.0, minValue=0.0, maxValue=1.0, parent=upVAttrGrp)
 
 
 
@@ -339,40 +366,38 @@ class OSSLimbComponentRig(OSSLimbComponent):
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
 
-        self.uplegDef = Joint('upleg', parent=self.defCmpGrp)
-        self.uplegDef.setComponent(self)
+        self.uplimbDef = Joint(uplimbName, parent=self.defCmpGrp)
+        self.uplimbDef.setComponent(self)
 
-        self.lolegDef = Joint('loleg', parent=self.defCmpGrp)
-        self.lolegDef.setComponent(self)
+        self.lolimbDef = Joint(lolimbName, parent=self.defCmpGrp)
+        self.lolimbDef.setComponent(self)
 
-        self.ankleDef = Joint('ankle', parent=self.defCmpGrp)
-        self.ankleDef.setComponent(self)
+        self.limbendDef = Joint(name+'end', parent=self.defCmpGrp)
+        self.limbendDef.setComponent(self)
 
 
         # ==============
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.legIKCtrlSpaceInputConstraint = self.legIKCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
-        self.legRootInputConstraint = self.uplegFKCtrlSpace.constrainTo(self.legPelvisInputTgt, maintainOffset=True)
-        self.ikGoalRefInputConstraint = self.ikgoalRef_cmpOut.constrainTo(self.legIKCtrl, maintainOffset=True)
-
+        self.limbIKCtrlSpaceInputConstraint = self.limbIKCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
+        self.parentSpaceInputConstraint = self.uplimbFKCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
 
         # Blend the Spaces (should make this a sub proc)
-        self.legUpVSpaceHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'UpVSpace_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.legUpVSpaceHierBlendSolver)
-        self.legUpVSpaceHierBlendSolver.setInput('blend', upVSpaceBlendInputAttr)
+        self.limbUpVSpaceHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'UpVSpace_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+        self.addOperator(self.limbUpVSpaceHierBlendSolver)
+        self.limbUpVSpaceHierBlendSolver.setInput('blend', upVSpaceBlendInputAttr)
         upVSpaceBlendInputAttr.setValue(0.5)
-        self.legUpVSpaceHierBlendSolver.setInput('parentIndexes', [-1])
+        self.limbUpVSpaceHierBlendSolver.setInput('parentIndexes', [-1])
         # Add Att Inputs
-        self.legUpVSpaceHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-        self.legUpVSpaceHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+        self.limbUpVSpaceHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        self.limbUpVSpaceHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.legUpVSpaceHierBlendSolver.setInput('hierA', [self.legUpVCtrlMasterSpace])
-        self.legUpVSpaceHierBlendSolver.setInput('hierB', [self.legUpVCtrlIKSpace])
+        self.limbUpVSpaceHierBlendSolver.setInput('hierA', [self.limbUpVCtrlMasterSpace])
+        self.limbUpVSpaceHierBlendSolver.setInput('hierB', [self.limbUpVCtrlIKSpace])
         # Add Xfo Outputs
-        self.legUpVSpaceHierBlendSolver.setOutput('hierOut', [self.legUpVCtrlSpace])
+        self.limbUpVSpaceHierBlendSolver.setOutput('hierOut', [self.limbUpVCtrlSpace])
 
 
 
@@ -381,47 +406,51 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # ===============
 
 
-        # Add FK/IK Blend Leg KL Op
-        self.legIKKLOp = KLOperator(self.getLocation()+self.getName()+'IKFKTwoBoneIKSolver', 'OSS_TwoBoneIKSolver', 'OSS_Kraken')
-        self.addOperator(self.legIKKLOp)
+        # Add FK/IK Blend Limb KL Op
+        self.limbIKKLOp = KLOperator(self.getLocation()+self.getName()+'IKFKTwoBoneIKSolver', 'OSS_TwoBoneIKSolver', 'OSS_Kraken')
+        self.addOperator(self.limbIKKLOp)
         # Add Att Inputs
-        self.legIKKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.legIKKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.legIKKLOp.setInput('bone0Len', self.legBone0LenInputAttr)
-        self.legIKKLOp.setInput('bone1Len', self.legBone1LenInputAttr)
-        self.legIKKLOp.setInput('ikBlend', legIKBlendInputAttr)
-        #self.legIKKLOp.setInput('Mocap', legMocapInputAttr)
-        self.legIKKLOp.setInput('softDist', legSoftDistInputAttr)
-        self.legIKKLOp.setInput('stretch', legStretchBlendInputAttr)
-        self.legIKKLOp.setInput('rightSide', self.rightSideInputAttr)
+        self.limbIKKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.limbIKKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.limbIKKLOp.setInput('bone0Len', self.limbBone0LenInputAttr)
+        self.limbIKKLOp.setInput('bone1Len', self.limbBone1LenInputAttr)
+        self.limbIKKLOp.setInput('ikBlend', limbIKBlendInputAttr)
+        self.limbIKKLOp.setInput('softDist', limbSoftDistInputAttr)
+        self.limbIKKLOp.setInput('stretch', limbStretchBlendInputAttr)
+        self.limbIKKLOp.setInput('rightSide', self.rightSideInputAttr)
         # Add Xfo Inputs
-        self.legIKKLOp.setInput('root', self.legPelvisInputTgt)
-        self.legIKKLOp.setInput('bone0FK', self.uplegFKCtrl)
-        self.legIKKLOp.setInput('bone1FK', self.lolegFKCtrl)
-        self.legIKKLOp.setInput('ikHandle', self.ikgoal_cmpIn)
-        self.legIKKLOp.setInput('upV', self.legUpVCtrl)
+        self.limbIKKLOp.setInput('root', self.parentSpaceInputTgt)
+        self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl)
+        self.limbIKKLOp.setInput('bone1FK', self.lolimbFKCtrl)
+        self.limbIKKLOp.setInput('upV', self.limbUpVCtrl)
+
+        if self.ikgoal_cmpIn:
+           self.limbIKKLOp.setInput('ikHandle', self.ikgoal_cmpIn)
+        else:
+            self.limbIKKLOp.setInput('ikHandle', self.limbIKCtrl)
+
         # Add Xfo Outputs
-        self.legIKKLOp_bone0_out = Locator('legIKKLOp_bone0_out', parent=self.outputHrcGrp)
-        self.legIKKLOp_bone1_out = Locator('legIKKLOp_bone1_out', parent=self.outputHrcGrp)
-        self.legIKKLOp_bone2_out = Locator('legIKKLOp_bone2_out', parent=self.outputHrcGrp)
-        self.legIKKLOp.setOutput('bone0Out', self.legIKKLOp_bone0_out)
-        self.legIKKLOp.setOutput('bone1Out', self.legIKKLOp_bone1_out)
-        self.legIKKLOp.setOutput('bone2Out', self.legIKKLOp_bone2_out)
+        self.limbIKKLOp_bone0_out = Locator('limbIKKLOp_bone0_out', parent=self.outputHrcGrp)
+        self.limbIKKLOp_bone1_out = Locator('limbIKKLOp_bone1_out', parent=self.outputHrcGrp)
+        self.limbIKKLOp_bone2_out = Locator('limbIKKLOp_bone2_out', parent=self.outputHrcGrp)
+        self.limbIKKLOp.setOutput('bone0Out', self.limbIKKLOp_bone0_out)
+        self.limbIKKLOp.setOutput('bone1Out', self.limbIKKLOp_bone1_out)
+        self.limbIKKLOp.setOutput('bone2Out', self.limbIKKLOp_bone2_out)
 
 
-        # Add Leg HierBlend Solver for Mocap
-        self.legMocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'legMocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.legMocapHierBlendSolver)
-        self.legMocapHierBlendSolver.setInput('blend', legMocapInputAttr)
-        self.legMocapHierBlendSolver.setInput('parentIndexes', [-1, 0, 1])
+        # Add Limb HierBlend Solver for Mocap
+        self.limbMocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'limbMocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+        self.addOperator(self.limbMocapHierBlendSolver)
+        self.limbMocapHierBlendSolver.setInput('blend', limbMocapInputAttr)
+        self.limbMocapHierBlendSolver.setInput('parentIndexes', [-1, 0, 1])
         # Add Att Inputs
-        self.legMocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-        self.legMocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+        self.limbMocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        self.limbMocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.legMocapHierBlendSolver.setInput('hierA', [self.legIKKLOp_bone0_out, self.legIKKLOp_bone1_out, self.legIKKLOp_bone2_out])
-        self.legMocapHierBlendSolver.setInput('hierB', [self.upleg_mocap, self.loleg_mocap, self.legend_mocap])
+        self.limbMocapHierBlendSolver.setInput('hierA', [self.limbIKKLOp_bone0_out, self.limbIKKLOp_bone1_out, self.limbIKKLOp_bone2_out])
+        self.limbMocapHierBlendSolver.setInput('hierB', [self.uplimb_mocap, self.lolimb_mocap, self.endlimb_mocap])
         # Add Xfo Outputs
-        self.legMocapHierBlendSolver.setOutput('hierOut', [self.upleg_cmpOut, self.loleg_cmpOut, self.ankle_cmpOut])
+        self.limbMocapHierBlendSolver.setOutput('hierOut', [self.uplimb_cmpOut, self.lolimb_cmpOut, self.endlimb_cmpOut])
 
 
         # Add Deformer Joint Constrain
@@ -431,9 +460,9 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.outputsToDeformersKLOp.setInput('constrainers', [self.upleg_cmpOut, self.loleg_cmpOut, self.ankle_cmpOut])
+        self.outputsToDeformersKLOp.setInput('constrainers', [self.uplimb_cmpOut, self.lolimb_cmpOut, self.endlimb_cmpOut])
         # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [self.uplegDef, self.lolegDef, self.ankleDef])
+        self.outputsToDeformersKLOp.setOutput('constrainees', [self.uplimbDef, self.lolimbDef, self.limbendDef])
 
 
 
@@ -455,6 +484,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         super(OSSLimbComponentRig, self).loadData( data )
 
+        self.createControls(data)
 
         # TODO: make this a property of the component
         boneAxisStr = "POSX"
@@ -463,68 +493,65 @@ class OSSLimbComponentRig(OSSLimbComponent):
         boneAxis = axisStrToTupleMapping["NEGX"]
 
 
-        #Upleg
-        self.uplegFKCtrlSpace.xfo = data['uplegXfo']
-        self.uplegFKCtrl.xfo = data['uplegXfo']
-        self.uplegFKCtrl.scalePointsOnAxis(data['uplegLen'], boneAxisStr)
+        #uplimb
+        self.uplimbFKCtrlSpace.xfo = data['uplimbXfo']
+        self.uplimbFKCtrl.xfo = data['uplimbXfo']
+        self.uplimbFKCtrl.scalePointsOnAxis(data['uplimbLen'], boneAxisStr)
 
-        self.upleg_cmpOut.xfo = data['uplegXfo']
-        self.loleg_cmpOut.xfo = data['lolegXfo']
-        self.ikgoal_cmpOut.xfo = data['ankleXfo']
-        self.ikgoal_cmpIn.xfo = data['ankleXfo']
+        self.uplimb_cmpOut.xfo = data['uplimbXfo']
+        self.lolimb_cmpOut.xfo = data['lolimbXfo']
+        self.ikgoal_cmpOut.xfo = data['handleXfo']
+        if self.ikgoal_cmpIn:
+            self.ikgoal_cmpIn.xfo = data['handleXfo']
 
-        # Loleg
-        self.lolegFKCtrlSpace.xfo = data['lolegXfo']
-        self.lolegFKCtrl.xfo = data['lolegXfo']
-        self.lolegFKCtrl.scalePointsOnAxis(data['lolegLen'], boneAxisStr)
+        # lolimb
+        self.lolimbFKCtrlSpace.xfo = data['lolimbXfo']
+        self.lolimbFKCtrl.xfo = data['lolimbXfo']
+        self.lolimbFKCtrl.scalePointsOnAxis(data['lolimbLen'], boneAxisStr)
 
-        self.upleg_mocap.xfo = data['uplegXfo']
-        self.upleg_mocap.scalePointsOnAxis(data['uplegLen'], boneAxisStr)
+        self.uplimb_mocap.xfo = data['uplimbXfo']
+        self.uplimb_mocap.scalePointsOnAxis(data['uplimbLen'], boneAxisStr)
 
-        self.loleg_mocapSpace.xfo = data['lolegXfo']
-        self.loleg_mocap.xfo = data['lolegXfo']
-        self.loleg_mocap.scalePointsOnAxis(data['lolegLen'], boneAxisStr)
+        self.lolimb_mocapSpace.xfo = data['lolimbXfo']
+        self.lolimb_mocap.xfo = data['lolimbXfo']
+        self.lolimb_mocap.scalePointsOnAxis(data['lolimbLen'], boneAxisStr)
 
-        self.legend_mocapSpace.xfo = data['ankleXfo']
-        self.legend_mocap.xfo = data['ankleXfo']
-        self.legend_mocap.xfo.ori = self.loleg_mocap.xfo.ori
+        self.endlimb_mocapSpace.xfo = data['handleXfo']
+        self.endlimb_mocap.xfo = data['handleXfo']
+        self.endlimb_mocap.xfo.ori = self.lolimb_mocap.xfo.ori
 
-        #ACK, can't access the foot heel pivot guide to set the ik control pos and ori.  Damn
         #Until later when we have better guide rigs setups, assume world Y up and Z forward to toe
-        self.legIKCtrlSpace.xfo = data['ankleXfo']
-        #self.legIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.toeCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
-        self.legIKCtrl.xfo = self.legIKCtrlSpace.xfo
-        self.ikgoalRef_cmpOut.xfo = self.legIKCtrlSpace.xfo
-        #self.legIKTarget.xfo.tr = data['ankleXfo'].tr
+        self.limbIKCtrlSpace.xfo = data['handleXfo']
+        #self.limbIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.toeCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
+        self.limbIKCtrl.xfo = self.limbIKCtrlSpace.xfo
 
 
         if self.getLocation() == "R":
             pass
-            #self.legIKCtrl.rotatePoints(0, 90, 0)
-            #self.legIKCtrl.translatePoints(Vec3(-1.0, 0.0, 0.0))
+            #self.limbIKCtrl.rotatePoints(0, 90, 0)
+            #self.limbIKCtrl.translatePoints(Vec3(-1.0, 0.0, 0.0))
         else:
             pass
-            #self.legIKCtrl.rotatePoints(0, -90, 0)
-            #self.legIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
+            #self.limbIKCtrl.rotatePoints(0, -90, 0)
+            #self.limbIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
 
-        self.legUpVCtrlIKSpace.xfo = data['upVXfo']
-        self.legUpVCtrl.xfo = data['upVXfo']
-        self.legUpVCtrlMasterSpace.xfo = data['upVXfo']
+        self.limbUpVCtrlIKSpace.xfo = data['upVXfo']
+        self.limbUpVCtrl.xfo = data['upVXfo']
+        self.limbUpVCtrlMasterSpace.xfo = data['upVXfo']
 
         self.rightSideInputAttr.setValue(self.getLocation() == 'R')
-        self.legBone0LenInputAttr.setMin(0.0)
-        self.legBone0LenInputAttr.setMax(data['uplegLen'] * 3.0)
-        self.legBone0LenInputAttr.setValue(data['uplegLen'])
-        self.legBone1LenInputAttr.setMin(0.0)
-        self.legBone1LenInputAttr.setMax(data['lolegLen'] * 3.0)
-        self.legBone1LenInputAttr.setValue(data['lolegLen'])
+        self.limbBone0LenInputAttr.setMin(0.0)
+        self.limbBone0LenInputAttr.setMax(data['uplimbLen'] * 3.0)
+        self.limbBone0LenInputAttr.setValue(data['uplimbLen'])
+        self.limbBone1LenInputAttr.setMin(0.0)
+        self.limbBone1LenInputAttr.setMax(data['lolimbLen'] * 3.0)
+        self.limbBone1LenInputAttr.setValue(data['lolimbLen'])
 
-        self.legPelvisInputTgt.xfo = data['uplegXfo']
+        self.parentSpaceInputTgt.xfo = data['uplimbXfo']
 
         # Eval Constraints
-        self.legIKCtrlSpaceInputConstraint.evaluate()
-        self.legRootInputConstraint.evaluate()
-        self.ikGoalRefInputConstraint.evaluate()
+        self.limbIKCtrlSpaceInputConstraint.evaluate()
+        self.parentSpaceInputConstraint.evaluate()
 
         # Eval Operators
         self.evalOperators()
@@ -532,18 +559,11 @@ class OSSLimbComponentRig(OSSLimbComponent):
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
-        self.uplegFKCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
-        self.lolegFKCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
-        self.legIKCtrl.scalePoints(globalScale)
-        self.legUpVCtrl.scalePoints(globalScale)
-
-        footPlane = Control("TMP", shape="square")
-        footPlane.alignOnZAxis()
-        footPlane.scalePoints(Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], 1.0))
-        # Damn, can't get the foot length because it is on another component
-        # Can we do this with just inputs?  We'd have to guarantee that everything was in the correct pose first
-        #footPlane.scalePointsOnAxis(self.legIKCtrl.xfo.tr.subtract(self.toeTipPivotLocator.xfo.tr).length(), "POSZ")
-        self.legIKCtrl.appendCurveData(footPlane.getCurveData())
+        self.uplimbFKCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
+        self.lolimbFKCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
+        if not self.useOtherIKGoal:
+            self.limbIKCtrl.scalePoints(globalScale)
+        self.limbUpVCtrl.scalePoints(globalScale)
 
 
 
