@@ -27,7 +27,10 @@ class AttributeWidget(QtGui.QWidget):
 
     __registeredWidgets = []
 
-    def __init__(self, attribute, parentWidget=None, addNotificationListener = True):
+    def __init__(self, attribute, parentWidget=None, addNotificationListener=True):
+
+        self._component_inspector = parentWidget
+
         super(AttributeWidget, self).__init__(parentWidget)
 
         # self.setMinimumWidth(AttributeWidget.getPortWidgetMinWidth())
@@ -41,6 +44,7 @@ class AttributeWidget(QtGui.QWidget):
         self._updatingWidget = False
         self._firingSetter = False
         self.__interactionInProgress = False
+        self._component_inspector = parentWidget
 
         # self.__notificationListenerAdded = False
         # if addNotificationListener:
@@ -113,6 +117,11 @@ class AttributeWidget(QtGui.QWidget):
 
         if not interactionInProgress:
             self.endInteraction()
+
+        # Refresh graph display in case this changed input/outputs, etc.
+        # Probably should regenerate just this particular node instead of whole graph, but for now this works.
+        if self._component_inspector is not None:
+            self._component_inspector.parent.graphView.displayGraph(None)
 
     # def unregisterNotificationListener(self):
     #     """When the widget is being removed fromthe inspector, this method must be called to unregister the event handlers"""
