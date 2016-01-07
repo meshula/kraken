@@ -79,7 +79,7 @@ class Synchronizer(Synchronizer):
 
         if dccItem is None:
             log("Warning Syncing. No DCC Item for :" + kObject.getPath(), 8)
-            return
+            return False
 
         dccXfo = dccItem.Kinematics.Global.GetTransform2(None)
         dccPos = dccXfo.Translation.Get2()
@@ -107,6 +107,11 @@ class Synchronizer(Synchronizer):
             bool: True if successful.
 
         """
+
+        if kObject.getParent() is not None and kObject.getParent().__class__ is AttributeGroup:
+            if issubclass(kObject.getParent().getParent().__class__, Component):
+                if kObject.getParent().getParent().getComponentType() == "Guide":
+                    return False
 
         hrcMap = self.getHierarchyMap()
 
