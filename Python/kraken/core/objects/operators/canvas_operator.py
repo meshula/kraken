@@ -127,9 +127,6 @@ class CanvasOperator(Operator):
                     portVals.append(rtValArray)
                 else:
                     portVals.append(getRTVal(self.outputs[portName]))
-            print("TTPrint: portVals[-1]:"),
-            print(portVals[-1])
-
 
         host = ks.getCoreClient().DFG.host
         binding = host.createBindingToPreset(self.canvasPresetPath, portVals)
