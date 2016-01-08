@@ -37,7 +37,6 @@ class CanvasOperator(Operator):
                 portDataType = port['typeSpec']
             else:
                 portDataType = '$TYPE$'
-            print "portDataType:" + portName + ":" +portDataType
 
             if portConnectionType == 'In':
                 if portDataType.endswith('[]'):
