@@ -52,9 +52,9 @@ class OSSSpineComponent(BaseExampleComponent):
 
         # Declare Output Attrs
 
-
         # Use this color for OSS components (should maybe get this color from a central source eventually)
         self.setComponentColor(155, 155, 200, 255)
+
 
 class OSSSpineComponentGuide(OSSSpineComponent):
     """Spine Component Guide"""
@@ -255,12 +255,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # Neck
         self.neckCtrlSpace = CtrlSpace('neck', parent=self.upChestCtrl)
-
-
-
-        # self.neckCtrl = Control('neck', parent=self.upChestCtrl, shape="cube")
-        # self.neckCtrl.setColor("green")
-        # self.neckCtrl.scalePoints(Vec3(1, 1, 1))
 
         # ==========
         # Deformers
