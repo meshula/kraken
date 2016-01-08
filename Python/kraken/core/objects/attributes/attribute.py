@@ -64,7 +64,8 @@ class Attribute(SceneItem):
         # But this integrates UI into functionality.
         # Also, we do not want to recreate the whole graph, just this one node.  Don't leave this code like this.
         if self.getUpdateNode() and hasattr(self, "component_inspector"):
-            self.component_inspector.parent().graphView.displayGraph(None)
+            if self.component_inspector is not None:
+                self.component_inspector.parent().graphView.displayGraph(None)
 
         return True
 
