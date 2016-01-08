@@ -91,13 +91,6 @@ class BaseValueEditor(QtGui.QWidget):
 
         self._firingSetter  = False
 
-        # TT
-        # Refresh graph display in case this changed input/outputs, etc.
-        # Probably should regenerate just this particular node instead of whole graph
-        # Really, the node being editied should be attached or use an event listener, but for now this works.
-        if self._parent is not None and issubclass(self._parent.__class__, kraken.ui.component_inspector.ComponentInspector):
-            self._parent.parent().graphView.displayGraph(None)
-
         # if not interactionInProgress:
         #     self.endInteraction()
 

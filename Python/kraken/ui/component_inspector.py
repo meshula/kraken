@@ -79,6 +79,11 @@ class ComponentInspector(BaseInspector):
             attributeWidget = EditorFactory.constructEditor(attributeController, parent=self)
             self.addEditor(attribute.getName(), attributeWidget)
 
+            # TTHack for updating graph
+            if attribute.getUpdateNode():
+                attribute.component_inspector = self
+
+
         for i in range(self.component.getNumAttributeGroups()):
             grp = self.component.getAttributeGroupByIndex(i)
             self.addSeparator(grp.getName())
