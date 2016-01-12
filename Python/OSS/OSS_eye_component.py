@@ -71,7 +71,7 @@ class OSSEyeGuide(OSSEye):
             data = {
                     "name": name,
                     "location": "M",
-                    "eyeXfo": Xfo(Vec3(2, 20, 1)),
+                    "eyeXfo": Xfo(Vec3(0.75, 20, 1)),
                    }
 
         self.loadData(data)
@@ -178,7 +178,7 @@ class OSSEyeRig(OSSEye):
         self.eyeAimCtrl.rotatePoints(90.0, 0.0, 0.0)
         self.eyeAimCtrl.lockScale(x=True, y=True, z=True)
 
-        self.eyeAimUpV = Locator('eyeAimUpV', parent=self.eyeAimCtrl)
+        self.eyeAimUpV = Locator('eyeAimUpV', parent=self.ctrlCmpGrp)
         self.eyeAimUpV.setShapeVisibility(False)
 
         # Eye
@@ -244,7 +244,7 @@ class OSSEyeRig(OSSEye):
 
         # Add Deformer Splice Op
         # ======================
-        self.deformersToOutputsKLOp = KLOperator('eyeDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.deformersToOutputsKLOp = KLOperator('eyeDeformerKLOp', 'OSS_BlendPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
         # Add Att Inputs
@@ -281,8 +281,8 @@ class OSSEyeRig(OSSEye):
         self.eyeAimCtrlSpace.xfo.tr = eyeXfo.tr.add(Vec3(0, 0, 10))
         self.eyeAimCtrl.xfo = self.eyeAimCtrlSpace.xfo
 
-        self.eyeAimUpV.xfo.ori = self.eyeAimCtrl.xfo.ori
-        self.eyeAimUpV.xfo.tr = self.eyeAimCtrl.xfo.tr.add(Vec3(0, 10, 0))
+        self.eyeAimUpV.xfo.ori = eyeXfo.ori
+        self.eyeAimUpV.xfo.tr = eyeXfo.tr.add(Vec3(0, 1, 0))
 
         self.eyeAim.xfo = eyeXfo
         self.eyeCtrlSpace.xfo = eyeXfo
