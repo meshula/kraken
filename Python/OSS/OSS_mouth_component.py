@@ -26,7 +26,7 @@ from kraken.helpers.utility_methods import logHierarchy
 class OSSMouth(BaseExampleComponent):
     """OSS Mouth Component Base"""
 
-    def __init__(self, name='fabriceMouthBase', parent=None, data=None):
+    def __init__(self, name='fabriceMouthBase', parent=None):
         super(OSSMouth, self).__init__(name, parent)
 
         # ===========
@@ -51,7 +51,7 @@ class OSSMouth(BaseExampleComponent):
 class OSSMouthGuide(OSSMouth):
     """OSS Mouth Component Guide"""
 
-    def __init__(self, name='mouth', parent=None, data=None):
+    def __init__(self, name='mouth', parent=None):
 
         Profiler.getInstance().push("Construct Mouth Guide Component:" + name)
         super(OSSMouthGuide, self).__init__(name, parent)
@@ -67,13 +67,12 @@ class OSSMouthGuide(OSSMouth):
         self.mouthCtrl.scalePoints(Vec3(3.5, 3.5, 3.5))
 
 
-        if data is None:
-            data = {
-                    "name": name,
-                    "location": "M",
-                    "mouthXfo": Xfo(Vec3(0.0, 2, 0)),
-                    "mouthCtrlCrvData": self.mouthCtrl.getCurveData(),
-                   }
+        data = {
+                "name": name,
+                "location": "M",
+                "mouthXfo": Xfo(Vec3(0.0, 2, 0)),
+                "mouthCtrlCrvData": self.mouthCtrl.getCurveData(),
+               }
 
         self.loadData(data)
 
@@ -109,6 +108,10 @@ class OSSMouthGuide(OSSMouth):
         True if successful.
 
         """
+        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        existing_data = self.saveData()
+        existing_data.update(data)
+        data = existing_data
 
         super(OSSMouthGuide, self).loadData( data )
 
