@@ -39,7 +39,7 @@ class OSSFootComponent(BaseExampleComponent):
         # ===========
         # Declare Inputs Xfos
         self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.footSpaceInputTgt = self.createInput('footSpaceInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.footSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.foot_cmpOut = self.createOutput('foot', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -61,7 +61,7 @@ class OSSFootComponent(BaseExampleComponent):
 class OSSFootComponentGuide(OSSFootComponent):
     """Foot Component Guide"""
 
-    def __init__(self, name='foot', parent=None, data=None):
+    def __init__(self, name='foot', parent=None):
 
         Profiler.getInstance().push("Construct Foot Guide Component:" + name)
         super(OSSFootComponentGuide, self).__init__(name, parent)
@@ -71,7 +71,10 @@ class OSSFootComponentGuide(OSSFootComponent):
         # Controls
         # ========
 
+        # Guide Settings
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
+        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
+        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
         # Guide Controls
         self.footCtrl = Control('foot', parent=self.ctrlCmpGrp, shape="sphere")
@@ -81,23 +84,21 @@ class OSSFootComponentGuide(OSSFootComponent):
         self.toeTipPivotCtrl = Control('toeTipPivot', parent=self.ctrlCmpGrp, shape="sphere")
         self.innerPivotCtrl = Control('innerPivot', parent=self.ctrlCmpGrp, shape="sphere")
         self.outerPivotCtrl = Control('outerPivot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
         self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
 
-        if data is None:
-            data = {
-                    "name": name,
-                    "location": "L",
-                    "footXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
-                    "toeXfo": Xfo(Vec3(1.85, 0.4, 0.25)),
-                    "toeTipXfo": Xfo(Vec3(1.85, 0.4, 1.5)),
-                    "heelPivotXfo": Xfo(Vec3(1.85, 0.0, -1.6)),
-                    "toeTipPivotXfo": Xfo(Vec3(1.85, 0.0, 1.5)),
-                    "innerPivotXfo": Xfo(Vec3(1., 0.0, 0.25)),
-                    "outerPivotXfo": Xfo(Vec3(2.67, 0.0, 0.25)),
-                    "handleXfo" : Xfo(Vec3(1.85, 0.0, -1.6)),
-                    "globalComponentCtrlSize": 1.0
-                   }
+
+        data = {
+                "name": name,
+                "location": "L",
+                "footXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
+                "toeXfo": Xfo(Vec3(1.85, 0.4, 0.25)),
+                "toeTipXfo": Xfo(Vec3(1.85, 0.4, 1.5)),
+                "heelPivotXfo": Xfo(Vec3(1.85, 0.0, -1.6)),
+                "toeTipPivotXfo": Xfo(Vec3(1.85, 0.0, 1.5)),
+                "innerPivotXfo": Xfo(Vec3(1., 0.0, 0.25)),
+                "outerPivotXfo": Xfo(Vec3(2.67, 0.0, 0.25)),
+                "handleXfo" : Xfo(Vec3(1.85, 0.0, -1.6)),
+               }
 
         self.loadData(data)
 
@@ -140,6 +141,10 @@ class OSSFootComponentGuide(OSSFootComponent):
         True if successful.
 
         """
+        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        existing_data = self.saveData()
+        existing_data.update(data)
+        data = existing_data
 
         super(OSSFootComponentGuide, self).loadData( data )
 
@@ -331,7 +336,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # Rig Ref objects
 
         # Add Component Params to IK control
-        footSettingsAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.footCtrl)
+        footSettingsAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.footIKCtrl)
         footDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=footSettingsAttrGrp)
         footMocapInputAttr = ScalarAttribute('footMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
         footIKInputAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
