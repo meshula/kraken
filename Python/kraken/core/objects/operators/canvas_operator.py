@@ -25,6 +25,7 @@ class CanvasOperator(Operator):
         def getPresetDesc(path):
             fileContents = open( ks.getCoreClient().DFG.host.getPresetImportPathname(path) ).read()
             fileContents = "".join(fileContents.split('\n'))
+            fileContents = "".join(fileContents.split('\r'))
             fileContents = "  ".join(fileContents.split('\t'))
             return json.loads(fileContents)
         self.graphDesc = getPresetDesc(self.canvasPresetPath)
