@@ -79,16 +79,19 @@ class OSSNeckComponentGuide(OSSNeckComponent):
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
 
-        self.loadData({
+        data = {
             'name': name,
             'location': 'M',
             'neckPosition': Vec3(0.0, 15, 0),
             'neckHandlePosition': Vec3(0.0, 15.25, 0),
             'headHandlePosition': Vec3(0.0, 17.75, 0),
             'headPosition': Vec3(0.0, 18, 0),
-            'numDeformers': 4,
-            'globalComponentCtrlSize': 1.0
-        })
+        }
+
+        # Now, add the guide settings attributes to the data (happens in saveData)
+        data.update(self.saveData())
+
+        self.loadData(data)
 
         Profiler.getInstance().pop()
 
@@ -110,7 +113,6 @@ class OSSNeckComponentGuide(OSSNeckComponent):
         data['neckHandlePosition'] = self.neckHandleCtrl.xfo.tr
         data['headHandlePosition'] = self.headHandleCtrl.xfo.tr
         data['headPosition'] = self.headCtrl.xfo.tr
-        data['numDeformers'] = self.numDeformersAttr.getValue()
 
 
         return data
@@ -133,8 +135,6 @@ class OSSNeckComponentGuide(OSSNeckComponent):
         self.neckHandleCtrl.xfo.tr = data["neckHandlePosition"]
         self.headHandleCtrl.xfo.tr = data["headHandlePosition"]
         self.headCtrl.xfo.tr = data["headPosition"]
-
-        self.numDeformersAttr.setValue(data["numDeformers"])
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
