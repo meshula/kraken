@@ -763,7 +763,7 @@ class Object3D(SceneItem):
         exec("constraint = "+type+"Constraint('')")
 
         constraint.addConstrainer(constrainer)
-        constraint.setMaintainOffset(True)
+        constraint.setMaintainOffset(maintainOffset)
 
         if name is None:
             name = ('_'.join([self.getName(), 'To', constrainer.getName(), type+'Constraint']))
