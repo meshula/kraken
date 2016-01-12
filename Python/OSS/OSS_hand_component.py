@@ -1,3 +1,5 @@
+import re
+
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping
 from kraken.core.maths.xfo import xfoFromDirAndUpV
@@ -30,21 +32,20 @@ import traceback
 class OSSHandComponent(BaseExampleComponent):
     """Hand Component"""
 
-    def __init__(self, name='footBase', parent=None, data=None):
+    def __init__(self, name='HandBase', parent=None):
 
-        super(OSSHandComponent, self).__init__(name=name, parent=parent, data=data)
+        super(OSSHandComponent, self).__init__(name, parent)
 
         # ===========
         # Declare IO
         # ===========
         # Declare Inputs Xfos
         self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.footSpaceInputTgt = self.createInput('footSpaceInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.ikGoalRefInputTgt = self.createInput('ikGoalRefInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.handSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
-        self.foot_cmpOut = self.createOutput('foot', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.toe_cmpOut = self.createOutput('toe', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.hand_cmpOut = self.createOutput('Hand', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.palm_cmpOut = self.createOutput('palm', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.ikgoal_cmpOut = self.createOutput('ikgoal', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
@@ -62,45 +63,127 @@ class OSSHandComponent(BaseExampleComponent):
 class OSSHandComponentGuide(OSSHandComponent):
     """Hand Component Guide"""
 
-    def __init__(self, name='foot', parent=None, data=None):
+    def __init__(self, name='Hand', parent=None):
 
         Profiler.getInstance().push("Construct Hand Guide Component:" + name)
-        super(OSSHandComponentGuide, self).__init__(name=name, parent=parent, data=data)
+        super(OSSHandComponentGuide, self).__init__(name, parent)
 
 
         # =========
         # Controls
         # ========
 
+        # Guide Settings
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
+        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
+        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        #self.numDigits = IntegerAttribute('numDigits', value=5, minValue=1, maxValue=20, parent=guideSettingsAttrGrp)
+        self.digit3SegmentNames = StringAttribute('Digit3SegmentNames', value="index middle ring pinky", parent=guideSettingsAttrGrp)
+        self.digit2SegmentNames = StringAttribute('Digit2SegmentNames', value="thumb", parent=guideSettingsAttrGrp)
+        self.digit1SegmentNames = StringAttribute('Digit1SegmentNames', value="", parent=guideSettingsAttrGrp)
+
+        self.digit3SegmentNames.setValueChangeCallback(self.updateDigit3SegmentControls)
+        self.digit2SegmentNames.setValueChangeCallback(self.updateDigit2SegmentControls)
+        self.digit1SegmentNames.setValueChangeCallback(self.updateDigit1SegmentControls)
 
         # Guide Controls
-        self.footCtrl = Control('foot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.toeCtrl = Control('toe', parent=self.ctrlCmpGrp, shape="sphere")
-        self.toeTipCtrl = Control('toeTip', parent=self.ctrlCmpGrp, shape="sphere")
-        self.heelPivotCtrl = Control('heelPivot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.toeTipPivotCtrl = Control('toeTipPivot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.innerPivotCtrl = Control('innerPivot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.outerPivotCtrl = Control('outerPivot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        self.handCtrl = Control('Hand', parent=self.ctrlCmpGrp, shape="sphere")
+        self.palmCtrl = Control('palm', parent=self.ctrlCmpGrp, shape="sphere")
+        self.palmTipCtrl = Control('palmTip', parent=self.ctrlCmpGrp, shape="sphere")
+        self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
 
-        if data is None:
-            data = {
-                    "name": name,
-                    "location": "L",
-                    "footXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
-                    "toeXfo": Xfo(Vec3(1.85, 0.4, 0.25)),
-                    "toeTipXfo": Xfo(Vec3(1.85, 0.4, 1.5)),
-                    "heelPivotXfo": Xfo(Vec3(1.85, 0.0, -1.6)),
-                    "toeTipPivotXfo": Xfo(Vec3(1.85, 0.0, 1.5)),
-                    "innerPivotXfo": Xfo(Vec3(1., 0.0, 0.25)),
-                    "outerPivotXfo": Xfo(Vec3(2.67, 0.0, 0.25)),
-                    "globalComponentCtrlSize": 1.0
-                   }
+        self.digit3SegmentCtrls = []
+        self.digit2SegmentCtrls = []
+        self.digit1SegmentCtrls = []
+
+        data = {
+                "name": name,
+                "location": "L",
+                "handXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
+                "palmXfo": Xfo(Vec3(1.85, 0.4, 0.25)),
+                "palmTipXfo": Xfo(Vec3(1.85, 0.4, 1.5)),
+                "handleXfo" : Xfo(Vec3(1.85, 0.0, -1.6)),
+               }
 
         self.loadData(data)
 
         Profiler.getInstance().pop()
+
+
+    # ==========
+    # Callbacks
+    # ==========
+    def updateNumDigitsControls(self, numSegments, controlsList, digitNames):
+        """Load a saved guide representation from persisted data.
+
+        Arguments:
+        numDigits -- object, The number of palm/toes
+
+        Return:
+        True if successful.
+
+        """
+
+        self.controlXforms = []
+
+        # Store current values if guide controls already exist
+        current = 0
+        for i, ctrl in enumerate(controlsList):
+
+            if ctrl.getParent() is self.palmCtrl:
+                self.controlXforms.append([ctrl.xfo])
+                current = len(self.controlXforms) -1
+            else:
+                self.controlXforms[current].append(ctrl.xfo)
+
+
+        # Delete current controls
+        for ctrl in reversed(controlsList):
+            ctrl.getParent().removeChild(ctrl)
+        del controlsList[:]
+
+        # Lets build all new digits
+        digitNameList = getDigitNameList(digitNames)
+
+        if not digitNameList:  # Nothing to build
+            return True
+
+        segments = ["palm", "base", "mid", "tip", "end"]
+        if numSegments == 2:
+            segments.remove("mid")
+        elif numSegments == 1:
+            segments.remove("mid")
+            segments.remove("tip")
+
+        offset = 0.0
+        for i, digitName in enumerate(digitNameList):
+            parent = self.palmCtrl
+            for j, segment in enumerate(segments):
+                newCtrl = Control(digitName+"_"+segment, parent=parent, shape="sphere")
+                #newCtrl.scalePoints(Vec3(0.25, 0.25, 0.25))
+                if j == 0:
+                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(10, 0.0, -offset)))
+                    offset += 10.0
+                else:
+                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(10.0, 0.0, 0.0)))
+
+                controlsList.append(newCtrl)
+                parent = newCtrl
+
+                if i < len(self.controlXforms):
+                    if j < len(self.controlXforms[i]):
+                        newCtrl.xfo = self.controlXforms[i][j]
+        return True
+
+
+    def updateDigit3SegmentControls(self, digitNames):
+        self.updateNumDigitsControls(3, self.digit3SegmentCtrls, digitNames)
+
+    def updateDigit2SegmentControls(self, digitNames):
+        self.updateNumDigitsControls(2, self.digit2SegmentCtrls, digitNames)
+
+    def updateDigit1SegmentControls(self, digitNames):
+        self.updateNumDigitsControls(1, self.digit1SegmentCtrls, digitNames)
 
 
     # =============
@@ -117,13 +200,20 @@ class OSSHandComponentGuide(OSSHandComponent):
 
         data = super(OSSHandComponentGuide, self).saveData()
 
-        data['footXfo'] = self.footCtrl.xfo
-        data['toeXfo'] = self.toeCtrl.xfo
-        data['toeTipXfo'] = self.toeTipCtrl.xfo
-        data['heelPivotXfo'] = self.heelPivotCtrl.xfo
-        data['toeTipPivotXfo'] = self.toeTipPivotCtrl.xfo
-        data['innerPivotXfo'] = self.innerPivotCtrl.xfo
-        data['outerPivotXfo'] = self.outerPivotCtrl.xfo
+        data['handXfo'] = self.handCtrl.xfo
+        data['palmXfo'] = self.palmCtrl.xfo
+        data['palmTipXfo'] = self.palmTipCtrl.xfo
+        data['handleXfo'] = self.handleCtrl.xfo
+
+
+        for ctrlListName in ["digit3SegmentCtrls", "digit2SegmentCtrls", "digit1SegmentCtrls"]:
+            ctrls = getattr(self, ctrlListName)
+            xfos = []
+            for i in xrange(len(ctrls)):
+                xfos.append(ctrls[i].xfo)
+            data[ctrlListName+"Xfos"] = xfos
+
+
 
         return data
 
@@ -138,36 +228,37 @@ class OSSHandComponentGuide(OSSHandComponent):
         True if successful.
 
         """
+        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        existing_data = self.saveData()
+        existing_data.update(data)
+        data = existing_data
 
         super(OSSHandComponentGuide, self).loadData( data )
 
-        if "footXfo" in data.keys():
-            self.footCtrl.xfo = data['footXfo']
-        if "toeXfo" in data.keys():
-            self.toeCtrl.xfo = data['toeXfo']
-        if "toeTipXfo" in data.keys():
-            self.toeTipCtrl.xfo = data['toeTipXfo']
-        if "heelPivotXfo" in data.keys():
-            self.heelPivotCtrl.xfo = data['heelPivotXfo']
-        if "toeTipPivotXfo" in data.keys():
-            self.toeTipPivotCtrl.xfo = data['toeTipPivotXfo']
-        if "innerPivotXfo" in data.keys():
-            self.innerPivotCtrl.xfo = data['innerPivotXfo']
-        if "outerPivotXfo" in data.keys():
-            self.outerPivotCtrl.xfo = data['outerPivotXfo']
+        if "handXfo" in data.keys():
+            self.handCtrl.xfo = data['handXfo']
+        if "palmXfo" in data.keys():
+            self.palmCtrl.xfo = data['palmXfo']
+        if "palmTipXfo" in data.keys():
+            self.palmTipCtrl.xfo = data['palmTipXfo']
+        if "handleXfo" in data.keys():
+            self.handleCtrl.xfo = data['handleXfo']
 
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
 
-        self.footCtrl.scalePoints(globalScaleVec)
-        self.toeCtrl.scalePoints(globalScaleVec)
-        self.toeTipCtrl.scalePoints(globalScaleVec)
-        self.heelPivotCtrl.scalePoints(globalScaleVec)
-        self.toeTipPivotCtrl.scalePoints(globalScaleVec)
-        self.innerPivotCtrl.scalePoints(globalScaleVec)
-        self.outerPivotCtrl.scalePoints(globalScaleVec)
+        self.handCtrl.scalePoints(globalScaleVec)
+        self.palmCtrl.scalePoints(globalScaleVec)
+        self.palmTipCtrl.scalePoints(globalScaleVec)
+        self.handleCtrl.scalePoints(globalScaleVec)
 
+        for ctrlListName in ["digit3SegmentCtrls", "digit2SegmentCtrls", "digit1SegmentCtrls"]:
+            ctrls = getattr(self, ctrlListName)
+            if ctrlListName+"Xfos" in data.keys():
+                for i in xrange(len(data[ctrlListName+"Xfos"])):
+                    if i < len(ctrls):
+                        ctrls[i].xfo = data[ctrlListName+"Xfos"][i]
         return True
 
 
@@ -195,63 +286,45 @@ class OSSHandComponentGuide(OSSHandComponent):
 
         # Values
 
-        footPosition = self.footCtrl.xfo.tr
-        toePosition = self.toeCtrl.xfo.tr
-        toeTipPosition = self.toeTipCtrl.xfo.tr
-        heelPivotPosition = self.heelPivotCtrl.xfo.tr
-        toeTipPivotPosition = self.toeTipPivotCtrl.xfo.tr
-        innerPivotPosition = self.innerPivotCtrl.xfo.tr
-        outerPivotPosition = self.outerPivotCtrl.xfo.tr
-
+        HandPosition = self.handCtrl.xfo.tr
+        palmPosition = self.palmCtrl.xfo.tr
+        palmTipPosition = self.palmTipCtrl.xfo.tr
 
 
         # Get lengths
-        footLen = footPosition.subtract(toePosition).length()
-        toeLen = toePosition.subtract(toeTipPosition).length()
+        handLen = HandPosition.subtract(palmPosition).length()
+        palmLen = palmPosition.subtract(palmTipPosition).length()
 
-        footXfo = Xfo()
-        footXfo.tr = footPosition
-
-        heelPivotXfo = Xfo()
-        heelPivotXfo.tr = heelPivotPosition
-
-        toeTipPivotXfo = Xfo()
-        toeTipPivotXfo.tr = toeTipPivotPosition
-
-        innerPivotXfo = Xfo()
-        innerPivotXfo.tr = innerPivotPosition
-
-        outerPivotXfo = Xfo()
-        outerPivotXfo.tr = outerPivotPosition
+        handXfo = Xfo()
+        handXfo.tr = HandPosition
 
         # Calculate Hand Xfo
-        footToToe = toePosition.subtract(footPosition).unit()
+        HandTopalm = palmPosition.subtract(HandPosition).unit()
 
-        toeXfo = Xfo(self.toeCtrl.xfo)
-
-        toePivotXfo = Xfo(toeXfo)
+        palmXfo = Xfo(self.palmCtrl.xfo)
 
 
-        heelPivotXfo.aimAt(aimPos=toeTipPivotPosition, upPos=footPosition, aimAxis=(0, 0, 1), upAxis=(0, 1, 0))
-        # In the complete guide system, have live constraint for toe upvec, this assumes foot is higher than toe
-        toeXfo.aimAt(aimPos=toeTipPosition, upPos=footPosition, aimAxis=boneAxis, upAxis=upAxis)
+        # In the complete guide system, have live constraint for palm upvec, this assumes Hand is higher than palm
+        #upvec hard-coded for now.  Really, we should have an upVector in the guide setup
+        palmXfo.aimAt(aimPos=palmTipPosition, upVector=handXfo.ori.getYaxis(), aimAxis=boneAxis, upAxis=upAxis)
         # Same here
-        footXfo.aimAt(aimPos=toeXfo.tr, upPos=toeTipPosition, aimAxis=boneAxis, upAxis=upAxis)
+        handXfo.aimAt(aimPos=palmXfo.tr, upVector=handXfo.ori.getYaxis(), aimAxis=boneAxis, upAxis=upAxis)
 
-        toeTipPivotXfo.ori = heelPivotXfo.ori
-        innerPivotXfo.ori = heelPivotXfo.ori
-        outerPivotXfo.ori = heelPivotXfo.ori
-        toePivotXfo.ori = heelPivotXfo.ori
+        handleXfo = self.handleCtrl.xfo
 
-        data['footXfo'] = footXfo
-        data['toeXfo'] = toeXfo
-        data['footLen'] = footLen
-        data['toeLen'] = toeLen
-        data['heelPivotXfo'] = heelPivotXfo
-        data['toePivotXfo'] = toePivotXfo
-        data['toeTipPivotXfo'] = toeTipPivotXfo
-        data['innerPivotXfo'] = innerPivotXfo
-        data['outerPivotXfo'] = outerPivotXfo
+        data['handXfo'] = handXfo
+        data['palmXfo'] = palmXfo
+        data['handLen'] = handLen
+        data['palmLen'] = palmLen
+        data['handleXfo'] = handleXfo
+
+
+        for ctrlListName in ["digit3SegmentCtrls", "digit2SegmentCtrls", "digit1SegmentCtrls"]:
+            ctrls = getattr(self, ctrlListName)
+            xfos = []
+            for i in xrange(len(ctrls)):
+                xfos.append(ctrls[i].xfo)
+            data[ctrlListName+"Xfos"] = xfos
 
         return data
 
@@ -284,74 +357,57 @@ class OSSHandComponentGuide(OSSHandComponent):
 class OSSHandComponentRig(OSSHandComponent):
     """Hand Component"""
 
-    def __init__(self, name='leg', parent=None, data=None):
+    def __init__(self, name='leg', parent=None):
 
-        Profiler.getInstance().push("Construct MainSrt Rig Component:" + name)
-        super(OSSHandComponentRig, self).__init__(name=name, parent=parent, data=data)
+        Profiler.getInstance().push("Construct Leg Rig Component:" + name)
+        super(OSSHandComponentRig, self).__init__(name, parent)
 
 
         # =========
         # Controls
         # =========
-        # FK Hand
-        self.footCtrlSpace = CtrlSpace('foot', parent=self.ctrlCmpGrp)
-        self.footCtrl = Control('foot', parent=self.footCtrlSpace, shape="cube")
-        self.footCtrl.alignOnXAxis()
 
-        # FK Toe
-        self.toeCtrlSpace = CtrlSpace('toe', parent=self.footCtrl)
-        self.toeCtrl = Control('toe', parent=self.toeCtrlSpace, shape="cube")
-        self.toeCtrl.alignOnXAxis()
+        # IK Handle
+        self.handIKCtrlSpace = CtrlSpace("HandIK", parent=self.ctrlCmpGrp)
+        self.handIKCtrl = Control("HandIK", parent=self.handIKCtrlSpace, shape="cross")
+
+        # FK Hand
+        self.handCtrlSpace = CtrlSpace('Hand', parent=self.ctrlCmpGrp)
+        self.handCtrl = Control('Hand', parent=self.handCtrlSpace, shape="cube")
+        self.handCtrl.alignOnXAxis()
+
+        # FK palm
+        self.palmCtrlSpace = CtrlSpace('palm', parent=self.handCtrl)
+        self.palmCtrl = Control('palm', parent=self.palmCtrlSpace, shape="cube")
+        self.palmCtrl.alignOnXAxis()
 
         # =========
         # Mocap
         # =========
         # Mocap Hand
-        self.foot_mocap = Control('foot_mocap', parent=self.footCtrlSpace, shape="cube")
-        self.foot_mocap.alignOnXAxis()
-        # Mocap Toe
-        self.toe_mocapSpace = CtrlSpace('toe_mocap', parent=self.foot_mocap)
-        self.toe_mocap = Control('toe_mocap', parent=self.toe_mocapSpace, shape="cube")
-        self.toe_mocap.alignOnXAxis()
-
-
+        self.hand_mocap = Control('hand_mocap', parent=self.handCtrlSpace, shape="cube")
+        self.hand_mocap.alignOnXAxis()
+        # Mocap palm
+        self.palm_mocapSpace = CtrlSpace('palm_mocap', parent=self.hand_mocap)
+        self.palm_mocap = Control('palm_mocap', parent=self.palm_mocapSpace, shape="cube")
+        self.palm_mocap.alignOnXAxis()
 
 
         # Rig Ref objects
 
         # Add Component Params to IK control
-        footSettingsAttrGrp = AttributeGroup("DisplayInfo_HandSettings", parent=self.footCtrl)
-        footDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=footSettingsAttrGrp)
-        footMocapInputAttr = ScalarAttribute('footMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
-        footIKInputAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
-        footRockerInputAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=footSettingsAttrGrp)
-        ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=footSettingsAttrGrp)
-        footTiltInputAttr = ScalarAttribute('footTilt', value=0.0, minValue=-180, maxValue=180.0, parent=footSettingsAttrGrp)
+        HandSettingsAttrGrp = AttributeGroup("DisplayInfo_HandSettings", parent=self.handIKCtrl)
+        HandDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=HandSettingsAttrGrp)
+        HandMocapInputAttr = ScalarAttribute('HandMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=HandSettingsAttrGrp)
+        HandIKInputAttr = ScalarAttribute('HandIK', value=1.0, minValue=0.0, maxValue=1.0, parent=HandSettingsAttrGrp)
+        ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=HandSettingsAttrGrp)
+        HandTiltInputAttr = ScalarAttribute('HandTilt', value=0.0, minValue=-180, maxValue=180.0, parent=HandSettingsAttrGrp)
 
-        self.drawDebugInputAttr.connect(footDrawDebugInputAttr)
+        self.drawDebugInputAttr.connect(HandDrawDebugInputAttr)
 
 
-        self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.ikGoalRefInputTgt)
+        self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.handIKCtrl)
         self.ikGoalRefLocator.setShapeVisibility(False)
-
-        # =========
-        # Locators for foot pivot
-        # =========
-        self.toeJointLocator = Locator('toeJoint', parent=self.ikGoalRefInputTgt)
-        #self.toeJointLocator.setVisibility(False) # does not seem to work, but setShapeVisibility does
-        self.toeJointLocator.setShapeVisibility(False)
-        self.footJointLocator = Locator('footJoint', parent=self.ikGoalRefInputTgt)
-        self.footJointLocator.setShapeVisibility(False)
-        self.heelPivotLocator = Locator('heelPivot', parent=self.ikGoalRefInputTgt)
-        self.heelPivotLocator.setShapeVisibility(False)
-        self.toePivotLocator = Locator('toePivot', parent=self.ikGoalRefInputTgt)
-        self.toePivotLocator.setShapeVisibility(False)
-        self.toeTipPivotLocator = Locator('toeTipPivot', parent=self.ikGoalRefInputTgt)
-        self.toeTipPivotLocator.setShapeVisibility(False)
-        self.innerPivotLocator = Locator('innerPivot', parent=self.ikGoalRefInputTgt)
-        self.innerPivotLocator.setShapeVisibility(False)
-        self.outerPivotLocator = Locator('outerPivot', parent=self.ikGoalRefInputTgt)
-        self.outerPivotLocator.setShapeVisibility(False)
 
 
         # ==========
@@ -360,11 +416,11 @@ class OSSHandComponentRig(OSSHandComponent):
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
 
-        self.footDef = Joint('foot', parent=self.defCmpGrp)
-        self.footDef.setComponent(self)
+        self.handDef = Joint('hand', parent=self.defCmpGrp)
+        self.handDef.setComponent(self)
 
-        self.toeDef = Joint('toe', parent=self.defCmpGrp)
-        self.toeDef.setComponent(self)
+        self.palmDef = Joint('palm', parent=self.defCmpGrp)
+        self.palmDef.setComponent(self)
 
 
         # ==============
@@ -373,91 +429,137 @@ class OSSHandComponentRig(OSSHandComponent):
         # Constraint inputs
 
 
+        self.handCtrlSpaceConstraint = self.handCtrlSpace.constrainTo(self.handSpaceInputTgt, maintainOffset=True)
+
+        self.ikgoal_cmpOutConstraint = self.ikgoal_cmpOut.constrainTo(self.handIKCtrl, maintainOffset=False)
+
+        # Create IK joints (until footrocker system is integrated)
+        self.ikHandLocator = Locator('ikHand', parent=self.handCtrlSpace)
+        self.ikPalmLocator = Locator('ikPalm', parent=self.ikHandLocator)
+
+
+
         # ===============
         # Add KL Ops
         # ===============
 
-        # Add HandRocker KL Op
-        self.footRockerKLOp = KLOperator(self.getLocation()+self.getName()+'HandRockerKLOp', 'OSS_HandRockerSystem', 'OSS_Kraken')
-        self.addOperator(self.footRockerKLOp)
-        # Add Att Inputs
-        self.footRockerKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.footRockerKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.footRockerKLOp.setInput('rightSide', self.rightSideInputAttr)
-        self.footRockerKLOp.setInput('footRocker', footRockerInputAttr)
-        self.footRockerKLOp.setInput('ballBreak', ballBreakInputAttr)
-        self.footRockerKLOp.setInput('footTilt', footTiltInputAttr)
-        # Add Xfo Inputs
-        self.footRockerKLOp.setInput('ikCtrl', self.ikGoalRefLocator)
-        self.footRockerKLOp.setInput('heelPivot', self.heelPivotLocator)
-        self.footRockerKLOp.setInput('ballPivot', self.toePivotLocator)
-        self.footRockerKLOp.setInput('toePivot', self.toeTipPivotLocator)
-        self.footRockerKLOp.setInput('footJointLoc', self.footJointLocator)
-        self.footRockerKLOp.setInput('toeJointLoc', self.toeJointLocator)
-        self.footRockerKLOp.setInput('innerPivotLoc', self.innerPivotLocator)
-        self.footRockerKLOp.setInput('outerPivotLoc', self.outerPivotLocator)
-        # Add Xfo Outputs
-        #self.legEndXfo_cmpOut = self.createOutput('legEndXfo', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.footRockerHand_out = Locator('footRockerHand_out', parent=self.outputHrcGrp)
-        self.footRockerToe_out = Locator('footRockerToe_out', parent=self.outputHrcGrp)
-        self.footRockerKLOp.setOutput('ikGoal', self.ikgoal_cmpOut)
-        self.footRockerKLOp.setOutput('footJoint', self.footRockerHand_out)
-        self.footRockerKLOp.setOutput('toeJoint', self.footRockerToe_out)
 
-
-
-        self.footCtrlSpaceConstraint = self.footCtrlSpace.constrainTo(self.footSpaceInputTgt, maintainOffset=True)
 
 
         # Wait, can this be a hier blend op?
         # Add Hand Blend KL Op
-        self.IKHandBlendKLOp = KLOperator(self.getLocation()+self.getName()+'IKHandBlendKLOp', 'OSS_IKHandBlendSolver', 'OSS_Kraken')
+        self.IKHandBlendKLOp = KLOperator(self.getLocation()+self.getName()+'IKHandBlendKLOp', 'OSS_IKFootBlendSolver', 'OSS_Kraken')
         self.addOperator(self.IKHandBlendKLOp)
         # Add Att Inputs
         self.IKHandBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.IKHandBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.IKHandBlendKLOp.setInput('blend', footIKInputAttr)
+        self.IKHandBlendKLOp.setInput('blend', HandIKInputAttr)
         # Add Xfo Inputs)
-        self.IKHandBlendKLOp.setInput('ikHand', self.footRockerHand_out)
-        self.IKHandBlendKLOp.setInput('fkHand', self.footCtrl)
-        self.IKHandBlendKLOp.setInput('ikToe', self.footRockerToe_out)
-        self.IKHandBlendKLOp.setInput('fkToe', self.toeCtrl)
+        self.IKHandBlendKLOp.setInput('ikFoot', self.handCtrl)
+        self.IKHandBlendKLOp.setInput('fkFoot', self.handCtrl)
+        self.IKHandBlendKLOp.setInput('ikToe', self.palmCtrl)
+        self.IKHandBlendKLOp.setInput('fkToe', self.palmCtrl)
         # Add Xfo Outputs
         self.IKHandBlendKLOpHand_out = Locator('IKHandBlendKLOpHand_out', parent=self.outputHrcGrp)
-        self.IKHandBlendKLOpToe_out = Locator('IKHandBlendKLOpToe_out', parent=self.outputHrcGrp)
+        self.IKHandBlendKLOppalm_out = Locator('IKHandBlendKLOppalm_out', parent=self.outputHrcGrp)
         self.IKHandBlendKLOp.setOutput('foot', self.IKHandBlendKLOpHand_out)
-        self.IKHandBlendKLOp.setOutput('toe', self.IKHandBlendKLOpToe_out)
+        self.IKHandBlendKLOp.setOutput('toe', self.IKHandBlendKLOppalm_out)
 
 
-        # Add Hand Toe HierBlend Solver for Mocap
-        self.foot_mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'foot_mocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.foot_mocapHierBlendSolver)
-        self.foot_mocapHierBlendSolver.setInput('blend', footMocapInputAttr)
-        self.foot_mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
+
+
+        # Add Hand palm HierBlend Solver for Mocap
+        self.hand_mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'hand_mocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+        self.addOperator(self.hand_mocapHierBlendSolver)
+        self.hand_mocapHierBlendSolver.setInput('blend', HandMocapInputAttr)
+        self.hand_mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
         # Add Att Inputs
-        self.foot_mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-        self.foot_mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+        self.hand_mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        self.hand_mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.foot_mocapHierBlendSolver.setInput('hierA', [self.IKHandBlendKLOpHand_out, self.IKHandBlendKLOpToe_out])
-        self.foot_mocapHierBlendSolver.setInput('hierB', [self.foot_mocap, self.toe_mocap])
+        self.hand_mocapHierBlendSolver.setInput('hierA', [self.IKHandBlendKLOpHand_out, self.IKHandBlendKLOppalm_out])
+        self.hand_mocapHierBlendSolver.setInput('hierB', [self.hand_mocap, self.palm_mocap])
         # Add Xfo Outputs
-        self.foot_mocapHierBlendSolver.setOutput('hierOut', [self.foot_cmpOut, self.toe_cmpOut])
+        self.hand_mocapHierBlendSolver.setOutput('hierOut', [self.hand_cmpOut, self.palm_cmpOut])
 
 
         # Add Deformer Joint Constrain
-        self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+'DeformerJointsKLOpBlach', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
         # Add Att Inputs
         self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.outputsToDeformersKLOp.setInput('constrainers', [self.foot_cmpOut, self.toe_cmpOut])
+        self.outputsToDeformersKLOp.setInput('constrainers', [self.hand_cmpOut, self.palm_cmpOut])
         # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [self.footDef, self.toeDef])
+        self.outputsToDeformersKLOp.setOutput('constrainees', [self.handDef, self.palmDef])
 
 
 
         Profiler.getInstance().pop()
+
+
+    def createControls(self, numSegments, digitNames, data):
+
+        digitNameList = getDigitNameList(digitNames)
+
+        segments = ["palm", "base", "mid", "tip", "end"]
+        if numSegments == 2:
+            segments.remove("mid")
+        elif numSegments == 1:
+            segments.remove("mid")
+            segments.remove("tip")
+
+        globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
+
+
+        for i, digitName in enumerate(digitNameList):
+            parent = self.palmCtrl
+            newCtrls = []
+            newDefs = []
+            for j, segment in enumerate(segments):
+                #Eventually, we need outputs and ports for this component for each digit segment
+                #spineOutput = ComponentOutput(digitName+"_"+segment, parent=self.outputHrcGrp)
+
+                if segment == "end":
+                    continue  # don't create control for end (but we need it to loop through control positions correctly)
+                newCtrlSpace = CtrlSpace(digitName+"_"+segment, parent=parent)
+                newCtrl = Control(digitName+"_"+segment, parent=newCtrlSpace, shape="circle")
+                newCtrl.rotatePoints(0,0,90)
+                newCtrl.scalePoints(globalScale)
+                newCtrls.append(newCtrl)
+
+                newDef = Joint(digitName+"_"+segment, parent=self.defCmpGrp)
+                newDefs.append(newDef)
+
+                #self.digitConstraints.append(newDef.constrainTo(newCtrl, maintainOffset=False))
+                #controlsList.append(newCtrl)
+                parent = newCtrl
+                ctrlListName = "digit"+str(numSegments)+"SegmentCtrls"
+
+                if (ctrlListName+"Xfos") in data.keys():
+
+                    index = i*len(segments) + j
+
+                    if (i*numSegments + j) < len(data[ctrlListName+"Xfos"]):
+                        newCtrlSpace.xfo = data[ctrlListName+"Xfos"][index]
+                        newCtrl.xfo = data[ctrlListName+"Xfos"][index]
+
+            # Add Deformer Joint Constrain
+            outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+digitName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+            self.addOperator(outputsToDeformersKLOp)
+            # Add Att Inputs
+            outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+            outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
+            # Add Xfo Inputs
+            outputsToDeformersKLOp.setInput('constrainers', newCtrls)
+            # Add Xfo Outputs
+            outputsToDeformersKLOp.setOutput('constrainees', newDefs)
+
+        return True
+
+
+
 
     # =============
     # Data Methods
@@ -483,22 +585,27 @@ class OSSHandComponentRig(OSSHandComponent):
         boneAxis = axisStrToTupleMapping["NEGX"]
 
 
+        self.handIKCtrlSpace.xfo = data['handleXfo']
+        #self.handIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.palmCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
+        self.handIKCtrl.xfo = self.handIKCtrlSpace.xfo
 
-        self.footCtrlSpace.xfo = data['footXfo']
-        self.footCtrl.xfo = data['footXfo']
-        self.footCtrl.scalePointsOnAxis(data['footLen'], boneAxisStr)
+        self.handCtrlSpace.xfo = data['handXfo']
+        self.handCtrl.xfo = data['handXfo']
+        self.handCtrl.scalePointsOnAxis(data['handLen'], boneAxisStr)
 
-        self.toeCtrlSpace.xfo = data['toeXfo']
-        self.toeCtrl.xfo = data['toeXfo']
-        self.toeCtrl.scalePointsOnAxis(data['toeLen'], boneAxisStr)
+        self.palmCtrlSpace.xfo = data['palmXfo']
+        self.palmCtrl.xfo = data['palmXfo']
+        self.palmCtrl.scalePointsOnAxis(data['palmLen'], boneAxisStr)
 
+        self.ikHandLocator = data['handXfo']
+        self.ikPalmLocator = data['palmXfo']
 
-        self.foot_mocap.xfo = data['footXfo']
-        self.foot_mocap.scalePointsOnAxis(data['footLen'], boneAxisStr)
+        self.hand_mocap.xfo = data['handXfo']
+        self.hand_mocap.scalePointsOnAxis(data['handLen'], boneAxisStr)
 
-        self.toe_mocapSpace.xfo = data['toeXfo']
-        self.toe_mocap.xfo = data['toeXfo']
-        self.toe_mocap.scalePointsOnAxis(data['toeLen'], boneAxisStr)
+        self.palm_mocapSpace.xfo = data['palmXfo']
+        self.palm_mocap.xfo = data['palmXfo']
+        self.palm_mocap.scalePointsOnAxis(data['palmLen'], boneAxisStr)
 
 
         if self.getLocation() == "R":
@@ -513,19 +620,17 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.rightSideInputAttr.setValue(self.getLocation() == 'R')
 
-        self.footSpaceInputTgt.xfo = data["footXfo"]
-        self.footSpaceInputTgt.xfo.ori = Xfo(data["heelPivotXfo"]).ori
-
-        self.toeJointLocator.xfo = data["toeXfo"]
-        self.footJointLocator.xfo = data["footXfo"]
-        self.heelPivotLocator.xfo = data["heelPivotXfo"]
-        self.toeTipPivotLocator.xfo = data["toeTipPivotXfo"]
-        self.innerPivotLocator.xfo = data["innerPivotXfo"]
-        self.outerPivotLocator.xfo = data["outerPivotXfo"]
-        self.toePivotLocator.xfo = data["toePivotXfo"]
 
         # Eval Constraints
-        self.footCtrlSpaceConstraint.evaluate()
+        self.handCtrlSpaceConstraint.evaluate()
+        self.ikgoal_cmpOutConstraint.evaluate()
+
+        self.digitConstraints = [] # reset
+
+        self.createControls(3, data["Digit3SegmentNames"], data)
+        self.createControls(2, data["Digit2SegmentNames"], data)
+        self.createControls(1, data["Digit1SegmentNames"], data)
+
 
         # Eval Operators
         self.evalOperators()
@@ -533,9 +638,41 @@ class OSSHandComponentRig(OSSHandComponent):
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
-        self.footCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
-        self.toeCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
+        self.handCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
+        self.palmCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
+        self.handIKCtrl.scalePoints(globalScale)
 
+        """
+        HandPlane = Control("TMP", shape="square")
+        HandPlane.alignOnZAxis()
+        HandPlane.scalePoints(Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], 1.0))
+        # Damn, can't get the Hand length because it is on another component
+        # Can we do this with just inputs?  We'd have to guarantee that everything was in the correct pose first
+        #HandPlane.scalePointsOnAxis(self.handIKCtrl.xfo.tr.subtract(self.palmTipPivotLocator.xfo.tr).length(), "POSZ")
+        self.handIKCtrl.appendCurveData(HandPlane.getCurveData())
+        """
+
+
+def getDigitNameList(digitNames):
+    """ tokenizes string argument, returns a list"""
+
+    digitNameList = re.split(r'[ ,:;]+', digitNames)
+
+    # These checks should actually prevent the component_inspector from closing maybe?
+    for name in digitNameList:
+        if name and not re.match(r'^[\w_]+$', name):
+            # Eventaully specific exception just for component class that display component name, etc.
+            raise ValueError("digitNames \""+name+"\" contains non-alphanumeric characters in component \""+self.getName()+"\"")
+
+    digitNameList = [x for x in digitNameList if x != ""]
+
+    if not digitNameList:
+        return []
+
+    if len(digitNameList) > len(set(digitNameList)):
+        raise ValueError("Duplicate names in digitNames in component \""+self.getName()+"\"")
+
+    return digitNameList
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
