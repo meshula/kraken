@@ -53,31 +53,35 @@ class OSSShoulderComponent(BaseExampleComponent):
 class OSSShoulderComponentGuide(OSSShoulderComponent):
     """Shoulder Component Guide"""
 
-    def __init__(self, name='shoulder', parent=None, data=None):
+    def __init__(self, name='shoulder', parent=None):
 
         Profiler.getInstance().push("Construct Shoulder Guide Component:" + name)
         super(OSSShoulderComponentGuide, self).__init__(name, parent)
+
+
+         # Guide Settings
+        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
+        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
+        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
 
         # =========
         # Controls
         # =========
         # Guide Controls
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
 
         self.shldrCtrl = Control('shldr', parent=self.ctrlCmpGrp, shape="sphere")
         self.shldrUpVCtrl = Control('shldrUpV', parent=self.ctrlCmpGrp, shape="triangle")
         self.shldrUpVCtrl.setColor('red')
         self.shldrEndCtrl = Control('shldrEnd', parent=self.ctrlCmpGrp, shape="sphere")
 
-        if data is None:
-            data = {
-                    "name": name,
-                    "location": "L",
-                    "shldrXfo": Xfo(Vec3(0.1322, 15.403, -0.5723)),
-                    "shldrUpVXfo": Xfo(Vec3(0.0, 1.0, 0.0)),
-                    "shldrEndXfo": Xfo(Vec3(2.27, 15.295, -0.753))
-                   }
+        data = {
+                "name": name,
+                "location": "L",
+                "shldrXfo": Xfo(Vec3(0.1322, 15.403, -0.5723)),
+                "shldrUpVXfo": Xfo(Vec3(0.0, 1.0, 0.0)),
+                "shldrEndXfo": Xfo(Vec3(2.27, 15.295, -0.753))
+               }
 
         self.loadData(data)
 
@@ -114,6 +118,11 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
         True if successful.
 
         """
+
+        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        existing_data = self.saveData()
+        existing_data.update(data)
+        data = existing_data
 
         super(OSSShoulderComponentGuide, self).loadData( data )
 

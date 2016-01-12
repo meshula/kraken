@@ -50,7 +50,7 @@ class OSSMainSrtComponent(BaseExampleComponent):
 class OSSMainSrtComponentGuide(OSSMainSrtComponent):
     """MainSrt Component Guide"""
 
-    def __init__(self, name='mainSrt', parent=None, data=None):
+    def __init__(self, name='mainSrt', parent=None):
 
         Profiler.getInstance().push("Construct MainSrt Guide Component:" + name)
         super(OSSMainSrtComponentGuide, self).__init__(name, parent)
@@ -58,10 +58,11 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
         # =========
         # Attributes
         # =========
-        # Add Component Params to IK control
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
 
-        self.mainSrtSizeInputAttr = ScalarAttribute('mainSrtSize', value=5.0, minValue=1.0, maxValue=50.0, parent=guideSettingsAttrGrp)
+        # Guide Settings
+        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
+        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
+        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
         # =========
         # Controls
@@ -70,12 +71,14 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
         # Guide Controls
         self.mainSrtCtrl = Control('mainSrt', parent=self.ctrlCmpGrp, shape="circle")
 
-        if data is None:
-            data = {
-                    "location": 'M',
-                    "mainSrtSize": self.mainSrtSizeInputAttr.getValue(),
-                    "mainSrtXfo": Xfo(tr=Vec3(0.0, 0.0, 0.0))
-                   }
+
+        data = {
+                "location": 'M',
+                "mainSrtXfo": Xfo(tr=Vec3(0.0, 0.0, 0.0))
+               }
+
+        # Now, add the guide settings attributes to the data (happens in saveData)
+        data.update(self.saveData())
 
         self.loadData(data)
 
@@ -94,7 +97,6 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
         """
         data = super(OSSMainSrtComponentGuide, self).saveData()
 
-        data["mainSrtSize"] = self.mainSrtSizeInputAttr.getValue()
         data["mainSrtXfo"] = self.mainSrtCtrl.xfo
 
         return data
@@ -110,13 +112,16 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
         True if successful.
 
         """
+        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        existing_data = self.saveData()
+        existing_data.update(data)
+        data = existing_data
 
         super(OSSMainSrtComponentGuide, self).loadData( data )
 
-        self.mainSrtSizeInputAttr.setValue(data["mainSrtSize"])
         self.mainSrtCtrl.xfo = data["mainSrtXfo"]
 
-        self.mainSrtCtrl.scalePoints(Vec3(data["mainSrtSize"], 1.0, data["mainSrtSize"]))
+        self.mainSrtCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
 
         return True
 
@@ -131,7 +136,6 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
 
         data = super(OSSMainSrtComponentGuide, self).getRigBuildData()
 
-        data["mainSrtSize"] = self.mainSrtSizeInputAttr.getValue()
         data["mainSrtXfo"] = self.mainSrtCtrl.xfo
 
         return data
@@ -246,8 +250,8 @@ class OSSMainSrtComponentRig(OSSMainSrtComponent):
         # ================
         # Resize Controls
         # ================
-        self.mainSRTCtrl.scalePoints(Vec3(data["mainSrtSize"], 1.0, data["mainSrtSize"]))
-        self.offsetCtrl.scalePoints(Vec3(data["mainSrtSize"] * 20, 1.0, data["mainSrtSize"] * 20))  # fix this scale issue
+        self.mainSRTCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
+        self.offsetCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 20, 1.0, data["globalComponentCtrlSize"] * 20))  # fix this scale issue
 
         # =======================
         # Set Control Transforms

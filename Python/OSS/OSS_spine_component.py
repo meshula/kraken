@@ -84,7 +84,7 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
 
-        self.loadData({
+        data = {
             'name': name,
             'location': 'M',
             'pelvisPosition': Vec3(0.0, 9, 0),
@@ -93,9 +93,9 @@ class OSSSpineComponentGuide(OSSSpineComponent):
             'chestPosition': Vec3(0.0, 12, 0),
             'upChestPosition': Vec3(0.0, 14, 0),
             'neckPosition': Vec3(0.0, 15, 0),
-            'numDeformers': 6,
-            'globalComponentCtrlSize': 1.0
-        })
+        }
+
+        self.loadData(data)
 
         Profiler.getInstance().pop()
 
@@ -119,8 +119,6 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         data['chestPosition'] = self.chestCtrl.xfo.tr
         data['upChestPosition'] = self.upChestCtrl.xfo.tr
         data['neckPosition'] = self.neckCtrl.xfo.tr
-        data['numDeformers'] = self.numDeformersAttr.getValue()
-
 
         return data
 
@@ -135,6 +133,10 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         True if successful.
 
         """
+        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        existing_data = self.saveData()
+        existing_data.update(data)
+        data = existing_data
 
         super(OSSSpineComponentGuide, self).loadData( data )
 
@@ -144,7 +146,6 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         self.chestCtrl.xfo.tr = data["chestPosition"]
         self.upChestCtrl.xfo.tr = data["upChestPosition"]
         self.neckCtrl.xfo.tr = data["neckPosition"]
-        self.numDeformersAttr.setValue(data["numDeformers"])
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
@@ -175,7 +176,6 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         data['chestPosition'] = self.chestCtrl.xfo.tr
         data['upChestPosition'] = self.upChestCtrl.xfo.tr
         data['neckPosition'] = self.neckCtrl.xfo.tr
-        data['numDeformers'] = self.numDeformersAttr.getValue()
 
         return data
 
