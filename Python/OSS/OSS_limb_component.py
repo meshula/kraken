@@ -64,7 +64,7 @@ class OSSLimbComponent(BaseExampleComponent):
 class OSSLimbComponentGuide(OSSLimbComponent):
     """Limb Component Guide"""
 
-    def __init__(self, name='limb', parent=None, data=None):
+    def __init__(self, name='limb', parent=None):
 
         Profiler.getInstance().push("Construct Limb Guide Component:" + name)
         super(OSSLimbComponentGuide, self).__init__(name, parent)
@@ -74,36 +74,32 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         # Controls
         # ========
 
+        # Guide Settings
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
+        self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=guideSettingsAttrGrp)
+        self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=guideSettingsAttrGrp)
+        self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=guideSettingsAttrGrp)
+        self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=guideSettingsAttrGrp)
+        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
+        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+
 
         # Guide Controls
         self.uplimbCtrl = Control('uplimb', parent=self.ctrlCmpGrp, shape="sphere")
         self.lolimbCtrl = Control('lolimb', parent=self.ctrlCmpGrp, shape="sphere")
         self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
 
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-
-        self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=guideSettingsAttrGrp)
-        self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=guideSettingsAttrGrp)
-        self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=guideSettingsAttrGrp)
-
-        self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=guideSettingsAttrGrp)
         self.useOtherIKGoalInput.setValueChangeCallback(self.updateUseOtherIKGoal)
+        self.useOtherIKGoalInput.setUpdateNode(True)
 
 
-        if data is None:
-            data = {
-                    "name": name,
-                    "location": "L",
-                    "uplimbXfo": Xfo(Vec3(0.9811, 9.769, -0.4572)),
-                    "lolimbXfo": Xfo(Vec3(1.4488, 5.4418, -0.5348)),
-                    "handleXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
-                    "useOtherIKGoalInput": 1,
-                    "uplimbName": "uplimb",
-                    "lolimbName": "lolimb",
-                    "ikHandleName": "limbIK",
-                    "globalComponentCtrlSize": 1.0,
-                   }
+        data = {
+                "name": name,
+                "location": "L",
+                "uplimbXfo": Xfo(Vec3(0.9811, 9.769, -0.4572)),
+                "lolimbXfo": Xfo(Vec3(1.4488, 5.4418, -0.5348)),
+                "handleXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
+            }
 
         self.loadData(data)
 
@@ -142,7 +138,12 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
         """
 
-        super(OSSLimbComponentGuide, self).loadData( data )
+        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        existing_data = self.saveData()
+        existing_data.update(data)
+        data = existing_data
+
+        super(OSSLimbComponentGuide, self).loadData(data)
 
         if "uplimbXfo" in data.keys():
             self.uplimbCtrl.xfo = data['uplimbXfo']
@@ -158,6 +159,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         self.lolimbCtrl.scalePoints(globalScaleVec)
         self.handleCtrl.scalePoints(globalScaleVec)
 
+        # maybe roll this into a createControls() function like in the Rig object?
         if "uplimbName" in data.keys():
             self.uplimbCtrl.setName(data['uplimbName'])
         if "lolimbName" in data.keys():
@@ -334,9 +336,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=limbSettingsAttrGrp)
         self.limbBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=limbSettingsAttrGrp)
         limbIKBlendInputAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-        limbMocapInputAttr = ScalarAttribute(lolimbName+'Mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-        ikHandleInputAttr = ScalarAttribute(ikHandleName, value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-        #limbSoftIKInputAttr = BoolAttribute('softIK', value=True, parent=limbSettingsAttrGrp)
+        limbMocapInputAttr = ScalarAttribute(name+'Mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
         limbSoftDistInputAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
         limbStretchBlendInputAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
 
