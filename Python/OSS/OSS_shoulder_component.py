@@ -34,7 +34,7 @@ class OSSShoulderComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.spineEndInputTgt = self.createInput('spineEnd', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.shldrOutputTgt = self.createOutput('shldr', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -227,9 +227,9 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        shldrInputConstraint = PoseConstraint('_'.join([self.shldrCtrl.getName(), 'To', self.spineEndInputTgt.getName()]))
+        shldrInputConstraint = PoseConstraint('_'.join([self.shldrCtrl.getName(), 'To', self.parentSpaceInputTgt.getName()]))
         shldrInputConstraint.setMaintainOffset(True)
-        shldrInputConstraint.addConstrainer(self.spineEndInputTgt)
+        shldrInputConstraint.addConstrainer(self.parentSpaceInputTgt)
         self.shldrCtrlSpace.addConstraint(shldrInputConstraint)
 
         # Constraint outputs
@@ -287,7 +287,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # ============
         # Set IO Xfos
         # ============
-        self.spineEndInputTgt.xfo = data['shldrXfo']
+        self.parentSpaceInputTgt.xfo = data['shldrXfo']
         self.shldrEndOutputTgt.xfo = data['shldrXfo']
         self.shldrOutputTgt.xfo = data['shldrXfo']
 
