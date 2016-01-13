@@ -21,11 +21,11 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 
-class OSSMainSrtComponent(BaseExampleComponent):
-    """MainSrt Component Base"""
+class OSSMainComponent(BaseExampleComponent):
+    """Main Component Base"""
 
-    def __init__(self, name='mainSrtBase', parent=None, data=None):
-        super(OSSMainSrtComponent, self).__init__(name, parent)
+    def __init__(self, name='main', parent=None, data=None):
+        super(OSSMainComponent, self).__init__(name, parent)
 
 
         # ===========
@@ -47,13 +47,13 @@ class OSSMainSrtComponent(BaseExampleComponent):
         self.setComponentColor(155, 155, 200, 255)
 
 
-class OSSMainSrtComponentGuide(OSSMainSrtComponent):
-    """MainSrt Component Guide"""
+class OSSMainComponentGuide(OSSMainComponent):
+    """Main Component Guide"""
 
-    def __init__(self, name='mainSrt', parent=None):
+    def __init__(self, name='main', parent=None):
 
-        Profiler.getInstance().push("Construct MainSrt Guide Component:" + name)
-        super(OSSMainSrtComponentGuide, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct Main Guide Component:" + name)
+        super(OSSMainComponentGuide, self).__init__(name, parent)
 
         # =========
         # Attributes
@@ -69,12 +69,12 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
         # =========
 
         # Guide Controls
-        self.mainSrtCtrl = Control('mainSrt', parent=self.ctrlCmpGrp, shape="circle")
+        self.mainCtrl = Control('main', parent=self.ctrlCmpGrp, shape="circle")
 
 
         data = {
                 "location": 'M',
-                "mainSrtXfo": Xfo(tr=Vec3(0.0, 0.0, 0.0))
+                "mainXfo": Xfo(tr=Vec3(0.0, 0.0, 0.0))
                }
 
         # Now, add the guide settings attributes to the data (happens in saveData)
@@ -95,9 +95,9 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
         The JSON data object
 
         """
-        data = super(OSSMainSrtComponentGuide, self).saveData()
+        data = super(OSSMainComponentGuide, self).saveData()
 
-        data["mainSrtXfo"] = self.mainSrtCtrl.xfo
+        data["mainXfo"] = self.mainCtrl.xfo
 
         return data
 
@@ -112,16 +112,20 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
         True if successful.
 
         """
+        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
+        for ctrl in self.getAllHierarchyNodes(classType=Control):
+            ctrl.setShape(ctrl.getShape())
+
         #Grab the guide settings in case we want to use them here (and are not stored in data arg)
         existing_data = self.saveData()
         existing_data.update(data)
         data = existing_data
 
-        super(OSSMainSrtComponentGuide, self).loadData( data )
+        super(OSSMainComponentGuide, self).loadData( data )
 
-        self.mainSrtCtrl.xfo = data["mainSrtXfo"]
+        self.mainCtrl.xfo = data["mainXfo"]
 
-        self.mainSrtCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
+        self.mainCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
 
         return True
 
@@ -134,9 +138,9 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
 
         """
 
-        data = super(OSSMainSrtComponentGuide, self).getRigBuildData()
+        data = super(OSSMainComponentGuide, self).getRigBuildData()
 
-        data["mainSrtXfo"] = self.mainSrtCtrl.xfo
+        data["mainXfo"] = self.mainCtrl.xfo
 
         return data
 
@@ -163,34 +167,34 @@ class OSSMainSrtComponentGuide(OSSMainSrtComponent):
 
         """
 
-        return OSSMainSrtComponentRig
+        return OSSMainComponentRig
 
-class OSSMainSrtComponentRig(OSSMainSrtComponent):
-    """MainSrt Component Rig"""
+class OSSMainComponentRig(OSSMainComponent):
+    """Main Component Rig"""
 
-    def __init__(self, name='mainSrt', parent=None):
+    def __init__(self, name='main', parent=None):
 
-        Profiler.getInstance().push("Construct MainSrt Rig Component:" + name)
-        super(OSSMainSrtComponentRig, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct Main Rig Component:" + name)
+        super(OSSMainComponentRig, self).__init__(name, parent)
 
 
         # =========
         # Controls
         # =========
         # Add Controls
-        self.mainSRTCtrlSpace = CtrlSpace('SRT', parent=self.ctrlCmpGrp)
-        self.mainSRTCtrl = Control('SRT', shape='main', parent=self.mainSRTCtrlSpace)
-        self.mainSRTCtrl.setColor("yellow")
-        self.mainSRTCtrl.lockScale(x=True, y=True, z=True)
+        self.mainCtrlSpace = CtrlSpace('SRT', parent=self.ctrlCmpGrp)
+        self.mainCtrl = Control('SRT', shape='main', parent=self.mainCtrlSpace)
+        self.mainCtrl.setColor("yellow")
+        self.mainCtrl.lockScale(x=True, y=True, z=True)
 
-        self.offsetCtrlSpace = CtrlSpace('Offset', parent=self.mainSRTCtrl)
+        self.offsetCtrlSpace = CtrlSpace('Offset', parent=self.mainCtrl)
         self.offsetCtrl = Control('Offset', shape='circle', parent=self.offsetCtrlSpace)
         self.offsetCtrl.setColor("orange")
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
 
         # Add Component Params to IK control
-        mainSrtSettingsAttrGrp = AttributeGroup('DisplayInfo_MainSrtSettings', parent=self.mainSRTCtrl)
-        self.rigScaleAttr = ScalarAttribute('rigScale', value=1.0, parent=mainSrtSettingsAttrGrp, minValue=0.1, maxValue=100.0)
+        MainSettingsAttrGrp = AttributeGroup('DisplayInfo_MainSettings', parent=self.mainCtrl)
+        self.rigScaleAttr = ScalarAttribute('rigScale', value=1.0, parent=MainSettingsAttrGrp, minValue=0.1, maxValue=100.0)
 
         self.rigScaleOutputAttr.connect(self.rigScaleAttr)
 
@@ -205,11 +209,11 @@ class OSSMainSrtComponentRig(OSSMainSrtComponent):
         # Constraint inputs
 
         # Constraint outputs
-        srtConstraint = PoseConstraint('_'.join([self.srtOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
-        srtConstraint.addConstrainer(self.mainSRTCtrl)
+        srtConstraint = PoseConstraint('_'.join([self.srtOutputTgt.getName(), 'To', self.mainCtrl.getName()]))
+        srtConstraint.addConstrainer(self.mainCtrl)
         self.srtOutputTgt.addConstraint(srtConstraint)
 
-        offsetConstraint = PoseConstraint('_'.join([self.offsetOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
+        offsetConstraint = PoseConstraint('_'.join([self.offsetOutputTgt.getName(), 'To', self.mainCtrl.getName()]))
         offsetConstraint.addConstrainer(self.offsetCtrl)
         self.offsetOutputTgt.addConstraint(offsetConstraint)
 
@@ -228,7 +232,7 @@ class OSSMainSrtComponentRig(OSSMainSrtComponent):
         # Add Xfo Inputs
 
         # Add Xfo Outputs
-        self.rigScaleKLOp.setOutput('target', self.mainSRTCtrlSpace)
+        self.rigScaleKLOp.setOutput('target', self.mainCtrlSpace)
 
 
         Profiler.getInstance().pop()
@@ -245,30 +249,30 @@ class OSSMainSrtComponentRig(OSSMainSrtComponent):
 
         """
 
-        super(OSSMainSrtComponentRig, self).loadData( data )
+        super(OSSMainComponentRig, self).loadData( data )
 
         # ================
         # Resize Controls
         # ================
-        self.mainSRTCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
+        self.mainCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
         self.offsetCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 20, 1.0, data["globalComponentCtrlSize"] * 20))  # fix this scale issue
 
         # =======================
         # Set Control Transforms
         # =======================
-        self.mainSRTCtrlSpace.xfo = data["mainSrtXfo"]
-        self.mainSRTCtrl.xfo = data["mainSrtXfo"]
-        self.offsetCtrlSpace.xfo = data["mainSrtXfo"]
-        self.offsetCtrl.xfo = data["mainSrtXfo"]
+        self.mainCtrlSpace.xfo = data["mainXfo"]
+        self.mainCtrl.xfo = data["mainXfo"]
+        self.offsetCtrlSpace.xfo = data["mainXfo"]
+        self.offsetCtrl.xfo = data["mainXfo"]
 
         # ============
         # Set IO Xfos
         # ============
-        self.srtOutputTgt = data["mainSrtXfo"]
-        self.offsetOutputTgt = data["mainSrtXfo"]
+        self.srtOutputTgt = data["mainXfo"]
+        self.offsetOutputTgt = data["mainXfo"]
 
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
-ks.registerComponent(OSSMainSrtComponentGuide)
-ks.registerComponent(OSSMainSrtComponentRig)
+ks.registerComponent(OSSMainComponentGuide)
+ks.registerComponent(OSSMainComponentRig)
