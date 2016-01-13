@@ -107,6 +107,9 @@ class OSSEyeGuide(OSSEye):
         True if successful.
 
         """
+        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
+        for ctrl in self.getAllHierarchyNodes(classType=Control):
+            ctrl.setShape(ctrl.getShape())
 
         super(OSSEyeGuide, self).loadData( data )
 

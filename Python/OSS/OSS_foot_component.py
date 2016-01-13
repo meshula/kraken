@@ -75,6 +75,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
         self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        self.ikHandleSizeInputAttr = ScalarAttribute('ikHandleSize', value=1, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
         # Guide Controls
         self.footCtrl = Control('foot', parent=self.ctrlCmpGrp, shape="sphere")
@@ -141,6 +142,10 @@ class OSSFootComponentGuide(OSSFootComponent):
         True if successful.
 
         """
+        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
+        for ctrl in self.getAllHierarchyNodes(classType=Control):
+            ctrl.setShape(ctrl.getShape())
+
         #Grab the guide settings in case we want to use them here (and are not stored in data arg)
         existing_data = self.saveData()
         existing_data.update(data)
@@ -177,6 +182,8 @@ class OSSFootComponentGuide(OSSFootComponent):
         self.innerPivotCtrl.scalePoints(globalScaleVec)
         self.outerPivotCtrl.scalePoints(globalScaleVec)
         self.handleCtrl.scalePoints(globalScaleVec)
+
+        self.handleCtrl.scalePoints(Vec3(data["ikHandleSize"], data["ikHandleSize"], data["ikHandleSize"]))
 
         return True
 
@@ -555,6 +562,7 @@ class OSSFootComponentRig(OSSFootComponent):
         self.footCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
         self.toeCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
         self.footIKCtrl.scalePoints(globalScale)
+        self.footIKCtrl.scalePoints(Vec3(data["ikHandleSize"], data["ikHandleSize"], data["ikHandleSize"]))
 
         """
         footPlane = Control("TMP", shape="square")

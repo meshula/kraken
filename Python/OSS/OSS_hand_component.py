@@ -76,7 +76,8 @@ class OSSHandComponentGuide(OSSHandComponent):
         # Guide Settings
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
         self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        self.ikHandleSizeInputAttr = ScalarAttribute('ikHandleSize', value=1, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
         #self.numDigits = IntegerAttribute('numDigits', value=5, minValue=1, maxValue=20, parent=guideSettingsAttrGrp)
         self.digit3SegmentNames = StringAttribute('Digit3SegmentNames', value="index middle ring pinky", parent=guideSettingsAttrGrp)
         self.digit2SegmentNames = StringAttribute('Digit2SegmentNames', value="thumb", parent=guideSettingsAttrGrp)
@@ -228,6 +229,10 @@ class OSSHandComponentGuide(OSSHandComponent):
         True if successful.
 
         """
+        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
+        for ctrl in self.getAllHierarchyNodes(classType=Control):
+            ctrl.setShape(ctrl.getShape())
+
         #Grab the guide settings in case we want to use them here (and are not stored in data arg)
         existing_data = self.saveData()
         existing_data.update(data)
@@ -252,6 +257,8 @@ class OSSHandComponentGuide(OSSHandComponent):
         self.palmCtrl.scalePoints(globalScaleVec)
         self.palmTipCtrl.scalePoints(globalScaleVec)
         self.handleCtrl.scalePoints(globalScaleVec)
+
+        self.handleCtrl.scalePoints(Vec3(data["ikHandleSize"], data["ikHandleSize"], data["ikHandleSize"]))
 
         for ctrlListName in ["digit3SegmentCtrls", "digit2SegmentCtrls", "digit1SegmentCtrls"]:
             ctrls = getattr(self, ctrlListName)
@@ -368,8 +375,8 @@ class OSSHandComponentRig(OSSHandComponent):
         # =========
 
         # IK Handle
-        self.handIKCtrlSpace = CtrlSpace("HandIK", parent=self.ctrlCmpGrp)
-        self.handIKCtrl = Control("HandIK", parent=self.handIKCtrlSpace, shape="cross")
+        self.handleCtrlSpace = CtrlSpace("HandIK", parent=self.ctrlCmpGrp)
+        self.handleCtrl = Control("HandIK", parent=self.handleCtrlSpace, shape="cross")
 
         # FK Hand
         self.handCtrlSpace = CtrlSpace('Hand', parent=self.ctrlCmpGrp)
@@ -396,7 +403,7 @@ class OSSHandComponentRig(OSSHandComponent):
         # Rig Ref objects
 
         # Add Component Params to IK control
-        HandSettingsAttrGrp = AttributeGroup("DisplayInfo_HandSettings", parent=self.handIKCtrl)
+        HandSettingsAttrGrp = AttributeGroup("DisplayInfo_HandSettings", parent=self.handleCtrl)
         HandDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=HandSettingsAttrGrp)
         HandMocapInputAttr = ScalarAttribute('HandMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=HandSettingsAttrGrp)
         HandIKInputAttr = ScalarAttribute('HandIK', value=1.0, minValue=0.0, maxValue=1.0, parent=HandSettingsAttrGrp)
@@ -406,7 +413,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.drawDebugInputAttr.connect(HandDrawDebugInputAttr)
 
 
-        self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.handIKCtrl)
+        self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.handleCtrl)
         self.ikGoalRefLocator.setShapeVisibility(False)
 
 
@@ -431,7 +438,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.handCtrlSpaceConstraint = self.handCtrlSpace.constrainTo(self.handSpaceInputTgt, maintainOffset=True)
 
-        self.ikgoal_cmpOutConstraint = self.ikgoal_cmpOut.constrainTo(self.handIKCtrl, maintainOffset=False)
+        self.ikgoal_cmpOutConstraint = self.ikgoal_cmpOut.constrainTo(self.handleCtrl, maintainOffset=False)
 
         # Create IK joints (until footrocker system is integrated)
         self.ikHandLocator = Locator('ikHand', parent=self.handCtrlSpace)
@@ -585,9 +592,9 @@ class OSSHandComponentRig(OSSHandComponent):
         boneAxis = axisStrToTupleMapping["NEGX"]
 
 
-        self.handIKCtrlSpace.xfo = data['handleXfo']
-        #self.handIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.palmCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
-        self.handIKCtrl.xfo = self.handIKCtrlSpace.xfo
+        self.handleCtrlSpace.xfo = data['handleXfo']
+        #self.handleCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.palmCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
+        self.handleCtrl.xfo = self.handleCtrlSpace.xfo
 
         self.handCtrlSpace.xfo = data['handXfo']
         self.handCtrl.xfo = data['handXfo']
@@ -640,7 +647,8 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.handCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
         self.palmCtrl.scalePoints(Vec3(1.0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
-        self.handIKCtrl.scalePoints(globalScale)
+        self.handleCtrl.scalePoints(globalScale)
+        self.handleCtrl.scalePoints(Vec3(data["ikHandleSize"], data["ikHandleSize"], data["ikHandleSize"]))
 
         """
         HandPlane = Control("TMP", shape="square")
@@ -648,8 +656,8 @@ class OSSHandComponentRig(OSSHandComponent):
         HandPlane.scalePoints(Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], 1.0))
         # Damn, can't get the Hand length because it is on another component
         # Can we do this with just inputs?  We'd have to guarantee that everything was in the correct pose first
-        #HandPlane.scalePointsOnAxis(self.handIKCtrl.xfo.tr.subtract(self.palmTipPivotLocator.xfo.tr).length(), "POSZ")
-        self.handIKCtrl.appendCurveData(HandPlane.getCurveData())
+        #HandPlane.scalePointsOnAxis(self.handleCtrl.xfo.tr.subtract(self.palmTipPivotLocator.xfo.tr).length(), "POSZ")
+        self.handleCtrl.appendCurveData(HandPlane.getCurveData())
         """
 
 

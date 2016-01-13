@@ -129,6 +129,10 @@ class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
 
         """
 
+        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
+        for ctrl in self.getAllHierarchyNodes(classType=Control):
+            ctrl.setShape(ctrl.getShape())
+
         super(OSSHeadNeckComponentGuide, self).loadData( data )
 
         self.neckCtrl.xfo.tr = data["neckPosition"]
