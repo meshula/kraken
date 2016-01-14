@@ -25,12 +25,12 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
-import traceback
+COMPONENT_NAME = "limb"
 
 class OSSLimbComponent(BaseExampleComponent):
     """Limb Component"""
 
-    def __init__(self, name='limbBase', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         super(OSSLimbComponent, self).__init__(name, parent)
 
@@ -64,7 +64,7 @@ class OSSLimbComponent(BaseExampleComponent):
 class OSSLimbComponentGuide(OSSLimbComponent):
     """Limb Component Guide"""
 
-    def __init__(self, name='limb', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Limb Guide Component:" + name)
         super(OSSLimbComponentGuide, self).__init__(name, parent)
@@ -182,13 +182,18 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         if useOtherIKGoal:
             if self.ikgoal_cmpIn is None:
                 self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+                self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', parent=self.cmpInputAttrGrp)
+                self.limbMocapAttr = self.createInput('limbMocap', dataType='Float', parent=self.cmpInputAttrGrp)
+                self.softDistAttr = self.createInput('softDist', dataType='Float', parent=self.cmpInputAttrGrp)
+                self.stretchAttr = self.createInput('stretch', dataType='Float', parent=self.cmpInputAttrGrp)
         else:
             if self.ikgoal_cmpIn is not None:
-                self.removeInputByName('ikGoalInput')
+                self.deleteInput('ikGoalInput', parent=self.inputHrcGrp)
+                self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
+                self.deleteInput('limbMocap', parent=self.cmpInputAttrGrp)
+                self.deleteInput('softDist', parent=self.cmpInputAttrGrp)
+                self.deleteInput('stretch', parent=self.cmpInputAttrGrp)
                 self.ikgoal_cmpIn = None
-
-
-
 
 
     def getRigBuildData(self):
@@ -281,7 +286,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 class OSSLimbComponentRig(OSSLimbComponent):
     """Limb Component"""
 
-    def __init__(self, name='limb', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Limb Rig Component:" + name)
         super(OSSLimbComponentRig, self).__init__(name, parent)
@@ -297,6 +302,16 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.useOtherIKGoal = data['useOtherIKGoal']
         if self.useOtherIKGoal:
             self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+            self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', value=1.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+            self.limbMocapAttr = self.createInput('limbMocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+            self.softDistAttr = self.createInput('softDist', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
+            self.stretchAttr = self.createInput('stretch', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+        else:
+            self.ikgoal_cmpIn = None
+            self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+            self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+            self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
+            self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
 
         # =========
         # Controls
@@ -314,9 +329,9 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # handle
         self.limbIKCtrlSpace = CtrlSpace(ikHandleName, parent=self.ctrlCmpGrp)
         if self.useOtherIKGoal: #Do not use this as a control, hide it
-            self.limbIKCtrl = Locator(uplimbName, parent=self.limbIKCtrlSpace)
+            self.limbIKCtrl = Locator(ikHandleName, parent=self.limbIKCtrlSpace)
         else:
-            self.limbIKCtrl = Control(uplimbName, parent=self.limbIKCtrlSpace, shape="cross")
+            self.limbIKCtrl = Control(ikHandleName, parent=self.limbIKCtrlSpace, shape="cross")
 
         # =========
         # Mocap
@@ -335,16 +350,11 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         # Add Component Params to IK control
         limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.limbIKCtrl)
-        limbDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=limbSettingsAttrGrp)
+        limbDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=limbSettingsAttrGrp)
         self.limbBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=limbSettingsAttrGrp)
         self.limbBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=limbSettingsAttrGrp)
-        limbIKBlendInputAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-        limbMocapInputAttr = ScalarAttribute(name+'Mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-        limbSoftDistInputAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
-        limbStretchBlendInputAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
 
-
-        self.drawDebugInputAttr.connect(limbDrawDebugInputAttr)
+        self.drawDebugInputAttr.connect(limbDrawDebugAttr)
 
         # UpV
         self.limbUpVCtrlSpace = CtrlSpace(name+'UpV', parent=self.ctrlCmpGrp)
@@ -417,9 +427,9 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('rigScale', self.rigScaleInputAttr)
         self.limbIKKLOp.setInput('bone0Len', self.limbBone0LenInputAttr)
         self.limbIKKLOp.setInput('bone1Len', self.limbBone1LenInputAttr)
-        self.limbIKKLOp.setInput('ikBlend', limbIKBlendInputAttr)
-        self.limbIKKLOp.setInput('softDist', limbSoftDistInputAttr)
-        self.limbIKKLOp.setInput('stretch', limbStretchBlendInputAttr)
+        self.limbIKKLOp.setInput('ikBlend', self.ikBlendAttr)
+        self.limbIKKLOp.setInput('softDist', self.softDistAttr)
+        self.limbIKKLOp.setInput('stretch', self.stretchAttr)
         self.limbIKKLOp.setInput('rightSide', self.rightSideInputAttr)
         # Add Xfo Inputs
         self.limbIKKLOp.setInput('root', self.parentSpaceInputTgt)
@@ -444,7 +454,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # Add Limb HierBlend Solver for Mocap
         self.limbMocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'limbMocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
         self.addOperator(self.limbMocapHierBlendSolver)
-        self.limbMocapHierBlendSolver.setInput('blend', limbMocapInputAttr)
+        self.limbMocapHierBlendSolver.setInput('blend', self.limbMocapAttr)
         self.limbMocapHierBlendSolver.setInput('parentIndexes', [-1, 0, 1])
         # Add Att Inputs
         self.limbMocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)

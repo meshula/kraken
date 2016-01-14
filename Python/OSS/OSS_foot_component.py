@@ -27,10 +27,12 @@ from kraken.helpers.utility_methods import logHierarchy
 
 import traceback
 
+COMPONENT_NAME = "foot"
+
 class OSSFootComponent(BaseExampleComponent):
     """Foot Component"""
 
-    def __init__(self, name='footBase', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         super(OSSFootComponent, self).__init__(name, parent)
 
@@ -53,6 +55,11 @@ class OSSFootComponent(BaseExampleComponent):
 
         # Declare Output Attrs
         self.drawDebugOutputAttr = self.createOutput('drawDebug', dataType='Boolean', value=False, parent=self.cmpOutputAttrGrp).getTarget()
+        self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=1.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.limbMocap_cmpOutAttr = self.createOutput('limbMocap', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.softDist_cmpOutAttr = self.createOutput('softDist', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.stretch_cmpOutAttr = self.createOutput('stretch', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
+
 
         # Use this color for OSS components (should maybe get this color from a central source eventually)
         self.setComponentColor(155, 155, 200, 255)
@@ -61,7 +68,7 @@ class OSSFootComponent(BaseExampleComponent):
 class OSSFootComponentGuide(OSSFootComponent):
     """Foot Component Guide"""
 
-    def __init__(self, name='foot', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Foot Guide Component:" + name)
         super(OSSFootComponentGuide, self).__init__(name, parent)
@@ -304,7 +311,7 @@ class OSSFootComponentGuide(OSSFootComponent):
 class OSSFootComponentRig(OSSFootComponent):
     """Foot Component"""
 
-    def __init__(self, name='leg', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Leg Rig Component:" + name)
         super(OSSFootComponentRig, self).__init__(name, parent)
@@ -344,14 +351,24 @@ class OSSFootComponentRig(OSSFootComponent):
 
         # Add Component Params to IK control
         footSettingsAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.footIKCtrl)
-        footDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=footSettingsAttrGrp)
-        footMocapInputAttr = ScalarAttribute('footMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
-        footIKInputAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
-        footRockerInputAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=footSettingsAttrGrp)
-        ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=footSettingsAttrGrp)
-        footTiltInputAttr = ScalarAttribute('footTilt', value=0.0, minValue=-180, maxValue=180.0, parent=footSettingsAttrGrp)
+        footDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=footSettingsAttrGrp)
+        footMocapAttr = ScalarAttribute('footMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
+        footIKAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
+        footRockerAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=footSettingsAttrGrp)
+        ballBreakAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=footSettingsAttrGrp)
+        footTiltAttr = ScalarAttribute('footTilt', value=0.0, minValue=-180, maxValue=180.0, parent=footSettingsAttrGrp)
 
-        self.drawDebugInputAttr.connect(footDrawDebugInputAttr)
+        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
+        self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
+        self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
+        self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
+        self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=footSettingsAttrGrp)
+        self.softDist_cmpOutAttr.connect(self.softDistAttr)
+        self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=footSettingsAttrGrp)
+        self.stretch_cmpOutAttr.connect(self.stretchAttr)
+
+
+        self.drawDebugInputAttr.connect(footDrawDebugAttr)
 
 
         self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.footIKCtrl)
@@ -395,6 +412,8 @@ class OSSFootComponentRig(OSSFootComponent):
         # ==============
         # Constraint inputs
 
+        self.footIKCtrlSpaceConstraint = self.footIKCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
+        self.footCtrlSpaceConstraint = self.footCtrlSpace.constrainTo(self.footSpaceInputTgt, maintainOffset=True)
 
         # ===============
         # Add KL Ops
@@ -407,9 +426,9 @@ class OSSFootComponentRig(OSSFootComponent):
         self.footRockerKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.footRockerKLOp.setInput('rigScale', self.rigScaleInputAttr)
         self.footRockerKLOp.setInput('rightSide', self.rightSideInputAttr)
-        self.footRockerKLOp.setInput('footRocker', footRockerInputAttr)
-        self.footRockerKLOp.setInput('ballBreak', ballBreakInputAttr)
-        self.footRockerKLOp.setInput('footTilt', footTiltInputAttr)
+        self.footRockerKLOp.setInput('footRocker', footRockerAttr)
+        self.footRockerKLOp.setInput('ballBreak', ballBreakAttr)
+        self.footRockerKLOp.setInput('footTilt', footTiltAttr)
         # Add Xfo Inputs
         self.footRockerKLOp.setInput('ikCtrl', self.ikGoalRefLocator)
         self.footRockerKLOp.setInput('heelPivot', self.heelPivotLocator)
@@ -429,17 +448,16 @@ class OSSFootComponentRig(OSSFootComponent):
 
 
 
-        self.footCtrlSpaceConstraint = self.footCtrlSpace.constrainTo(self.footSpaceInputTgt, maintainOffset=True)
 
 
-        # Wait, can this be a hier blend op?
-        # Add Foot Blend KL Op
+        # Wait, can this be a hier blend op?  Don't like having this explicit OSS_IKFootBlendSolver Op
+        # Add Foot Blend KL Op, no footBlend puts the position of the fk always at the ikOSS_IKFootBlendSolver Op pos, so maybe another kind of network
         self.IKFootBlendKLOp = KLOperator(self.getLocation()+self.getName()+'IKFootBlendKLOp', 'OSS_IKFootBlendSolver', 'OSS_Kraken')
         self.addOperator(self.IKFootBlendKLOp)
         # Add Att Inputs
         self.IKFootBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.IKFootBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.IKFootBlendKLOp.setInput('blend', footIKInputAttr)
+        self.IKFootBlendKLOp.setInput('blend', footIKAttr)
         # Add Xfo Inputs)
         self.IKFootBlendKLOp.setInput('ikFoot', self.footRockerFoot_out)
         self.IKFootBlendKLOp.setInput('fkFoot', self.footCtrl)
@@ -455,7 +473,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # Add Foot Toe HierBlend Solver for Mocap
         self.foot_mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'foot_mocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
         self.addOperator(self.foot_mocapHierBlendSolver)
-        self.foot_mocapHierBlendSolver.setInput('blend', footMocapInputAttr)
+        self.foot_mocapHierBlendSolver.setInput('blend', footMocapAttr)
         self.foot_mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
         # Add Att Inputs
         self.foot_mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
@@ -552,6 +570,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
         # Eval Constraints
         self.footCtrlSpaceConstraint.evaluate()
+        self.footIKCtrlSpaceConstraint.evaluate()
 
         # Eval Operators
         self.evalOperators()

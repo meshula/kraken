@@ -27,12 +27,12 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
-import traceback
+COMPONENT_NAME = "hand"
 
 class OSSHandComponent(BaseExampleComponent):
     """Hand Component"""
 
-    def __init__(self, name='HandBase', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         super(OSSHandComponent, self).__init__(name, parent)
 
@@ -44,7 +44,7 @@ class OSSHandComponent(BaseExampleComponent):
         self.handSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
-        self.hand_cmpOut = self.createOutput('Hand', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.hand_cmpOut = self.createOutput('hand', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.palm_cmpOut = self.createOutput('palm', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.ikgoal_cmpOut = self.createOutput('ikgoal', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
@@ -63,7 +63,7 @@ class OSSHandComponent(BaseExampleComponent):
 class OSSHandComponentGuide(OSSHandComponent):
     """Hand Component Guide"""
 
-    def __init__(self, name='Hand', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Hand Guide Component:" + name)
         super(OSSHandComponentGuide, self).__init__(name, parent)
@@ -88,7 +88,7 @@ class OSSHandComponentGuide(OSSHandComponent):
         self.digit1SegmentNames.setValueChangeCallback(self.updateDigit1SegmentControls)
 
         # Guide Controls
-        self.handCtrl = Control('Hand', parent=self.ctrlCmpGrp, shape="sphere")
+        self.handCtrl = Control('hand', parent=self.ctrlCmpGrp, shape="sphere")
         self.palmCtrl = Control('palm', parent=self.ctrlCmpGrp, shape="sphere")
         self.palmTipCtrl = Control('palmTip', parent=self.ctrlCmpGrp, shape="sphere")
         self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
@@ -364,7 +364,7 @@ class OSSHandComponentGuide(OSSHandComponent):
 class OSSHandComponentRig(OSSHandComponent):
     """Hand Component"""
 
-    def __init__(self, name='leg', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Leg Rig Component:" + name)
         super(OSSHandComponentRig, self).__init__(name, parent)
@@ -375,12 +375,12 @@ class OSSHandComponentRig(OSSHandComponent):
         # =========
 
         # IK Handle
-        self.handleCtrlSpace = CtrlSpace("HandIK", parent=self.ctrlCmpGrp)
-        self.handleCtrl = Control("HandIK", parent=self.handleCtrlSpace, shape="cross")
+        self.handleCtrlSpace = CtrlSpace("handIK", parent=self.ctrlCmpGrp)
+        self.handleCtrl = Control("handIK", parent=self.handleCtrlSpace, shape="cross")
 
         # FK Hand
-        self.handCtrlSpace = CtrlSpace('Hand', parent=self.ctrlCmpGrp)
-        self.handCtrl = Control('Hand', parent=self.handCtrlSpace, shape="cube")
+        self.handCtrlSpace = CtrlSpace('hand', parent=self.ctrlCmpGrp)
+        self.handCtrl = Control('hand', parent=self.handCtrlSpace, shape="cube")
         self.handCtrl.alignOnXAxis()
 
         # FK palm
@@ -403,14 +403,14 @@ class OSSHandComponentRig(OSSHandComponent):
         # Rig Ref objects
 
         # Add Component Params to IK control
-        HandSettingsAttrGrp = AttributeGroup("DisplayInfo_HandSettings", parent=self.handleCtrl)
-        HandDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=HandSettingsAttrGrp)
-        HandMocapInputAttr = ScalarAttribute('HandMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=HandSettingsAttrGrp)
-        HandIKInputAttr = ScalarAttribute('HandIK', value=1.0, minValue=0.0, maxValue=1.0, parent=HandSettingsAttrGrp)
-        ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=HandSettingsAttrGrp)
-        HandTiltInputAttr = ScalarAttribute('HandTilt', value=0.0, minValue=-180, maxValue=180.0, parent=HandSettingsAttrGrp)
+        handSettingsAttrGrp = AttributeGroup("DisplayInfo_HandSettings", parent=self.handleCtrl)
+        handDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=handSettingsAttrGrp)
+        handMocapInputAttr = ScalarAttribute('handMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=handSettingsAttrGrp)
+        handIKInputAttr = ScalarAttribute('handIK', value=1.0, minValue=0.0, maxValue=1.0, parent=handSettingsAttrGrp)
+        #ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=handSettingsAttrGrp)
+        #HandTiltInputAttr = ScalarAttribute('handTilt', value=0.0, minValue=-180, maxValue=180.0, parent=handSettingsAttrGrp)
 
-        self.drawDebugInputAttr.connect(HandDrawDebugInputAttr)
+        self.drawDebugInputAttr.connect(handDrawDebugInputAttr)
 
 
         self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.handleCtrl)
@@ -437,13 +437,14 @@ class OSSHandComponentRig(OSSHandComponent):
 
 
         self.handCtrlSpaceConstraint = self.handCtrlSpace.constrainTo(self.handSpaceInputTgt, maintainOffset=True)
-
         self.ikgoal_cmpOutConstraint = self.ikgoal_cmpOut.constrainTo(self.handleCtrl, maintainOffset=False)
+        self.handleCtrlSpaceConstraint = self.handleCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
+
+
 
         # Create IK joints (until footrocker system is integrated)
         self.ikHandLocator = Locator('ikHand', parent=self.handCtrlSpace)
         self.ikPalmLocator = Locator('ikPalm', parent=self.ikHandLocator)
-
 
 
         # ===============
@@ -460,7 +461,7 @@ class OSSHandComponentRig(OSSHandComponent):
         # Add Att Inputs
         self.IKHandBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.IKHandBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.IKHandBlendKLOp.setInput('blend', HandIKInputAttr)
+        self.IKHandBlendKLOp.setInput('blend', handIKInputAttr)
         # Add Xfo Inputs)
         self.IKHandBlendKLOp.setInput('ikFoot', self.handCtrl)
         self.IKHandBlendKLOp.setInput('fkFoot', self.handCtrl)
@@ -478,7 +479,7 @@ class OSSHandComponentRig(OSSHandComponent):
         # Add Hand palm HierBlend Solver for Mocap
         self.hand_mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'hand_mocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
         self.addOperator(self.hand_mocapHierBlendSolver)
-        self.hand_mocapHierBlendSolver.setInput('blend', HandMocapInputAttr)
+        self.hand_mocapHierBlendSolver.setInput('blend', handMocapInputAttr)
         self.hand_mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
         # Add Att Inputs
         self.hand_mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)

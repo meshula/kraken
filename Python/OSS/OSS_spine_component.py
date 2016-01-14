@@ -25,11 +25,12 @@ from kraken.core.objects.operators.canvas_operator import CanvasOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+COMPONENT_NAME = "spine"
 
 class OSSSpineComponent(BaseExampleComponent):
     """Spine Component"""
 
-    def __init__(self, name="spineBase", parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
         super(OSSSpineComponent, self).__init__(name, parent)
 
         # ===========
@@ -59,7 +60,7 @@ class OSSSpineComponent(BaseExampleComponent):
 class OSSSpineComponentGuide(OSSSpineComponent):
     """Spine Component Guide"""
 
-    def __init__(self, name='spine', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Spine Guide Component:" + name)
         super(OSSSpineComponentGuide, self).__init__(name, parent)
@@ -213,7 +214,7 @@ class OSSSpineComponentGuide(OSSSpineComponent):
 class OSSSpineComponentRig(OSSSpineComponent):
     """Spine Component"""
 
-    def __init__(self, name="spine", parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Spine Rig Component:" + name)
         super(OSSSpineComponentRig, self).__init__(name, parent)

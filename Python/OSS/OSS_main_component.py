@@ -20,11 +20,12 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+COMPONENT_NAME = "main"
 
 class OSSMainComponent(BaseExampleComponent):
     """Main Component Base"""
 
-    def __init__(self, name='main', parent=None, data=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None, data=None):
         super(OSSMainComponent, self).__init__(name, parent)
 
 
@@ -50,7 +51,7 @@ class OSSMainComponent(BaseExampleComponent):
 class OSSMainComponentGuide(OSSMainComponent):
     """Main Component Guide"""
 
-    def __init__(self, name='main', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Main Guide Component:" + name)
         super(OSSMainComponentGuide, self).__init__(name, parent)
@@ -172,7 +173,7 @@ class OSSMainComponentGuide(OSSMainComponent):
 class OSSMainComponentRig(OSSMainComponent):
     """Main Component Rig"""
 
-    def __init__(self, name='main', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Main Rig Component:" + name)
         super(OSSMainComponentRig, self).__init__(name, parent)
