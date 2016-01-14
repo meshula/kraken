@@ -55,7 +55,10 @@ class OSSHandComponent(BaseExampleComponent):
 
         # Declare Output Attrs
         self.drawDebugOutputAttr = self.createOutput('drawDebug', dataType='Boolean', value=False, parent=self.cmpOutputAttrGrp).getTarget()
-
+        self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=1.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.limbMocap_cmpOutAttr = self.createOutput('limbMocap', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.softDist_cmpOutAttr = self.createOutput('softDist', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.stretch_cmpOutAttr = self.createOutput('stretch', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         # Use this color for OSS components (should maybe get this color from a central source eventually)
         self.setComponentColor(155, 155, 200, 255)
 
@@ -406,11 +409,20 @@ class OSSHandComponentRig(OSSHandComponent):
         handSettingsAttrGrp = AttributeGroup("DisplayInfo_HandSettings", parent=self.handleCtrl)
         handDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=handSettingsAttrGrp)
         handMocapInputAttr = ScalarAttribute('handMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=handSettingsAttrGrp)
-        handIKInputAttr = ScalarAttribute('handIK', value=1.0, minValue=0.0, maxValue=1.0, parent=handSettingsAttrGrp)
+        handIKInputAttr = ScalarAttribute('handIK', value=0.0, minValue=0.0, maxValue=1.0, parent=handSettingsAttrGrp)
         #ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=handSettingsAttrGrp)
         #HandTiltInputAttr = ScalarAttribute('handTilt', value=0.0, minValue=-180, maxValue=180.0, parent=handSettingsAttrGrp)
 
         self.drawDebugInputAttr.connect(handDrawDebugInputAttr)
+
+        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=handSettingsAttrGrp)
+        self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
+        self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=handSettingsAttrGrp)
+        self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
+        self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=handSettingsAttrGrp)
+        self.softDist_cmpOutAttr.connect(self.softDistAttr)
+        self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=handSettingsAttrGrp)
+        self.stretch_cmpOutAttr.connect(self.stretchAttr)
 
 
         self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.handleCtrl)
@@ -465,13 +477,13 @@ class OSSHandComponentRig(OSSHandComponent):
         # Add Xfo Inputs)
         self.IKHandBlendKLOp.setInput('ikFoot', self.handCtrl)
         self.IKHandBlendKLOp.setInput('fkFoot', self.handCtrl)
-        self.IKHandBlendKLOp.setInput('ikToe', self.palmCtrl)
-        self.IKHandBlendKLOp.setInput('fkToe', self.palmCtrl)
+        self.IKHandBlendKLOp.setInput('ikBall', self.palmCtrl)
+        self.IKHandBlendKLOp.setInput('fkBall', self.palmCtrl)
         # Add Xfo Outputs
         self.IKHandBlendKLOpHand_out = Locator('IKHandBlendKLOpHand_out', parent=self.outputHrcGrp)
-        self.IKHandBlendKLOppalm_out = Locator('IKHandBlendKLOppalm_out', parent=self.outputHrcGrp)
+        self.IKHandBlendKLOpPalm_out = Locator('IKHandBlendKLOpPalm_out', parent=self.outputHrcGrp)
         self.IKHandBlendKLOp.setOutput('foot', self.IKHandBlendKLOpHand_out)
-        self.IKHandBlendKLOp.setOutput('toe', self.IKHandBlendKLOppalm_out)
+        self.IKHandBlendKLOp.setOutput('ball', self.IKHandBlendKLOpPalm_out)
 
 
 
@@ -485,7 +497,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.hand_mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
         self.hand_mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
-        self.hand_mocapHierBlendSolver.setInput('hierA', [self.IKHandBlendKLOpHand_out, self.IKHandBlendKLOppalm_out])
+        self.hand_mocapHierBlendSolver.setInput('hierA', [self.IKHandBlendKLOpHand_out, self.IKHandBlendKLOpPalm_out])
         self.hand_mocapHierBlendSolver.setInput('hierB', [self.hand_mocap, self.palm_mocap])
         # Add Xfo Outputs
         self.hand_mocapHierBlendSolver.setOutput('hierOut', [self.hand_cmpOut, self.palm_cmpOut])

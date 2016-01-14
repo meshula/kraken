@@ -20,10 +20,10 @@ function KrakenSolverArg[] OSS_IKFootBlendSolver.getArguments(){
   args.push(KrakenSolverArg('blend', 'In', 'Scalar'));
   args.push(KrakenSolverArg('ikFoot', 'In', 'Mat44'));
   args.push(KrakenSolverArg('fkFoot', 'In', 'Mat44'));
-  args.push(KrakenSolverArg('ikToe', 'In', 'Mat44'));
-  args.push(KrakenSolverArg('fkToe', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('ikBall', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('fkBall', 'In', 'Mat44'));
   args.push(KrakenSolverArg('foot', 'Out', 'Mat44'));
-  args.push(KrakenSolverArg('toe', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('ball', 'Out', 'Mat44'));
 
   return args;
 }
@@ -37,10 +37,10 @@ function OSS_IKFootBlendSolver.solve!
   in Scalar blend,
   in Mat44 ikFoot,
   in Mat44 fkFoot,
-  in Mat44 ikToe,
-  in Mat44 fkToe,
+  in Mat44 ikBall,
+  in Mat44 fkBall,
   io Mat44 foot,
-  io Mat44 toe
+  io Mat44 ball
   )
 {
   // The position of the fk foot is always the position we want the foot to be in
@@ -50,8 +50,8 @@ function OSS_IKFootBlendSolver.solve!
   Xfo ikFootXfo = Xfo(ikFoot);
   Xfo fkFootXfo = Xfo(fkFoot);
 
-  Xfo ikToeXfo = Xfo(ikToe);
-  Xfo fkToeXfo = Xfo(fkToe);
+  Xfo ikBallXfo = Xfo(ikBall);
+  Xfo fkBallXfo = Xfo(fkBall);
 
   //Foot
   Xfo resultFootXfo = ikFootXfo;
@@ -61,17 +61,17 @@ function OSS_IKFootBlendSolver.solve!
   resultFootXfo.ori = fkFootXfo.ori.sphericalLinearInterpolate(resultFootXfo.ori, blend);
   foot = resultFootXfo.toMat44();
 
-  //Toe
-  Xfo resultToeXfo =  resultFootXfo * ikFootXfo.inverse() * ikToeXfo;
-  resultToeXfo.ori = fkToeXfo.ori.sphericalLinearInterpolate(resultToeXfo.ori, blend);
-  toe = resultToeXfo.toMat44();
+  //Ball
+  Xfo resultBallXfo =  resultFootXfo * ikFootXfo.inverse() * ikBallXfo;
+  resultBallXfo.ori = fkBallXfo.ori.sphericalLinearInterpolate(resultBallXfo.ori, blend);
+  ball = resultBallXfo.toMat44();
 
   // Set debugging visibility.
   this.setDebug(drawDebug);
   if(this.drawDebug){
 
     drawXfo(this.handle.rootTransform, "footXfo", resultFootXfo);
-    drawXfo(this.handle.rootTransform, "toeXfo", resultToeXfo);
+    drawXfo(this.handle.rootTransform, "ballXfo", resultBallXfo);
   }
 
 }

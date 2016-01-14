@@ -31,11 +31,11 @@ function KrakenSolverArg[] OSS_FootRockerSystem.getArguments(){
   args.push(KrakenSolverArg('ballPivot', 'In', 'Mat44'));
   args.push(KrakenSolverArg('toePivot', 'In', 'Mat44'));
   args.push(KrakenSolverArg('footJointLoc', 'In', 'Mat44'));
-  args.push(KrakenSolverArg('toeJointLoc', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('ballJointLoc', 'In', 'Mat44'));
   args.push(KrakenSolverArg('innerPivotLoc', 'In', 'Mat44'));
   args.push(KrakenSolverArg('outerPivotLoc', 'In', 'Mat44'));
   args.push(KrakenSolverArg('footJoint', 'Out', 'Mat44'));
-  args.push(KrakenSolverArg('toeJoint', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('ballJoint', 'Out', 'Mat44'));
   args.push(KrakenSolverArg('ikGoal', 'Out', 'Mat44'));
 
   return args;
@@ -73,12 +73,12 @@ function OSS_FootRockerSystem.solve!
   Mat44 ballPivot,
   Mat44 toePivot,
   Mat44 footJointLoc,
-  Mat44 toeJointLoc,
+  Mat44 ballJointLoc,
   Mat44 innerPivotLoc,
   Mat44 outerPivotLoc,
 
   io Mat44 footJoint,
-  io Mat44 toeJoint,
+  io Mat44 ballJoint,
   io Mat44 ikGoal
 )
 {
@@ -89,7 +89,7 @@ function OSS_FootRockerSystem.solve!
   Xfo toePivotXfo = Xfo(toePivot);
 
   Xfo footXfo = Xfo(footJointLoc);
-  Xfo toeXfo = Xfo(toeJointLoc);
+  Xfo toeXfo = Xfo(ballJointLoc);
 
   Xfo innerPivotXfo = Xfo(innerPivotLoc);
   Xfo outerPivotXfo = Xfo(outerPivotLoc);
@@ -165,7 +165,7 @@ function OSS_FootRockerSystem.solve!
   // can we just output the foot joint if it's always going to be the same loc as ikGoal?
   ikGoal = ikCtrlXfo.toMat44();
   footJoint = footXfo.toMat44();
-  toeJoint = toeXfo.toMat44();
+  ballJoint = toeXfo.toMat44();
 
 
   this.setDebug(drawDebug);
