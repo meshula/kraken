@@ -171,7 +171,13 @@ class KLOperator(Operator):
                 else:
                     argVals.append(getRTVal(self.outputs[argName]))
 
-        self.solverRTVal.solve('', *argVals)
+        try:
+            self.solverRTVal.solve('', *argVals)
+        except:
+            print("Problem with KL operator \""+self.getName()+"\" arguments:")
+            import pprint
+            pprint.pprint(argVals)
+            raise
 
         # Now put the computed values out to the connected output objects.
         def setRTVal(obj, rtval):
