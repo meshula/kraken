@@ -22,12 +22,12 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
-
+COMPONENT_NAME = "shoulder"
 
 class OSSShoulderComponent(BaseExampleComponent):
     """Shoulder Component Base"""
 
-    def __init__(self, name='shoulderBase', parent=None, data=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None, data=None):
         super(OSSShoulderComponent, self).__init__(name, parent)
 
         # ===========
@@ -53,7 +53,7 @@ class OSSShoulderComponent(BaseExampleComponent):
 class OSSShoulderComponentGuide(OSSShoulderComponent):
     """Shoulder Component Guide"""
 
-    def __init__(self, name='shoulder', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Shoulder Guide Component:" + name)
         super(OSSShoulderComponentGuide, self).__init__(name, parent)
@@ -197,7 +197,7 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
 class OSSShoulderComponentRig(OSSShoulderComponent):
     """Shoulder Component"""
 
-    def __init__(self, name='Shoulder', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Shoulder Rig Component:" + name)
         super(OSSShoulderComponentRig, self).__init__(name, parent)
