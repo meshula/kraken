@@ -241,7 +241,8 @@ class KrakenMenu(QtGui.QWidget):
 
         # Create New Rig And Reload All Components.
         graphViewWidget.newRigPreset()
-        KrakenSystem.getInstance().reloadAllComponents()
+        KrakenSystem.getInstance().loadComponentModules()
+        krakenUIWidget.nodeLibrary.componentTreeWidget.buildWidgets()
 
         # Load Saved Data And Update Widget
         graphViewWidget.guideRig.loadRigDefinition(rigData)
