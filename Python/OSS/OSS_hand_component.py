@@ -544,7 +544,7 @@ class OSSHandComponentRig(OSSHandComponent):
                 if segment == "end":
                     continue  # don't create control for end (but we need it to loop through control positions correctly)
                 newCtrlSpace = CtrlSpace(digitName+"_"+segment, parent=parent)
-                newCtrl = Control(digitName+"_"+segment, parent=newCtrlSpace, shape="circle")
+                newCtrl = Control(digitName+"_"+segment, parent=newCtrlSpace, shape="square")
                 newCtrl.rotatePoints(0,0,90)
                 newCtrl.scalePoints(globalScale)
                 newCtrls.append(newCtrl)

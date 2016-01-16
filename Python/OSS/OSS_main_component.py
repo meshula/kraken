@@ -35,7 +35,7 @@ class OSSMainComponent(BaseExampleComponent):
         # Declare Inputs Xfos
 
         # Declare Output Xfos
-        self.srtOutputTgt = self.createOutput('srt', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.globalOutputTgt = self.createOutput('global', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.offsetOutputTgt = self.createOutput('offset', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
@@ -183,14 +183,14 @@ class OSSMainComponentRig(OSSMainComponent):
         # Controls
         # =========
         # Add Controls
-        self.mainCtrlSpace = CtrlSpace('SRT', parent=self.ctrlCmpGrp)
-        self.mainCtrl = Control('SRT', shape='main', parent=self.mainCtrlSpace)
-        self.mainCtrl.setColor("yellow")
+        self.mainCtrlSpace = CtrlSpace('global', parent=self.ctrlCmpGrp)
+        self.mainCtrl = Control('global', shape='main', parent=self.mainCtrlSpace)
+        self.mainCtrl.setColor("turqoise")
         self.mainCtrl.lockScale(x=True, y=True, z=True)
 
         self.offsetCtrlSpace = CtrlSpace('Offset', parent=self.mainCtrl)
-        self.offsetCtrl = Control('Offset', shape='circle', parent=self.offsetCtrlSpace)
-        self.offsetCtrl.setColor("orange")
+        self.offsetCtrl = Control('Offset', shape='main', parent=self.offsetCtrlSpace)
+        self.offsetCtrl.setColor("turqoiseDark")
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
 
         # Add Component Params to IK control
@@ -210,9 +210,9 @@ class OSSMainComponentRig(OSSMainComponent):
         # Constraint inputs
 
         # Constraint outputs
-        srtConstraint = PoseConstraint('_'.join([self.srtOutputTgt.getName(), 'To', self.mainCtrl.getName()]))
-        srtConstraint.addConstrainer(self.mainCtrl)
-        self.srtOutputTgt.addConstraint(srtConstraint)
+        globalConstraint = PoseConstraint('_'.join([self.globalOutputTgt.getName(), 'To', self.mainCtrl.getName()]))
+        globalConstraint.addConstrainer(self.mainCtrl)
+        self.globalOutputTgt.addConstraint(globalConstraint)
 
         offsetConstraint = PoseConstraint('_'.join([self.offsetOutputTgt.getName(), 'To', self.mainCtrl.getName()]))
         offsetConstraint.addConstrainer(self.offsetCtrl)
@@ -256,7 +256,7 @@ class OSSMainComponentRig(OSSMainComponent):
         # Resize Controls
         # ================
         self.mainCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
-        self.offsetCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 20, 1.0, data["globalComponentCtrlSize"] * 20))  # fix this scale issue
+        self.offsetCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
 
         # =======================
         # Set Control Transforms
@@ -269,7 +269,7 @@ class OSSMainComponentRig(OSSMainComponent):
         # ============
         # Set IO Xfos
         # ============
-        self.srtOutputTgt = data["mainXfo"]
+        self.globalOutputTgt = data["mainXfo"]
         self.offsetOutputTgt = data["mainXfo"]
 
 

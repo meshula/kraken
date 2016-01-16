@@ -71,7 +71,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         # Guide Controls
 
         self.mouthCtrl = Control('mouth', parent=self.ctrlCmpGrp, shape="sphere")
-        self.mouthUpVCtrl = Control('mouthUpV', parent=self.ctrlCmpGrp, shape="triangle") 
+        self.mouthUpVCtrl = Control('mouthUpV', parent=self.ctrlCmpGrp, shape="triangle")
         self.mouthUpVCtrl.setColor('red')
         self.mouthEndCtrl = Control('mouthEnd', parent=self.ctrlCmpGrp, shape="sphere")
 
@@ -277,7 +277,7 @@ class OSSMouthComponentRig(OSSMouthComponent):
 
         self.mouthCtrlSpace.xfo = data['mouthXfo']
         self.mouthCtrl.xfo = data['mouthXfo']
-
+        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'], 0.0, -1.0))
 
         # ============
         # Set IO Xfos

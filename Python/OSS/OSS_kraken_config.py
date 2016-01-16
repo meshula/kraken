@@ -22,10 +22,10 @@ class OSSConfig(Config):
 
         colorMap = {
                     "Control": {
-                                "default": "yellow",
-                                "L": "blue",
-                                "M": "yellow",
-                                "R": "red"
+                                "default": "yellowLight",
+                                "L": "turqoiseMuted",
+                                "M": "yellowLight",
+                                "R": "mutedMagenta"
                                }
                    }
 

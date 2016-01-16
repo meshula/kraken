@@ -208,7 +208,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # =========
         # Shoulder
         self.shldrCtrlSpace = CtrlSpace('shldr', parent=self.ctrlCmpGrp)
-        self.shldrCtrl = Control('shldr', parent=self.shldrCtrlSpace, shape="cube")
+        self.shldrCtrl = Control('shldr', parent=self.shldrCtrlSpace, shape="square")
         self.shldrCtrl.alignOnXAxis()
 
 
@@ -277,12 +277,10 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
 
         self.shldrCtrlSpace.xfo = data['shldrXfo']
         self.shldrCtrl.xfo = data['shldrXfo']
-        self.shldrCtrl.scalePoints(Vec3(data['shldrLen'], 0.75, 0.75))
+        xoffset = 2
+        self.shldrCtrl.scalePoints(Vec3(data['shldrLen'], 4, 4))
 
-        if data['location'] == "R":
-            self.shldrCtrl.translatePoints(Vec3(0.0, 0.0, -1.0))
-        else:
-            self.shldrCtrl.translatePoints(Vec3(0.0, 0.0, 1.0))
+        self.shldrCtrl.translatePoints(Vec3(xoffset, -5.0, 0.0))
 
         # ============
         # Set IO Xfos
