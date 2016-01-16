@@ -44,6 +44,11 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
         """
 
         for item in data['components']:
+            if data['components'][item] not in self.ks.registeredComponents.keys():
+                print ("Warning: Component module "+data['components'][item]+" not found in registered components:")
+                for component in self.ks.registeredComponents:
+                    print "  "+component
+                continue
 
             treeItem = QtGui.QTreeWidgetItem(parentWidget)
             treeItem.setData(0, QtCore.Qt.UserRole, data['components'][item])

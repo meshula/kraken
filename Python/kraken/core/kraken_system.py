@@ -311,41 +311,6 @@ class KrakenSystem(object):
         return self.registeredComponents[className]
 
 
-    def reloadAllComponents(self):
-        """Force the reload of all registered component modules
-
-        Return:
-        True if successful.
-
-        """
-
-        for componentClassPath in self.registeredComponents:
-            componentModulePath = self.registeredComponents[componentClassPath].__module__
-            if componentModulePath in sys.modules:
-                del(sys.modules[componentModulePath])
-
-        prevRegsteredComponents = self.registeredComponents.copy()
-        self.registeredComponents = {}
-
-        for componentClassPath in prevRegsteredComponents:
-            componentModulePath = prevRegsteredComponents[componentClassPath].__module__
-            try:
-                importlib.import_module(componentModulePath)
-            except Exception as e:
-                stack = traceback.format_tb(sys.exc_info()[2])
-                exception_list = []
-                exception_list.extend(stack)
-                exception_list.extend(traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1]))
-
-                exception_str = "Traceback (most recent call last):\n"
-                exception_str += "".join(exception_list)
-                # Removing the last \n
-                exception_str = exception_str[:-1]
-                print(exception_str)
-
-        return True
-
-
     def getComponentClassNames(self):
         """Returns the names of the registered Python component classes
 
@@ -364,6 +329,14 @@ class KrakenSystem(object):
 
         """
 
+        for componentClassPath in self.registeredComponents:
+            componentModulePath = self.registeredComponents[componentClassPath].__module__
+            if componentModulePath in sys.modules:
+                del(sys.modules[componentModulePath])
+
+        self.registeredComponents = {}
+
+        print ("\nLoading component modules...") #Important feedback
 
         def __importDirRecursive(path, parentModulePath=''):
             contents = os.listdir(path)
@@ -383,22 +356,27 @@ class KrakenSystem(object):
 
 
             if moduleFilefound:
+                print(" "+path+":")
                 for item in contents:
                     if os.path.isfile(os.path.join(path, item)):
                         # parse all the files of given path and import python modules
                         if item.endswith(".py") and item != "__init__.py":
                             module = modulePath+"."+item[:-3]
                             try:
+                                print ("  "+module), #Important feedback
                                 importlib.import_module(module)
 
                             except ImportError, e:
+                                print " Failed..."
                                 print e
                                 for arg in e.args:
                                     print arg
 
                             except Exception, e:
+                                print "Failed..."
                                 for arg in e.args:
                                     print arg
+                            print "\n", #newline
 
 
             for item in contents:
@@ -426,6 +404,7 @@ class KrakenSystem(object):
                     continue
 
                 __importDirRecursive(path)
+        print ("Done loading.")
 
 
     @classmethod

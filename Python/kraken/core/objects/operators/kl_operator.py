@@ -185,6 +185,8 @@ class KLOperator(Operator):
                 obj.xfo.setFromMat44(Mat44(rtval))
             elif isinstance(obj, Attribute):
                 obj.setValue(rtval)
+            else:
+                print ("Warning: Not setting rtval "+str(rtval)+" for object "+str(obj))
 
         for i in xrange(len(argVals)):
             arg = self.args[i]

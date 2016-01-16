@@ -96,6 +96,7 @@ class CanvasOperator(Operator):
             portDataType = port['typeSpec']
 
             if portDataType == '$TYPE$':
+                # TODO: test for inputs[portName] is iterable, if so change dataType to based on elements and do the rest
                 return
 
             if portDataType == 'EvalContext':
@@ -138,6 +139,8 @@ class CanvasOperator(Operator):
                 obj.xfo.setFromMat44(Mat44(rtval))
             elif isinstance(obj, Attribute):
                 obj.setValue(rtval)
+            else:
+                print ("Warning: Not setting rtval "+str(rtval)+" for object "+str(obj))
 
         for port in self.graphDesc['ports']:
             portName = port['name']
@@ -146,7 +149,7 @@ class CanvasOperator(Operator):
 
             if portConnectionType != 'In':
                 outVal = binding.getArgValue(portName)
-                if portDataType.endswith('[]'):
+                if hasattr(outVal, '__iter__'): #type could be "$TYPE$" so don't test for brackets
                     for j in xrange(len(outVal)):
                         setRTVal(self.outputs[portName][j], outVal[j])
                 else:
