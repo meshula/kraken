@@ -747,6 +747,29 @@ class Object3D(SceneItem):
         return True
 
 
+    def insertCtrlSpace(self, name=None):
+        """Adds a CtrlSpace object above this object
+
+        Args:
+            name (string) optional name for this CtrlSpace, default is same as this object
+
+        Returns:
+            string: CtrlSpace object
+
+        """
+        if not name:
+            name = self.getName()
+
+        exec("from kraken.core.objects.ctrlSpace import CtrlSpace")
+        exec("newCtrlSpace = CtrlSpace(\""+name+"\", parent=self.getParent())")
+        self.getParent().removeChild(self) #Not sure why this does not happen in setParent()
+        self.setParent(newCtrlSpace)
+        newCtrlSpace.addChild(self) #Not sure why this does not happen in setParent()
+        newCtrlSpace.xfo = self.xfo
+
+        return newCtrlSpace
+
+
 
     def constrainTo(self, constrainer, type="Pose", maintainOffset=False, name=None):
         """Adds an constraint to this object.
