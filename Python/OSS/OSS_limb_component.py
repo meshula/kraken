@@ -317,8 +317,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.useOtherIKGoal = bool(data['useOtherIKGoal'])
         self.mocap = bool(data["mocap"])
 
-        print("TTPrint: self.mocap:"),
-        print(self.mocap)
         if self.mocap:
                 self.limbMocapInputAttr = self.createInput('limbMocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
@@ -332,6 +330,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
             self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
             self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+
 
         # =========
         # Controls
