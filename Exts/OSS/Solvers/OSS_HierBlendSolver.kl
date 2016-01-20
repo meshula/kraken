@@ -47,33 +47,74 @@ function OSS_HierBlendSolver.solve!
     hierBXfos.resize(size);
     hierOutXfos.resize(size);
 
-    // Convert to Xfos
-    for(Integer i=0; i<size; i++)
-    {
-        hierAXfos[i] = Xfo(hierA[i]);
-        hierBXfos[i] = Xfo(hierB[i]);
-    }
+    Integer parentIndexesResolved[];
+    parentIndexesResolved.resize(size);  // Why does Integer parentIndexesResolved[size] not work?
 
-    for(Integer i=0; i<size; i++)
+
+    // To optimize test for blend value
+
+    if (blend == 1)
     {
-        if (parentIndexes[i] < 0)
+      for(Integer i=0; i<size; i++)
+      {
+          hierOut[i] = hierB[i];
+
+      }
+      return;
+    }
+    else if (blend == 0)
+    {
+      for(Integer i=0; i<size; i++)
+      {
+          hierOut[i] = hierA[i];
+
+      }
+      return;
+    }
+    else {
+
+      // If no parent indexes are provided or not enough, generate them automatically
+
+      for(Integer i=0; i<size; i++)
+      {
+        if (i < parentIndexes.size())
         {
-            hierOutXfos[i] = hierAXfos[i].linearInterpolate(hierBXfos[i], blend).toMat44();
+          parentIndexesResolved[i] = parentIndexes[i];
         }
         else
         {
-            Xfo localAXfo = hierAXfos[parentIndexes[i]].inverse() * hierAXfos[i];
-            Xfo localBXfo = hierBXfos[parentIndexes[i]].inverse() * hierBXfos[i];
-            Xfo localXfo = localAXfo.linearInterpolate(localBXfo, blend);
-            hierOutXfos[i] = hierOutXfos[parentIndexes[i]] * localXfo;
+          parentIndexesResolved[i] = i-1;
         }
-    }
+      }
 
-    for(Integer i=0; i<size; i++)
-    {
-          hierOut[i] = hierOutXfos[i].toMat44();
-    }
 
+      // Convert to Xfos
+      for(Integer i=0; i<size; i++)
+      {
+          hierAXfos[i] = Xfo(hierA[i]);
+          hierBXfos[i] = Xfo(hierB[i]);
+      }
+
+      for(Integer i=0; i<size; i++)
+      {
+          if (parentIndexesResolved[i] < 0)
+          {
+              hierOutXfos[i] = hierAXfos[i].linearInterpolate(hierBXfos[i], blend).toMat44();
+          }
+          else
+          {
+              Xfo localAXfo = hierAXfos[parentIndexesResolved[i]].inverse() * hierAXfos[i];
+              Xfo localBXfo = hierBXfos[parentIndexesResolved[i]].inverse() * hierBXfos[i];
+              Xfo localXfo = localAXfo.linearInterpolate(localBXfo, blend);
+              hierOutXfos[i] = hierOutXfos[parentIndexesResolved[i]] * localXfo;
+          }
+      }
+
+      for(Integer i=0; i<size; i++)
+      {
+            hierOut[i] = hierOutXfos[i].toMat44();
+      }
+    }
 
   // Set debugging visibility.
   this.setDebug(drawDebug);
