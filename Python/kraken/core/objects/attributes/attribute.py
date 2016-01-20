@@ -70,7 +70,7 @@ class Attribute(SceneItem):
         return True
 
 
-    def setValueChangeCallback(self, callback):
+    def setValueChangeCallback(self, callback, updateNodeGraph=False):
         """Sets the value of the attribute.
 
 
@@ -83,6 +83,8 @@ class Attribute(SceneItem):
         """
 
         self._callback = callback
+
+        self.setUpdateNode(updateNodeGraph)
 
         return True
 
