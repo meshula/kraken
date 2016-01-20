@@ -627,7 +627,9 @@ class Builder(Builder):
                         arraySizes[argName] = len(connectedObjects)
 
                     if len(connectedObjects) == 0:
-                        raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' not connected.");
+                        pass
+                        # TTHACK: Allow nothing to be connected and no values set for operators
+                        #raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' not connected.");
 
                     connectionTargets = []
                     for i in range(len(connectedObjects)):
@@ -759,7 +761,9 @@ class Builder(Builder):
                         arraySizes[portName] = len(connectedObjects)
 
                     if len(connectedObjects) == 0:
-                        raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' not connected.");
+                        pass
+                        # TTHACK: Allow nothing to be connected and no values set for operators
+                        #raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' not connected.");
 
                     connectionTargets = []
                     for i in range(len(connectedObjects)):
