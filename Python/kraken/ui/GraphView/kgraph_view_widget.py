@@ -73,10 +73,21 @@ class KGraphViewWidget(GraphViewWidget):
         text, ok = dialog.getText(self, 'Edit Rig Name', 'New Rig Name', text=self.guideRig.getName())
 
         if ok is True:
-            self.setRigName(text)
+            self.setGuideRigName(text)
 
 
-    def setRigName(self, text):
+    def setGuideRigName(self, text):
+        """
+        Sets the name of the guide rig only.
+        Force all guide rigs to end with "_guide"
+        This happens when guide rigs are built and if they are saved after that,
+        they get saved with "_guide" appeneded anyway.  So, sure up this convention
+        until it is changed categorically.
+
+        """
+
+        if text.endswith('_guide') is False:
+            text = text + '_guide'
         self.guideRig.setName(text)
         self.rigNameChanged.emit()
 
@@ -84,7 +95,7 @@ class KGraphViewWidget(GraphViewWidget):
     def newRigPreset(self):
         self.guideRig = Rig()
         self.getGraphView().displayGraph(self.guideRig)
-        self.setRigName('MyRig')
+        self.setGuideRigName('MyRig')
 
         self.openedFile = None
 
@@ -208,11 +219,13 @@ class KGraphViewWidget(GraphViewWidget):
         try:
             self.window().statusBar().showMessage('Building Guide')
 
-            builder = plugins.getBuilder()
-
             if self.guideRig.getName().endswith('_guide') is False:
                 self.guideRig.setName(self.guideRig.getName() + '_guide')
 
+            if self.window().preferences.getPreferenceValue('delete_existing_rigs'):
+                self.removeExistingDccRig(self.guideRig)
+
+            builder = plugins.getBuilder()
             builder.build(self.guideRig)
 
         except Exception as e:
@@ -228,6 +241,14 @@ class KGraphViewWidget(GraphViewWidget):
         synchronizer.sync()
 
 
+    def removeExistingDccRig(self, rig):
+
+        synchronizer = plugins.getSynchronizer()
+        synchronizer.setTarget(rig)
+        synchronizer.deleteDCCItem(rig)  # delete dcc item if it exists
+        synchronizer.cleanOperators()
+
+
     def buildRig(self):
 
         try:
@@ -240,6 +261,9 @@ class KGraphViewWidget(GraphViewWidget):
             rig.loadRigDefinition(rigBuildData)
 
             rig.setName(rig.getName().replace('_guide', ''))
+
+            if self.window().preferences.getPreferenceValue('delete_existing_rigs'):
+                self.removeExistingDccRig(rig)
 
             builder = plugins.getBuilder()
             builder.build(rig)
