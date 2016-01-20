@@ -158,3 +158,28 @@ class Synchronizer(Synchronizer):
         kObject.setCurveData(data)
 
         return True
+
+    def deleteDCCItem(self, kObject):
+        """ Delete the dcc item of kObject if it exists """
+
+        print ("deleteDCCItem() needs to be implemented and tested for SI.")
+
+        """
+        item = self.getDCCItem(kObject)
+        if item:
+            si.SelectObj(item, "BRANCH")  #This is just a guess!  I don't have softimage
+            si.DeleteObj()
+        """
+
+        return True
+
+    def cleanOperators(self):
+        """
+        Remove all operators from the scene that have no inputs
+        Not a great way to get rid of these, but they don't disappear when the hierarchy is deleted
+        """
+
+        print ("cleanOperators() needs to be implemented and tested for SI.")
+
+
+        return True

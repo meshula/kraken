@@ -163,3 +163,25 @@ class Synchronizer(Synchronizer):
         kObject.setCurveData(data)
 
         return True
+
+
+    def deleteDCCItem(self, kObject):
+        """ Delete the dcc item of kObject if it exists """
+
+        item = self.getDCCItem(kObject)
+        if item:
+            pm.delete(item)
+
+        return True
+
+    def cleanOperators(self):
+        """
+        Remove all operators from the scene that have no inputs
+        Not a great way to get rid of these, but they don't disappear when the hierarchy is deleted
+        """
+
+        for node in cmds.ls(type=["canvasNode", "dfgMayaNode"]):
+            if cmds.objExists(node) and not cmds.listConnections(node, source=True, destination=False):
+                cmds.delete(node)
+
+        return True
