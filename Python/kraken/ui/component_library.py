@@ -23,7 +23,7 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
         self.setDragEnabled(True)
         self.setDragDropMode(QtGui.QTreeWidget.DragOnly)
 
-        self._data = self.generateData()
+        self.generateData()
 
         self.buildWidgets()
 
@@ -89,7 +89,8 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
             componentClassNames.append(componentClassName)
 
 
-        data = {'subDirs': {}, 'components': {}}
+        self._data  = {'subDirs': {}, 'components': {}}
+
         for classItem in componentClassNames:
 
             nameSplit = classItem.rsplit('.', 1)
@@ -102,10 +103,10 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
             for i, part in enumerate(path):
 
                 if i == 0:
-                    if part not in data['subDirs'].keys():
-                        data['subDirs'][part] = {'subDirs': {}, 'components': {}}
+                    if part not in self._data['subDirs'].keys():
+                        self._data['subDirs'][part] = {'subDirs': {}, 'components': {}}
 
-                    parent = data['subDirs'][part]
+                    parent = self._data['subDirs'][part]
 
                     continue
 
@@ -118,7 +119,6 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
 
             parent['components'][className] = classItem
 
-        return data
 
     def mouseMoveEvent(self, event):
         self.dragObject()
