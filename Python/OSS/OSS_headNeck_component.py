@@ -37,7 +37,7 @@ class OSSHeadNeckComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.neckParentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.neckBaseOutputTgt = self.createOutput('neckBase', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -79,6 +79,9 @@ class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
 
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=4, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
+        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
+        self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
+        self.mocapInputAttr = None
 
         data = {
             'name': name,
@@ -88,9 +91,6 @@ class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
             'headHandlePosition': Vec3(0.0, 17.75, 0),
             'headPosition': Vec3(0.0, 18, 0),
         }
-
-        # Now, add the guide settings attributes to the data (happens in saveData)
-        data.update(self.saveData())
 
         self.loadData(data)
 
@@ -134,6 +134,11 @@ class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
         for ctrl in self.getAllHierarchyNodes(classType=Control):
             ctrl.setShape(ctrl.getShape())
 
+        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        existing_data = self.saveData()
+        existing_data.update(data)
+        data = existing_data
+
         super(OSSHeadNeckComponentGuide, self).loadData( data )
 
         self.neckCtrl.xfo.tr = data["neckPosition"]
@@ -148,6 +153,21 @@ class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
         self.headCtrl.scalePoints(globalScaleVec)
 
         return True
+
+
+    def updateMocap(self, mocap):
+        """ Callback to changing the component setting 'useOtherIKGoalInput'
+        Really, we should build this ability into the system, to add/remove input attrs based on guide setting bools.
+        That way, we don't have to write these callbacks.
+        """
+        if mocap:
+            if self.mocapInputAttr is None:
+                self.mocapInputAttr = self.createInput('mocap', dataType='Float', parent=self.cmpInputAttrGrp)
+
+        else:
+            if self.mocapInputAttr is not None:
+                self.deleteInput('mocap', parent=self.cmpInputAttrGrp)
+                self.mocapInputAttr = None
 
 
     def getRigBuildData(self):
@@ -203,7 +223,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         Profiler.getInstance().push("Construct Neck Rig Component:" + name)
         super(OSSHeadNeckComponentRig, self).__init__(name, parent)
 
-
+        self.mocap = False
         # =========
         # Controls
         # =========
@@ -249,18 +269,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.neckSrtInputConstraint = PoseConstraint('_'.join([self.neckCtrlSpace.getName(), 'To', self.neckParentSpaceInputTgt.getName()]))
-        self.neckSrtInputConstraint.addConstrainer(self.neckParentSpaceInputTgt)
-        self.neckSrtInputConstraint.setMaintainOffset(True)
-        self.neckCtrlSpace.addConstraint(self.neckSrtInputConstraint)
+        self.neckCtrlSpaceConstraint = self.neckCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
-        self.neckBaseOutputConstraint = PoseConstraint('_'.join([self.neckBaseOutputTgt.getName(), 'To', 'neckBase']))
-        self.neckBaseOutputConstraint.addConstrainer(self.neckOutputs[0])
-        self.neckBaseOutputTgt.addConstraint(self.neckBaseOutputConstraint)
 
-        self.neckEndOutputConstraint = PoseConstraint('_'.join([self.neckEndOutputTgt.getName(), 'To', 'neckEnd']))
-        self.neckEndOutputConstraint.addConstrainer(self.neckOutputs[0])
-        self.neckEndOutputTgt.addConstraint(self.neckEndOutputConstraint)
 
 
         # ===============
@@ -344,6 +355,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         headPosition = data['headPosition']
         numDeformers = data['numDeformers']
 
+        self.mocap = bool(data["mocap"])
+
         self.neckCtrlSpace.xfo.tr = neckPosition
         self.neckCtrl.xfo.tr = neckPosition
         self.neckHandleCtrlSpace.xfo.tr = neckHandlePosition
@@ -355,9 +368,107 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers)
 
-        # Updating constraint to use the updated last output.
-        self.neckEndOutputConstraint.setConstrainer(self.neckOutputs[-1], index=0)
 
+        if self.mocap:
+
+            self.mocapInputAttr = self.createInput('mocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+
+
+            self.neckCtrlSpace.xfo.tr = neckPosition
+            self.neckCtrl.xfo.tr = neckPosition
+            self.neckHandleCtrlSpace.xfo.tr = neckHandlePosition
+            self.headHandleCtrlSpace.xfo.tr = headHandlePosition
+            self.headCtrlSpace.xfo.tr = headPosition
+            self.headCtrl.xfo.tr = headPosition
+
+
+            # Neck
+            self.neckMocapCtrl = Control('neck_mocap', parent=self.ctrlCmpGrp, shape="circle")
+            self.neckMocapCtrl.scalePoints(Vec3(5.0, 5.0, 5.0))
+            self.neckMocapCtrl.setColor("purpleLight")
+            self.neckMocapCtrl.xfo.tr = neckPosition
+
+            self.neckMocapCtrlSpace = self.neckMocapCtrl.insertCtrlSpace()
+            self.neckMocapCtrlSpaceConstraint = self.neckMocapCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+
+            # Neck handle
+            self.neckHandleMocapCtrlSpace = CtrlSpace('neckHandle_mocap', parent=self.neckMocapCtrlSpace)
+            self.neckHandleMocapCtrlSpace.xfo.tr = neckHandlePosition
+
+            # Head
+            self.headMocapCtrl = Control('head_mocap', parent=self.neckMocapCtrl, shape="circle")
+            self.headMocapCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
+            self.headMocapCtrl.setColor("purpleLight")
+            self.headMocapCtrl.xfo.tr = headPosition
+
+            self.headMocapCtrlSpace = self.headMocapCtrl.insertCtrlSpace()
+
+            # Head handle
+            self.headHandleMocapCtrlSpace = CtrlSpace('headHandle_mocap', parent=self.headMocapCtrl)
+            self.headHandleMocapCtrlSpace.xfo.tr = headHandlePosition
+
+            # Blend anim and mocap together
+            self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocap_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.addOperator(self.mocapHierBlendSolver)
+            self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)  # connect this to attr
+            # Add Att Inputs
+            self.mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+            self.mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+            # Add Xfo Inputs
+            self.mocapHierBlendSolver.setInput('hierA',
+                [
+                self.neckCtrl,
+                self.neckHandleCtrlSpace,
+                self.headCtrl,
+                self.headHandleCtrlSpace,
+                ],
+            )
+
+            self.mocapHierBlendSolver.setInput('hierB',
+                [
+                self.neckMocapCtrl,
+                self.neckHandleMocapCtrlSpace,
+                self.headMocapCtrl,
+                self.headHandleMocapCtrlSpace
+                ]
+            )
+            self.mocapHierBlendSolver.setInput('parentIndexes', [-1, 0, 0, 2])
+
+            #Create some nodes just for the oupt of the blend.
+            #Wish we could just make direct connections....
+
+            self.neckCtrlSpace_link = CtrlSpace('neckCtrlSpace_link', parent=self.outputHrcGrp)
+            self.neckHandleCtrlSpace_link = CtrlSpace('neckHandleCtrlSpace_link', parent=self.outputHrcGrp)
+            self.headCtrlSpace_link = CtrlSpace('headCtrlSpace_link', parent=self.outputHrcGrp)
+            self.headHandleCtrlSpace_link = CtrlSpace('headHandleCtrlSpace_link', parent=self.outputHrcGrp)
+
+
+            self.mocapHierBlendSolver.setOutput('hierOut',
+                [
+                self.neckCtrlSpace_link,
+                self.neckHandleCtrlSpace_link,
+                self.headCtrlSpace_link,
+                self.headHandleCtrlSpace_link
+                ]
+            )
+            self.mocapHierBlendSolver.evaluate()
+
+            # Add Xfo Outputs
+            self.ZSplineNeckCanvasOp.setInput('neck', self.neckCtrlSpace_link)
+            self.ZSplineNeckCanvasOp.setInput('head', self.headCtrlSpace_link)
+            self.ZSplineNeckCanvasOp.setInput('neckHandle', self.neckHandleCtrlSpace_link)
+            self.ZSplineNeckCanvasOp.setInput('headHandle', self.headHandleCtrlSpace_link)
+
+
+        self.neckBaseOutputConstraint = self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0], maintainOffset=True)
+        self.neckEndOutputConstraint = self.neckEndOutputTgt.constrainTo(self.neckOutputs[-1], maintainOffset=True)
+
+
+
+
+        # evaluate the constraints to ensure the outputs are now in the correct location.
+        self.neckBaseOutputConstraint.evaluate()
+        self.neckEndOutputConstraint.evaluate()
 
         # ====================
         # Evaluate Splice Ops
@@ -368,9 +479,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # evaluate the constraint op so that all the joint transforms are updated.
         self.deformersToOutputsKLOp.evaluate()
 
-        # evaluate the constraints to ensure the outputs are now in the correct location.
-        self.neckBaseOutputConstraint.evaluate()
-        self.neckEndOutputConstraint.evaluate()
+
 
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
