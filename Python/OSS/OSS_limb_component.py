@@ -80,7 +80,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=guideSettingsAttrGrp)
         self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=guideSettingsAttrGrp)
         self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=guideSettingsAttrGrp)
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
+        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp) # inputAttribute=limbMocap #TODO later
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
 
@@ -89,9 +89,10 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         self.lolimbCtrl = Control('lolimb', parent=self.ctrlCmpGrp, shape="sphere")
         self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
 
-        self.useOtherIKGoalInput.setValueChangeCallback(self.updateUseOtherIKGoal)
-        self.useOtherIKGoalInput.setUpdateNode(True)
+        self.useOtherIKGoalInput.setValueChangeCallback(self.updateUseOtherIKGoal, updateNodeGraph=True)
+        self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
 
+        self.limbMocapInputAttr = None
 
         data = {
                 "name": name,
@@ -171,9 +172,25 @@ class OSSLimbComponentGuide(OSSLimbComponent):
             self.handleCtrl.setName(data['ikHandleName'])
 
         if "useOtherIKGoalInput" in data.keys():
-            self.updateUseOtherIKGoal(data["useOtherIKGoalInput"])
+            self.updateUseOtherIKGoal(bool(data["useOtherIKGoalInput"]))
 
         return True
+
+
+    def updateMocap(self, mocap):
+        """ Callback to changing the component setting 'useOtherIKGoalInput'
+        Really, we should build this ability into the system, to add/remove input attrs based on guide setting bools.
+        That way, we don't have to write these callbacks.
+        """
+        if mocap:
+            if self.limbMocapInputAttr is None:
+                self.limbMocapInputAttr = self.createInput('limbMocap', dataType='Float', parent=self.cmpInputAttrGrp)
+
+        else:
+            if self.limbMocapInputAttr is not None:
+                self.deleteInput('limbMocap', parent=self.cmpInputAttrGrp)
+                self.limbMocapInputAttr = None
+
 
 
     def updateUseOtherIKGoal(self, useOtherIKGoal):
@@ -183,14 +200,12 @@ class OSSLimbComponentGuide(OSSLimbComponent):
             if self.ikgoal_cmpIn is None:
                 self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
                 self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', parent=self.cmpInputAttrGrp)
-                self.limbMocapAttr = self.createInput('limbMocap', dataType='Float', parent=self.cmpInputAttrGrp)
                 self.softDistAttr = self.createInput('softDist', dataType='Float', parent=self.cmpInputAttrGrp)
                 self.stretchAttr = self.createInput('stretch', dataType='Float', parent=self.cmpInputAttrGrp)
         else:
             if self.ikgoal_cmpIn is not None:
                 self.deleteInput('ikGoalInput', parent=self.inputHrcGrp)
                 self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
-                self.deleteInput('limbMocap', parent=self.cmpInputAttrGrp)
                 self.deleteInput('softDist', parent=self.cmpInputAttrGrp)
                 self.deleteInput('stretch', parent=self.cmpInputAttrGrp)
                 self.ikgoal_cmpIn = None
@@ -299,17 +314,22 @@ class OSSLimbComponentRig(OSSLimbComponent):
         lolimbName = data['lolimbName']
         ikHandleName = data['ikHandleName']
 
-        self.useOtherIKGoal = data['useOtherIKGoal']
+        self.useOtherIKGoal = bool(data['useOtherIKGoal'])
+        self.mocap = bool(data["mocap"])
+
+        print("TTPrint: self.mocap:"),
+        print(self.mocap)
+        if self.mocap:
+                self.limbMocapInputAttr = self.createInput('limbMocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+
         if self.useOtherIKGoal:
             self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
             self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', value=1.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
-            self.limbMocapAttr = self.createInput('limbMocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
             self.softDistAttr = self.createInput('softDist', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
             self.stretchAttr = self.createInput('stretch', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
         else:
             self.ikgoal_cmpIn = None
             self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-            self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
             self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
             self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
 
@@ -336,16 +356,17 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # =========
         # Mocap
         # =========
-        # Mocap uplimb
-        self.uplimb_mocap = Control(uplimbName+'_mocap', parent=self.uplimbFKCtrlSpace, shape="cube")
-        self.uplimb_mocap.alignOnXAxis()
-        # Mocap lolimb
-        self.lolimb_mocapSpace = CtrlSpace(lolimbName+'_mocap', parent=self.uplimb_mocap)
-        self.lolimb_mocap = Control(lolimbName+'_mocap', parent=self.lolimb_mocapSpace, shape="cube")
-        self.lolimb_mocap.alignOnXAxis()
-        # Mocap handle
-        self.endlimb_mocapSpace = CtrlSpace(name+'end_mocap', parent=self.lolimb_mocap)
-        self.endlimb_mocap = Locator(name+'end_mocap', parent=self.endlimb_mocapSpace)
+        if self.mocap:
+            # Mocap uplimb
+            self.uplimb_mocap = Control(uplimbName+'_mocap', parent=self.uplimbFKCtrlSpace, shape="cube")
+            self.uplimb_mocap.alignOnXAxis()
+            # Mocap lolimb
+            self.lolimb_mocapSpace = CtrlSpace(lolimbName+'_mocap', parent=self.uplimb_mocap)
+            self.lolimb_mocap = Control(lolimbName+'_mocap', parent=self.lolimb_mocapSpace, shape="cube")
+            self.lolimb_mocap.alignOnXAxis()
+            # Mocap handle
+            self.endlimb_mocapSpace = CtrlSpace(name+'end_mocap', parent=self.lolimb_mocap)
+            self.endlimb_mocap = Locator(name+'end_mocap', parent=self.endlimb_mocapSpace)
 
 
         # Add Component Params to IK control
@@ -380,14 +401,10 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
 
         self.uplimbDef = Joint(uplimbName, parent=self.defCmpGrp)
-        self.uplimbDef.setComponent(self)
 
         self.lolimbDef = Joint(lolimbName, parent=self.defCmpGrp)
-        self.lolimbDef.setComponent(self)
 
         self.limbendDef = Joint(name+'end', parent=self.defCmpGrp)
-        self.limbendDef.setComponent(self)
-
 
         # ==============
         # Constrain I/O
@@ -442,28 +459,35 @@ class OSSLimbComponentRig(OSSLimbComponent):
         else:
             self.limbIKKLOp.setInput('ikHandle', self.limbIKCtrl)
 
-        # Add Xfo Outputs
-        self.limbIKKLOp_bone0_out = Locator('limbIKKLOp_bone0_out', parent=self.outputHrcGrp)
-        self.limbIKKLOp_bone1_out = Locator('limbIKKLOp_bone1_out', parent=self.outputHrcGrp)
-        self.limbIKKLOp_bone2_out = Locator('limbIKKLOp_bone2_out', parent=self.outputHrcGrp)
-        self.limbIKKLOp.setOutput('bone0Out', self.limbIKKLOp_bone0_out)
-        self.limbIKKLOp.setOutput('bone1Out', self.limbIKKLOp_bone1_out)
-        self.limbIKKLOp.setOutput('bone2Out', self.limbIKKLOp_bone2_out)
 
 
-        # Add Limb HierBlend Solver for Mocap
-        self.limbMocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'limbMocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.limbMocapHierBlendSolver)
-        self.limbMocapHierBlendSolver.setInput('blend', self.limbMocapAttr)
-        self.limbMocapHierBlendSolver.setInput('parentIndexes', [-1, 0, 1])
-        # Add Att Inputs
-        self.limbMocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-        self.limbMocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
-        # Add Xfo Inputs
-        self.limbMocapHierBlendSolver.setInput('hierA', [self.limbIKKLOp_bone0_out, self.limbIKKLOp_bone1_out, self.limbIKKLOp_bone2_out])
-        self.limbMocapHierBlendSolver.setInput('hierB', [self.uplimb_mocap, self.lolimb_mocap, self.endlimb_mocap])
-        # Add Xfo Outputs
-        self.limbMocapHierBlendSolver.setOutput('hierOut', [self.uplimb_cmpOut, self.lolimb_cmpOut, self.endlimb_cmpOut])
+        if self.mocap:
+
+            # Add Xfo Outputs
+            self.limbIKKLOp_bone0_out = Locator('limbIKKLOp_bone0_out', parent=self.outputHrcGrp)
+            self.limbIKKLOp_bone1_out = Locator('limbIKKLOp_bone1_out', parent=self.outputHrcGrp)
+            self.limbIKKLOp_bone2_out = Locator('limbIKKLOp_bone2_out', parent=self.outputHrcGrp)
+            self.limbIKKLOp.setOutput('bone0Out', self.limbIKKLOp_bone0_out)
+            self.limbIKKLOp.setOutput('bone1Out', self.limbIKKLOp_bone1_out)
+            self.limbIKKLOp.setOutput('bone2Out', self.limbIKKLOp_bone2_out)
+
+            # Add Limb HierBlend Solver for Mocap
+            self.limbMocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'limbMocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.addOperator(self.limbMocapHierBlendSolver)
+            self.limbMocapHierBlendSolver.setInput('blend', self.limbMocapInputAttr)
+            self.limbMocapHierBlendSolver.setInput('parentIndexes', [-1, 0, 1])
+            # Add Att Inputs
+            self.limbMocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+            self.limbMocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+            # Add Xfo Inputs
+            self.limbMocapHierBlendSolver.setInput('hierA', [self.limbIKKLOp_bone0_out, self.limbIKKLOp_bone1_out, self.limbIKKLOp_bone2_out])
+            self.limbMocapHierBlendSolver.setInput('hierB', [self.uplimb_mocap, self.lolimb_mocap, self.endlimb_mocap])
+            # Add Xfo Outputs
+            self.limbMocapHierBlendSolver.setOutput('hierOut', [self.uplimb_cmpOut, self.lolimb_cmpOut, self.endlimb_cmpOut])
+        else:
+            self.limbIKKLOp.setOutput('bone0Out', self.uplimb_cmpOut)
+            self.limbIKKLOp.setOutput('bone1Out', self.lolimb_cmpOut)
+            self.limbIKKLOp.setOutput('bone2Out', self.endlimb_cmpOut)
 
 
         # Add Deformer Joint Constrain
@@ -522,16 +546,17 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.scalePointsOnAxis(data['lolimbLen'], boneAxisStr)
 
-        self.uplimb_mocap.xfo = data['uplimbXfo']
-        self.uplimb_mocap.scalePointsOnAxis(data['uplimbLen'], boneAxisStr)
+        if self.mocap:
+            self.uplimb_mocap.xfo = data['uplimbXfo']
+            self.uplimb_mocap.scalePointsOnAxis(data['uplimbLen'], boneAxisStr)
 
-        self.lolimb_mocapSpace.xfo = data['lolimbXfo']
-        self.lolimb_mocap.xfo = data['lolimbXfo']
-        self.lolimb_mocap.scalePointsOnAxis(data['lolimbLen'], boneAxisStr)
+            self.lolimb_mocapSpace.xfo = data['lolimbXfo']
+            self.lolimb_mocap.xfo = data['lolimbXfo']
+            self.lolimb_mocap.scalePointsOnAxis(data['lolimbLen'], boneAxisStr)
 
-        self.endlimb_mocapSpace.xfo = data['handleXfo']
-        self.endlimb_mocap.xfo = data['handleXfo']
-        self.endlimb_mocap.xfo.ori = self.lolimb_mocap.xfo.ori
+            self.endlimb_mocapSpace.xfo = data['handleXfo']
+            self.endlimb_mocap.xfo = data['handleXfo']
+            self.endlimb_mocap.xfo.ori = self.lolimb_mocap.xfo.ori
 
         #Until later when we have better guide rigs setups, assume world Y up and Z forward to toe
         self.limbIKCtrlSpace.xfo = data['handleXfo']
@@ -571,7 +596,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
-        
+
         self.uplimbFKCtrl.scalePoints(Vec3(0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
         self.lolimbFKCtrl.scalePoints(Vec3(0, data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
 
