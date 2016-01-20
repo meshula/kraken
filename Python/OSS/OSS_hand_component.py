@@ -391,6 +391,15 @@ class OSSHandComponentRig(OSSHandComponent):
         self.palmCtrl = Control('palm', parent=self.palmCtrlSpace, shape="cube")
         self.palmCtrl.alignOnXAxis()
 
+        # IK Hand
+        self.handIKCtrlSpace = CtrlSpace('handIK', parent=self.handleCtrl)
+
+        # IK palm
+        self.palmCtrlSpace = CtrlSpace('palmIK', parent=self.handIKCtrlSpace)
+
+
+
+
         # =========
         # Mocap
         # =========
@@ -475,17 +484,15 @@ class OSSHandComponentRig(OSSHandComponent):
         self.IKHandBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
         self.IKHandBlendKLOp.setInput('blend', handIKInputAttr)
         # Add Xfo Inputs)
-        self.IKHandBlendKLOp.setInput('ikFoot', self.handCtrl)
+        self.IKHandBlendKLOp.setInput('ikFoot', self.handIKCtrlSpace)
         self.IKHandBlendKLOp.setInput('fkFoot', self.handCtrl)
-        self.IKHandBlendKLOp.setInput('ikBall', self.palmCtrl)
+        self.IKHandBlendKLOp.setInput('ikBall', self.palmCtrlSpace)
         self.IKHandBlendKLOp.setInput('fkBall', self.palmCtrl)
         # Add Xfo Outputs
         self.IKHandBlendKLOpHand_out = Locator('IKHandBlendKLOpHand_out', parent=self.outputHrcGrp)
         self.IKHandBlendKLOpPalm_out = Locator('IKHandBlendKLOpPalm_out', parent=self.outputHrcGrp)
         self.IKHandBlendKLOp.setOutput('foot', self.IKHandBlendKLOpHand_out)
         self.IKHandBlendKLOp.setOutput('ball', self.IKHandBlendKLOpPalm_out)
-
-
 
 
         # Add Hand palm HierBlend Solver for Mocap
@@ -534,7 +541,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
 
         for i, digitName in enumerate(digitNameList):
-            parent = self.palmCtrl
+            parent = self.palm_cmpOut
             newCtrls = []
             newDefs = []
             for j, segment in enumerate(segments):
@@ -616,6 +623,9 @@ class OSSHandComponentRig(OSSHandComponent):
         self.palmCtrlSpace.xfo = data['palmXfo']
         self.palmCtrl.xfo = data['palmXfo']
         self.palmCtrl.scalePointsOnAxis(data['palmLen'], boneAxisStr)
+
+        self.handIKCtrlSpace.xfo = self.handCtrl.xfo
+        self.palmCtrlSpace.xfo = self.palmCtrl.xfo
 
         self.ikHandLocator = data['handXfo']
         self.ikPalmLocator = data['palmXfo']
