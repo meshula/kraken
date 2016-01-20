@@ -77,17 +77,11 @@ class KGraphViewWidget(GraphViewWidget):
 
 
     def setGuideRigName(self, text):
-        """
-        Sets the name of the guide rig only.
-        Force all guide rigs to end with "_guide"
-        This happens when guide rigs are built and if they are saved after that,
-        they get saved with "_guide" appeneded anyway.  So, sure up this convention
-        until it is changed categorically.
 
-        """
 
-        if text.endswith('_guide') is False:
-            text = text + '_guide'
+        if text.endswith('_guide') is True:
+            text = text.replace('_guide', '')
+
         self.guideRig.setName(text)
         self.rigNameChanged.emit()
 
@@ -217,8 +211,11 @@ class KGraphViewWidget(GraphViewWidget):
     def buildGuideRig(self):
 
         try:
+            self.window().setCursor(QtCore.Qt.WaitCursor)
+
             self.window().statusBar().showMessage('Building Guide')
 
+            #Append "_guide" to rig name when building guide
             if self.guideRig.getName().endswith('_guide') is False:
                 self.guideRig.setName(self.guideRig.getName() + '_guide')
 
@@ -234,6 +231,8 @@ class KGraphViewWidget(GraphViewWidget):
             print callstack
             self.reportMessage('Error Building', level='error', exception=e)
 
+        finally:
+            self.window().setCursor(QtCore.Qt.ArrowCursor)
 
     def synchGuideRig(self):
         synchronizer = plugins.getSynchronizer()
@@ -252,6 +251,8 @@ class KGraphViewWidget(GraphViewWidget):
     def buildRig(self):
 
         try:
+            self.window().setCursor(QtCore.Qt.WaitCursor)
+
             self.window().statusBar().showMessage('Building Rig')
 
             self.synchGuideRig()
@@ -273,6 +274,9 @@ class KGraphViewWidget(GraphViewWidget):
             callstack = traceback.format_exc()
             print callstack
             self.reportMessage('Error Building', level='error', exception=e)
+
+        finally:
+            self.window().setCursor(QtCore.Qt.ArrowCursor)
 
     # ==========
     # Shortcuts
