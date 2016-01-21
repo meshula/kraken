@@ -300,16 +300,19 @@ class OSSEyeRig(OSSEye):
         self.eyeAimOutputTgt.xfo = eyeXfo
 
         # ====================
-        # Evaluate Splice Ops
+        # Evaluate Fabric Ops
         # ====================
-        # evaluate the constraint op so that all the joint transforms are updated.
-        self.eyeAimCanvasOp.evaluate()
-        self.deformersToOutputsKLOp.evaluate()
+        # Eval Operators # Order is important
+        self.evalOperators()
 
-        # evaluate the constraints to ensure the outputs are now in the correct location.
+        # ====================
+        # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
+        # ====================
+        # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
         self.eyeToAimConstraint.evaluate()
         self.eyeAimInputConstraint.evaluate()
         self.eyeOutputConstraint.evaluate()
+        # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 
 
 from kraken.core.kraken_system import KrakenSystem

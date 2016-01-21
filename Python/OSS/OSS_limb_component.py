@@ -317,21 +317,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.useOtherIKGoal = bool(data['useOtherIKGoal'])
         self.mocap = bool(data["mocap"])
 
-        if self.mocap:
-                self.limbMocapInputAttr = self.createInput('limbMocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
-
-        if self.useOtherIKGoal:
-            self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-            self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', value=1.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
-            self.softDistAttr = self.createInput('softDist', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
-            self.stretchAttr = self.createInput('stretch', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
-        else:
-            self.ikgoal_cmpIn = None
-            self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-            self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
-            self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-
-
         # =========
         # Controls
         # =========
@@ -352,6 +337,31 @@ class OSSLimbComponentRig(OSSLimbComponent):
         else:
             self.limbIKCtrl = Control(ikHandleName, parent=self.limbIKCtrlSpace, shape="cross")
 
+        # Add Component Params to IK control
+        limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.limbIKCtrl)
+        limbDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=limbSettingsAttrGrp)
+        self.limbBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=limbSettingsAttrGrp)
+        self.limbBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=limbSettingsAttrGrp)
+
+        self.drawDebugInputAttr.connect(limbDrawDebugAttr)
+
+        if self.mocap:
+                self.limbMocapInputAttr = self.createInput('limbMocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+
+        if self.useOtherIKGoal:
+            self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+            self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', value=1.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+            self.softDistAttr = self.createInput('softDist', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
+            self.stretchAttr = self.createInput('stretch', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+        else:
+            self.ikgoal_cmpIn = None
+            self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+            self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
+            self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+
+
+
+
         # =========
         # Mocap
         # =========
@@ -368,13 +378,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.endlimb_mocap = Locator(name+'end_mocap', parent=self.endlimb_mocapSpace)
 
 
-        # Add Component Params to IK control
-        limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.limbIKCtrl)
-        limbDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=limbSettingsAttrGrp)
-        self.limbBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=limbSettingsAttrGrp)
-        self.limbBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=limbSettingsAttrGrp)
 
-        self.drawDebugInputAttr.connect(limbDrawDebugAttr)
 
         # UpV
         self.limbUpVCtrlSpace = CtrlSpace(name+'UpV', parent=self.ctrlCmpGrp)
@@ -410,7 +414,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # ==============
         # Constraint inputs
         self.limbIKCtrlSpaceInputConstraint = self.limbIKCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
-        self.parentSpaceInputConstraint = self.uplimbFKCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.uplimbFKCtrlSpaceConstraint = self.uplimbFKCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
 
         # Blend the Spaces (should make this a sub proc)
@@ -586,12 +590,20 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.parentSpaceInputTgt.xfo = data['uplimbXfo']
 
-        # Eval Constraints
-        self.limbIKCtrlSpaceInputConstraint.evaluate()
-        self.parentSpaceInputConstraint.evaluate()
 
-        # Eval Operators
+        # ====================
+        # Evaluate Fabric Ops
+        # ====================
+        # Eval Operators # Order is important
         self.evalOperators()
+
+        # ====================
+        # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
+        # ====================
+        # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
+        # None
+        # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
+
 
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])

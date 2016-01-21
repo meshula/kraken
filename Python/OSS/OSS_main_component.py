@@ -272,6 +272,12 @@ class OSSMainComponentRig(OSSMainComponent):
         self.globalOutputTgt = data["mainXfo"]
         self.offsetOutputTgt = data["mainXfo"]
 
+        # ====================
+        # Evaluate Fabric Ops
+        # ====================
+        # Eval Operators # Order is important
+        self.evalOperators()
+
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()

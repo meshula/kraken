@@ -273,11 +273,11 @@ class OSSMouthComponentRig(OSSMouthComponent):
 
         """
 
-        super(OSSMouthComponentRig, self).loadData( data )
+        super(OSSMouthComponentRig, self).loadData(data)
 
         self.mouthCtrlSpace.xfo = data['mouthXfo']
         self.mouthCtrl.xfo = data['mouthXfo']
-        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'], 0.0, -1.0))
+        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'], 0.0, -1.0)))
 
         # ============
         # Set IO Xfos
