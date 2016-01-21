@@ -327,6 +327,9 @@ class KrakenSystem(object):
 
         The kraken_examples are loaded at all times.
 
+        Returns:
+            True if all components loaded, else False
+
         """
 
         for componentClassPath in self.registeredComponents:
@@ -339,6 +342,8 @@ class KrakenSystem(object):
         print ("\nLoading component modules...") #Important feedback
 
         def __importDirRecursive(path, parentModulePath=''):
+            isSuccessful = True
+
             contents = os.listdir(path)
             moduleFilefound = False
             for item in contents:
@@ -367,12 +372,14 @@ class KrakenSystem(object):
                                 importlib.import_module(module)
 
                             except ImportError, e:
+                                isSuccessful = False
                                 print " Failed..."
                                 print e
                                 for arg in e.args:
                                     print arg
 
                             except Exception, e:
+                                isSuccessful = False
                                 print "Failed..."
                                 for arg in e.args:
                                     print arg
@@ -382,14 +389,18 @@ class KrakenSystem(object):
             for item in contents:
                 if os.path.isdir(os.path.join(path, item)):
                     if moduleFilefound:
-                        __importDirRecursive(os.path.join(path, item), modulePath)
+                        if not __importDirRecursive(os.path.join(path, item), modulePath):
+                            isSuccessful = False
                     else:
-                        __importDirRecursive(os.path.join(path, item))
+                        if not __importDirRecursive(os.path.join(path, item)):
+                            isSuccessful = False
+
+            return isSuccessful
 
 
         # find the kraken examples module in the same folder as the kraken module.
         examplePaths = os.path.join(os.path.dirname(os.path.dirname(kraken.__file__)), 'kraken_examples')
-        __importDirRecursive(examplePaths)
+        isSuccessful = __importDirRecursive(examplePaths)
 
         pathsVar = os.getenv('KRAKEN_PATHS')
         if pathsVar is not None:
@@ -403,8 +414,12 @@ class KrakenSystem(object):
                     print "Invalid Kraken Path: " + path
                     continue
 
-                __importDirRecursive(path)
+                if not __importDirRecursive(path):
+                    isSuccessful = False
+
         print ("Done loading.")
+
+        return isSuccessful
 
 
     @classmethod
