@@ -243,6 +243,17 @@ class OSSHandComponentGuide(OSSHandComponent):
 
         super(OSSHandComponentGuide, self).loadData( data )
 
+        # TODO: make this a property of the component
+        self.boneAxisStr = "POSX"
+        if self.getLocation() == 'R':
+            self.boneAxisStr = "NEGX"
+        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+
+        self.upAxisStr = "NEGY"
+        if self.getLocation() == 'R':
+            self.upAxisStr = "POSY"
+        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+
         if "handXfo" in data.keys():
             self.handCtrl.xfo = data['handXfo']
         if "palmXfo" in data.keys():
@@ -283,15 +294,6 @@ class OSSHandComponentGuide(OSSHandComponent):
 
         data = super(OSSHandComponentGuide, self).getRigBuildData()
 
-        boneAxisStr = "POSX"
-        if self.getLocation() == 'R':
-            boneAxisStr = "NEGX"
-        boneAxis = axisStrToTupleMapping[boneAxisStr]
-
-        upAxisStr = "POSY"
-        if self.getLocation() == 'R':
-            upAxisStr = "NEGY"
-        upAxis = axisStrToTupleMapping[upAxisStr]
 
 
         # Values
@@ -316,9 +318,9 @@ class OSSHandComponentGuide(OSSHandComponent):
 
         # In the complete guide system, have live constraint for palm upvec, this assumes Hand is higher than palm
         #upvec hard-coded for now.  Really, we should have an upVector in the guide setup
-        palmXfo.aimAt(aimPos=palmTipPosition, upVector=handXfo.ori.getYaxis(), aimAxis=boneAxis, upAxis=upAxis)
+        palmXfo.aimAt(aimPos=palmTipPosition, upVector=handXfo.ori.getYaxis(), aimAxis=self.boneAxis, upAxis=self.upAxis)
         # Same here
-        handXfo.aimAt(aimPos=palmXfo.tr, upVector=handXfo.ori.getYaxis(), aimAxis=boneAxis, upAxis=upAxis)
+        handXfo.aimAt(aimPos=palmXfo.tr, upVector=handXfo.ori.getYaxis(), aimAxis=self.boneAxis, upAxis=self.upAxis)
 
         handleXfo = self.handleCtrl.xfo
 
@@ -499,7 +501,6 @@ class OSSHandComponentRig(OSSHandComponent):
 
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
-
         for i, digitName in enumerate(digitNameList):
             parent = self.palm_cmpOut
             newCtrls = []
@@ -510,8 +511,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
                 if segment == "end":
                     continue  # don't create control for end (but we need it to loop through control positions correctly)
-                newCtrlSpace = CtrlSpace(digitName+"_"+segment, parent=parent)
-                newCtrl = Control(digitName+"_"+segment, parent=newCtrlSpace, shape="square")
+                newCtrl = Control(digitName+"_"+segment, parent=parent, shape="square")
                 newCtrl.rotatePoints(0,0,90)
                 newCtrl.scalePoints(globalScale)
                 newCtrls.append(newCtrl)
@@ -527,8 +527,20 @@ class OSSHandComponentRig(OSSHandComponent):
                     index = i*len(segments) + j
 
                     if (i*numSegments + j) < len(data[ctrlListName+"Xfos"]):
-                        newCtrlSpace.xfo = data[ctrlListName+"Xfos"][index]
                         newCtrl.xfo = data[ctrlListName+"Xfos"][index]
+
+                        #Aim Control at child
+                        if j > 0:
+                            newCtrls[-2].xfo.aimAt(aimPos=newCtrl.xfo.tr, upVector=self.handCtrl.xfo.ori.getYaxis(), aimAxis=self.boneAxis, upAxis=self.upAxis)
+                            newCtrls[-2].insertCtrlSpace()
+                            if j == len(segments)-2:
+                                newCtrl.xfo.ori = newCtrls[-2].xfo.ori
+                                newCtrl.insertCtrlSpace()
+
+
+
+
+
 
             # Add Deformer Joint Constrain
             outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+digitName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
@@ -564,27 +576,33 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.mocap = bool(data["mocap"])
 
+
         # TODO: make this a property of the component
-        boneAxisStr = "POSX"
+        self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
-            boneAxisStr = "NEGX"
-        boneAxis = axisStrToTupleMapping["NEGX"]
+            self.boneAxisStr = "NEGX"
+        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+
+        self.upAxisStr = "NEGY"
+        if self.getLocation() == 'R':
+            self.upAxisStr = "POSY"
+        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
 
 
         self.handleCtrlSpace.xfo = data['handleXfo']
         #self.handleCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.palmCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
-        self.handleCtrl.xfo = self.handleCtrlSpace.xfo
+        self.handleCtrl.xfo = Xfo(self.handleCtrlSpace.xfo)
 
         self.handCtrlSpace.xfo = data['handXfo']
         self.handCtrl.xfo = data['handXfo']
-        self.handCtrl.scalePointsOnAxis(data['handLen'], boneAxisStr)
+        self.handCtrl.scalePointsOnAxis(data['handLen'], self.boneAxisStr)
 
         self.palmCtrlSpace.xfo = data['palmXfo']
         self.palmCtrl.xfo = data['palmXfo']
-        self.palmCtrl.scalePointsOnAxis(data['palmLen'], boneAxisStr)
+        self.palmCtrl.scalePointsOnAxis(data['palmLen'], self.boneAxisStr)
 
-        self.handIKCtrlSpace.xfo = self.handCtrl.xfo
-        self.palmCtrlSpace.xfo = self.palmCtrl.xfo
+        self.handIKCtrlSpace.xfo = Xfo(self.handCtrl.xfo)
+        self.palmCtrlSpace.xfo = Xfo(self.palmCtrl.xfo)
 
         self.ikHandTransform = data['handXfo']
         self.ikPalmTransform = data['palmXfo']
@@ -615,7 +633,7 @@ class OSSHandComponentRig(OSSHandComponent):
             self.handMocapCtrl = Control('hand_mocap', parent=self.handCtrlSpace, shape="cube")
             self.handMocapCtrl.alignOnXAxis()
             self.handMocapCtrl.xfo = data['handXfo']
-            self.handMocapCtrl.scalePointsOnAxis(data['handLen'], boneAxisStr)
+            self.handMocapCtrl.scalePointsOnAxis(data['handLen'], self.boneAxisStr)
 
             # Mocap palm
             self.palmMocapCtrlSpace = CtrlSpace('palm_mocap', parent=self.handMocapCtrl)
@@ -623,7 +641,7 @@ class OSSHandComponentRig(OSSHandComponent):
             self.palmMocapCtrl = Control('palm_mocap', parent=self.palmMocapCtrlSpace, shape="cube")
             self.palmMocapCtrl.xfo = data['palmXfo']
             self.palmMocapCtrl.alignOnXAxis()
-            self.palmMocapCtrl.scalePointsOnAxis(data['palmLen'], boneAxisStr)
+            self.palmMocapCtrl.scalePointsOnAxis(data['palmLen'], self.boneAxisStr)
 
 
 

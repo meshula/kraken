@@ -75,13 +75,13 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         # ========
 
         # Guide Settings
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=guideSettingsAttrGrp)
-        self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=guideSettingsAttrGrp)
-        self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=guideSettingsAttrGrp)
-        self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=guideSettingsAttrGrp)
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp) # inputAttribute=limbMocap #TODO later
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
+        self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=self.guideSettingsAttrGrp)
+        self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=self.guideSettingsAttrGrp)
+        self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=self.guideSettingsAttrGrp)
+        self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=self.guideSettingsAttrGrp)
+        self.mocapAttr = BoolAttribute('mocap', value=False, parent=self.guideSettingsAttrGrp) # inputAttribute=limbMocap #TODO later
+        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
 
 
         # Guide Controls
@@ -226,9 +226,9 @@ class OSSLimbComponentGuide(OSSLimbComponent):
             boneAxisStr = "NEGX"
         boneAxis = axisStrToTupleMapping[boneAxisStr]
 
-        upAxisStr = "POSY"
+        upAxisStr = "NEGY"
         if self.getLocation() == 'R':
-            upAxisStr = "NEGY"
+            upAxisStr = "POSY"
         upAxis = axisStrToTupleMapping[upAxisStr]
 
 
@@ -530,7 +530,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             boneAxisStr = "NEGX"
-        boneAxis = axisStrToTupleMapping["NEGX"]
+        boneAxis = axisStrToTupleMapping[boneAxisStr]
 
 
         #uplimb
@@ -564,7 +564,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         #Until later when we have better guide rigs setups, assume world Y up and Z forward to toe
         self.limbIKCtrlSpace.xfo = data['handleXfo']
         #self.limbIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.toeCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
-        self.limbIKCtrl.xfo = self.limbIKCtrlSpace.xfo
+        self.limbIKCtrl.xfo = Xfo(self.limbIKCtrlSpace.xfo)
 
 
         if self.getLocation() == "R":

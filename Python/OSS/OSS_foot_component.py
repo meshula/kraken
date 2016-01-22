@@ -517,12 +517,12 @@ class OSSFootComponentRig(OSSFootComponent):
         boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             boneAxisStr = "NEGX"
-        boneAxis = axisStrToTupleMapping["NEGX"]
+        boneAxis = axisStrToTupleMapping[boneAxisStr]
 
 
         self.handleCtrlSpace.xfo = data['handleXfo']
         #self.handleCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.ballCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
-        self.handleCtrl.xfo = self.handleCtrlSpace.xfo
+        self.handleCtrl.xfo = Xfo(self.handleCtrlSpace.xfo)
 
         self.footCtrlSpace.xfo = data['footXfo']
         self.footCtrl.xfo = data['footXfo']
