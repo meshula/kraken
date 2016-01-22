@@ -1,0 +1,43 @@
+require Math;
+
+object OSS_RemapScalarValueSolver : KrakenSolver {
+};
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_RemapScalarValueSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+
+  args.push(KrakenSolverArg('inputValues', 'In', 'Scalar[]'));
+  // args.push(KrakenSolverArg('scale', 'In', 'Scalar[]'));
+  args.push(KrakenSolverArg('resultNeg', 'Out', 'Scalar[]'));
+  args.push(KrakenSolverArg('resultPos', 'Out', 'Scalar[]'));
+  args.push(KrakenSolverArg('result', 'Out', 'Scalar[]'));
+  return args;
+}
+
+
+// Solve
+function OSS_RemapScalarValueSolver.solve!
+(
+  in Scalar inputValues[],
+  // in Scalar scale[],
+  out Scalar resultNeg[],
+  out Scalar resultPos[],
+  out Scalar result[],
+  )
+{ 
+  Scalar scale = 1.0;
+  currentSize = inputValues.size();
+  resultPos.resize(currentSize);
+  resultNeg.resize(currentSize);
+  result.resize(currentSize);
+  scale.resize(currentSize);
+
+  for(UInt32 i=0; i<inputValues.size(); i++){
+    resultPos[i] = Math_max(0,inputValues[i])*scale;
+    resultNeg[i] = abs(Math_min(0,inputValues[i]))*scale;
+    result = resultPos[i] - resultNeg[i];
+  }
+}
+

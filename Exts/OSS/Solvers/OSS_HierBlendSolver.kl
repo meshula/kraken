@@ -2,9 +2,6 @@ require InlineDrawing;
 require Geometry;
 require Kraken;
 
-require InlineDrawing;
-require Geometry;
-
 object OSS_HierBlendSolver : KrakenSolver {
 };
 

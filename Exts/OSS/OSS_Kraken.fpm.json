@@ -4,6 +4,7 @@
     "Solvers/OSS_BlendPoseConstraintSolver.kl",
     "Solvers/OSS_IKFootBlendSolver.kl",
     "Solvers/OSS_TwoBoneIKSolver.kl",
-    "Solvers/OSS_HierBlendSolver.kl"
+    "Solvers/OSS_HierBlendSolver.kl",
+    "Solvers/OSS_RemapScalarValueSolver.kl"
   ]
 }

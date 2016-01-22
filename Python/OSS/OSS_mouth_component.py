@@ -1,3 +1,5 @@
+import re
+
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo
 
@@ -18,6 +20,7 @@ from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
+from kraken.core.objects.operators.canvas_operator import CanvasOperator
 
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
@@ -63,6 +66,16 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
         self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+  
+        self.an3DCtrlNames = StringAttribute('an3DNames', value="LThreeD RThreeD", parent=guideSettingsAttrGrp)
+        self.an2DCtrlNames = StringAttribute('an2DNames', value="LTwoD RTwoD", parent=guideSettingsAttrGrp)
+        self.an1DCtrlNames = StringAttribute('an1DNames', value="LOneD ROneD", parent=guideSettingsAttrGrp)
+
+
+        self.an1DCtrlNames.setValueChangeCallback(self.updateAn1DControls)
+        self.an2DCtrlNames.setValueChangeCallback(self.updateAn2DControls)
+        self.an3DCtrlNames.setValueChangeCallback(self.updateAn3DControls)
+
 
 
         # =========
@@ -75,9 +88,15 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         self.mouthUpVCtrl.setColor('red')
         self.mouthEndCtrl = Control('mouthEnd', parent=self.ctrlCmpGrp, shape="sphere")
 
+
+        self.an1DCtrls = []
+        self.an2DCtrls = []
+        self.an3DCtrls = []
+
+
         data = {
                 "name": name,
-                "location": "L",
+                "location": "M",
                 "mouthXfo": Xfo(Vec3(0, 15, 0)),
                 "mouthUpVXfo": Xfo(Vec3(0.0, 1.0, 0.0)),
                 "mouthEndXfo": Xfo(Vec3(0, 14, 2))
@@ -86,6 +105,112 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         self.loadData(data)
 
         Profiler.getInstance().pop()
+
+    def updateAnControls(self, numSegments, controlsList, digitNames):
+        """Load a saved guide representation from persisted data.
+
+        Arguments:
+        numDigits -- object, The number of palm/toes
+
+        Return:
+        True if successful.
+
+        """
+        self.controlXforms = []
+
+        globalScale = 1.0
+
+        # Store current values if guide controls already exist
+        current = 0
+        for i, ctrl in enumerate(controlsList):
+
+            if ctrl.getParent() is self.mouthCtrl:
+                self.controlXforms.append([ctrl.xfo])
+                current = len(self.controlXforms) -1
+            else:
+                self.controlXforms[current].append(ctrl.xfo)
+
+
+
+        # Delete current controls
+        for ctrl in reversed(controlsList):
+            ctrl.getParent().removeChild(ctrl)
+        del controlsList[:]
+
+        # Lets build all new digits
+        animControlNameList = getAnimControlNameList(digitNames)
+
+        if not animControlNameList:  # Nothing to build
+            return True
+
+        segments = ["base", "tweak"]
+
+        offset = 0.0
+        for i, digitName in enumerate(animControlNameList):
+            parent = self.mouthCtrl
+            for j, segment in enumerate(segments):
+
+
+                newCtrl = Control(digitName+"_"+segment, parent=parent, shape="circle")
+
+                if numSegments ==1: # Slider
+                    if j == 0:
+                        newCtrl.setShape("square")
+                        newCtrl.setColor("red")
+                        newCtrl.scalePoints(Vec3(0.125,2,2))
+                    else:
+                        newCtrl.setShape("square")
+                        newCtrl.scalePoints(Vec3(.5,.25,.25))
+                        newCtrl.lockTranslation(x=True, y=False, z=True)
+
+                elif numSegments==2: # Field
+                    if j == 0:
+                        newCtrl.setShape("square")
+                        newCtrl.setColor("green")
+                        newCtrl.scalePoints(Vec3(2,2,2))
+                    else:
+                        newCtrl.setShape("circle")
+                        newCtrl.scalePoints(Vec3(.5,.5,.5))
+                        newCtrl.lockTranslation(x=False, y=False, z=True)
+
+                elif numSegments==3: # Volume
+                    if j == 0:
+                        newCtrl.setShape("cube")
+                        newCtrl.setColor("blue")
+                        newCtrl.scalePoints(Vec3(2,2,2))
+                    else:
+                        newCtrl.setShape("sphere")
+                        newCtrl.scalePoints(Vec3(.5,.5,.5))
+
+                newCtrl.rotatePoints(90,0,00)
+
+
+                #newCtrl.scalePoints(Vec3(0.25, 0.25, 0.25))
+                if j == 0:
+                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(-offset, 0.0, 0)))
+                    offset += 5.0
+                else:
+                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0.0, 0.0, 0)))
+
+                controlsList.append(newCtrl)
+                parent = newCtrl
+
+                if i < len(self.controlXforms):
+                    if j < len(self.controlXforms[i]):
+                        newCtrl.xfo = self.controlXforms[i][j]
+
+
+        return True
+
+
+    def updateAn1DControls(self, digitNames):
+        self.updateAnControls(1, self.an1DCtrls, digitNames)
+
+    def updateAn2DControls(self, digitNames):
+        self.updateAnControls(2, self.an2DCtrls, digitNames)
+
+    def updateAn3DControls(self, digitNames):
+        self.updateAnControls(3, self.an3DCtrls, digitNames)
 
 
     # =============
@@ -104,6 +229,16 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         data['mouthXfo'] = self.mouthCtrl.xfo
         data['mouthUpVXfo'] = self.mouthUpVCtrl.xfo
         data['mouthEndXfo'] = self.mouthEndCtrl.xfo
+
+
+
+        for ctrlListName in ["an1DCtrls", "an2DCtrls", "an3DCtrls"]:
+            ctrls = getattr(self, ctrlListName)
+            xfos = []
+            for i in xrange(len(ctrls)):
+                xfos.append(ctrls[i].xfo)
+            data[ctrlListName+"Xfos"] = xfos
+
 
         return data
 
@@ -133,7 +268,15 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         self.mouthUpVCtrl.xfo = self.mouthCtrl.xfo.multiply(data['mouthUpVXfo'])
         self.mouthEndCtrl.xfo = data['mouthEndXfo']
 
+        for ctrlListName in ["an1DCtrls", "an2DCtrls", "an3DCtrls"]:
+            ctrls = getattr(self, ctrlListName)
+            if ctrlListName+"Xfos" in data.keys():
+                for i in xrange(len(data[ctrlListName+"Xfos"])):
+                    if i < len(ctrls):
+                        ctrls[i].xfo = data[ctrlListName+"Xfos"][i]
         return True
+
+
 
 
     def getRigBuildData(self):
@@ -166,7 +309,15 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         data['mouthXfo'] = mouthXfo
         data['mouthLen'] = mouthLen
 
+        for ctrlListName in ["an1DCtrls", "an2DCtrls", "an3DCtrls"]:
+            ctrls = getattr(self, ctrlListName)
+            xfos = []
+            for i in xrange(len(ctrls)):
+                xfos.append(ctrls[i].xfo)
+            data[ctrlListName+"Xfos"] = xfos
+
         return data
+
 
     # ==============
     # Class Methods
@@ -216,30 +367,24 @@ class OSSMouthComponentRig(OSSMouthComponent):
         # Deformers
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
-        defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
         self.ctrlCmpGrp.setComponent(self)
 
-        self.mouthDef = Joint('mouth', parent=defCmpGrp)
+        self.mouthDef = Joint('mouth', parent=self.defCmpGrp)
         self.mouthDef.setComponent(self)
 
 
         # ==============
         # Constrain I/O
         # ==============
-        # Constraint inputs
-        mouthInputConstraint = PoseConstraint('_'.join([self.mouthCtrl.getName(), 'To', self.parentSpaceInputTgt.getName()]))
-        mouthInputConstraint.setMaintainOffset(True)
-        mouthInputConstraint.addConstrainer(self.parentSpaceInputTgt)
-        self.mouthCtrlSpace.addConstraint(mouthInputConstraint)
+        self.mouthInputConstraint = self.mouthCtrl.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.mouthConstraint = self.mouthOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
+        self.mouthEndConstraint = self.mouthEndOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
 
-        # Constraint outputs
-        mouthConstraint = PoseConstraint('_'.join([self.mouthOutputTgt.getName(), 'To', self.mouthCtrl.getName()]))
-        mouthConstraint.addConstrainer(self.mouthCtrl)
-        self.mouthOutputTgt.addConstraint(mouthConstraint)
 
-        mouthEndConstraint = PoseConstraint('_'.join([self.mouthEndOutputTgt.getName(), 'To', self.mouthCtrl.getName()]))
-        mouthEndConstraint.addConstrainer(self.mouthCtrl)
-        self.mouthEndOutputTgt.addConstraint(mouthEndConstraint)
+
+
+
 
 
         # ===============
@@ -262,6 +407,107 @@ class OSSMouthComponentRig(OSSMouthComponent):
         Profiler.getInstance().pop()
 
 
+
+    def createControls(self, numSegments, digitNames, data):
+
+        animControlNameList = getAnimControlNameList(digitNames)
+
+
+        segments = ["base", "tweak"]
+
+        globalScale = data['globalComponentCtrlSize']
+
+
+        for i, digitName in enumerate(animControlNameList):
+            parent = self.mouthEndOutputTgt
+            newCtrls = []
+            newDefs = []
+            for j, segment in enumerate(segments):
+                #Eventually, we need outputs and ports for this component for each digit segment
+                #spineOutput = ComponentOutput(digitName+"_"+segment, parent=self.outputHrcGrp)
+
+                    
+                newCtrlSpace = CtrlSpace(digitName+"_"+segment, parent=parent)
+                newCtrl = Control(digitName+"_"+segment, parent=newCtrlSpace, shape="circle")
+
+                if numSegments ==1: # Slider
+                    if j == 0:
+                        newCtrl.setShape("square")
+                        newCtrl.setColor("red")
+                        newCtrl.scalePoints(Vec3(0.125,2,2))
+                    else:
+                        newCtrl.setShape("square")
+                        newCtrl.scalePoints(Vec3(.5,.25,.25))
+                        newCtrl.lockTranslation(x=True, y=False, z=True)
+
+                elif numSegments==2: # Field
+                    if j == 0:
+                        newCtrl.setShape("square")
+                        newCtrl.setColor("green")
+                        newCtrl.scalePoints(Vec3(2,2,2))
+                    else:
+                        newCtrl.setShape("circle")
+                        newCtrl.scalePoints(Vec3(.5,.5,.5))
+                        newCtrl.lockTranslation(x=False, y=False, z=True)
+
+                elif numSegments==3: # Volume
+                    if j == 0:
+                        newCtrl.setShape("cube")
+                        newCtrl.setColor("blue")
+                        newCtrl.scalePoints(Vec3(2,2,2))
+                    else:
+                        newCtrl.setShape("sphere")
+                        newCtrl.scalePoints(Vec3(.5,.5,.5))
+
+                newCtrl.rotatePoints(90,0,0)
+
+
+                # newCtrl.lockTranslation(x=True, y=True, z=True)
+                newCtrl.lockScale(x=True, y=True, z=True)
+                newCtrl.lockRotation(x=True, y=True, z=True)
+
+                newCtrls.append(newCtrl)
+
+                newDef = Joint(digitName+"_"+segment, parent=self.defCmpGrp)
+                newDefs.append(newDef)
+
+                #self.digitConstraints.append(newDef.constrainTo(newCtrl, maintainOffset=False))
+                #controlsList.append(newCtrl)
+                parent = newCtrl
+                ctrlListName = "an"+str(numSegments)+"DCtrls"
+                print ctrlListName
+                print data.keys()
+
+                if (ctrlListName+"Xfos") in data.keys():
+
+                    index = i*len(segments) + j
+
+                    if (i*numSegments + j) < len(data[ctrlListName+"Xfos"]):
+                        newCtrlSpace.xfo = data[ctrlListName+"Xfos"][index]
+                        newCtrl.xfo = data[ctrlListName+"Xfos"][index]
+
+            # Add Deformer Joint Constrain
+            self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+digitName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+
+            self.RemapScalarValueSolverKLOp = KLOperator(self.getLocation()+self.getName()+digitName+'RemapScalarValueSolverCanvasOp', 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
+
+            self.addOperator(self.outputsToDeformersKLOp)
+
+            self.addOperator(self.RemapScalarValueSolverCanvasOp)
+
+            # Add Att Inputs
+            self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+            self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
+            # Add Xfo Inputs
+            self.outputsToDeformersKLOp.setInput('constrainers', newCtrls)
+            # Add Xfo Outputs
+            self.outputsToDeformersKLOp.setOutput('constrainees', newDefs)
+
+        return True
+
+
+
+
     def loadData(self, data=None):
         """Load a saved guide representation from persisted data.
 
@@ -277,8 +523,8 @@ class OSSMouthComponentRig(OSSMouthComponent):
 
         self.mouthCtrlSpace.xfo = data['mouthXfo']
         self.mouthCtrl.xfo = data['mouthXfo']
-        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'], 0.0, -1.0))
-
+        self.mouthCtrl.rotatePoints(0.0, 0.0, 90.0)
+        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'], -0.5 , 0.0)))
         # ============
         # Set IO Xfos
         # ============
@@ -286,6 +532,38 @@ class OSSMouthComponentRig(OSSMouthComponent):
         self.mouthEndOutputTgt.xfo = data['mouthXfo']
         self.mouthOutputTgt.xfo = data['mouthXfo']
 
+        # Eval Constraints
+        self.mouthConstraint.evaluate()
+        self.mouthEndConstraint.evaluate()
+
+
+        self.createControls(3, data["an3DNames"], data)
+        self.createControls(2, data["an2DNames"], data)
+        self.createControls(1, data["an1DNames"], data)
+
+        # Eval Operators
+        self.evalOperators()
+
+
+def getAnimControlNameList(digitNames):
+    """ tokenizes string argument, returns a list"""
+    animControlNameList = re.split(r'[ ,:;]+', digitNames)
+
+    # These checks should actually prevent the component_inspector from closing maybe?
+    for name in animControlNameList:
+        if name and not re.match(r'^[\w_]+$', name):
+            # Eventaully specific exception just for component class that display component name, etc.
+            raise ValueError("digitNames \""+name+"\" contains non-alphanumeric characters in component \""+self.getName()+"\"")
+
+    animControlNameList = [x for x in animControlNameList if x != ""]
+
+    if not animControlNameList:
+        return []
+
+    if len(animControlNameList) > len(set(animControlNameList)):
+        raise ValueError("Duplicate names in digitNames in component \""+self.getName()+"\"")
+
+    return animControlNameList
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
