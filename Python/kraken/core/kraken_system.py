@@ -417,8 +417,6 @@ class KrakenSystem(object):
                 if not __importDirRecursive(path):
                     isSuccessful = False
 
-        print ("Done loading.")
-
         return isSuccessful
 
 
