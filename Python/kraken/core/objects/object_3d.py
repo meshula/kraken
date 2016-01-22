@@ -754,7 +754,7 @@ class Object3D(SceneItem):
             name (string) optional name for this CtrlSpace, default is same as this object
 
         Returns:
-            string: CtrlSpace object
+            string: New CtrlSpace object
 
         """
         if not name:
@@ -762,10 +762,11 @@ class Object3D(SceneItem):
 
         exec("from kraken.core.objects.ctrlSpace import CtrlSpace")
         exec("newCtrlSpace = CtrlSpace(\""+name+"\", parent=self.getParent())")
-        self.getParent().removeChild(self) #Not sure why this does not happen in setParent()
+        if self.getParent() is not None:
+            self.getParent().removeChild(self) #Not sure why this does not happen in setParent()
         self.setParent(newCtrlSpace)
         newCtrlSpace.addChild(self) #Not sure why this does not happen in setParent()
-        newCtrlSpace.xfo = self.xfo
+        newCtrlSpace.xfo = Xfo(self.xfo)
 
         return newCtrlSpace
 
