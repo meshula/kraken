@@ -57,7 +57,7 @@ class Control(Curve):
         config = Config.getInstance()
         configShapes = config.getControlShapes()
         if shape not in configShapes.keys():
-            raise KeyError("'" + shape + "' is not a valid shape in the loaded config.")
+            raise KeyError("'" + shape + "' is not a valid shape in the loaded config of class ["+config.__class__.__name__+"]")
 
         self.setCurveData(configShapes[shape])
 
