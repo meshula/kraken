@@ -23,11 +23,16 @@ class CanvasOperator(Operator):
         # Note: this is a temporary solution to getting the descritption of a Canvas node.
         # I beleive that the API does provide a method to retrieve the node desc, but I couldn't find it.
         def getPresetDesc(path):
-            fileContents = open( ks.getCoreClient().DFG.host.getPresetImportPathname(path) ).read()
-            fileContents = "".join(fileContents.split('\n'))
-            fileContents = "".join(fileContents.split('\r'))
-            fileContents = "  ".join(fileContents.split('\t'))
+
+            fileContents = ""
+            with open(ks.getCoreClient().DFG.host.getPresetImportPathname(path), 'r') as presetFile:
+                fileContents = presetFile.read()
+                fileContents = "".join(fileContents.split('\n'))
+                fileContents = "".join(fileContents.split('\r'))
+                fileContents = "  ".join(fileContents.split('\t'))
+
             return json.loads(fileContents)
+
         self.graphDesc = getPresetDesc(self.canvasPresetPath)
 
         # Initialize the inputs and outputs based on the given args.
@@ -128,6 +133,7 @@ class CanvasOperator(Operator):
                     portVals.append(rtValArray)
                 else:
                     portVals.append(getRTVal(self.outputs[portName]))
+
 
         host = ks.getCoreClient().DFG.host
         binding = host.createBindingToPreset(self.canvasPresetPath, portVals)

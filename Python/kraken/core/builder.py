@@ -511,6 +511,9 @@ class Builder(object):
         elif kObject.isTypeOf("CtrlSpace"):
             dccSceneItem = self.buildGroup(kObject, buildName)
 
+        elif kObject.isTypeOf("Transform"):
+            dccSceneItem = self.buildGroup(kObject, buildName)
+
         elif kObject.isTypeOf("Locator"):
             dccSceneItem = self.buildLocator(kObject, buildName)
 
@@ -896,9 +899,7 @@ class Builder(object):
             self._postBuild()
 
             # Clear Config when finished.
-            # TT Commented out the following line.  This resets a custom config to default after each build in ui.
-            # Why is this line needed?
-            #self.config.clearInstance()
+            self.config.clearInstance()
 
         Profiler.getInstance().pop()
 
