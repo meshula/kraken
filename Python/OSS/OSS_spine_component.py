@@ -18,6 +18,7 @@ from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.control import Control
+from OSS.OSS_control import *
 
 from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.objects.operators.canvas_operator import CanvasOperator
@@ -245,13 +246,13 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # COG
         self.cogCtrlSpace = CtrlSpace('cog', parent=self.ctrlCmpGrp)
-        self.cogCtrl = Control('cog', parent=self.cogCtrlSpace, shape="circle")
+        self.cogCtrl = FKControl('cog', parent=self.cogCtrlSpace, shape="circle")
         self.cogCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))
         self.cogCtrl.setColor("orange")
 
         # hips
         self.hipsCtrlSpace = CtrlSpace('hips', parent=self.cogCtrl)
-        self.hipsCtrl = Control('hips', parent=self.hipsCtrlSpace, shape="cube")
+        self.hipsCtrl = FKControl('hips', parent=self.hipsCtrlSpace, shape="cube")
         height = 2.0
         self.hipsCtrl.scalePoints(Vec3(4.5, height, 2.5))
         self.hipsCtrl.translatePoints(Vec3(0, -height/2, 0))
@@ -264,17 +265,17 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # Torso
         self.torsoCtrlSpace = CtrlSpace('torso', parent=self.cogCtrl)
-        self.torsoCtrl = Control('torso', parent=self.torsoCtrlSpace, shape="square")
+        self.torsoCtrl = FKControl('torso', parent=self.torsoCtrlSpace, shape="square")
         self.torsoCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
 
         # Chest
         self.chestCtrlSpace = CtrlSpace('chest', parent=self.torsoCtrl)
-        self.chestCtrl = Control('chest', parent=self.chestCtrlSpace, shape="square")
+        self.chestCtrl = FKControl('chest', parent=self.chestCtrlSpace, shape="square")
         self.chestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
 
         # UpChest
         self.upChestCtrlSpace = CtrlSpace('upChest', parent=self.chestCtrl)
-        self.upChestCtrl = Control('upChest', parent=self.upChestCtrlSpace, shape="square")
+        self.upChestCtrl = FKControl('upChest', parent=self.upChestCtrlSpace, shape="square")
         self.upChestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
 
         # Neck
@@ -423,7 +424,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
             self.mocapInputAttr = self.createInput('mocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
             # COG
-            self.cogMocapCtrl = Control('cog_mocap', parent=self.ctrlCmpGrp, shape="circle")
+            self.cogMocapCtrl = MCControl('cog', parent=self.ctrlCmpGrp, shape="circle")
             self.cogMocapCtrl.scalePoints(Vec3(5.0, 5.0, 5.0))
             self.cogMocapCtrl.setColor("purpleLight")
             self.cogMocapCtrl.xfo.tr = cogPosition
@@ -432,7 +433,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.cogMocapCtrlSpaceConstraint = self.cogMocapCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
             # hips
-            self.pelvisMocapCtrl = Control('pelvis_mocap', parent=self.cogMocapCtrl, shape="circle")
+            self.pelvisMocapCtrl = MCControl('pelvis', parent=self.cogMocapCtrl, shape="circle")
             height = 2.0
             self.pelvisMocapCtrl.scalePoints(Vec3(4.5, height, 2.5))
             self.pelvisMocapCtrl.setColor("purpleLight")
@@ -440,28 +441,28 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.pelvisMocapCtrlSpace = self.pelvisMocapCtrl.insertCtrlSpace()
 
             # Torso
-            self.torsoMocapCtrl = Control('torso_mocap', parent=self.cogMocapCtrl, shape="circle")
+            self.torsoMocapCtrl = MCControl('torso', parent=self.cogMocapCtrl, shape="circle")
             self.torsoMocapCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
             self.torsoMocapCtrl.setColor("purpleLight")
             self.torsoMocapCtrl.xfo.tr = torsoPosition
             self.torsoMocapCtrlSpace = self.torsoMocapCtrl.insertCtrlSpace()
 
             # Chest
-            self.chestMocapCtrl = Control('chest_mocap', parent=self.torsoMocapCtrl, shape="circle")
+            self.chestMocapCtrl = MCControl('chest', parent=self.torsoMocapCtrl, shape="circle")
             self.chestMocapCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
             self.chestMocapCtrl.setColor("purpleLight")
             self.chestMocapCtrl.xfo.tr = chestPosition
             self.chestMocapCtrlSpace = self.chestMocapCtrl.insertCtrlSpace()
 
             # UpChest
-            self.upChestMocapCtrl = Control('upChest_mocap', parent=self.chestMocapCtrl, shape="circle")
+            self.upChestMocapCtrl = MCControl('upChest', parent=self.chestMocapCtrl, shape="circle")
             self.upChestMocapCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
             self.upChestMocapCtrl.setColor("purpleLight")
             self.upChestMocapCtrl.xfo.tr = upChestPosition
             self.upChestMocapCtrlSpace = self.upChestMocapCtrl.insertCtrlSpace()
 
             # Neck
-            self.neckMocapCtrlSpace = CtrlSpace('neckPosition_mocap', parent=self.upChestMocapCtrl)
+            self.neckMocapCtrlSpace = CtrlSpace('neckPosition', parent=self.upChestMocapCtrl)
             self.neckMocapCtrlSpace.xfo.tr = neckPosition
 
             # Blend anim and mocap together

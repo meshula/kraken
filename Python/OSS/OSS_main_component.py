@@ -28,7 +28,6 @@ class OSSMainComponent(BaseExampleComponent):
     def __init__(self, name=COMPONENT_NAME, parent=None, data=None):
         super(OSSMainComponent, self).__init__(name, parent)
 
-
         # ===========
         # Declare IO
         # ===========
