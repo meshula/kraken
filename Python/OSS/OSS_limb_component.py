@@ -15,7 +15,7 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
-from kraken.core.objects.locator import Locator
+from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
@@ -333,7 +333,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # handle
         self.limbIKCtrlSpace = CtrlSpace(ikHandleName, parent=self.ctrlCmpGrp)
         if self.useOtherIKGoal: #Do not use this as a control, hide it
-            self.limbIKCtrl = Locator(ikHandleName, parent=self.limbIKCtrlSpace)
+            self.limbIKCtrl = Transform(ikHandleName, parent=self.limbIKCtrlSpace)
         else:
             self.limbIKCtrl = Control(ikHandleName, parent=self.limbIKCtrlSpace, shape="cross")
 
@@ -375,7 +375,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.lolimb_mocap.alignOnXAxis()
             # Mocap handle
             self.endlimb_mocapSpace = CtrlSpace(name+'end_mocap', parent=self.lolimb_mocap)
-            self.endlimb_mocap = Locator(name+'end_mocap', parent=self.endlimb_mocapSpace)
+            self.endlimb_mocap = Transform(name+'end_mocap', parent=self.endlimb_mocapSpace)
 
 
 
@@ -467,9 +467,9 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if self.mocap:
 
             # Add Xfo Outputs
-            self.limbIKKLOp_bone0_out = Locator('limbIKKLOp_bone0_out', parent=self.outputHrcGrp)
-            self.limbIKKLOp_bone1_out = Locator('limbIKKLOp_bone1_out', parent=self.outputHrcGrp)
-            self.limbIKKLOp_bone2_out = Locator('limbIKKLOp_bone2_out', parent=self.outputHrcGrp)
+            self.limbIKKLOp_bone0_out = Transform('limbIKKLOp_bone0_out', parent=self.outputHrcGrp)
+            self.limbIKKLOp_bone1_out = Transform('limbIKKLOp_bone1_out', parent=self.outputHrcGrp)
+            self.limbIKKLOp_bone2_out = Transform('limbIKKLOp_bone2_out', parent=self.outputHrcGrp)
             self.limbIKKLOp.setOutput('bone0Out', self.limbIKKLOp_bone0_out)
             self.limbIKKLOp.setOutput('bone1Out', self.limbIKKLOp_bone1_out)
             self.limbIKKLOp.setOutput('bone2Out', self.limbIKKLOp_bone2_out)

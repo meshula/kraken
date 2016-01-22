@@ -17,7 +17,7 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
-from kraken.core.objects.locator import Locator
+from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
@@ -423,9 +423,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.stretch_cmpOutAttr.connect(self.stretchAttr)
 
-
-        self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.handleCtrl)
-        self.ikGoalRefLocator.setShapeVisibility(False)
+        self.ikGoalRefTransform = Transform('ikGoalRef', parent=self.handleCtrl)
 
 
         # ==========
@@ -454,8 +452,8 @@ class OSSHandComponentRig(OSSHandComponent):
 
 
         # Create IK joints (until footrocker system is integrated)
-        self.ikHandLocator = Locator('ikHand', parent=self.handCtrlSpace)
-        self.ikPalmLocator = Locator('ikPalm', parent=self.ikHandLocator)
+        self.ikHandTransform = Transform('ikHand', parent=self.handCtrlSpace)
+        self.ikPalmTransform = Transform('ikPalm', parent=self.ikHandTransform)
 
 
         # ===============
@@ -479,8 +477,8 @@ class OSSHandComponentRig(OSSHandComponent):
         self.IKHandBlendKLOp.setInput('ikBall', self.palmCtrlSpace)
         self.IKHandBlendKLOp.setInput('fkBall', self.palmCtrl)
         # Add Xfo Outputs
-        self.IKHandBlendKLOpHand_out = Locator('IKHandBlendKLOpHand_out', parent=self.outputHrcGrp)
-        self.IKHandBlendKLOpPalm_out = Locator('IKHandBlendKLOpPalm_out', parent=self.outputHrcGrp)
+        self.IKHandBlendKLOpHand_out = Transform('IKHandBlendKLOpHand_out', parent=self.outputHrcGrp)
+        self.IKHandBlendKLOpPalm_out = Transform('IKHandBlendKLOpPalm_out', parent=self.outputHrcGrp)
         self.IKHandBlendKLOp.setOutput('foot', self.IKHandBlendKLOpHand_out)
         self.IKHandBlendKLOp.setOutput('ball', self.IKHandBlendKLOpPalm_out)
 
@@ -588,8 +586,8 @@ class OSSHandComponentRig(OSSHandComponent):
         self.handIKCtrlSpace.xfo = self.handCtrl.xfo
         self.palmCtrlSpace.xfo = self.palmCtrl.xfo
 
-        self.ikHandLocator = data['handXfo']
-        self.ikPalmLocator = data['palmXfo']
+        self.ikHandTransform = data['handXfo']
+        self.ikPalmTransform = data['palmXfo']
 
 
         if self.getLocation() == "R":
@@ -710,7 +708,7 @@ class OSSHandComponentRig(OSSHandComponent):
         HandPlane.scalePoints(Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], 1.0))
         # Damn, can't get the Hand length because it is on another component
         # Can we do this with just inputs?  We'd have to guarantee that everything was in the correct pose first
-        #HandPlane.scalePointsOnAxis(self.handleCtrl.xfo.tr.subtract(self.palmTipPivotLocator.xfo.tr).length(), "POSZ")
+        #HandPlane.scalePointsOnAxis(self.handleCtrl.xfo.tr.subtract(self.palmTipPivotTransform.xfo.tr).length(), "POSZ")
         self.handleCtrl.appendCurveData(HandPlane.getCurveData())
         """
 

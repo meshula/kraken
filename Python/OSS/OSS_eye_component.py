@@ -11,7 +11,7 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
-from kraken.core.objects.locator import Locator
+from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
@@ -182,12 +182,10 @@ class OSSEyeRig(OSSEye):
         self.eyeAimCtrl.rotatePoints(90.0, 0.0, 0.0)
         self.eyeAimCtrl.lockScale(x=True, y=True, z=True)
 
-        self.eyeAimUpV = Locator('eyeAimUpV', parent=self.ctrlCmpGrp)
-        self.eyeAimUpV.setShapeVisibility(False)
+        self.eyeAimUpV = Transform('eyeAimUpV', parent=self.ctrlCmpGrp)
 
         # Eye
-        self.eyeAim = Locator('eyeAim', parent=self.ctrlCmpGrp)
-        self.eyeAim.setShapeVisibility(False)
+        self.eyeAim = Transform('eyeAim', parent=self.ctrlCmpGrp)
 
         self.eyeCtrlSpace = CtrlSpace('eye', parent=self.ctrlCmpGrp)
         self.eyeCtrl = Control('eye', parent=self.eyeCtrlSpace, shape="null")

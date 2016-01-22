@@ -64,6 +64,7 @@ class OSSConfig(Config):
                                   "Joint": "def",
                                   "Layer": "",
                                   "Locator": "loc",
+                                  "Transform": "xfo",
                                   "CtrlSpace": "ctrlSpace"
                                  },
                         "formats":
@@ -71,9 +72,10 @@ class OSSConfig(Config):
                                    "Container": ["name"],
                                    "Layer": ["container", "sep", "name"],
                                    "Control": ["location", "sep", "name"],
-                                   "ComponentGroup": ["name", "sep", "location", "sep", "type"],
+                                   "ComponentGroup": ["location", "sep", "name", "sep", "type"],
                                    # "default": ["location", "sep", "component", "sep", "name", "sep", "type"],
                                    "default": ["location", "sep", "name", "sep", "type"],
+                                   "Transform": ["location", "sep", "name"]
                                   }
                        }
 

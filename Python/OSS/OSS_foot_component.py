@@ -15,10 +15,11 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
-from kraken.core.objects.locator import Locator
+from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
+from kraken.core.objects.transform import Transform
 
 from kraken.core.objects.operators.kl_operator import KLOperator
 
@@ -371,27 +372,18 @@ class OSSFootComponentRig(OSSFootComponent):
         self.drawDebugInputAttr.connect(footDrawDebugAttr)
 
 
-        self.ikGoalRefLocator = Locator('ikGoalRef', parent=self.handleCtrl)
-        self.ikGoalRefLocator.setShapeVisibility(False)
+        self.ikGoalRefTransform = Transform('ikGoalRef', parent=self.handleCtrl)
 
         # =========
-        # Locators for foot pivot
+        # Nulls for foot pivot
         # =========
-        self.ballJointLocator = Locator('ballJoint', parent=self.handleCtrl)
-        #self.ballJointLocator.setVisibility(False) # does not seem to work, but setShapeVisibility does
-        self.ballJointLocator.setShapeVisibility(False)
-        self.footJointLocator = Locator('footJoint', parent=self.handleCtrl)
-        self.footJointLocator.setShapeVisibility(False)
-        self.heelPivotLocator = Locator('heelPivot', parent=self.handleCtrl)
-        self.heelPivotLocator.setShapeVisibility(False)
-        self.ballPivotLocator = Locator('ballPivot', parent=self.handleCtrl)
-        self.ballPivotLocator.setShapeVisibility(False)
-        self.ballTipPivotLocator = Locator('ballTipPivot', parent=self.handleCtrl)
-        self.ballTipPivotLocator.setShapeVisibility(False)
-        self.innerPivotLocator = Locator('innerPivot', parent=self.handleCtrl)
-        self.innerPivotLocator.setShapeVisibility(False)
-        self.outerPivotLocator = Locator('outerPivot', parent=self.handleCtrl)
-        self.outerPivotLocator.setShapeVisibility(False)
+        self.ballJointTransform = Transform('ballJoint', parent=self.handleCtrl)
+        self.footJointTransform = Transform('footJoint', parent=self.handleCtrl)
+        self.heelPivotTransform = Transform('heelPivot', parent=self.handleCtrl)
+        self.ballPivotTransform = Transform('ballPivot', parent=self.handleCtrl)
+        self.ballTipPivotTransform = Transform('ballTipPivot', parent=self.handleCtrl)
+        self.innerPivotTransform = Transform('innerPivot', parent=self.handleCtrl)
+        self.outerPivotTransform = Transform('outerPivot', parent=self.handleCtrl)
 
 
         # ==========
@@ -434,18 +426,18 @@ class OSSFootComponentRig(OSSFootComponent):
         self.footRockerKLOp.setInput('ballBreak', ballBreakAttr)
         self.footRockerKLOp.setInput('footTilt', footTiltAttr)
         # Add Xfo Inputs
-        self.footRockerKLOp.setInput('ikCtrl', self.ikGoalRefLocator)
-        self.footRockerKLOp.setInput('heelPivot', self.heelPivotLocator)
-        self.footRockerKLOp.setInput('ballPivot', self.ballPivotLocator)
-        self.footRockerKLOp.setInput('toePivot', self.ballTipPivotLocator)
-        self.footRockerKLOp.setInput('footJointLoc', self.footJointLocator)
-        self.footRockerKLOp.setInput('ballJointLoc', self.ballJointLocator)
-        self.footRockerKLOp.setInput('innerPivotLoc', self.innerPivotLocator)
-        self.footRockerKLOp.setInput('outerPivotLoc', self.outerPivotLocator)
+        self.footRockerKLOp.setInput('ikCtrl', self.ikGoalRefTransform)
+        self.footRockerKLOp.setInput('heelPivot', self.heelPivotTransform)
+        self.footRockerKLOp.setInput('ballPivot', self.ballPivotTransform)
+        self.footRockerKLOp.setInput('toePivot', self.ballTipPivotTransform)
+        self.footRockerKLOp.setInput('footJointLoc', self.footJointTransform)
+        self.footRockerKLOp.setInput('ballJointLoc', self.ballJointTransform)
+        self.footRockerKLOp.setInput('innerPivotLoc', self.innerPivotTransform)
+        self.footRockerKLOp.setInput('outerPivotLoc', self.outerPivotTransform)
         # Add Xfo Outputs
         #self.legEndXfo_cmpOut = self.createOutput('legEndXfo', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.footRockerFoot_out = Locator('footRockerFoot_out', parent=self.outputHrcGrp)
-        self.footRockerBall_out = Locator('footRockerBall_out', parent=self.outputHrcGrp)
+        self.footRockerFoot_out = Transform('footRockerFoot_out', parent=self.outputHrcGrp)
+        self.footRockerBall_out = Transform('footRockerBall_out', parent=self.outputHrcGrp)
         self.footRockerKLOp.setOutput('ikGoal', self.ikgoal_cmpOut)
         self.footRockerKLOp.setOutput('footJoint', self.footRockerFoot_out)
         self.footRockerKLOp.setOutput('ballJoint', self.footRockerBall_out)
@@ -468,8 +460,8 @@ class OSSFootComponentRig(OSSFootComponent):
         self.IKFootBlendKLOp.setInput('ikBall', self.footRockerBall_out)
         self.IKFootBlendKLOp.setInput('fkBall', self.ballCtrl)
         # Add Xfo Outputs
-        self.IKFootBlendKLOpFoot_out = Locator('IKFootBlendKLOpFoot_out', parent=self.outputHrcGrp)
-        self.IKFootBlendKLOpBall_out = Locator('IKFootBlendKLOpBall_out', parent=self.outputHrcGrp)
+        self.IKFootBlendKLOpFoot_out = Transform('IKFootBlendKLOpFoot_out', parent=self.outputHrcGrp)
+        self.IKFootBlendKLOpBall_out = Transform('IKFootBlendKLOpBall_out', parent=self.outputHrcGrp)
         self.IKFootBlendKLOp.setOutput('foot', self.IKFootBlendKLOpFoot_out)
         self.IKFootBlendKLOp.setOutput('ball', self.IKFootBlendKLOpBall_out)
 
@@ -564,13 +556,13 @@ class OSSFootComponentRig(OSSFootComponent):
         self.footSpaceInputTgt.xfo = data["footXfo"]
         self.footSpaceInputTgt.xfo.ori = Xfo(data["heelPivotXfo"]).ori
 
-        self.ballJointLocator.xfo = data["ballXfo"]
-        self.footJointLocator.xfo = data["footXfo"]
-        self.heelPivotLocator.xfo = data["heelPivotXfo"]
-        self.ballTipPivotLocator.xfo = data["ballTipPivotXfo"]
-        self.innerPivotLocator.xfo = data["innerPivotXfo"]
-        self.outerPivotLocator.xfo = data["outerPivotXfo"]
-        self.ballPivotLocator.xfo = data["ballPivotXfo"]
+        self.ballJointTransform.xfo = data["ballXfo"]
+        self.footJointTransform.xfo = data["footXfo"]
+        self.heelPivotTransform.xfo = data["heelPivotXfo"]
+        self.ballTipPivotTransform.xfo = data["ballTipPivotXfo"]
+        self.innerPivotTransform.xfo = data["innerPivotXfo"]
+        self.outerPivotTransform.xfo = data["outerPivotXfo"]
+        self.ballPivotTransform.xfo = data["ballPivotXfo"]
 
 
         # ====================
@@ -600,7 +592,7 @@ class OSSFootComponentRig(OSSFootComponent):
         footPlane.scalePoints(Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], 1.0))
         # Damn, can't get the foot length because it is on another component
         # Can we do this with just inputs?  We'd have to guarantee that everything was in the correct pose first
-        #footPlane.scalePointsOnAxis(self.handleCtrl.xfo.tr.subtract(self.ballTipPivotLocator.xfo.tr).length(), "POSZ")
+        #footPlane.scalePointsOnAxis(self.handleCtrl.xfo.tr.subtract(self.ballTipPivotTransform.xfo.tr).length(), "POSZ")
         self.handleCtrl.appendCurveData(footPlane.getCurveData())
         """
 
