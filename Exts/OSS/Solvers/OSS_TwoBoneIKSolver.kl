@@ -98,7 +98,7 @@ function from_aimXupZ(
     {
       aimAxis = aimAxis.negate();
     }
-    Vec3 upAxis = inXfo.ori.getYaxis().unit();
+    Vec3 upAxis = inXfo.ori.getYaxis().negate().unit();
     Vec3 normalAxis = upAxis.cross(aimAxis).unit();
     Mat33 mat(aimAxis, normalAxis, upAxis);
 
