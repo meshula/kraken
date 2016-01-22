@@ -19,6 +19,7 @@ from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
+from OSS.OSS_control import *
 
 from kraken.core.objects.operators.kl_operator import KLOperator
 
@@ -221,15 +222,15 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
         data = super(OSSLimbComponentGuide, self).getRigBuildData()
 
-        boneAxisStr = "POSX"
+        self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
-            boneAxisStr = "NEGX"
-        boneAxis = axisStrToTupleMapping[boneAxisStr]
+            self.boneAxisStr = "NEGX"
+        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
 
-        upAxisStr = "NEGY"
+        self.upAxisStr = "NEGY"
         if self.getLocation() == 'R':
-            upAxisStr = "POSY"
-        upAxis = axisStrToTupleMapping[upAxisStr]
+            self.upAxisStr = "POSY"
+        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
 
 
         # Values
@@ -239,18 +240,18 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
         # Calculate uplimb Xfo
         uplimbXfo = Xfo(self.uplimbCtrl.xfo)
-        # upAxis neg Y assumes the lolimb is bent forward.  To avoid this stuff, build a guide system with an actual upVector
+        # self.upAxis neg Y assumes the lolimb is bent forward.  To avoid this stuff, build a guide system with an actual upVector
         # to get rid of any ambiguity
-        #uplimbXfo.aimAt(self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=boneAxis, upAxis=upAxis.negate())
-        uplimbXfo.aimAt(aimPos=self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=boneAxis, upAxis=tuple([-x for x in upAxis]))
+        #uplimbXfo.aimAt(self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=self.upAxis.negate())
+        uplimbXfo.aimAt(aimPos=self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=tuple([-x for x in self.upAxis]))
 
 
         # Calculate lolimb Xfo
         lolimbXfo = Xfo(self.lolimbCtrl.xfo)
-        # upAxis neg Y assumes the lolimb is bent forward.  To avoid this stuff, build a guide system with an actual upVector
+        # self.upAxis neg Y assumes the lolimb is bent forward.  To avoid this stuff, build a guide system with an actual upVector
         # to get rid of any ambiguity
-        #lolimbXfo.aimAt(self.toeCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=boneAxis, upAxis=upAxis.negate())
-        lolimbXfo.aimAt(aimPos=self.handleCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=boneAxis, upAxis=tuple([-x for x in upAxis]))
+        #lolimbXfo.aimAt(self.toeCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=self.upAxis.negate())
+        lolimbXfo.aimAt(aimPos=self.handleCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=tuple([-x for x in self.upAxis]))
 
         # Get lengths
         uplimbLen = uplimbPosition.subtract(lolimbPosition).length()
@@ -259,7 +260,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         handleXfo = self.handleCtrl.xfo
 
         upVXfo = Xfo()
-        offset = [x * uplimbLen * 2 for x in upAxis]
+        offset = [x * uplimbLen * 2 for x in self.upAxis]
 
         upVXfo.tr = lolimbXfo.transformVector(Vec3(offset[0], offset[1], offset[2]))
 
@@ -322,12 +323,12 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # =========
         # uplimb
         self.uplimbFKCtrlSpace = CtrlSpace(uplimbName, parent=self.ctrlCmpGrp)
-        self.uplimbFKCtrl = Control(uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
+        self.uplimbFKCtrl = FKControl(uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
         self.uplimbFKCtrl.alignOnXAxis()
 
         # lolimb
         self.lolimbFKCtrlSpace = CtrlSpace(lolimbName, parent=self.uplimbFKCtrl)
-        self.lolimbFKCtrl = Control(lolimbName, parent=self.lolimbFKCtrlSpace, shape="cube")
+        self.lolimbFKCtrl = FKControl(lolimbName, parent=self.lolimbFKCtrlSpace, shape="cube")
         self.lolimbFKCtrl.alignOnXAxis()
 
         # handle
@@ -335,7 +336,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if self.useOtherIKGoal: #Do not use this as a control, hide it
             self.limbIKCtrl = Transform(ikHandleName, parent=self.limbIKCtrlSpace)
         else:
-            self.limbIKCtrl = Control(ikHandleName, parent=self.limbIKCtrlSpace, shape="cross")
+            self.limbIKCtrl = IKControl(ikHandleName, parent=self.limbIKCtrlSpace, shape="cross")
 
         # Add Component Params to IK control
         limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.limbIKCtrl)
@@ -367,17 +368,22 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # =========
         if self.mocap:
             # Mocap uplimb
-            self.uplimb_mocap = Control(uplimbName+'_mocap', parent=self.uplimbFKCtrlSpace, shape="cube")
+            self.uplimb_mocap = MCControl(uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
+            self.uplimb_mocap.xfo = data['uplimbXfo']
             self.uplimb_mocap.alignOnXAxis()
+            self.uplimb_mocap.scalePointsOnAxis(data['uplimbLen'], self.boneAxisStr)
+
+
             # Mocap lolimb
-            self.lolimb_mocapSpace = CtrlSpace(lolimbName+'_mocap', parent=self.uplimb_mocap)
-            self.lolimb_mocap = Control(lolimbName+'_mocap', parent=self.lolimb_mocapSpace, shape="cube")
+            self.lolimb_mocap = MCControl(lolimbName, parent=self.uplimb_mocap, shape="cube")
+            self.lolimb_mocap.xfo = data['lolimbXfo']
             self.lolimb_mocap.alignOnXAxis()
+            self.lolimb_mocap.insertCtrlSpace()
             # Mocap handle
-            self.endlimb_mocapSpace = CtrlSpace(name+'end_mocap', parent=self.lolimb_mocap)
-            self.endlimb_mocap = Transform(name+'end_mocap', parent=self.endlimb_mocapSpace)
-
-
+            self.endlimb_mocap = Transform(name+'end', parent=self.lolimb_mocap)
+            self.endlimb_mocap.xfo = data['handleXfo']
+            self.endlimb_mocap.xfo.ori = self.lolimb_mocap.xfo.ori
+            self.endlimb_mocap.insertCtrlSpace()
 
 
         # UpV
@@ -524,19 +530,18 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         super(OSSLimbComponentRig, self).loadData( data )
 
-        self.createControls(data)
-
         # TODO: make this a property of the component
-        boneAxisStr = "POSX"
+        self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
-            boneAxisStr = "NEGX"
-        boneAxis = axisStrToTupleMapping[boneAxisStr]
+            self.boneAxisStr = "NEGX"
+        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
 
+        self.createControls(data)
 
         #uplimb
         self.uplimbFKCtrlSpace.xfo = data['uplimbXfo']
         self.uplimbFKCtrl.xfo = data['uplimbXfo']
-        self.uplimbFKCtrl.scalePointsOnAxis(data['uplimbLen'], boneAxisStr)
+        self.uplimbFKCtrl.scalePointsOnAxis(data['uplimbLen'], self.boneAxisStr)
 
         self.uplimb_cmpOut.xfo = data['uplimbXfo']
         self.lolimb_cmpOut.xfo = data['lolimbXfo']
@@ -547,19 +552,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # lolimb
         self.lolimbFKCtrlSpace.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
-        self.lolimbFKCtrl.scalePointsOnAxis(data['lolimbLen'], boneAxisStr)
+        self.lolimbFKCtrl.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
 
-        if self.mocap:
-            self.uplimb_mocap.xfo = data['uplimbXfo']
-            self.uplimb_mocap.scalePointsOnAxis(data['uplimbLen'], boneAxisStr)
-
-            self.lolimb_mocapSpace.xfo = data['lolimbXfo']
-            self.lolimb_mocap.xfo = data['lolimbXfo']
-            self.lolimb_mocap.scalePointsOnAxis(data['lolimbLen'], boneAxisStr)
-
-            self.endlimb_mocapSpace.xfo = data['handleXfo']
-            self.endlimb_mocap.xfo = data['handleXfo']
-            self.endlimb_mocap.xfo.ori = self.lolimb_mocap.xfo.ori
 
         #Until later when we have better guide rigs setups, assume world Y up and Z forward to toe
         self.limbIKCtrlSpace.xfo = data['handleXfo']

@@ -6,6 +6,7 @@ Object3D - Base Object3D Object.
 """
 
 import re
+import inspect
 
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
@@ -29,6 +30,7 @@ class Object3D(SceneItem):
         self._color = None
         self._visibility = True
         self._shapeVisibility = True
+        self._secondBuildNameType = None
 
         if parent is not None:
             parent.addChild(self)
@@ -183,12 +185,21 @@ class Object3D(SceneItem):
 
             elif token is 'type':
 
+                secondType = self.getSecondType()
+                if secondType:
+                    if inspect.isclass(secondType):
+                        builtName += nameTemplate['separator']+nameTemplate['types'][secondType.__name__]
+                    elif isinstance(secondType, str):
+                        builtName += nameTemplate['separator']+nameTemplate['types'][secondType]
+
                 if objectType == 'Locator' and self.testFlag('inputObject'):
                     objectType = 'ComponentInput'
                 elif objectType == 'Locator' and self.testFlag('outputObject'):
                     objectType = 'ComponentOutput'
 
                 builtName += nameTemplate['types'][objectType]
+
+
 
             elif token is 'name':
                 builtName += self.getName()
@@ -277,6 +288,36 @@ class Object3D(SceneItem):
             parent = parent.getParent()
 
         return parent
+
+
+    # ==================
+    # Component Methods
+    # ==================
+    def getSecondType(self):
+        """Returns the second type of the object as a class.
+
+        Returns:
+            Class: second type of the object as a class.
+
+        """
+
+        return self._secondBuildNameType
+
+
+    def setSecondType(self, objectType):
+        """Sets the second type of the object as a class.
+
+        Args:
+            type (Class): Class that is the secondary type (for use in getBuildName() later)
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._secondBuildNameType = objectType
+
+        return True
 
 
     # ==================
@@ -767,6 +808,8 @@ class Object3D(SceneItem):
         self.setParent(newCtrlSpace)
         newCtrlSpace.addChild(self) #Not sure why this does not happen in setParent()
         newCtrlSpace.xfo = Xfo(self.xfo)
+
+        newCtrlSpace.setSecondType(self.__class__)
 
         return newCtrlSpace
 
