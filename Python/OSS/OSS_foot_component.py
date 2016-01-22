@@ -352,7 +352,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # Add Component Params to IK control
         handleCtrlAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.handleCtrl)
         footDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=handleCtrlAttrGrp)
-        footMocapAttr = ScalarAttribute('footMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=handleCtrlAttrGrp)
+        footMocapAttr = ScalarAttribute('mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=handleCtrlAttrGrp)
         footIKAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=handleCtrlAttrGrp)
         footRockerAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=handleCtrlAttrGrp)
         ballBreakAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=handleCtrlAttrGrp)
