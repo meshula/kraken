@@ -1,0 +1,184 @@
+{
+  "objectType" : "Graph",
+  "title" : "",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "metadata" : {},
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "resultPos",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "resultNeg",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {},
+      "nodePortType" : "Out",
+      "name" : "scale",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      }
+    ],
+  "extDeps" : {},
+  "nodes" : [
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":281.0,\"y\":78.0}"
+        },
+      "name" : "remapScalar_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "resultPos"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "resultNeg"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "scale"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "OSS.Math.remapScalar",
+      "presetGUID" : "3CD516F1ECA79145EFD79D24801EFA01"
+      }
+    ],
+  "connections" : {
+    "this" : [
+      "remapScalar_1.this"
+      ],
+    "scale" : [
+      "remapScalar_1.scale"
+      ],
+    "remapScalar_1.resultPos" : [
+      "resultPos"
+      ],
+    "remapScalar_1.resultNeg" : [
+      "resultNeg"
+      ],
+    "remapScalar_1.result" : [
+      "result"
+      ]
+    },
+  "metadata" : {
+    "maya_id" : "39"
+    },
+  "requiredPresets" : {
+    "OSS.Math.remapScalar" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "remapScalar",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "resultPos",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "resultNeg",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "scale",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "3CD516F1ECA79145EFD79D24801EFA01",
+      "code" : "dfgEntry {
+  resultPos = Math_max(0,this)*scale;
+  resultNeg = abs(Math_min(0,this))*scale;
+  result = resultPos - resultNeg;
+}
+"
+      }
+    },
+  "args" : [
+    {
+      "type" : "Scalar",
+      "value" : null
+      },
+    {
+      "type" : "Scalar",
+      "value" : null
+      },
+    {
+      "type" : "Scalar",
+      "value" : null
+      },
+    {
+      "type" : "Scalar",
+      "value" : null
+      },
+    {
+      "type" : "Float32",
+      "value" : null
+      }
+    ]
+  }

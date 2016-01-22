@@ -14,7 +14,7 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
-from kraken.core.objects.locator import Locator
+from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
@@ -67,9 +67,9 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
   
-        self.an3DCtrlNames = StringAttribute('an3DNames', value="LThreeD RThreeD", parent=guideSettingsAttrGrp)
-        self.an2DCtrlNames = StringAttribute('an2DNames', value="LTwoD RTwoD", parent=guideSettingsAttrGrp)
-        self.an1DCtrlNames = StringAttribute('an1DNames', value="LOneD ROneD", parent=guideSettingsAttrGrp)
+        self.an1DCtrlNames = StringAttribute('an1DNames', value="L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut", parent=guideSettingsAttrGrp)
+        self.an2DCtrlNames = StringAttribute('an2DNames', value="LMouth RMouth", parent=guideSettingsAttrGrp)
+        self.an3DCtrlNames = StringAttribute('an3DNames', value="", parent=guideSettingsAttrGrp)
 
 
         self.an1DCtrlNames.setValueChangeCallback(self.updateAn1DControls)
@@ -106,7 +106,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
 
         Profiler.getInstance().pop()
 
-    def updateAnControls(self, numSegments, controlsList, digitNames):
+    def updateAnControls(self, anCtrlType, controlsList, handleNames):
         """Load a saved guide representation from persisted data.
 
         Arguments:
@@ -137,8 +137,8 @@ class OSSMouthComponentGuide(OSSMouthComponent):
             ctrl.getParent().removeChild(ctrl)
         del controlsList[:]
 
-        # Lets build all new digits
-        animControlNameList = getAnimControlNameList(digitNames)
+        # Lets build all new handles
+        animControlNameList = getAnimControlNameList(handleNames)
 
         if not animControlNameList:  # Nothing to build
             return True
@@ -146,14 +146,14 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         segments = ["base", "tweak"]
 
         offset = 0.0
-        for i, digitName in enumerate(animControlNameList):
+        for i, handleName in enumerate(animControlNameList):
             parent = self.mouthCtrl
             for j, segment in enumerate(segments):
 
 
-                newCtrl = Control(digitName+"_"+segment, parent=parent, shape="circle")
+                newCtrl = Control(handleName+"_"+segment, parent=parent, shape="circle")
 
-                if numSegments ==1: # Slider
+                if anCtrlType==1: # Slider
                     if j == 0:
                         newCtrl.setShape("square")
                         newCtrl.setColor("red")
@@ -163,7 +163,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
                         newCtrl.scalePoints(Vec3(.5,.25,.25))
                         newCtrl.lockTranslation(x=True, y=False, z=True)
 
-                elif numSegments==2: # Field
+                elif anCtrlType==2: # Field
                     if j == 0:
                         newCtrl.setShape("square")
                         newCtrl.setColor("green")
@@ -173,7 +173,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
                         newCtrl.scalePoints(Vec3(.5,.5,.5))
                         newCtrl.lockTranslation(x=False, y=False, z=True)
 
-                elif numSegments==3: # Volume
+                elif anCtrlType==3: # Volume
                     if j == 0:
                         newCtrl.setShape("cube")
                         newCtrl.setColor("blue")
@@ -203,14 +203,14 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         return True
 
 
-    def updateAn1DControls(self, digitNames):
-        self.updateAnControls(1, self.an1DCtrls, digitNames)
+    def updateAn1DControls(self, handleNames):
+        self.updateAnControls(1, self.an1DCtrls, handleNames)
 
-    def updateAn2DControls(self, digitNames):
-        self.updateAnControls(2, self.an2DCtrls, digitNames)
+    def updateAn2DControls(self, handleNames):
+        self.updateAnControls(2, self.an2DCtrls, handleNames)
 
-    def updateAn3DControls(self, digitNames):
-        self.updateAnControls(3, self.an3DCtrls, digitNames)
+    def updateAn3DControls(self, handleNames):
+        self.updateAnControls(3, self.an3DCtrls, handleNames)
 
 
     # =============
@@ -408,9 +408,9 @@ class OSSMouthComponentRig(OSSMouthComponent):
 
 
 
-    def createControls(self, numSegments, digitNames, data):
+    def createControls(self, anCtrlType, handleNames, data):
 
-        animControlNameList = getAnimControlNameList(digitNames)
+        animControlNameList = getAnimControlNameList(handleNames)
 
 
         segments = ["base", "tweak"]
@@ -418,43 +418,52 @@ class OSSMouthComponentRig(OSSMouthComponent):
         globalScale = data['globalComponentCtrlSize']
 
 
-        for i, digitName in enumerate(animControlNameList):
+        for i, handleName in enumerate(animControlNameList):
             parent = self.mouthEndOutputTgt
             newCtrls = []
             newDefs = []
             for j, segment in enumerate(segments):
-                #Eventually, we need outputs and ports for this component for each digit segment
-                #spineOutput = ComponentOutput(digitName+"_"+segment, parent=self.outputHrcGrp)
+                #Eventually, we need outputs and ports for this component for each handle segment
+                #spineOutput = ComponentOutput(handleName+"_"+segment, parent=self.outputHrcGrp)
 
                     
-                newCtrlSpace = CtrlSpace(digitName+"_"+segment, parent=parent)
-                newCtrl = Control(digitName+"_"+segment, parent=newCtrlSpace, shape="circle")
+                newCtrlSpace = CtrlSpace(handleName+"_"+segment, parent=parent)
+                newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
 
-                if numSegments ==1: # Slider
+                if anCtrlType ==1: # Slider
                     if j == 0:
                         newCtrl.setShape("square")
                         newCtrl.setColor("red")
                         newCtrl.scalePoints(Vec3(0.125,2,2))
+                        newCtrl.lockTranslation(x=True, y=True, z=True)
+                        newCtrl.lockScale(x=True, y=True, z=True)
+                        newCtrl.lockRotation(x=True, y=True, z=True)
                     else:
                         newCtrl.setShape("square")
                         newCtrl.scalePoints(Vec3(.5,.25,.25))
                         newCtrl.lockTranslation(x=True, y=False, z=True)
 
-                elif numSegments==2: # Field
+                elif anCtrlType==2: # Field
                     if j == 0:
                         newCtrl.setShape("square")
                         newCtrl.setColor("green")
                         newCtrl.scalePoints(Vec3(2,2,2))
+                        newCtrl.lockTranslation(x=True, y=True, z=True)
+                        newCtrl.lockScale(x=True, y=True, z=True)
+                        newCtrl.lockRotation(x=True, y=True, z=True)
                     else:
                         newCtrl.setShape("circle")
                         newCtrl.scalePoints(Vec3(.5,.5,.5))
                         newCtrl.lockTranslation(x=False, y=False, z=True)
 
-                elif numSegments==3: # Volume
+                elif anCtrlType==3: # Volume
                     if j == 0:
                         newCtrl.setShape("cube")
                         newCtrl.setColor("blue")
                         newCtrl.scalePoints(Vec3(2,2,2))
+                        newCtrl.lockTranslation(x=True, y=True, z=True)
+                        newCtrl.lockScale(x=True, y=True, z=True)
+                        newCtrl.lockRotation(x=True, y=True, z=True)
                     else:
                         newCtrl.setShape("sphere")
                         newCtrl.scalePoints(Vec3(.5,.5,.5))
@@ -468,28 +477,26 @@ class OSSMouthComponentRig(OSSMouthComponent):
 
                 newCtrls.append(newCtrl)
 
-                newDef = Joint(digitName+"_"+segment, parent=self.defCmpGrp)
+                newDef = Joint(handleName+"_"+segment, parent=self.defCmpGrp)
                 newDefs.append(newDef)
 
-                #self.digitConstraints.append(newDef.constrainTo(newCtrl, maintainOffset=False))
+                #self.handleConstraints.append(newDef.constrainTo(newCtrl, maintainOffset=False))
                 #controlsList.append(newCtrl)
                 parent = newCtrl
-                ctrlListName = "an"+str(numSegments)+"DCtrls"
-                print ctrlListName
-                print data.keys()
+                ctrlListName = "an"+str(anCtrlType)+"DCtrls"
 
                 if (ctrlListName+"Xfos") in data.keys():
 
                     index = i*len(segments) + j
 
-                    if (i*numSegments + j) < len(data[ctrlListName+"Xfos"]):
+                    if (i*anCtrlType + j) < len(data[ctrlListName+"Xfos"]):
                         newCtrlSpace.xfo = data[ctrlListName+"Xfos"][index]
                         newCtrl.xfo = data[ctrlListName+"Xfos"][index]
 
 
             # Add Deformer Joint Constrain
-            self.outputsToDeformersKLOp     = KLOperator(self.getLocation()+self.getName()+digitName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-            self.RemapScalarValueSolverKLOp = KLOperator(self.getLocation()+self.getName()+digitName+'RemapScalarValueSolverKLOp', 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
+            self.outputsToDeformersKLOp     = KLOperator(self.getLocation()+self.getName()+handleName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+            self.RemapScalarValueSolverKLOp = KLOperator(self.getLocation()+self.getName()+handleName+'RemapScalarValueSolverKLOp', 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
 
             self.addOperator(self.outputsToDeformersKLOp)
             self.addOperator(self.RemapScalarValueSolverKLOp)
@@ -497,10 +504,21 @@ class OSSMouthComponentRig(OSSMouthComponent):
             # Add Att Inputs
             self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
             self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
+
+
+            self.RemapScalarValueSolverKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+            self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
+
+
             # Add Xfo Inputs
             self.outputsToDeformersKLOp.setInput('constrainers', newCtrls)
             # Add Xfo Outputs
+            
             self.outputsToDeformersKLOp.setOutput('constrainees', newDefs)
+
+            self.outputsToDeformersKLOp.setOutput('constrainees', newDefs)
+
+            self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         return True
 
@@ -539,20 +557,19 @@ class OSSMouthComponentRig(OSSMouthComponent):
         self.createControls(3, data["an3DNames"], data)
         self.createControls(2, data["an2DNames"], data)
         self.createControls(1, data["an1DNames"], data)
-
         # Eval Operators
-        self.evalOperators()
+        # self.evalOperators()
 
 
-def getAnimControlNameList(digitNames):
+def getAnimControlNameList(handleNames):
     """ tokenizes string argument, returns a list"""
-    animControlNameList = re.split(r'[ ,:;]+', digitNames)
+    animControlNameList = re.split(r'[ ,:;]+', handleNames)
 
     # These checks should actually prevent the component_inspector from closing maybe?
     for name in animControlNameList:
         if name and not re.match(r'^[\w_]+$', name):
             # Eventaully specific exception just for component class that display component name, etc.
-            raise ValueError("digitNames \""+name+"\" contains non-alphanumeric characters in component \""+self.getName()+"\"")
+            raise ValueError("handleNames \""+name+"\" contains non-alphanumeric characters in component \""+self.getName()+"\"")
 
     animControlNameList = [x for x in animControlNameList if x != ""]
 
@@ -560,7 +577,7 @@ def getAnimControlNameList(digitNames):
         return []
 
     if len(animControlNameList) > len(set(animControlNameList)):
-        raise ValueError("Duplicate names in digitNames in component \""+self.getName()+"\"")
+        raise ValueError("Duplicate names in handleNames in component \""+self.getName()+"\"")
 
     return animControlNameList
 

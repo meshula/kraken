@@ -1,0 +1,184 @@
+{
+  "objectType" : "Graph",
+  "title" : "",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "metadata" : {},
+      "nodePortType" : "Out",
+      "name" : "inputValues",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {},
+      "nodePortType" : "Out",
+      "name" : "scale",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "resultNeg",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "resultPos",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[]"
+      }
+    ],
+  "extDeps" : {},
+  "nodes" : [
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":111.0,\"y\":130.0}"
+        },
+      "name" : "remapScalarValueArrayPreset_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "inputValues"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "scale"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "resultNeg"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "resultPos"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "result"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "remapScalarValueArrayPreset",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "inputValues",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Float32" : 1
+              },
+            "name" : "scale",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "resultNeg",
+            "execPortType" : "IO",
+            "typeSpec" : "Scalar[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "resultPos",
+            "execPortType" : "IO",
+            "typeSpec" : "Scalar[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "result",
+            "execPortType" : "IO",
+            "typeSpec" : "Scalar[]"
+            }
+          ],
+        "extDeps" : {
+          "Math" : "*"
+          },
+        "origPresetGUID" : "3A41C0CA3F6C5C99BB75FA053DF733D6",
+        "code" : "dfgEntry {
+  UInt32 size = inputValues.size();
+  resultPos.resize(size);
+  resultNeg.resize(size);
+  result.resize(size);
+
+  for(UInt32 i=0; i<inputValues.size(); i++){
+    resultPos.push(Math_max(0,inputValues[i])*scale);
+    resultNeg.push(abs(Math_min(0,inputValues[i]))*scale);
+    result.push(resultPos[i] - resultNeg[i]);
+  }
+}
+
+"
+        }
+      }
+    ],
+  "connections" : {
+    "inputValues" : [
+      "remapScalarValueArrayPreset_1.inputValues"
+      ],
+    "scale" : [
+      "remapScalarValueArrayPreset_1.scale"
+      ],
+    "remapScalarValueArrayPreset_1.resultNeg" : [
+      "resultNeg"
+      ],
+    "remapScalarValueArrayPreset_1.resultPos" : [
+      "resultPos"
+      ],
+    "remapScalarValueArrayPreset_1.result" : [
+      "result"
+      ]
+    },
+  "metadata" : {
+    "maya_id" : "37"
+    },
+  "args" : [
+    {
+      "type" : "Scalar[]",
+      "value" : null
+      },
+    {
+      "type" : "Float32",
+      "value" : null
+      },
+    {
+      "type" : "Scalar[]",
+      "value" : null
+      },
+    {
+      "type" : "Scalar[]",
+      "value" : null
+      },
+    {
+      "type" : "Scalar[]",
+      "value" : null
+      }
+    ]
+  }
