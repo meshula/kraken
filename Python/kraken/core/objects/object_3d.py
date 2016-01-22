@@ -188,9 +188,9 @@ class Object3D(SceneItem):
                 secondType = self.getSecondType()
                 if secondType:
                     if inspect.isclass(secondType):
-                        builtName += nameTemplate['separator']+nameTemplate['types'][secondType.__name__]
+                        builtName += nameTemplate['types'][secondType.__name__] + nameTemplate['separator']
                     elif isinstance(secondType, str):
-                        builtName += nameTemplate['separator']+nameTemplate['types'][secondType]
+                        builtName += nameTemplate['types'][secondType] + nameTemplate['separator']
 
                 if objectType == 'Locator' and self.testFlag('inputObject'):
                     objectType = 'ComponentInput'
