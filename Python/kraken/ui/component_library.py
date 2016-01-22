@@ -23,7 +23,14 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
         self.setDragEnabled(True)
         self.setDragDropMode(QtGui.QTreeWidget.DragOnly)
 
-        self.generateData()
+        krakenUIWidget = self.parent().parent()
+        graphViewWidget = krakenUIWidget.graphViewWidget
+
+        krakenUIWidget.error_loading_startup = False
+        if not self.generateData():
+            krakenUIWidget.error_loading_startup = True
+            # Wait until right after the window is displayed for the first time to call reportMessage
+
 
         self.buildWidgets()
 
@@ -73,12 +80,12 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
         """Generates a dictionary with a tree structure of the component paths.
 
         Returns:
-            dict: Component tree structure.
+            True if successful
 
         """
 
         self.ks = KrakenSystem.getInstance()
-        self.ks.loadComponentModules()
+        isSuccessful = self.ks.loadComponentModules()
 
         componentClassNames = []
         for componentClassName in sorted(self.ks.getComponentClassNames()):
@@ -118,6 +125,8 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
                 parent = parent['subDirs'][part]
 
             parent['components'][className] = classItem
+
+        return isSuccessful
 
 
     def mouseMoveEvent(self, event):

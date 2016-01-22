@@ -13,7 +13,7 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.components.component_output import ComponentOutput
 from kraken.core.objects.hierarchy_group import HierarchyGroup
-from kraken.core.objects.locator import Locator
+from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.layer import Layer
@@ -302,12 +302,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.spineSrtInputConstraint = self.cogCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-
-
-        self.spineBaseOutputConstraint = self.spineBaseOutputTgt.constrainTo(self.spineOutputs[0])
-        self.spineEndOutputConstraint = self.spineEndOutputTgt.constrainTo(self.spineOutputs[0])
-
+        self.cogCtrlSpaceConstraint = self.cogCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # ===============
         # Add Fabric Ops
@@ -420,9 +415,9 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers)
 
-        # Updating constraint to use the updated last output.
-        self.spineEndOutputConstraint.setConstrainer(self.spineOutputs[-1], index=0)
-
+        # Constrain Outputs
+        self.spineBaseOutputConstraint = self.spineBaseOutputTgt.constrainTo(self.spineOutputs[0])
+        self.spineEndOutputConstraint = self.spineEndOutputTgt.constrainTo(self.spineOutputs[-1])
 
         if self.mocap:
 
@@ -434,7 +429,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.cogMocapCtrl.xfo.tr = cogPosition
             self.cogMocapCtrlSpace = self.cogMocapCtrl.insertCtrlSpace()
 
-            self.cogMocapCtrlConstraint = self.cogMocapCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+            self.cogMocapCtrlSpaceConstraint = self.cogMocapCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
             # hips
             self.pelvisMocapCtrl = Control('pelvis_mocap', parent=self.cogMocapCtrl, shape="circle")
@@ -466,8 +461,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.upChestMocapCtrlSpace = self.upChestMocapCtrl.insertCtrlSpace()
 
             # Neck
-            self.neckMocapSpaceCtrl = CtrlSpace('neckPosition_mocap', parent=self.upChestMocapCtrl)
-            self.neckMocapSpaceCtrl.xfo.tr = neckPosition
+            self.neckMocapCtrlSpace = CtrlSpace('neckPosition_mocap', parent=self.upChestMocapCtrl)
+            self.neckMocapCtrlSpace.xfo.tr = neckPosition
 
             # Blend anim and mocap together
             self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocap_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
@@ -495,10 +490,10 @@ class OSSSpineComponentRig(OSSSpineComponent):
                 self.torsoMocapCtrl,
                 self.chestMocapCtrl,
                 self.upChestMocapCtrl,
-                self.neckMocapSpaceCtrl
+                self.neckMocapCtrlSpace
                 ]
             )
-            #Create some nodes just for the oupt of the blend.
+            #Create some nodes just for the ouput of the blend.
             #Wish we could just make direct connections....
 
             self.cogCtrlSpace_link = CtrlSpace('cogCtrlSpace_link', parent=self.outputHrcGrp)
@@ -535,27 +530,26 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace)
 
 
-        # evaluate the constraints to ensure the outputs are now in the correct location.
-        self.spineSrtInputConstraint.evaluate()
-        if self.mocap:
-            self.cogMocapCtrlConstraint.evaluate()
+        # ====================
+        # Evaluate Fabric Ops
+        # ====================
+        # Eval Operators # Order is important
+        self.evalOperators()
+
+        # ====================
+        # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
+        # ====================
+        # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
         self.spineCogOutputConstraint.evaluate()
         self.spineBaseOutputConstraint.evaluate()
         self.pelvisOutputConstraint.evaluate()
         self.spineEndOutputConstraint.evaluate()
+        # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 
 
         # ====================
-        # Evaluate Splice Ops
+        # Extra Shape Mods
         # ====================
-        # evaluate the spine op so that all the output transforms are updated.
-        self.ZSplineSpineCanvasOp.evaluate()
-        # evaluate the constraint op so that all the joint transforms are updated.
-        self.outputsToDeformersOKLOp.evaluate()
-
-        if self.mocap:
-            pass
-
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 

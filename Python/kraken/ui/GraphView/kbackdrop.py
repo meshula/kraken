@@ -93,10 +93,14 @@ class KBackdrop(QtGui.QGraphicsWidget):
     sizeChanged = QtCore.Signal(float)
 
     __defaultColor = QtGui.QColor(65, 120, 122, 255)
-    __unselectedPen = QtGui.QPen(__defaultColor.darker(125), 1.6)
-    __selectedPen = QtGui.QPen(__defaultColor.lighter(175), 1.6)
-    __hoveredPen = QtGui.QPen(__defaultColor.lighter(110), 1.6)
-    __linePen = QtGui.QPen(QtGui.QColor(25, 25, 25, 255), 1.25)
+    __defaultUnselectedColor = QtGui.QColor(__defaultColor.darker(125))
+    __defaultSelectedColor = QtGui.QColor(__defaultColor.lighter(175))
+    __defaultHoverColor = QtGui.QColor(__defaultColor.lighter(110))
+
+    __defaultUnselectedPen = QtGui.QPen(__defaultUnselectedColor, 1.6)
+    __defaultSelectedPen = QtGui.QPen(__defaultSelectedColor, 1.6)
+    __defaultHoveredPen = QtGui.QPen(__defaultHoverColor, 1.6)
+    __defaultLinePen = QtGui.QPen(QtGui.QColor(25, 25, 25, 255), 1.25)
 
     __resizeDistance = 16.0
     __setCustomCursor = False
@@ -112,6 +116,15 @@ class KBackdrop(QtGui.QGraphicsWidget):
         self.__graph = graph
         self.__color = self.__defaultColor
         self.__color.setAlpha(25)
+        self.__unselectedColor = self.__defaultUnselectedColor
+        self.__selectedColor = self.__defaultSelectedColor
+        self.__hoverColor = self.__defaultHoverColor
+
+        self.__unselectedPen = QtGui.QPen(self.__defaultUnselectedPen)
+        self.__selectedPen = QtGui.QPen(self.__defaultSelectedPen)
+        self.__hoveredPen = QtGui.QPen(self.__defaultHoveredPen)
+        self.__linePen = QtGui.QPen(self.__defaultLinePen)
+
         self.__inspectorWidget = None
 
         self.setMinimumWidth(120)
@@ -123,6 +136,7 @@ class KBackdrop(QtGui.QGraphicsWidget):
         self.__dragging = False
         self.__resizing = False
         self.__resizeCorner = -1
+        self.__resizeEdge = -1
 
         self.createLayout()
         self.createConnections()
@@ -183,11 +197,40 @@ class KBackdrop(QtGui.QGraphicsWidget):
 
 
     def getColor(self):
-        return self.__color
+        color = QtGui.QColor(self.__color)
+        color.setAlpha(255)
+        return color
 
     def setColor(self, color):
         self.__color = color
         self.__color.setAlpha(25)
+        self.update()
+
+
+    def getUnselectedColor(self):
+        return self.__unselectedColor
+
+    def setUnselectedColor(self, color):
+        self.__unselectedColor = color
+        self.__unselectedPen.setColor(self.__unselectedColor)
+        self.update()
+
+
+    def getSelectedColor(self):
+        return self.__selectedColor
+
+    def setSelectedColor(self, color):
+        self.__selectedColor = color
+        self.__selectedPen.setColor(self.__selectedColor)
+        self.update()
+
+
+    def getHoveredColor(self):
+        return self.__hoverColor
+
+    def setHoveredColor(self, color):
+        self.__hoverColor = color
+        self.__hoveredPen.setColor(self.__hoverColor)
         self.update()
 
 
@@ -218,19 +261,11 @@ class KBackdrop(QtGui.QGraphicsWidget):
         return QtCore.QPointF(transform.dx()+(size.width()*0.5), transform.dy()+(size.height()*0.5))
 
     def setGraphPos(self, graphPos):
-        self.prepareConnectionGeometryChange()
         size = self.size()
         self.setTransform(QtGui.QTransform.fromTranslate(graphPos.x()-(size.width()*0.5), graphPos.y()-(size.height()*0.5)), False)
 
     def translate(self, x, y):
-        self.prepareConnectionGeometryChange()
         super(KBackdrop, self).translate(x, y)
-
-
-    # Prior to moving the node, we need to tell the connections to prepare for a geometry change.
-    # This method must be called preior to moving a node.
-    def prepareConnectionGeometryChange(self):
-        pass
 
     def paint(self, painter, option, widget):
         rect = self.windowFrameRect()
@@ -272,9 +307,14 @@ class KBackdrop(QtGui.QGraphicsWidget):
         if event.button() is QtCore.Qt.MouseButton.LeftButton:
 
             resizeCorner = self.getCorner(event.pos())
+            resizeEdge = self.getEdge(event.pos())
             if resizeCorner != -1 and self.isSelected():
                 self.__resizing = True
                 self.__resizeCorner = resizeCorner
+                self._resizedBackdrop = False
+            elif resizeEdge != -1 and self.isSelected():
+                self.__resizing = True
+                self.__resizeEdge = resizeEdge
                 self._resizedBackdrop = False
             else:
                 modifiers = event.modifiers()
@@ -399,6 +439,42 @@ class KBackdrop(QtGui.QGraphicsWidget):
                 if newHeight <= self.minimumHeight():
                     newHeight = self.minimumHeight()
 
+            elif self.__resizeEdge == 0:
+                pass
+
+            elif self.__resizeEdge == 1:
+                newWidth = self._initBoundingRect.width() + delta.x()
+                newHeight = self._initBoundingRect.height()
+
+                newPosY = self._initPos.y()
+
+                if newWidth <= self.minimumWidth():
+                    newWidth = self.minimumWidth()
+                else:
+                    newPosX = self._initPos.x()
+
+            elif self.__resizeEdge == 2:
+                newWidth = self._initBoundingRect.width()
+                newHeight = self._initBoundingRect.height() + delta.y()
+
+                newPosX = self._initPos.x()
+
+                if newHeight <= self.minimumHeight():
+                    newHeight = self.minimumHeight()
+                else:
+                    newPosY = self._initPos.y()
+
+            elif self.__resizeEdge == 3:
+                newWidth = self._initBoundingRect.width() + (delta.x() * -1.0)
+                newHeight = self._initBoundingRect.height()
+
+                newPosY = self._initPos.y()
+
+                if newWidth <= self.minimumWidth():
+                    newWidth = self.minimumWidth()
+                else:
+                    newPosX = self._initPos.x() + delta.x()
+
             self.setPos(newPosX, newPosY)
             self.resize(newWidth, newHeight)
 
@@ -447,6 +523,7 @@ class KBackdrop(QtGui.QGraphicsWidget):
     def hoverMoveEvent(self, event):
 
         resizeCorner = self.getCorner(event.pos())
+        resizeEdge = self.getEdge(event.pos())
         if resizeCorner == 0:
             self.__setCustomCursor = True
             self.setCursor(QtCore.Qt.SizeFDiagCursor)
@@ -459,6 +536,18 @@ class KBackdrop(QtGui.QGraphicsWidget):
         elif resizeCorner == 3:
             self.__setCustomCursor = True
             self.setCursor(QtCore.Qt.SizeFDiagCursor)
+        elif resizeEdge == 0:
+            self.__setCustomCursor = True
+            self.setCursor(QtCore.Qt.SizeVerCursor)
+        elif resizeEdge == 1:
+            self.__setCustomCursor = True
+            self.setCursor(QtCore.Qt.SizeHorCursor)
+        elif resizeEdge == 2:
+            self.__setCustomCursor = True
+            self.setCursor(QtCore.Qt.SizeVerCursor)
+        elif resizeEdge == 3:
+            self.__setCustomCursor = True
+            self.setCursor(QtCore.Qt.SizeHorCursor)
         elif self.__headerItem.contains(event.pos()) is True:
             self.__setCustomCursor = True
             self.setCursor(QtCore.Qt.OpenHandCursor)
@@ -490,6 +579,34 @@ class KBackdrop(QtGui.QGraphicsWidget):
 
         return -1
 
+    def getEdge(self, pos):
+        topRectUpperLeft = self.mapFromItem(self, self.boundingRect().topLeft())
+        topRectLowerRight = self.mapFromItem(self, self.boundingRect().right(), self.__resizeDistance * 0.25)
+        topRect = QtCore.QRectF(topRectUpperLeft, topRectLowerRight)
+
+        rightRectUpperLeft = self.mapFromItem(self, self.boundingRect().right() - self.__resizeDistance * 0.25, 0)
+        rightRectLowerRight = self.mapFromItem(self, self.boundingRect().bottomRight())
+        rightRect = QtCore.QRectF(rightRectUpperLeft, rightRectLowerRight)
+
+        bottomRectUpperLeft = self.mapFromItem(self, 0, self.boundingRect().bottom() - self.__resizeDistance * 0.25)
+        bottomRectLowerRight = self.mapFromItem(self, self.boundingRect().bottomRight())
+        bottomRect = QtCore.QRectF(bottomRectUpperLeft, bottomRectLowerRight)
+
+        leftRectUpperLeft = self.mapFromItem(self, self.boundingRect().topLeft())
+        leftRectLowerRight = self.mapFromItem(self, self.boundingRect().left() + self.__resizeDistance * 0.25, self.boundingRect().bottom())
+        leftRect = QtCore.QRectF(leftRectUpperLeft, leftRectLowerRight)
+
+        if topRect.contains(pos):
+            return -1  # Disabling the top resize by default.
+        elif rightRect.contains(pos):
+            return 1
+        elif bottomRect.contains(pos):
+            return 2
+        elif leftRect.contains(pos):
+            return 3
+
+        return -1
+
     def inspectorClosed(self):
         self.__inspectorWidget = None
 
@@ -499,3 +616,52 @@ class KBackdrop(QtGui.QGraphicsWidget):
     # ==========
     def disconnectAllPorts(self):
         pass
+
+
+    # =============
+    # Data Methods
+    # =============
+    def getData(self):
+        """Gets the essential data of the backdrop for saving.
+
+        Returns:
+            dict: Data for saving.
+
+        """
+
+        data = {
+            'name': self.getName(),
+            'comment': self.getComment(),
+            'graphPos': self.getGraphPos().toTuple(),
+            'size': self.size().toTuple(),
+            'color': self.getColor().toTuple()
+        }
+
+        return data
+
+    def setData(self, data):
+        """Sets the data on a backdrop after loading.
+
+        Args:
+            data (dict): Name, comment, graph pos, size, and color.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self.setComment(data.get('comment', ''))
+
+        size = data.get('size', (self.minimumWidth(), self.minimumHeight()))
+        self.resize(size[0], size[1])
+
+        position = data.get('graphPos', (0, 0))
+        self.setGraphPos(QtCore.QPointF(position[0], position[1]))
+
+        color = data.get('color', self.__defaultColor.toTuple())
+        self.setColor(color=QtGui.QColor(color[0], color[1], color[2], color[3]))
+        self.setUnselectedColor(self.getColor().darker(125))
+        self.setSelectedColor(self.getColor().lighter(175))
+        self.setHoveredColor(self.getColor().lighter(110))
+
+        return True

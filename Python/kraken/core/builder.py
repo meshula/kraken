@@ -393,10 +393,7 @@ class Builder(object):
         else:
             connectionTarget = connection.getTarget()
 
-        constraint = PoseConstraint('_'.join([inputTarget.getName(), 'To', connectionTarget.getName()]))
-        constraint.setMaintainOffset(True)
-        constraint.setConstrainee(inputTarget)
-        constraint.addConstrainer(connectionTarget)
+        constraint = inputTarget.constrainTo(connectionTarget, maintainOffset=True)
 
         dccSceneItem = self.buildPoseConstraint(constraint)
         self._registerSceneItemPair(componentInput, dccSceneItem)
@@ -512,6 +509,9 @@ class Builder(object):
             dccSceneItem = self.buildHierarchyGroup(kObject, buildName)
 
         elif kObject.isTypeOf("CtrlSpace"):
+            dccSceneItem = self.buildGroup(kObject, buildName)
+
+        elif kObject.isTypeOf("Transform"):
             dccSceneItem = self.buildGroup(kObject, buildName)
 
         elif kObject.isTypeOf("Locator"):
@@ -899,9 +899,7 @@ class Builder(object):
             self._postBuild()
 
             # Clear Config when finished.
-            # TT Commented out the following line.  This resets a custom config to default after each build in ui.
-            # Why is this line needed?
-            #self.config.clearInstance()
+            self.config.clearInstance()
 
         Profiler.getInstance().pop()
 

@@ -1,4 +1,5 @@
 require Math;
+require Kraken;
 
 object OSS_RemapScalarValueSolver : KrakenSolver {
 };
@@ -24,11 +25,11 @@ function OSS_RemapScalarValueSolver.solve!
   // in Scalar scale[],
   out Scalar resultNeg[],
   out Scalar resultPos[],
-  out Scalar result[],
+  out Scalar result[]
   )
 { 
   Scalar scale = 1.0;
-  currentSize = inputValues.size();
+  UInt32 currentSize = inputValues.size();
   resultPos.resize(currentSize);
   resultNeg.resize(currentSize);
   result.resize(currentSize);

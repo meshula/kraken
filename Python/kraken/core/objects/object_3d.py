@@ -771,11 +771,11 @@ class Object3D(SceneItem):
 
 
 
-    def constrainTo(self, constrainer, type="Pose", maintainOffset=False, name=None):
+    def constrainTo(self, constrainers, type="Pose", maintainOffset=False, name=None):
         """Adds an constraint to this object.
 
         Args:
-            constraint (Object): Constraint object to add to this object.
+            constrainers (Object or Object list): Constraint object to add to this object or objects.
 
         Returns:
             string: Constraint object
@@ -785,7 +785,13 @@ class Object3D(SceneItem):
         exec("from kraken.core.objects.constraints.pose_constraint import "+type+"Constraint")
         exec("constraint = "+type+"Constraint('')")
 
-        constraint.addConstrainer(constrainer)
+        # function overloading to accept a single object or a list of objects
+        if not hasattr(constrainers, '__iter__'):
+            constrainers = [constrainers]
+
+        for constrainer in constrainers:
+            constraint.addConstrainer(constrainer)
+
         constraint.setMaintainOffset(maintainOffset)
 
         if name is None:

@@ -10,7 +10,7 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
-from kraken.core.objects.locator import Locator
+from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
@@ -271,6 +271,12 @@ class OSSMainComponentRig(OSSMainComponent):
         # ============
         self.globalOutputTgt = data["mainXfo"]
         self.offsetOutputTgt = data["mainXfo"]
+
+        # ====================
+        # Evaluate Fabric Ops
+        # ====================
+        # Eval Operators # Order is important
+        self.evalOperators()
 
 
 from kraken.core.kraken_system import KrakenSystem

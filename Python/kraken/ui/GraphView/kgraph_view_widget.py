@@ -134,6 +134,16 @@ class KGraphViewWidget(GraphViewWidget):
                     return False
 
             self.synchGuideRig()
+
+            # Backdrop Meta Data
+            graphView = self.getGraphView()
+            backdropNodes = graphView.getNodesOfType('KBackdrop')
+            backdropData = [x.getData() for x in backdropNodes]
+
+            # Add Meta Data to rig
+            self.guideRig.setMetaData('backdrops', backdropData)
+
+            # Write rig file
             self.guideRig.writeRigDefinitionFile(filePath)
 
             settings = self.window().getSettings()
@@ -195,6 +205,7 @@ class KGraphViewWidget(GraphViewWidget):
     def loadRigPreset(self, filePath):
         self.guideRig = Rig()
         self.guideRig.loadRigDefinitionFile(filePath)
+
         self.graphView.displayGraph(self.guideRig)
 
         settings = self.window().getSettings()
@@ -215,6 +226,10 @@ class KGraphViewWidget(GraphViewWidget):
 
             self.window().statusBar().showMessage('Building Guide')
 
+            initConfigIndex = self.window().krakenMenu.configsWidget.currentIndex()
+
+            builder = plugins.getBuilder()
+
             #Append "_guide" to rig name when building guide
             if self.guideRig.getName().endswith('_guide') is False:
                 self.guideRig.setName(self.guideRig.getName() + '_guide')
@@ -225,17 +240,24 @@ class KGraphViewWidget(GraphViewWidget):
             builder = plugins.getBuilder()
             builder.build(self.guideRig)
 
+            self.reportMessage('Guide Rig Build Success', level='information', timeOut=6000)
+
+            self.window().krakenMenu.setCurrentConfig(initConfigIndex)
+
         except Exception as e:
             # Add the callstak to the log
             callstack = traceback.format_exc()
             print callstack
-            self.reportMessage('Error Building', level='error', exception=e)
+            self.reportMessage('Error Building', level='error', exception=e, timeOut=0) #Keep this message!
 
         finally:
             self.window().setCursor(QtCore.Qt.ArrowCursor)
 
     def synchGuideRig(self):
         synchronizer = plugins.getSynchronizer()
+        #Guide is always  built with "_guide" need this so synchronizer not confused with real Rig nodes
+        if self.guideRig.getName().endswith('_guide') is False:
+            self.guideRig.setName(self.guideRig.getName() + '_guide')
         synchronizer.setTarget(self.guideRig)
         synchronizer.sync()
 
@@ -255,6 +277,8 @@ class KGraphViewWidget(GraphViewWidget):
 
             self.window().statusBar().showMessage('Building Rig')
 
+            initConfigIndex = self.window().krakenMenu.configsWidget.currentIndex()
+
             self.synchGuideRig()
 
             rigBuildData = self.guideRig.getRigBuildData()
@@ -268,12 +292,15 @@ class KGraphViewWidget(GraphViewWidget):
 
             builder = plugins.getBuilder()
             builder.build(rig)
+            self.reportMessage('Rig Build Success', level='information', timeOut=6000)
+
+            self.window().krakenMenu.setCurrentConfig(initConfigIndex)
 
         except Exception as e:
             # Add the callstak to the log
             callstack = traceback.format_exc()
             print callstack
-            self.reportMessage('Error Building', level='error', exception=e)
+            self.reportMessage('Error Building', level='error', exception=e, timeOut=0)
 
         finally:
             self.window().setCursor(QtCore.Qt.ArrowCursor)
@@ -338,11 +365,19 @@ class KGraphViewWidget(GraphViewWidget):
     # ==============
     # Other Methods
     # ==============
-    def addBackdrop(self):
+    def addBackdrop(self, name='Backdrop'):
+        """Adds a backdrop node to the graph.
+
+        Args:
+            name (str): Name of the backdrop node.
+
+        Returns:
+            Node: Backdrop node that was created.
+
+        """
 
         graphView = self.getGraphView()
 
-        name = 'Backdrop'
         initName = name
         suffix = 1
         collision = True
@@ -364,13 +399,13 @@ class KGraphViewWidget(GraphViewWidget):
         graphView.addNode(backdropNode)
 
         graphView.selectNode(backdropNode, clearSelection=True)
-        # backdropNode.setSelected()
 
+        return backdropNode
 
     # ==================
     # Message Reporting
     # ==================
-    def reportMessage(self, message, level='error', exception=None):
+    def reportMessage(self, message, level='error', exception=None, timeOut=3500):
         """Shows an error message in the status bar.
 
         Args:
@@ -379,6 +414,10 @@ class KGraphViewWidget(GraphViewWidget):
         """
 
         statusBar = self.window().statusBar()
+
+        currentLables = statusBar.findChildren(QtGui.QLabel)
+        for label in currentLables:
+            statusBar.removeWidget(label)
 
         if exception is not None:
             fullMessage = level[0].upper() + level[1:] + ": " + message + '; ' + ', '.join([x for x in exception.args])
@@ -401,23 +440,23 @@ class KGraphViewWidget(GraphViewWidget):
         messageLabel.setStyleSheet("QLabel { border-radius: 3px; background-color: " + messageColors[level] + "}")
 
         def addMessage():
-            self.window().statusBar().clearMessage()
-
+            statusBar.clearMessage()
+            statusBar.currentMessage = messageLabel
             statusBar.addWidget(messageLabel, 1)
             statusBar.repaint()
-
-            timer.start()
+            if timeOut > 0.0:
+                timer.start()
 
         def endMessage():
             timer.stop()
             statusBar.removeWidget(messageLabel)
             statusBar.repaint()
+            statusBar.showMessage('Ready', 2000)
 
-            self.window().statusBar().showMessage('Ready', 2000)
-
-        timer = QtCore.QTimer()
-        timer.setInterval(3500)
-        timer.timeout.connect(endMessage)
+        if timeOut > 0.0:
+            timer = QtCore.QTimer()
+            timer.setInterval(timeOut)
+            timer.timeout.connect(endMessage)
 
         addMessage()
 

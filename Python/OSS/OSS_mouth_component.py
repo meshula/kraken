@@ -486,14 +486,13 @@ class OSSMouthComponentRig(OSSMouthComponent):
                         newCtrlSpace.xfo = data[ctrlListName+"Xfos"][index]
                         newCtrl.xfo = data[ctrlListName+"Xfos"][index]
 
-            # Add Deformer Joint Constrain
-            self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+digitName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
 
-            self.RemapScalarValueSolverKLOp = KLOperator(self.getLocation()+self.getName()+digitName+'RemapScalarValueSolverCanvasOp', 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
+            # Add Deformer Joint Constrain
+            self.outputsToDeformersKLOp     = KLOperator(self.getLocation()+self.getName()+digitName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+            self.RemapScalarValueSolverKLOp = KLOperator(self.getLocation()+self.getName()+digitName+'RemapScalarValueSolverKLOp', 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
 
             self.addOperator(self.outputsToDeformersKLOp)
-
-            self.addOperator(self.RemapScalarValueSolverCanvasOp)
+            self.addOperator(self.RemapScalarValueSolverKLOp)
 
             # Add Att Inputs
             self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
