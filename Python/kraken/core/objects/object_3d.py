@@ -18,8 +18,12 @@ from kraken.core.objects.attributes.attribute_group import AttributeGroup
 class Object3D(SceneItem):
     """Kraken base object type for any 3D object."""
 
+
+
     def __init__(self, name, parent=None):
+
         super(Object3D, self).__init__(name, parent)
+
         self._component = None
         self._children = []
         self._flags = {}
@@ -30,7 +34,6 @@ class Object3D(SceneItem):
         self._color = None
         self._visibility = True
         self._shapeVisibility = True
-        self._secondBuildNameType = None
 
         if parent is not None:
             parent.addChild(self)
@@ -140,7 +143,7 @@ class Object3D(SceneItem):
 
         # If flag is set on object to use explicit name, return it.
         if config.getExplicitNaming() is True or self.testFlag('EXPLICIT_NAME'):
-            return self.getName()
+            return
 
         nameTemplate = config.getNameTemplate()
 
@@ -187,10 +190,7 @@ class Object3D(SceneItem):
 
                 secondType = self.getSecondType()
                 if secondType:
-                    if inspect.isclass(secondType):
-                        builtName += nameTemplate['types'][secondType.__name__] + nameTemplate['separator']
-                    elif isinstance(secondType, str):
-                        builtName += nameTemplate['types'][secondType] + nameTemplate['separator']
+                    builtName += nameTemplate['types'][secondType.__name__] + nameTemplate['separator']
 
                 if objectType == 'Locator' and self.testFlag('inputObject'):
                     objectType = 'ComponentInput'
@@ -221,6 +221,7 @@ class Object3D(SceneItem):
 
         return builtName
 
+
     def setName(self, name):
         """Sets the name of the object with a string.
 
@@ -238,6 +239,7 @@ class Object3D(SceneItem):
             initName = name
             suffix = 1
             collision = True
+
             while collision:
                 child = self.getParent().getChildByDecoratedName(name + self.getNameDecoration())
                 collision = child != None and child is not self
@@ -288,37 +290,6 @@ class Object3D(SceneItem):
             parent = parent.getParent()
 
         return parent
-
-
-    # ==================
-    # Component Methods
-    # ==================
-    def getSecondType(self):
-        """Returns the second type of the object as a class.
-
-        Returns:
-            Class: second type of the object as a class.
-
-        """
-
-        return self._secondBuildNameType
-
-
-    def setSecondType(self, objectType):
-        """Sets the second type of the object as a class.
-
-        Args:
-            type (Class): Class that is the secondary type (for use in getBuildName() later)
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        self._secondBuildNameType = objectType
-
-        return True
-
 
     # ==================
     # Component Methods
