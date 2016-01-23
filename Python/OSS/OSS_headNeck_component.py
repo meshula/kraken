@@ -25,6 +25,8 @@ from kraken.core.objects.operators.canvas_operator import CanvasOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from OSS.OSS_control import *
+
 COMPONENT_NAME = "headNeck"
 
 class OSSHeadNeckComponent(BaseExampleComponent):
@@ -230,18 +232,18 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # COG
 
         # Neck
-        self.neckCtrlSpace = CtrlSpace('neck', parent=self.ctrlCmpGrp)
-        self.neckCtrl = Control('neck', parent=self.neckCtrlSpace, shape="square")
+        self.neckCtrl = FKControl('neck', parent=self.ctrlCmpGrp, shape="square")
         self.neckCtrl.scalePoints(Vec3(2.5, 2.5, 2.5))
+        self.neckCtrlSpace = self.neckCtrl.insertCtrlSpace()
 
         # Neck handle
         self.neckHandleCtrlSpace = CtrlSpace('neckHandle', parent=self.neckCtrlSpace)
 
         # Head
-        self.headCtrlSpace = CtrlSpace('head', parent=self.neckCtrl)
-        self.headCtrl = Control('head', parent=self.headCtrlSpace, shape="square")
+        self.headCtrl = FKControl('head', parent=self.neckCtrl, shape="square")
         #self.headCtrl.rotatePoints(0, 0, 90)
         self.headCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))
+        self.headCtrlSpace = self.headCtrl.insertCtrlSpace()
 
         # Head handle
         self.headHandleCtrlSpace = CtrlSpace('headHandle', parent=self.headCtrl)

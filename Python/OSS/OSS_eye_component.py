@@ -22,6 +22,8 @@ from kraken.core.objects.operators.canvas_operator import CanvasOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from OSS.OSS_control import *
+
 COMPONENT_NAME = "eyes"
 
 class OSSEye(BaseExampleComponent):
@@ -65,7 +67,7 @@ class OSSEyeGuide(OSSEye):
         # =========
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
 
-        self.eyeCtrl = Control('eye', parent=self.ctrlCmpGrp, shape="sphere")
+        self.eyeCtrl = FKControl('eye', parent=self.ctrlCmpGrp, shape="sphere")
 
 
         if data is None:

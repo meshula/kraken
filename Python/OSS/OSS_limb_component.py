@@ -19,12 +19,13 @@ from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
-from OSS.OSS_control import *
 
 from kraken.core.objects.operators.kl_operator import KLOperator
 
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
+
+from OSS.OSS_control import *
 
 COMPONENT_NAME = "limb"
 
@@ -378,6 +379,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.lolimb_mocap = MCControl(lolimbName, parent=self.uplimb_mocap, shape="cube")
             self.lolimb_mocap.xfo = data['lolimbXfo']
             self.lolimb_mocap.alignOnXAxis()
+            self.lolimb_mocap.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
             self.lolimb_mocap.insertCtrlSpace()
             # Mocap handle
             self.endlimb_mocap = Transform(name+'end', parent=self.lolimb_mocap)
@@ -387,16 +389,19 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
 
         # UpV
-        self.limbUpVCtrlSpace = CtrlSpace(name+'UpV', parent=self.ctrlCmpGrp)
-        self.limbUpVCtrl = Control(name+'UpV', parent=self.limbUpVCtrlSpace, shape="triangle")
+        self.limbUpVCtrl = Control(name+'UpV', parent=self.ctrlCmpGrp, shape="triangle")
+        self.limbUpVCtrl.xfo = data['upVXfo']
         self.limbUpVCtrl.alignOnZAxis()
-
-        self.limbUpVCtrlMasterSpace = CtrlSpace(name+'IKMaster', parent=self.globalSRTInputTgt)
+        self.limbUpVCtrlSpace = self.limbUpVCtrl.insertCtrlSpace()
 
         parent = self.limbIKCtrl
         if self.useOtherIKGoal:
             parent = self.ikgoal_cmpIn
         self.limbUpVCtrlIKSpace = CtrlSpace(name+'UpVIK', parent=parent)
+        self.limbUpVCtrlIKSpace.xfo = data['upVXfo']
+
+        self.limbUpVCtrlMasterSpace = CtrlSpace(name+'IKMaster', parent=self.globalSRTInputTgt)
+        self.limbUpVCtrlMasterSpace.xfo = data['upVXfo']
 
         upVAttrGrp = AttributeGroup("UpVAttrs", parent=self.limbUpVCtrl)
         upVSpaceBlendInputAttr = ScalarAttribute(ikHandleName+'Space', value=0.0, minValue=0.0, maxValue=1.0, parent=upVAttrGrp)
@@ -458,7 +463,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('stretch', self.stretchAttr)
         self.limbIKKLOp.setInput('rightSide', self.rightSideInputAttr)
         # Add Xfo Inputs
-        self.limbIKKLOp.setInput('root', self.parentSpaceInputTgt)
+        self.limbIKKLOp.setInput('root', self.uplimbFKCtrlSpace)
         self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl)
         self.limbIKKLOp.setInput('bone1FK', self.lolimbFKCtrl)
         self.limbIKKLOp.setInput('upV', self.limbUpVCtrl)
@@ -570,9 +575,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             #self.limbIKCtrl.rotatePoints(0, -90, 0)
             #self.limbIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
 
-        self.limbUpVCtrlIKSpace.xfo = data['upVXfo']
-        self.limbUpVCtrl.xfo = data['upVXfo']
-        self.limbUpVCtrlMasterSpace.xfo = data['upVXfo']
+
 
         self.rightSideInputAttr.setValue(self.getLocation() == 'R')
         self.limbBone0LenInputAttr.setMin(0.0)
@@ -582,7 +585,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbBone1LenInputAttr.setMax(data['lolimbLen'] * 3.0)
         self.limbBone1LenInputAttr.setValue(data['lolimbLen'])
 
-        self.parentSpaceInputTgt.xfo = data['uplimbXfo']
+
 
 
         # ====================

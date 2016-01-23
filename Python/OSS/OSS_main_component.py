@@ -20,6 +20,8 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from OSS.OSS_control import *
+
 COMPONENT_NAME = "main"
 
 class OSSMainComponent(BaseExampleComponent):
@@ -183,12 +185,12 @@ class OSSMainComponentRig(OSSMainComponent):
         # =========
         # Add Controls
         self.mainCtrlSpace = CtrlSpace('global', parent=self.ctrlCmpGrp)
-        self.mainCtrl = Control('global', shape='main', parent=self.mainCtrlSpace)
+        self.mainCtrl = FKControl('global', shape='main', parent=self.mainCtrlSpace)
         self.mainCtrl.setColor("turqoise")
         self.mainCtrl.lockScale(x=True, y=True, z=True)
 
         self.offsetCtrlSpace = CtrlSpace('Offset', parent=self.mainCtrl)
-        self.offsetCtrl = Control('Offset', shape='main', parent=self.offsetCtrlSpace)
+        self.offsetCtrl = FKControl('Offset', shape='main', parent=self.offsetCtrlSpace)
         self.offsetCtrl.setColor("turqoiseDark")
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
 

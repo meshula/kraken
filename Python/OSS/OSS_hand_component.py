@@ -27,6 +27,8 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from OSS.OSS_control import *
+
 COMPONENT_NAME = "hand"
 
 class OSSHandComponent(BaseExampleComponent):
@@ -381,18 +383,19 @@ class OSSHandComponentRig(OSSHandComponent):
         # =========
 
         # IK Handle
-        self.handleCtrlSpace = CtrlSpace("handIK", parent=self.ctrlCmpGrp)
-        self.handleCtrl = Control("handIK", parent=self.handleCtrlSpace, shape="cross")
+        self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="cross")
+        self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace()
+
 
         # FK Hand
-        self.handCtrlSpace = CtrlSpace('hand', parent=self.ctrlCmpGrp)
-        self.handCtrl = Control('hand', parent=self.handCtrlSpace, shape="cube")
+        self.handCtrl = FKControl('hand', parent=self.ctrlCmpGrp, shape="cube")
         self.handCtrl.alignOnXAxis()
+        self.handCtrlSpace = self.handCtrl.insertCtrlSpace()
 
         # FK palm
-        self.palmCtrlSpace = CtrlSpace('palm', parent=self.handCtrl)
-        self.palmCtrl = Control('palm', parent=self.palmCtrlSpace, shape="cube")
+        self.palmCtrl = FKControl('palm', parent=self.handCtrl, shape="cube")
         self.palmCtrl.alignOnXAxis()
+        self.palmCtrlSpace = self.palmCtrl.insertCtrlSpace()
 
         # IK Hand
         self.handIKCtrlSpace = CtrlSpace('handIK', parent=self.handleCtrl)
@@ -630,18 +633,18 @@ class OSSHandComponentRig(OSSHandComponent):
             # Mocap
             # =========
             # Mocap Hand
-            self.handMocapCtrl = Control('hand_mocap', parent=self.handCtrlSpace, shape="cube")
+            self.handMocapCtrl = MCControl('hand', parent=self.handCtrlSpace, shape="cube")
             self.handMocapCtrl.alignOnXAxis()
             self.handMocapCtrl.xfo = data['handXfo']
             self.handMocapCtrl.scalePointsOnAxis(data['handLen'], self.boneAxisStr)
 
+
             # Mocap palm
-            self.palmMocapCtrlSpace = CtrlSpace('palm_mocap', parent=self.handMocapCtrl)
-            self.palmMocapCtrlSpace.xfo = data['palmXfo']
-            self.palmMocapCtrl = Control('palm_mocap', parent=self.palmMocapCtrlSpace, shape="cube")
+            self.palmMocapCtrl = MCControl('palm', parent=self.handMocapCtrl, shape="cube")
             self.palmMocapCtrl.xfo = data['palmXfo']
             self.palmMocapCtrl.alignOnXAxis()
             self.palmMocapCtrl.scalePointsOnAxis(data['palmLen'], self.boneAxisStr)
+            self.palmMocapCtrlSpace = self.palmMocapCtrl.insertCtrlSpace()
 
 
 

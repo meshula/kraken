@@ -22,6 +22,8 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from OSS.OSS_control import *
+
 COMPONENT_NAME = "shoulder"
 
 class OSSShoulderComponent(BaseExampleComponent):
@@ -71,7 +73,7 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
         # =========
         # Guide Controls
 
-        self.shldrCtrl = Control('shldr', parent=self.ctrlCmpGrp, shape="sphere")
+        self.shldrCtrl = FKControl('shldr', parent=self.ctrlCmpGrp, shape="sphere")
         self.shldrUpVCtrl = Control('shldrUpV', parent=self.ctrlCmpGrp, shape="triangle")
         self.shldrUpVCtrl.setColor('red')
         self.shldrEndCtrl = Control('shldrEnd', parent=self.ctrlCmpGrp, shape="sphere")
@@ -231,7 +233,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # =========
         # Shoulder
         self.shldrCtrlSpace = CtrlSpace('shldr', parent=self.ctrlCmpGrp)
-        self.shldrCtrl = Control('shldr', parent=self.shldrCtrlSpace, shape="square")
+        self.shldrCtrl = FKControl('shldr', parent=self.shldrCtrlSpace, shape="square")
         self.shldrCtrl.alignOnXAxis()
 
         self.shldrEndCtrlSpace = CtrlSpace('shldrEnd', parent=self.shldrCtrl)

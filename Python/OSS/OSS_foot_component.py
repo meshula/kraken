@@ -26,7 +26,7 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
-import traceback
+from OSS.OSS_control import *
 
 COMPONENT_NAME = "foot"
 
@@ -207,15 +207,15 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         data = super(OSSFootComponentGuide, self).getRigBuildData()
 
-        boneAxisStr = "POSX"
+        self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
-            boneAxisStr = "NEGX"
-        boneAxis = axisStrToTupleMapping[boneAxisStr]
+            self.boneAxisStr = "NEGX"
+        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
 
-        upAxisStr = "POSY"
+        self.upAxisStr = "POSY"
         if self.getLocation() == 'R':
-            upAxisStr = "NEGY"
-        upAxis = axisStrToTupleMapping[upAxisStr]
+            self.upAxisStr = "NEGY"
+        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
 
 
         # Values
@@ -259,9 +259,9 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         heelPivotXfo.aimAt(aimPos=ballTipPivotPosition, upPos=footPosition, aimAxis=(0, 0, 1), upAxis=(0, 1, 0))
         # In the complete guide system, have live constraint for ball upvec, this assumes foot is higher than ball
-        ballXfo.aimAt(aimPos=ballTipPosition, upPos=footPosition, aimAxis=boneAxis, upAxis=upAxis)
+        ballXfo.aimAt(aimPos=ballTipPosition, upPos=footPosition, aimAxis=self.boneAxis, upAxis=self.upAxis)
         # Same here
-        footXfo.aimAt(aimPos=ballXfo.tr, upPos=ballTipPosition, aimAxis=boneAxis, upAxis=upAxis)
+        footXfo.aimAt(aimPos=ballXfo.tr, upPos=ballTipPosition, aimAxis=self.boneAxis, upAxis=self.upAxis)
 
         ballTipPivotXfo.ori = heelPivotXfo.ori
         innerPivotXfo.ori = heelPivotXfo.ori
@@ -317,55 +317,47 @@ class OSSFootComponentRig(OSSFootComponent):
         Profiler.getInstance().push("Construct Leg Rig Component:" + name)
         super(OSSFootComponentRig, self).__init__(name, parent)
 
+        self.mocap = False
 
         # =========
         # Controls
         # =========
 
         # IK Handle
-        self.handleCtrlSpace = CtrlSpace("footIK", parent=self.ctrlCmpGrp)
-        self.handleCtrl = Control("footIK", parent=self.handleCtrlSpace, shape="cross")
+        self.handleCtrlSpace = CtrlSpace("foot", parent=self.ctrlCmpGrp)
+        self.handleCtrl = IKControl("foot", parent=self.handleCtrlSpace, shape="cross")
 
         # FK Foot
         self.footCtrlSpace = CtrlSpace('foot', parent=self.ctrlCmpGrp)
-        self.footCtrl = Control('foot', parent=self.footCtrlSpace, shape="cube")
+        self.footCtrl = FKControl('foot', parent=self.ctrlCmpGrp, shape="cube")
         self.footCtrl.alignOnXAxis()
+        self.footCtrlSpace = self.footCtrl.insertCtrlSpace()
 
         # FK Ball
-        self.ballCtrlSpace = CtrlSpace('ball', parent=self.footCtrl)
-        self.ballCtrl = Control('ball', parent=self.ballCtrlSpace, shape="cube")
+        self.ballCtrl = FKControl('ball', parent=self.footCtrl, shape="cube")
         self.ballCtrl.alignOnXAxis()
+        self.ballCtrlSpace = self.ballCtrl.insertCtrlSpace()
 
-        # =========
-        # Mocap
-        # =========
-        # Mocap Foot
-        self.foot_mocap = Control('foot_mocap', parent=self.footCtrlSpace, shape="cube")
-        self.foot_mocap.alignOnXAxis()
-        # Mocap Ball
-        self.ball_mocapSpace = CtrlSpace('ball_mocap', parent=self.foot_mocap)
-        self.ball_mocap = Control('ball_mocap', parent=self.ball_mocapSpace, shape="cube")
-        self.ball_mocap.alignOnXAxis()
 
 
         # Rig Ref objects
 
         # Add Component Params to IK control
-        handleCtrlAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.handleCtrl)
-        footDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=handleCtrlAttrGrp)
-        footMocapAttr = ScalarAttribute('mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=handleCtrlAttrGrp)
-        footIKAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=handleCtrlAttrGrp)
-        footRockerAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=handleCtrlAttrGrp)
-        ballBreakAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=handleCtrlAttrGrp)
-        footTiltAttr = ScalarAttribute('footTilt', value=0.0, minValue=-180, maxValue=180.0, parent=handleCtrlAttrGrp)
+        self.handleCtrlAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.handleCtrl)
+        footDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=self.handleCtrlAttrGrp)
+        footIKAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        footRockerAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=self.handleCtrlAttrGrp)
+        ballBreakAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
+        footTiltAttr = ScalarAttribute('footTilt', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
 
-        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=handleCtrlAttrGrp)
+        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
-        self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=handleCtrlAttrGrp)
+
+        self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
-        self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=handleCtrlAttrGrp)
+        self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=self.handleCtrlAttrGrp)
         self.softDist_cmpOutAttr.connect(self.softDistAttr)
-        self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=handleCtrlAttrGrp)
+        self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.stretch_cmpOutAttr.connect(self.stretchAttr)
 
 
@@ -466,19 +458,6 @@ class OSSFootComponentRig(OSSFootComponent):
         self.IKFootBlendKLOp.setOutput('ball', self.IKFootBlendKLOpBall_out)
 
 
-        # Add Foot Ball HierBlend Solver for Mocap
-        self.foot_mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'foot_mocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
-        self.addOperator(self.foot_mocapHierBlendSolver)
-        self.foot_mocapHierBlendSolver.setInput('blend', footMocapAttr)
-        self.foot_mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
-        # Add Att Inputs
-        self.foot_mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-        self.foot_mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
-        # Add Xfo Inputs
-        self.foot_mocapHierBlendSolver.setInput('hierA', [self.IKFootBlendKLOpFoot_out, self.IKFootBlendKLOpBall_out])
-        self.foot_mocapHierBlendSolver.setInput('hierB', [self.foot_mocap, self.ball_mocap])
-        # Add Xfo Outputs
-        self.foot_mocapHierBlendSolver.setOutput('hierOut', [self.foot_cmpOut, self.ball_cmpOut])
 
 
         # Add Deformer Joint Constrain
@@ -512,33 +491,25 @@ class OSSFootComponentRig(OSSFootComponent):
 
         super(OSSFootComponentRig, self).loadData( data )
 
+        self.mocap = bool(data["mocap"])
 
         # TODO: make this a property of the component
-        boneAxisStr = "POSX"
+        self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
-            boneAxisStr = "NEGX"
-        boneAxis = axisStrToTupleMapping[boneAxisStr]
+            self.boneAxisStr = "NEGX"
+        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
 
 
-        self.handleCtrlSpace.xfo = data['handleXfo']
-        #self.handleCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.ballCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
-        self.handleCtrl.xfo = Xfo(self.handleCtrlSpace.xfo)
+        self.handleCtrl.xfo = data['handleXfo']
+        self.handleCtrlSpace.xfo = Xfo(self.handleCtrlSpace.xfo)
 
-        self.footCtrlSpace.xfo = data['footXfo']
         self.footCtrl.xfo = data['footXfo']
-        self.footCtrl.scalePointsOnAxis(data['footLen'], boneAxisStr)
+        self.footCtrl.scalePointsOnAxis(data['footLen'], self.boneAxisStr)
+        self.footCtrlSpace.xfo = Xfo(self.handleCtrlSpace.xfo)
 
-        self.ballCtrlSpace.xfo = data['ballXfo']
         self.ballCtrl.xfo = data['ballXfo']
-        self.ballCtrl.scalePointsOnAxis(data['ballLen'], boneAxisStr)
-
-
-        self.foot_mocap.xfo = data['footXfo']
-        self.foot_mocap.scalePointsOnAxis(data['footLen'], boneAxisStr)
-
-        self.ball_mocapSpace.xfo = data['ballXfo']
-        self.ball_mocap.xfo = data['ballXfo']
-        self.ball_mocap.scalePointsOnAxis(data['ballLen'], boneAxisStr)
+        self.ballCtrl.scalePointsOnAxis(data['ballLen'], self.boneAxisStr)
+        self.ballCtrlSpace.xfo = Xfo(self.handleCtrlSpace.xfo)
 
 
         if self.getLocation() == "R":
@@ -553,6 +524,70 @@ class OSSFootComponentRig(OSSFootComponent):
 
         self.rightSideInputAttr.setValue(self.getLocation() == 'R')
 
+
+        if self.mocap:
+            self.mocapInputAttr = ScalarAttribute('mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+
+
+
+            # Mocap Foot
+            self.footMocapCtrl = MCControl('foot', parent=self.footCtrlSpace, shape="cube")
+            self.footMocapCtrl.alignOnXAxis()
+            self.footMocapCtrl.xfo = data['footXfo']
+            self.footMocapCtrl.scalePointsOnAxis(data['footLen'], self.boneAxisStr)
+
+
+            # Mocap Ball
+            self.ballMocapCtrl = MCControl('ball', parent=self.footMocapCtrl, shape="cube")
+            self.ballMocapCtrl.xfo = data['ballXfo']
+            self.ballMocapCtrl.alignOnXAxis()
+            self.ballMocapCtrl.scalePointsOnAxis(data['ballLen'], self.boneAxisStr)
+            self.ballMocapCtrlSpace = self.ballMocapCtrl.insertCtrlSpace()
+
+
+            # Add Foot Ball HierBlend Solver for Mocap
+            self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.addOperator(self.mocapHierBlendSolver)
+            self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)
+            self.mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
+            # Add Att Inputs
+            self.mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+            self.mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
+            # Add Xfo Inputs
+            self.mocapHierBlendSolver.setInput('hierA',
+                [
+                self.IKFootBlendKLOpFoot_out,
+                self.IKFootBlendKLOpBall_out
+                ],
+            )
+            self.mocapHierBlendSolver.setInput('hierB',
+                [
+                self.footMocapCtrl,
+                self.ballMocapCtrl,
+                ]
+            )
+            #Create some nodes just for the oupt of the blend.
+            #Wish we could just make direct connections....
+
+            self.footMocapCtrl_link = CtrlSpace('footMocapCtrl_link', parent=self.outputHrcGrp)
+            self.ballMocapCtrl_link = CtrlSpace('ballMocapCtrl_link', parent=self.outputHrcGrp)
+
+            self.mocapHierBlendSolver.setOutput('hierOut',
+                [
+                self.footMocapCtrl_link,
+                self.ballMocapCtrl_link,
+                ]
+            )
+            self.footOutputTgtConstraint = self.foot_cmpOut.constrainTo(self.footMocapCtrl_link)
+            self.ballOutputTgtConstraint = self.ball_cmpOut.constrainTo(self.ballMocapCtrl_link)
+        else:
+            self.footOutputTgtConstraint = self.foot_cmpOut.constrainTo(self.IKFootBlendKLOpFoot_out)
+            self.ballOutputTgtConstraint = self.ball_cmpOut.constrainTo(self.IKFootBlendKLOpBall_out)
+
+
+
+
+
         self.footSpaceInputTgt.xfo = data["footXfo"]
         self.footSpaceInputTgt.xfo.ori = Xfo(data["heelPivotXfo"]).ori
 
@@ -563,6 +598,10 @@ class OSSFootComponentRig(OSSFootComponent):
         self.innerPivotTransform.xfo = data["innerPivotXfo"]
         self.outerPivotTransform.xfo = data["outerPivotXfo"]
         self.ballPivotTransform.xfo = data["ballPivotXfo"]
+
+
+
+
 
 
         # ====================

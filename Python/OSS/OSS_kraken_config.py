@@ -81,7 +81,7 @@ class OSSConfig(Config):
                                    "ComponentGroup": ["location", "sep", "name", "sep", "type"],
                                    # "default": ["location", "sep", "component", "sep", "name", "sep", "type"],
                                    "default": ["location", "sep", "name", "sep", "type"],
-                                   "Transform": ["location", "sep", "name"]
+                                   "Transform": ["location", "sep", "name", "sep", "type"]
                                   }
                        }
 

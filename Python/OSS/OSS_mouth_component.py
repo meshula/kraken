@@ -25,12 +25,14 @@ from kraken.core.objects.operators.canvas_operator import CanvasOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from OSS.OSS_control import *
 
+COMPONENT_NAME = "mouth"
 
 class OSSMouthComponent(BaseExampleComponent):
     """Mouth Component Base"""
 
-    def __init__(self, name='MouthBase', parent=None, data=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None, data=None):
         super(OSSMouthComponent, self).__init__(name, parent)
 
         # ===========
@@ -56,7 +58,7 @@ class OSSMouthComponent(BaseExampleComponent):
 class OSSMouthComponentGuide(OSSMouthComponent):
     """Mouth Component Guide"""
 
-    def __init__(self, name='Mouth', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Mouth Guide Component:" + name)
         super(OSSMouthComponentGuide, self).__init__(name, parent)
@@ -66,7 +68,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
         self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-  
+
         self.an1DCtrlNames = StringAttribute('an1DNames', value="L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut", parent=guideSettingsAttrGrp)
         self.an2DCtrlNames = StringAttribute('an2DNames', value="LMouth RMouth", parent=guideSettingsAttrGrp)
         self.an3DCtrlNames = StringAttribute('an3DNames', value="", parent=guideSettingsAttrGrp)
@@ -348,7 +350,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
 class OSSMouthComponentRig(OSSMouthComponent):
     """Mouth Component"""
 
-    def __init__(self, name='Mouth', parent=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
 
         Profiler.getInstance().push("Construct Mouth Rig Component:" + name)
         super(OSSMouthComponentRig, self).__init__(name, parent)
@@ -426,7 +428,7 @@ class OSSMouthComponentRig(OSSMouthComponent):
                 #Eventually, we need outputs and ports for this component for each handle segment
                 #spineOutput = ComponentOutput(handleName+"_"+segment, parent=self.outputHrcGrp)
 
-                    
+
                 newCtrlSpace = CtrlSpace(handleName+"_"+segment, parent=parent)
                 newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
 
@@ -513,7 +515,7 @@ class OSSMouthComponentRig(OSSMouthComponent):
             # Add Xfo Inputs
             self.outputsToDeformersKLOp.setInput('constrainers', newCtrls)
             # Add Xfo Outputs
-            
+
             self.outputsToDeformersKLOp.setOutput('constrainees', newDefs)
 
             self.outputsToDeformersKLOp.setOutput('constrainees', newDefs)
