@@ -89,7 +89,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         # Guide Controls
         self.uplimbCtrl = Control('uplimb', parent=self.ctrlCmpGrp, shape="sphere")
         self.lolimbCtrl = Control('lolimb', parent=self.ctrlCmpGrp, shape="sphere")
-        self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
+        self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="jack")
 
         self.useOtherIKGoalInput.setValueChangeCallback(self.updateUseOtherIKGoal, updateNodeGraph=True)
         self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
@@ -337,7 +337,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if self.useOtherIKGoal: #Do not use this as a control, hide it
             self.limbIKCtrl = Transform(ikHandleName, parent=self.limbIKCtrlSpace)
         else:
-            self.limbIKCtrl = IKControl(ikHandleName, parent=self.limbIKCtrlSpace, shape="cross")
+            self.limbIKCtrl = IKControl(ikHandleName, parent=self.limbIKCtrlSpace, shape="jack")
 
         # Add Component Params to IK control
         limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.limbIKCtrl)

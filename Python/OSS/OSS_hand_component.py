@@ -96,7 +96,7 @@ class OSSHandComponentGuide(OSSHandComponent):
         self.handCtrl = Control('hand', parent=self.ctrlCmpGrp, shape="sphere")
         self.palmCtrl = Control('palm', parent=self.ctrlCmpGrp, shape="sphere")
         self.palmTipCtrl = Control('palmTip', parent=self.ctrlCmpGrp, shape="sphere")
-        self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
+        self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="jack")
 
         self.digit3SegmentCtrls = []
         self.digit2SegmentCtrls = []
@@ -383,7 +383,7 @@ class OSSHandComponentRig(OSSHandComponent):
         # =========
 
         # IK Handle
-        self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="cross")
+        self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="jack")
         self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace()
 
 

@@ -93,7 +93,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         self.ballTipPivotCtrl = Control('ballTipPivot', parent=self.ctrlCmpGrp, shape="sphere")
         self.innerPivotCtrl = Control('innerPivot', parent=self.ctrlCmpGrp, shape="sphere")
         self.outerPivotCtrl = Control('outerPivot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="cross")
+        self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="jack")
 
 
         data = {
@@ -325,7 +325,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # =========
 
         # IK Handle
-        self.handleCtrl = IKControl("foot", parent=self.ctrlCmpGrp, shape="cross")
+        self.handleCtrl = IKControl("foot", parent=self.ctrlCmpGrp, shape="jack")
         self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace()
 
         # FK Foot
