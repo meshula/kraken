@@ -385,7 +385,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
 
             # Neck
-            self.neckMocapCtrl = Control('neck_mocap', parent=self.ctrlCmpGrp, shape="circle")
+            self.neckMocapCtrl = MCControl('neck', parent=self.ctrlCmpGrp, shape="circle")
             self.neckMocapCtrl.scalePoints(Vec3(5.0, 5.0, 5.0))
             self.neckMocapCtrl.setColor("purpleLight")
             self.neckMocapCtrl.xfo.tr = neckPosition
@@ -394,11 +394,12 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.neckMocapCtrlSpaceConstraint = self.neckMocapCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
             # Neck handle
-            self.neckHandleMocapCtrlSpace = CtrlSpace('neckHandle_mocap', parent=self.neckMocapCtrlSpace)
+            self.neckHandleMocapCtrlSpace = CtrlSpace('neckHandle', parent=self.neckMocapCtrlSpace)
+            self.neckHandleMocapCtrlSpace.setSecondType(MCControl)
             self.neckHandleMocapCtrlSpace.xfo.tr = neckHandlePosition
 
             # Head
-            self.headMocapCtrl = Control('head_mocap', parent=self.neckMocapCtrl, shape="circle")
+            self.headMocapCtrl = MCControl('head', parent=self.neckMocapCtrl, shape="circle")
             self.headMocapCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
             self.headMocapCtrl.setColor("purpleLight")
             self.headMocapCtrl.xfo.tr = headPosition
@@ -407,6 +408,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
             # Head handle
             self.headHandleMocapCtrlSpace = CtrlSpace('headHandle_mocap', parent=self.headMocapCtrl)
+            self.headHandleMocapCtrlSpace.setSecondType(MCControl)
             self.headHandleMocapCtrlSpace.xfo.tr = headHandlePosition
 
             # Blend anim and mocap together
