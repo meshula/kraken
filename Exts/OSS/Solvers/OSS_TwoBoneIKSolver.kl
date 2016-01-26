@@ -87,6 +87,7 @@ function oss_solve2BoneIK(
 
 
 // Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
 function from_aimXupZ(
   in Xfo inXfo,
   in Boolean rightSide,
@@ -98,7 +99,7 @@ function from_aimXupZ(
     {
       aimAxis = aimAxis.negate();
     }
-    Vec3 upAxis = inXfo.ori.getYaxis().negate().unit();
+    Vec3 upAxis = inXfo.ori.getZaxis().negate().unit();
     Vec3 normalAxis = upAxis.cross(aimAxis).unit();
     Mat33 mat(aimAxis, normalAxis, upAxis);
 

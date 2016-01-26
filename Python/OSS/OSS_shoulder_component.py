@@ -232,9 +232,10 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # Controls
         # =========
         # Shoulder
-        self.shldrCtrlSpace = CtrlSpace('shldr', parent=self.ctrlCmpGrp)
-        self.shldrCtrl = FKControl('shldr', parent=self.shldrCtrlSpace, shape="square")
+        self.shldrCtrl = FKControl('shldr', parent=self.ctrlCmpGrp, shape="square")
         self.shldrCtrl.alignOnXAxis()
+        self.shldrCtrlSpace = self.shldrCtrl.insertCtrlSpace()
+
 
         self.shldrEndCtrlSpace = CtrlSpace('shldrEnd', parent=self.shldrCtrl)
 
@@ -313,7 +314,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         if self.mocap:
             self.mocapInputAttr = self.createInput('mocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
-            self.shldrMocapCtrl = Control('shldr_mocap', parent=self.ctrlCmpGrp, shape="circle")
+            self.shldrMocapCtrl = MCControl('shldr', parent=self.ctrlCmpGrp, shape="circle")
             self.shldrMocapCtrl.scalePoints(Vec3(5.0, 5.0, 5.0))
             self.shldrMocapCtrl.setColor("purpleLight")
             self.shldrMocapCtrl.xfo = data['shldrXfo']
@@ -321,7 +322,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
 
             self.shldrMocapCtrlSpaceConstraint = self.shldrMocapCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
-            self.shdlrEndMocapSpaceCtrl = CtrlSpace('shdlrEnd_mocap', parent=self.shldrMocapCtrl)
+            self.shdlrEndMocapSpaceCtrl = CtrlSpace('shdlrEnd', parent=self.shldrMocapCtrl)
             self.shdlrEndMocapSpaceCtrl.xfo = data['shldrEndXfo']
 
             self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocap_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')

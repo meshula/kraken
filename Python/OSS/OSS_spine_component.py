@@ -246,17 +246,17 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # =========
 
         # COG
-        self.cogCtrlSpace = CtrlSpace('cog', parent=self.ctrlCmpGrp)
-        self.cogCtrl = FKControl('cog', parent=self.cogCtrlSpace, shape="circle")
+        self.cogCtrl = FKControl('cog', parent=self.ctrlCmpGrp, shape="circle")
         self.cogCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))
         self.cogCtrl.setColor("orange")
+        self.cogCtrlSpace = self.cogCtrl.insertCtrlSpace()
 
         # hips
-        self.hipsCtrlSpace = CtrlSpace('hips', parent=self.cogCtrl)
-        self.hipsCtrl = FKControl('hips', parent=self.hipsCtrlSpace, shape="cube")
+        self.hipsCtrl = FKControl('hips', parent=self.cogCtrl, shape="cube")
         height = 2.0
         self.hipsCtrl.scalePoints(Vec3(4.5, height, 2.5))
         self.hipsCtrl.translatePoints(Vec3(0, -height/2, 0))
+        self.hipsCtrlSpace = self.hipsCtrl.insertCtrlSpace()
 
         # Pelvis
         self.pelvisCtrlSpace = CtrlSpace('pelvis', parent=self.hipsCtrl)
@@ -265,19 +265,20 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # self.pelvisCtrl.scalePoints(Vec3(1, 1, 1))
 
         # Torso
-        self.torsoCtrlSpace = CtrlSpace('torso', parent=self.cogCtrl)
-        self.torsoCtrl = FKControl('torso', parent=self.torsoCtrlSpace, shape="square")
+        self.torsoCtrl = FKControl('torso', parent=self.cogCtrl, shape="square")
         self.torsoCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
+        self.torsoCtrlSpace = self.torsoCtrl.insertCtrlSpace()
+
 
         # Chest
-        self.chestCtrlSpace = CtrlSpace('chest', parent=self.torsoCtrl)
-        self.chestCtrl = FKControl('chest', parent=self.chestCtrlSpace, shape="square")
+        self.chestCtrl = FKControl('chest', parent=self.torsoCtrl, shape="square")
         self.chestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
+        self.chestCtrlSpace = self.chestCtrl.insertCtrlSpace()
 
         # UpChest
-        self.upChestCtrlSpace = CtrlSpace('upChest', parent=self.chestCtrl)
-        self.upChestCtrl = FKControl('upChest', parent=self.upChestCtrlSpace, shape="square")
+        self.upChestCtrl = FKControl('upChest', parent=self.chestCtrl, shape="square")
         self.upChestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
+        self.upChestCtrlSpace = self.upChestCtrl.insertCtrlSpace()
 
         # Neck
         self.neckCtrlSpace = CtrlSpace('neck', parent=self.upChestCtrl)
