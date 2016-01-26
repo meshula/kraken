@@ -32,13 +32,14 @@ COMPONENT_NAME = "mouth"
 class OSSMouthComponent(BaseExampleComponent):
     """Mouth Component Base"""
 
-    def __init__(self, name=COMPONENT_NAME, parent=None, data=None):
+    def __init__(self, name=COMPONENT_NAME, parent=None):
         super(OSSMouthComponent, self).__init__(name, parent)
 
         # ===========
         # Declare IO
         # ===========
         # Declare Inputs Xfos
+        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
@@ -69,8 +70,8 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
-        self.an1DCtrlNames = StringAttribute('an1DNames', value="L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut", parent=guideSettingsAttrGrp)
-        self.an2DCtrlNames = StringAttribute('an2DNames', value="LMouth RMouth", parent=guideSettingsAttrGrp)
+        self.an1DCtrlNames = StringAttribute('an1DNames', value="L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut L_loLidInn L_loLidMid L_loLidOut R_loLidInn R_loLidMid R_loLidOut L_upLidInn L_upLidMid L_upLidOut R_upLidInn R_upLidMid R_upLidOut", parent=guideSettingsAttrGrp)
+        self.an2DCtrlNames = StringAttribute('an2DNames', value="L_Mouth R_Mouth", parent=guideSettingsAttrGrp)
         self.an3DCtrlNames = StringAttribute('an3DNames', value="", parent=guideSettingsAttrGrp)
 
 
@@ -79,7 +80,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         self.an3DCtrlNames.setValueChangeCallback(self.updateAn3DControls)
 
 
-
+ 
         # =========
         # Controls
         # =========
@@ -112,7 +113,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         """Load a saved guide representation from persisted data.
 
         Arguments:
-        numDigits -- object, The number of palm/toes
+        numtweakers -- object, The number of palm/toes
 
         Return:
         True if successful.
@@ -232,8 +233,6 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         data['mouthUpVXfo'] = self.mouthUpVCtrl.xfo
         data['mouthEndXfo'] = self.mouthEndCtrl.xfo
 
-
-
         for ctrlListName in ["an1DCtrls", "an2DCtrls", "an3DCtrls"]:
             ctrls = getattr(self, ctrlListName)
             xfos = []
@@ -241,6 +240,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
                 xfos.append(ctrls[i].xfo)
             data[ctrlListName+"Xfos"] = xfos
 
+        print "DATA: \n" + str(data)
 
         return data
 
@@ -288,9 +288,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         The JSON rig data object.
 
         """
-
         data = super(OSSMouthComponentGuide, self).getRigBuildData()
-
 
         # Values
         mouthPosition = self.mouthCtrl.xfo.tr
@@ -384,11 +382,6 @@ class OSSMouthComponentRig(OSSMouthComponent):
         self.mouthEndConstraint = self.mouthEndOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
 
 
-
-
-
-
-
         # ===============
         # Add Splice Ops
         # ===============
@@ -421,7 +414,7 @@ class OSSMouthComponentRig(OSSMouthComponent):
 
 
         for i, handleName in enumerate(animControlNameList):
-            parent = self.mouthEndOutputTgt
+            parent = self.mouthCtrlSpace
             newCtrls = []
             newDefs = []
             for j, segment in enumerate(segments):
@@ -430,47 +423,52 @@ class OSSMouthComponentRig(OSSMouthComponent):
 
 
                 newCtrlSpace = CtrlSpace(handleName+"_"+segment, parent=parent)
-                newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
+                # newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
 
-                if anCtrlType ==1: # Slider
-                    if j == 0:
-                        newCtrl.setShape("square")
-                        newCtrl.setColor("red")
-                        newCtrl.scalePoints(Vec3(0.125,2,2))
-                        newCtrl.lockTranslation(x=True, y=True, z=True)
-                        newCtrl.lockScale(x=True, y=True, z=True)
-                        newCtrl.lockRotation(x=True, y=True, z=True)
-                    else:
+                if j == 0:
+                    newCtrl = Transform(handleName+"_"+segment, parent=newCtrlSpace)
+                    '''
+                    if anCtrlType ==1: # Slider
+                            newCtrl.setShape("square")
+                            newCtrl.setColor("red")
+                            newCtrl.scalePoints(Vec3(0.125,2,2))
+                            # newCtrl.lockTranslation(x=True, y=True, z=True)
+                            newCtrl.lockScale(x=True, y=True, z=True)
+                            newCtrl.lockRotation(x=True, y=True, z=True)
+                    elif anCtrlType==2: # Field
+                            newCtrl.setShape("square")
+                            newCtrl.setColor("green")
+                            newCtrl.scalePoints(Vec3(2,2,2))
+                            # newCtrl.lockTranslation(x=True, y=True, z=True)
+                            newCtrl.lockScale(x=True, y=True, z=True)
+                            newCtrl.lockRotation(x=True, y=True, z=True)
+                    elif anCtrlType==3: # Volume
+                            newCtrl.setShape("cube")
+                            newCtrl.setColor("blue")
+                            newCtrl.scalePoints(Vec3(2,2,2))
+                            # newCtrl.lockTranslation(x=True, y=True, z=True)
+                            newCtrl.lockScale(x=True, y=True, z=True)
+                            newCtrl.lockRotation(x=True, y=True, z=True)
+                    newCtrl.rotatePoints(90,0,0)
+                    '''
+                else:
+                    newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
+                    if anCtrlType ==1: # Slider
                         newCtrl.setShape("square")
                         newCtrl.scalePoints(Vec3(.5,.25,.25))
                         newCtrl.lockTranslation(x=True, y=False, z=True)
 
-                elif anCtrlType==2: # Field
-                    if j == 0:
-                        newCtrl.setShape("square")
-                        newCtrl.setColor("green")
-                        newCtrl.scalePoints(Vec3(2,2,2))
-                        newCtrl.lockTranslation(x=True, y=True, z=True)
-                        newCtrl.lockScale(x=True, y=True, z=True)
-                        newCtrl.lockRotation(x=True, y=True, z=True)
-                    else:
+                    elif anCtrlType==2: # Field
                         newCtrl.setShape("circle")
                         newCtrl.scalePoints(Vec3(.5,.5,.5))
                         newCtrl.lockTranslation(x=False, y=False, z=True)
 
-                elif anCtrlType==3: # Volume
-                    if j == 0:
-                        newCtrl.setShape("cube")
-                        newCtrl.setColor("blue")
-                        newCtrl.scalePoints(Vec3(2,2,2))
-                        newCtrl.lockTranslation(x=True, y=True, z=True)
-                        newCtrl.lockScale(x=True, y=True, z=True)
-                        newCtrl.lockRotation(x=True, y=True, z=True)
-                    else:
+                    elif anCtrlType==3: # Volume
                         newCtrl.setShape("sphere")
                         newCtrl.scalePoints(Vec3(.5,.5,.5))
+                    newCtrl.rotatePoints(90,0,0)
 
-                newCtrl.rotatePoints(90,0,0)
+
 
 
                 # newCtrl.lockTranslation(x=True, y=True, z=True)
