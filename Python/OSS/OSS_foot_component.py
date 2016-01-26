@@ -207,14 +207,15 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         data = super(OSSFootComponentGuide, self).getRigBuildData()
 
+        # TODO: make this a property of the component
         self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             self.boneAxisStr = "NEGX"
         self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
 
-        self.upAxisStr = "POSY"
+        self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
-            self.upAxisStr = "NEGY"
+            self.upAxisStr = "NEGZ"
         self.upAxis = axisStrToTupleMapping[self.upAxisStr]
 
 
@@ -324,11 +325,10 @@ class OSSFootComponentRig(OSSFootComponent):
         # =========
 
         # IK Handle
-        self.handleCtrlSpace = CtrlSpace("foot", parent=self.ctrlCmpGrp)
-        self.handleCtrl = IKControl("foot", parent=self.handleCtrlSpace, shape="cross")
+        self.handleCtrl = IKControl("foot", parent=self.ctrlCmpGrp, shape="cross")
+        self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace()
 
         # FK Foot
-        self.footCtrlSpace = CtrlSpace('foot', parent=self.ctrlCmpGrp)
         self.footCtrl = FKControl('foot', parent=self.ctrlCmpGrp, shape="cube")
         self.footCtrl.alignOnXAxis()
         self.footCtrlSpace = self.footCtrl.insertCtrlSpace()
@@ -499,17 +499,22 @@ class OSSFootComponentRig(OSSFootComponent):
             self.boneAxisStr = "NEGX"
         self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
 
+        self.upAxisStr = "POSZ"
+        if self.getLocation() == 'R':
+            self.upAxisStr = "NEGZ"
+        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+
 
         self.handleCtrl.xfo = data['handleXfo']
-        self.handleCtrlSpace.xfo = Xfo(self.handleCtrlSpace.xfo)
+        self.handleCtrlSpace.xfo = Xfo(self.handleCtrl.xfo)
 
         self.footCtrl.xfo = data['footXfo']
         self.footCtrl.scalePointsOnAxis(data['footLen'], self.boneAxisStr)
-        self.footCtrlSpace.xfo = Xfo(self.handleCtrlSpace.xfo)
+        self.footCtrlSpace.xfo = Xfo(self.footCtrl.xfo)
 
         self.ballCtrl.xfo = data['ballXfo']
         self.ballCtrl.scalePointsOnAxis(data['ballLen'], self.boneAxisStr)
-        self.ballCtrlSpace.xfo = Xfo(self.handleCtrlSpace.xfo)
+        self.ballCtrlSpace.xfo = Xfo(self.ballCtrl.xfo)
 
 
         if self.getLocation() == "R":

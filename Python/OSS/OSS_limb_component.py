@@ -228,9 +228,9 @@ class OSSLimbComponentGuide(OSSLimbComponent):
             self.boneAxisStr = "NEGX"
         self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
 
-        self.upAxisStr = "NEGY"
+        self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
-            self.upAxisStr = "POSY"
+            self.upAxisStr = "NEGZ"
         self.upAxis = axisStrToTupleMapping[self.upAxisStr]
 
 

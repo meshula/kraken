@@ -251,9 +251,9 @@ class OSSHandComponentGuide(OSSHandComponent):
             self.boneAxisStr = "NEGX"
         self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
 
-        self.upAxisStr = "NEGY"
+        self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
-            self.upAxisStr = "POSY"
+            self.upAxisStr = "NEGZ"
         self.upAxis = axisStrToTupleMapping[self.upAxisStr]
 
         if "handXfo" in data.keys():
@@ -504,6 +504,14 @@ class OSSHandComponentRig(OSSHandComponent):
 
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
+        self.handCtrl.xfo.ori.getZaxis()
+
+        upVectorAxisStr = self.upAxisStr[-1]
+        upVectorFunction = getattr(self.handCtrl.xfo.ori, "get"+upVectorAxisStr+"axis")
+        upVector = upVectorFunction()
+        if self.upAxisStr.startswith("NEG"):
+            upVector = upVector.negate()
+
         for i, digitName in enumerate(digitNameList):
             parent = self.palm_cmpOut
             newCtrls = []
@@ -534,7 +542,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
                         #Aim Control at child
                         if j > 0:
-                            newCtrls[-2].xfo.aimAt(aimPos=newCtrl.xfo.tr, upVector=self.handCtrl.xfo.ori.getYaxis(), aimAxis=self.boneAxis, upAxis=self.upAxis)
+                            newCtrls[-2].xfo.aimAt(aimPos=newCtrl.xfo.tr, upVector=upVector, aimAxis=self.boneAxis, upAxis=self.upAxis)
                             newCtrls[-2].insertCtrlSpace()
                             if j == len(segments)-2:
                                 newCtrl.xfo.ori = newCtrls[-2].xfo.ori
@@ -586,9 +594,9 @@ class OSSHandComponentRig(OSSHandComponent):
             self.boneAxisStr = "NEGX"
         self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
 
-        self.upAxisStr = "NEGY"
+        self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
-            self.upAxisStr = "POSY"
+            self.upAxisStr = "NEGZ"
         self.upAxis = axisStrToTupleMapping[self.upAxisStr]
 
 
