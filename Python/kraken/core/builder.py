@@ -393,7 +393,7 @@ class Builder(object):
         else:
             connectionTarget = connection.getTarget()
 
-        constraint = inputTarget.constrainTo(connectionTarget, maintainOffset=True)
+        constraint = inputTarget.constrainTo(connectionTarget, maintainOffset=True, addToConstraintList=False)
 
         dccSceneItem = self.buildPoseConstraint(constraint)
         self._registerSceneItemPair(componentInput, dccSceneItem)
