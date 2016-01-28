@@ -306,7 +306,6 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # ============
         # Set IO Xfos
         # ============
-        self.parentSpaceInputTgt.xfo = data['shldrXfo']
         self.shldrEndOutputTgt.xfo = data['shldrXfo']
         self.shldrOutputTgt.xfo = data['shldrXfo']
 

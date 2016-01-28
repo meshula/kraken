@@ -49,7 +49,6 @@ class OSSLimbComponent(BaseExampleComponent):
         self.uplimb_cmpOut = self.createOutput('uplimb', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.lolimb_cmpOut = self.createOutput('lolimb', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.endlimb_cmpOut = self.createOutput('endlimb', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.ikgoal_cmpOut = self.createOutput('ikgoal', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
         self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
@@ -323,21 +322,30 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # Controls
         # =========
         # uplimb
-        self.uplimbFKCtrlSpace = CtrlSpace(uplimbName, parent=self.ctrlCmpGrp)
-        self.uplimbFKCtrl = FKControl(uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
+        self.uplimbFKCtrl = FKControl(uplimbName, parent=self.ctrlCmpGrp, shape="cube")
+        self.uplimbFKCtrl.xfo = data['uplimbXfo']
         self.uplimbFKCtrl.alignOnXAxis()
+        self.uplimbFKCtrl.scalePointsOnAxis(data['uplimbLen'], self.boneAxisStr)
+        self.uplimbFKCtrlSpace = self.uplimbFKCtrl.insertCtrlSpace()
+
 
         # lolimb
-        self.lolimbFKCtrlSpace = CtrlSpace(lolimbName, parent=self.uplimbFKCtrl)
-        self.lolimbFKCtrl = FKControl(lolimbName, parent=self.lolimbFKCtrlSpace, shape="cube")
+        self.lolimbFKCtrl = FKControl(lolimbName, parent=self.uplimbFKCtrl, shape="cube")
+        self.lolimbFKCtrl.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.alignOnXAxis()
+        self.lolimbFKCtrl.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
+        self.lolimbFKCtrlSpace = self.lolimbFKCtrl.insertCtrlSpace()
+
 
         # handle
-        self.limbIKCtrlSpace = CtrlSpace(ikHandleName, parent=self.ctrlCmpGrp)
         if self.useOtherIKGoal: #Do not use this as a control, hide it
-            self.limbIKCtrl = Transform(ikHandleName, parent=self.limbIKCtrlSpace)
+            self.limbIKCtrl = Transform(ikHandleName, parent=self.ctrlCmpGrp)
         else:
-            self.limbIKCtrl = IKControl(ikHandleName, parent=self.limbIKCtrlSpace, shape="jack")
+            self.limbIKCtrl = IKControl(ikHandleName, parent=self.ctrlCmpGrp, shape="jack")
+        self.limbIKCtrl.xfo = data['handleXfo']
+        self.limbIKCtrlSpace = self.limbIKCtrl.insertCtrlSpace()
+
+
 
         # Add Component Params to IK control
         limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.limbIKCtrl)
@@ -352,6 +360,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         if self.useOtherIKGoal:
             self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+            self.limbIKCtrl.constrainTo(self.ikgoal_cmpIn, maintainOffset=True)
             self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', value=1.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
             self.softDistAttr = self.createInput('softDist', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
             self.stretchAttr = self.createInput('stretch', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
@@ -394,14 +403,18 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbUpVCtrl.alignOnZAxis()
         self.limbUpVCtrlSpace = self.limbUpVCtrl.insertCtrlSpace()
 
-        parent = self.limbIKCtrl
-        if self.useOtherIKGoal:
-            parent = self.ikgoal_cmpIn
-        self.limbUpVCtrlIKSpace = CtrlSpace(name+'UpVIK', parent=parent)
-        self.limbUpVCtrlIKSpace.xfo = data['upVXfo']
 
-        self.limbUpVCtrlMasterSpace = CtrlSpace(name+'IKMaster', parent=self.globalSRTInputTgt)
+        self.limbUpVCtrlIKSpace = CtrlSpace(name+'UpVIK', parent=self.ctrlCmpGrp)
+        self.limbUpVCtrlIKSpace.xfo = data['upVXfo']
+        if self.useOtherIKGoal:
+            self.limbUpVCtrlIKSpaceConstraint = self.limbUpVCtrlIKSpace.constrainTo(self.ikgoal_cmpIn, maintainOffset=True)
+        else:
+            self.limbUpVCtrlIKSpaceConstraint = self.limbUpVCtrlIKSpace.constrainTo(self.limbIKCtrl, maintainOffset=True)
+
+
+        self.limbUpVCtrlMasterSpace = CtrlSpace(name+'IKMaster', parent=self.ctrlCmpGrp)
         self.limbUpVCtrlMasterSpace.xfo = data['upVXfo']
+        self.limbUpVCtrlMasterSpaceConstraint = self.limbUpVCtrlMasterSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
 
         upVAttrGrp = AttributeGroup("UpVAttrs", parent=self.limbUpVCtrl)
         upVSpaceBlendInputAttr = ScalarAttribute(ikHandleName+'Space', value=0.0, minValue=0.0, maxValue=1.0, parent=upVAttrGrp)
@@ -463,17 +476,13 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('stretch', self.stretchAttr)
         #self.limbIKKLOp.setInput('rightSide', self.rightSideInputAttr)
         # Add Xfo Inputs
-        self.limbIKKLOp.setInput('root', self.uplimbFKCtrlSpace)
-        self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl)
-        self.limbIKKLOp.setInput('bone1FK', self.lolimbFKCtrl)
+        self.limbIKKLOp.setInput('root', self.uplimbFKCtrlSpace.xfo)
+        self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl.xfo)
+        self.limbIKKLOp.setInput('bone1FK', self.lolimbFKCtrl.xfo)
         self.limbIKKLOp.setInput('upV', self.limbUpVCtrl)
         self.limbIKKLOp.setInput('boneAxis', axisStrToIntMapping[self.boneAxisStr])
         self.limbIKKLOp.setInput('upAxis', axisStrToIntMapping[self.upAxisStr])
-
-        if self.ikgoal_cmpIn:
-           self.limbIKKLOp.setInput('ikHandle', self.ikgoal_cmpIn)
-        else:
-            self.limbIKKLOp.setInput('ikHandle', self.limbIKCtrl)
+        self.limbIKKLOp.setInput('ikHandle', self.limbIKCtrl)
 
 
 
@@ -550,27 +559,9 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.createControls(data)
 
-        #uplimb
-        self.uplimbFKCtrlSpace.xfo = data['uplimbXfo']
-        self.uplimbFKCtrl.xfo = data['uplimbXfo']
-        self.uplimbFKCtrl.scalePointsOnAxis(data['uplimbLen'], self.boneAxisStr)
-
-        self.uplimb_cmpOut.xfo = data['uplimbXfo']
-        self.lolimb_cmpOut.xfo = data['lolimbXfo']
-        self.ikgoal_cmpOut.xfo = data['handleXfo']
-        if self.ikgoal_cmpIn:
-            self.ikgoal_cmpIn.xfo = data['handleXfo']
-
-        # lolimb
-        self.lolimbFKCtrlSpace.xfo = data['lolimbXfo']
-        self.lolimbFKCtrl.xfo = data['lolimbXfo']
-        self.lolimbFKCtrl.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
 
 
-        #Until later when we have better guide rigs setups, assume world Y up and Z forward to toe
-        self.limbIKCtrlSpace.xfo = data['handleXfo']
-        #self.limbIKCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.toeCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
-        self.limbIKCtrl.xfo = Xfo(self.limbIKCtrlSpace.xfo)
+
 
 
         if self.getLocation() == "R":
