@@ -72,16 +72,14 @@ class OSSConfig(Config):
                                  },
                         "formats":
                                   {
-                                   "Container": ["name"],
-                                   "Layer": ["container", "sep", "name"],
-                                   "Control": ["location", "sep", "name", "sep", "type"],
-                                   "FKControl": ["location", "sep", "name", "sep", "type"],
-                                   "IKControl": ["location", "sep", "name", "sep", "type"],
-                                   "MCControl": ["location", "sep", "name", "sep", "type"],
-                                   "ComponentGroup": ["location", "sep", "name", "sep", "type"],
-                                   # "default": ["location", "sep", "component", "sep", "name", "sep", "type"],
-                                   "default": ["location", "sep", "name", "sep", "type"],
-                                   "Transform": ["location", "sep", "name", "sep", "type"]
+                                   "Container"       : ["name"],
+                                   "Layer"           : ["container", "sep", "name"],
+                                   "Control"         : ["location", "sep", "name", "sep", "type"],
+                                   "FKControl"       : ["location", "sep", "name", "sep", "type"],
+                                   "IKControl"       : ["location", "sep", "name", "sep", "type"],
+                                   "MCControl"       : ["location", "sep", "name", "sep", "type"],
+                                   "default"         : ["location", "sep", "name", "sep", "type"],
+                                   "Transform"       : ["location", "sep", "name", "sep", "type"]
                                   }
                        }
 
