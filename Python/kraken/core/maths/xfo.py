@@ -17,7 +17,16 @@ axisStrToTupleMapping = {
     'POSZ': (0, 0, 1),
     'NEGX': (-1, 0, 0),
     'NEGY': (0, -1, 0),
-    'NEGZ': (0, 0, -1),
+    'NEGZ': (0, 0, -1)
+}
+
+axisStrToIntMapping = {
+    'POSX': 0,
+    'POSY': 1,
+    'POSZ': 2,
+    'NEGX': 3,
+    'NEGY': 4,
+    'NEGZ': 5
 }
 
 class Xfo(MathObject):
