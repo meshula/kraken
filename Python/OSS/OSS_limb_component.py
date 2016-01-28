@@ -1,5 +1,5 @@
 from kraken.core.maths import Vec3
-from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping
+from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping, axisStrToIntMapping
 from kraken.core.maths.xfo import xfoFromDirAndUpV
 import kraken.core.maths.euler as euler
 
@@ -461,12 +461,14 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('ikBlend', self.ikBlendAttr)
         self.limbIKKLOp.setInput('softDist', self.softDistAttr)
         self.limbIKKLOp.setInput('stretch', self.stretchAttr)
-        self.limbIKKLOp.setInput('rightSide', self.rightSideInputAttr)
+        #self.limbIKKLOp.setInput('rightSide', self.rightSideInputAttr)
         # Add Xfo Inputs
         self.limbIKKLOp.setInput('root', self.uplimbFKCtrlSpace)
         self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl)
         self.limbIKKLOp.setInput('bone1FK', self.lolimbFKCtrl)
         self.limbIKKLOp.setInput('upV', self.limbUpVCtrl)
+        self.limbIKKLOp.setInput('boneAxis', axisStrToIntMapping[self.boneAxisStr])
+        self.limbIKKLOp.setInput('upAxis', axisStrToIntMapping[self.upAxisStr])
 
         if self.ikgoal_cmpIn:
            self.limbIKKLOp.setInput('ikHandle', self.ikgoal_cmpIn)
@@ -540,6 +542,11 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if self.getLocation() == 'R':
             self.boneAxisStr = "NEGX"
         self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+
+        self.upAxisStr = "POSZ"
+        if self.getLocation() == 'R':
+            self.upAxisStr = "NEGZ"
+        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
 
         self.createControls(data)
 

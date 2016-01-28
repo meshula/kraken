@@ -22,7 +22,6 @@ function OSS_TwoBoneIKSolver(
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_TwoBoneIKSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
-  args.push(KrakenSolverArg('rightSide', 'In', 'Boolean'));
 
   args.push(KrakenSolverArg('ikBlend', 'In', 'Scalar'));
   args.push(KrakenSolverArg('softDist', 'In', 'Scalar'));
@@ -33,6 +32,8 @@ function KrakenSolverArg[] OSS_TwoBoneIKSolver.getArguments(){
   args.push(KrakenSolverArg('bone1FK', 'In', 'Mat44'));
   args.push(KrakenSolverArg('ikHandle', 'In', 'Mat44'));
   args.push(KrakenSolverArg('upV', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('boneAxis', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('upAxis', 'In', 'UInt32'));
 
   args.push(KrakenSolverArg('bone0Len', 'In', 'Scalar'));
   args.push(KrakenSolverArg('bone1Len', 'In', 'Scalar'));
@@ -63,7 +64,7 @@ function oss_solve2BoneIK(
   bone0Xfo.tr = rootPosition;
 
   Vec3 xaxis = rootToGoal.unit();
-  Vec3 zaxis = xaxis.cross(rootToUpV.unit()).cross(xaxis).unit().negate();
+  Vec3 zaxis = xaxis.cross(rootToUpV.unit()).cross(xaxis).unit();
   Vec3 yaxis = zaxis.cross(xaxis).unit();
   bone0Xfo.ori.setFromMat33(Mat33(xaxis, yaxis, zaxis).transpose());
 
@@ -74,7 +75,7 @@ function oss_solve2BoneIK(
 
   // Apply the rotation in the coordinate space of the bone.
   Quat offset;
-  offset.setFromAxisAndAngle(Vec3(0.0, 1.0, 0.0), ikBoneAngle);
+  offset.setFromAxisAndAngle(Vec3(0.0, -1.0, 0.0), ikBoneAngle);
   bone0Xfo.ori = bone0Xfo.ori * offset;
 
   // transform the vector without applying scale.
@@ -86,25 +87,66 @@ function oss_solve2BoneIK(
 }
 
 
+// Gotta be a better way
+function Vec3 getAxisAsVector(in UInt32 axisIndex)
+{
+  Vec3 vec;
+  switch (axisIndex)
+  {
+    case 0:
+      return Vec3(1.0, 0.0, 0.0);
+    case 1:
+      return Vec3(0.0, 1.0, 0.0);
+    case 2:
+      return Vec3(0.0, 0.0, 1.0);
+    case 3:
+      return Vec3(-1.0, 0.0, 0.0);
+    case 4:
+      return Vec3(0.0, -1.0, 0.0);
+    case 5:
+      return Vec3(0.0, 0.0, -1.0);
+  }
+  report("OSS_TwoBoneIKSolver:getAxisAsVector() invalid axisIndex");
+  return Vec3(1.0, 0.0, 0.0);
+}
+
+function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return ori.getXaxis();
+    case 1:
+      return ori.getYaxis();
+    case 2:
+      return ori.getZaxis();
+    case 3:
+      return ori.getXaxis().negate();
+    case 4:
+      return ori.getYaxis().negate();
+    case 5:
+      return ori.getZaxis().negate();
+  }
+  report("OSS_TwoBoneIKSolver:getAxis() invalid axisIndex");
+  return ori.getXaxis();
+
+}
+
 // Make this take in a specific aim and upvector later
 // Hard-coded to aim pos +X and use +Z as normal
-function from_aimXupZ(
+function setCorrectAxes(
   in Xfo inXfo,
-  in Boolean rightSide,
+  in UInt32 boneAxis,
+  in UInt32 upAxis,
   io Xfo outXfo
   ) {
 
-    Vec3 aimAxis = inXfo.ori.getXaxis().unit();
-    if (rightSide)
-    {
-      aimAxis = aimAxis.negate();
-    }
-    Vec3 upAxis = inXfo.ori.getZaxis().negate().unit();
-    Vec3 normalAxis = upAxis.cross(aimAxis).unit();
-    Mat33 mat(aimAxis, normalAxis, upAxis);
+    Vec3 aimAxisVec = getAxis(inXfo.ori, boneAxis).unit();
+    Vec3 upAxisVec = getAxis(inXfo.ori, upAxis).unit();
+    Vec3 normalAxisVec = upAxisVec.cross(aimAxisVec).unit();
+    Mat33 mat(aimAxisVec, normalAxisVec, upAxisVec);
 
     outXfo.ori.setFromMat33(mat.transpose());
-
 }
 
 
@@ -113,7 +155,6 @@ function OSS_TwoBoneIKSolver.solve!
 (
   Boolean drawDebug,
   Scalar rigScale,
-  Boolean rightSide,
 
   Scalar ikBlend,
   Scalar softDist,
@@ -124,6 +165,8 @@ function OSS_TwoBoneIKSolver.solve!
   Mat44 bone1FK,
   Mat44 ikHandle,
   Mat44 upV,
+  UInt32 boneAxis,
+  UInt32 upAxis,
 
   Scalar bone0Len,
   Scalar bone1Len,
@@ -155,13 +198,6 @@ function OSS_TwoBoneIKSolver.solve!
   Xfo debugXfo;
   Xfo debugXfo2;
   Xfo ikGoalPosXfoDebug;
-
-  //bone0Xfo.ori = bone0FkXfo.ori.sphericalLinearInterpolate(bone0Xfo.ori, ikBlend);
-  Scalar negater = 1.0;
-  if (rightSide)
-  {
-    negater = -1.0;
-  }
 
   if(ikBlend > 0) {
 
@@ -224,7 +260,6 @@ function OSS_TwoBoneIKSolver.solve!
       //distance = bone0LenRigScaled + bone1LenRigScaled;
     }
 
-
     oss_solve2BoneIK(
       bone0LenRigScaled,
       bone1LenRigScaled,
@@ -235,18 +270,26 @@ function OSS_TwoBoneIKSolver.solve!
       bone1Xfo
     );
 
-    from_aimXupZ(bone0Xfo, rightSide, bone0Xfo);
-    from_aimXupZ(bone1Xfo, rightSide, bone1Xfo);
-    from_aimXupZ(bone2Xfo, rightSide, bone2Xfo);
+    // Because of the way oss_solve2BoneIK treats the upvector (z)
+    // Perhaps we can re-write to solve in the correct axes eventually, but for now this should work
+    UInt32 upAxisInt = upAxis;
+    // if (upAxisInt > 2)
+    // {
+    //   upAxisInt = upAxisInt - 3;
+    // }
+
+    setCorrectAxes(bone0Xfo, boneAxis, upAxisInt, bone0Xfo);
+    setCorrectAxes(bone1Xfo, boneAxis, upAxisInt, bone1Xfo);
+    setCorrectAxes(bone2Xfo, boneAxis, upAxisInt, bone2Xfo);
 
     bone0Xfo.ori = bone0FkXfo.ori.sphericalLinearInterpolate(bone0Xfo.ori, ikBlend);
-    bone1Xfo.tr = bone0Xfo.transformVector(Vec3(stretchedRatio * bone0Length * negater, 0.0, 0.0));
+    bone1Xfo.tr = bone0Xfo.transformVector((stretchedRatio * bone0Length) * getAxisAsVector(boneAxis) );
     bone1Xfo.ori = bone1FkXfo.ori.sphericalLinearInterpolate(bone1Xfo.ori, ikBlend);
   }
 
   // project bone2 to the end of bone 1
   bone2Xfo = bone1Xfo;
-  bone2Xfo.tr = bone1Xfo.transformVector(Vec3(stretchedRatio * bone1Length * negater, 0.0, 0.0));
+  bone2Xfo.tr = bone1Xfo.transformVector((stretchedRatio * bone1Length) * getAxisAsVector(boneAxis));
   // softdist may pull the foot away from ik goal, put it back
   //bone2Xfo.tr = ikHandleXfo.tr;
 
