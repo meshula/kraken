@@ -786,7 +786,7 @@ class Object3D(SceneItem):
 
 
 
-    def constrainTo(self, constrainers, type="Pose", maintainOffset=False, name=None):
+    def constrainTo(self, constrainers, type="Pose", maintainOffset=False, name=None, addToConstraintList=True):
         """Adds an constraint to this object.
 
         Args:
@@ -813,12 +813,12 @@ class Object3D(SceneItem):
             name = ('_'.join([self.getName(), 'To', constrainer.getName(), type+'Constraint']))
 
         constraint.setName(name)
-        self.addConstraint(constraint)
+        self.addConstraint(constraint, addToConstraintList=addToConstraintList)
 
         return constraint
 
 
-    def addConstraint(self, constraint):
+    def addConstraint(self, constraint, addToConstraintList=True):
         """Adds an constraint to this object.
 
         Args:
@@ -829,10 +829,12 @@ class Object3D(SceneItem):
 
         """
 
-        if constraint.getName() in [x.getName() for x in self._constraints]:
-            raise IndexError("Constraint with name '" + constraint.getName() + "'' already exists as a constraint.")
+        if addToConstraintList:
+            if constraint.getName() in [x.getName() for x in self._constraints]:
+                raise IndexError("Constraint with name '" + constraint.getName() + "'' already exists as a constraint.")
 
-        self._constraints.append(constraint)
+            self._constraints.append(constraint)
+
         constraint.setParent(self)
         constraint.setConstrainee(self)
 
