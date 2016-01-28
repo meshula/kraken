@@ -87,8 +87,6 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         # Guide Controls
 
         self.mouthCtrl = Control('mouth', parent=self.ctrlCmpGrp, shape="sphere")
-        self.mouthUpVCtrl = Control('mouthUpV', parent=self.ctrlCmpGrp, shape="triangle")
-        self.mouthUpVCtrl.setColor('red')
         self.mouthEndCtrl = Control('mouthEnd', parent=self.ctrlCmpGrp, shape="sphere")
 
 
@@ -101,7 +99,6 @@ class OSSMouthComponentGuide(OSSMouthComponent):
                 "name": name,
                 "location": "M",
                 "mouthXfo": Xfo(Vec3(0, 15, 0)),
-                "mouthUpVXfo": Xfo(Vec3(0.0, 1.0, 0.0)),
                 "mouthEndXfo": Xfo(Vec3(0, 14, 2))
                }
 
@@ -230,7 +227,6 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         data = super(OSSMouthComponentGuide, self).saveData()
 
         data['mouthXfo'] = self.mouthCtrl.xfo
-        data['mouthUpVXfo'] = self.mouthUpVCtrl.xfo
         data['mouthEndXfo'] = self.mouthEndCtrl.xfo
 
         for ctrlListName in ["an1DCtrls", "an2DCtrls", "an3DCtrls"]:
@@ -239,9 +235,6 @@ class OSSMouthComponentGuide(OSSMouthComponent):
             for i in xrange(len(ctrls)):
                 xfos.append(ctrls[i].xfo)
             data[ctrlListName+"Xfos"] = xfos
-
-        print "DATA: \n" + str(data)
-
         return data
 
 
@@ -267,7 +260,6 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         super(OSSMouthComponentGuide, self).loadData( data )
 
         self.mouthCtrl.xfo = data['mouthXfo']
-        self.mouthUpVCtrl.xfo = self.mouthCtrl.xfo.multiply(data['mouthUpVXfo'])
         self.mouthEndCtrl.xfo = data['mouthEndXfo']
 
         for ctrlListName in ["an1DCtrls", "an2DCtrls", "an3DCtrls"]:
@@ -292,11 +284,15 @@ class OSSMouthComponentGuide(OSSMouthComponent):
 
         # Values
         mouthPosition = self.mouthCtrl.xfo.tr
-        mouthUpV = self.mouthUpVCtrl.xfo.tr
         mouthEndPosition = self.mouthEndCtrl.xfo.tr
 
         # Calculate Mouth Xfo
+        
+        # UpVector 
+        mouthUpV= Xfo(Vec3(0.0, 1.0, 0.0)).tr
+
         rootToEnd = mouthEndPosition.subtract(mouthPosition).unit()
+
         rootToUpV = mouthUpV.subtract(mouthPosition).unit()
         bone1ZAxis = rootToUpV.cross(rootToEnd).unit()
         bone1Normal = bone1ZAxis.cross(rootToEnd).unit()
@@ -377,7 +373,7 @@ class OSSMouthComponentRig(OSSMouthComponent):
         # ==============
         # Constrain I/O
         # ==============
-        self.mouthInputConstraint = self.mouthCtrl.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.mouthInputConstraint = self.mouthCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         self.mouthConstraint = self.mouthOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
         self.mouthEndConstraint = self.mouthEndOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
 

@@ -255,7 +255,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # ==============
         # Constraint inputs
 
-        self.shldrCtrlConstraint = self.shldrCtrl.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.shldrCtrlConstraint = self.shldrCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # ===============
         # Add Splice Ops
