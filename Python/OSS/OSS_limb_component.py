@@ -476,9 +476,9 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('stretch', self.stretchAttr)
         #self.limbIKKLOp.setInput('rightSide', self.rightSideInputAttr)
         # Add Xfo Inputs
-        self.limbIKKLOp.setInput('root', self.uplimbFKCtrlSpace.xfo)
-        self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl.xfo)
-        self.limbIKKLOp.setInput('bone1FK', self.lolimbFKCtrl.xfo)
+        self.limbIKKLOp.setInput('root', self.uplimbFKCtrlSpace)
+        self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl)
+        self.limbIKKLOp.setInput('bone1FK', self.lolimbFKCtrl)
         self.limbIKKLOp.setInput('upV', self.limbUpVCtrl)
         self.limbIKKLOp.setInput('boneAxis', axisStrToIntMapping[self.boneAxisStr])
         self.limbIKKLOp.setInput('upAxis', axisStrToIntMapping[self.upAxisStr])
