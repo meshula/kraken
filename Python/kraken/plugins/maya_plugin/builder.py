@@ -10,6 +10,7 @@ import json
 from kraken.core.kraken_system import ks
 from kraken.core.builder import Builder
 from kraken.core.objects.object_3d import Object3D
+from kraken.core.maths.xfo import Xfo
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.plugins.maya_plugin.utils import *
@@ -644,15 +645,18 @@ class Builder(Builder):
                         arraySizes[argName] = len(connectedObjects)
 
                     if len(connectedObjects) == 0:
-                        raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' not connected.")
+                        pass
+                        # TTHACK: Allow nothing to be connected and no values set for operators
+                        #raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' not connected.")
 
                     connectionTargets = []
                     for i in range(len(connectedObjects)):
                         opObject = connectedObjects[i]
                         dccSceneItem = self.getDCCSceneItem(opObject)
 
-                        if dccSceneItem is None:
-                            raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' dcc item not found for item:" + opObject.getPath())
+                        # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
+                        #if dccSceneItem is None: TTHACK
+                        #   raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' dcc item not found for item:" + opObject.getPath())
                         connectionTargets.append( { 'opObject': opObject, 'dccSceneItem': dccSceneItem} )
                 else:
                     if connectedObjects is None:
@@ -661,8 +665,9 @@ class Builder(Builder):
                     opObject = connectedObjects
                     dccSceneItem = self.getDCCSceneItem(opObject)
 
-                    if dccSceneItem is None:
-                        raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' dcc item not found for item:" + connectedObjects.getPath())
+                    # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
+                    #if dccSceneItem is None:
+                    #    raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' dcc item not found for item:" + connectedObjects.getPath())
 
                     connectionTargets = { 'opObject': opObject, 'dccSceneItem': dccSceneItem }
 
@@ -670,12 +675,18 @@ class Builder(Builder):
                 if argConnectionType == 'In':
 
                     def connectInput(tgt, opObject, dccSceneItem):
+
                         if isinstance(opObject, Attribute):
                             cmds.connectAttr(str(dccSceneItem), tgt)
                         elif isinstance(opObject, Object3D):
                             cmds.connectAttr(str(dccSceneItem.attr('worldMatrix')), tgt)
+                        elif isinstance(opObject, Xfo):
+                            self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
                         else:
-                            raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
+                            # Maybe this should be pymel to help with implicit types
+                            #Right now we don't account for all data types
+                            #raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
+                            cmds.setAttr(tgt, opObject)
 
                     if argDataType.endswith('[]'):
                         for i in range(len(connectionTargets)):
@@ -773,15 +784,18 @@ class Builder(Builder):
                         arraySizes[portName] = len(connectedObjects)
 
                     if len(connectedObjects) == 0:
-                        raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' not connected.")
+                        pass
+                        # TTHACK: Allow nothing to be connected and no values set for operators
+                        #raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' not connected.")
 
                     connectionTargets = []
                     for i in range(len(connectedObjects)):
                         opObject = connectedObjects[i]
                         dccSceneItem = self.getDCCSceneItem(opObject)
 
-                        if dccSceneItem is None:
-                            raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' dcc item not found for item:" + opObject.getPath())
+                        # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
+                        #if dccSceneItem is None:
+                        #    raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' dcc item not found for item:" + opObject.getPath())
                         connectionTargets.append( { 'opObject': opObject, 'dccSceneItem': dccSceneItem} )
                 else:
                     if connectedObjects is None:
@@ -790,8 +804,9 @@ class Builder(Builder):
                     opObject = connectedObjects
                     dccSceneItem = self.getDCCSceneItem(opObject)
 
-                    if dccSceneItem is None:
-                        raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' dcc item not found for item:" + connectedObjects.getPath())
+                    # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
+                    #if dccSceneItem is None:
+                    #   raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' dcc item not found for item:" + connectedObjects.getPath())
 
                     connectionTargets = { 'opObject': opObject, 'dccSceneItem': dccSceneItem }
 
@@ -804,7 +819,9 @@ class Builder(Builder):
                         elif isinstance(opObject, Object3D):
                             cmds.connectAttr(str(dccSceneItem.attr('worldMatrix')), tgt)
                         else:
-                            raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
+                            # Maybe this should be pymel to help with implicit types
+                            #raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
+                            cmds.setAttr(tgt, opObject)
 
                     if portDataType.endswith('[]'):
                         for i in range(len(connectionTargets)):
@@ -831,6 +848,7 @@ class Builder(Builder):
                             connectOutput(str(spliceNode + "." + portName)+'['+str(i)+']', connectionTargets[i]['opObject'], connectionTargets[i]['dccSceneItem'])
                     else:
                         connectOutput(str(spliceNode + "." + portName), connectionTargets['opObject'], connectionTargets['dccSceneItem'])
+
 
         finally:
             pass

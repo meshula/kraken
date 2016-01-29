@@ -5,7 +5,7 @@ CanvasOperator - Splice operator object.
 
 """
 import json
-from kraken.core.maths import Mat44
+from kraken.core.maths import Mat44, Xfo
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.attributes.attribute import Attribute
@@ -89,16 +89,22 @@ class CanvasOperator(Operator):
         def getRTVal(obj):
             if isinstance(obj, Object3D):
                 return obj.xfo.getRTVal().toMat44('Mat44')
+            elif isinstance(obj, Xfo):
+                return obj.getRTVal().toMat44('Mat44')
             elif isinstance(obj, Attribute):
                 return obj.getRTVal()
+            else: # Must be a numerical, or string, etc.
+                return obj  ###### TTHACK Pass this through, we are setting a value directly, not makeing a connection
 
         portVals = []
+        debug = []
         for port in self.graphDesc['ports']:
             portName = port['name']
             portConnectionType = port['execPortType']
             portDataType = port['typeSpec']
 
             if portDataType == '$TYPE$':
+                # TODO: test for inputs[portName] is iterable, if so change dataType to based on elements and do the rest
                 return
 
             if portDataType == 'EvalContext':
@@ -113,16 +119,17 @@ class CanvasOperator(Operator):
 
             if portConnectionType == 'In':
                 if str(portDataType).endswith('[]'):
-                    rtValArray = ks.rtVal(portDataType[:-2]+'Array')
+                    rtValArray = ks.rtVal(portDataType)
                     rtValArray.resize(len(self.inputs[portName]))
                     for j in xrange(len(self.inputs[portName])):
                         rtValArray[j] = getRTVal(self.inputs[portName][j])
                     portVals.append(rtValArray)
                 else:
+                    value = getRTVal(self.inputs[portName])
                     portVals.append(getRTVal(self.inputs[portName]))
             else:
                 if str(portDataType).endswith('[]'):
-                    rtValArray = ks.rtVal(portDataType[:-2]+'Array')
+                    rtValArray = ks.rtVal(portDataType)
                     rtValArray.resize(len(self.outputs[portName]))
                     for j in xrange(len(self.outputs[portName])):
                         rtValArray[j] = getRTVal(self.outputs[portName][j])
@@ -130,17 +137,31 @@ class CanvasOperator(Operator):
                 else:
                     portVals.append(getRTVal(self.outputs[portName]))
 
+            debug.append({portName : [{"portDataType": portDataType, "portConnectionType": portConnectionType}, portVals[-1]]})
+
 
         host = ks.getCoreClient().DFG.host
-        binding = host.createBindingToPreset(self.canvasPresetPath, portVals)
+
+        try:
+            binding = host.createBindingToPreset(self.canvasPresetPath, portVals)
+        except:
+            print("Possible problem with Canvas operator \""+self.getName()+"\" port values:")
+            import pprint
+            pprint.pprint(debug, width=800)
+            raise
+
         binding.execute()
 
         # Now put the computed values out to the connected output objects.
         def setRTVal(obj, rtval):
             if isinstance(obj, Object3D):
                 obj.xfo.setFromMat44(Mat44(rtval))
+            elif isinstance(obj, Xfo):
+                obj.setFromMat44(Mat44(rtval))
             elif isinstance(obj, Attribute):
                 obj.setValue(rtval)
+            else:
+                print ("Warning: Not setting rtval "+str(rtval)+" for object "+str(obj))
 
         for port in self.graphDesc['ports']:
             portName = port['name']
@@ -149,7 +170,7 @@ class CanvasOperator(Operator):
 
             if portConnectionType != 'In':
                 outVal = binding.getArgValue(portName)
-                if portDataType.endswith('[]'):
+                if hasattr(outVal, '__iter__'): #type could be "$TYPE$" so don't test for brackets
                     for j in xrange(len(outVal)):
                         setRTVal(self.outputs[portName][j], outVal[j])
                 else:
