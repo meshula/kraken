@@ -773,7 +773,7 @@ class Builder(object):
                     else:
                         componentLocation = component.getLocation()
                         buildColor = colorMap[typeName][componentLocation]
-                    break;
+                    break
 
         return buildColor
 

@@ -36,16 +36,16 @@ def XSILoadPlugin(in_reg):
     # Add the path to the module search paths so we can import the module.
     sys.path.append( os.path.join(krakenDir, 'Python' ) )
 
-    krakenExtsDir = os.path.join(krakenDir, 'KLExts')
+    krakenExtsDir = os.path.join(krakenDir, 'Exts')
     if 'FABRIC_EXTS_PATH' not in os.environ:
         LogMessage('Unable to Load Kraken becase Fabric Engine has not be loaded.')
         return
     if krakenExtsDir not in  os.environ['FABRIC_EXTS_PATH']:
-        os.environ['FABRIC_EXTS_PATH'] = krakenExtsDir + ';' + os.environ['FABRIC_EXTS_PATH']
+        os.environ['FABRIC_EXTS_PATH'] = krakenExtsDir + os.pathsep + os.environ['FABRIC_EXTS_PATH']
 
     canvasPresetsDir = os.path.join(krakenDir, 'CanvasPresets')
     if canvasPresetsDir not in os.environ['FABRIC_DFG_PATH']:
-        os.environ['FABRIC_DFG_PATH'] = canvasPresetsDir + ';' + os.environ['FABRIC_DFG_PATH']
+        os.environ['FABRIC_DFG_PATH'] = canvasPresetsDir + os.pathsep + os.environ['FABRIC_DFG_PATH']
 
     krakenLoadMenu = os.getenv('KRAKEN_LOAD_MENU', 'True')
     if krakenLoadMenu == 'True':
@@ -64,12 +64,12 @@ def XSIUnloadPlugin(in_reg):
 
 def Kraken_Init( in_ctxt ):
 
-    menu = in_ctxt.source;
+    menu = in_ctxt.source
     menu.AddCommandItem( "Open UI", "OpenKrakenEditor")
-    menu.AddSeparatorItem();
+    menu.AddSeparatorItem()
     menu.AddCommandItem("Build Guide", "BuildKrakenGuide")
     menu.AddCommandItem("Build Rig", "BuildKrakenRig")
-    menu.AddSeparatorItem();
+    menu.AddSeparatorItem()
     menu.AddCallbackItem( "Help", "OpenKrakenHelp" )
 
 

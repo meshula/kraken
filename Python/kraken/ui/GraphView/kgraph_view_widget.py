@@ -354,7 +354,7 @@ class KGraphViewWidget(GraphViewWidget):
 
 
     def openContextualNodeList(self):
-        pos = self.mapFromGlobal(QtGui.QCursor.pos());
+        pos = self.mapFromGlobal(QtGui.QCursor.pos())
 
         contextualNodeList = ContextualNodeList(self)
 

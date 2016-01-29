@@ -161,10 +161,10 @@ class Xfo(MathObject):
 
         """
 
-        xfo = Xfo();
-        xfo.tr = self.tr.clone();
-        xfo.ori = self.ori.clone();
-        xfo.sc = self.sc.clone();
+        xfo = Xfo()
+        xfo.tr = self.tr.clone()
+        xfo.ori = self.ori.clone()
+        xfo.sc = self.sc.clone()
 
         return xfo
 
