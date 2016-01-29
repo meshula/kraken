@@ -26,6 +26,22 @@ class Builder(Builder):
         super(Builder, self).__init__()
 
 
+    def deleteBuildElements(self):
+        """
+        Clear out all dcc built elements from the scene if exist
+        """
+
+        for builtElement in self._buildElements:
+            if builtElement['tgt'].__class__ is pm.Attribute:
+                continue
+            node = builtElement['tgt']
+            if node.exists():
+                pm.delete(node)
+
+        self._buildElements = []
+
+        return None
+
     # ========================
     # Object3D Build Methods
     # ========================
@@ -578,6 +594,7 @@ class Builder(Builder):
 
             # Create Splice Operator
             spliceNode = cmds.createNode('dfgMayaNode', name=kOperator.getName())
+            self._registerSceneItemPair(kOperator, pm.PyNode(spliceNode))
             cmds.FabricCanvasSetExtDeps(mayaNode=spliceNode, execPath="", extDep=kOperator.getExtension())
 
             cmds.FabricCanvasAddFunc(mayaNode=spliceNode, execPath="", title=kOperator.getName(), code="dfgEntry {}", xPos="100", yPos="100")
@@ -713,6 +730,7 @@ class Builder(Builder):
 
             # Create Splice Operator
             spliceNode = cmds.createNode('dfgMayaNode', name=kOperator.getName())
+            self._registerSceneItemPair(kOperator, pm.PyNode(spliceNode))
             cmds.FabricCanvasSetExtDeps(mayaNode=spliceNode, execPath="", extDep="Kraken" )
             graphNodeName = cmds.FabricCanvasInstPreset(mayaNode=spliceNode, execPath="", presetPath=kOperator.getPresetPath(), xPos="100", yPos="100")
 
