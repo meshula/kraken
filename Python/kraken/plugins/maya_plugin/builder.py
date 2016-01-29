@@ -10,6 +10,7 @@ import json
 from kraken.core.kraken_system import ks
 from kraken.core.builder import Builder
 from kraken.core.objects.object_3d import Object3D
+from kraken.core.maths.xfo import Xfo
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.plugins.maya_plugin.utils import *
@@ -657,10 +658,13 @@ class Builder(Builder):
                 if argConnectionType == 'In':
 
                     def connectInput(tgt, opObject, dccSceneItem):
+
                         if isinstance(opObject, Attribute):
                             cmds.connectAttr(str(dccSceneItem), tgt)
                         elif isinstance(opObject, Object3D):
                             cmds.connectAttr(str(dccSceneItem.attr('worldMatrix')), tgt)
+                        elif isinstance(opObject, Xfo):
+                            self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
                         else:
                             # Maybe this should be pymel to help with implicit types
                             #raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
@@ -958,6 +962,32 @@ class Builder(Builder):
         dccSceneItem.setRotationOrder(kSceneItem.ro.order + 1, False)
 
         pm.select(clear=True)
+
+        return True
+
+
+    def setMat44Attr(self, dccSceneItemName, attr, mat44):
+        """Sets a matrix attribute directly with values from a fabric mat44
+
+        Args:
+            dccSceneItemName -- str: name of dccSceneItem
+            attr -- str: name of matrix attribute to set
+            mat44 -- mat44 with matrix value
+
+        Return:
+            bool: True if successful.
+
+        Note: Fabric and Maya's matrix row orders are reversed, so we transpose the matrix first
+
+        """
+
+        tmat44 = mat44.transpose()
+        matrix = []
+        rows = [tmat44.row0, tmat44.row1, tmat44.row2, tmat44.row3]
+        for row in rows:
+            matrix.extend([row.x, row.y, row.z, row.t])
+
+        cmds.setAttr(dccSceneItemName+"."+attr,  matrix, type="matrix")
 
         return True
 

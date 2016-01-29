@@ -5,7 +5,7 @@ KLOperator - Splice operator object.
 
 """
 
-from kraken.core.maths import Mat44
+from kraken.core.maths import Mat44, Xfo
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.attributes.attribute import Attribute
@@ -130,12 +130,15 @@ class KLOperator(Operator):
         def getRTVal(obj):
             if isinstance(obj, Object3D):
                 return obj.xfo.getRTVal().toMat44('Mat44')
+            elif isinstance(obj, Xfo):
+                return obj.getRTVal().toMat44('Mat44')
             elif isinstance(obj, Attribute):
                 return obj.getRTVal()
             else: # Must be a numerical, or string, etc.
                 return obj  ###### TTHACK Pass this through, we are setting a value directly, not makeing a connection
 
         argVals = []
+        debug = []
         for i in xrange(len(self.args)):
             arg = self.args[i]
             argName = arg.name.getSimpleType()
@@ -171,18 +174,23 @@ class KLOperator(Operator):
                 else:
                     argVals.append(getRTVal(self.outputs[argName]))
 
+
+            debug.append({argName : [{"dataType": argDataType, "connectionType": argConnectionType}, argVals[-1]]})
+
         try:
             self.solverRTVal.solve('', *argVals)
         except:
-            print("Problem with KL operator \""+self.getName()+"\" arguments:")
+            print("Possible problem with KL operator \""+self.getName()+"\" arguments:")
             import pprint
-            pprint.pprint(argVals)
+            pprint.pprint(debug, width=800)
             raise
 
         # Now put the computed values out to the connected output objects.
         def setRTVal(obj, rtval):
             if isinstance(obj, Object3D):
                 obj.xfo.setFromMat44(Mat44(rtval))
+            elif isinstance(obj, Xfo):
+                obj.setFromMat44(Mat44(rtval))
             elif isinstance(obj, Attribute):
                 obj.setValue(rtval)
             else:

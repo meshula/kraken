@@ -5,7 +5,7 @@ CanvasOperator - Splice operator object.
 
 """
 import json
-from kraken.core.maths import Mat44
+from kraken.core.maths import Mat44, Xfo
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.attributes.attribute import Attribute
@@ -89,12 +89,15 @@ class CanvasOperator(Operator):
         def getRTVal(obj):
             if isinstance(obj, Object3D):
                 return obj.xfo.getRTVal().toMat44('Mat44')
+            elif isinstance(obj, Xfo):
+                return obj.getRTVal().toMat44('Mat44')
             elif isinstance(obj, Attribute):
                 return obj.getRTVal()
             else: # Must be a numerical, or string, etc.
                 return obj  ###### TTHACK Pass this through, we are setting a value directly, not makeing a connection
 
         portVals = []
+        debug = []
         for port in self.graphDesc['ports']:
             portName = port['name']
             portConnectionType = port['execPortType']
@@ -134,15 +137,27 @@ class CanvasOperator(Operator):
                 else:
                     portVals.append(getRTVal(self.outputs[portName]))
 
+            debug.append({portName : [{"portDataType": portDataType, "portConnectionType": portConnectionType}, portVals[-1]]})
+
 
         host = ks.getCoreClient().DFG.host
-        binding = host.createBindingToPreset(self.canvasPresetPath, portVals)
+
+        try:
+            binding = host.createBindingToPreset(self.canvasPresetPath, portVals)
+        except:
+            print("Possible problem with Canvas operator \""+self.getName()+"\" port values:")
+            import pprint
+            pprint.pprint(debug, width=800)
+            raise
+
         binding.execute()
 
         # Now put the computed values out to the connected output objects.
         def setRTVal(obj, rtval):
             if isinstance(obj, Object3D):
                 obj.xfo.setFromMat44(Mat44(rtval))
+            elif isinstance(obj, Xfo):
+                obj.setFromMat44(Mat44(rtval))
             elif isinstance(obj, Attribute):
                 obj.setValue(rtval)
             else:
