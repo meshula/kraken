@@ -9,7 +9,7 @@ from kraken.core.kraken_system import ks
 from kraken.core.builder import Builder
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.plugins.si_plugin.utils import *
-
+from kraken.core.maths.xfo import Xfo
 import FabricEngine.Core as core
 
 
@@ -19,6 +19,18 @@ class Builder(Builder):
     def __init__(self):
         super(Builder, self).__init__()
 
+
+    def deleteBuildElements(self):
+        """
+        Clear out all dcc built elements from the scene if exist
+        """
+
+        for builtElement in self._buildElements:
+            print ("Implement deleteBuildElements() in XSI: deleting "+builtElement['tgt'])
+
+        self._buildElements = []
+
+        return None
 
     # ========================
     # SceneItem Build Methods
@@ -669,6 +681,8 @@ class Builder(Builder):
             # Create Splice Operator
             canvasOpPath = si.FabricCanvasOpApply(operatorOwner.FullName, "", True, "", "")
             canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+            print ("XSI buildKLOperator(): make sure the folloing line makes sense...")
+            #self._registerSceneItemPair(kOperator, canvasOp)
             si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken" )
 
             si.FabricCanvasAddFunc(canvasOpPath, "", kOperator.getName(), "dfgEntry {}", "400", "0")
@@ -851,7 +865,8 @@ class Builder(Builder):
             # Create Splice Operator
             canvasOpPath = si.FabricCanvasOpApply(operatorOwner.FullName, "", True, "", "")
             canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
-
+            print ("XSI buildCanvasOperator(): make sure the folloing line makes sense...")
+            #self._registerSceneItemPair(kOperator, canvasOp)
             si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken" )
             si.FabricCanvasInstPreset(canvasOpPath, "", kOperator.getPresetPath(), "400", "0")
 

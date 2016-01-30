@@ -32,6 +32,8 @@ class KGraphViewWidget(GraphViewWidget):
         # constructors of base classes
         super(KGraphViewWidget, self).__init__(parent)
 
+        self._builder = None
+        self._guideBuilder = None
 
         graphView = KGraphView(parent=self)
         graphView.nodeAdded.connect(self.__onNodeAdded)
@@ -205,7 +207,7 @@ class KGraphViewWidget(GraphViewWidget):
     def loadRigPreset(self, filePath):
         self.guideRig = Rig()
         self.guideRig.loadRigDefinitionFile(filePath)
-
+        self.setGuideRigName(self.guideRig.getName()) #Remove "_guide" from end of name
         self.graphView.displayGraph(self.guideRig)
 
         settings = self.window().getSettings()
@@ -228,17 +230,16 @@ class KGraphViewWidget(GraphViewWidget):
 
             initConfigIndex = self.window().krakenMenu.configsWidget.currentIndex()
 
-            builder = plugins.getBuilder()
-
             #Append "_guide" to rig name when building guide
             if self.guideRig.getName().endswith('_guide') is False:
                 self.guideRig.setName(self.guideRig.getName() + '_guide')
 
             if self.window().preferences.getPreferenceValue('delete_existing_rigs'):
-                self.removeExistingDccRig(self.guideRig)
+                if self._guideBuilder:
+                    self._guideBuilder.deleteBuildElements()
 
-            builder = plugins.getBuilder()
-            builder.build(self.guideRig)
+            self._guideBuilder = plugins.getBuilder()
+            self._guideBuilder.build(self.guideRig)
 
             self.reportMessage('Guide Rig Build Success', level='information', timeOut=6000)
 
@@ -262,14 +263,6 @@ class KGraphViewWidget(GraphViewWidget):
         synchronizer.sync()
 
 
-    def removeExistingDccRig(self, rig):
-
-        synchronizer = plugins.getSynchronizer()
-        synchronizer.setTarget(rig)
-        synchronizer.deleteDCCItem(rig)  # delete dcc item if it exists
-        synchronizer.cleanOperators()
-
-
     def buildRig(self):
 
         try:
@@ -288,10 +281,12 @@ class KGraphViewWidget(GraphViewWidget):
             rig.setName(rig.getName().replace('_guide', ''))
 
             if self.window().preferences.getPreferenceValue('delete_existing_rigs'):
-                self.removeExistingDccRig(rig)
+                if self._builder:
+                    self._builder.deleteBuildElements()
 
-            builder = plugins.getBuilder()
-            builder.build(rig)
+            self._builder = plugins.getBuilder()
+            self._builder.build(rig)
+
             self.reportMessage('Rig Build Success', level='information', timeOut=6000)
 
             self.window().krakenMenu.setCurrentConfig(initConfigIndex)

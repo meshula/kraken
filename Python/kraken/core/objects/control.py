@@ -190,7 +190,7 @@ class Control(Curve):
     # Scale Methods
     # ==============
     def scalePointsOnAxis(self, scale, scaleAxis="POSX"):
-        """Scales the point positions from it's center on the given axes.
+        """Scales the point positions from it's center along the given axis only.
 
         Args:
             scale: scale value to apply to the points.

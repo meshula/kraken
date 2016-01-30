@@ -365,6 +365,8 @@ class KrakenSystem(object):
                 for item in contents:
                     if os.path.isfile(os.path.join(path, item)):
                         # parse all the files of given path and import python modules
+                        # The files in these folders really should be limited to components, otherwise we are loading more than modules
+                        # and that is not clear.  Or, we could have a requirement that components end with _component.py and _config.py?
                         if item.endswith(".py") and item != "__init__.py":
                             module = modulePath+"."+item[:-3]
                             try:

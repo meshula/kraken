@@ -18,8 +18,6 @@ from kraken.core.objects.attributes.attribute_group import AttributeGroup
 class Object3D(SceneItem):
     """Kraken base object type for any 3D object."""
 
-
-
     def __init__(self, name, parent=None):
 
         super(Object3D, self).__init__(name, parent)
@@ -143,7 +141,7 @@ class Object3D(SceneItem):
 
         # If flag is set on object to use explicit name, return it.
         if config.getExplicitNaming() is True or self.testFlag('EXPLICIT_NAME'):
-            return
+            return self.getName()
 
         nameTemplate = config.getNameTemplate()
 
@@ -198,8 +196,6 @@ class Object3D(SceneItem):
                     objectType = 'ComponentOutput'
 
                 builtName += nameTemplate['types'][objectType]
-
-
 
             elif token is 'name':
                 builtName += self.getName()
@@ -290,6 +286,7 @@ class Object3D(SceneItem):
             parent = parent.getParent()
 
         return parent
+
 
     # ==================
     # Component Methods
@@ -783,7 +780,6 @@ class Object3D(SceneItem):
         newCtrlSpace.setSecondType(self.__class__)
 
         return newCtrlSpace
-
 
 
     def constrainTo(self, constrainers, type="Pose", maintainOffset=False, name=None, addToConstraintList=True):

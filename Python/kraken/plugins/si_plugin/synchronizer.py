@@ -4,6 +4,8 @@ from kraken.core.synchronizer import Synchronizer
 from kraken.plugins.si_plugin.utils import *
 from kraken.plugins.si_plugin.utils.curves import curveToKraken
 
+from kraken.core.objects.components.component import Component
+from kraken.core.objects.attributes.attribute_group import AttributeGroup
 
 class Synchronizer(Synchronizer):
     """The Synchronizer is a singleton object used to synchronize data between
@@ -88,7 +90,7 @@ class Synchronizer(Synchronizer):
 
         pos = Vec3(x=dccPos[0], y=dccPos[1], z=dccPos[2])
         quat = Quat(v=Vec3(dccQuat[1], dccQuat[2], dccQuat[3]), w=dccQuat[0])
-        scl = Vec3(x=dccScl[0], y=dccScl[1], z=dccScl[2])
+        scl = Vec3(x=1.0, y=1.0, z=1.0) # we don't want scale recorded
 
         newXfo = Xfo(tr=pos, ori=quat, sc=scl)
 
