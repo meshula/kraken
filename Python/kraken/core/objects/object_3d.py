@@ -6,6 +6,7 @@ Object3D - Base Object3D Object.
 """
 
 import re
+import inspect
 
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
@@ -182,6 +183,10 @@ class Object3D(SceneItem):
                 builtName += location
 
             elif token is 'type':
+
+                secondType = self.getSecondType()
+                if secondType:
+                    builtName += nameTemplate['types'][secondType.__name__] + nameTemplate['separator']
 
                 if objectType == 'Locator' and self.testFlag('inputObject'):
                     objectType = 'ComponentInput'
@@ -767,6 +772,8 @@ class Object3D(SceneItem):
         self.setParent(newCtrlSpace)
         newCtrlSpace.addChild(self) #Not sure why this does not happen in setParent()
         newCtrlSpace.xfo = Xfo(self.xfo)
+
+        newCtrlSpace.setSecondType(self.__class__)
 
         return newCtrlSpace
 
