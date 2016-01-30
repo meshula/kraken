@@ -19,6 +19,7 @@ class Attribute(SceneItem):
         self._lock = False
         self._animatable = True
         self._callback = None
+        self._updateNode = False
 
         if parent is not None:
             if parent.getTypeName() != 'AttributeGroup':
@@ -58,10 +59,18 @@ class Attribute(SceneItem):
         if self._callback is not None:
             self._callback(value)
 
+        # TT Total Hack
+        # Need a way that does not imbed knowledge of Kraken into HAppkit Editors
+        # But this integrates UI into functionality.
+        # Also, we do not want to recreate the whole graph, just this one node.  Don't leave this code like this.
+        if self.getUpdateNode() and hasattr(self, "component_inspector"):
+            if self.component_inspector is not None:
+                self.component_inspector.parent().graphView.displayGraph(None)
+
         return True
 
 
-    def setValueChangeCallback(self, callback):
+    def setValueChangeCallback(self, callback, updateNodeGraph=False):
         """Sets the value of the attribute.
 
 
@@ -75,7 +84,39 @@ class Attribute(SceneItem):
 
         self._callback = callback
 
+        self.setUpdateNode(updateNodeGraph)
+
         return True
+
+
+    def setUpdateNode(self, value):
+        """Sets the animatable state of the attribute..
+
+        Args:
+            value (bool): should Kraken graph update the node if value is changed
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if type(value) is not bool:
+            raise TypeError("Value is not of type 'bool'.")
+
+        self._updateNode = value
+
+        return True
+
+
+    def getUpdateNode(self):
+        """Returns the animatable state of the attribute..
+
+        Returns:
+            bool: True if  Kraken graph updates the node if value is changed
+
+        """
+
+        return self._updateNode
 
 
     def getKeyable(self):

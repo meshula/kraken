@@ -40,9 +40,14 @@ class KGraphView(GraphView):
     # Graph
     # ======
     def displayGraph(self, rig):
+        """
+        Builds the Kraken node graph
+        Pass None as rig parameter to refresh current rig graph
+        """
         self.reset()
 
-        self.__rig = rig
+        if rig is not None:
+            self.__rig = rig
 
         guideComponents = self.__rig.getChildrenByType('Component')
 
