@@ -269,18 +269,3 @@ class Synchronizer(object):
         """
 
         return True
-
-
-    def deleteDCCItem(self, kObject):
-        """ Delete the dcc item of kObject if it exists """
-
-        return True
-
-
-    def cleanOperators(self):
-        """
-        Remove all operators from the scene that have no inputs
-        Not a great way to get rid of these, but they don't disappear when the hierarchy is deleted
-        """
-
-        return True
