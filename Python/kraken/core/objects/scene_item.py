@@ -4,7 +4,6 @@ Classes:
 SceneItem - Base SceneItem Object.
 
 """
-import inspect
 
 class SceneItem(object):
     """Kraken base object type for any 3D object."""

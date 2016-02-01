@@ -6,7 +6,6 @@ Object3D - Base Object3D Object.
 """
 
 import re
-import inspect
 
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
