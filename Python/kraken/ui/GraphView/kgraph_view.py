@@ -74,7 +74,8 @@ class KGraphView(GraphView):
                 self.addNode(backdropNode)
                 backdropNode.setData(backdrop)
 
-        self.frameAllNodes()
+        if rig is not None:
+            self.frameAllNodes()
 
 
     def addConnection(self, connection, emitSignal=True):
