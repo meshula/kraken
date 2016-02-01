@@ -6,6 +6,7 @@ Object3D - Base Object3D Object.
 """
 
 import re
+import inspect
 
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
@@ -18,9 +19,7 @@ class Object3D(SceneItem):
     """Kraken base object type for any 3D object."""
 
     def __init__(self, name, parent=None):
-
         super(Object3D, self).__init__(name, parent)
-
         self._component = None
         self._children = []
         self._flags = {}
@@ -216,7 +215,6 @@ class Object3D(SceneItem):
 
         return builtName
 
-
     def setName(self, name):
         """Sets the name of the object with a string.
 
@@ -234,7 +232,6 @@ class Object3D(SceneItem):
             initName = name
             suffix = 1
             collision = True
-
             while collision:
                 child = self.getParent().getChildByDecoratedName(name + self.getNameDecoration())
                 collision = child != None and child is not self

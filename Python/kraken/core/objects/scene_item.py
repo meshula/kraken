@@ -5,6 +5,7 @@ SceneItem - Base SceneItem Object.
 
 """
 
+
 class SceneItem(object):
     """Kraken base object type for any 3D object."""
 
