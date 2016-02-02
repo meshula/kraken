@@ -325,6 +325,10 @@ class OSSHandComponentGuide(OSSHandComponent):
         handXfo.aimAt(aimPos=palmXfo.tr, upVector=handXfo.ori.getYaxis(), aimAxis=self.boneAxis, upAxis=self.upAxis)
 
         handleXfo = self.handleCtrl.xfo
+        # Not great.  This assumes that guide ctrl has been mirrored from left side
+        # Another case where the guide system should feed in correct values
+        if self.getLocation() == 'R':
+            handleXfo.ori = handleXfo.ori.mirror(0)
 
         data['handXfo'] = handXfo
         data['palmXfo'] = palmXfo
