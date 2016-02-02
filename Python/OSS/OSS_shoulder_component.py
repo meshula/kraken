@@ -1,5 +1,5 @@
 from kraken.core.maths import Vec3
-from kraken.core.maths.xfo import Xfo
+from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping, axisStrToIntMapping
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -164,6 +164,17 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
 
         data = super(OSSShoulderComponentGuide, self).getRigBuildData()
 
+        self.boneAxisStr = "POSX"
+        if self.getLocation() == 'R':
+            self.boneAxisStr = "NEGX"
+        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+
+        self.upAxisStr = "NEGY"
+        if self.getLocation() == 'R':
+            self.upAxisStr = "POSY"
+        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+
+
         # Values
         shldrPosition = self.shldrCtrl.xfo.tr
 
@@ -171,19 +182,13 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
         shldrEndPosition = self.shldrEndCtrl.xfo.tr
 
 
-        # Calculate Shoulder Xfo
-        rootToEnd = shldrEndPosition.subtract(shldrPosition).unit()
-        rootToUpV = shldrUpV.subtract(shldrPosition).unit()
-        bone1ZAxis = rootToUpV.cross(rootToEnd).unit()
-        bone1Normal = bone1ZAxis.cross(rootToEnd).unit()
+        shldrXfo = Xfo(self.shldrCtrl.xfo)
+        shldrXfo.aimAt(aimPos=self.shldrEndCtrl.xfo.tr, upVector=shldrUpV, aimAxis=self.boneAxis, upAxis=self.upAxis)
 
-        shldrXfo = Xfo()
-        shldrXfo.setFromVectors(rootToEnd, bone1Normal, bone1ZAxis, shldrPosition)
+        shldrEndXfo = Xfo(self.shldrEndCtrl.xfo)
+        shldrEndXfo.ori = shldrEndXfo.ori = shldrXfo.ori
 
-        shldrEndXfo = Xfo(shldrXfo)
-        shldrEndXfo.tr = shldrEndPosition
-
-        shldrLen = shldrPosition.subtract(shldrEndPosition).length()
+        shldrLen = shldrXfo.tr.subtract(shldrEndXfo.tr).length()
 
         data['shldrXfo'] = shldrXfo
         data['shldrLen'] = shldrLen
@@ -233,7 +238,6 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # =========
         # Shoulder
         self.shldrCtrl = FKControl('shldr', parent=self.ctrlCmpGrp, shape="square")
-        self.shldrCtrl.alignOnXAxis()
         self.shldrCtrlSpace = self.shldrCtrl.insertCtrlSpace()
 
 
@@ -297,10 +301,14 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         self.shldrCtrlSpace.xfo = data['shldrXfo']
         self.shldrCtrl.xfo = data['shldrXfo']
         xoffset = 2
+        yoffset = -5.0
+        if self.getLocation() == 'R':
+            xoffset *= -1
+            yoffset *= -1
+
+        self.shldrCtrl.alignOnXAxis(self.getLocation() == 'R')
         self.shldrCtrl.scalePoints(Vec3(data['shldrLen'], 4, 4))
-
-        self.shldrCtrl.translatePoints(Vec3(xoffset, -5.0, 0.0))
-
+        self.shldrCtrl.translatePoints(Vec3(xoffset, yoffset, 0.0))
         self.shldrEndCtrlSpace.xfo = data['shldrEndXfo']
 
         # ============
@@ -315,6 +323,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
 
             self.shldrMocapCtrl = MCControl('shldr', parent=self.ctrlCmpGrp, shape="circle")
             self.shldrMocapCtrl.scalePoints(Vec3(5.0, 5.0, 5.0))
+            self.shldrMocapCtrl.rotatePoints(0.0, 0.0, 90.0)
             self.shldrMocapCtrl.setColor("purpleLight")
             self.shldrMocapCtrl.xfo = data['shldrXfo']
             self.shldrMocapCtrlSpace = self.shldrMocapCtrl.insertCtrlSpace()
