@@ -112,23 +112,25 @@ class KGraphViewWidget(GraphViewWidget):
         try:
             self.window().setCursor(QtCore.Qt.WaitCursor)
 
-            if self.openedFile is None:
+            #Do it all from settings, should never be a need to read opened file path
+            settings = self.window().getSettings()
+            settings.beginGroup('Files')
+            filePath = settings.value("lastFilePath", os.path.join(GetKrakenPath(), self.guideRig.getName()))
+            settings.endGroup()
+            # Only resort to Kraken path if absolutly necessary
+            if not filePath:
                 filePath = GetKrakenPath()
-            else:
-                settings = self.window().getSettings()
-                settings.beginGroup('Files')
-                filePath = settings.value("lastFilePath", os.path.join(GetKrakenPath(), self.guideRig.getName()))
-                settings.endGroup()
 
             if saveAs is True:
 
                 fileDialog = QtGui.QFileDialog(self)
                 fileDialog.setOption(QtGui.QFileDialog.DontUseNativeDialog, on=True)
                 fileDialog.setWindowTitle('Save Rig Preset As')
-                fileDialog.setDirectory(os.path.abspath(filePath))
+                fileDialog.setDirectory(os.path.dirname(os.path.abspath(filePath)))
                 fileDialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
                 fileDialog.setNameFilter('Kraken Rig (*.krg)')
                 fileDialog.setDefaultSuffix('krg')
+
 
                 if fileDialog.exec_() == QtGui.QFileDialog.Accepted:
                     filePath = fileDialog.selectedFiles()[0]
@@ -191,6 +193,10 @@ class KGraphViewWidget(GraphViewWidget):
             settings.beginGroup('Files')
             lastFilePath = settings.value("lastFilePath", os.path.join(GetKrakenPath(), self.guideRig.getName()))
             settings.endGroup()
+
+            # Only resort to Kraken path if absolutly necessary
+            if not lastFilePath:
+                lastFilePath = GetKrakenPath()
 
             fileDialog = QtGui.QFileDialog(self)
             fileDialog.setOption(QtGui.QFileDialog.DontUseNativeDialog, on=True)
