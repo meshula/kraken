@@ -1,4 +1,6 @@
 from kraken.core.maths import Vec3
+from kraken.core.maths.rotation_order import RotationOrder
+from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -233,6 +235,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         # Neck
         self.neckCtrl = FKControl('neck', parent=self.ctrlCmpGrp, shape="square")
+        self.neckCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
         self.neckCtrl.scalePoints(Vec3(2.5, 2.5, 2.5))
         self.neckCtrlSpace = self.neckCtrl.insertCtrlSpace()
 
@@ -241,6 +244,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         # Head
         self.headCtrl = FKControl('head', parent=self.neckCtrl, shape="square")
+        self.headCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
         #self.headCtrl.rotatePoints(0, 0, 90)
         self.headCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))
         self.headCtrlSpace = self.headCtrl.insertCtrlSpace()

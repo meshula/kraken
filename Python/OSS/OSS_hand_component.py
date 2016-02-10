@@ -3,7 +3,9 @@ import re
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping
 from kraken.core.maths.xfo import xfoFromDirAndUpV
-import kraken.core.maths.euler as euler
+from kraken.core.maths.rotation_order import RotationOrder
+from kraken.core.maths.euler import rotationOrderStrToIntMapping
+
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -12,6 +14,7 @@ from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.attributes.string_attribute import StringAttribute
 from kraken.core.objects.attributes.integer_attribute import IntegerAttribute
+
 
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
@@ -87,6 +90,8 @@ class OSSHandComponentGuide(OSSHandComponent):
         self.digit3SegmentNames = StringAttribute('Digit3SegmentNames', value="index middle ring pinky", parent=guideSettingsAttrGrp)
         self.digit2SegmentNames = StringAttribute('Digit2SegmentNames', value="thumb", parent=guideSettingsAttrGrp)
         self.digit1SegmentNames = StringAttribute('Digit1SegmentNames', value="", parent=guideSettingsAttrGrp)
+
+
 
         self.digit3SegmentNames.setValueChangeCallback(self.updateDigit3SegmentControls)
         self.digit2SegmentNames.setValueChangeCallback(self.updateDigit2SegmentControls)
@@ -388,16 +393,19 @@ class OSSHandComponentRig(OSSHandComponent):
 
         # IK Handle
         self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="jack")
+        self.handleCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later careful when combining with foot!
         self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace()
 
 
         # FK Hand
         self.handCtrl = FKControl('hand', parent=self.ctrlCmpGrp, shape="cube")
+        self.handCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
         self.handCtrl.alignOnXAxis()
         self.handCtrlSpace = self.handCtrl.insertCtrlSpace()
 
         # FK palm
         self.palmCtrl = FKControl('palm', parent=self.handCtrl, shape="cube")
+        self.palmCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
         self.palmCtrl.alignOnXAxis()
         self.palmCtrlSpace = self.palmCtrl.insertCtrlSpace()
 
@@ -415,15 +423,13 @@ class OSSHandComponentRig(OSSHandComponent):
 
         # Add Component Params to IK control
         self.handleCtrlAttrGrp = AttributeGroup("DisplayInfo_HandSettings", parent=self.handleCtrl)
-        handDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=self.handleCtrlAttrGrp)
-        handIKInputAttr = ScalarAttribute('handIK', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         #ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
         #HandTiltInputAttr = ScalarAttribute('handTilt', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
 
-        self.drawDebugInputAttr.connect(handDrawDebugInputAttr)
-
         self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
+        handIKInputAttr = ScalarAttribute('handIK', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+
         # Need a more elegant way to drive attrs on another component, especially this one where we don't even know if the limb has mocap
         self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
@@ -434,7 +440,8 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.ikGoalRefTransform = Transform('ikGoalRef', parent=self.handleCtrl)
 
-
+        handDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=self.handleCtrlAttrGrp)
+        self.drawDebugInputAttr.connect(handDrawDebugInputAttr)
         # ==========
         # Deformers
         # ==========
@@ -527,6 +534,7 @@ class OSSHandComponentRig(OSSHandComponent):
                 if segment == "end":
                     continue  # don't create control for end (but we need it to loop through control positions correctly)
                 newCtrl = FKControl(digitName+"_"+segment, parent=parent, shape="square")
+                newCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
                 newCtrl.rotatePoints(0,0,90)
                 newCtrl.scalePoints(globalScale)
                 newCtrls.append(newCtrl)

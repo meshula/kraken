@@ -1,7 +1,8 @@
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping
 from kraken.core.maths.xfo import xfoFromDirAndUpV
-import kraken.core.maths.euler as euler
+from kraken.core.maths.rotation_order import RotationOrder
+from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -330,15 +331,18 @@ class OSSFootComponentRig(OSSFootComponent):
 
         # IK Handle
         self.handleCtrl = IKControl("foot", parent=self.ctrlCmpGrp, shape="jack")
+        self.handleCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later careful when combining with foot!
         self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace()
 
         # FK Foot
         self.footCtrl = FKControl('foot', parent=self.ctrlCmpGrp, shape="cube")
+        self.footCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
         self.footCtrl.alignOnXAxis()
         self.footCtrlSpace = self.footCtrl.insertCtrlSpace()
 
         # FK Ball
         self.ballCtrl = FKControl('ball', parent=self.footCtrl, shape="cube")
+        self.ballCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
         self.ballCtrl.alignOnXAxis()
         self.ballCtrlSpace = self.ballCtrl.insertCtrlSpace()
 
@@ -348,25 +352,26 @@ class OSSFootComponentRig(OSSFootComponent):
 
         # Add Component Params to IK control
         self.handleCtrlAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.handleCtrl)
-        footDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=self.handleCtrlAttrGrp)
+        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
+
+
         footIKAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         footRockerAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=self.handleCtrlAttrGrp)
         ballBreakAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
         footTiltAttr = ScalarAttribute('footTilt', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
 
-        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
-        self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
 
-        self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
-        self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
         self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=self.handleCtrlAttrGrp)
         self.softDist_cmpOutAttr.connect(self.softDistAttr)
         self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.stretch_cmpOutAttr.connect(self.stretchAttr)
 
+        drawDebugAttr = BoolAttribute('drawDebug', value=False, parent=self.handleCtrlAttrGrp)
+        self.drawDebugInputAttr.connect(drawDebugAttr)
 
-        self.drawDebugInputAttr.connect(footDrawDebugAttr)
-
+        self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
 
         self.ikGoalRefTransform = Transform('ikGoalRef', parent=self.handleCtrl)
 

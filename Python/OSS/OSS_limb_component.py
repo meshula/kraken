@@ -1,7 +1,8 @@
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping, axisStrToIntMapping
 from kraken.core.maths.xfo import xfoFromDirAndUpV
-import kraken.core.maths.euler as euler
+from kraken.core.maths.rotation_order import RotationOrder
+from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -323,6 +324,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # =========
         # uplimb
         self.uplimbFKCtrl = FKControl(uplimbName, parent=self.ctrlCmpGrp, shape="cube")
+        self.uplimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
         self.uplimbFKCtrl.xfo = data['uplimbXfo']
         self.uplimbFKCtrl.alignOnXAxis()
         self.uplimbFKCtrl.scalePointsOnAxis(data['uplimbLen'], self.boneAxisStr)
@@ -331,6 +333,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         # lolimb
         self.lolimbFKCtrl = FKControl(lolimbName, parent=self.uplimbFKCtrl, shape="cube")
+        self.lolimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.alignOnXAxis()
         self.lolimbFKCtrl.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
@@ -349,11 +352,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         # Add Component Params to IK control
         limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.limbIKCtrl)
-        limbDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=limbSettingsAttrGrp)
-        self.limbBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=limbSettingsAttrGrp)
-        self.limbBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=limbSettingsAttrGrp)
 
-        self.drawDebugInputAttr.connect(limbDrawDebugAttr)
 
         if self.mocap:
                 self.limbMocapInputAttr = self.createInput('limbMocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
@@ -370,6 +369,11 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
             self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
 
+        self.limbBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=limbSettingsAttrGrp)
+        self.limbBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=limbSettingsAttrGrp)
+        self.limbDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=limbSettingsAttrGrp)
+
+        self.drawDebugInputAttr.connect(self.limbDrawDebugAttr)
 
 
 
@@ -379,6 +383,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if self.mocap:
             # Mocap uplimb
             self.uplimb_mocap = MCControl(uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
+            #rotation order should stay consistent no matter what ro the controls have
             self.uplimb_mocap.xfo = data['uplimbXfo']
             self.uplimb_mocap.alignOnXAxis()
             self.uplimb_mocap.scalePointsOnAxis(data['uplimbLen'], self.boneAxisStr)

@@ -1,4 +1,6 @@
 from kraken.core.maths import Vec3, Vec3, Euler, Quat, Xfo
+from kraken.core.maths.rotation_order import RotationOrder
+from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -20,6 +22,8 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from kraken.core.configs.config import Config
+
 from OSS.OSS_control import *
 
 COMPONENT_NAME = "main"
@@ -36,8 +40,9 @@ class OSSMainComponent(BaseExampleComponent):
         # Declare Inputs Xfos
 
         # Declare Output Xfos
-        self.globalOutputTgt = self.createOutput('global', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.masterOutputTgt = self.createOutput('master', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.offsetOutputTgt = self.createOutput('offset', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.cogOutputTgt = self.createOutput('cog', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
         self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
@@ -60,29 +65,36 @@ class OSSMainComponentGuide(OSSMainComponent):
         # =========
         # Attributes
         # =========
+        self.mocap = False
 
         # Guide Settings
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
         self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
+        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
         # =========
         # Controls
         # =========
 
         # Guide Controls
-        self.mainCtrl = Control('main', parent=self.ctrlCmpGrp, shape="circle")
+        self.mainCtrl = Control('master', shape='circle', parent=self.ctrlCmpGrp)
+        if "oss_master" not in Config.getInstance().getControlShapes().keys():
+            self.mainCtrl.setCurveData(MASTER_SHAPE) #Why does this not work for guide controls?
 
+        self.cogCtrl = Control('cogPosition', parent=self.ctrlCmpGrp, shape="circle")
+        self.cogCtrl.scalePoints(Vec3(2, 2, 2))
+        self.cogCtrl.setColor('red')
 
-        data = {
-                "location": 'M',
-                "mainXfo": Xfo(tr=Vec3(0.0, 0.0, 0.0))
+        self.mocapIconCtrl = None
+
+        self.init_data = {
+                "mainXfo": Xfo(tr=Vec3(0.0, 0.0, 0.0)),
+                "cogPosition": Vec3(0.0, 10.0, 0.0),
+                "mocapIconXfo": Xfo(tr=Vec3(0.0, 0.0, 5.0)),
                }
 
-        # Now, add the guide settings attributes to the data (happens in saveData)
-        data.update(self.saveData())
-
-        self.loadData(data)
+        self.loadData(self.init_data)
 
         Profiler.getInstance().pop()
 
@@ -97,9 +109,14 @@ class OSSMainComponentGuide(OSSMainComponent):
         The JSON data object
 
         """
-        data = super(OSSMainComponentGuide, self).saveData()
+        data = dict(self.init_data)
+        data.update(super(OSSMainComponentGuide, self).saveData())
 
         data["mainXfo"] = self.mainCtrl.xfo
+        data['cogPosition'] = self.cogCtrl.xfo.tr
+
+        if self.mocap:
+            data['mocapIconXfo'] = self.mocapIconCtrl.xfo
 
         return data
 
@@ -114,22 +131,58 @@ class OSSMainComponentGuide(OSSMainComponent):
         True if successful.
 
         """
+
         #Reset all shapes, but really we should just recreate all controls from loadData instead of init
         for ctrl in self.getAllHierarchyNodes(classType=Control):
             ctrl.setShape(ctrl.getShape())
 
-        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        #saveData() will grab the guide settings values (and are not stored in data arg)
         existing_data = self.saveData()
         existing_data.update(data)
         data = existing_data
 
-        super(OSSMainComponentGuide, self).loadData( data )
+        super(OSSMainComponentGuide, self).loadData(data)
+
 
         self.mainCtrl.xfo = data["mainXfo"]
-
+        self.mainCtrl.scalePoints(Vec3(10, 1.0, 10))
         self.mainCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
 
+        self.cogCtrl.xfo.tr = data["cogPosition"]
+
+        self.cogCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
+
+        self.mocap = bool(data["mocap"])
+
+        if self.mocap:
+            if 'mocapIconXfo' in data.keys():
+                self.mocapIconCtrl.xfo = data['mocapIconXfo']
+                self.mocapIconCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
+
         return True
+
+
+
+    def updateMocap(self, mocap):
+        """ Callback to changing the component setting 'useOtherIKGoalInput'
+        Really, we should build this ability into the system, to add/remove input attrs based on guide setting bools.
+        That way, we don't have to write these callbacks.
+        """
+        if mocap:
+            if self.mocapIconCtrl is None:
+                self.mocapIconCtrl = Control('mocapIcon', parent=self.ctrlCmpGrp)
+                self.mocapIconCtrl.setCurveData(MOCAP_SHAPE)
+                self.mocapIconCtrl.setColor("purpleLight")
+                self.mocapIconCtrl.scalePoints(Vec3(2.0, 2.0, 2.0))
+                self.mocapIconCtrl.xfo.tr = Vec3(0.0, 0.0, 3.0)  #How to load default in this callback without access to data?
+
+
+        else:
+            if self.mocapIconCtrl is not None:
+                self.mocapIconCtrl.getParent().removeChild(self.mocapIconCtrl) #There should be a simpler way!
+                self.mocapIconCtrl = None
+
+
 
 
     def getRigBuildData(self):
@@ -139,12 +192,16 @@ class OSSMainComponentGuide(OSSMainComponent):
         The JSON rig data object.
 
         """
-
         data = super(OSSMainComponentGuide, self).getRigBuildData()
 
         data["mainXfo"] = self.mainCtrl.xfo
+        data['cogPosition'] = self.cogCtrl.xfo.tr
+
+        if self.mocap:
+            data['mocapIconXfo'] = self.mocapIconCtrl.xfo
 
         return data
+
 
     # ==============
     # Class Methods
@@ -179,26 +236,43 @@ class OSSMainComponentRig(OSSMainComponent):
         Profiler.getInstance().push("Construct Main Rig Component:" + name)
         super(OSSMainComponentRig, self).__init__(name, parent)
 
+        self.mocap = False
 
         # =========
         # Controls
         # =========
         # Add Controls
-        self.mainCtrlSpace = CtrlSpace('global', parent=self.ctrlCmpGrp)
-        self.mainCtrl = FKControl('global', shape='main', parent=self.mainCtrlSpace)
-        self.mainCtrl.setColor("turqoise")
+        self.mainCtrl = FKControl('master', shape='circle', parent=self.ctrlCmpGrp)
+        if "oss_master" not in Config.getInstance().getControlShapes():
+            self.mainCtrl.setCurveData(MASTER_SHAPE)
+        self.mainCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.mainCtrl.setColor("blueLightMuted")
         self.mainCtrl.lockScale(x=True, y=True, z=True)
+        self.mainCtrlSpace = self.mainCtrl.insertCtrlSpace()
 
-        self.offsetCtrlSpace = CtrlSpace('Offset', parent=self.mainCtrl)
-        self.offsetCtrl = FKControl('Offset', shape='main', parent=self.offsetCtrlSpace)
-        self.offsetCtrl.setColor("turqoiseDark")
+        self.offsetCtrl = FKControl('offset', shape='circle', parent=self.mainCtrl)
+        if "oss_master" not in Config.getInstance().getControlShapes():
+            self.offsetCtrl.setCurveData(MASTER_SHAPE)
+        self.offsetCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.offsetCtrl.setColor("blueDark")
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
+        self.offsetCtrlSpace = self.offsetCtrl.insertCtrlSpace()
+
+        # COG
+        self.cogCtrl = FKControl('cog', parent=self.offsetCtrl, shape="circle")
+        self.cogCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.cogCtrl.scalePoints(Vec3(10.0, 10.0, 10.0))
+        self.cogCtrl.setColor("orange")
+        self.cogCtrlSpace = self.cogCtrl.insertCtrlSpace()
+
 
         # Add Component Params to IK control
         MainSettingsAttrGrp = AttributeGroup('DisplayInfo_MainSettings', parent=self.mainCtrl)
         self.rigScaleAttr = ScalarAttribute('rigScale', value=1.0, parent=MainSettingsAttrGrp, minValue=0.1, maxValue=100.0)
 
         self.rigScaleOutputAttr.connect(self.rigScaleAttr)
+
+
 
         # ==========
         # Deformers
@@ -211,13 +285,8 @@ class OSSMainComponentRig(OSSMainComponent):
         # Constraint inputs
 
         # Constraint outputs
-        globalConstraint = PoseConstraint('_'.join([self.globalOutputTgt.getName(), 'To', self.mainCtrl.getName()]))
-        globalConstraint.addConstrainer(self.mainCtrl)
-        self.globalOutputTgt.addConstraint(globalConstraint)
-
-        offsetConstraint = PoseConstraint('_'.join([self.offsetOutputTgt.getName(), 'To', self.mainCtrl.getName()]))
-        offsetConstraint.addConstrainer(self.offsetCtrl)
-        self.offsetOutputTgt.addConstraint(offsetConstraint)
+        self.masterOutputTgtConstraint = self.masterOutputTgt.constrainTo(self.mainCtrl)
+        self.offsetOutputTgtConstraint = self.offsetOutputTgt.constrainTo(self.offsetCtrl)
 
 
         # ===============
@@ -253,11 +322,14 @@ class OSSMainComponentRig(OSSMainComponent):
 
         super(OSSMainComponentRig, self).loadData( data )
 
+        self.mocap = bool(data["mocap"])
+
         # ================
         # Resize Controls
         # ================
         self.mainCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
         self.offsetCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
+        self.cogCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
 
         # =======================
         # Set Control Transforms
@@ -267,11 +339,66 @@ class OSSMainComponentRig(OSSMainComponent):
         self.offsetCtrlSpace.xfo = data["mainXfo"]
         self.offsetCtrl.xfo = data["mainXfo"]
 
+        self.cogCtrlSpace.xfo.tr = data["cogPosition"]
+        self.cogCtrl.xfo.tr = data["cogPosition"]
+
         # ============
         # Set IO Xfos
         # ============
-        self.globalOutputTgt = data["mainXfo"]
-        self.offsetOutputTgt = data["mainXfo"]
+        self.masterOutputTgt.xfo = data["mainXfo"]
+        self.offsetOutputTgt.xfo = data["mainXfo"]
+        self.cogOutputTgt.xfo.tr = data["cogPosition"]
+
+
+        if self.mocap:
+
+
+            self.mocapIconCtrl = Control('mocap', parent=self.ctrlCmpGrp)
+            if "oss_mocap" not in Config.getInstance().getControlShapes():
+                self.mocapIconCtrl.setCurveData(MOCAP_SHAPE)
+            self.mocapIconCtrl.xfo = data["mocapIconXfo"]
+            self.mocapIconCtrl.setColor("purpleLight")
+            self.mocapIconCtrl.scalePoints(Vec3(2.0, 2.0, 2.0))
+            self.mocapIconCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
+
+            self.mocapIconCtrl.constrainTo(self.offsetCtrl, maintainOffset=True)
+
+            self.mocapIconAttrGrp = AttributeGroup("___Mocap___", parent=self.mocapIconCtrl)
+
+            self.mocapInputAttr = ScalarAttribute('mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.mocapIconAttrGrp)
+
+            # COG
+            self.cogMocapCtrl = MCControl('cog', parent=self.offsetCtrl, shape="circle")
+            self.cogMocapCtrl.setColor("purpleLight")
+            self.cogMocapCtrl.xfo.tr = data["cogPosition"]
+            self.cogMocapCtrlSpace = self.cogMocapCtrl.insertCtrlSpace()
+
+            self.cogMocapCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
+
+            #Maybe we should add an aditional master mc offset?
+
+             # Blend anim and mocap together
+            self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocap_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.addOperator(self.mocapHierBlendSolver)
+            self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)  # connect this to attr
+            # Add Att Inputs
+            self.mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
+            self.mocapHierBlendSolver.setInput('rigScale', self.rigScaleAttr)
+            # Add Xfo Inputs
+            self.mocapHierBlendSolver.setInput('hierA',[self.cogCtrl])
+            self.mocapHierBlendSolver.setInput('hierB',[self.cogMocapCtrl])
+            self.cogCtrl_link = Transform('cogCtrlSpace_link', parent=self.outputHrcGrp)
+            self.mocapHierBlendSolver.setOutput('hierOut',[self.cogCtrl_link])
+
+            self.mocapHierBlendSolver.evaluate()
+
+            # Add Xfo Outputs
+            self.cogOutputTgtConstraint = self.cogOutputTgt.constrainTo(self.cogCtrl_link)
+        else:     # Constraint outputs
+            self.cogOutputTgtConstraint = self.cogOutputTgt.constrainTo(self.cogCtrl)
+
+
+
 
         # ====================
         # Evaluate Fabric Ops
@@ -279,8 +406,95 @@ class OSSMainComponentRig(OSSMainComponent):
         # Eval Operators # Order is important
         self.evalOperators()
 
+        self.masterOutputTgtConstraint.evaluate()
+        self.offsetOutputTgtConstraint.evaluate()
+        self.cogOutputTgtConstraint.evaluate()
+
+
+
+MOCAP_SHAPE = [{'closed': False,
+  'degree': 3,
+  'points': [[0.5, 0.0, -0.5],
+             [0.5, 0.0, -0.167],
+             [0.5, 0.0, 0.167],
+             [0.5, 0.0, 0.5]]},
+ {'closed': False,
+  'degree': 3,
+  'points': [[-0.5, 0.0, 0.5],
+             [-0.5, 0.0, 0.167],
+             [-0.5, 0.0, -0.167],
+             [-0.5, 0.0, -0.5]]},
+ {'closed': False,
+  'degree': 3,
+  'points': [[0.5, 0.0, -0.5],
+             [0.333, 0.0, -0.213],
+             [0.165, 0.0, 0.075],
+             [-0.0, 0.0, 0.364]]},
+ {'closed': False,
+  'degree': 3,
+  'points': [[-0.5, 0.0, -0.5],
+             [-0.328, 0.0, -0.212],
+             [-0.16, 0.0, 0.076],
+             [-0.0, 0.0, 0.364]]}]
+
+
+
+MASTER_SHAPE =     [
+      {
+      "points":  [
+                   [3.3166, 0.0000, 11.2661],
+                   [3.3166, 0.0000, 12.1030],
+                   [5.5276, 0.0000, 12.1030],
+                   [0.0000, 0.0000, 16.2875],
+                   [-5.5276, 0.0000, 12.1030],
+                   [-3.3166, 0.0000, 12.1030],
+                   [-3.3166, 0.0000, 11.2661],
+                 ],
+      "degree":  1,
+      "closed": False,
+      },
+      {
+      "points":  [
+                   [3.3166, 0.0000, 11.2661],
+                   [3.3166, 0.0000, 11.2661],
+                   [4.5318, 0.0000, 10.9408],
+                   [6.5792, 0.0000, 9.8464],
+                   [8.3737, 0.0000, 8.3737],
+                   [9.8464, 0.0000, 6.5792],
+                   [10.9408, 0.0000, 4.5318],
+                   [11.6147, 0.0000, 2.3103],
+                   [11.8422, 0.0000, 0.0000],
+                   [11.6147, 0.0000, -2.3103],
+                   [10.9408, 0.0000, -4.5318],
+                   [9.8464, 0.0000, -6.5792],
+                   [8.3737, 0.0000, -8.3737],
+                   [6.5792, 0.0000, -9.8464],
+                   [4.5318, 0.0000, -10.9408],
+                   [0.0000, 0.0000, -12.0087],
+                   [-4.5318, 0.0000, -10.9408],
+                   [-6.5792, 0.0000, -9.8464],
+                   [-8.3737, 0.0000, -8.3737],
+                   [-9.8464, 0.0000, -6.5792],
+                   [-10.9408, 0.0000, -4.5318],
+                   [-11.6147, 0.0000, -2.3103],
+                   [-11.8422, 0.0000, 0.0000],
+                   [-11.6147, 0.0000, 2.3103],
+                   [-10.9408, 0.0000, 4.5318],
+                   [-9.8464, 0.0000, 6.5792],
+                   [-8.3737, 0.0000, 8.3737],
+                   [-6.5792, 0.0000, 9.8464],
+                   [-4.5318, 0.0000, 10.9408],
+                   [-3.3166, 0.0000, 11.2661],
+                   [-3.3166, 0.0000, 11.2661],
+                 ],
+      "degree":  3,
+      "closed": False,
+      },
+     ]
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
 ks.registerComponent(OSSMainComponentGuide)
 ks.registerComponent(OSSMainComponentRig)
+
+

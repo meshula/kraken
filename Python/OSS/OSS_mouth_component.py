@@ -2,6 +2,8 @@ import re
 
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo
+from kraken.core.maths.rotation_order import RotationOrder
+from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -80,7 +82,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         self.an3DCtrlNames.setValueChangeCallback(self.updateAn3DControls)
 
 
- 
+
         # =========
         # Controls
         # =========
@@ -287,8 +289,8 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         mouthEndPosition = self.mouthEndCtrl.xfo.tr
 
         # Calculate Mouth Xfo
-        
-        # UpVector 
+
+        # UpVector
         mouthUpV= Xfo(Vec3(0.0, 1.0, 0.0)).tr
 
         rootToEnd = mouthEndPosition.subtract(mouthPosition).unit()

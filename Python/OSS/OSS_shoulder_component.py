@@ -1,5 +1,7 @@
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping, axisStrToIntMapping
+from kraken.core.maths.rotation_order import RotationOrder
+from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -238,6 +240,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # =========
         # Shoulder
         self.shldrCtrl = FKControl('shldr', parent=self.ctrlCmpGrp, shape="square")
+        self.shldrCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
         self.shldrCtrlSpace = self.shldrCtrl.insertCtrlSpace()
 
 
@@ -356,16 +359,16 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
             #Create some nodes just for the oupt of the blend.
             #Wish we could just make direct connections....
 
-            self.shldrMocapCtrl_link = CtrlSpace('shldrMocapCtrl_link', parent=self.outputHrcGrp)
-            self.shdlrEndMocapSpaceCtrl_link = CtrlSpace('shdlrEndMocapSpaceCtrl_link', parent=self.outputHrcGrp)
+            self.shldrMocap_link = Transform('shldrMocap_link', parent=self.outputHrcGrp)
+            self.shdlrEndMocapSpaceCtrl_link = Transform('shdlrEndMocapSpaceCtrl_link', parent=self.outputHrcGrp)
 
             self.mocapHierBlendSolver.setOutput('hierOut',
                 [
-                self.shldrMocapCtrl_link,
+                self.shldrMocap_link,
                 self.shdlrEndMocapSpaceCtrl_link,
                 ]
             )
-            self.shldrOutputTgtConstraint = self.shldrOutputTgt.constrainTo(self.shldrMocapCtrl_link)
+            self.shldrOutputTgtConstraint = self.shldrOutputTgt.constrainTo(self.shldrMocap_link)
             self.shldrEndOutputTgtConstraint = self.shldrEndOutputTgt.constrainTo(self.shdlrEndMocapSpaceCtrl_link)
         else:
             self.shldrOutputTgtConstraint = self.shldrOutputTgt.constrainTo(self.shldrCtrl)
