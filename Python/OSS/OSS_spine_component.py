@@ -76,9 +76,6 @@ class OSSSpineComponentGuide(OSSSpineComponent):
 
 
         # Guide Controls
-        self.hipsCtrl = Control('hipsPosition', parent=self.ctrlCmpGrp, shape="circle")
-        self.hipsCtrl.scalePoints(Vec3(2, 2, 2))
-        self.hipsCtrl.setColor('red')
 
         self.pelvisCtrl = Control('pelvisPosition', parent=self.ctrlCmpGrp, shape='null')
         self.torsoCtrl = Control('torsoPosition', parent=self.ctrlCmpGrp, shape='sphere')
@@ -95,7 +92,6 @@ class OSSSpineComponentGuide(OSSSpineComponent):
 
         data = {
             'pelvisPosition': Vec3(0.0, 9, 0),
-            'hipsPosition': Vec3(0.0, 10, 0),
             'torsoPosition': Vec3(0.0, 10, 0),
             'chestPosition': Vec3(0.0, 12, 0),
             'upChestPosition': Vec3(0.0, 14, 0),
@@ -120,7 +116,6 @@ class OSSSpineComponentGuide(OSSSpineComponent):
 
         data = super(OSSSpineComponentGuide, self).saveData()
 
-        data['hipsPosition'] = self.hipsCtrl.xfo.tr
         data['pelvisPosition'] = self.pelvisCtrl.xfo.tr
         data['torsoPosition'] = self.torsoCtrl.xfo.tr
         data['chestPosition'] = self.chestCtrl.xfo.tr
@@ -151,7 +146,6 @@ class OSSSpineComponentGuide(OSSSpineComponent):
 
         super(OSSSpineComponentGuide, self).loadData( data )
 
-        self.hipsCtrl.xfo.tr = data["hipsPosition"]
         self.pelvisCtrl.xfo.tr = data["pelvisPosition"]
         self.torsoCtrl.xfo.tr = data["torsoPosition"]
         self.chestCtrl.xfo.tr = data["chestPosition"]
@@ -195,7 +189,6 @@ class OSSSpineComponentGuide(OSSSpineComponent):
 
         data = super(OSSSpineComponentGuide, self).getRigBuildData()
 
-        data['hipsPosition'] = self.hipsCtrl.xfo.tr
         data['pelvisPosition'] = self.pelvisCtrl.xfo.tr
         data['torsoPosition'] = self.torsoCtrl.xfo.tr
         data['chestPosition'] = self.chestCtrl.xfo.tr
@@ -384,8 +377,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         super(OSSSpineComponentRig, self).loadData( data )
 
-        hipsPosition = data['hipsPosition']
-        hipsPosition = data['hipsPosition']
         pelvisPosition = data['pelvisPosition']
         torsoPosition = data['torsoPosition']
         chestPosition = data['chestPosition']
@@ -395,8 +386,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         self.mocap = bool(data["mocap"])
 
-        self.hipsCtrlSpace.xfo.tr = hipsPosition
-        self.hipsCtrl.xfo.tr = hipsPosition
+        self.hipsCtrlSpace.xfo.tr = pelvisPosition
+        self.hipsCtrl.xfo.tr = pelvisPosition
 
         self.pelvisCtrlSpace.xfo.tr = pelvisPosition
         # self.pelvisCtrl.xfo.tr = pelvisPosition
@@ -429,7 +420,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
             height = 2.0
             self.hipsMocapCtrl.scalePoints(Vec3(4.5, height, 2.5))
             self.hipsMocapCtrl.setColor("purpleLight")
-            self.hipsMocapCtrl.xfo.tr = hipsPosition
+            self.hipsMocapCtrl.xfo.tr = pelvisPosition
             self.hipsMocapCtrlSpace = self.hipsMocapCtrl.insertCtrlSpace()
 
             self.pelvisMocapCtrl = MCControl('pelvis', parent=self.hipsMocapCtrl, shape="circle")
