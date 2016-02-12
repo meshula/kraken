@@ -148,16 +148,19 @@ class KGraphViewWidget(GraphViewWidget):
             self.guideRig.setMetaData('backdrops', backdropData)
 
             # Write rig file
-            self.guideRig.writeRigDefinitionFile(filePath)
+            try:
+                self.guideRig.writeRigDefinitionFile(filePath)
+                settings = self.window().getSettings()
+                settings.beginGroup('Files')
+                settings.setValue("lastFilePath", filePath)
+                settings.endGroup()
+                self.openedFile = filePath
 
-            settings = self.window().getSettings()
-            settings.beginGroup('Files')
-            settings.setValue("lastFilePath", filePath)
-            settings.endGroup()
+                self.reportMessage('Saved Rig file: ' + filePath, level='information')
 
-            self.openedFile = filePath
-
-            self.reportMessage('Saved Rig file: ' + filePath, level='information')
+            except Exception as e:
+                self.reportMessage('Error Saving Rig File', level='error', exception=e, timeOut=0)
+                return False
 
             return filePath
 
@@ -423,7 +426,7 @@ class KGraphViewWidget(GraphViewWidget):
             statusBar.removeWidget(label)
 
         if exception is not None:
-            fullMessage = level[0].upper() + level[1:] + ": " + message + '; ' + ', '.join([x for x in exception.args])
+            fullMessage = level[0].upper() + level[1:] + ": " + message + '; ' + ', '.join([str(x) for x in exception.args])
         else:
             fullMessage = level[0].upper() + level[1:] + ": " + message
 
