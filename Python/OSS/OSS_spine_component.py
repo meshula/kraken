@@ -386,11 +386,11 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         self.mocap = bool(data["mocap"])
 
-        self.hipsCtrlSpace.xfo.tr = pelvisPosition
-        self.hipsCtrl.xfo.tr = pelvisPosition
-
         self.pelvisCtrlSpace.xfo.tr = pelvisPosition
-        # self.pelvisCtrl.xfo.tr = pelvisPosition
+
+        self.hipsCtrlSpace.xfo.tr = torsoPosition
+        self.hipsCtrl.xfo.tr = torsoPosition
+
 
         self.torsoCtrlSpace.xfo.tr = torsoPosition
         self.torsoCtrl.xfo.tr = torsoPosition
