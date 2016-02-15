@@ -324,16 +324,29 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
     def setNumDeformers(self, numDeformers):
 
+        for output in reversed(self.neckOutputs):
+            output.getParent().removeChild(output)
+        del self.neckOutputs[:] #Clear since this array obj is tied to output already
+
+        for joint in reversed(self.deformerJoints):
+            joint.getParent().removeChild(joint)
+        del self.deformerJoints[:] #Clear since this array obj is tied to output already
+
         # Add new deformers and outputs
-        for i in xrange(len(self.neckOutputs), numDeformers):
+        for i in xrange(numDeformers):
             name = 'neck' + str(i + 1).zfill(2)
             neckOutput = ComponentOutput(name, parent=self.outputHrcGrp)
             self.neckOutputs.append(neckOutput)
 
-        for i in xrange(len(self.deformerJoints), numDeformers):
-            name = 'neck' + str(i + 1).zfill(2)
+        for i in xrange(numDeformers):
+
+            if i == numDeformers-1:
+                name = 'head'
+            else:
+                name = 'neck' + str(i + 1).zfill(2)
             neckDef = Joint(name, parent=self.defCmpGrp)
             neckDef.setComponent(self)
+
             self.deformerJoints.append(neckDef)
 
         if hasattr(self, 'ZSplineNeckCanvasOp'):  # Check in case this is ever called from Guide callback
@@ -466,7 +479,6 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.ZSplineNeckCanvasOp.setInput('head', self.headCtrlSpace_link)
             self.ZSplineNeckCanvasOp.setInput('neckHandle', self.neckHandleCtrlSpace_link)
             self.ZSplineNeckCanvasOp.setInput('headHandle', self.headHandleCtrlSpace_link)
-
 
         self.neckBaseOutputConstraint = self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0], maintainOffset=True)
         self.neckEndOutputConstraint = self.neckEndOutputTgt.constrainTo(self.neckOutputs[-1], maintainOffset=True)
