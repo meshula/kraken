@@ -710,7 +710,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
 
         # Add Deformer Joint Constrain
-        self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+'DeformerJointsKLOpBlach', 'MultiPoseConstraintSolver', 'Kraken')
+        self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
         # Add Att Inputs
         self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
