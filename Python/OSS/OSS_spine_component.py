@@ -172,11 +172,13 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         if mocap:
             if self.mocapInputAttr is None:
                 self.mocapInputAttr = self.createInput('mocap', dataType='Float', parent=self.cmpInputAttrGrp)
+                self.mocap = True
 
         else:
             if self.mocapInputAttr is not None:
                 self.deleteInput('mocap', parent=self.cmpInputAttrGrp)
                 self.mocapInputAttr = None
+                self.mocap = False
 
 
     def getRigBuildData(self):

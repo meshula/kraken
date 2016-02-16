@@ -175,12 +175,14 @@ class OSSMainComponentGuide(OSSMainComponent):
                 self.mocapIconCtrl.setColor("purpleLight")
                 self.mocapIconCtrl.scalePoints(Vec3(2.0, 2.0, 2.0))
                 self.mocapIconCtrl.xfo.tr = Vec3(0.0, 0.0, 3.0)  #How to load default in this callback without access to data?
+                self.mocap = True
 
 
         else:
             if self.mocapIconCtrl is not None:
                 self.mocapIconCtrl.getParent().removeChild(self.mocapIconCtrl) #There should be a simpler way!
                 self.mocapIconCtrl = None
+                self.mocap = False
 
 
 

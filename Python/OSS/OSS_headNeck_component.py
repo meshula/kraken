@@ -119,7 +119,6 @@ class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
         data['headHandlePosition'] = self.headHandleCtrl.xfo.tr
         data['headPosition'] = self.headCtrl.xfo.tr
 
-
         return data
 
 

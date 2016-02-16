@@ -187,11 +187,13 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         if mocap:
             if self.limbMocapInputAttr is None:
                 self.limbMocapInputAttr = self.createInput('limbMocap', dataType='Float', parent=self.cmpInputAttrGrp)
+                self.mocap = True
 
         else:
             if self.limbMocapInputAttr is not None:
                 self.deleteInput('limbMocap', parent=self.cmpInputAttrGrp)
                 self.limbMocapInputAttr = None
+                self.mocap = False
 
 
 
