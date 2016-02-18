@@ -144,13 +144,15 @@ class CanvasOperator(Operator):
 
         try:
             binding = host.createBindingToPreset(self.canvasPresetPath, portVals)
+
+            binding.execute()
         except:
             print("Possible problem with Canvas operator \""+self.getName()+"\" port values:")
             import pprint
             pprint.pprint(debug, width=800)
             raise
 
-        binding.execute()
+
 
         # Now put the computed values out to the connected output objects.
         def setRTVal(obj, rtval):
