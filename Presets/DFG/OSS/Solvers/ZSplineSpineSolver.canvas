@@ -2,18 +2,11 @@
   "objectType" : "Graph",
   "metadata" : {
     "maya_id" : "2",
-    "uiGraphZoom" : "{\n  \"value\" : 0.741372287273407\n  }",
-    "uiGraphPan" : "{\n  \"x\" : 332.7240905761719,\n  \"y\" : -340.361328125\n  }"
+    "uiGraphZoom" : "{\n  \"value\" : 0.5423529744148254\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 140.1195646510029,\n  \"y\" : -332.1014540066162\n  }"
     },
   "title" : "ZSplineSpineSolver",
   "ports" : [
-    {
-      "objectType" : "Port",
-      "nodePortType" : "In",
-      "name" : "outputs",
-      "execPortType" : "Out",
-      "typeSpec" : "Mat44[]"
-      },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
@@ -125,17 +118,35 @@
       "name" : "neckRest",
       "execPortType" : "In",
       "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "mat44Array",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {},
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 1
+        },
+      "name" : "compressionAmt",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
       }
     ],
   "extDeps" : {
     "Curves" : "*"
     },
-  "presetGUID" : "BFB1977C06CEE7C6AA512467139908AA",
+  "presetGUID" : "81FCCFACC9ED4E236193827FD346EEE3",
   "nodes" : [
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-92.1905,\"y\":629.803}"
+        "uiGraphPos" : "{\"x\":-208.313,\"y\":868.159}"
         },
       "name" : "assemble",
       "ports" : [
@@ -235,116 +246,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":776.528,\"y\":244.274}"
-        },
-      "name" : "GetEmptyDebugShape2",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "this"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "name"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
-          }
-        ],
-      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.GetEmptyDebugShape",
-      "presetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6"
-      },
-    {
-      "objectType" : "User",
-      "metadata" : {
-        "uiTitle" : "Drawing",
-        "uiGraphPos" : "{\"x\":753.448,\"y\":80.90900000000001}",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiGraphSize" : "{\"w\":611.199,\"h\":420.479}"
-        },
-      "name" : "uiBackDropTheDrivenRig22",
-      "ports" : []
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":776.9160000000001,\"y\":136.871}",
-        "uiCollapsedState" : "0"
-        },
-      "name" : "CreateSegs",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "this"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "color"
-          }
-        ],
-      "executable" : "OSS.Exts.Curves.ZSpline.createSegsOnZSpline",
-      "presetGUID" : "D8E844DE0169A7D9BB304C9F8DDF30A2"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":1052.66,\"y\":161.581}",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiCollapsedState" : "0"
-        },
-      "name" : "DrawCurve",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "points"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "color"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "this"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "dummyResult"
-          }
-        ],
-      "executable" : "OSS.Exts.Curves.ZSpline.drawCurve",
-      "presetGUID" : "B3D1DFFCE15CC7040DCD73D99F2C3098"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":348.036,\"y\":521.46}"
+        "uiGraphPos" : "{\"x\":374.52,\"y\":825.008}"
         },
       "name" : "buildZSpline",
       "ports" : [
@@ -403,78 +305,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":556.878,\"y\":544.265}",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiCollapsedState" : "0"
-        },
-      "name" : "createXfosOnZSpline",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "this"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Float32" : 0
-            },
-          "name" : "keepCurveLen"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Float32" : 1
-            },
-          "name" : "keepArcLen"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "medianXfos"
-          }
-        ],
-      "executable" : "OSS.Exts.Curves.ZSpline.createXfosOnZSplineSegments",
-      "presetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":1235.8,\"y\":324.887}"
-        },
-      "name" : "Add_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "lhs"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "rhs"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
-          }
-        ],
-      "executable" : "Fabric.Core.Math.Add",
-      "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":1336.45,\"y\":742.684}"
+        "uiGraphPos" : "{\"x\":942.222,\"y\":1523.15}"
         },
       "name" : "convertXfoToMat44",
       "ports" : [
@@ -521,7 +352,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":182.478,\"y\":831.352}"
+        "uiGraphPos" : "{\"x\":162.077,\"y\":972.56}"
         },
       "name" : "Convert_2",
       "ports" : [
@@ -580,7 +411,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":50.6211,\"y\":817.356}"
+        "uiGraphPos" : "{\"x\":13.7618,\"y\":879.606}"
         },
       "name" : "Size_1",
       "ports" : [
@@ -601,116 +432,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1077.4,\"y\":882.143}"
-        },
-      "name" : "Set_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "this"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "index"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "value"
-          }
-        ],
-      "definition" : {
-        "objectType" : "Func",
-        "metadata" : {
-          "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Containers/LocalL4UInt8Array.html",
-          "uiTooltip" : "sets the value stored at an index\n\n Supported by LocalL4UInt8Array,LocalL8UInt8Array,LocalL16UInt8Array,LocalL32UInt8Array,LocalL64UInt8Array"
-          },
-        "title" : "Set",
-        "ports" : [
-          {
-            "objectType" : "Port",
-            "nodePortType" : "IO",
-            "name" : "this",
-            "execPortType" : "IO",
-            "typeSpec" : "$TYPE$[]"
-            },
-          {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
-            "name" : "index",
-            "execPortType" : "In",
-            "typeSpec" : "UInt32"
-            },
-          {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
-            "name" : "value",
-            "execPortType" : "In",
-            "typeSpec" : "$TYPE$"
-            }
-          ],
-        "extDeps" : {
-          "Containers" : "*"
-          },
-        "code" : "require Containers;
-
-dfgEntry {
-  this[index] =  value;
-}
-"
-        }
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":647.008,\"y\":973.784}"
-        },
-      "name" : "Sub_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "lhs"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "rhs"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
-          }
-        ],
-      "executable" : "Fabric.Core.Math.Sub",
-      "presetGUID" : "F9754B19F43BC017056B8BA291E7B8B4"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":499.815,\"y\":975.68}"
-        },
-      "name" : "UInt32_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "UInt32" : 1
-            },
-          "name" : "value"
-          }
-        ],
-      "executable" : "Fabric.Core.Constants.UInt32",
-      "presetGUID" : "522214488375FF199C3D64A3DBF3C762"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":-152.249,\"y\":1154.66}"
+        "uiGraphPos" : "{\"x\":-305.838,\"y\":1059.62}"
         },
       "name" : "assemble_2",
       "ports" : [
@@ -810,7 +532,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":324.989,\"y\":1064.04}"
+        "uiGraphPos" : "{\"x\":342.223,\"y\":1078.62}"
         },
       "name" : "buildZSpline_2",
       "ports" : [
@@ -866,7 +588,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":37.2939,\"y\":1481.2}",
+        "uiGraphPos" : "{\"x\":97.1455,\"y\":1258.89}",
         "uiCollapsedState" : "0"
         },
       "name" : "Convert_3",
@@ -926,7 +648,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-92.706,\"y\":1386.2}",
+        "uiGraphPos" : "{\"x\":-63.346,\"y\":1250.06}",
         "uiCollapsedState" : "0"
         },
       "name" : "Size_2",
@@ -948,7 +670,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-276.706,\"y\":1440.11}"
+        "uiGraphPos" : "{\"x\":-64.39619999999999,\"y\":1339.77}"
         },
       "name" : "Scalar_1",
       "ports" : [
@@ -967,7 +689,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":577.49,\"y\":751.0119999999999}",
+        "uiGraphPos" : "{\"x\":551.603,\"y\":976.154}",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiCollapsedState" : "0"
@@ -996,7 +718,7 @@ dfgEntry {
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "Float32" : 1
+            "Float32" : 0
             },
           "name" : "keepArcLen"
           },
@@ -1116,7 +838,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":853.814,\"y\":980.4210000000001}"
+        "uiGraphPos" : "{\"x\":394.382,\"y\":1563.91}"
         },
       "name" : "SetFromMat44_1",
       "ports" : [
@@ -1133,11 +855,399 @@ dfgEntry {
         ],
       "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
       "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":563.02,\"y\":1546.12}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "switchSpace",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "UInt32" : 1
+            },
+          "name" : "boneAxis"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "UInt32" : 5
+            },
+          "name" : "upAxis"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "switchSpace",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "boneAxis",
+            "execPortType" : "In",
+            "typeSpec" : "UInt32"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "upAxis",
+            "execPortType" : "In",
+            "typeSpec" : "UInt32"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "Xfo"
+            }
+          ],
+        "extDeps" : {},
+        "code" : "// Gotta be a better way
+function Vec3 getAxisAsVector(in UInt32 axisIndex)
+{
+  Vec3 vec;
+  switch (axisIndex)
+  {
+    case 0:
+      return Vec3(1.0, 0.0, 0.0);
+    case 1:
+      return Vec3(0.0, 1.0, 0.0);
+    case 2:
+      return Vec3(0.0, 0.0, 1.0);
+    case 3:
+      return Vec3(-1.0, 0.0, 0.0);
+    case 4:
+      return Vec3(0.0, -1.0, 0.0);
+    case 5:
+      return Vec3(0.0, 0.0, -1.0);
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxisAsVector() invalid axisIndex\");
+  return Vec3(1.0, 0.0, 0.0);
+}
+
+function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return ori.getXaxis();
+    case 1:
+      return ori.getYaxis();
+    case 2:
+      return ori.getZaxis();
+    case 3:
+      return ori.getXaxis().negate();
+    case 4:
+      return ori.getYaxis().negate();
+    case 5:
+      return ori.getZaxis().negate();
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxis() invalid axisIndex\");
+  return ori.getXaxis();
+}
+
+
+// Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
+dfgEntry {
+  Vec3 aimAxisVec = getAxis(this.ori, boneAxis).unit();
+  Vec3 upAxisVec = getAxis(this.ori, upAxis).unit();
+  Vec3 normalAxisVec = upAxisVec.cross(aimAxisVec).unit();
+  Mat33 mat(aimAxisVec, normalAxisVec, upAxisVec);
+  this.ori.setFromMat33(mat.transpose());
+}
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":408.983,\"y\":1446.46}"
+        },
+      "name" : "SetFromMat44_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "m"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
+      "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":798.697,\"y\":1455.24}"
+        },
+      "name" : "Set_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "index"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Containers/LocalL4UInt8Array.html",
+          "uiTooltip" : "sets the value stored at an index\n\n Supported by LocalL4UInt8Array,LocalL8UInt8Array,LocalL16UInt8Array,LocalL32UInt8Array,LocalL64UInt8Array"
+          },
+        "title" : "Set",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "$TYPE$[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "index",
+            "execPortType" : "In",
+            "typeSpec" : "UInt32"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "value",
+            "execPortType" : "In",
+            "typeSpec" : "$TYPE$"
+            }
+          ],
+        "extDeps" : {
+          "Containers" : "*"
+          },
+        "code" : "require Containers;
+
+dfgEntry {
+  this[index] =  value;
+}
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":789.497,\"y\":1560.0}"
+        },
+      "name" : "Set_3",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "index"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Containers/LocalL4UInt8Array.html",
+          "uiTooltip" : "sets the value stored at an index\n\n Supported by LocalL4UInt8Array,LocalL8UInt8Array,LocalL16UInt8Array,LocalL32UInt8Array,LocalL64UInt8Array"
+          },
+        "title" : "Set",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "$TYPE$[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "index",
+            "execPortType" : "In",
+            "typeSpec" : "UInt32"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "value",
+            "execPortType" : "In",
+            "typeSpec" : "$TYPE$"
+            }
+          ],
+        "extDeps" : {
+          "Containers" : "*"
+          },
+        "code" : "require Containers;
+
+dfgEntry {
+  this[index] =  value;
+}
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":564.572,\"y\":1426.97}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "switchSpace_3",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "UInt32" : 1
+            },
+          "name" : "boneAxis"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "UInt32" : 5
+            },
+          "name" : "upAxis"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "switchSpace",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "boneAxis",
+            "execPortType" : "In",
+            "typeSpec" : "UInt32"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "upAxis",
+            "execPortType" : "In",
+            "typeSpec" : "UInt32"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "Xfo"
+            }
+          ],
+        "extDeps" : {},
+        "code" : "// Gotta be a better way
+function Vec3 getAxisAsVector(in UInt32 axisIndex)
+{
+  Vec3 vec;
+  switch (axisIndex)
+  {
+    case 0:
+      return Vec3(1.0, 0.0, 0.0);
+    case 1:
+      return Vec3(0.0, 1.0, 0.0);
+    case 2:
+      return Vec3(0.0, 0.0, 1.0);
+    case 3:
+      return Vec3(-1.0, 0.0, 0.0);
+    case 4:
+      return Vec3(0.0, -1.0, 0.0);
+    case 5:
+      return Vec3(0.0, 0.0, -1.0);
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxisAsVector() invalid axisIndex\");
+  return Vec3(1.0, 0.0, 0.0);
+}
+
+function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return ori.getXaxis();
+    case 1:
+      return ori.getYaxis();
+    case 2:
+      return ori.getZaxis();
+    case 3:
+      return ori.getXaxis().negate();
+    case 4:
+      return ori.getYaxis().negate();
+    case 5:
+      return ori.getZaxis().negate();
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxis() invalid axisIndex\");
+  return ori.getXaxis();
+}
+
+
+// Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
+dfgEntry {
+  Vec3 aimAxisVec = getAxis(this.ori, boneAxis).unit();
+  Vec3 upAxisVec = getAxis(this.ori, upAxis).unit();
+  Vec3 normalAxisVec = upAxisVec.cross(aimAxisVec).unit();
+  Mat33 mat(aimAxisVec, normalAxisVec, upAxisVec);
+  this.ori.setFromMat33(mat.transpose());
+}
+"
+        }
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "Swap out first and Last",
+        "uiGraphPos" : "{\"x\":351.3,\"y\":1354.12}",
+        "uiGraphSize" : "{\"w\":831.542,\"h\":343.249}"
+        },
+      "name" : "backDrop",
+      "ports" : []
       }
     ],
   "connections" : {
     "pelvis" : [
-      "assemble.pelvis"
+      "assemble.pelvis",
+      "SetFromMat44_2.m"
       ],
     "torso" : [
       "assemble.torso"
@@ -1170,41 +1280,26 @@ dfgEntry {
     "neckRest" : [
       "assemble_2.neck"
       ],
+    "compressionAmt" : [
+      "createXfosOnZSpline_2.compressionAmt"
+      ],
     "assemble.result" : [
       "buildZSpline.mat44s",
       "Size_1.this"
       ],
-    "GetEmptyDebugShape2.result" : [
-      "DrawCurve.this"
-      ],
-    "CreateSegs.result" : [
-      "DrawCurve.points"
-      ],
-    "CreateSegs.color" : [
-      "DrawCurve.color"
-      ],
-    "DrawCurve.dummyResult" : [
-      "Add_1.lhs"
-      ],
     "buildZSpline.result" : [
-      "createXfosOnZSpline.this",
       "createXfosOnZSpline_2.this"
       ],
     "convertXfoToMat44.mat44Array" : [
-      "outputs"
+      "mat44Array"
       ],
     "Convert_2.result" : [
       "buildZSpline_2.defSegs",
       "buildZSpline.defSegs"
       ],
     "Size_1.result" : [
-      "Convert_2.size"
-      ],
-    "Sub_1.result" : [
-      "Set_1.index"
-      ],
-    "UInt32_1.value" : [
-      "Sub_1.rhs"
+      "Convert_2.size",
+      "Set_3.index"
       ],
     "assemble_2.result" : [
       "buildZSpline_2.mat44s",
@@ -1224,10 +1319,25 @@ dfgEntry {
       "Convert_3.defaultVal"
       ],
     "createXfosOnZSpline_2.result" : [
-      "convertXfoToMat44.xfoArray"
+      "Set_2.this"
       ],
     "SetFromMat44_1.this" : [
-      "Set_1.value"
+      "switchSpace.this"
+      ],
+    "switchSpace.this" : [
+      "Set_3.value"
+      ],
+    "SetFromMat44_2.this" : [
+      "switchSpace_3.this"
+      ],
+    "Set_2.this" : [
+      "Set_3.this"
+      ],
+    "Set_3.this" : [
+      "convertXfoToMat44.xfoArray"
+      ],
+    "switchSpace_3.this" : [
+      "Set_2.value"
       ]
     },
   "requiredPresets" : {
@@ -1235,18 +1345,11 @@ dfgEntry {
       "objectType" : "Graph",
       "metadata" : {
         "maya_id" : "2",
-        "uiGraphZoom" : "{\n  \"value\" : 0.741372287273407\n  }",
-        "uiGraphPan" : "{\n  \"x\" : 332.7240905761719,\n  \"y\" : -340.361328125\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 0.5423529744148254\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 140.1195646510029,\n  \"y\" : -332.1014540066162\n  }"
         },
       "title" : "ZSplineSpineSolver",
       "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "outputs",
-          "execPortType" : "Out",
-          "typeSpec" : "Mat44[]"
-          },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
@@ -1358,17 +1461,35 @@ dfgEntry {
           "name" : "neckRest",
           "execPortType" : "In",
           "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "mat44Array",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {},
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "compressionAmt",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
           }
         ],
       "extDeps" : {
         "Curves" : "*"
         },
-      "presetGUID" : "BFB1977C06CEE7C6AA512467139908AA",
+      "presetGUID" : "81FCCFACC9ED4E236193827FD346EEE3",
       "nodes" : [
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":-92.1905,\"y\":629.803}"
+            "uiGraphPos" : "{\"x\":-208.313,\"y\":868.159}"
             },
           "name" : "assemble",
           "ports" : [
@@ -1468,116 +1589,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":776.528,\"y\":244.274}"
-            },
-          "name" : "GetEmptyDebugShape2",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "this"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "name"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "result"
-              }
-            ],
-          "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.GetEmptyDebugShape",
-          "presetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6"
-          },
-        {
-          "objectType" : "User",
-          "metadata" : {
-            "uiTitle" : "Drawing",
-            "uiGraphPos" : "{\"x\":753.448,\"y\":80.90900000000001}",
-            "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-            "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-            "uiGraphSize" : "{\"w\":611.199,\"h\":420.479}"
-            },
-          "name" : "uiBackDropTheDrivenRig22",
-          "ports" : []
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":776.9160000000001,\"y\":136.871}",
-            "uiCollapsedState" : "0"
-            },
-          "name" : "CreateSegs",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "result"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "this"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "color"
-              }
-            ],
-          "executable" : "OSS.Exts.Curves.ZSpline.createSegsOnZSpline",
-          "presetGUID" : "D8E844DE0169A7D9BB304C9F8DDF30A2"
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":1052.66,\"y\":161.581}",
-            "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-            "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-            "uiCollapsedState" : "0"
-            },
-          "name" : "DrawCurve",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "points"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "color"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "result"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "this"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "dummyResult"
-              }
-            ],
-          "executable" : "OSS.Exts.Curves.ZSpline.drawCurve",
-          "presetGUID" : "B3D1DFFCE15CC7040DCD73D99F2C3098"
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":348.036,\"y\":521.46}"
+            "uiGraphPos" : "{\"x\":374.52,\"y\":825.008}"
             },
           "name" : "buildZSpline",
           "ports" : [
@@ -1636,78 +1648,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":556.878,\"y\":544.265}",
-            "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-            "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-            "uiCollapsedState" : "0"
-            },
-          "name" : "createXfosOnZSpline",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "this"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "result"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "defaultValues" : {
-                "Float32" : 0
-                },
-              "name" : "keepCurveLen"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "defaultValues" : {
-                "Float32" : 1
-                },
-              "name" : "keepArcLen"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "medianXfos"
-              }
-            ],
-          "executable" : "OSS.Exts.Curves.ZSpline.createXfosOnZSplineSegments",
-          "presetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B"
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":1235.8,\"y\":324.887}"
-            },
-          "name" : "Add_1",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "lhs"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "rhs"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "result"
-              }
-            ],
-          "executable" : "Fabric.Core.Math.Add",
-          "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7"
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":1336.45,\"y\":742.684}"
+            "uiGraphPos" : "{\"x\":942.222,\"y\":1523.15}"
             },
           "name" : "convertXfoToMat44",
           "ports" : [
@@ -1754,7 +1695,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":182.478,\"y\":831.352}"
+            "uiGraphPos" : "{\"x\":162.077,\"y\":972.56}"
             },
           "name" : "Convert_2",
           "ports" : [
@@ -1813,7 +1754,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":50.6211,\"y\":817.356}"
+            "uiGraphPos" : "{\"x\":13.7618,\"y\":879.606}"
             },
           "name" : "Size_1",
           "ports" : [
@@ -1834,116 +1775,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1077.4,\"y\":882.143}"
-            },
-          "name" : "Set_1",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "this"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "index"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "value"
-              }
-            ],
-          "definition" : {
-            "objectType" : "Func",
-            "metadata" : {
-              "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Containers/LocalL4UInt8Array.html",
-              "uiTooltip" : "sets the value stored at an index\n\n Supported by LocalL4UInt8Array,LocalL8UInt8Array,LocalL16UInt8Array,LocalL32UInt8Array,LocalL64UInt8Array"
-              },
-            "title" : "Set",
-            "ports" : [
-              {
-                "objectType" : "Port",
-                "nodePortType" : "IO",
-                "name" : "this",
-                "execPortType" : "IO",
-                "typeSpec" : "$TYPE$[]"
-                },
-              {
-                "objectType" : "Port",
-                "nodePortType" : "Out",
-                "name" : "index",
-                "execPortType" : "In",
-                "typeSpec" : "UInt32"
-                },
-              {
-                "objectType" : "Port",
-                "nodePortType" : "Out",
-                "name" : "value",
-                "execPortType" : "In",
-                "typeSpec" : "$TYPE$"
-                }
-              ],
-            "extDeps" : {
-              "Containers" : "*"
-              },
-            "code" : "require Containers;
-
-dfgEntry {
-  this[index] =  value;
-}
-"
-            }
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":647.008,\"y\":973.784}"
-            },
-          "name" : "Sub_1",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "lhs"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "rhs"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "result"
-              }
-            ],
-          "executable" : "Fabric.Core.Math.Sub",
-          "presetGUID" : "F9754B19F43BC017056B8BA291E7B8B4"
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":499.815,\"y\":975.68}"
-            },
-          "name" : "UInt32_1",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "defaultValues" : {
-                "UInt32" : 1
-                },
-              "name" : "value"
-              }
-            ],
-          "executable" : "Fabric.Core.Constants.UInt32",
-          "presetGUID" : "522214488375FF199C3D64A3DBF3C762"
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":-152.249,\"y\":1154.66}"
+            "uiGraphPos" : "{\"x\":-305.838,\"y\":1059.62}"
             },
           "name" : "assemble_2",
           "ports" : [
@@ -2043,7 +1875,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":324.989,\"y\":1064.04}"
+            "uiGraphPos" : "{\"x\":342.223,\"y\":1078.62}"
             },
           "name" : "buildZSpline_2",
           "ports" : [
@@ -2099,7 +1931,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":37.2939,\"y\":1481.2}",
+            "uiGraphPos" : "{\"x\":97.1455,\"y\":1258.89}",
             "uiCollapsedState" : "0"
             },
           "name" : "Convert_3",
@@ -2159,7 +1991,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":-92.706,\"y\":1386.2}",
+            "uiGraphPos" : "{\"x\":-63.346,\"y\":1250.06}",
             "uiCollapsedState" : "0"
             },
           "name" : "Size_2",
@@ -2181,7 +2013,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":-276.706,\"y\":1440.11}"
+            "uiGraphPos" : "{\"x\":-64.39619999999999,\"y\":1339.77}"
             },
           "name" : "Scalar_1",
           "ports" : [
@@ -2200,7 +2032,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":577.49,\"y\":751.0119999999999}",
+            "uiGraphPos" : "{\"x\":551.603,\"y\":976.154}",
             "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
             "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
             "uiCollapsedState" : "0"
@@ -2229,7 +2061,7 @@ dfgEntry {
               "objectType" : "InstPort",
               "nodePortType" : "In",
               "defaultValues" : {
-                "Float32" : 1
+                "Float32" : 0
                 },
               "name" : "keepArcLen"
               },
@@ -2349,7 +2181,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":853.814,\"y\":980.4210000000001}"
+            "uiGraphPos" : "{\"x\":394.382,\"y\":1563.91}"
             },
           "name" : "SetFromMat44_1",
           "ports" : [
@@ -2366,11 +2198,399 @@ dfgEntry {
             ],
           "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
           "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":563.02,\"y\":1546.12}",
+            "uiCollapsedState" : "0"
+            },
+          "name" : "switchSpace",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "UInt32" : 1
+                },
+              "name" : "boneAxis"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "UInt32" : 5
+                },
+              "name" : "upAxis"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "switchSpace",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "boneAxis",
+                "execPortType" : "In",
+                "typeSpec" : "UInt32"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "upAxis",
+                "execPortType" : "In",
+                "typeSpec" : "UInt32"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "IO",
+                "name" : "this",
+                "execPortType" : "IO",
+                "typeSpec" : "Xfo"
+                }
+              ],
+            "extDeps" : {},
+            "code" : "// Gotta be a better way
+function Vec3 getAxisAsVector(in UInt32 axisIndex)
+{
+  Vec3 vec;
+  switch (axisIndex)
+  {
+    case 0:
+      return Vec3(1.0, 0.0, 0.0);
+    case 1:
+      return Vec3(0.0, 1.0, 0.0);
+    case 2:
+      return Vec3(0.0, 0.0, 1.0);
+    case 3:
+      return Vec3(-1.0, 0.0, 0.0);
+    case 4:
+      return Vec3(0.0, -1.0, 0.0);
+    case 5:
+      return Vec3(0.0, 0.0, -1.0);
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxisAsVector() invalid axisIndex\");
+  return Vec3(1.0, 0.0, 0.0);
+}
+
+function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return ori.getXaxis();
+    case 1:
+      return ori.getYaxis();
+    case 2:
+      return ori.getZaxis();
+    case 3:
+      return ori.getXaxis().negate();
+    case 4:
+      return ori.getYaxis().negate();
+    case 5:
+      return ori.getZaxis().negate();
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxis() invalid axisIndex\");
+  return ori.getXaxis();
+}
+
+
+// Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
+dfgEntry {
+  Vec3 aimAxisVec = getAxis(this.ori, boneAxis).unit();
+  Vec3 upAxisVec = getAxis(this.ori, upAxis).unit();
+  Vec3 normalAxisVec = upAxisVec.cross(aimAxisVec).unit();
+  Mat33 mat(aimAxisVec, normalAxisVec, upAxisVec);
+  this.ori.setFromMat33(mat.transpose());
+}
+"
+            }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":408.983,\"y\":1446.46}"
+            },
+          "name" : "SetFromMat44_2",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "m"
+              }
+            ],
+          "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
+          "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":798.697,\"y\":1455.24}"
+            },
+          "name" : "Set_2",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "index"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "metadata" : {
+              "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Containers/LocalL4UInt8Array.html",
+              "uiTooltip" : "sets the value stored at an index\n\n Supported by LocalL4UInt8Array,LocalL8UInt8Array,LocalL16UInt8Array,LocalL32UInt8Array,LocalL64UInt8Array"
+              },
+            "title" : "Set",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "IO",
+                "name" : "this",
+                "execPortType" : "IO",
+                "typeSpec" : "$TYPE$[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "index",
+                "execPortType" : "In",
+                "typeSpec" : "UInt32"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "value",
+                "execPortType" : "In",
+                "typeSpec" : "$TYPE$"
+                }
+              ],
+            "extDeps" : {
+              "Containers" : "*"
+              },
+            "code" : "require Containers;
+
+dfgEntry {
+  this[index] =  value;
+}
+"
+            }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":789.497,\"y\":1560.0}"
+            },
+          "name" : "Set_3",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "index"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "metadata" : {
+              "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Containers/LocalL4UInt8Array.html",
+              "uiTooltip" : "sets the value stored at an index\n\n Supported by LocalL4UInt8Array,LocalL8UInt8Array,LocalL16UInt8Array,LocalL32UInt8Array,LocalL64UInt8Array"
+              },
+            "title" : "Set",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "IO",
+                "name" : "this",
+                "execPortType" : "IO",
+                "typeSpec" : "$TYPE$[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "index",
+                "execPortType" : "In",
+                "typeSpec" : "UInt32"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "value",
+                "execPortType" : "In",
+                "typeSpec" : "$TYPE$"
+                }
+              ],
+            "extDeps" : {
+              "Containers" : "*"
+              },
+            "code" : "require Containers;
+
+dfgEntry {
+  this[index] =  value;
+}
+"
+            }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":564.572,\"y\":1426.97}",
+            "uiCollapsedState" : "0"
+            },
+          "name" : "switchSpace_3",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "UInt32" : 1
+                },
+              "name" : "boneAxis"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "UInt32" : 5
+                },
+              "name" : "upAxis"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "switchSpace",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "boneAxis",
+                "execPortType" : "In",
+                "typeSpec" : "UInt32"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "upAxis",
+                "execPortType" : "In",
+                "typeSpec" : "UInt32"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "IO",
+                "name" : "this",
+                "execPortType" : "IO",
+                "typeSpec" : "Xfo"
+                }
+              ],
+            "extDeps" : {},
+            "code" : "// Gotta be a better way
+function Vec3 getAxisAsVector(in UInt32 axisIndex)
+{
+  Vec3 vec;
+  switch (axisIndex)
+  {
+    case 0:
+      return Vec3(1.0, 0.0, 0.0);
+    case 1:
+      return Vec3(0.0, 1.0, 0.0);
+    case 2:
+      return Vec3(0.0, 0.0, 1.0);
+    case 3:
+      return Vec3(-1.0, 0.0, 0.0);
+    case 4:
+      return Vec3(0.0, -1.0, 0.0);
+    case 5:
+      return Vec3(0.0, 0.0, -1.0);
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxisAsVector() invalid axisIndex\");
+  return Vec3(1.0, 0.0, 0.0);
+}
+
+function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return ori.getXaxis();
+    case 1:
+      return ori.getYaxis();
+    case 2:
+      return ori.getZaxis();
+    case 3:
+      return ori.getXaxis().negate();
+    case 4:
+      return ori.getYaxis().negate();
+    case 5:
+      return ori.getZaxis().negate();
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxis() invalid axisIndex\");
+  return ori.getXaxis();
+}
+
+
+// Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
+dfgEntry {
+  Vec3 aimAxisVec = getAxis(this.ori, boneAxis).unit();
+  Vec3 upAxisVec = getAxis(this.ori, upAxis).unit();
+  Vec3 normalAxisVec = upAxisVec.cross(aimAxisVec).unit();
+  Mat33 mat(aimAxisVec, normalAxisVec, upAxisVec);
+  this.ori.setFromMat33(mat.transpose());
+}
+"
+            }
+          },
+        {
+          "objectType" : "User",
+          "metadata" : {
+            "uiTitle" : "Swap out first and Last",
+            "uiGraphPos" : "{\"x\":351.3,\"y\":1354.12}",
+            "uiGraphSize" : "{\"w\":831.542,\"h\":343.249}"
+            },
+          "name" : "backDrop",
+          "ports" : []
           }
         ],
       "connections" : {
         "pelvis" : [
-          "assemble.pelvis"
+          "assemble.pelvis",
+          "SetFromMat44_2.m"
           ],
         "torso" : [
           "assemble.torso"
@@ -2403,41 +2623,26 @@ dfgEntry {
         "neckRest" : [
           "assemble_2.neck"
           ],
+        "compressionAmt" : [
+          "createXfosOnZSpline_2.compressionAmt"
+          ],
         "assemble.result" : [
           "buildZSpline.mat44s",
           "Size_1.this"
           ],
-        "GetEmptyDebugShape2.result" : [
-          "DrawCurve.this"
-          ],
-        "CreateSegs.result" : [
-          "DrawCurve.points"
-          ],
-        "CreateSegs.color" : [
-          "DrawCurve.color"
-          ],
-        "DrawCurve.dummyResult" : [
-          "Add_1.lhs"
-          ],
         "buildZSpline.result" : [
-          "createXfosOnZSpline.this",
           "createXfosOnZSpline_2.this"
           ],
         "convertXfoToMat44.mat44Array" : [
-          "outputs"
+          "mat44Array"
           ],
         "Convert_2.result" : [
           "buildZSpline_2.defSegs",
           "buildZSpline.defSegs"
           ],
         "Size_1.result" : [
-          "Convert_2.size"
-          ],
-        "Sub_1.result" : [
-          "Set_1.index"
-          ],
-        "UInt32_1.value" : [
-          "Sub_1.rhs"
+          "Convert_2.size",
+          "Set_3.index"
           ],
         "assemble_2.result" : [
           "buildZSpline_2.mat44s",
@@ -2457,188 +2662,27 @@ dfgEntry {
           "Convert_3.defaultVal"
           ],
         "createXfosOnZSpline_2.result" : [
-          "convertXfoToMat44.xfoArray"
+          "Set_2.this"
           ],
         "SetFromMat44_1.this" : [
-          "Set_1.value"
+          "switchSpace.this"
+          ],
+        "switchSpace.this" : [
+          "Set_3.value"
+          ],
+        "SetFromMat44_2.this" : [
+          "switchSpace_3.this"
+          ],
+        "Set_2.this" : [
+          "Set_3.this"
+          ],
+        "Set_3.this" : [
+          "convertXfoToMat44.xfoArray"
+          ],
+        "switchSpace_3.this" : [
+          "Set_2.value"
           ]
         }
-      },
-    "Fabric.Exts.InlineDrawing.DrawingHandle.GetEmptyDebugShape" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
-        "uiTooltip" : "helper function to clear a debug drawing shape\n\n Supported by DrawingHandle"
-        },
-      "title" : "GetEmptyDebugShape",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "exec",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "this",
-          "execPortType" : "IO",
-          "typeSpec" : "DrawingHandle"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "String" : "debug"
-            },
-          "name" : "name",
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "InlineDebugShape"
-          }
-        ],
-      "extDeps" : {
-        "InlineDrawing" : "*",
-        "FabricInterfaces" : "*"
-        },
-      "presetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6",
-      "code" : "require InlineDrawing;
-
-dfgEntry {
-  result = this.getEmptyDebugShape(name);
-}
-"
-      },
-    "OSS.Exts.Curves.ZSpline.createSegsOnZSpline" : {
-      "objectType" : "Func",
-      "title" : "createSegsOnZSpline",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec3[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "this",
-          "execPortType" : "In",
-          "typeSpec" : "ZSpline"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "color",
-          "execPortType" : "Out",
-          "typeSpec" : "Color[]"
-          }
-        ],
-      "extDeps" : {
-        "Math" : "*"
-        },
-      "presetGUID" : "D8E844DE0169A7D9BB304C9F8DDF30A2",
-      "code" : "dfgEntry {
-  result.resize(0);
-  color.resize(0);
-  for(UInt32 n=0;n<this.BSplines.size();n++){
-    BSpline b = this.BSplines[n];
-    UInt32 resolution = b.resolution;
-    
-    // Color Settings
-    Scalar hue = mathRandomScalar(n,1);
-    Scalar saturation = 2;
-    
-    for(UInt32 k=0; k<=resolution; k++) {
-      Scalar t =  Scalar(k)/(resolution);
-      t = (t+n)/(this.BSplines.size());
-      Color c = randomColor(hue*180,saturation,this.normalizeT(t));
-      result.push(this.evalPosition(t));
-      color.push(c);
-    }
-  }
-}
-"
-      },
-    "OSS.Exts.Curves.ZSpline.drawCurve" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
-        },
-      "title" : "drawCurve",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "points",
-          "execPortType" : "In",
-          "typeSpec" : "Vec3[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "color",
-          "execPortType" : "In",
-          "typeSpec" : "Color[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "InlineDebugShape"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "this",
-          "execPortType" : "IO",
-          "typeSpec" : "InlineDebugShape"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "dummyResult",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec3"
-          }
-        ],
-      "extDeps" : {},
-      "presetGUID" : "B3D1DFFCE15CC7040DCD73D99F2C3098",
-      "code" : "dfgEntry {
-  Index firstIndex = this.allocateLines(points.size(), points.size()-1);
-  Index colorIndex = firstIndex;
-  Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
-  Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
-  ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
-  
-
-  for( Integer i=0; i<points.size(); i++){
-    vertexColorsAttr.values[firstIndex] = color[i];
-    positionsAttr.values[firstIndex] = points[i];
-    normalsAttr.values[firstIndex++] = this.defaultNormal;
-    if(i > 0){
-      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 2;
-      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 1;
-    }
-  }
-
-  positionsAttr.incrementVersion();
-  normalsAttr.incrementVersion();
-  vertexColorsAttr.incrementVersion();
-
-  result = this;
-}
-"
       },
     "OSS.Exts.Curves.ZSpline.ZSpline" : {
       "objectType" : "Func",
@@ -2721,114 +2765,6 @@ dfgEntry {
   result.buildZSpline(mat44s, isSegmentStart, weights, order, resolution, defSegs, clamped, closed);
 }"
       },
-    "OSS.Exts.Curves.ZSpline.createXfosOnZSplineSegments" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
-        },
-      "title" : "createXfosOnZSplineSegments",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "this",
-          "execPortType" : "In",
-          "typeSpec" : "ZSpline"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "Xfo[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Float32" : 0
-            },
-          "name" : "keepCurveLen",
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Float32" : 1
-            },
-          "name" : "keepArcLen",
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "medianXfos",
-          "execPortType" : "Out",
-          "typeSpec" : "Xfo[]"
-          }
-        ],
-      "extDeps" : {
-        "Math" : "*"
-        },
-      "presetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B",
-      "code" : "dfgEntry {
-  result.resize(0);
-  for(UInt32 n=0;n<this.BSplines.size();n++){
-    for(UInt32 k=0; k<this.BSplines[n].defSegs; k++) {
-        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(this.BSplines[n].defSegs-1)));
-        Xfo outXfo = Xfo(
-                this.BSplines[n].evalPosition(t,keepArcLen,keepCurveLen),
-                this.BSplines[n].evalOri(t,keepArcLen,keepCurveLen),
-                this.BSplines[n].evalScale(t,keepArcLen,keepCurveLen));
-        result.push(outXfo);
-        
-        // export on mid segments
-        if(k==0 && n!=0) {
-            medianXfos.push(outXfo.linearInterpolate(result[result.size()-2], 0.5));
-           // ToDo Export defrobulated Euler Angles on segment Joints
-        }
-    }
-  }
-}  "
-      },
-    "Fabric.Core.Math.Add" : {
-      "objectType" : "Func",
-      "title" : "Add",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "lhs",
-          "execPortType" : "In",
-          "typeSpec" : "$TYPE$"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "rhs",
-          "execPortType" : "In",
-          "typeSpec" : "$TYPE$"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "$TYPE$"
-          }
-        ],
-      "extDeps" : {},
-      "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7",
-      "code" : "
-dfgEntry {
-	result = lhs + rhs;
-}
-"
-      },
     "Fabric.Exts.Geometry.Func.Size" : {
       "objectType" : "Func",
       "metadata" : {
@@ -2860,61 +2796,6 @@ dfgEntry {
 
 dfgEntry {
   result = this.size();
-}
-"
-      },
-    "Fabric.Core.Math.Sub" : {
-      "objectType" : "Func",
-      "title" : "Sub",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "lhs",
-          "execPortType" : "In",
-          "typeSpec" : "$TYPE$"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "rhs",
-          "execPortType" : "In",
-          "typeSpec" : "$TYPE$"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "$TYPE$"
-          }
-        ],
-      "extDeps" : {},
-      "presetGUID" : "F9754B19F43BC017056B8BA291E7B8B4",
-      "code" : "
-dfgEntry {
-	result = lhs - rhs;
-}
-"
-      },
-    "Fabric.Core.Constants.UInt32" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiAlwaysShowDaisyChainPorts" : "true"
-        },
-      "title" : "UInt32",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "value",
-          "execPortType" : "In",
-          "typeSpec" : "UInt32"
-          }
-        ],
-      "extDeps" : {},
-      "presetGUID" : "522214488375FF199C3D64A3DBF3C762",
-      "code" : "dfgEntry {
 }
 "
       },
