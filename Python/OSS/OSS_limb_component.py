@@ -335,7 +335,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         # lolimb
         self.lolimbFKCtrl = FKControl(lolimbName, parent=self.uplimbFKCtrl, shape="cube")
-        self.lolimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
+        self.lolimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.alignOnXAxis()
         self.lolimbFKCtrl.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
