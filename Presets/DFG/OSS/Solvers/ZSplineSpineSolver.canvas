@@ -122,16 +122,15 @@
     {
       "objectType" : "Port",
       "nodePortType" : "In",
-      "name" : "mat44Array",
+      "name" : "outputs",
       "execPortType" : "Out",
       "typeSpec" : "Mat44[]"
       },
     {
       "objectType" : "Port",
-      "metadata" : {},
       "nodePortType" : "Out",
       "defaultValues" : {
-        "Float32" : 1
+        "Float32" : 0
         },
       "name" : "compressionAmt",
       "execPortType" : "In",
@@ -141,7 +140,7 @@
   "extDeps" : {
     "Curves" : "*"
     },
-  "presetGUID" : "81FCCFACC9ED4E236193827FD346EEE3",
+  "presetGUID" : "E1DEA372D3D8A26A3D2ACC43592D4D1A",
   "nodes" : [
     {
       "objectType" : "Inst",
@@ -1291,7 +1290,7 @@ dfgEntry {
       "createXfosOnZSpline_2.this"
       ],
     "convertXfoToMat44.mat44Array" : [
-      "mat44Array"
+      "outputs"
       ],
     "Convert_2.result" : [
       "buildZSpline_2.defSegs",
@@ -1465,16 +1464,15 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "In",
-          "name" : "mat44Array",
+          "name" : "outputs",
           "execPortType" : "Out",
           "typeSpec" : "Mat44[]"
           },
         {
           "objectType" : "Port",
-          "metadata" : {},
           "nodePortType" : "Out",
           "defaultValues" : {
-            "Float32" : 1
+            "Float32" : 0
             },
           "name" : "compressionAmt",
           "execPortType" : "In",
@@ -1484,7 +1482,7 @@ dfgEntry {
       "extDeps" : {
         "Curves" : "*"
         },
-      "presetGUID" : "81FCCFACC9ED4E236193827FD346EEE3",
+      "presetGUID" : "E1DEA372D3D8A26A3D2ACC43592D4D1A",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -2634,7 +2632,7 @@ dfgEntry {
           "createXfosOnZSpline_2.this"
           ],
         "convertXfoToMat44.mat44Array" : [
-          "mat44Array"
+          "outputs"
           ],
         "Convert_2.result" : [
           "buildZSpline_2.defSegs",
