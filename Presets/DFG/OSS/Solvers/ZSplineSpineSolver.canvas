@@ -2,8 +2,8 @@
   "objectType" : "Graph",
   "metadata" : {
     "maya_id" : "2",
-    "uiGraphZoom" : "{\n  \"value\" : 0.5952916145324707\n  }",
-    "uiGraphPan" : "{\n  \"x\" : 168.6403656005859,\n  \"y\" : -23.51296997070313\n  }"
+    "uiGraphZoom" : "{\n  \"value\" : 0.4283214509487152\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 396.8946228027344,\n  \"y\" : 10.86127853393555\n  }"
     },
   "title" : "ZSplineSpineSolver",
   "ports" : [
@@ -125,24 +125,17 @@
       "name" : "neckRest",
       "execPortType" : "In",
       "typeSpec" : "Mat44"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "In",
-      "name" : "result",
-      "execPortType" : "Out",
-      "typeSpec" : "Vec3"
       }
     ],
   "extDeps" : {
     "Curves" : "*"
     },
-  "presetGUID" : "F9FA8F6A42B99A1F09C86CA2B58B116A",
+  "presetGUID" : "B7EEEBA540222B40C90BB4884E837608",
   "nodes" : [
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":4.84941,\"y\":486.796}"
+        "uiGraphPos" : "{\"x\":-92.1905,\"y\":629.803}"
         },
       "name" : "assemble",
       "ports" : [
@@ -410,7 +403,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":537.604,\"y\":534.628}",
+        "uiGraphPos" : "{\"x\":556.878,\"y\":544.265}",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiCollapsedState" : "0"
@@ -481,7 +474,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":946.1609999999999,\"y\":663.986}"
+        "uiGraphPos" : "{\"x\":1336.45,\"y\":742.684}"
         },
       "name" : "convertXfoToMat44",
       "ports" : [
@@ -528,54 +521,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1162.46,\"y\":962.435}"
-        },
-      "name" : "convertXfoToMat44_2",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "xfoArray"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "mat44Array"
-          }
-        ],
-      "definition" : {
-        "objectType" : "Func",
-        "title" : "convertXfoToMat44",
-        "ports" : [
-          {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
-            "name" : "xfoArray",
-            "execPortType" : "In",
-            "typeSpec" : "Xfo[]"
-            },
-          {
-            "objectType" : "Port",
-            "nodePortType" : "In",
-            "name" : "mat44Array",
-            "execPortType" : "Out",
-            "typeSpec" : "Mat44[]"
-            }
-          ],
-        "extDeps" : {},
-        "code" : "dfgEntry {
-  for(UInt32 i=0;i<xfoArray.size();i++)
-  {
-    mat44Array.push(xfoArray[i].toMat44());
-  }
-}
-"
-        }
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":-47.6391,\"y\":883.747}"
+        "uiGraphPos" : "{\"x\":182.478,\"y\":831.352}"
         },
       "name" : "Convert_2",
       "ports" : [
@@ -634,7 +580,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":207.205,\"y\":460.081}"
+        "uiGraphPos" : "{\"x\":50.6211,\"y\":817.356}"
         },
       "name" : "Size_1",
       "ports" : [
@@ -655,7 +601,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":900.679,\"y\":751.204}"
+        "uiGraphPos" : "{\"x\":1146.42,\"y\":714.263}"
         },
       "name" : "Set_1",
       "ports" : [
@@ -1861,7 +1807,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-90.8708,\"y\":996.725}"
+        "uiGraphPos" : "{\"x\":-131.73,\"y\":925.221}"
         },
       "name" : "assemble_2",
       "ports" : [
@@ -2118,7 +2064,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":551.792,\"y\":751.0119999999999}",
+        "uiGraphPos" : "{\"x\":577.49,\"y\":751.0119999999999}",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiCollapsedState" : "0"
@@ -2237,7 +2183,6 @@ dfgEntry {
         "extDeps" : {
           "Math" : "*"
           },
-        "origPresetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B",
         "code" : "dfgEntry {
   result.resize(0);
   for(UInt32 n=0;n<this.BSplines.size();n++){
@@ -2264,6 +2209,27 @@ dfgEntry {
   }
 }  "
         }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":853.814,\"y\":980.4210000000001}"
+        },
+      "name" : "SetFromMat44_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "m"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
+      "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
       }
     ],
   "connections" : {
@@ -2280,7 +2246,8 @@ dfgEntry {
       "assemble.upchest"
       ],
     "neck" : [
-      "assemble.neck"
+      "assemble.neck",
+      "SetFromMat44_1.m"
       ],
     "numDeformers" : [
       "Convert_2.defaultVal"
@@ -2320,15 +2287,6 @@ dfgEntry {
       "createXfosOnZSpline.this",
       "createXfosOnZSpline_2.this"
       ],
-    "createXfosOnZSpline.result" : [
-      "Set_1.this"
-      ],
-    "createXfosOnZSpline.medianXfos" : [
-      "convertXfoToMat44.xfoArray"
-      ],
-    "Add_1.result" : [
-      "result"
-      ],
     "convertXfoToMat44.mat44Array" : [
       "outputs"
       ],
@@ -2337,6 +2295,9 @@ dfgEntry {
       ],
     "Size_1.result" : [
       "Convert_2.size"
+      ],
+    "Set_1.this" : [
+      "convertXfoToMat44.xfoArray"
       ],
     "Sub_1.result" : [
       "Set_1.index"
@@ -2363,7 +2324,10 @@ dfgEntry {
       "ZSplineSpineSolver_1.defaultVal"
       ],
     "createXfosOnZSpline_2.result" : [
-      "convertXfoToMat44_2.xfoArray"
+      "Set_1.this"
+      ],
+    "SetFromMat44_1.this" : [
+      "Set_1.value"
       ]
     },
   "requiredPresets" : {
@@ -2371,8 +2335,8 @@ dfgEntry {
       "objectType" : "Graph",
       "metadata" : {
         "maya_id" : "2",
-        "uiGraphZoom" : "{\n  \"value\" : 0.5952916145324707\n  }",
-        "uiGraphPan" : "{\n  \"x\" : 168.6403656005859,\n  \"y\" : -23.51296997070313\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 0.4283214509487152\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 396.8946228027344,\n  \"y\" : 10.86127853393555\n  }"
         },
       "title" : "ZSplineSpineSolver",
       "ports" : [
@@ -2494,24 +2458,17 @@ dfgEntry {
           "name" : "neckRest",
           "execPortType" : "In",
           "typeSpec" : "Mat44"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec3"
           }
         ],
       "extDeps" : {
         "Curves" : "*"
         },
-      "presetGUID" : "F9FA8F6A42B99A1F09C86CA2B58B116A",
+      "presetGUID" : "B7EEEBA540222B40C90BB4884E837608",
       "nodes" : [
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":4.84941,\"y\":486.796}"
+            "uiGraphPos" : "{\"x\":-92.1905,\"y\":629.803}"
             },
           "name" : "assemble",
           "ports" : [
@@ -2779,7 +2736,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":537.604,\"y\":534.628}",
+            "uiGraphPos" : "{\"x\":556.878,\"y\":544.265}",
             "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
             "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
             "uiCollapsedState" : "0"
@@ -2850,7 +2807,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":946.1609999999999,\"y\":663.986}"
+            "uiGraphPos" : "{\"x\":1336.45,\"y\":742.684}"
             },
           "name" : "convertXfoToMat44",
           "ports" : [
@@ -2897,54 +2854,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1162.46,\"y\":962.435}"
-            },
-          "name" : "convertXfoToMat44_2",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "xfoArray"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "mat44Array"
-              }
-            ],
-          "definition" : {
-            "objectType" : "Func",
-            "title" : "convertXfoToMat44",
-            "ports" : [
-              {
-                "objectType" : "Port",
-                "nodePortType" : "Out",
-                "name" : "xfoArray",
-                "execPortType" : "In",
-                "typeSpec" : "Xfo[]"
-                },
-              {
-                "objectType" : "Port",
-                "nodePortType" : "In",
-                "name" : "mat44Array",
-                "execPortType" : "Out",
-                "typeSpec" : "Mat44[]"
-                }
-              ],
-            "extDeps" : {},
-            "code" : "dfgEntry {
-  for(UInt32 i=0;i<xfoArray.size();i++)
-  {
-    mat44Array.push(xfoArray[i].toMat44());
-  }
-}
-"
-            }
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":-47.6391,\"y\":883.747}"
+            "uiGraphPos" : "{\"x\":182.478,\"y\":831.352}"
             },
           "name" : "Convert_2",
           "ports" : [
@@ -3003,7 +2913,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":207.205,\"y\":460.081}"
+            "uiGraphPos" : "{\"x\":50.6211,\"y\":817.356}"
             },
           "name" : "Size_1",
           "ports" : [
@@ -3024,7 +2934,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":900.679,\"y\":751.204}"
+            "uiGraphPos" : "{\"x\":1146.42,\"y\":714.263}"
             },
           "name" : "Set_1",
           "ports" : [
@@ -4230,7 +4140,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":-90.8708,\"y\":996.725}"
+            "uiGraphPos" : "{\"x\":-131.73,\"y\":925.221}"
             },
           "name" : "assemble_2",
           "ports" : [
@@ -4487,7 +4397,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":551.792,\"y\":751.0119999999999}",
+            "uiGraphPos" : "{\"x\":577.49,\"y\":751.0119999999999}",
             "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
             "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
             "uiCollapsedState" : "0"
@@ -4606,7 +4516,6 @@ dfgEntry {
             "extDeps" : {
               "Math" : "*"
               },
-            "origPresetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B",
             "code" : "dfgEntry {
   result.resize(0);
   for(UInt32 n=0;n<this.BSplines.size();n++){
@@ -4633,6 +4542,27 @@ dfgEntry {
   }
 }  "
             }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":853.814,\"y\":980.4210000000001}"
+            },
+          "name" : "SetFromMat44_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "m"
+              }
+            ],
+          "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
+          "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
           }
         ],
       "connections" : {
@@ -4649,7 +4579,8 @@ dfgEntry {
           "assemble.upchest"
           ],
         "neck" : [
-          "assemble.neck"
+          "assemble.neck",
+          "SetFromMat44_1.m"
           ],
         "numDeformers" : [
           "Convert_2.defaultVal"
@@ -4689,15 +4620,6 @@ dfgEntry {
           "createXfosOnZSpline.this",
           "createXfosOnZSpline_2.this"
           ],
-        "createXfosOnZSpline.result" : [
-          "Set_1.this"
-          ],
-        "createXfosOnZSpline.medianXfos" : [
-          "convertXfoToMat44.xfoArray"
-          ],
-        "Add_1.result" : [
-          "result"
-          ],
         "convertXfoToMat44.mat44Array" : [
           "outputs"
           ],
@@ -4706,6 +4628,9 @@ dfgEntry {
           ],
         "Size_1.result" : [
           "Convert_2.size"
+          ],
+        "Set_1.this" : [
+          "convertXfoToMat44.xfoArray"
           ],
         "Sub_1.result" : [
           "Set_1.index"
@@ -4732,7 +4657,10 @@ dfgEntry {
           "ZSplineSpineSolver_1.defaultVal"
           ],
         "createXfosOnZSpline_2.result" : [
-          "convertXfoToMat44_2.xfoArray"
+          "Set_1.this"
+          ],
+        "SetFromMat44_1.this" : [
+          "Set_1.value"
           ]
         }
       },
@@ -5330,6 +5258,47 @@ dfgEntry {
       "extDeps" : {},
       "presetGUID" : "E0E96C6E234F70063BC98887B83327DC",
       "code" : "dfgEntry {
+}
+"
+      },
+    "Fabric.Exts.Math.Xfo.SetFromMat44" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiTooltip" : "Sets this transform from a given Mat44\n\n Supported by Xfo"
+        },
+      "title" : "SetFromMat44",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "m",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "59B1B738E9402F3006B2516B14A43848",
+      "code" : "require Math;
+
+dfgEntry {
+  this.setFromMat44(m);
 }
 "
       }
