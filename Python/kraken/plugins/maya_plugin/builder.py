@@ -815,12 +815,16 @@ class Builder(Builder):
                 if portConnectionType == 'In':
 
                     def connectInput(tgt, opObject, dccSceneItem):
+
                         if isinstance(opObject, Attribute):
                             cmds.connectAttr(str(dccSceneItem), tgt)
                         elif isinstance(opObject, Object3D):
                             cmds.connectAttr(str(dccSceneItem.attr('worldMatrix')), tgt)
+                        elif isinstance(opObject, Xfo):
+                            self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
                         else:
                             # Maybe this should be pymel to help with implicit types
+                            #Right now we don't account for all data types
                             #raise Exception(opObject.getPath() + " with type '" + opObject.getTypeName() + " is not implemented!")
                             cmds.setAttr(tgt, opObject)
 
