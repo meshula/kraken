@@ -315,6 +315,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.ZSplineSpineCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.ZSplineSpineCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
         self.ZSplineSpineCanvasOp.setInput('numDeformers',  1)
+        self.ZSplineSpineCanvasOp.setInput('compressionAmt', 0)
         # Add Xfo Inputs
         self.ZSplineSpineCanvasOp.setInput('pelvis', self.pelvisCtrlSpace)
         self.ZSplineSpineCanvasOp.setInput('torso', self.torsoCtrl)
@@ -322,6 +323,12 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.ZSplineSpineCanvasOp.setInput('upChest', self.upChestCtrl)
         self.ZSplineSpineCanvasOp.setInput('neck', self.neckCtrlSpace)
         # temp now until handles are swapped
+
+        self.ZSplineSpineCanvasOp.setInput('pelvisRest', self.pelvisCtrlSpace.xfo)
+        self.ZSplineSpineCanvasOp.setInput('torsoRest', self.torsoCtrl.xfo)
+        self.ZSplineSpineCanvasOp.setInput('chestRest', self.chestCtrl.xfo)
+        self.ZSplineSpineCanvasOp.setInput('upChestRest', self.upChestCtrl.xfo)
+        self.ZSplineSpineCanvasOp.setInput('neckRest', self.neckCtrlSpace.xfo)
 
 
         # Add Xfo Outputs
