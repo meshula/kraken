@@ -1,0 +1,82 @@
+{
+  "objectType" : "Func",
+  "title" : "normalizeScalarArray",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "Scalar[]"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "B060177C592CAB2F7D72B32527F6D9D3",
+  "code" : "
+dfgEntry  {
+  Boolean takeFirstIfInvalid = true;
+  UInt32 count = this.size();
+  Scalar sum;
+  
+  for( Size i = 0; i < this.size(); ++i )
+    sum += this[i];
+    
+  if( sum > 0.0001 ) {
+    for( Size i = 0; i < count; ++i )
+      this[i] = this[i]/sum;
+  
+  } else if(count) {
+    //Just put equal weights; ensures sum is 1.0
+    for( Size i = 0; i < count; ++i )
+      if (!takeFirstIfInvalid) {
+        this[i] = 1/Scalar(count);
+      } else {
+        if (i==0) this[i]=1;
+        else this[i]=0;
+      }
+  }
+}
+",
+  "requiredPresets" : {
+    "OSS.Math.normalizeScalarArray" : {
+      "objectType" : "Func",
+      "title" : "normalizeScalarArray",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "Scalar[]"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "B060177C592CAB2F7D72B32527F6D9D3",
+      "code" : "
+dfgEntry  {
+  Boolean takeFirstIfInvalid = true;
+  UInt32 count = this.size();
+  Scalar sum;
+  
+  for( Size i = 0; i < this.size(); ++i )
+    sum += this[i];
+    
+  if( sum > 0.0001 ) {
+    for( Size i = 0; i < count; ++i )
+      this[i] = this[i]/sum;
+  
+  } else if(count) {
+    //Just put equal weights; ensures sum is 1.0
+    for( Size i = 0; i < count; ++i )
+      if (!takeFirstIfInvalid) {
+        this[i] = 1/Scalar(count);
+      } else {
+        if (i==0) this[i]=1;
+        else this[i]=0;
+      }
+  }
+}
+"
+      }
+    }
+  }

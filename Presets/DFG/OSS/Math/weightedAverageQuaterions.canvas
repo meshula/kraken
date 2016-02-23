@@ -1,0 +1,104 @@
+{
+  "objectType" : "Func",
+  "title" : "weightedAverageQuaterions",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "quats",
+      "execPortType" : "IO",
+      "typeSpec" : "Quat[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "weights",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Quat"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "4F4DFE52B397E2BAA8E718B7D043EA4A",
+  "code" : "//NOTE: weights need to be normalized
+
+dfgEntry {
+
+  UInt32 numQuats = weights.size();
+  Quat cumQuat = Quat()*0;
+  quats.resize(numQuats);
+ 
+  for (UInt32 i=0; i<numQuats; i++)
+  { 
+    Quat wQuat = quats[i]*weights[i];
+    
+    //Before we add the new rotation to the average (mean), we have to check whether the quaternion has to be inverted. Because
+    //q and -q are the same rotation, but cannot be averaged, we have to make sure they are all the same.
+    if (wQuat.almostEqual(cumQuat)){
+        wQuat.inverse();  
+    }
+    
+    cumQuat += wQuat;
+  }
+  result = cumQuat.unit_safe();
+}",
+  "requiredPresets" : {
+    "OSS.Math.weightedAverageQuaterions" : {
+      "objectType" : "Func",
+      "title" : "weightedAverageQuaterions",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "quats",
+          "execPortType" : "IO",
+          "typeSpec" : "Quat[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "weights",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Quat"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "4F4DFE52B397E2BAA8E718B7D043EA4A",
+      "code" : "//NOTE: weights need to be normalized
+
+dfgEntry {
+
+  UInt32 numQuats = weights.size();
+  Quat cumQuat = Quat()*0;
+  quats.resize(numQuats);
+ 
+  for (UInt32 i=0; i<numQuats; i++)
+  { 
+    Quat wQuat = quats[i]*weights[i];
+    
+    //Before we add the new rotation to the average (mean), we have to check whether the quaternion has to be inverted. Because
+    //q and -q are the same rotation, but cannot be averaged, we have to make sure they are all the same.
+    if (wQuat.almostEqual(cumQuat)){
+        wQuat.inverse();  
+    }
+    
+    cumQuat += wQuat;
+  }
+  result = cumQuat.unit_safe();
+}"
+      }
+    }
+  }
