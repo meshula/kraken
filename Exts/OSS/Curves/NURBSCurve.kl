@@ -64,6 +64,11 @@ object NURBSCurve {
 };
 
 
+/// - - - - - - 
+/// CONSTRUCTORS
+
+/// Default constructor
+/// set the transform to the identity
 
 function NURBSCurve() {
   // this.parent._init("NURBSCurve");
@@ -71,16 +76,15 @@ function NURBSCurve() {
   ;
 }
 
-		
-
 function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
 	// INITIATE POINTS
 	//
 	this.numPoints = 2;
 	this.numCurves = 1;
-	if (this.resolution < 1) this.resolution = 25;
+	if (this.resolution < 1) this.resolution = 50;
 	
   	this.numCurves = 0;
+  	this.cmats = cMats;
 	this.numPoints = cMats.size();
 
 
@@ -92,7 +96,7 @@ function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
 	this.controlPoints   = this.pointAttributes.getOrCreateVec4Attribute("controlPoints");
 	this.isSegmentStart  = this.pointAttributes.getOrCreateUInt32Attribute('isSegmentStart');
 	this.ori             = this.pointAttributes.getOrCreateQuatAttribute('ori');
-	this.weights             = this.pointAttributes.getOrCreateScalarAttribute('weights');
+	this.weights         = this.pointAttributes.getOrCreateScalarAttribute('weights');
 
 	// first point is always a Segment Start
 	this.isSegmentStart.values[0] = 1;
@@ -182,17 +186,46 @@ function NURBSCurve(Vec3 cps[], Integer degree)
 */
 /// Get the u value from the 0-1 parameter
 /// \internal
+
+
+
+
+/// Return points on curve that are evenly distributed
+operator __evalPositionsTask<<<index>>>(io Vec3 results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getPoint(index*stepSize(curve.resolution), keepArcLength, keepCurveLen);
+}
+
+/// Return colors with gradient between curve ends that are evenly distributed
+operator __evalColorsTask<<<index>>>(io Color results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	Scalar hue = mathRandomScalar(0,1);
+	Scalar saturation = 3;
+	results[index] = randomColor(hue*180,saturation,index*stepSize(curve.resolution)); 	
+
+}		
+
+/// Return tangents on curve that are evenly distributed
+operator __evalTangentsTask<<<index>>>(io Vec3 results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getTangent(index*stepSize(curve.resolution),true, keepArcLength, keepCurveLen);
+}
+
+/// Return colors with gradient between curve ends that are evenly distributed
+operator __evalDistancesTask<<<index>>>(io Scalar results[], io Ref<NURBSCurve> curve)
+{	
+	results[index] = curve.getDistanceAtIndex(index);	
+}	
+
+
+
+
 inline Scalar stepSize(UInt32 samples)
 {	
 	if (samples > 0) return  1.0 / Scalar(samples - 1.0);		
 	return 0.0;
 }
 
-inline Scalar NURBSCurve.getCurveLength(Scalar keepCurveLen) {
-  UInt32 s = this.distances.values.size();
-  if (keepCurveLen==0) return this.distances.values[s-1];
-  return  (1-keepCurveLen)*(this.distances.values[s-1]) + keepCurveLen*this.restLength.values[0];
-}
 
 // do a fast, binary search for the closest matching distance index
 inline Scalar NURBSCurve.getClosestDistanceIndex(Scalar param, Scalar keepCurveLen) {
@@ -226,22 +259,7 @@ function Scalar NURBSCurve.arcLengthParam(Scalar param, Scalar keepArcLength, Sc
     return nonArcLengthT;
   }
   Scalar idx = this.getClosestDistanceIndex(param, keepCurveLen);
-  /*
-    // do a fast, binary search for the closest matching distance index
-  Scalar low = 0, high = this.distances.values.size()-1, index = 0;
-  while (low < high) {
-    index = low + (((high - low) / 2) | 0);  
-    if (this.distances.values[index] < tipLength) {
-      low = index + 1;
-    } else {
-      high = index;
-    }
-  }
-  if (this.distances.values[index] > tipLength) {
-    index -= 1;
-  }
 
-  */
   // from the distance index, extrapolate 
   Scalar lengthBefore = this.distances.values[idx];
   Scalar arcLenghtT   = (idx + (tipLength - lengthBefore) / (this.distances.values[idx + 1] - lengthBefore)) / (this.distances.values.size()-1);
@@ -249,6 +267,7 @@ function Scalar NURBSCurve.arcLengthParam(Scalar param, Scalar keepArcLength, Sc
   // return lerped parameterization using the blend value keepArcLength
   return (keepArcLength*arcLenghtT) + (1.0-keepArcLength)*nonArcLengthT;
 }
+
 
 /// Get the u value from the 0-1 parameter
 /// \internal
@@ -266,125 +285,6 @@ inline Scalar NURBSCurve.uFromParam(Scalar param, Scalar keepArcLength, Scalar k
 	
 }
 
-
-/// Get a point on the curve
-/// \param param Parameter on curve between 0-1
-function Vec3 NURBSCurve.getPoint(Scalar param, Scalar keepArcLength, Scalar keepCurveLen)
-{
-	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
-
-	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
-
-	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
-	return hpoint.makeHomogeneousVec3();
-}
-
-/// Get a point on the curve
-/// \param param Parameter on curve between 0-1
-function Vec3 NURBSCurve.getPoint(Scalar param)
-{	
-	Scalar keepArcLength =0;
-	Scalar keepCurveLen=0;
-	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
-
-	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
-
-	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
-	return hpoint.makeHomogeneousVec3();
-}
-
-
-/// Return the tangent vector at a given parameter
-/// Calculated using the NURBS Derivative of that parameter on the curve.
-function Vec3 NURBSCurve.getTangent(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen)
-{
-	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
-
-	Vec4 ders[] = NURBSUtils_calcNURBSDerivatives( this.degree.values[0], this.knots, this.controlPoints.values, u, 1 );
-	Vec3 tangent = ders[1].clone().xyz();
-
-	if (normalize)
-		return tangent.unit();
-	else
-		return tangent;
-}
-
-function Quat NURBSCurve.getNormal(Scalar param, Xfo xfoA, Xfo xfoB) {
-	Vec3 tangent = this.getTangent(param,true,0.0,0.0);
-	// to determine upvec, use linear rotation inperpolation for simplicity - this could be better
-	
-	Quat ori = xfoA.ori.sphericalLinearInterpolate(xfoB.ori, param);
-
-	Vec3 upVecTemp = ori.getXaxis();
-	
-	Vec3 side = upVecTemp.cross(-tangent);
-	Vec3 up = side.cross(tangent);
-	// Set the quat to represent the direction as the Z axis and the upvector pointing along the XY plane.
-	return ori.setFromDirectionAndUpvector(side,up);
-}
-
-function Quat NURBSCurve.evalOri(Scalar param, Xfo xfoA, Xfo xfoB) {
-	Vec3 tangent = this.getTangent(param,true,0.0,0.0);
-	// to determine upvec, use linear rotation inperpolation for simplicity - this could be better
-	
-	Quat ori = xfoA.ori.sphericalLinearInterpolate(xfoB.ori, param);
-
-	Vec3 upVecTemp = ori.getXaxis();
-	
-	Vec3 side = upVecTemp.cross(-tangent);
-	Vec3 up = side.cross(tangent);
-	// Set the quat to represent the direction as the Z axis and the upvector pointing along the XY plane.
-	return ori.setFromDirectionAndUpvector(side,up);
-}
-
-// returns distance from begginning of curve to curve end
-// asssumes positions to have been set
-inline Scalar NURBSCurve.getDistanceAtIndex(UInt32 index) {
-	Vec3 p_prev;
-	// Accumulatively store lengths in distance array
-	// the last value is the total approximated length of the curve
-	if (index == 0) {
-		return 0;
-	} else {
-		return this.distances.values[index-1] + this.positions.values[index].distanceTo(this.positions.values[index-1]);
-	}
-}	
-/*
-inline NURBSCurve.setRestLength!(Scalar length) {
-  this.restLength = length;
-}
-*/
-
-
-
-/// Return points on curve that are evenly distributed
-operator __evalPositionsTask<<<index>>>(io Vec3 results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
-{	
-	results[index] = curve.getPoint(index*stepSize(curve.resolution), keepArcLength, keepCurveLen);
-}
-
-/// Return colors with gradient between curve ends that are evenly distributed
-operator __evalColorsTask<<<index>>>(io Color results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
-{	
-	Scalar hue = mathRandomScalar(0,1);
-	Scalar saturation = 3;
-	results[index] = randomColor(hue*180,saturation,index*stepSize(curve.resolution)); 	
-
-}		
-
-/// Return tangents on curve that are evenly distributed
-operator __evalTangentsTask<<<index>>>(io Vec3 results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
-{	
-	results[index] = curve.getTangent(index*stepSize(curve.resolution),true, keepArcLength, keepCurveLen);
-}
-
-/// Return colors with gradient between curve ends that are evenly distributed
-operator __evalDistancesTask<<<index>>>(io Scalar results[], io Ref<NURBSCurve> curve)
-{	
-	results[index] = curve.getDistanceAtIndex(index);	
-}	
 
 
 /*
@@ -429,9 +329,156 @@ function NURBSCurve.computeUniformKnots!()
 	}
 }
 
+
+// returns distance from begginning of curve to curve end
+// asssumes positions to have been set
+inline Scalar NURBSCurve.getDistanceAtIndex(UInt32 index) {
+	Vec3 p_prev;
+	// Accumulatively store lengths in distance array
+	// the last value is the total approximated length of the curve
+	if (index == 0) {
+		return 0;
+	} else {
+		return this.distances.values[index-1] + this.positions.values[index].distanceTo(this.positions.values[index-1]);
+	}
+}	
+
+
+
+
+/// POSITION
+
+
+
+/// Get a point on the curve
+/// \param param Parameter on curve between 0-1
+function Vec3 NURBSCurve.getPoint(Scalar param, Scalar keepArcLength, Scalar keepCurveLen)
+{
+	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
+
+	// following results in (wx, wy, wz, w) homogeneous point
+	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
+
+	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
+	return hpoint.makeHomogeneousVec3();
+}
+
+/// Get a point on the curve
+/// \param param Parameter on curve between 0-1
+function Vec3 NURBSCurve.getPoint(Scalar param)
+{	
+	Scalar keepArcLength =0;
+	Scalar keepCurveLen=0;
+	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
+
+	// following results in (wx, wy, wz, w) homogeneous point
+	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
+
+	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
+	return hpoint.makeHomogeneousVec3();
+}
+
+
+
+
+/// ORIENTATION
+
+/// Return the tangent vector at a given parameter
+/// Calculated using the NURBS Derivative of that parameter on the curve.
+/// needs to be revised - doesn't exactly match the tangent we need
+function Vec3 NURBSCurve.getTangent(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen)
+{
+	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
+
+	Vec4 ders[] = NURBSUtils_calcNURBSDerivatives( this.degree.values[0], this.knots, this.controlPoints.values, u, 1 );
+	Vec3 tangent = ders[1].clone().xyz();
+
+	if (normalize)
+		return tangent.unit();
+	else
+		return tangent;
+}
+
+
+// ORIENTATION
+
+function Vec3 NURBSCurve.getFakeTangent(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen)
+{
+	// this should be a straight deriviative look-up
+	Scalar epsilon = 0.01;
+
+	Scalar paramA = this.uFromParam(param-epsilon,keepArcLength,keepCurveLen);
+	Scalar paramB = this.uFromParam(param+epsilon,keepArcLength,keepCurveLen);
+
+	Vec3 pa = this.getPoint(paramA);
+	Vec3 pb = this.getPoint(paramB);
+
+	Vec3 tangent = pb-pa;
+
+	if (normalize)
+		return tangent.unit();
+	else
+		return tangent;
+}
+
+
+function Quat NURBSCurve.getNormal(Scalar param, Xfo xfoA, Xfo xfoB) {
+	Vec3 tangent = this.getTangent(param,true,0.0,0.0);
+	// to determine upvec, use linear rotation inperpolation for simplicity - this could be better
+	
+	Quat ori = xfoA.ori.sphericalLinearInterpolate(xfoB.ori, param);
+
+	Vec3 upVecTemp = ori.getXaxis();
+	
+	Vec3 side = upVecTemp.cross(-tangent);
+	Vec3 up = side.cross(tangent);
+	// Set the quat to represent the direction as the Z axis and the upvector pointing along the XY plane.
+	return ori.setFromDirectionAndUpvector(side,up);
+}
+
+
+function Quat NURBSCurve.getOri(Scalar t, Scalar keepArcLength, Scalar keepRestLength) {
+	Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepRestLength);
+	return this.getOri(arcLenT);
+}
+
+
+function Quat NURBSCurve.getOri(Scalar param, Xfo xfoA, Xfo xfoB) {
+	Vec3 tangent = this.getTangent(param,true,0.0,0.0);
+	// to determine upvec, use linear rotation inperpolation for simplicity - this could be better
+	
+	Quat ori = xfoA.ori.sphericalLinearInterpolate(xfoB.ori, param);
+
+	Vec3 upVecTemp = ori.getXaxis();
+	
+	Vec3 side = upVecTemp.cross(-tangent);
+	Vec3 up = side.cross(tangent);
+	// Set the quat to represent the direction as the Z axis and the upvector pointing along the XY plane.
+	return ori.setFromDirectionAndUpvector(side,up);
+}
+
+
+function Quat NURBSCurve.getOri(Scalar t) {
+	Xfo XfoA, XfoB;
+	XfoA.setFromMat44(this.cmats[0]);
+  	XfoB.setFromMat44(this.cmats[this.cmats.size()-1]);
+	return this.getOri(t, XfoA, XfoB);
+}
+
+
+function Xfo NURBSCurve.getXfo(Scalar param, Scalar keepArcLength, Scalar keepCurveLen)
+{
+    return Xfo(
+    	this.getPoint(param,keepArcLength, keepCurveLen),
+        this.getOri(param,  keepArcLength, keepCurveLen),
+        this.getScale(param,keepArcLength, keepCurveLen)
+    );
+}
+
+
 /// Return curve frame normal samples
 /// Based on: "Parallel Transport Approach to Curve Framing"
-function NURBSCurve.parallelFramesNormals(in Size samples,
+function NURBSCurve.parallelFramesNormals(in UInt32 samples,
 										 in Vec3 upVec,
 										 out Vec3 normals[] ) {
   // TODO: Test this! :)
@@ -442,7 +489,7 @@ function NURBSCurve.parallelFramesNormals(in Size samples,
 
   Scalar step = stepSize(samples);
 
-  for(Size i=0; i<samples; i++)
+  for(UInt32 i=0; i<samples; i++)
   {
   	tangent = this.getTangent(step*i, true, 0.0, 0.0);
   	cross = prevNorm.cross(tangent);
@@ -451,10 +498,11 @@ function NURBSCurve.parallelFramesNormals(in Size samples,
   }
 }
 
+
 /// Return curve frame Xfo samples
 /// Based on: "Parallel Transport Approach to Curve Framing"
 function NURBSCurve.parallelFrames(out Xfo xfos[],
-								   in Size samples,
+								   in UInt32 samples,
 								   in Vec3 upVec,
 								   Scalar keepArcLength, Scalar keepCurveLen)
 {
@@ -468,7 +516,7 @@ function NURBSCurve.parallelFrames(out Xfo xfos[],
   	// Scalar step = this.knots[this.knots.size()-1] / Scalar(samples-1);
 	Scalar step = stepSize(samples);
 
-  	for(Size i=0; i<samples; i++)
+  	for(UInt32 i=0; i<samples; i++)
   	{	
   		tangent = this.getTangent(step*i, true, keepArcLength, keepCurveLen);
   		cross = prevNorm.cross(tangent);
@@ -481,4 +529,50 @@ function NURBSCurve.parallelFrames(out Xfo xfos[],
 
 		xfos[i] = Xfo(pt, quat);
   	}
+}
+
+
+/// Return curve frame normal samples
+/// Based on: "Parallel Transport Approach to Curve Framing"
+
+/// SCALE
+
+function Vec3 NURBSCurve.getScale(Scalar t, Xfo xfoA, Xfo xfoB) {
+	return xfoA.sc.linearInterpolate(xfoB.sc, t);
+}
+
+function Vec3 NURBSCurve.getScale(Scalar param, Scalar keepArcLength, Scalar keepCurveLen) {
+	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
+	return this.getScale(u);
+}
+
+function Vec3 NURBSCurve.getScale(Scalar t) {
+	Xfo XfoA, XfoB;
+	XfoA.setFromMat44(this.cmats[0]);
+  	XfoB.setFromMat44(this.cmats[this.cmats.size()-1]);
+	return this.getScale(t, XfoA, XfoB);
+}
+
+function Scalar NURBSCurve.getCompression(Scalar param, NURBSCurve referenceCurve, Scalar keepArcLength, Scalar keepCurveLen) {
+  Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
+  return this.getCompression(u,referenceCurve);
+}
+
+
+function Scalar NURBSCurve.getCompression(Scalar t, NURBSCurve referenceCurve) {
+  Scalar keepCurveLen = 0;
+  UInt32 index = this.getClosestDistanceIndex(t,keepCurveLen)+1;
+  Scalar lengthSample = this.distances.values[index];
+  Scalar lengthSampleRef = referenceCurve.distances.values[index];
+  if(lengthSample == 0) return 1.0;
+  return lengthSampleRef/lengthSample;
+}
+
+
+/// LENGTH
+
+inline Scalar NURBSCurve.getCurveLength(Scalar keepCurveLen) {
+  UInt32 s = this.distances.values.size();
+  if (keepCurveLen==0) return this.distances.values[s-1];
+  return  (1-keepCurveLen)*(this.distances.values[s-1]) + keepCurveLen*this.restLength.values[0];
 }
