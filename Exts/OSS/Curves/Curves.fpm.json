@@ -3,10 +3,9 @@
   "code": [
     "BSplineKnot.kl",
     "BSpline.kl",
-    
     "BezierKnot.kl",
     "Bezier.kl",
-    
+
     "ZSpline.kl",
     "NURBSCurve.kl",
     "NURBSUtils.kl",
