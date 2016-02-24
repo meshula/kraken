@@ -262,6 +262,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.neckOutputs = []
         self.setNumDeformers(1)
 
+        self.controlInputs = []
+        self.controlRestInputs = []
+
 
         # =====================
         # Create Component I/O
@@ -283,20 +286,19 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Add Fabric Ops
         # ===============
         # Add Neck Canvas Op
-        self.ZSplineNeckCanvasOp = CanvasOperator('ZSplineNeckCanvasOp', 'OSS.Solvers.ZSplineNeckSolver')
+        self.ZSplineNeckCanvasOp = CanvasOperator('ZSplineNeckCanvasOp', 'OSS.Solvers.NURBSSpineSolver')
 
         self.addOperator(self.ZSplineNeckCanvasOp)
 
-        # Add Att Inputs
+        self.ZSplineNeckCanvasOp.setInput('controls', self.controlInputs)
+
+        self.ZSplineNeckCanvasOp.setInput('controlsRest', self.controlRestInputs)
+
+        # Add Xfo Inputs
         self.ZSplineNeckCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.ZSplineNeckCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
         self.ZSplineNeckCanvasOp.setInput('numDeformers',  1)
-        # Add Xfo Inputs
-        self.ZSplineNeckCanvasOp.setInput('neck', self.neckCtrl)
-        self.ZSplineNeckCanvasOp.setInput('head', self.headCtrl)
-        self.ZSplineNeckCanvasOp.setInput('neckHandle', self.neckHandleCtrlSpace)
-        self.ZSplineNeckCanvasOp.setInput('headHandle', self.headHandleCtrlSpace)
-        # temp now until handles are swapped
+        self.ZSplineNeckCanvasOp.setInput('compressionAmt', 0)
 
 
         # Add Xfo Outputs
@@ -386,6 +388,16 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers)
 
+        self.controlInputs.append(self.neckCtrl)
+        self.controlInputs.append(self.neckHandleCtrlSpace)
+        self.controlInputs.append(self.headHandleCtrlSpace)
+        self.controlInputs.append(self.headCtrl)
+
+        self.controlRestInputs.append(self.neckCtrl.xfo)
+        self.controlRestInputs.append(self.neckHandleCtrlSpace.xfo)
+        self.controlRestInputs.append(self.headHandleCtrlSpace.xfo)
+        self.controlRestInputs.append(self.headCtrl.xfo)
+        
 
         if self.mocap:
 

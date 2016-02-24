@@ -3,7 +3,6 @@
   "code": [
     "BSplineKnot.kl",
     "BSpline.kl",
-    "PSpline.kl",
     
     "BezierKnot.kl",
     "Bezier.kl",

@@ -449,7 +449,7 @@ function Quat NURBSCurve.getOri(Scalar param, Xfo xfoA, Xfo xfoB) {
 	
 	Quat ori = xfoA.ori.sphericalLinearInterpolate(xfoB.ori, param);
 
-	Vec3 upVecTemp = ori.getXaxis();
+	Vec3 upVecTemp = ori.getZaxis();
 	
 	Vec3 side = upVecTemp.cross(-tangent);
 	Vec3 up = side.cross(tangent);
