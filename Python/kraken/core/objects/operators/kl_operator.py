@@ -181,8 +181,8 @@ class KLOperator(Operator):
             self.solverRTVal.solve('', *argVals)
         except:
             print("Possible problem with KL operator \""+self.getName()+"\" arguments:")
-            print("Number of ports:"),
-            print(len(self.graphDesc['ports']))
+            print("Number of args:"),
+            print(len(self.args[i]))
             print("Number of argVals:"),
             print(len(argVals))
             import pprint
