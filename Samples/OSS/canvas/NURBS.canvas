@@ -1,16 +1,16 @@
 {
   "objectType" : "Graph",
   "metadata" : {
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : -0.5653371214866638,\n    \"y\" : -0.1240640133619309,\n    \"z\" : 0.8176171183586121,\n    \"t\" : 15.30417060852051\n    },\n  \"row1\" : {\n    \"x\" : -3.418641426833347e-06,\n    \"y\" : 0.9886177182197571,\n    \"z\" : 0.1505403369665146,\n    \"t\" : 11.92881011962891\n    },\n  \"row2\" : {\n    \"x\" : -0.827088475227356,\n    \"y\" : 0.08479698747396469,\n    \"z\" : -0.5588638782501221,\n    \"t\" : -2.941868782043457\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : -0.05648341774940491,\n    \"y\" : -0.004011965822428465,\n    \"z\" : 1.000484943389893,\n    \"t\" : 15.73595905303955\n    },\n  \"row1\" : {\n    \"x\" : -7.840057492103369e-07,\n    \"y\" : 1.000005125999451,\n    \"z\" : 0.004026637878268957,\n    \"t\" : 5.126119613647461\n    },\n  \"row2\" : {\n    \"x\" : -1.000573396682739,\n    \"y\" : 0.0002256959705846384,\n    \"z\" : -0.05647840350866318,\n    \"t\" : 7.938816547393799\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
     "uiGraphZoom" : "{\n  \"value\" : 0.7953977584838867\n  }",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "21.13158988952637",
+    "camera_focalDistance" : "17.61050415039063",
     "timeline_current" : "1",
     "timeline_timerInterval" : "1",
     "timeline_end" : "50",
-    "uiGraphPan" : "{\n  \"x\" : -34.91624450683594,\n  \"y\" : 46.85516738891602\n  }"
+    "uiGraphPan" : "{\n  \"x\" : -114.9162292480469,\n  \"y\" : 107.8551635742188\n  }"
     },
   "title" : "",
   "ports" : [
@@ -44,13 +44,6 @@
       },
     {
       "objectType" : "Port",
-      "nodePortType" : "In",
-      "name" : "dummyResult_4",
-      "execPortType" : "Out",
-      "typeSpec" : "Vec3"
-      },
-    {
-      "objectType" : "Port",
       "metadata" : {
         "uiPersistValue" : "true"
         },
@@ -58,13 +51,6 @@
       "name" : "numSegs",
       "execPortType" : "In",
       "typeSpec" : "UInt32"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "In",
-      "name" : "this_2",
-      "execPortType" : "Out",
-      "typeSpec" : "DrawingHandle"
       }
     ],
   "extDeps" : {},
@@ -72,7 +58,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":225.9786682128906,\"y\":40.1662483215332}",
+        "uiGraphPos" : "{\"x\":229.7503662109375,\"y\":33.88008499145508}",
         "uiCollapsedState" : "2"
         },
       "name" : "Xfo_1",
@@ -111,7 +97,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":228.2397308349609,\"y\":87.02418518066406}",
+        "uiGraphPos" : "{\"x\":230.7541961669922,\"y\":88.28141784667969}",
         "uiCollapsedState" : "2"
         },
       "name" : "Xfo_2",
@@ -157,7 +143,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":229.9761657714844,\"y\":129.0974884033203}",
+        "uiGraphPos" : "{\"x\":229.9761657714844,\"y\":130.3547210693359}",
         "uiCollapsedState" : "2"
         },
       "name" : "Xfo_3",
@@ -203,7 +189,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":226.9577331542969,\"y\":180.3461456298828}",
+        "uiGraphPos" : "{\"x\":225.7005004882813,\"y\":181.6033782958984}",
         "uiCollapsedState" : "2"
         },
       "name" : "Xfo_4",
@@ -242,7 +228,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":780.5706176757812,\"y\":94.7960205078125}"
+        "uiGraphPos" : "{\"x\":937.724609375,\"y\":36.96331787109375}"
         },
       "name" : "drawCurve_1",
       "ports" : [
@@ -348,7 +334,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":486.0689392089844,\"y\":76.60308074951172}"
+        "uiGraphPos" : "{\"x\":631.9078369140625,\"y\":-32.77616119384766}"
         },
       "name" : "EmptyDrawingHandle_1",
       "ports" : [
@@ -364,7 +350,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":484.9334106445312,\"y\":155.5819091796875}"
+        "uiGraphPos" : "{\"x\":589.283935546875,\"y\":55.0032958984375}"
         },
       "name" : "GetEmptyDebugShape_1",
       "ports" : [
@@ -389,13 +375,63 @@
           "name" : "result"
           }
         ],
-      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.GetEmptyDebugShape",
-      "presetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6"
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+          "uiTooltip" : "helper function to clear a debug drawing shape\n\n Supported by DrawingHandle"
+          },
+        "title" : "GetEmptyDebugShape",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "DrawingHandle"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "String" : "debug"
+              },
+            "name" : "name",
+            "execPortType" : "In",
+            "typeSpec" : "String"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "InlineDebugShape"
+            }
+          ],
+        "extDeps" : {
+          "InlineDrawing" : "*",
+          "FabricInterfaces" : "*"
+          },
+        "origPresetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6",
+        "code" : "require InlineDrawing;
+
+dfgEntry {
+  result = this.getEmptyDebugShape(name);
+}
+"
+        }
       },
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":494.9647216796875,\"y\":445.5816345214844}"
+        "uiGraphPos" : "{\"x\":474.8489074707031,\"y\":451.8677978515625}"
         },
       "name" : "NURBSCurve",
       "ports" : [
@@ -533,8 +569,7 @@
   result = NURBSCurve();
   result.initiate(mats,degree);
   positions = result.positions.values;
-  colors = result.colors.values;
-  result.parallelFrames(xfos, 500,Vec3(0,1,0),arcLenParam,keepCurveLen);
+  colors  = result.colors.values;
   normals = result.normals.values;
 }
 
@@ -606,7 +641,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":232.7404937744141,\"y\":287.2613830566406}",
+        "uiGraphPos" : "{\"x\":233.9977264404297,\"y\":286.004150390625}",
         "uiCollapsedState" : "2"
         },
       "name" : "Xfo_6",
@@ -622,7 +657,7 @@
           "defaultValues" : {
             "Vec3" : {
               "x" : -5,
-              "y" : 2,
+              "y" : 3,
               "z" : 1
               }
             },
@@ -784,7 +819,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\n  \"x\" : 340.4405673742294,\n  \"y\" : 409.9830873012543\n  }"
+        "uiGraphPos" : "{\"x\":316.5531616210938,\"y\":383.5812072753906}"
         },
       "name" : "ToMat44Array_1",
       "ports" : [
@@ -805,7 +840,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":232.7408905029297,\"y\":334.1092834472656}",
+        "uiGraphPos" : "{\"x\":232.7408905029297,\"y\":332.85205078125}",
         "uiCollapsedState" : "2"
         },
       "name" : "Xfo_7",
@@ -873,66 +908,9 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":780.8215942382812,\"y\":250.9940185546875}"
+        "uiGraphPos" : "{\"x\":785.8504638671875,\"y\":263.5663452148438}"
         },
       "name" : "DrawAxesInstances_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "this"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "name"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "transforms"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "dummyResult"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "instance"
-          }
-        ],
-      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances",
-      "presetGUID" : "A2DAC55CB1CE7426981A13F213257B7A"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":785.5772705078125,\"y\":447.6514892578125}"
-        },
-      "name" : "EmptyDrawingHandle_3",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "handle"
-          }
-        ],
-      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle",
-      "presetGUID" : "2440020BA6A1CAB1CEB690A198F99C70"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":788.2930908203125,\"y\":508.290771484375}"
-        },
-      "name" : "DrawAxesInstances_3",
       "ports" : [
         {
           "objectType" : "InstPort",
@@ -983,6 +961,94 @@
         ],
       "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle",
       "presetGUID" : "2440020BA6A1CAB1CEB690A198F99C70"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":675.259765625,\"y\":530.8212890625}"
+        },
+      "name" : "NURBSCurveFrames",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "keepArcLen"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "keepCurveLen"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "UInt32" : 6
+            },
+          "name" : "numXfos"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "NURBSCurveFrames",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "this",
+            "execPortType" : "In",
+            "typeSpec" : "NURBSCurve"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "Xfo[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "keepArcLen",
+            "execPortType" : "IO",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "keepCurveLen",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "numXfos",
+            "execPortType" : "In",
+            "typeSpec" : "UInt32"
+            }
+          ],
+        "extDeps" : {
+          "Curves" : "*"
+          },
+        "code" : "dfgEntry {
+ this.linearInterpolateFrames(result, numXfos, keepArcLen, keepCurveLen);
+}
+"
+        }
       }
     ],
   "connections" : {
@@ -1001,23 +1067,20 @@
     "drawCurve_1.result" : [
       "result"
       ],
-    "drawCurve_1.dummyResult" : [
-      "dummyResult"
-      ],
     "EmptyDrawingHandle_1.handle" : [
       "GetEmptyDebugShape_1.this"
       ],
     "GetEmptyDebugShape_1.result" : [
       "drawCurve_1.this"
       ],
+    "NURBSCurve.result" : [
+      "NURBSCurveFrames.this"
+      ],
     "NURBSCurve.positions" : [
       "drawCurve_1.points"
       ],
     "NURBSCurve.colors" : [
       "drawCurve_1.color"
-      ],
-    "NURBSCurve.xfos" : [
-      "DrawAxesInstances_3.transforms"
       ],
     "Cache_1.value" : [
       "NURBSCurve.mats"
@@ -1061,17 +1124,11 @@
     "DrawAxesInstances_1.dummyResult" : [
       "dummyResult_2"
       ],
-    "EmptyDrawingHandle_3.handle" : [
-      "DrawAxesInstances_3.this"
-      ],
-    "DrawAxesInstances_3.this" : [
-      "this_2"
-      ],
-    "DrawAxesInstances_3.dummyResult" : [
-      "dummyResult_4"
-      ],
     "EmptyDrawingHandle_4.handle" : [
       "DrawAxesInstances_1.this"
+      ],
+    "NURBSCurveFrames.result" : [
+      "DrawAxesInstances_1.transforms"
       ]
     },
   "requiredPresets" : {
@@ -1264,58 +1321,6 @@ dfgEntry {
 
 dfgEntry {
   this.clear();
-}
-"
-      },
-    "Fabric.Exts.InlineDrawing.DrawingHandle.GetEmptyDebugShape" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
-        "uiTooltip" : "helper function to clear a debug drawing shape\n\n Supported by DrawingHandle"
-        },
-      "title" : "GetEmptyDebugShape",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "exec",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "this",
-          "execPortType" : "IO",
-          "typeSpec" : "DrawingHandle"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "String" : "debug"
-            },
-          "name" : "name",
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "InlineDebugShape"
-          }
-        ],
-      "extDeps" : {
-        "InlineDrawing" : "*",
-        "FabricInterfaces" : "*"
-        },
-      "presetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6",
-      "code" : "require InlineDrawing;
-
-dfgEntry {
-  result = this.getEmptyDebugShape(name);
 }
 "
       },
@@ -1543,18 +1548,8 @@ dfgEntry {
       "ext" : "InlineDrawing"
       },
     {
-      "type" : "Vec3",
-      "value" : null,
-      "ext" : "Math"
-      },
-    {
       "type" : "UInt32",
       "value" : 22
-      },
-    {
-      "type" : "DrawingHandle",
-      "value" : null,
-      "ext" : "InlineDrawing"
       }
     ]
   }
