@@ -146,8 +146,13 @@ class CanvasOperator(Operator):
             binding = host.createBindingToPreset(self.canvasPresetPath, portVals)
 
             binding.execute()
+
         except:
             print("Possible problem with Canvas operator \""+self.getName()+"\" port values:")
+            print("Number of ports:"),
+            print(len(self.graphDesc['ports']))
+            print("Number of portVals:"),
+            print(len(portVals))
             import pprint
             pprint.pprint(debug, width=800)
             raise
