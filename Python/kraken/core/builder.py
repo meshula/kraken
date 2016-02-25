@@ -43,6 +43,12 @@ class Builder(object):
             bool: True if successful.
 
         """
+        if kSceneItem.__class__.__name__ == "Rig":
+            print("TTPrint: kSceneItem:"),
+            print(kSceneItem)
+            print("TTPrint: dccSceneItem:"),
+            print(dccSceneItem)
+
 
         pairing = {
                    'src': kSceneItem,
@@ -71,10 +77,19 @@ class Builder(object):
             object: The DCC Scene Item that corresponds to the given scene item
 
         """
+        builtElement=None
 
-        for builtElement in self._buildElements:
-            if builtElement['src'] == kSceneItem:
-                return builtElement['tgt']
+        try:
+            for builtElement in self._buildElements:
+
+                if builtElement['src'] == kSceneItem:
+                    return builtElement['tgt']
+        except:
+            print("TTPrint: builtElement:"),
+            print(builtElement)
+            print("TTPrint: kSceneItem:"),
+            print(kSceneItem)
+            raise
 
         return None
 
@@ -472,12 +487,9 @@ class Builder(object):
 
         for i in xrange(kObject.getNumAttributeGroups()):
             attributeGroup = kObject.getAttributeGroupByIndex(i)
-
-            attributeCount = attributeGroup.getNumAttributes()
             self.buildAttributeGroup(attributeGroup)
 
         return True
-
 
 
     def buildHierarchy(self, kObject, component=None):
@@ -655,7 +667,6 @@ class Builder(object):
         # Build input connections
         for i in xrange(kObject.getNumAttributeGroups()):
             attributeGroup = kObject.getAttributeGroupByIndex(i)
-
             for y in xrange(attributeGroup.getNumAttributes()):
                 attribute = attributeGroup.getAttributeByIndex(y)
                 self.connectAttribute(attribute)

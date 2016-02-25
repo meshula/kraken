@@ -13,6 +13,7 @@ from kraken.core.objects.scene_item import SceneItem
 from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
+from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 
 
 class Object3D(SceneItem):
@@ -28,8 +29,10 @@ class Object3D(SceneItem):
         self._xfo = Xfo()
         self._ro = RotationOrder()
         self._color = None
-        self._visibility = True
-        self._shapeVisibility = True
+
+        self._implicitAttrGrp = AttributeGroup("implicitAttrGrp", self)
+        self._visibility = BoolAttribute('visibility', True, self._implicitAttrGrp)
+        self._shapeVisibility = BoolAttribute('shapeVisibility', True, self._implicitAttrGrp)
 
         if parent is not None:
             parent.addChild(self)
@@ -124,7 +127,6 @@ class Object3D(SceneItem):
     # =============
     # Name Methods
     # =============
-
     def getBuildName(self):
         """Returns the build name for the object.
 
@@ -268,7 +270,6 @@ class Object3D(SceneItem):
 
         return parent
 
-
     def getLayer(self):
         """Returns the Layer the object belongs to.
 
@@ -296,7 +297,6 @@ class Object3D(SceneItem):
         """
 
         return self._component
-
 
     def setComponent(self, component):
         """Sets the component attribute of this object.
@@ -926,6 +926,16 @@ class Object3D(SceneItem):
     # ===================
     # Visibility Methods
     # ===================
+    def getVisibilityAttr(self):
+        """Returns the Visibility attribute object.
+
+        Returns:
+            BoolAttribute: Attribute that holds the value of the visibility.
+
+        """
+
+        return self._visibility
+
     def getVisibility(self):
         """Returns the visibility status of the scene item.
 
@@ -934,8 +944,7 @@ class Object3D(SceneItem):
 
         """
 
-        return self._visibility
-
+        return self._visibility.getValue()
 
     def setVisibility(self, value):
         """Sets the visibility of the scene object.
@@ -948,10 +957,20 @@ class Object3D(SceneItem):
 
         """
 
-        self._visibility = value
+        self._visibility.setValue(value)
 
         return True
 
+
+    def getShapeVisibilityAttr(self):
+        """Returns the Shape Visibility attribute object.
+
+        Returns:
+            BoolAttribute: Attribute that holds the value of the shape visibility.
+
+        """
+
+        return self._shapeVisibility
 
     def getShapeVisibility(self):
         """Returns the shape visibility status of the scene item.
@@ -961,8 +980,7 @@ class Object3D(SceneItem):
 
         """
 
-        return self._shapeVisibility
-
+        return self._shapeVisibility.getValue()
 
     def setShapeVisibility(self, value):
         """Sets the shape visibility of the scene object.
@@ -975,7 +993,7 @@ class Object3D(SceneItem):
 
         """
 
-        self._shapeVisibility = value
+        self._shapeVisibility.setValue(value)
 
         return True
 
