@@ -397,6 +397,9 @@ class Builder(Builder):
         parentDCCSceneItem = self.getDCCSceneItem(kAttributeGroup.getParent())
 
         groupName = kAttributeGroup.getName()
+        if groupName == "implicitAttrGrp":
+            return False
+
         dccSceneItem = parentDCCSceneItem.AddProperty("CustomParameterSet", False, groupName)
         self._registerSceneItemPair(kAttributeGroup, dccSceneItem)
 
@@ -434,8 +437,32 @@ class Builder(Builder):
         """
 
         if kAttribute.isConnected() is True:
-            driver = self.getDCCSceneItem(kAttribute.getConnection())
-            driven = self.getDCCSceneItem(kAttribute)
+
+            # Detect if driver is visibility attribute and map to correct DCC attribute
+            driverAttr = kAttribute.getConnection()
+            if driverAttr.getName() == 'visibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
+                driver = dccItem.Properties("Visibility").Parameters("viewvis")
+
+            elif driverAttr.getName() == 'shapeVisibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
+                driver = dccItem.Properties("Visibility").Parameters("viewvis")
+
+            else:
+                driver = self.getDCCSceneItem(kAttribute.getConnection())
+
+            # Detect if the driven attribute is a visibility attribute and map to correct DCC attribute
+            if kAttribute.getName() == 'visibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+                driven = dccItem.Properties("Visibility").Parameters("viewvis")
+
+            elif kAttribute.getName() == 'shapeVisibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+                driven = dccItem.Properties("Visibility").Parameters("viewvis")
+            else:
+                driven = self.getDCCSceneItem(kAttribute)
+
+
             driven.AddExpression(driver.FullName)
 
         return True
@@ -715,7 +742,7 @@ class Builder(Builder):
                     canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
                     si.FabricCanvasOpConnectPort(canvasOpPath, portName, dccSceneItem.FullName+".kine.global")
 
-                elif portDataType in ['Scalar', 'Boolean']:
+                elif portDataType in ['Scalar', 'Boolean', 'Integer']:
 
                     portmapDefinition = portName+"|XSI Parameter"
 
@@ -830,30 +857,45 @@ class Builder(Builder):
             bool: True if successful.
 
         """
+
         try:
-            graphDesc = kOperator.getGraphDesc()
             graphNodeName = kOperator.getPresetPath().split('.')[-1]
 
+            host = ks.getCoreClient().DFG.host
+            opBinding = host.createBindingToPreset(kOperator.getPresetPath())
+            node = opBinding.getExec()
 
-            def findPortOfType(dataTypes, connectionTypes):
-                for port in graphDesc['ports']:
-                    portName = port['name']
-                    portConnectionType = port['execPortType']
-                    portDataType = port['typeSpec']
+            portTypeMap = {
+                0: 'In',
+                1: 'IO',
+                2: 'Out'
+            }
 
-                    if portDataType in dataTypes and portConnectionType in connectionTypes:
-                        return port
+            ownerOutPortData = {
+                'name': None,
+                'typeSpec': None,
+                'execPortType': None
+            }
 
-                return None
+            for i in xrange(node.getExecPortCount()):
+                portName = node.getExecPortName(i)
+                portType = node.getExecPortType(i)
+                rtVal = opBinding.getArgValue(portName)
+                typeSpec = rtVal.getTypeName().getSimpleType()
+
+                if typeSpec in ['Mat44', 'Mat44[]'] and portTypeMap[portType] in ['Out', 'IO']:
+                    ownerOutPortData['name'] = portName
+                    ownerOutPortData['typeSpec'] = typeSpec
+                    ownerOutPortData['execPortType'] = portTypeMap[portType]
+                    break
 
             # Find operatorOwner to attach Splice Operator to.
-            ownerOutPort = findPortOfType(['Mat44', 'Mat44[]'], ['Out', 'IO'])
-            if ownerOutPort is None:
-                raise Exception("Graph '" + graphNodeName + "' has no Mat44 outputs!")
+            if ownerOutPortData['name'] is None:
+                raise Exception("Graph '" + uniqueNodeName + "' has no Mat44 outputs!")
 
-            ownerOutPortName = ownerOutPort['name']
-            ownerOutPortDataType = ownerOutPort['typeSpec']
-            ownerOutPortConnectionType = ownerOutPort['execPortType']
+            ownerOutPortName = ownerOutPortData['name']
+            ownerOutPortDataType = ownerOutPortData['typeSpec']
+            ownerOutPortConnectionType = ownerOutPortData['execPortType']
 
             if ownerOutPortDataType == 'Mat44[]':
                 operatorOwner = self.getDCCSceneItem( kOperator.getOutput(ownerOutPortName)[0] )
@@ -868,8 +910,7 @@ class Builder(Builder):
             print ("XSI buildCanvasOperator(): make sure the folloing line makes sense...")
             #self._registerSceneItemPair(kOperator, canvasOp)
             si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken" )
-            si.FabricCanvasInstPreset(canvasOpPath, "", kOperator.getPresetPath(), "400", "0")
-
+            uniqueNodeName = si.FabricCanvasInstPreset(canvasOpPath, "", kOperator.getPresetPath(), "400", "0")
 
             def addCanvasPorts(canvasOpPath, portName, canvasGraphPort, portDataType, argConnectionType, dccSceneItem):
 
@@ -894,7 +935,7 @@ class Builder(Builder):
                     canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
                     si.FabricCanvasOpConnectPort(canvasOpPath, portName, dccSceneItem.FullName+".kine.global")
 
-                elif portDataType in ['Scalar', 'Boolean']:
+                elif portDataType in ['Scalar', 'Boolean', 'Integer']:
 
                     portmapDefinition = portName+"|XSI Parameter"
 
@@ -915,12 +956,13 @@ class Builder(Builder):
                             parameter.AddExpression(dccSceneItem.FullName)
 
 
-            arraySizes = {}
+            # arraySizes = {}
             # connect the operator to the objects in the DCC
-            for port in graphDesc['ports']:
-                portName = port['name']
-                portConnectionType = port['execPortType']
-                portDataType = port['typeSpec']
+            for i in xrange(node.getExecPortCount()):
+                portName = node.getExecPortName(i)
+                portConnectionType = portTypeMap[node.getExecPortType(i)]
+                rtVal = opBinding.getArgValue(portName)
+                portDataType = rtVal.getTypeName().getSimpleType()
 
                 if portConnectionType not in ['In', 'IO', 'Out']:
                     raise Exception("Invalid connection type:" + portConnectionType)
@@ -935,13 +977,14 @@ class Builder(Builder):
                         arrayNode = si.FabricCanvasAddFunc(canvasOpPath, "", portName+"_ComposeArray", "dfgEntry {}", "40", str(i * 100))
                         si.FabricCanvasAddPort(canvasOpPath, arrayNode, "array", "Out", portDataType, "")
                         arrayNodeCode = "dfgEntry { \n  array.resize("+str(len(connectedObjects))+");\n"
-                        for j in range(len(connectedObjects)):
+                        for j in xrange(len(connectedObjects)):
                             si.FabricCanvasAddPort(canvasOpPath, arrayNode, "value"+str(j), "In", elementDataType, "", "")
                             arrayNodeCode += "  array["+str(j)+"] = value"+str(j)+";\n"
+
                         arrayNodeCode += "}"
                         si.FabricCanvasSetCode(canvasOpPath, arrayNode, arrayNodeCode)
 
-                        si.FabricCanvasConnect(canvasOpPath, "", arrayNode+".array", graphNodeName+"."+portName)
+                        si.FabricCanvasConnect(canvasOpPath, "", arrayNode+".array", uniqueNodeName + "." + portName)
 
                     elif portConnectionType in ['IO', 'Out']:
                         connectedObjects = kOperator.getOutput(portName)
@@ -949,22 +992,30 @@ class Builder(Builder):
                         arrayNode = si.FabricCanvasAddFunc(canvasOpPath, "", portName+"_DecomposeArray", "dfgEntry {}", "800", str(i * 100))
                         si.FabricCanvasAddPort(canvasOpPath, arrayNode, "array", "In", portDataType, "")
                         arrayNodeCode = "dfgEntry { \n"
-                        for j in range(len(connectedObjects)):
+                        for j in xrange(len(connectedObjects)):
                             si.FabricCanvasAddPort(canvasOpPath, arrayNode, "value"+str(j), "Out", elementDataType, "", "")
                             arrayNodeCode += "  value"+str(j)+" = array["+str(j)+"];\n"
+
                         arrayNodeCode += "}"
                         si.FabricCanvasSetCode(canvasOpPath, arrayNode, arrayNodeCode)
 
-                        si.FabricCanvasConnect(canvasOpPath, "", graphNodeName+"."+portName, arrayNode+".array")
+                        si.FabricCanvasConnect(canvasOpPath, "", uniqueNodeName + "." + portName, arrayNode+".array")
 
                         # OutArrays must be resized by the splice op.
-                        arraySizes[portName] = len(connectedObjects)
+                        # arraySizes[portName] = len(connectedObjects)
 
-                    for j in range(len(connectedObjects)):
+                    for j in xrange(len(connectedObjects)):
                         dccSceneItem = self.getDCCSceneItem(connectedObjects[j])
                         if dccSceneItem is None:
                             raise Exception("Operator:'"+kOperator.getName()+"' of type:'"+kOperator.getPresetPath()+"' port:'"+portName+"' dcc item not found for item:" + connectedObjects[j].getPath())
-                        addCanvasPorts(canvasOpPath, portName+str(j), arrayNode+".value"+str(j), elementDataType, portConnectionType, dccSceneItem)
+
+                        # Note: Need to find the operator each time as the
+                        # operator is destroyed and recreated each time you add
+                        # a new port.
+                        canvasOp = si.Dictionary.GetObject(operatorOwner.Fullname + ".kine.global.CanvasOp", False)
+
+                        addCanvasPorts(canvasOp, portName+str(j), arrayNode+".value"+str(j), elementDataType, portConnectionType, dccSceneItem)
+
 
                 else:
                     if portConnectionType == 'In':
@@ -975,7 +1026,8 @@ class Builder(Builder):
                     dccSceneItem = self.getDCCSceneItem(connectedObject)
                     if dccSceneItem is None:
                         raise Exception("Operator:'"+kOperator.getName()+"' of type:'"+kOperator.getPresetPath()+"' port:'"+portName+"' dcc item not found for item:" + connectedObject.getPath())
-                    addCanvasPorts(canvasOpPath, portName, graphNodeName+"."+portName, portDataType, portConnectionType, dccSceneItem)
+
+                    addCanvasPorts(canvasOpPath, portName, uniqueNodeName+"."+portName, portDataType, portConnectionType, dccSceneItem)
 
                 canvasOpPath = canvasOpPath2[:-1]
 
@@ -1058,7 +1110,14 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
-        if kSceneItem.getShapeVisibility() is False:
+        # Set Visibility
+        visAttr = kSceneItem.getVisibilityAttr()
+        if visAttr.isConnected() is False and kSceneItem.getVisibility() is False:
+            dccSceneItem.Properties("Visibility").Parameters("viewvis").Value = False
+
+        # Set Shape Visibility
+        shapeVisAttr = kSceneItem.getShapeVisibilityAttr()
+        if shapeVisAttr.isConnected() is False and kSceneItem.getShapeVisibility() is False:
             dccSceneItem.Properties("Visibility").Parameters("viewvis").Value = False
 
         return True

@@ -10,6 +10,7 @@ import json
 from kraken.core.kraken_system import ks
 from kraken.core.builder import Builder
 from kraken.core.objects.object_3d import Object3D
+from kraken.core.objects.scene_item import SceneItem
 from kraken.core.objects.control import Control
 from kraken.core.maths.xfo import Xfo
 from kraken.core.objects.attributes.attribute import Attribute
@@ -416,6 +417,9 @@ class Builder(Builder):
         parentDCCSceneItem = self.getDCCSceneItem(kAttributeGroup.getParent())
 
         groupName = kAttributeGroup.getName()
+        if groupName == "implicitAttrGrp":
+            return False
+
         parentDCCSceneItem.addAttr(groupName, niceName=groupName, attributeType="enum", enumName="-----", keyable=True)
         dccSceneItem = parentDCCSceneItem.attr(groupName)
         pm.setAttr(parentDCCSceneItem + "." + groupName, lock=True)
@@ -457,8 +461,31 @@ class Builder(Builder):
 
         if kAttribute.isConnected() is True:
 
-            driver = self.getDCCSceneItem(kAttribute.getConnection())
-            driven = self.getDCCSceneItem(kAttribute)
+            # Detect if driver is visibility attribute and map to correct DCC attribute
+            driverAttr = kAttribute.getConnection()
+            if driverAttr.getName() == 'visibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
+                driver = dccItem.attr('visibility')
+
+            elif driverAttr.getName() == 'shapeVisibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
+                shape = dccItem.getShape()
+                driver = shape.attr('visibility')
+
+            else:
+                driver = self.getDCCSceneItem(kAttribute.getConnection())
+
+            # Detect if the driven attribute is a visibility attribute and map to correct DCC attribute
+            if kAttribute.getName() == 'visibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+                driven = dccItem.attr('visibility')
+
+            elif kAttribute.getName() == 'shapeVisibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+                shape = dccItem.getShape()
+                driven = shape.attr('visibility')
+            else:
+                driven = self.getDCCSceneItem(kAttribute)
 
             pm.connectAttr(driver, driven, force=True)
 
@@ -545,7 +572,6 @@ class Builder(Builder):
     # ========================
     # Component Build Methods
     # ========================
-
     def buildAttributeConnection(self, connectionInput):
         """Builds the connection between the attribute and the connection.
 
@@ -653,7 +679,10 @@ class Builder(Builder):
                     connectionTargets = []
                     for i in range(len(connectedObjects)):
                         opObject = connectedObjects[i]
-                        dccSceneItem = self.getDCCSceneItem(opObject)
+                        if isinstance(opObject, SceneItem):
+                            dccSceneItem = self.getDCCSceneItem(opObject)
+                        else:
+                            dccSceneItem = None
 
                         # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
                         #if dccSceneItem is None: TTHACK
@@ -664,7 +693,10 @@ class Builder(Builder):
                         raise Exception("Operator '"+kOperator.getName()+"' of type '"+solverTypeName+"' arg '"+argName+"' not connected.")
 
                     opObject = connectedObjects
-                    dccSceneItem = self.getDCCSceneItem(opObject)
+                    if isinstance(opObject, SceneItem):
+                        dccSceneItem = self.getDCCSceneItem(opObject)
+                    else:
+                        dccSceneItem = None
 
                     # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
                     #if dccSceneItem is None:
@@ -715,7 +747,6 @@ class Builder(Builder):
                     else:
                         connectOutput(str(spliceNode + "." + argName), connectionTargets['opObject'], connectionTargets['dccSceneItem'])
 
-
             opSourceCode = kOperator.generateSourceCode(arraySizes=arraySizes)
             cmds.FabricCanvasSetCode(mayaNode=spliceNode, execPath=kOperator.getName(), code=opSourceCode)
 
@@ -726,10 +757,10 @@ class Builder(Builder):
 
 
     def buildCanvasOperator(self, kOperator):
-        """Builds Splice Operators on the components.
+        """Builds Canvas Operators on the components.
 
         Args:
-            kOperator (Object): Kraken operator that represents a Splice operator.
+            kOperator (Object): Kraken operator that represents a Canvas operator.
 
         Return:
             bool: True if successful.
@@ -737,41 +768,48 @@ class Builder(Builder):
         """
 
         try:
-            graphDesc = kOperator.getGraphDesc()
-            graphNodePreset = kOperator.getPresetPath().split('.')[-1]
+            host = ks.getCoreClient().DFG.host
+            opBinding = host.createBindingToPreset(kOperator.getPresetPath())
+            node = opBinding.getExec()
 
-            # Create Splice Operator
-            spliceNode = cmds.createNode('dfgMayaNode', name=kOperator.getName())
-            self._registerSceneItemPair(kOperator, pm.PyNode(spliceNode))
-            cmds.FabricCanvasSetExtDeps(mayaNode=spliceNode, execPath="", extDep="Kraken" )
-            graphNodeName = cmds.FabricCanvasInstPreset(mayaNode=spliceNode, execPath="", presetPath=kOperator.getPresetPath(), xPos="100", yPos="100")
+            portTypeMap = {
+                0: 'In',
+                1: 'IO',
+                2: 'Out'
+            }
+
+            # Create Canvas Operator
+            canvasNode = cmds.createNode('dfgMayaNode', name=kOperator.getName())
+            self._registerSceneItemPair(kOperator, pm.PyNode(canvasNode))
+            cmds.FabricCanvasSetExtDeps(mayaNode=canvasNode, execPath="", extDep="Kraken" )
+            graphNodeName = cmds.FabricCanvasInstPreset(mayaNode=canvasNode, execPath="", presetPath=kOperator.getPresetPath(), xPos="100", yPos="100")
 
             arraySizes = {}
-            # connect the operator to the objects in the DCC
-            for port in graphDesc['ports']:
-                portName = port['name']
-                portConnectionType = port['execPortType']
-                portDataType = port['typeSpec']
+            for i in xrange(node.getExecPortCount()):
+                portName = node.getExecPortName(i)
+                portConnectionType = portTypeMap[node.getExecPortType(i)]
+                rtVal = opBinding.getArgValue(portName)
+                portDataType = rtVal.getTypeName().getSimpleType()
 
                 if portConnectionType == 'In':
-                    cmds.FabricCanvasAddPort(mayaNode=spliceNode, execPath="", desiredPortName=portName, portType="In", typeSpec=portDataType, connectToPortPath="")
-                    cmds.FabricCanvasConnect(mayaNode=spliceNode, execPath="", srcPortPath=portName, dstPortPath=graphNodeName+"."+portName)
+                    cmds.FabricCanvasAddPort(mayaNode=canvasNode, execPath="", desiredPortName=portName, portType="In", typeSpec=portDataType, connectToPortPath="")
+                    cmds.FabricCanvasConnect(mayaNode=canvasNode, execPath="", srcPortPath=portName, dstPortPath=graphNodeName+"."+portName)
                 elif portConnectionType in ['IO', 'Out']:
-                    cmds.FabricCanvasAddPort(mayaNode=spliceNode, execPath="", desiredPortName=portName, portType="Out", typeSpec=portDataType, connectToPortPath="")
-                    cmds.FabricCanvasConnect(mayaNode=spliceNode, execPath="", srcPortPath=graphNodeName+"."+portName, dstPortPath=portName)
+                    cmds.FabricCanvasAddPort(mayaNode=canvasNode, execPath="", desiredPortName=portName, portType="Out", typeSpec=portDataType, connectToPortPath="")
+                    cmds.FabricCanvasConnect(mayaNode=canvasNode, execPath="", srcPortPath=graphNodeName+"."+portName, dstPortPath=portName)
                 else:
                     raise Exception("Invalid connection type:" + portConnectionType)
 
                 if portDataType == 'EvalContext':
                     continue
                 if portName == 'time':
-                    cmds.expression( o=spliceNode + '.time', s=spliceNode + '.time = time;' )
+                    cmds.expression( o=canvasNode + '.time', s=canvasNode + '.time = time;' )
                     continue
                 if portName == 'frame':
-                    cmds.expression( o=spliceNode + '.frame', s=spliceNode + '.frame = frame;' )
+                    cmds.expression( o=canvasNode + '.frame', s=canvasNode + '.frame = frame;' )
                     continue
 
-                # Get the portument's input from the DCC
+                # Get the port's input from the DCC
                 if portConnectionType == 'In':
                     connectedObjects = kOperator.getInput(portName)
                 elif portConnectionType in ['IO', 'Out']:
@@ -779,7 +817,7 @@ class Builder(Builder):
 
                 if portDataType.endswith('[]'):
 
-                    # In SpliceMaya, output arrays are not resized by the system prior to calling into Splice, so we
+                    # In CanvasMaya, output arrays are not resized by the system prior to calling into Canvas, so we
                     # explicily resize the arrays in the generated operator stub code.
                     if portConnectionType in ['IO', 'Out']:
                         arraySizes[portName] = len(connectedObjects)
@@ -790,9 +828,12 @@ class Builder(Builder):
                         #raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' not connected.")
 
                     connectionTargets = []
-                    for i in range(len(connectedObjects)):
+                    for i in xrange(len(connectedObjects)):
                         opObject = connectedObjects[i]
-                        dccSceneItem = self.getDCCSceneItem(opObject)
+                        if isinstance(opObject, SceneItem):
+                            dccSceneItem = self.getDCCSceneItem(opObject)
+                        else:
+                            dccSceneItem = None
 
                         # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
                         #if dccSceneItem is None:
@@ -803,7 +844,11 @@ class Builder(Builder):
                         raise Exception("Operator '"+kOperator.getName()+"' of type '"+kOperator.getPresetPath()+"' port '"+portName+"' not connected.")
 
                     opObject = connectedObjects
-                    dccSceneItem = self.getDCCSceneItem(opObject)
+                    if isinstance(opObject, SceneItem):
+                        dccSceneItem = self.getDCCSceneItem(opObject)
+                    else:
+                        dccSceneItem = None
+
 
                     # TTHACK: Allow dccSceneItem to be None, this means we are setting a value instead of making connection
                     #if dccSceneItem is None:
@@ -811,7 +856,7 @@ class Builder(Builder):
 
                     connectionTargets = { 'opObject': opObject, 'dccSceneItem': dccSceneItem }
 
-                # Add the splice Port for each port.
+                # Add the Canvas Port for each port.
                 if portConnectionType == 'In':
 
                     def connectInput(tgt, opObject, dccSceneItem):
@@ -830,9 +875,9 @@ class Builder(Builder):
 
                     if portDataType.endswith('[]'):
                         for i in range(len(connectionTargets)):
-                            connectInput( spliceNode + "." + portName+'['+str(i)+']', connectionTargets[i]['opObject'], connectionTargets[i]['dccSceneItem'])
+                            connectInput( canvasNode + "." + portName+'['+str(i)+']', connectionTargets[i]['opObject'], connectionTargets[i]['dccSceneItem'])
                     else:
-                        connectInput( spliceNode + "." + portName, connectionTargets['opObject'], connectionTargets['dccSceneItem'])
+                        connectInput( canvasNode + "." + portName, connectionTargets['opObject'], connectionTargets['dccSceneItem'])
 
                 elif portConnectionType in ['IO', 'Out']:
 
@@ -850,9 +895,9 @@ class Builder(Builder):
 
                     if portDataType.endswith('[]'):
                         for i in range(len(connectionTargets)):
-                            connectOutput(str(spliceNode + "." + portName)+'['+str(i)+']', connectionTargets[i]['opObject'], connectionTargets[i]['dccSceneItem'])
+                            connectOutput(str(canvasNode + "." + portName)+'['+str(i)+']', connectionTargets[i]['opObject'], connectionTargets[i]['dccSceneItem'])
                     else:
-                        connectOutput(str(spliceNode + "." + portName), connectionTargets['opObject'], connectionTargets['dccSceneItem'])
+                        connectOutput(str(canvasNode + "." + portName), connectionTargets['opObject'], connectionTargets['dccSceneItem'])
 
 
         finally:
@@ -928,8 +973,14 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
-        if kSceneItem.getShapeVisibility() is False:
+        # Set Visibility
+        visAttr = kSceneItem.getVisibilityAttr()
+        if visAttr.isConnected() is False and kSceneItem.getVisibility() is False:
+            dccSceneItem.visibility.set(False)
 
+        # Set Shape Visibility
+        shapeVisAttr = kSceneItem.getShapeVisibilityAttr()
+        if shapeVisAttr.isConnected() is False and kSceneItem.getShapeVisibility() is False:
             # Get shape node, if it exists, hide it.
             shape = dccSceneItem.getShape()
             if shape is not None:

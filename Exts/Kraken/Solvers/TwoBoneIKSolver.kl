@@ -116,7 +116,8 @@ function TwoBoneIKSolver.solve!
   Xfo bone1FkXfo = Xfo(bone1FK);
   Xfo bone0Xfo = bone0FkXfo;
   Xfo bone1Xfo = bone1FkXfo;
-  Xfo bone2Xfo;
+  Xfo bone2Xfo = bone1Xfo;
+  bone2Xfo.tr = bone1Xfo.transformVector(Vec3(bone1Len, 0.0, 0.0));
 
   Scalar scaledBone0Len = bone0Len * rigScale;
   Scalar scaledBone1Len = bone1Len * rigScale;
@@ -153,7 +154,8 @@ function TwoBoneIKSolver.solve!
   // Set debugging visibility.
   this.setDebug(drawDebug);
   if(this.drawDebug){
-
+    if(!this.handle)
+      this.handle = DrawingHandle();
     Color boneColor(1.0, 1.0, 0);
     etDrawBone(this.handle.rootTransform, 'bone0', bone0Xfo, scaledBone0Len, scaledBone0Len * 0.15, boneColor);
     etDrawBone(this.handle.rootTransform, 'bone1', bone1Xfo, scaledBone1Len, scaledBone1Len * 0.15, boneColor);
