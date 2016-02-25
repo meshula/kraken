@@ -43,12 +43,6 @@ class Builder(object):
             bool: True if successful.
 
         """
-        if kSceneItem.__class__.__name__ == "Rig":
-            print("TTPrint: kSceneItem:"),
-            print(kSceneItem)
-            print("TTPrint: dccSceneItem:"),
-            print(dccSceneItem)
-
 
         pairing = {
                    'src': kSceneItem,
@@ -77,19 +71,12 @@ class Builder(object):
             object: The DCC Scene Item that corresponds to the given scene item
 
         """
-        builtElement=None
 
-        try:
-            for builtElement in self._buildElements:
+        for builtElement in self._buildElements:
 
-                if builtElement['src'] == kSceneItem:
-                    return builtElement['tgt']
-        except:
-            print("TTPrint: builtElement:"),
-            print(builtElement)
-            print("TTPrint: kSceneItem:"),
-            print(kSceneItem)
-            raise
+            if builtElement['src'] == kSceneItem:
+                return builtElement['tgt']
+
 
         return None
 

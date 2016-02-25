@@ -619,8 +619,7 @@ class Builder(Builder):
 
         try:
             solverTypeName = kOperator.getSolverTypeName()
-            print("TTPrint: solverTypeName:"),
-            print(solverTypeName)
+
             # Create Splice Operator
             spliceNode = cmds.createNode('dfgMayaNode', name=kOperator.getName())
             self._registerSceneItemPair(kOperator, pm.PyNode(spliceNode))
@@ -640,10 +639,6 @@ class Builder(Builder):
                 argName = arg.name.getSimpleType()
                 argDataType = arg.dataType.getSimpleType()
                 argConnectionType = arg.connectionType.getSimpleType()
-                print("TTPrint: argName:"),
-                print(argName)
-                print("TTPrint: argDataType:"),
-                print(argDataType)
 
                 if argConnectionType == 'In':
                     cmds.FabricCanvasAddPort(mayaNode=spliceNode, execPath="", desiredPortName=argName, portType="In", typeSpec=argDataType, connectToPortPath="")
@@ -668,9 +663,6 @@ class Builder(Builder):
                     connectedObjects = kOperator.getInput(argName)
                 elif argConnectionType in ['IO', 'Out']:
                     connectedObjects = kOperator.getOutput(argName)
-
-                print("TTPrint: connectedObjects:"),
-                print(connectedObjects)
 
                 if argDataType.endswith('[]'):
 
@@ -714,8 +706,6 @@ class Builder(Builder):
 
                 # Add the splice Port for each arg.
                 if argConnectionType == 'In':
-                    print("TTPrint: connectionTargets:"),
-                    print(connectionTargets)
 
                     def connectInput(tgt, opObject, dccSceneItem):
 

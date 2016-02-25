@@ -40,17 +40,9 @@ class CanvasOperator(Operator):
         for i in xrange(self.node.getExecPortCount()):
 
             portName = self.node.getExecPortName(i)
-            print("TTPrint: portName:"),
-            print(portName)
             portConnectionType = portTypeMap[self.node.getExecPortType(i)]
-            print("TTPrint: portConnectionType:"),
-            print(portConnectionType)
             rtVal = self.binding.getArgValue(portName)
-            print("TTPrint: rtVal:"),
-            print(rtVal)
             portDataType = rtVal.getTypeName().getSimpleType()
-            print("TTPrint: portDataType:"),
-            print(portDataType)
 
             if portConnectionType == 'In':
                 if portDataType.endswith('[]'):
