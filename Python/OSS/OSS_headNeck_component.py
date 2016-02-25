@@ -286,23 +286,23 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Add Fabric Ops
         # ===============
         # Add Neck Canvas Op
-        self.ZSplineNeckCanvasOp = CanvasOperator('ZSplineNeckCanvasOp', 'OSS.Solvers.NURBSSpineSolver')
+        self.NURBSNeckCanvasOp = CanvasOperator('NURBSNeckCanvasOp', 'OSS.Solvers.NURBSSpineSolver')
 
-        self.addOperator(self.ZSplineNeckCanvasOp)
+        self.addOperator(self.NURBSNeckCanvasOp)
 
-        self.ZSplineNeckCanvasOp.setInput('controls', self.controlInputs)
+        self.NURBSNeckCanvasOp.setInput('controls', self.controlInputs)
 
-        self.ZSplineNeckCanvasOp.setInput('controlsRest', self.controlRestInputs)
+        self.NURBSNeckCanvasOp.setInput('controlsRest', self.controlRestInputs)
 
         # Add Xfo Inputs
-        self.ZSplineNeckCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.ZSplineNeckCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.ZSplineNeckCanvasOp.setInput('numDeformers',  1)
-        self.ZSplineNeckCanvasOp.setInput('compressionAmt', 0)
+        self.NURBSNeckCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.NURBSNeckCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.NURBSNeckCanvasOp.setInput('numDeformers',  1)
+        self.NURBSNeckCanvasOp.setInput('compressionAmt', 0)
 
 
         # Add Xfo Outputs
-        self.ZSplineNeckCanvasOp.setOutput('outputs', self.neckOutputs)
+        self.NURBSNeckCanvasOp.setOutput('outputs', self.neckOutputs)
 
         # Add Deformer Splice Op
         self.deformersToOutputsKLOp = KLOperator('neckDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
@@ -350,8 +350,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
             self.deformerJoints.append(neckDef)
 
-        if hasattr(self, 'ZSplineNeckCanvasOp'):  # Check in case this is ever called from Guide callback
-            self.ZSplineNeckCanvasOp.setInput('numDeformers',  numDeformers)
+        if hasattr(self, 'NURBSNeckCanvasOp'):  # Check in case this is ever called from Guide callback
+            self.NURBSNeckCanvasOp.setInput('numDeformers',  numDeformers)
 
         return True
 
@@ -486,10 +486,10 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.mocapHierBlendSolver.evaluate()
 
             # Add Xfo Outputs
-            self.ZSplineNeckCanvasOp.setInput('neck', self.neckCtrlSpace_link)
-            self.ZSplineNeckCanvasOp.setInput('head', self.headCtrlSpace_link)
-            self.ZSplineNeckCanvasOp.setInput('neckHandle', self.neckHandleCtrlSpace_link)
-            self.ZSplineNeckCanvasOp.setInput('headHandle', self.headHandleCtrlSpace_link)
+            self.NURBSNeckCanvasOp.setInput('neck', self.neckCtrlSpace_link)
+            self.NURBSNeckCanvasOp.setInput('head', self.headCtrlSpace_link)
+            self.NURBSNeckCanvasOp.setInput('neckHandle', self.neckHandleCtrlSpace_link)
+            self.NURBSNeckCanvasOp.setInput('headHandle', self.headHandleCtrlSpace_link)
 
         self.neckBaseOutputConstraint = self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0], maintainOffset=True)
         self.neckEndOutputConstraint = self.neckEndOutputTgt.constrainTo(self.neckOutputs[-1], maintainOffset=True)

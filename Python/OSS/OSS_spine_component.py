@@ -313,49 +313,22 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Add Fabric Ops
         # ===============
         # Add Spine Canvas Op
-        self.ZSplineSpineCanvasOp = CanvasOperator('ZSplineSpineCanvasOp', 'OSS.Solvers.NURBSSpineSolver')
+        self.NURBSSpineCanvasOp = CanvasOperator('NURBSSpineCanvasOp', 'OSS.Solvers.NURBSSpineSolver')
 
-        self.addOperator(self.ZSplineSpineCanvasOp)
+        self.addOperator(self.NURBSSpineCanvasOp)
 
         # Add Att Inputs
-        self.ZSplineSpineCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.ZSplineSpineCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.ZSplineSpineCanvasOp.setInput('numDeformers',  1)
-        self.ZSplineSpineCanvasOp.setInput('compressionAmt', 0)
-        # Add Xfo Inputs
+        self.NURBSSpineCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.NURBSSpineCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.NURBSSpineCanvasOp.setInput('numDeformers',  1)
+        self.NURBSSpineCanvasOp.setInput('compressionAmt', 0)
 
-        # self.controlInputs.append(self.pelvisCtrlSpace)
-        # self.controlInputs.append(self.torsoCtrl)
-        # self.controlInputs.append(self.chestCtrl)
-        # self.controlInputs.append(self.upChestCtrl)
-        # self.controlInputs.append(self.neckCtrlSpace)
-
-        self.ZSplineSpineCanvasOp.setInput('controls', self.controlInputs)
-
-        # self.ZSplineSpineCanvasOp.setInput('pelvis', self.pelvisCtrlSpace)
-        # self.ZSplineSpineCanvasOp.setInput('torso', self.torsoCtrl)
-        # self.ZSplineSpineCanvasOp.setInput('chest', self.chestCtrl)
-        # self.ZSplineSpineCanvasOp.setInput('upChest', self.upChestCtrl)
-        # self.ZSplineSpineCanvasOp.setInput('neck', self.neckCtrlSpace)
-        # temp now until handles are swapped
-
-        # self.controlRestInputs.append(self.pelvisCtrlSpace.xfo)
-        # self.controlRestInputs.append(self.torsoCtrl.xfo)
-        # self.controlRestInputs.append(self.chestCtrl.xfo)
-        # self.controlRestInputs.append(self.upChestCtrl.xfo)
-        # self.controlRestInputs.append(self.neckCtrlSpace.xfo)
-
-        self.ZSplineSpineCanvasOp.setInput('controlsRest', self.controlRestInputs)
-
-        # self.ZSplineSpineCanvasOp.setInput('pelvisRest', self.pelvisCtrlSpace.xfo)
-        # self.ZSplineSpineCanvasOp.setInput('torsoRest', self.torsoCtrl.xfo)
-        # self.ZSplineSpineCanvasOp.setInput('chestRest', self.chestCtrl.xfo)
-        # self.ZSplineSpineCanvasOp.setInput('upChestRest', self.upChestCtrl.xfo)
-        # self.ZSplineSpineCanvasOp.setInput('neckRest', self.neckCtrlSpace.xfo)
+        self.NURBSSpineCanvasOp.setInput('controls', self.controlInputs)
+        self.NURBSSpineCanvasOp.setInput('controlsRest', self.controlRestInputs)
 
 
         # Add Xfo Outputs
-        self.ZSplineSpineCanvasOp.setOutput('outputs', self.spineOutputs)
+        self.NURBSSpineCanvasOp.setOutput('outputs', self.spineOutputs)
 
         # Add Deformer Splice Op
         self.outputsToDeformersOKLOp = KLOperator('spineDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
@@ -390,8 +363,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
             spineDef.setComponent(self)
             self.deformerJoints.append(spineDef)
 
-        if hasattr(self, 'ZSplineSpineCanvasOp'):  # Check in case this is ever called from Guide callback
-            self.ZSplineSpineCanvasOp.setInput('numDeformers',  numDeformers)
+        if hasattr(self, 'NURBSSpineCanvasOp'):  # Check in case this is ever called from Guide callback
+            self.NURBSSpineCanvasOp.setInput('numDeformers',  numDeformers)
 
         return True
 
@@ -563,11 +536,13 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.mocapHierBlendSolver.evaluate()
 
             # Add Xfo Outputs
-            self.ZSplineSpineCanvasOp.setInput('pelvis', self.pelvisCtrlSpace_link)
-            self.ZSplineSpineCanvasOp.setInput('torso', self.torsoCtrl_link)
-            self.ZSplineSpineCanvasOp.setInput('chest', self.chestCtrl_link)
-            self.ZSplineSpineCanvasOp.setInput('upChest', self.upChestCtrl_link)
-            self.ZSplineSpineCanvasOp.setInput('neck', self.neckCtrlSpace_link)
+            self.mcControlInputs = []
+            self.NURBSSpineCanvasOp.setInput('controls', self.mcControlInputs)
+            self.mcControlInputs.append(self.pelvisCtrlSpace_link)
+            self.mcControlInputs.append(self.torsoCtrl_link)
+            self.mcControlInputs.append(self.chestCtrl_link)
+            self.mcControlInputs.append(self.upChestCtrl_link)
+            self.mcControlInputs.append(self.neckCtrlSpace_link)
 
             self.spineHipsOutputConstraint = self.spineHipsOutputTgt.constrainTo(self.hipsCtrl_link)
             self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace_link)

@@ -70,9 +70,9 @@
       }
     ],
   "extDeps" : {
-    "Curves" : "*"
+    "Math" : "*"
     },
-  "presetGUID" : "C4D9316AD4D119756AAF37E9E276AAEA",
+  "presetGUID" : "7A306810F590F09B07A98F5028A5A25F",
   "nodes" : [
     {
       "objectType" : "Inst",
@@ -328,7 +328,6 @@ dfgEntry {
         "extDeps" : {
           "Math" : "*"
           },
-        "origPresetGUID" : "59B1B738E9402F3006B2516B14A43848",
         "code" : "require Math;
 
 dfgEntry {
@@ -648,7 +647,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\n  \"x\" : 327.501953125,\n  \"y\" : 1597.279052734375\n  }"
+        "uiGraphPos" : "{\"x\":327.502,\"y\":1596.04}"
         },
       "name" : "getXfosOnCurve_2",
       "ports" : [
@@ -749,7 +748,6 @@ dfgEntry {
 dfgEntry {
   results.resize(params.size());
   __evalCompressionTask<<<params.size()>>>(results, curve, restCurve, params, keepArcLength, keepCurveLen);
-  report(results);
 }
 
 "
@@ -799,7 +797,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\n  \"x\" : 604.6216430664063,\n  \"y\" : 1603.218505859375\n  }"
+        "uiGraphPos" : "{\"x\":609.574,\"y\":1668.84}"
         },
       "name" : "scaleByCompression",
       "ports" : [
@@ -845,11 +843,13 @@ dfgEntry {
             "typeSpec" : "Scalar"
             }
           ],
-        "extDeps" : {},
+        "extDeps" : {
+          "Math" : "*"
+          },
         "code" : "dfgEntry {
   //result = lhs + rhs;
   for (UInt32 i =0; i<this.size(); i++) {
-    Scalar localCompression = compression[i]*compressionAmt;
+    Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
     this[i].sc = this[i].sc*Vec3(1,localCompression,localCompression);
   }
 }
@@ -1223,9 +1223,9 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "Curves" : "*"
+        "Math" : "*"
         },
-      "presetGUID" : "C4D9316AD4D119756AAF37E9E276AAEA",
+      "presetGUID" : "7A306810F590F09B07A98F5028A5A25F",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -1481,7 +1481,6 @@ dfgEntry {
             "extDeps" : {
               "Math" : "*"
               },
-            "origPresetGUID" : "59B1B738E9402F3006B2516B14A43848",
             "code" : "require Math;
 
 dfgEntry {
@@ -1801,7 +1800,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\n  \"x\" : 327.501953125,\n  \"y\" : 1597.279052734375\n  }"
+            "uiGraphPos" : "{\"x\":327.502,\"y\":1596.04}"
             },
           "name" : "getXfosOnCurve_2",
           "ports" : [
@@ -1902,7 +1901,6 @@ dfgEntry {
 dfgEntry {
   results.resize(params.size());
   __evalCompressionTask<<<params.size()>>>(results, curve, restCurve, params, keepArcLength, keepCurveLen);
-  report(results);
 }
 
 "
@@ -1952,7 +1950,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\n  \"x\" : 604.6216430664063,\n  \"y\" : 1603.218505859375\n  }"
+            "uiGraphPos" : "{\"x\":609.574,\"y\":1668.84}"
             },
           "name" : "scaleByCompression",
           "ports" : [
@@ -1998,11 +1996,13 @@ dfgEntry {
                 "typeSpec" : "Scalar"
                 }
               ],
-            "extDeps" : {},
+            "extDeps" : {
+              "Math" : "*"
+              },
             "code" : "dfgEntry {
   //result = lhs + rhs;
   for (UInt32 i =0; i<this.size(); i++) {
-    Scalar localCompression = compression[i]*compressionAmt;
+    Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
     this[i].sc = this[i].sc*Vec3(1,localCompression,localCompression);
   }
 }
