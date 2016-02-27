@@ -115,8 +115,6 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         """
         self.controlXforms = []
 
-
-
         globalScale = 1.0
 
         # Store current values if guide controls already exist
@@ -128,8 +126,6 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                 current = len(self.controlXforms) -1
             else:
                 self.controlXforms[current].append(ctrl.xfo)
-
-
 
         # Delete current controls
         for ctrl in reversed(controlsList):
@@ -153,6 +149,15 @@ class OSSEyesComponentGuide(OSSEyesComponent):
             for j, segment in enumerate(segments):
 
 
+                sideIdx = 0
+                if handleName.startswith("L"):
+                    lSideIdx += 1
+                    sideIdx = lSideIdx
+                elif handleName.startswith("R"):
+                    rSideIdx += 1
+                    sideIdx = -rSideIdx
+
+
                 if j == 0:
                     newCtrl = Control(handleName+"_"+segment, parent= self.eyesCtrl, shape="direction")
                     newCtrl.setShape("direction")
@@ -160,6 +165,9 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                     newCtrl.rotatePoints(90,0,0)
                     newCtrl.translatePoints(Vec3(0,0,1))
                     newCtrl.scalePoints(Vec3(1,1,self.EyeRadius.getValue()))
+                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(sideIdx*offset, 0, 0)))
+                    parent = newCtrl
+
                 else:
                     newCtrl = Control(handleName+"_"+segment, parent= parent, shape="square")
                     newCtrl.setShape("square")
@@ -171,29 +179,15 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                     newCtrl.rotatePoints(90,0,0)
                     newCtrl.translatePoints(Vec3(0,0,10))
 
+                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0, 0, 0)))
 
-                if j == 0:
-                    # Parent transform offsets for L and R Side
-                    if handleName.startswith("L"):
-                        lSideIdx += 1
-                        sideIdx = lSideIdx
-                    elif handleName.startswith("R"):
-                        rSideIdx += 1
-                        sideIdx = -rSideIdx
-                    else:
-                        sideIdx = 0
 
-                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(sideIdx*offset, 0, 0)))
-                else:
-                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0.0, 0.0, 0)))
-
+                # parent = newCtrl
                 controlsList.append(newCtrl)
-                parent = newCtrl
 
                 if i < len(self.controlXforms):
                     if j < len(self.controlXforms[i]):
                         newCtrl.xfo = self.controlXforms[i][j]
-
 
         return True
 
@@ -344,7 +338,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
 
         self.eyeTrackerSpace = CtrlSpace('eyeTracker', parent=self.ctrlCmpGrp)
         self.eyeTracker = Control('eyeTracker', parent=self.eyeTrackerSpace, shape="circle")
-        self.eyeTrackerUpSpace = CtrlSpace('eyeTrackerUp', parent=self.ctrlCmpGrp)
+        self.eyeTrackerUpSpace = CtrlSpace('eyeTrackerUp', parent=self.eyesCtrlSpace)
         self.eyeTrackerIKSpace = CtrlSpace('eyeTrackerIK', parent=self.ctrlCmpGrp)
         self.eyeTracker.rotatePoints(90,0,0)
         self.eyeTracker.lockRotation(x=True, y=True, z=True)
@@ -356,6 +350,12 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.ctrlCmpGrp.setComponent(self)
 
 
+        # ==============
+        # Constrain I/O
+        # ==============
+        # Constraint inputs
+        self.eyeCtrlConstraint = self.eyesCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.eyeTrackerIKSpaceConstraint = self.eyeTrackerIKSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
 
         # ===============
         # Add Fabric Ops
@@ -391,25 +391,19 @@ class OSSEyesComponentRig(OSSEyesComponent):
         globalScale = data['globalComponentCtrlSize']
 
 
+
         for i, handleName in enumerate(animControlNameList):
             parent = self.eyesCtrlSpace
             # newCtrls = []
-            print "i %s"%i
-            print "handleName %s"%handleName
             # build fk handle
             for j, segment in enumerate(segments):
-                print "j %s"%j
-                print "segment %s"%segment
                 #Eventually, we need outputs and ports for this component for each handle segment
                 #spineOutput = ComponentOutput(handleName+"_"+segment, parent=self.outputHrcGrp)
-
-                print "____"
 
                 newCtrlSpace = CtrlSpace(handleName+"_"+segment, parent=parent)
                 # newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
 
                 if segment == "fk":
-                    print "fkmake"
                     # fkCtrl = Transform(handleName+"_"+segment, parent=newCtrlSpace)
                     fkCtrl = Control(handleName+"_fk", parent=newCtrlSpace, shape="direction")
                     upCtrlSpace = Transform(handleName+"_"+segment, parent=newCtrlSpace)
@@ -426,7 +420,6 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     upVSpaceBlendInputAttr = ScalarAttribute(handleName+'FKIK', value=0.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
 
                 if segment == "ik":
-                    print "ikmake"
                     # break these out more explicitly
                     ikCtrlEndSpace = CtrlSpace(handleName+"_"+segment, parent=self.eyeTrackerIKSpace)
                     ikCtrl = Control(handleName+"_"+segment, parent=ikCtrlEndSpace, shape="square")
@@ -506,6 +499,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.eyeTracker.xfo = data['eyesEndXfo']
         self.eyeTrackerIKSpace.xfo = data['eyesEndXfo']
         self.eyeTrackerUpSpace.xfo = data['eyesXfo'].multiply(Xfo(Vec3(0.0, 1, 0)))
+
 
 
         self.createControls(data["EyesNames"], data)
