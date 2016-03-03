@@ -368,6 +368,8 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.EyeAutoAimCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.EyeAutoAimCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
         self.EyeAutoAimCanvasOp.setInput('blend',  0)
+        self.EyeAutoAimCanvasOp.setInput('atAxis',  3)
+        self.EyeAutoAimCanvasOp.setInput('upAxis',  2)
 
         self.EyeAutoAimCanvasOp.setOutput('result', self.eyeTrackerIKSpace)
         self.EyeAutoAimCanvasOp.setInput('position', self.eyeTracker)
@@ -461,6 +463,8 @@ class OSSEyesComponentRig(OSSEyesComponent):
             self.EyeIkFkBlendCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
             self.EyeIkFkBlendCanvasOp.setInput('blend',  upVSpaceBlendInputAttr)
             self.EyeIkFkBlendCanvasOp.setInput('position', fkCtrl)
+            self.EyeIkFkBlendCanvasOp.setInput('atAxis',  0)
+            self.EyeIkFkBlendCanvasOp.setInput('upAxis',  2)
 
             self.EyeIkFkBlendCanvasOp.setOutput('result', newDef)
             self.EyeIkFkBlendCanvasOp.setInput('ik', ikCtrl)
