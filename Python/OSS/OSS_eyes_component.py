@@ -169,7 +169,7 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                     parent = newCtrl
 
                 else:
-                    newCtrl = Control(handleName+"_"+segment, parent= parent, shape="square")
+                    newCtrl = Control(handleName+"_"+segment, parent=parent, shape="square")
                     newCtrl.setShape("square")
                     newCtrl.setColor("red")
                     newCtrl.lockTranslation(x=True, y=True, z=True)
@@ -355,7 +355,8 @@ class OSSEyesComponentRig(OSSEyesComponent):
         # ==============
         # Constraint inputs
         self.eyeCtrlConstraint = self.eyesCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-        self.eyeTrackerIKSpaceConstraint = self.eyeTrackerIKSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
+        # self.eyeTrackerIKSpaceConstraint = self.eyeTrackerIKSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
+        self.eyeTrackerSpaceConstraint = self.eyeTrackerSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
 
         # ===============
         # Add Fabric Ops
@@ -368,8 +369,8 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.EyeAutoAimCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.EyeAutoAimCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
         self.EyeAutoAimCanvasOp.setInput('blend',  0)
-        self.EyeAutoAimCanvasOp.setInput('atAxis',  3)
-        self.EyeAutoAimCanvasOp.setInput('upAxis',  2)
+        self.EyeAutoAimCanvasOp.setInput('atAxis',  0)
+        self.EyeAutoAimCanvasOp.setInput('upAxis',  5)
 
         self.EyeAutoAimCanvasOp.setOutput('result', self.eyeTrackerIKSpace)
         self.EyeAutoAimCanvasOp.setInput('position', self.eyeTracker)
@@ -408,7 +409,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                 if segment == "fk":
                     # fkCtrl = Transform(handleName+"_"+segment, parent=newCtrlSpace)
                     fkCtrl = Control(handleName+"_fk", parent=newCtrlSpace, shape="direction")
-                    upCtrlSpace = Transform(handleName+"_"+segment, parent=newCtrlSpace)
+                    upCtrlSpace = fkCtrl.insertCtrlSpace()
                     fkCtrl.setShape("direction")
                     fkCtrl.setColor("yellow")
                     fkCtrl.lockTranslation(x=True, y=True, z=True)
@@ -419,19 +420,18 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     newDef = Joint(handleName+"_fk", parent=self.defCmpGrp)
 
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
-                    upVSpaceBlendInputAttr = ScalarAttribute(handleName+'FKIK', value=0.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
+                    upVSpaceBlendInputAttr = ScalarAttribute(handleName+'FKIK', value=1.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
 
                 if segment == "ik":
                     # break these out more explicitly
-                    ikCtrlEndSpace = CtrlSpace(handleName+"_"+segment, parent=self.eyeTrackerIKSpace)
-                    ikCtrl = Control(handleName+"_"+segment, parent=ikCtrlEndSpace, shape="square")
+                    ikCtrl = Control(handleName+"_"+segment, parent=self.eyeTrackerIKSpace, shape="square")
+                    ikCtrlEndSpace = ikCtrl.insertCtrlSpace()
                     ikCtrl.setShape("square")
                     ikCtrl.setColor("red")
                     ikCtrl.lockRotation(x=True, y=True, z=True)
                     ikCtrl.rotatePoints(90,0,0)
                     ikCtrl.scalePoints(Vec3(.5,.5,.5))
                     # newCtrls.append(ikCtrl)
-
 
                 ctrlListName = "eyesCtrls"
 
@@ -449,6 +449,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                             newXfo = data["eyesCtrlsXfos"][index].multiply(Xfo(Vec3(0.0, 0.0, data['eyesLen'])))
                             ikCtrlEndSpace.xfo = newXfo
                             ikCtrl.xfo = newXfo
+
 
 
             # ===============
@@ -472,6 +473,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
             # Add Xfo Inputs
             self.EyeIkFkBlendCanvasOp.setInput('up', upCtrlSpace)
             # temp now until handles are swapped
+
 
         return True
 
@@ -499,14 +501,15 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.parentSpaceInputTgt.xfo = data['eyesXfo']
         self.eyesEndOutputTgt.xfo = data['eyesEndXfo']
 
+        self.eyeTrackerUpSpace.xfo = data['eyesXfo'].multiply(Xfo(Vec3(0.0, -1, 0)))
         self.eyeTrackerSpace.xfo = data['eyesEndXfo']
         self.eyeTracker.xfo = data['eyesEndXfo']
         self.eyeTrackerIKSpace.xfo = data['eyesEndXfo']
-        self.eyeTrackerUpSpace.xfo = data['eyesXfo'].multiply(Xfo(Vec3(0.0, 1, 0)))
 
 
 
         self.createControls(data["EyesNames"], data)
+
         # Eval Operators
         # self.evalOperators()
 

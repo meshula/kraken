@@ -1,73 +1,151 @@
 {
   "objectType" : "Graph",
   "metadata" : {
-    "uiGraphZoom" : "{\n  \"value\" : 0.4446912407875061\n  }",
-    "uiGraphPan" : "{\n  \"x\" : 164.5220325883051,\n  \"y\" : -63.83108724705744\n  }"
+    "uiGraphZoom" : "{\n  \"value\" : 0.8212661147117615\n  }",
+    "uiGraphPan" : "{\n  \"x\" : -536.17724609375,\n  \"y\" : -622.408935546875\n  }"
     },
-  "title" : "WeightedMat44BlendSolver",
+  "title" : "weightedAverageMat44",
   "ports" : [
     {
       "objectType" : "Port",
-      "nodePortType" : "In",
-      "name" : "result",
-      "execPortType" : "Out"
-      },
-    {
-      "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44" : {
+          "row0" : {
+            "x" : 1,
+            "y" : 0,
+            "z" : 0,
+            "t" : 0
+            },
+          "row1" : {
+            "x" : 0,
+            "y" : 1,
+            "z" : 0,
+            "t" : 0
+            },
+          "row2" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 1,
+            "t" : 0
+            },
+          "row3" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0,
+            "t" : 1
+            }
+          }
+        },
       "name" : "xfoRest",
       "execPortType" : "In"
       },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44[]" : []
+        },
       "name" : "xfos",
       "execPortType" : "In"
       },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar[]" : []
+        },
       "name" : "xfoWeights",
       "execPortType" : "In"
       },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 0
+        },
       "name" : "translationAmt",
       "execPortType" : "In"
       },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 0
+        },
       "name" : "rotationAmt",
       "execPortType" : "In"
       },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 0
+        },
       "name" : "scaleAmt",
       "execPortType" : "In"
       },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 0
+        },
       "name" : "atAxis",
       "execPortType" : "In"
       },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 0
+        },
       "name" : "upAxis",
       "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "defaultValues" : {
+        "Mat44" : {
+          "row0" : {
+            "x" : 1,
+            "y" : 0,
+            "z" : 0,
+            "t" : 0
+            },
+          "row1" : {
+            "x" : 0,
+            "y" : 1,
+            "z" : 0,
+            "t" : 0
+            },
+          "row2" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 1,
+            "t" : 0
+            },
+          "row3" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0,
+            "t" : 1
+            }
+          }
+        },
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44"
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "34915B39E8F2472BAC523F94D60E7CB3",
+  "presetGUID" : "41065F32CEAB11D9FA78002904891488",
   "nodes" : [
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1423.57,\"y\":986.0650000000001}"
+        "uiGraphPos" : "{\"x\":1276.24,\"y\":1325.79}"
         },
       "name" : "ToMat44_1",
       "ports" : [
@@ -88,7 +166,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":84.7903,\"y\":677.234}"
+        "uiGraphPos" : "{\"x\":118.884,\"y\":811.173}"
         },
       "name" : "DecomposeXfo_1",
       "ports" : [
@@ -181,7 +259,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1061.46,\"y\":885.646}"
+        "uiGraphPos" : "{\"x\":966.484,\"y\":1067.07}"
         },
       "name" : "ComposeXfo_1",
       "ports" : [
@@ -212,7 +290,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-155.495,\"y\":713.287}"
+        "uiGraphPos" : "{\"x\":-122.893,\"y\":862.3200000000001}"
         },
       "name" : "SetFromMat44_2",
       "ports" : [
@@ -233,7 +311,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1326.49,\"y\":1181.21}"
+        "uiGraphPos" : "{\"x\":1285.04,\"y\":1142.69}"
         },
       "name" : "orientXfo_2",
       "ports" : [
@@ -421,7 +499,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-157.687,\"y\":1398.09}"
+        "uiGraphPos" : "{\"x\":-136.876,\"y\":1387.68}"
         },
       "name" : "SetFromMat44_3",
       "ports" : [
@@ -483,7 +561,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":52.5559,\"y\":1372.3}"
+        "uiGraphPos" : "{\"x\":131.071,\"y\":1382.71}"
         },
       "name" : "DecomposeXfo_3",
       "ports" : [
@@ -780,76 +858,154 @@ dfgEntry {
       ]
     },
   "requiredPresets" : {
-    "OSS.WeightedMat44BlendSolver" : {
+    "OSS.Math.weightedAverageMat44" : {
       "objectType" : "Graph",
       "metadata" : {
-        "uiGraphZoom" : "{\n  \"value\" : 0.4446912407875061\n  }",
-        "uiGraphPan" : "{\n  \"x\" : 164.5220325883051,\n  \"y\" : -63.83108724705744\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 0.8212661147117615\n  }",
+        "uiGraphPan" : "{\n  \"x\" : -536.17724609375,\n  \"y\" : -622.408935546875\n  }"
         },
-      "title" : "WeightedMat44BlendSolver",
+      "title" : "weightedAverageMat44",
       "ports" : [
         {
           "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out"
-          },
-        {
-          "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Mat44" : {
+              "row0" : {
+                "x" : 1,
+                "y" : 0,
+                "z" : 0,
+                "t" : 0
+                },
+              "row1" : {
+                "x" : 0,
+                "y" : 1,
+                "z" : 0,
+                "t" : 0
+                },
+              "row2" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 1,
+                "t" : 0
+                },
+              "row3" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0,
+                "t" : 1
+                }
+              }
+            },
           "name" : "xfoRest",
           "execPortType" : "In"
           },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Mat44[]" : []
+            },
           "name" : "xfos",
           "execPortType" : "In"
           },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar[]" : []
+            },
           "name" : "xfoWeights",
           "execPortType" : "In"
           },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
           "name" : "translationAmt",
           "execPortType" : "In"
           },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
           "name" : "rotationAmt",
           "execPortType" : "In"
           },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
           "name" : "scaleAmt",
           "execPortType" : "In"
           },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "UInt32" : 0
+            },
           "name" : "atAxis",
           "execPortType" : "In"
           },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "UInt32" : 0
+            },
           "name" : "upAxis",
           "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Mat44" : {
+              "row0" : {
+                "x" : 1,
+                "y" : 0,
+                "z" : 0,
+                "t" : 0
+                },
+              "row1" : {
+                "x" : 0,
+                "y" : 1,
+                "z" : 0,
+                "t" : 0
+                },
+              "row2" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 1,
+                "t" : 0
+                },
+              "row3" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0,
+                "t" : 1
+                }
+              }
+            },
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "34915B39E8F2472BAC523F94D60E7CB3",
+      "presetGUID" : "41065F32CEAB11D9FA78002904891488",
       "nodes" : [
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1423.57,\"y\":986.0650000000001}"
+            "uiGraphPos" : "{\"x\":1276.24,\"y\":1325.79}"
             },
           "name" : "ToMat44_1",
           "ports" : [
@@ -870,7 +1026,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":84.7903,\"y\":677.234}"
+            "uiGraphPos" : "{\"x\":118.884,\"y\":811.173}"
             },
           "name" : "DecomposeXfo_1",
           "ports" : [
@@ -963,7 +1119,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1061.46,\"y\":885.646}"
+            "uiGraphPos" : "{\"x\":966.484,\"y\":1067.07}"
             },
           "name" : "ComposeXfo_1",
           "ports" : [
@@ -994,7 +1150,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":-155.495,\"y\":713.287}"
+            "uiGraphPos" : "{\"x\":-122.893,\"y\":862.3200000000001}"
             },
           "name" : "SetFromMat44_2",
           "ports" : [
@@ -1015,7 +1171,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1326.49,\"y\":1181.21}"
+            "uiGraphPos" : "{\"x\":1285.04,\"y\":1142.69}"
             },
           "name" : "orientXfo_2",
           "ports" : [
@@ -1203,7 +1359,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":-157.687,\"y\":1398.09}"
+            "uiGraphPos" : "{\"x\":-136.876,\"y\":1387.68}"
             },
           "name" : "SetFromMat44_3",
           "ports" : [
@@ -1265,7 +1421,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":52.5559,\"y\":1372.3}"
+            "uiGraphPos" : "{\"x\":131.071,\"y\":1382.71}"
             },
           "name" : "DecomposeXfo_3",
           "ports" : [
@@ -1566,7 +1722,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html",
         "uiTooltip" : "Returns this xfo as a Mat44\n\n Supported by Xfo"
         },
       "title" : "ToMat44",
@@ -1607,7 +1763,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Math/Xfo.html"
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html"
         },
       "title" : "Xfo ->",
       "ports" : [
@@ -1739,7 +1895,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Math/Xfo.html"
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html"
         },
       "title" : "-> Xfo",
       "ports" : [
@@ -1825,7 +1981,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html",
         "uiTooltip" : "Sets this transform from a given Mat44\n\n Supported by Xfo"
         },
       "title" : "SetFromMat44",
@@ -1949,7 +2105,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Math/Quat.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Quat.html",
         "uiTooltip" : "interpolates two quaternions spherically (slerp)\ngiven a scalar blend value (0.0 to 1.0).\n\n Supported by Quat"
         },
       "title" : "SphericalLinearInterpolate",
