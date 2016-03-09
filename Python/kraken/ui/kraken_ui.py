@@ -1,8 +1,4 @@
 
-#
-# Copyright 2010-2015
-#
-
 import os
 import sys
 
@@ -28,8 +24,8 @@ class KrakenUI(QtGui.QWidget):
         self.setWindowTitle("Kraken Editor")
         self.setAcceptDrops(True)
 
-        self.nodeLibrary = ComponentLibrary(parent=self)
         self.graphViewWidget = KGraphViewWidget(parent=self)
+        self.nodeLibrary = ComponentLibrary(parent=self)
 
         self.horizontalSplitter = QtGui.QSplitter(QtCore.Qt.Horizontal, parent=self)
         self.horizontalSplitter.addWidget(self.nodeLibrary)
@@ -51,6 +47,16 @@ class KrakenUI(QtGui.QWidget):
         krakenSystem.loadCoreClient()
         krakenSystem.loadExtension('Kraken')
 
+        # Need to wait until window is shown before we update the statusBar with messages
+        if hasattr(self, "error_loading_startup"):
+
+            if self.error_loading_startup:
+                self.graphViewWidget.reportMessage('Error Loading Modules', level='error', timeOut=0) #Keep this message!
+            else:
+                self.graphViewWidget.reportMessage('Success Loading Modules', level='information')
+
+            delattr(self, "error_loading_startup")
+
 
     def resizeSplitter(self):
         splitter = self.horizontalSplitter
@@ -68,14 +74,22 @@ class KrakenUI(QtGui.QWidget):
 
     def writeSettings(self, settings):
         settings.beginGroup("KrakenUI")
-        settings.setValue("horizontalSplitterSizes", self.nodeLibraryExpandedSize)
+        settings.setValue('horizontalSplitterSizes', self.nodeLibraryExpandedSize)
+        settings.setValue('componentLibCollapsed', self.horizontalSplitter.sizes()[0] == 0)
         settings.endGroup()
 
 
     def readSettings(self, settings):
         settings.beginGroup("KrakenUI")
         if settings.contains('horizontalSplitterSizes'):
-            self.nodeLibraryExpandedSize = settings.value("horizontalSplitterSizes", 175)
+            self.nodeLibraryExpandedSize = settings.value('horizontalSplitterSizes', 175)
+        if settings.contains('componentLibCollapsed'):
+            if settings.value('componentLibCollapsed') == 'false':
+                splitter = self.horizontalSplitter
+                sizes = splitter.sizes()
+
+                self.horizontalSplitter.setSizes([self.nodeLibraryExpandedSize, sizes[1]])
+
         settings.endGroup()
 
 
