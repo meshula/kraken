@@ -90,6 +90,10 @@ function TwoBoneStretchyIKSolver.solve!
   Scalar scaledBone0Len = bone0Len * rigScale;
   Scalar scaledBone1Len = bone1Len * rigScale;
 
+  // Whether a scale should be applied in one axis
+  // when the IK chain stretches
+  Boolean scaleOnStretch = false; // hardcoded for now
+
   // Solve IK
   if(ikblend > 0.0)
   {
@@ -205,9 +209,18 @@ function TwoBoneStretchyIKSolver.solve!
     bone2Xfo.tr = bone1Xfo.transformVector(Vec3(scaledBone1Len, 0.0, 0.0));
 
     // Set IK bone scaling
-    bone0Xfo.sc = Vec3(scaledBone0Len / bone0Len, rigScale, rigScale);
-    bone1Xfo.sc = Vec3(scaledBone1Len / bone1Len, rigScale, rigScale);
-    bone2Xfo.sc = Vec3(rigScale, rigScale, rigScale);
+    if (scaleOnStretch)
+    {
+      bone0Xfo.sc = Vec3(scaledBone0Len / bone0Len, rigScale, rigScale);
+      bone1Xfo.sc = Vec3(scaledBone1Len / bone1Len, rigScale, rigScale);
+      bone2Xfo.sc = Vec3(rigScale, rigScale, rigScale);
+    }
+    else
+    {
+      bone0Xfo.sc = Vec3(rigScale, rigScale, rigScale);
+      bone1Xfo.sc = Vec3(rigScale, rigScale, rigScale);
+      bone2Xfo.sc = Vec3(rigScale, rigScale, rigScale);
+    }
 
   }
 
