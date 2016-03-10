@@ -789,7 +789,7 @@ class Object3D(SceneItem):
 
         """
 
-        exec("from kraken.core.objects.constraints.pose_constraint import "+type+"Constraint")
+        exec("from kraken.core.objects.constraints."+type.lower()+"_constraint import "+type+"Constraint")
         exec("constraint = "+type+"Constraint('')")
 
         # function overloading to accept a single object or a list of objects
