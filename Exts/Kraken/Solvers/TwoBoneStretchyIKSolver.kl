@@ -90,6 +90,10 @@ function TwoBoneStretchyIKSolver.solve!
   Scalar scaledBone0Len = bone0Len * rigScale;
   Scalar scaledBone1Len = bone1Len * rigScale;
 
+  // Ensure minimum length (clamp)
+  if (scaledBone0Len < 1e-6) scaledBone0Len = 1e-6;
+  if (scaledBone1Len < 1e-6) scaledBone1Len = 1e-6;
+
   // Whether a scale should be applied in one axis
   // when the IK chain stretches
   Boolean scaleOnStretch = false; // hardcoded for now
@@ -100,15 +104,15 @@ function TwoBoneStretchyIKSolver.solve!
 
     Vec3 ikHandlePos = ikHandle.translation();
     Vec3 rootPos = root.translation();
+    Vec3 upVPos = upV.translation();
     Scalar distanceToIK = (rootPos - ikHandlePos).length();
 
     // Lock mid to the upVector (pole vector)
     // e.g. could be used to lock an elbow on a table
     if (pin > 0.0)
     {
-        Vec3 pinPt = upV.translation();
-        scaledBone0Len = Math_linearInterpolate(scaledBone0Len, (pinPt - rootPos).length(), pin);
-        scaledBone1Len = Math_linearInterpolate(scaledBone1Len, (pinPt - ikHandlePos).length(), pin);
+        scaledBone0Len = Math_linearInterpolate(scaledBone0Len, (upVPos - rootPos).length(), pin);
+        scaledBone1Len = Math_linearInterpolate(scaledBone1Len, (upVPos - ikHandlePos).length(), pin);
     }
 
     if (pin != 1.0)
@@ -116,7 +120,6 @@ function TwoBoneStretchyIKSolver.solve!
 
       // TODO: Allow scale of zero and the evaluation to finish
       Scalar chainLen = scaledBone0Len + scaledBone1Len;
-      //if (chainLen == 0) return;
 
       // Slide mid to end (+1) or to start (-1)
       if (slide != 0.0)
@@ -197,8 +200,8 @@ function TwoBoneStretchyIKSolver.solve!
     solve2BoneIK(
       scaledBone0Len,
       scaledBone1Len,
-      root.translation(),
-      upV.translation(),
+      rootPos,
+      upVPos,
       ikHandlePos,
       bone0Xfo,
       bone1Xfo
