@@ -418,6 +418,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     fkCtrl.scalePoints(Vec3(1,1,data['EyeRadius']))
                     # newCtrls.append(fkCtrl)
                     newDef = Joint(handleName+"_fk", parent=self.defCmpGrp)
+                    newRef = Joint(handleName+"_ref", parent=self.defCmpGrp)
 
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
                     upVSpaceBlendInputAttr = ScalarAttribute(handleName+'FKIK', value=1.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
@@ -443,6 +444,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                         newCtrlSpace.xfo = data["eyesCtrlsXfos"][index]
                         if segment == "fk":
                             fkCtrl.xfo = data["eyesCtrlsXfos"][index]
+                            newRef.xfo = data["eyesCtrlsXfos"][index]
                             upCtrlSpace.xfo = data["eyesCtrlsXfos"][index].multiply(Xfo(Vec3(0.0, 1, 0)))
                         if segment == "ik":
                             ikCtrl.xfo = data["eyesCtrlsXfos"][index]
