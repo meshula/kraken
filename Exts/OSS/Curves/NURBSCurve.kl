@@ -29,6 +29,7 @@ object NURBSCurve {
   UInt32 resolution;
   Mat44 cmats[];
 
+  UInt32 pointSizes[];
 
   // per point, size numPoints
   GeometryAttributes pointAttributes;
@@ -81,7 +82,7 @@ function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
 	//
 	this.numPoints = 2;
 	this.numCurves = 1;
-	if (this.resolution < 1) this.resolution = 50;
+	if (this.resolution < 1) this.resolution = 25;
 	
   	this.numCurves = 0;
   	this.cmats = cMats;
@@ -190,13 +191,13 @@ function NURBSCurve(Vec3 cps[], Integer degree)
 
 
 
-/// Return points on curve that are evenly distributed
+/// Sample points on curve at equally spaced parametric intervals
 operator __evalPositionsTask<<<index>>>(io Vec3 results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
 {	
 	results[index] = curve.getPoint(index*stepSize(curve.resolution), keepArcLength, keepCurveLen);
 }
 
-/// Return colors with gradient between curve ends that are evenly distributed
+/// Return colors with gradient between curve ends, sampled at equally spaced parametric intervals
 operator __evalColorsTask<<<index>>>(io Color results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
 {	
 	Scalar hue = mathRandomScalar(0,1);
@@ -205,19 +206,17 @@ operator __evalColorsTask<<<index>>>(io Color results[], io Ref<NURBSCurve> curv
 
 }		
 
-/// Return tangents on curve that are evenly distributed
+/// Sample tangents on curve at equally spaced parametric intervals
 operator __evalTangentsTask<<<index>>>(io Vec3 results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
 {	
 	results[index] = curve.getTangent(index*stepSize(curve.resolution),true, keepArcLength, keepCurveLen);
 }
 
-/// Return colors with gradient between curve ends that are evenly distributed
+/// Return accumulative distances to first point of curve, sampled at equally spaced parametric intervals
 operator __evalDistancesTask<<<index>>>(io Scalar results[], io Ref<NURBSCurve> curve)
 {	
 	results[index] = curve.getDistanceAtIndex(index);	
 }	
-
-
 
 
 inline Scalar stepSize(UInt32 samples)
@@ -376,7 +375,7 @@ function Vec3 NURBSCurve.getPoint(Scalar param)
 
 	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
 	return hpoint.makeHomogeneousVec3();
-}
+}	
 
 
 
@@ -399,8 +398,6 @@ function Vec3 NURBSCurve.getTangent(Scalar param, Boolean normalize, Scalar keep
 		return tangent;
 }
 
-
-// ORIENTATION
 
 function Vec3 NURBSCurve.getFakeTangent(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen)
 {
@@ -529,6 +526,118 @@ function NURBSCurve.parallelFrames(out Xfo xfos[],
 
 		xfos[i] = Xfo(pt, quat);
   	}
+}
+
+/*
+
+inline Scalar closestPointToLineRatio(in Vec3 P, in Vec3 lineP0, in Vec3 lineP1) {
+  Vec3 v, w, Pb;
+  Scalar c1, c2, b;
+  v = lineP1 - lineP0;
+  if (v.length() < 0.00001) return 0;
+  w = P - lineP0;
+
+  c1 = w.dot(v);
+  c2 = v.dot(v);
+  if(c2 < 1e-10)//squared epsilon
+    return 0.0;
+  return c1 / c2;
+}
+*/
+
+inline Scalar getthis(in Scalar u, in Vec4 e[], in Vec3 d){
+	Vec3 e1 = e[1].xyz();
+	Vec3 e2 = e[2].xyz();
+	Scalar f1 = e1.dot(d); //verb_core_Vec.dot(e1[1],d);
+	Scalar s0 = e2.dot(d); //verb_core_Vec.dot(e1[2],d);
+	Scalar s1 = e1.dot(e1); // verb_core_Vec.dot(e1[1],e1[1]);
+	Scalar df = s0 + s1;
+	return u - f1 / df;
+}
+
+
+// Todo get closest Param to Point on a rational Curve
+function Scalar NURBSCurve.getClosestParam(in Vec3 p) {
+	Scalar min = + SCALAR_INFINITE;
+	Scalar u = 0.0;
+
+	UInt32 _g1 = 0;
+	UInt32 _g = this.positions.size() - 1;
+	while(_g1 < _g) {
+		UInt32 i1 = _g1++;
+		Scalar u0  = Scalar(i1)/Scalar(_g);
+		Scalar u11 = Scalar(i1+1)/Scalar(_g);
+		// report(_g1);
+		// report(u0);
+		// report(u11);
+		Vec3 p0 = this.positions.values[i1];
+		Vec3 p1 = this.positions.values[i1 + 1];
+		Scalar ratio = closestPointToLineRatio(p,p0,p1);
+		Scalar d1 = (p - p1).length();
+		if(d1 < min) {
+			min = d1;
+			u = u0.linearInterpolate(u11,ratio);
+		}
+	}
+	// return u;
+
+	UInt32 maxits = 5;
+	UInt32 i = 0;
+	Scalar eps1 = 0.0001;
+	Scalar eps2 = 0.0005;
+	Vec3 dif;
+	Scalar minu = this.knots[0];
+	Scalar maxu = this.knots[(this.knots.size() -1 )];
+	Boolean closed = false; // verb_core_Vec.normSquared(verb_core_Vec.sub(this.controlPoints[0],verb_core_ArrayExtensions.last(this.controlPoints))) < verb_core_Constants.EPSILON;
+	
+	Scalar cu = u;
+	while(i < maxits) {
+		// calculate derivatives
+		Vec4 e[] = NURBSUtils_calcNURBSDerivatives( this.degree.values[0], this.knots, this.controlPoints.values, cu, 2 );
+		Vec3 e0 = e[0].xyz();
+		Vec3 e1 = e[1].xyz();
+		Vec3 e2 = e[2].xyz();
+		dif = e0 - p;
+		Scalar c1v = dif.length();
+		Scalar c2n = e1.dot(dif);
+		Scalar c2d = e1.length() * c1v;
+		Scalar c2v = c2n / c2d;
+		Boolean c1 = c1v < eps1;
+		Boolean c2 = abs(c2v) < eps2;
+		
+		//if both tolerances are met
+		if(c1 && c2) return cu;
+
+		Scalar ct = getthis(cu,e,dif);
+		//are we outside of the bounds of the curve?
+		if(ct < minu) if(closed) ct = maxu - (ct - minu); else ct = minu; else if(ct > maxu) if(closed) ct = minu + (ct - maxu); else ct = maxu;
+		Scalar c3v = ((ct - cu)*e1).length();
+		if(c3v < eps1) {
+			return cu;
+		}
+		cu = ct;
+		i++;
+	}
+	return cu;
+}
+
+
+
+function Vec3 NURBSCurve.getClosestPoint(in Vec3 p) {
+	Scalar closestU = this.getClosestParam(p);
+	return this.getPoint(closestU);
+}
+
+// Create a parametrization for a point (needs to be generalized)
+function Vec4 NURBSCurve.pointParam(in Vec3 p) {
+	Vec4 param;
+	Scalar closestU = this.getClosestParam(p);
+	Vec3 offsetVec = p - this.getPoint(closestU);
+	param.x = offsetVec.x;
+	param.y = offsetVec.y;
+	param.z = offsetVec.z;
+	param.t = closestU;
+	return param;
 }
 
 
