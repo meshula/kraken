@@ -2,9 +2,9 @@
   "objectType" : "Graph",
   "metadata" : {
     "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
-    "uiGraphPan" : "{\n  \"x\" : -47.6724853515625,\n  \"y\" : -834.1650390625\n  }"
+    "uiGraphPan" : "{\n  \"x\" : -217.6724853515625,\n  \"y\" : -988.1650390625\n  }"
     },
-  "title" : "WeightedMat44BlendSolver",
+  "title" : "blendMat44ArraySolver",
   "ports" : [
     {
       "objectType" : "Port",
@@ -121,24 +121,6 @@
       },
     {
       "objectType" : "Port",
-      "nodePortType" : "Out",
-      "defaultValues" : {
-        "SInt32" : 0
-        },
-      "name" : "atAxis",
-      "execPortType" : "In"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
-      "defaultValues" : {
-        "SInt32" : 0
-        },
-      "name" : "upAxis",
-      "execPortType" : "In"
-      },
-    {
-      "objectType" : "Port",
       "nodePortType" : "In",
       "defaultValues" : {
         "Mat44" : {
@@ -172,13 +154,15 @@
       "execPortType" : "Out"
       }
     ],
-  "extDeps" : {},
-  "presetGUID" : "90E12AF90BCA77175BDF8E0D5A9006D3",
+  "extDeps" : {
+    "Math" : "*"
+    },
+  "presetGUID" : "284C4C675C5C2188783F48C33C06AC9C",
   "nodes" : [
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":305.971,\"y\":1280.52}"
+        "uiGraphPos" : "{\"x\":287.971,\"y\":1302.52}"
         },
       "name" : "graph",
       "ports" : [
@@ -221,8 +205,8 @@
       "definition" : {
         "objectType" : "Graph",
         "metadata" : {
-          "uiGraphZoom" : "{\n  \"value\" : 0.5626993775367737\n  }",
-          "uiGraphPan" : "{\n  \"x\" : 119.9291328035697,\n  \"y\" : -127.1661944215339\n  }"
+          "uiGraphZoom" : "{\n  \"value\" : 0.5885331630706787\n  }",
+          "uiGraphPan" : "{\n  \"x\" : 261.3481750488281,\n  \"y\" : -265.7761840820313\n  }"
           },
         "title" : "weightedAverageMat44",
         "ports" : [
@@ -342,7 +326,6 @@
             }
           ],
         "extDeps" : {},
-        "origPresetGUID" : "41065F32CEAB11D9FA78002904891488",
         "nodes" : [
           {
             "objectType" : "Inst",
@@ -1022,13 +1005,13 @@ dfgEntry {
       ]
     },
   "requiredPresets" : {
-    "OSS.Solvers.WeightedMat44BlendSolver" : {
+    "OSS.Solvers.blendMat44ArraySolver" : {
       "objectType" : "Graph",
       "metadata" : {
         "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
-        "uiGraphPan" : "{\n  \"x\" : -47.6724853515625,\n  \"y\" : -834.1650390625\n  }"
+        "uiGraphPan" : "{\n  \"x\" : -217.6724853515625,\n  \"y\" : -988.1650390625\n  }"
         },
-      "title" : "WeightedMat44BlendSolver",
+      "title" : "blendMat44ArraySolver",
       "ports" : [
         {
           "objectType" : "Port",
@@ -1145,24 +1128,6 @@ dfgEntry {
           },
         {
           "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "SInt32" : 0
-            },
-          "name" : "atAxis",
-          "execPortType" : "In"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "SInt32" : 0
-            },
-          "name" : "upAxis",
-          "execPortType" : "In"
-          },
-        {
-          "objectType" : "Port",
           "nodePortType" : "In",
           "defaultValues" : {
             "Mat44" : {
@@ -1196,13 +1161,15 @@ dfgEntry {
           "execPortType" : "Out"
           }
         ],
-      "extDeps" : {},
-      "presetGUID" : "90E12AF90BCA77175BDF8E0D5A9006D3",
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "284C4C675C5C2188783F48C33C06AC9C",
       "nodes" : [
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":305.971,\"y\":1280.52}"
+            "uiGraphPos" : "{\"x\":287.971,\"y\":1302.52}"
             },
           "name" : "graph",
           "ports" : [
@@ -1245,8 +1212,8 @@ dfgEntry {
           "definition" : {
             "objectType" : "Graph",
             "metadata" : {
-              "uiGraphZoom" : "{\n  \"value\" : 0.5626993775367737\n  }",
-              "uiGraphPan" : "{\n  \"x\" : 119.9291328035697,\n  \"y\" : -127.1661944215339\n  }"
+              "uiGraphZoom" : "{\n  \"value\" : 0.5885331630706787\n  }",
+              "uiGraphPan" : "{\n  \"x\" : 261.3481750488281,\n  \"y\" : -265.7761840820313\n  }"
               },
             "title" : "weightedAverageMat44",
             "ports" : [
@@ -1366,7 +1333,6 @@ dfgEntry {
                 }
               ],
             "extDeps" : {},
-            "origPresetGUID" : "41065F32CEAB11D9FA78002904891488",
             "nodes" : [
               {
                 "objectType" : "Inst",

@@ -1,0 +1,1268 @@
+{
+  "objectType" : "Graph",
+  "metadata" : {
+    "maya_id" : "2",
+    "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
+    "uiGraphPan" : "{\n  \"x\" : -101.7500076293945,\n  \"y\" : 83.60499954223633\n  }"
+    },
+  "title" : "",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "parentSpace",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "A",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "B",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "rotationAmt",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "translationAmt",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "scaleAmt",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44"
+      }
+    ],
+  "extDeps" : {},
+  "nodes" : [
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":255.0,\"y\":58.0}"
+        },
+      "name" : "blendMat44_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "A"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "B"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "rotationAmt"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "translationAmt"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "scaleAmt"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Graph",
+        "metadata" : {
+          "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
+          "uiGraphPan" : "{\n  \"x\" : -28.22650909423828,\n  \"y\" : -1676.5\n  }"
+          },
+        "title" : "blendMat44",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Mat44" : {
+                "row0" : {
+                  "x" : 0.9991268515586853,
+                  "y" : -0.01431489270180464,
+                  "z" : -0.03925034031271935,
+                  "t" : -0.3925034105777741
+                  },
+                "row1" : {
+                  "x" : 0.01463900227099657,
+                  "y" : 0.9998610019683838,
+                  "z" : 0.007982549257576466,
+                  "t" : 19.07982635498047
+                  },
+                "row2" : {
+                  "x" : 0.03913061320781708,
+                  "y" : -0.008550165221095085,
+                  "z" : 0.9991975426673889,
+                  "t" : -0.008024770766496658
+                  },
+                "row3" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0,
+                  "t" : 1
+                  }
+                }
+              },
+            "name" : "A",
+            "execPortType" : "In",
+            "typeSpec" : "Mat44"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Mat44" : {
+                "row0" : {
+                  "x" : 0.9849460124969482,
+                  "y" : 0.05857525765895844,
+                  "z" : -0.1626354157924652,
+                  "t" : -1.626354217529297
+                  },
+                "row1" : {
+                  "x" : -0.1064288467168808,
+                  "y" : 0.9468605518341065,
+                  "z" : -0.3035259544849396,
+                  "t" : 15.96474075317383
+                  },
+                "row2" : {
+                  "x" : 0.1362139582633972,
+                  "y" : 0.3162657916545868,
+                  "z" : 0.9388406276702881,
+                  "t" : -0.6115937829017639
+                  },
+                "row3" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0,
+                  "t" : 1
+                  }
+                }
+              },
+            "name" : "B",
+            "execPortType" : "In",
+            "typeSpec" : "Mat44"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Scalar" : 0
+              },
+            "name" : "rotationAmt",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Scalar" : 0
+              },
+            "name" : "translationAmt",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Scalar" : 0
+              },
+            "name" : "scaleAmt",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "defaultValues" : {
+              "Mat44" : {
+                "row0" : {
+                  "x" : 1,
+                  "y" : 0,
+                  "z" : 0,
+                  "t" : 0
+                  },
+                "row1" : {
+                  "x" : 0,
+                  "y" : 1,
+                  "z" : 0,
+                  "t" : 0
+                  },
+                "row2" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 1,
+                  "t" : 0
+                  },
+                "row3" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0,
+                  "t" : 1
+                  }
+                }
+              },
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "Mat44"
+            }
+          ],
+        "extDeps" : {},
+        "origPresetGUID" : "283105393A20B40716A60ABCD108A6E8",
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":342.435,\"y\":1726.0}",
+              "uiCollapsedState" : "0"
+              },
+            "name" : "blendSpaces",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "A"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "B"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "rotationAmt"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "translationAmt"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "scaleAmt"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "definition" : {
+              "objectType" : "Graph",
+              "metadata" : {
+                "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
+                "uiGraphPan" : "{\n  \"x\" : -514.0355224609375,\n  \"y\" : -1724.409912109375\n  }"
+                },
+              "title" : "blendSpaces",
+              "ports" : [
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "defaultValues" : {
+                    "Xfo" : {
+                      "ori" : {
+                        "v" : {
+                          "x" : 0,
+                          "y" : 0,
+                          "z" : 0
+                          },
+                        "w" : 1
+                        },
+                      "tr" : {
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0
+                        },
+                      "sc" : {
+                        "x" : 1,
+                        "y" : 1,
+                        "z" : 1
+                        }
+                      }
+                    },
+                  "name" : "A",
+                  "execPortType" : "In",
+                  "typeSpec" : "Xfo"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "defaultValues" : {
+                    "Xfo" : {
+                      "ori" : {
+                        "v" : {
+                          "x" : 0,
+                          "y" : 0,
+                          "z" : 0
+                          },
+                        "w" : 1
+                        },
+                      "tr" : {
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0
+                        },
+                      "sc" : {
+                        "x" : 1,
+                        "y" : 1,
+                        "z" : 1
+                        }
+                      }
+                    },
+                  "name" : "B",
+                  "execPortType" : "In",
+                  "typeSpec" : "Xfo"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "defaultValues" : {
+                    "Scalar" : 0
+                    },
+                  "name" : "rotationAmt",
+                  "execPortType" : "In",
+                  "typeSpec" : "Scalar"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "defaultValues" : {
+                    "Scalar" : 0
+                    },
+                  "name" : "translationAmt",
+                  "execPortType" : "In",
+                  "typeSpec" : "Scalar"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "defaultValues" : {
+                    "Scalar" : 0
+                    },
+                  "name" : "scaleAmt",
+                  "execPortType" : "In",
+                  "typeSpec" : "Scalar"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "In",
+                  "name" : "result",
+                  "execPortType" : "Out",
+                  "typeSpec" : "Xfo"
+                  }
+                ],
+              "extDeps" : {},
+              "nodes" : [
+                {
+                  "objectType" : "Inst",
+                  "metadata" : {
+                    "uiGraphPos" : "{\"x\":269.482,\"y\":2042.14}"
+                    },
+                  "name" : "DecomposeXfo_1",
+                  "ports" : [
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "value"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "ori"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "tr"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "sc"
+                      }
+                    ],
+                  "executable" : "Fabric.Exts.Math.Xfo.DecomposeXfo",
+                  "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6"
+                  },
+                {
+                  "objectType" : "Inst",
+                  "metadata" : {
+                    "uiGraphPos" : "{\"x\":824.0,\"y\":2259.0}"
+                    },
+                  "name" : "LinearInterpolate_Translation",
+                  "ports" : [
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "this"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "other"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "t"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "result"
+                      }
+                    ],
+                  "executable" : "Fabric.Exts.Math.Func.LinearInterpolate",
+                  "presetGUID" : "12CF7203114B81451A5EEC920610EDA9"
+                  },
+                {
+                  "objectType" : "Inst",
+                  "metadata" : {
+                    "uiGraphPos" : "{\"x\":813.48,\"y\":2106.4}",
+                    "uiCollapsedState" : "1"
+                    },
+                  "name" : "LinearInterpolate_2",
+                  "ports" : [
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "this"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "other"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "t"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "result"
+                      }
+                    ],
+                  "executable" : "Fabric.Exts.Math.Func.LinearInterpolate",
+                  "presetGUID" : "12CF7203114B81451A5EEC920610EDA9"
+                  },
+                {
+                  "objectType" : "Inst",
+                  "metadata" : {
+                    "uiGraphPos" : "{\"x\":799.5890000000001,\"y\":1938.82}"
+                    },
+                  "name" : "SphericalLinearInterpolate_1",
+                  "ports" : [
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "this"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "q2"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "t"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "result"
+                      }
+                    ],
+                  "executable" : "Fabric.Exts.Math.Quat.SphericalLinearInterpolate",
+                  "presetGUID" : "8F8A88A5073927972931DF1FB8D01172"
+                  },
+                {
+                  "objectType" : "Inst",
+                  "metadata" : {
+                    "uiGraphPos" : "{\"x\":269.638,\"y\":2156.09}"
+                    },
+                  "name" : "DecomposeXfo_2",
+                  "ports" : [
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "value"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "ori"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "tr"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "sc"
+                      }
+                    ],
+                  "executable" : "Fabric.Exts.Math.Xfo.DecomposeXfo",
+                  "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6"
+                  },
+                {
+                  "objectType" : "Inst",
+                  "metadata" : {
+                    "uiGraphPos" : "{\"x\":1192.04,\"y\":2220.41}"
+                    },
+                  "name" : "ComposeXfo_1",
+                  "ports" : [
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "ori"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "tr"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "In",
+                      "name" : "sc"
+                      },
+                    {
+                      "objectType" : "InstPort",
+                      "nodePortType" : "Out",
+                      "name" : "result"
+                      }
+                    ],
+                  "executable" : "Fabric.Exts.Math.Xfo.ComposeXfo",
+                  "presetGUID" : "C61287D19D84D9733903DDC14FABD4AF"
+                  }
+                ],
+              "connections" : {
+                "A" : [
+                  "DecomposeXfo_1.value"
+                  ],
+                "B" : [
+                  "DecomposeXfo_2.value"
+                  ],
+                "rotationAmt" : [
+                  "SphericalLinearInterpolate_1.t"
+                  ],
+                "translationAmt" : [
+                  "LinearInterpolate_2.t"
+                  ],
+                "scaleAmt" : [
+                  "LinearInterpolate_Translation.t"
+                  ],
+                "DecomposeXfo_1.ori" : [
+                  "SphericalLinearInterpolate_1.this"
+                  ],
+                "DecomposeXfo_1.tr" : [
+                  "LinearInterpolate_2.this"
+                  ],
+                "DecomposeXfo_1.sc" : [
+                  "LinearInterpolate_Translation.this"
+                  ],
+                "LinearInterpolate_Translation.result" : [
+                  "ComposeXfo_1.sc"
+                  ],
+                "LinearInterpolate_2.result" : [
+                  "ComposeXfo_1.tr"
+                  ],
+                "SphericalLinearInterpolate_1.result" : [
+                  "ComposeXfo_1.ori"
+                  ],
+                "DecomposeXfo_2.ori" : [
+                  "SphericalLinearInterpolate_1.q2"
+                  ],
+                "DecomposeXfo_2.tr" : [
+                  "LinearInterpolate_2.other"
+                  ],
+                "DecomposeXfo_2.sc" : [
+                  "LinearInterpolate_Translation.other"
+                  ],
+                "ComposeXfo_1.result" : [
+                  "result"
+                  ]
+                }
+              }
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":142.36,\"y\":1733.13}"
+              },
+            "name" : "SetFromMat44_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "m"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
+            "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":143.441,\"y\":1815.86}"
+              },
+            "name" : "SetFromMat44_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "m"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
+            "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":534.093,\"y\":1820.31}"
+              },
+            "name" : "ToMat44_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Xfo.ToMat44",
+            "presetGUID" : "3EB232DB6FF4BEE162E1D62ABFBE8C3A"
+            }
+          ],
+        "connections" : {
+          "A" : [
+            "SetFromMat44_2.m"
+            ],
+          "B" : [
+            "SetFromMat44_3.m"
+            ],
+          "rotationAmt" : [
+            "blendSpaces.rotationAmt"
+            ],
+          "translationAmt" : [
+            "blendSpaces.translationAmt"
+            ],
+          "scaleAmt" : [
+            "blendSpaces.scaleAmt"
+            ],
+          "blendSpaces.result" : [
+            "ToMat44_2.this"
+            ],
+          "SetFromMat44_2.this" : [
+            "blendSpaces.A"
+            ],
+          "SetFromMat44_3.this" : [
+            "blendSpaces.B"
+            ],
+          "ToMat44_2.result" : [
+            "result"
+            ]
+          }
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":271.589,\"y\":-29.21}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "Inverse_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Func.Inverse",
+      "presetGUID" : "B8922E10BA9ED2EB40A0009C880C5928"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":580.4109999999999,\"y\":67.20999999999999}"
+        },
+      "name" : "Mul_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "lhs"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "rhs"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Core.Math.Mul",
+      "presetGUID" : "CC951B43BB879483B46EFF7965692350"
+      }
+    ],
+  "connections" : {
+    "parentSpace" : [
+      "Inverse_1.this"
+      ],
+    "A" : [
+      "blendMat44_1.A"
+      ],
+    "B" : [
+      "blendMat44_1.B"
+      ],
+    "rotationAmt" : [
+      "blendMat44_1.rotationAmt"
+      ],
+    "translationAmt" : [
+      "blendMat44_1.translationAmt"
+      ],
+    "scaleAmt" : [
+      "blendMat44_1.scaleAmt"
+      ],
+    "blendMat44_1.result" : [
+      "Mul_2.rhs"
+      ],
+    "Inverse_1.result" : [
+      "Mul_2.lhs"
+      ],
+    "Mul_2.result" : [
+      "result"
+      ]
+    },
+  "metadata" : {
+    "maya_id" : "2"
+    },
+  "requiredPresets" : {
+    "Fabric.Exts.Math.Xfo.DecomposeXfo" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html"
+        },
+      "title" : "Xfo ->",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Xfo" : {
+              "ori" : {
+                "v" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0
+                  },
+                "w" : 1
+                },
+              "tr" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              "sc" : {
+                "x" : 1,
+                "y" : 1,
+                "z" : 1
+                }
+              }
+            },
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "ori",
+          "execPortType" : "Out",
+          "typeSpec" : "Quat"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "tr",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "sc",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6",
+      "code" : "require Math;
+
+dfgEntry {
+  ori = value.ori;
+  tr = value.tr;
+  sc = value.sc;
+}
+"
+      },
+    "Fabric.Exts.Math.Func.LinearInterpolate" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiTooltip" : "Linearly interpolates a scalar value with another based on a blend (0.0 to 1.0)\n\n Supported by Float32,Float64,RGB,RGBA,ARGB,Color,Vec2,Vec3,Vec4,Quat,Xfo"
+        },
+      "title" : "LinearInterpolate",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "other",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "t",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "12CF7203114B81451A5EEC920610EDA9",
+      "code" : "require Math;
+
+dfgEntry {
+  result = this.linearInterpolate(other, t);
+}
+"
+      },
+    "Fabric.Exts.Math.Quat.SphericalLinearInterpolate" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Quat.html",
+        "uiTooltip" : "interpolates two quaternions spherically (slerp)\ngiven a scalar blend value (0.0 to 1.0).\n\n Supported by Quat"
+        },
+      "title" : "SphericalLinearInterpolate",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Quat"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "q2",
+          "execPortType" : "In",
+          "typeSpec" : "Quat"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "t",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Quat"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "8F8A88A5073927972931DF1FB8D01172",
+      "code" : "require Math;
+
+dfgEntry {
+  result = this.sphericalLinearInterpolate(q2, t);
+}
+"
+      },
+    "Fabric.Exts.Math.Xfo.ComposeXfo" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html"
+        },
+      "title" : "-> Xfo",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Quat" : {
+              "v" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              "w" : 1
+              }
+            },
+          "name" : "ori",
+          "execPortType" : "In",
+          "typeSpec" : "Quat"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "tr",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 1,
+              "y" : 1,
+              "z" : 1
+              }
+            },
+          "name" : "sc",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "C61287D19D84D9733903DDC14FABD4AF",
+      "code" : "require Math;
+
+dfgEntry {
+  result.ori = ori;
+  result.tr = tr;
+  result.sc = sc;
+}
+"
+      },
+    "Fabric.Exts.Math.Xfo.SetFromMat44" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiTooltip" : "Sets this transform from a given Mat44\n\n Supported by Xfo"
+        },
+      "title" : "SetFromMat44",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "m",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "59B1B738E9402F3006B2516B14A43848",
+      "code" : "require Math;
+
+dfgEntry {
+  this.setFromMat44(m);
+}
+"
+      },
+    "Fabric.Exts.Math.Xfo.ToMat44" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiTooltip" : "Returns this xfo as a Mat44\n\n Supported by Xfo"
+        },
+      "title" : "ToMat44",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "3EB232DB6FF4BEE162E1D62ABFBE8C3A",
+      "code" : "require Math;
+
+dfgEntry {
+  result = this.toMat44();
+}
+"
+      },
+    "Fabric.Exts.Math.Func.Inverse" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Vec2.html",
+        "uiTooltip" : "Returns the inversed version of this vector\n\n Supported by Vec2,Vec2_d,Vec2_i,Vec3,Vec3_d,Vec3_i,Vec4,Vec4_d,Vec4_i,Mat22,Mat22_d,Mat22_i,Mat33,Mat33_d,Mat33_i,Mat44,Mat44_d,Mat44_i,Quat,Quat_d,Quat_i,Xfo"
+        },
+      "title" : "Inverse",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "B8922E10BA9ED2EB40A0009C880C5928",
+      "code" : "require Math;
+
+dfgEntry {
+  result = this.inverse();
+}
+"
+      },
+    "Fabric.Core.Math.Mul" : {
+      "objectType" : "Func",
+      "title" : "Mul",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "lhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "rhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "CC951B43BB879483B46EFF7965692350",
+      "code" : "
+dfgEntry {
+	result = lhs * rhs;
+}
+"
+      }
+    },
+  "args" : [
+    {
+      "type" : "Mat44",
+      "value" : null,
+      "ext" : "Math"
+      },
+    {
+      "type" : "Mat44",
+      "value" : null,
+      "ext" : "Math"
+      },
+    {
+      "type" : "Mat44",
+      "value" : null,
+      "ext" : "Math"
+      },
+    {
+      "type" : "Float32",
+      "value" : null
+      },
+    {
+      "type" : "Float32",
+      "value" : null
+      },
+    {
+      "type" : "Float32",
+      "value" : null
+      },
+    {
+      "type" : "Mat44",
+      "value" : null,
+      "ext" : "Math"
+      }
+    ]
+  }
