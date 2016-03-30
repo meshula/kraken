@@ -68,7 +68,7 @@ class OSSSocketGuide(OSSSocket):
         self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
 
-        self.socketCtrl = Control('socket', parent=self.ctrlCmpGrp)
+        self.socketCtrl = Control('socket', parent=self.ctrlCmpGrp, shape="null")
         self.socketCtrl.setColor("pink")
 
         data = {
@@ -97,7 +97,7 @@ class OSSSocketGuide(OSSSocket):
         data = super(OSSSocketGuide, self).saveData()
 
         data['socketXfo'] = self.socketCtrl.xfo
-        data['socketCtrlCrvData'] = self.socketCtrl.getCurveData()
+        #data['socketCtrlCrvData'] = self.socketCtrl.getCurveData()
 
         return data
 
@@ -117,7 +117,7 @@ class OSSSocketGuide(OSSSocket):
         super(OSSSocketGuide, self).loadData( data )
 
         self.socketCtrl.xfo = data['socketXfo']
-        self.socketCtrl.setCurveData(data['socketCtrlCrvData'])
+        #self.socketCtrl.setCurveData(data['socketCtrlCrvData'])
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
@@ -178,15 +178,24 @@ class OSSSocketRig(OSSSocket):
         super(OSSSocketRig, self).__init__(name, parent)
 
 
+
+    def createControls(self, data):
+
         # =========
         # Controls
         # =========
         # Socket
-        self.socketCtrlSpace = CtrlSpace('socket', parent=self.ctrlCmpGrp)
-        self.socketCtrl = Control(self.getName() + 'socket', parent=self.socketCtrlSpace, shape="cube")
-        self.socketCtrl.setColor("pink")
-        self.socketCtrl.alignOnXAxis()
 
+        self.socket_offsetCtrl = Control(self.getName() + '_offset', parent=self.ctrlCmpGrp, shape="circle")
+        self.socket_offsetCtrl.xfo = data['socketXfo']
+        self.socket_offsetCtrl.setColor("pink")
+        self.socket_offsetCtrl.alignOnYAxis()
+        self.socket_offsetCtrlSpace = self.socket_offsetCtrl.insertCtrlSpace()
+
+        self.socketCtrl = Control(self.getName(), parent=self.socket_offsetCtrl, shape="null")
+        self.socketCtrl.xfo = data['socketXfo']
+        #self.socketCtrl.setCurveData(data['socketCtrlCrvData'])
+        self.socketCtrl.setColor("pink")
 
         # ==========
         # Deformers
@@ -203,33 +212,18 @@ class OSSSocketRig(OSSSocket):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        socketInputConstraint = PoseConstraint('_'.join([self.socketCtrl.getName(), 'To', self.parentSpaceInputTgt.getName()]))
-        socketInputConstraint.setMaintainOffset(True)
-        socketInputConstraint.addConstrainer(self.parentSpaceInputTgt)
-        self.socketCtrlSpace.addConstraint(socketInputConstraint)
+
+        # ==============
+        # Constrain I/O
+        # ==============
+        # Constraint inputs
+        self.socketInputConstraint = self.socket_offsetCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # Constraint outputs
-        socketConstraint = PoseConstraint('_'.join([self.socketOutputTgt.getName(), 'To', self.socketCtrl.getName()]))
-        socketConstraint.addConstrainer(self.socketCtrl)
-        self.socketOutputTgt.addConstraint(socketConstraint)
+        self.socketOutputTgtConstraint = self.socketOutputTgt.constrainTo(self.socketCtrl)
+        self.socketDefConstraint = self.socketDef.constrainTo(self.socketCtrl)
 
-
-        # ===============
-        # Add Splice Ops
-        # ===============
-        # Add Deformer Splice Op
-        spliceOp = KLOperator('socketDeformerKLOp', 'PoseConstraintSolver', 'Kraken')
-        self.addOperator(spliceOp)
-
-        # Add Att Inputs
-        spliceOp.setInput('drawDebug', self.drawDebugInputAttr)
-        spliceOp.setInput('rigScale', self.rigScaleInputAttr)
-
-        # Add Xfo Inputs
-        spliceOp.setInput('constrainer', self.socketOutputTgt)
-
-        # Add Xfo Outputs
-        spliceOp.setOutput('constrainee', self.socketDef)
+        self.socketOutputTgtConstraint.evaluate()
 
         Profiler.getInstance().pop()
 
@@ -247,16 +241,11 @@ class OSSSocketRig(OSSSocket):
 
         super(OSSSocketRig, self).loadData( data )
 
-        self.socketCtrlSpace.xfo = data['socketXfo']
-        self.socketCtrl.xfo = data['socketXfo']
-        self.socketCtrl.setCurveData(data['socketCtrlCrvData'])
+        self.createControls(data)
+
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
         self.socketCtrl.scalePoints(globalScale)
-        # ============
-        # Set IO Xfos
-        # ============
-        self.parentSpaceInputTgt.xfo = data['socketXfo']
-        self.socketOutputTgt.xfo = data['socketXfo']
+        self.socket_offsetCtrl.scalePoints(globalScale)
 
 
 from kraken.core.kraken_system import KrakenSystem
