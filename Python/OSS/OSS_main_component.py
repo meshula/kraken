@@ -86,11 +86,14 @@ class OSSMainComponentGuide(OSSMainComponent):
         self.cogCtrl.scalePoints(Vec3(2, 2, 2))
         self.cogCtrl.setColor('red')
 
+        self.visIconCtrl = Control('visPosition', parent=self.ctrlCmpGrp)
+
         self.mocapIconCtrl = None
 
         self.init_data = {
                 "mainXfo": Xfo(tr=Vec3(0.0, 0.0, 0.0)),
                 "cogPosition": Vec3(0.0, 10.0, 0.0),
+                "visIconXfo": Xfo(tr=Vec3(0.0, 0.0, 5.0)),
                 "mocapIconXfo": Xfo(tr=Vec3(0.0, 0.0, 5.0)),
                }
 
@@ -114,6 +117,7 @@ class OSSMainComponentGuide(OSSMainComponent):
 
         data["mainXfo"] = self.mainCtrl.xfo
         data['cogPosition'] = self.cogCtrl.xfo.tr
+        data['visIconXfo'] = self.visIconCtrl.xfo
 
         if self.mocap:
             data['mocapIconXfo'] = self.mocapIconCtrl.xfo
@@ -159,6 +163,11 @@ class OSSMainComponentGuide(OSSMainComponent):
                 self.mocapIconCtrl.xfo = data['mocapIconXfo']
                 self.mocapIconCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
 
+        self.visIconCtrl.xfo = data['visIconXfo']
+        if "oss_vis" not in Config.getInstance().getControlShapes():
+            self.visIconCtrl.setCurveData(VIS_SHAPE)
+        self.visIconCtrl.scalePoints(Vec3(8, 1.0, 8))
+
         return True
 
 
@@ -198,6 +207,7 @@ class OSSMainComponentGuide(OSSMainComponent):
 
         data["mainXfo"] = self.mainCtrl.xfo
         data['cogPosition'] = self.cogCtrl.xfo.tr
+        data['visIconXfo'] = self.visIconCtrl.xfo
 
         if self.mocap:
             data['mocapIconXfo'] = self.mocapIconCtrl.xfo
@@ -267,6 +277,11 @@ class OSSMainComponentRig(OSSMainComponent):
         self.cogCtrl.setColor("orange")
         self.cogCtrlSpace = self.cogCtrl.insertCtrlSpace()
 
+        # VIS
+        self.visIconCtrl = Control('vis', parent=self.ctrlCmpGrp)
+        if "oss_vis" not in Config.getInstance().getControlShapes():
+            self.visIconCtrl.setCurveData(VIS_SHAPE)
+        self.visIconCtrl.constrainTo(self.mainCtrl, maintainOffset=True)
 
         # Add Component Params to IK control
         MainSettingsAttrGrp = AttributeGroup('DisplayInfo_MainSettings', parent=self.mainCtrl)
@@ -351,6 +366,9 @@ class OSSMainComponentRig(OSSMainComponent):
         self.offsetOutputTgt.xfo = data["mainXfo"]
         self.cogOutputTgt.xfo.tr = data["cogPosition"]
 
+        self.visIconCtrl.xfo = data['visIconXfo']
+        self.visIconCtrl.scalePoints(Vec3(8, 1.0, 8))
+
 
         if self.mocap:
 
@@ -412,6 +430,21 @@ class OSSMainComponentRig(OSSMainComponent):
         self.offsetOutputTgtConstraint.evaluate()
         self.cogOutputTgtConstraint.evaluate()
 
+
+
+VIS_SHAPE = [
+ {'closed': False,
+  'degree': 3,
+  'points': [[0.5, 0.0, -0.5],
+             [0.333, 0.0, -0.213],
+             [0.165, 0.0, 0.075],
+             [-0.0, 0.0, 0.364]]},
+ {'closed': False,
+  'degree': 3,
+  'points': [[-0.5, 0.0, -0.5],
+             [-0.328, 0.0, -0.212],
+             [-0.16, 0.0, 0.076],
+             [-0.0, 0.0, 0.364]]}]
 
 
 MOCAP_SHAPE = [{'closed': False,
