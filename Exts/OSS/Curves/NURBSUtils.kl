@@ -111,7 +111,6 @@ function Vec4 NURBSUtils_calcBSplinePoint(UInt32 degree, UInt32 knots[], Vec4 co
 		Vec4 result(0, 0, 0, 0);
 
 		for ( UInt32 j = 0; j <= degree; ++ j ) {
-
 			Vec4 point = controlPoints[span - degree + j];
 			Scalar basis = basises[j];
 			Scalar weight = point.t * basis;
@@ -121,9 +120,7 @@ function Vec4 NURBSUtils_calcBSplinePoint(UInt32 degree, UInt32 knots[], Vec4 co
 			result.t += point.t * basis;
 
 		}
-
 		return result;
-
 }
 
 /*
