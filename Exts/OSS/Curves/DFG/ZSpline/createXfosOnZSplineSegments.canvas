@@ -1,0 +1,150 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "createXfosOnZSplineSegments",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "ZSpline"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 0
+        },
+      "name" : "keepCurveLen",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 1
+        },
+      "name" : "keepArcLen",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "medianXfos",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      }
+    ],
+  "extDeps" : {
+    "Math" : "*"
+    },
+  "presetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B",
+  "code" : "dfgEntry {
+  result.resize(0);
+  for(UInt32 n=0;n<this.BSplines.size();n++){
+    for(UInt32 k=0; k<this.BSplines[n].defSegs; k++) {
+        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(this.BSplines[n].defSegs-1)));
+        Xfo outXfo = Xfo(
+                this.BSplines[n].evalPosition(t,keepArcLen,keepCurveLen),
+                this.BSplines[n].evalOri(t,keepArcLen,keepCurveLen),
+                this.BSplines[n].evalScale(t,keepArcLen,keepCurveLen));
+        result.push(outXfo);
+        
+        // export on mid segments
+        if(k==0 && n!=0) {
+            medianXfos.push(outXfo.linearInterpolate(result[result.size()-2], 0.5));
+           // ToDo Export defrobulated Euler Angles on segment Joints
+        }
+    }
+  }
+}  ",
+  "requiredPresets" : {
+    "OSS.Exts.Curves.ZSpline.createXfosOnZSplineSegments" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "createXfosOnZSplineSegments",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "ZSpline"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 0
+            },
+          "name" : "keepCurveLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "keepArcLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "medianXfos",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[]"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "9A8AFEEBF71811F541C71B0877BDF45B",
+      "code" : "dfgEntry {
+  result.resize(0);
+  for(UInt32 n=0;n<this.BSplines.size();n++){
+    for(UInt32 k=0; k<this.BSplines[n].defSegs; k++) {
+        Scalar t =  Scalar(k)/ Scalar(Math_max(1,(this.BSplines[n].defSegs-1)));
+        Xfo outXfo = Xfo(
+                this.BSplines[n].evalPosition(t,keepArcLen,keepCurveLen),
+                this.BSplines[n].evalOri(t,keepArcLen,keepCurveLen),
+                this.BSplines[n].evalScale(t,keepArcLen,keepCurveLen));
+        result.push(outXfo);
+        
+        // export on mid segments
+        if(k==0 && n!=0) {
+            medianXfos.push(outXfo.linearInterpolate(result[result.size()-2], 0.5));
+           // ToDo Export defrobulated Euler Angles on segment Joints
+        }
+    }
+  }
+}  "
+      }
+    }
+  }

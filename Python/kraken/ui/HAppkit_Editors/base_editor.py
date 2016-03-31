@@ -2,6 +2,8 @@ from PySide import QtGui
 
 from core.undo_redo_manager import UndoRedoManager, Command
 
+import kraken.ui.component_inspector
+
 class BaseValueEditor(QtGui.QWidget):
 
     def __init__(self, valueController, parent=None):
@@ -16,6 +18,8 @@ class BaseValueEditor(QtGui.QWidget):
 
         self._valueController.valueChanged.connect(self._onValueChange)
         self._valueController.editableChanged.connect(self.setEditable)
+
+        self._parent = parent
 
 
     def isEditable(self):

@@ -1,0 +1,172 @@
+require InlineDrawing;
+require Kraken;
+
+object OSS_FootRockerSystem : KrakenSolver {
+  Xfo initPose[];
+};
+
+// Default Constructor
+function OSS_FootRockerSystem()
+{
+
+}
+
+function OSS_FootRockerSystem(
+  Xfo initPose[])
+{
+  this.initPose = initPose;
+}
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_FootRockerSystem.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+
+  args.push(KrakenSolverArg('rightSide', 'In', 'Boolean'));
+  args.push(KrakenSolverArg('footRocker', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('ballBreak', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('footTilt', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('ikCtrl', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('heelPivot', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('ballPivot', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('toePivot', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('footJointLoc', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('ballJointLoc', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('innerPivotLoc', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('outerPivotLoc', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('footJoint', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('ballJoint', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('ikGoal', 'Out', 'Mat44'));
+
+  return args;
+}
+
+
+require Math;
+require Animation;
+
+// For optimization, this should be inline or not a function at all since it is just one line...
+function rotateAroundPivot(
+  in Xfo rotationXfo,
+  in Xfo pivotXfo,
+  in Xfo targetXfo,
+  io Xfo ikCtrlXfo
+) {
+
+  //ikCtrlXfo = targetXfo * pivotXfo.inverse() * rotationXfo * pivotXfo;
+  ikCtrlXfo = pivotXfo * rotationXfo * pivotXfo.inverse() * targetXfo ;
+}
+
+
+// Solve
+function OSS_FootRockerSystem.solve!
+(
+  Boolean drawDebug,
+  Scalar rigScale,
+  Boolean rightSide,
+  Scalar footRocker,
+  Scalar ballBreak,
+  Scalar footTilt,
+
+  Mat44 ikCtrl,
+  Mat44 heelPivot,
+  Mat44 ballPivot,
+  Mat44 toePivot,
+  Mat44 footJointLoc,
+  Mat44 ballJointLoc,
+  Mat44 innerPivotLoc,
+  Mat44 outerPivotLoc,
+
+  io Mat44 footJoint,
+  io Mat44 ballJoint,
+  io Mat44 ikGoal
+)
+{
+
+  Xfo ikCtrlXfo = Xfo(ikCtrl);
+  Xfo heelPivotXfo = Xfo(heelPivot);
+  Xfo ballPivotXfo = Xfo(ballPivot);
+  Xfo toePivotXfo = Xfo(toePivot);
+
+  Xfo footXfo = Xfo(footJointLoc);
+  Xfo toeXfo = Xfo(ballJointLoc);
+
+  Xfo innerPivotXfo = Xfo(innerPivotLoc);
+  Xfo outerPivotXfo = Xfo(outerPivotLoc);
+
+  Scalar heelRotation = 0;
+  Scalar ballRotation = 0;
+  Scalar toeRotation = 0;
+
+  Xfo offsetRotationXfo;
+  Xfo rotateOnPivotXfo;
+
+ /*
+  Quat offsetRotation = Quat(Euler(3.0 * footRocker, 0, 0));
+  ikCtrlXfo.ori =  ikCtrlXfo.ori * offsetRotation;
+  ikGoal = ikCtrlXfo.toMat44();
+*/
+  heelRotation = footRocker;
+
+  if (heelRotation < 0) {
+
+    offsetRotationXfo = Xfo(Quat(Euler(Math_degToRad(heelRotation), 0, 0)));
+
+    rotateOnPivotXfo = heelPivotXfo * offsetRotationXfo * heelPivotXfo.inverse();
+    ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
+    footXfo = rotateOnPivotXfo * footXfo;
+    toeXfo = rotateOnPivotXfo * toeXfo;
+  }
+  else if (heelRotation > 0) {
+
+    toeRotation = footRocker - ballBreak;
+
+    if (toeRotation > 0) {
+      ballRotation = ballBreak;
+    } else {
+      ballRotation = footRocker;
+    }
+
+    offsetRotationXfo = Xfo(Quat(Euler(Math_degToRad(ballRotation), 0, 0)));
+    rotateOnPivotXfo = ballPivotXfo * offsetRotationXfo * ballPivotXfo.inverse();
+    ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
+    footXfo = rotateOnPivotXfo * footXfo;
+
+
+    if (toeRotation > 0) {
+      offsetRotationXfo = Xfo(Quat(Euler(Math_degToRad(toeRotation), 0, 0)));
+      rotateOnPivotXfo = toePivotXfo * offsetRotationXfo * toePivotXfo.inverse();
+      ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
+      footXfo = rotateOnPivotXfo * footXfo;
+      toeXfo = rotateOnPivotXfo * toeXfo;
+    }
+
+  }
+
+  if (footTilt) {
+
+      Scalar negate = -1;
+      if (rightSide) negate = 1;
+
+      offsetRotationXfo = Xfo(Quat(Euler(0.0, 0.0, negate * Math_degToRad(footTilt))));
+
+    if (footTilt < 0) {
+      rotateOnPivotXfo = innerPivotXfo * offsetRotationXfo * innerPivotXfo.inverse();
+    } else if (footTilt > 0) {
+      rotateOnPivotXfo = outerPivotXfo * offsetRotationXfo * outerPivotXfo.inverse();
+    }
+
+    ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
+    footXfo = rotateOnPivotXfo * footXfo;
+    toeXfo = rotateOnPivotXfo * toeXfo;
+  }
+
+
+  // can we just output the foot joint if it's always going to be the same loc as ikGoal?
+  ikGoal = ikCtrlXfo.toMat44();
+  footJoint = footXfo.toMat44();
+  ballJoint = toeXfo.toMat44();
+
+
+  this.setDebug(drawDebug);
+}

@@ -224,6 +224,59 @@ class Component(Object3D):
         return True
 
 
+    def getAllHierarchyNodes(self, classType, inheritedClass=False):
+        """
+        Returns a nodeList with all children in component hierarchy that matches classType
+        If inheritedType is True, match any node that is subclass of type
+        """
+
+        # Currently does not work.  Does component not have children???
+
+        def getHierarchyNodes(kObject, classType, nodeList, inheritedClass):
+            for i in xrange(kObject.getNumChildren()):
+                child = kObject.getChildByIndex(i)
+                if inheritedClass and issubclass(child.__class__.__name__, classType):
+                    nodeList.append(child)
+                elif isinstance(child, classType):
+                    nodeList.append(child)
+
+                getHierarchyNodes(child, classType=classType, nodeList=nodeList, inheritedClass=inheritedClass)
+
+
+        container = self.getContainer()
+        nodeList = []
+        for i in xrange(container.getNumChildren()):
+            child = container.getChildByIndex(i)
+            getHierarchyNodes(child, classType=classType, nodeList=nodeList, inheritedClass=inheritedClass)
+
+        nodeList = [x for x in nodeList if x.getComponent() is self]
+        return nodeList
+
+    def deleteInput(self, name, **kwargs):
+        """Deletes an input object and also any connected target object that matches
+        the data type that is passed.
+
+        Args:
+            name (str): Name of the input to delete.
+
+        """
+        dataType = None
+        for eachInput in self._inputs:
+            if eachInput.getName() == name:
+                dataType = eachInput.getDataType()
+
+        # Handle keyword arguments
+        for k, v in kwargs.iteritems():
+            if k == 'parent':
+                if dataType.startswith('Xfo'):
+                    v.removeChildByName(name)
+                else:
+                    v.removeAttributeByName(name)
+            else:
+                print "Keyword '" + k + "' is not supported with createInput method!"
+
+        self.removeInputByName(name)
+
     # ==============
     # Input Methods
     # ==============
@@ -363,6 +416,49 @@ class Component(Object3D):
 
         return True
 
+
+    def removeOutputByIndex(self, index):
+        """Remove ComponentOutputPort at specified index.
+
+        Args:
+            index (int): Index of the ComponentOutputPort to remove.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if self.checkOutputIndex(index) is not True:
+            return False
+
+        del self._outputs[index]
+
+        return True
+
+
+    def removeOutputByName(self, name):
+        """Removes a output from this object by name.
+
+        Args:
+            name (str): Name of output to remove.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        removeIndex = None
+
+        for i, eachOutput in enumerate(self._outputs):
+            if eachOutput.getName() == name:
+                removeIndex = i
+
+        if removeIndex is None:
+            raise ValueError("'" + name + "' is not a valid output of this object.")
+
+        self.removeOutputByIndex(removeIndex)
+
+        return True
 
     def getNumInputs(self):
         """Returns the number of inputs this component has.
@@ -559,6 +655,25 @@ class Component(Object3D):
     # =================
     # Operator Methods
     # =================
+
+
+    def evalOperators(self):
+        """Evaluates all component operators
+
+        Args:
+            None
+
+        Returns:
+            bool: True if the index is valid.
+
+        """
+
+        for op in self._operators:
+            op.evaluate()
+
+        return True
+
+
     def checkOperatorIndex(self, index):
         """Checks the supplied index is valid.
 

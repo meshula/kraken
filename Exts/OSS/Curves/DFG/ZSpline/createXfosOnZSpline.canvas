@@ -1,0 +1,144 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "createXfosOnZSpline",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "ZSpline"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 0
+        },
+      "name" : "keepCurveLen",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 6
+        },
+      "name" : "numXfos",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 1
+        },
+      "name" : "keepArcLen",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      }
+    ],
+  "extDeps" : {
+    "Math" : "*"
+    },
+  "presetGUID" : "E96E2152CB52C36BD334DF4A092B1D69",
+  "code" : "dfgEntry {
+  result.resize(0);
+  for(UInt32 k=0; k<numXfos; k++) {
+      Scalar t =  Scalar(k)/ Scalar(Math_max(1,(numXfos-1)));
+      Xfo outXfo = Xfo(
+              this.evalPosition(t,keepArcLen,keepCurveLen),
+              this.evalOri(t,keepArcLen,keepCurveLen),
+              this.evalScale(t,keepArcLen,keepCurveLen)
+             );
+      
+      result.push(outXfo.toMat44());
+  }
+}",
+  "requiredPresets" : {
+    "OSS.Exts.Curves.ZSpline.createXfosOnZSpline" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "createXfosOnZSpline",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "ZSpline"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 0
+            },
+          "name" : "keepCurveLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "UInt32" : 6
+            },
+          "name" : "numXfos",
+          "execPortType" : "In",
+          "typeSpec" : "UInt32"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "keepArcLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "E96E2152CB52C36BD334DF4A092B1D69",
+      "code" : "dfgEntry {
+  result.resize(0);
+  for(UInt32 k=0; k<numXfos; k++) {
+      Scalar t =  Scalar(k)/ Scalar(Math_max(1,(numXfos-1)));
+      Xfo outXfo = Xfo(
+              this.evalPosition(t,keepArcLen,keepCurveLen),
+              this.evalOri(t,keepArcLen,keepCurveLen),
+              this.evalScale(t,keepArcLen,keepCurveLen)
+             );
+      
+      result.push(outXfo.toMat44());
+  }
+}"
+      }
+    }
+  }

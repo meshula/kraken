@@ -1,0 +1,138 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "Curve",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "mats",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "NURBSCurve"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "positions",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "colors",
+      "execPortType" : "Out",
+      "typeSpec" : "Color[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 3
+        },
+      "name" : "degree",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "normals",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3[]"
+      }
+    ],
+  "extDeps" : {
+    "Curves" : "*"
+    },
+  "presetGUID" : "34E69A496B9C63877CE6447CEFD7AC9A",
+  "code" : "dfgEntry {
+  result = NURBSCurve();
+  result.initiate(mats,degree);
+  positions = result.positions.values;
+  colors  = result.colors.values;
+  normals = result.normals.values;
+}
+
+",
+  "requiredPresets" : {
+    "OSS.Exts.Curves.NURBS.Curve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "Curve",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "mats",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "NURBSCurve"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "positions",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "colors",
+          "execPortType" : "Out",
+          "typeSpec" : "Color[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "UInt32" : 3
+            },
+          "name" : "degree",
+          "execPortType" : "In",
+          "typeSpec" : "UInt32"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "normals",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3[]"
+          }
+        ],
+      "extDeps" : {
+        "Curves" : "*"
+        },
+      "presetGUID" : "34E69A496B9C63877CE6447CEFD7AC9A",
+      "code" : "dfgEntry {
+  result = NURBSCurve();
+  result.initiate(mats,degree);
+  positions = result.positions.values;
+  colors  = result.colors.values;
+  normals = result.normals.values;
+}
+
+"
+      }
+    }
+  }

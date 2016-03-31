@@ -1,0 +1,106 @@
+{
+  "objectType" : "Func",
+  "title" : "createZSplineSegs",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "ZSpline"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "color",
+      "execPortType" : "Out",
+      "typeSpec" : "Color[]"
+      }
+    ],
+  "extDeps" : {
+    "Math" : "*"
+    },
+  "presetGUID" : "F15CA016C4228059A5429A3D38303F4A",
+  "code" : "dfgEntry {
+  result.resize(0);
+  color.resize(0);
+  for(UInt32 n=0;n<this.BSplines.size();n++){
+    BSpline b = this.BSplines[n];
+    UInt32 resolution = b.resolution;
+    
+    // Color Settings
+    Scalar hue = mathRandomScalar(n,1);
+    Scalar saturation = 2;
+    
+    for(UInt32 k=0; k<=resolution; k++) {
+      Scalar t =  Scalar(k)/(resolution);
+      t = (t+n)/(this.BSplines.size());
+      Color c = randomColor(hue*180,saturation,this.normalizeT(t));
+      result.push(this.evalPosition(t));
+      color.push(c);
+    }
+  }
+}
+",
+  "requiredPresets" : {
+    "OSS.Exts.Curves.ZSpline.createZSplineSegs" : {
+      "objectType" : "Func",
+      "title" : "createZSplineSegs",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "ZSpline"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "color",
+          "execPortType" : "Out",
+          "typeSpec" : "Color[]"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "F15CA016C4228059A5429A3D38303F4A",
+      "code" : "dfgEntry {
+  result.resize(0);
+  color.resize(0);
+  for(UInt32 n=0;n<this.BSplines.size();n++){
+    BSpline b = this.BSplines[n];
+    UInt32 resolution = b.resolution;
+    
+    // Color Settings
+    Scalar hue = mathRandomScalar(n,1);
+    Scalar saturation = 2;
+    
+    for(UInt32 k=0; k<=resolution; k++) {
+      Scalar t =  Scalar(k)/(resolution);
+      t = (t+n)/(this.BSplines.size());
+      Color c = randomColor(hue*180,saturation,this.normalizeT(t));
+      result.push(this.evalPosition(t));
+      color.push(c);
+    }
+  }
+}
+"
+      }
+    }
+  }

@@ -53,6 +53,13 @@ class Builder(object):
 
         return True
 
+    def deleteBuildElements(self):
+        """
+        Clear out all dcc built elements from the scene if exist
+        """
+
+        return None
+
 
     def getDCCSceneItem(self, kSceneItem):
         """Given a kSceneItem, returns the built dcc scene item.
@@ -66,8 +73,10 @@ class Builder(object):
         """
 
         for builtElement in self._buildElements:
+
             if builtElement['src'] == kSceneItem:
                 return builtElement['tgt']
+
 
         return None
 
@@ -393,10 +402,9 @@ class Builder(object):
         else:
             connectionTarget = connection.getTarget()
 
-        constraint = PoseConstraint('_'.join([inputTarget.getName(), 'To', connectionTarget.getName()]))
-        constraint.setMaintainOffset(True)
-        constraint.setConstrainee(inputTarget)
-        constraint.addConstrainer(connectionTarget)
+        # There should be no offset between an output xfo from one component and the connected input of another
+        # If connected, they should be exactly the same.
+        constraint = inputTarget.constrainTo(connectionTarget, maintainOffset=False, addToConstraintList=False)
 
         dccSceneItem = self.buildPoseConstraint(constraint)
         self._registerSceneItemPair(componentInput, dccSceneItem)
@@ -466,12 +474,9 @@ class Builder(object):
 
         for i in xrange(kObject.getNumAttributeGroups()):
             attributeGroup = kObject.getAttributeGroupByIndex(i)
-
-            attributeCount = attributeGroup.getNumAttributes()
             self.buildAttributeGroup(attributeGroup)
 
         return True
-
 
 
     def buildHierarchy(self, kObject, component=None):
@@ -649,7 +654,6 @@ class Builder(object):
         # Build input connections
         for i in xrange(kObject.getNumAttributeGroups()):
             attributeGroup = kObject.getAttributeGroupByIndex(i)
-
             for y in xrange(attributeGroup.getNumAttributes()):
                 attribute = attributeGroup.getAttributeByIndex(y)
                 self.connectAttribute(attribute)

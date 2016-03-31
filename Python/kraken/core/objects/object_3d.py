@@ -6,12 +6,14 @@ Object3D - Base Object3D Object.
 """
 
 import re
+import inspect
 
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
 from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
+from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 
 
 class Object3D(SceneItem):
@@ -27,8 +29,10 @@ class Object3D(SceneItem):
         self._xfo = Xfo()
         self._ro = RotationOrder()
         self._color = None
-        self._visibility = True
-        self._shapeVisibility = True
+
+        self._implicitAttrGrp = AttributeGroup("implicitAttrGrp", self)
+        self._visibility = BoolAttribute('visibility', True, self._implicitAttrGrp)
+        self._shapeVisibility = BoolAttribute('shapeVisibility', True, self._implicitAttrGrp)
 
         if parent is not None:
             parent.addChild(self)
@@ -123,7 +127,6 @@ class Object3D(SceneItem):
     # =============
     # Name Methods
     # =============
-
     def getBuildName(self):
         """Returns the build name for the object.
 
@@ -182,6 +185,10 @@ class Object3D(SceneItem):
                 builtName += location
 
             elif token is 'type':
+
+                secondType = self.getSecondType()
+                if secondType:
+                    builtName += nameTemplate['types'][secondType.__name__] + nameTemplate['separator']
 
                 if objectType == 'Locator' and self.testFlag('inputObject'):
                     objectType = 'ComponentInput'
@@ -263,7 +270,6 @@ class Object3D(SceneItem):
 
         return parent
 
-
     def getLayer(self):
         """Returns the Layer the object belongs to.
 
@@ -291,7 +297,6 @@ class Object3D(SceneItem):
         """
 
         return self._component
-
 
     def setComponent(self, component):
         """Sets the component attribute of this object.
@@ -747,7 +752,65 @@ class Object3D(SceneItem):
         return True
 
 
-    def addConstraint(self, constraint):
+    def insertCtrlSpace(self, name=None):
+        """Adds a CtrlSpace object above this object
+
+        Args:
+            name (string) optional name for this CtrlSpace, default is same as this object
+
+        Returns:
+            string: New CtrlSpace object
+
+        """
+        if not name:
+            name = self.getName()
+
+        exec("from kraken.core.objects.ctrlSpace import CtrlSpace")
+        exec("newCtrlSpace = CtrlSpace(\""+name+"\", parent=self.getParent())")
+        if self.getParent() is not None:
+            self.getParent().removeChild(self) #Not sure why this does not happen in setParent()
+        self.setParent(newCtrlSpace)
+        newCtrlSpace.addChild(self) #Not sure why this does not happen in setParent()
+        newCtrlSpace.xfo = Xfo(self.xfo)
+
+        newCtrlSpace.setSecondType(self.__class__)
+
+        return newCtrlSpace
+
+
+    def constrainTo(self, constrainers, type="Pose", maintainOffset=False, name=None, addToConstraintList=True):
+        """Adds an constraint to this object.
+
+        Args:
+            constrainers (Object or Object list): Constraint object to add to this object or objects.
+
+        Returns:
+            string: Constraint object
+
+        """
+
+        exec("from kraken.core.objects.constraints."+type.lower()+"_constraint import "+type+"Constraint")
+        exec("constraint = "+type+"Constraint('')")
+
+        # function overloading to accept a single object or a list of objects
+        if not hasattr(constrainers, '__iter__'):
+            constrainers = [constrainers]
+
+        for constrainer in constrainers:
+            constraint.addConstrainer(constrainer)
+
+        constraint.setMaintainOffset(maintainOffset)
+
+        if name is None:
+            name = ('_'.join([self.getName(), 'To', constrainer.getName(), type+'Constraint']))
+
+        constraint.setName(name)
+        self.addConstraint(constraint, addToConstraintList=addToConstraintList)
+
+        return constraint
+
+
+    def addConstraint(self, constraint, addToConstraintList=True):
         """Adds an constraint to this object.
 
         Args:
@@ -758,10 +821,12 @@ class Object3D(SceneItem):
 
         """
 
-        if constraint.getName() in [x.getName() for x in self._constraints]:
-            raise IndexError("Constraint with name '" + constraint.getName() + "'' already exists as a constraint.")
+        if addToConstraintList:
+            if constraint.getName() in [x.getName() for x in self._constraints]:
+                raise IndexError("Constraint with name '" + constraint.getName() + "'' already exists as a constraint.")
 
-        self._constraints.append(constraint)
+            self._constraints.append(constraint)
+
         constraint.setParent(self)
         constraint.setConstrainee(self)
 
@@ -861,6 +926,16 @@ class Object3D(SceneItem):
     # ===================
     # Visibility Methods
     # ===================
+    def getVisibilityAttr(self):
+        """Returns the Visibility attribute object.
+
+        Returns:
+            BoolAttribute: Attribute that holds the value of the visibility.
+
+        """
+
+        return self._visibility
+
     def getVisibility(self):
         """Returns the visibility status of the scene item.
 
@@ -869,8 +944,7 @@ class Object3D(SceneItem):
 
         """
 
-        return self._visibility
-
+        return self._visibility.getValue()
 
     def setVisibility(self, value):
         """Sets the visibility of the scene object.
@@ -883,10 +957,20 @@ class Object3D(SceneItem):
 
         """
 
-        self._visibility = value
+        self._visibility.setValue(value)
 
         return True
 
+
+    def getShapeVisibilityAttr(self):
+        """Returns the Shape Visibility attribute object.
+
+        Returns:
+            BoolAttribute: Attribute that holds the value of the shape visibility.
+
+        """
+
+        return self._shapeVisibility
 
     def getShapeVisibility(self):
         """Returns the shape visibility status of the scene item.
@@ -896,8 +980,7 @@ class Object3D(SceneItem):
 
         """
 
-        return self._shapeVisibility
-
+        return self._shapeVisibility.getValue()
 
     def setShapeVisibility(self, value):
         """Sets the shape visibility of the scene object.
@@ -910,7 +993,7 @@ class Object3D(SceneItem):
 
         """
 
-        self._shapeVisibility = value
+        self._shapeVisibility.setValue(value)
 
         return True
 

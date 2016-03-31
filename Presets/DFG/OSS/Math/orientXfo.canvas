@@ -1,0 +1,182 @@
+{
+  "objectType" : "Func",
+  "title" : "orientXfo",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 1
+        },
+      "name" : "atAxis",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 2
+        },
+      "name" : "upAxis",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "Xfo"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "53A2FC56A2BACEC95035D5ED3610B859",
+  "code" : "// Gotta be a better way
+function Vec3 getAxisAsVector(in UInt32 axisIndex)
+{
+  Vec3 vec;
+  switch (axisIndex)
+  {
+    case 0:
+      return Vec3(1.0, 0.0, 0.0);
+    case 1:
+      return Vec3(0.0, 1.0, 0.0);
+    case 2:
+      return Vec3(0.0, 0.0, 1.0);
+    case 3:
+      return Vec3(-1.0, 0.0, 0.0);
+    case 4:
+      return Vec3(0.0, -1.0, 0.0);
+    case 5:
+      return Vec3(0.0, 0.0, -1.0);
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxisAsVector() invalid axisIndex\");
+  return Vec3(1.0, 0.0, 0.0);
+}
+
+function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return ori.getXaxis();
+    case 1:
+      return ori.getYaxis();
+    case 2:
+      return ori.getZaxis();
+    case 3:
+      return ori.getXaxis().negate();
+    case 4:
+      return ori.getYaxis().negate();
+    case 5:
+      return ori.getZaxis().negate();
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxis() invalid axisIndex\");
+  return ori.getXaxis();
+}
+
+
+// Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
+dfgEntry {
+  Vec3 atAxisVec = getAxis(this.ori, atAxis).unit();
+  Vec3 upAxisVec = getAxis(this.ori, upAxis).unit();
+  Vec3 normalAxisVec = upAxisVec.cross(atAxisVec).unit();
+  Mat33 mat(atAxisVec, normalAxisVec, upAxisVec);
+  this.ori.setFromMat33(mat.transpose());
+}
+",
+  "requiredPresets" : {
+    "OSS.Math.orientXfo" : {
+      "objectType" : "Func",
+      "title" : "orientXfo",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "UInt32" : 1
+            },
+          "name" : "atAxis",
+          "execPortType" : "In",
+          "typeSpec" : "UInt32"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "UInt32" : 2
+            },
+          "name" : "upAxis",
+          "execPortType" : "In",
+          "typeSpec" : "UInt32"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "Xfo"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "53A2FC56A2BACEC95035D5ED3610B859",
+      "code" : "// Gotta be a better way
+function Vec3 getAxisAsVector(in UInt32 axisIndex)
+{
+  Vec3 vec;
+  switch (axisIndex)
+  {
+    case 0:
+      return Vec3(1.0, 0.0, 0.0);
+    case 1:
+      return Vec3(0.0, 1.0, 0.0);
+    case 2:
+      return Vec3(0.0, 0.0, 1.0);
+    case 3:
+      return Vec3(-1.0, 0.0, 0.0);
+    case 4:
+      return Vec3(0.0, -1.0, 0.0);
+    case 5:
+      return Vec3(0.0, 0.0, -1.0);
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxisAsVector() invalid axisIndex\");
+  return Vec3(1.0, 0.0, 0.0);
+}
+
+function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return ori.getXaxis();
+    case 1:
+      return ori.getYaxis();
+    case 2:
+      return ori.getZaxis();
+    case 3:
+      return ori.getXaxis().negate();
+    case 4:
+      return ori.getYaxis().negate();
+    case 5:
+      return ori.getZaxis().negate();
+  }
+  report(\"OSS_TwoBoneIKSolver:getAxis() invalid axisIndex\");
+  return ori.getXaxis();
+}
+
+
+// Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
+dfgEntry {
+  Vec3 atAxisVec = getAxis(this.ori, atAxis).unit();
+  Vec3 upAxisVec = getAxis(this.ori, upAxis).unit();
+  Vec3 normalAxisVec = upAxisVec.cross(atAxisVec).unit();
+  Mat33 mat(atAxisVec, normalAxisVec, upAxisVec);
+  this.ori.setFromMat33(mat.transpose());
+}
+"
+      }
+    }
+  }

@@ -1,0 +1,132 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "toArray",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "defaultValues" : {
+        "Vec3[]" : []
+        },
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "$TYPE$[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Vec3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0
+          }
+        },
+      "name" : "value",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 0,
+        "UInt64" : 0
+        },
+      "name" : "size",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "BCB40492A9195FB8CE191231E5EBEDE5",
+  "code" : "operator core_array_convert_task<<<index>>>($TYPE$ value, io $TYPE$[] result) {
+  result[index] = value;
+}
+
+dfgEntry {
+  result.resize(size);
+
+  if(size < 10000)
+  {
+    for(Size i=0;i<size;i++)
+      result[i] = value;
+  }
+  else
+  {
+    core_array_convert_task<<<size>>>(value, result);
+  }
+}
+",
+  "requiredPresets" : {
+    "OSS.Math.toArray" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "toArray",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3[]" : []
+            },
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "UInt32" : 0,
+            "UInt64" : 0
+            },
+          "name" : "size",
+          "execPortType" : "In",
+          "typeSpec" : "UInt32"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "BCB40492A9195FB8CE191231E5EBEDE5",
+      "code" : "operator core_array_convert_task<<<index>>>($TYPE$ value, io $TYPE$[] result) {
+  result[index] = value;
+}
+
+dfgEntry {
+  result.resize(size);
+
+  if(size < 10000)
+  {
+    for(Size i=0;i<size;i++)
+      result[i] = value;
+  }
+  else
+  {
+    core_array_convert_task<<<size>>>(value, result);
+  }
+}
+"
+      }
+    }
+  }
