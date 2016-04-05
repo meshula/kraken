@@ -1,8 +1,7 @@
 import re
 
-from kraken.core.maths import Vec3
-from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping
-from kraken.core.maths.xfo import xfoFromDirAndUpV
+from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP
+from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
@@ -254,12 +253,12 @@ class OSSHandComponentGuide(OSSHandComponent):
         self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             self.boneAxisStr = "NEGX"
-        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+        self.boneAxis = AXIS_NAME_TO_TUPLE_MAP[self.boneAxisStr]
 
         self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
             self.upAxisStr = "NEGZ"
-        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+        self.upAxis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
 
         if "handXfo" in data.keys():
             self.handCtrl.xfo = data['handXfo']
@@ -325,9 +324,9 @@ class OSSHandComponentGuide(OSSHandComponent):
 
         # In the complete guide system, have live constraint for palm upvec, this assumes Hand is higher than palm
         #upvec hard-coded for now.  Really, we should have an upVector in the guide setup
-        palmXfo.aimAt(aimPos=palmTipPosition, upVector=handXfo.ori.getYaxis(), aimAxis=self.boneAxis, upAxis=self.upAxis)
+        aimAt(palmXfo, aimPos=palmTipPosition, upVector=handXfo.ori.getYaxis(), aimAxis=self.boneAxis, upAxis=self.upAxis)
         # Same here
-        handXfo.aimAt(aimPos=palmXfo.tr, upVector=handXfo.ori.getYaxis(), aimAxis=self.boneAxis, upAxis=self.upAxis)
+        aimAt(handXfo, aimPos=palmXfo.tr, upVector=handXfo.ori.getYaxis(), aimAxis=self.boneAxis, upAxis=self.upAxis)
 
         handleXfo = self.handleCtrl.xfo
         # Not great.  This assumes that guide ctrl has been mirrored from left side
@@ -395,7 +394,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="jack")
         self.handleCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later careful when combining with foot!
         self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace()
-
+        self.handleIKCtrlSpace = CtrlSpace('handIK', parent=self.handleCtrl)
 
         # FK Hand
         self.handCtrl = FKControl('hand', parent=self.ctrlCmpGrp, shape="cube")
@@ -409,11 +408,10 @@ class OSSHandComponentRig(OSSHandComponent):
         self.palmCtrl.alignOnXAxis()
         self.palmCtrlSpace = self.palmCtrl.insertCtrlSpace()
 
-        # IK Hand
-        self.handIKCtrlSpace = CtrlSpace('handIK', parent=self.handleCtrl)
+
 
         # IK palm
-        self.palmCtrlSpace = CtrlSpace('palmIK', parent=self.handIKCtrlSpace)
+        self.palmCtrlSpace = CtrlSpace('palmIK', parent=self.handleIKCtrlSpace)
 
 
 
@@ -488,7 +486,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.IKHandBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
         self.IKHandBlendKLOp.setInput('blend', handIKInputAttr)
         # Add Xfo Inputs)
-        self.IKHandBlendKLOp.setInput('ikFoot', self.handIKCtrlSpace)
+        self.IKHandBlendKLOp.setInput('ikFoot', self.handleIKCtrlSpace)
         self.IKHandBlendKLOp.setInput('fkFoot', self.handCtrl)
         self.IKHandBlendKLOp.setInput('ikBall', self.palmCtrlSpace)
         self.IKHandBlendKLOp.setInput('fkBall', self.palmCtrl)
@@ -554,7 +552,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
                         #Aim Control at child
                         if j > 0:
-                            newCtrls[-2].xfo.aimAt(aimPos=newCtrl.xfo.tr, upVector=upVector, aimAxis=self.boneAxis, upAxis=self.upAxis)
+                            aimAt(newCtrls[-2].xfo, aimPos=newCtrl.xfo.tr, upVector=upVector, aimAxis=self.boneAxis, upAxis=self.upAxis)
                             newCtrls[-2].insertCtrlSpace()
                             if j == len(segments)-2:
                                 newCtrl.xfo.ori = newCtrls[-2].xfo.ori
@@ -604,16 +602,16 @@ class OSSHandComponentRig(OSSHandComponent):
         self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             self.boneAxisStr = "NEGX"
-        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+        self.boneAxis = AXIS_NAME_TO_TUPLE_MAP[self.boneAxisStr]
 
         self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
             self.upAxisStr = "NEGZ"
-        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+        self.upAxis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
 
 
         self.handleCtrlSpace.xfo = data['handleXfo']
-        #self.handleCtrlSpace.xfo.aimAt(aimVector=Vec3(0, 1, 0), upPos=self.palmCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
+        #aimAt(self.handleCtrlSpace.xfo., aimVector=Vec3(0, 1, 0), upPos=self.palmCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
         self.handleCtrl.xfo = Xfo(self.handleCtrlSpace.xfo)
 
         self.handCtrlSpace.xfo = data['handXfo']
@@ -624,7 +622,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.palmCtrl.xfo = data['palmXfo']
         self.palmCtrl.scalePointsOnAxis(data['palmLen'], self.boneAxisStr)
 
-        self.handIKCtrlSpace.xfo = Xfo(self.handCtrl.xfo)
+        self.handleIKCtrlSpace.xfo = Xfo(self.handCtrl.xfo)
         self.palmCtrlSpace.xfo = Xfo(self.palmCtrl.xfo)
 
         self.ikHandTransform = data['handXfo']
@@ -702,11 +700,11 @@ class OSSHandComponentRig(OSSHandComponent):
                 self.palmMocapCtrl_link,
                 ]
             )
-            self.handOutputTgtConstraint = self.hand_cmpOut.constrainTo(self.handMocapCtrl_link)
-            self.palmOutputTgtConstraint = self.palm_cmpOut.constrainTo(self.palmMocapCtrl_link)
+            self.hand_cmpOutConstraint = self.hand_cmpOut.constrainTo(self.handMocapCtrl_link)
+            self.palm_cmpOutConstraint = self.palm_cmpOut.constrainTo(self.palmMocapCtrl_link)
         else:
-            self.handOutputTgtConstraint = self.hand_cmpOut.constrainTo(self.IKHandBlendKLOpHand_out)
-            self.palmOutputTgtConstraint = self.palm_cmpOut.constrainTo(self.IKHandBlendKLOpPalm_out)
+            self.hand_cmpOutConstraint = self.hand_cmpOut.constrainTo(self.IKHandBlendKLOpHand_out)
+            self.palm_cmpOutConstraint = self.palm_cmpOut.constrainTo(self.IKHandBlendKLOpPalm_out)
 
 
         # Add Deformer Joint Constrain
@@ -731,8 +729,8 @@ class OSSHandComponentRig(OSSHandComponent):
         # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
         self.ikgoal_cmpOutConstraint.evaluate()
-        self.handOutputTgtConstraint.evaluate()
-        self.palmOutputTgtConstraint.evaluate()
+        self.hand_cmpOutConstraint.evaluate()
+        self.palm_cmpOutConstraint.evaluate()
 
 
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info

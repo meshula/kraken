@@ -1,6 +1,5 @@
-from kraken.core.maths import Vec3
-from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping, axisStrToIntMapping
-from kraken.core.maths.xfo import xfoFromDirAndUpV
+from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP, AXIS_NAME_TO_INT_MAP
+from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
@@ -228,12 +227,12 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             self.boneAxisStr = "NEGX"
-        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+        self.boneAxis = AXIS_NAME_TO_TUPLE_MAP[self.boneAxisStr]
 
         self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
             self.upAxisStr = "NEGZ"
-        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+        self.upAxis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
 
 
         # Values
@@ -245,16 +244,16 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         uplimbXfo = Xfo(self.uplimbCtrl.xfo)
         # self.upAxis neg Y assumes the lolimb is bent forward.  To avoid this stuff, build a guide system with an actual upVector
         # to get rid of any ambiguity
-        #uplimbXfo.aimAt(self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=self.upAxis.negate())
-        uplimbXfo.aimAt(aimPos=self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=tuple([-x for x in self.upAxis]))
+        #aimAt(uplimbXfo, self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=self.upAxis.negate())
+        aimAt(uplimbXfo, aimPos=self.lolimbCtrl.xfo.tr, upPos=self.handleCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=tuple([-x for x in self.upAxis]))
 
 
         # Calculate lolimb Xfo
         lolimbXfo = Xfo(self.lolimbCtrl.xfo)
         # self.upAxis neg Y assumes the lolimb is bent forward.  To avoid this stuff, build a guide system with an actual upVector
         # to get rid of any ambiguity
-        #lolimbXfo.aimAt(self.toeCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=self.upAxis.negate())
-        lolimbXfo.aimAt(aimPos=self.handleCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=tuple([-x for x in self.upAxis]))
+        #aimAt(lolimbXfo, self.toeCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=self.upAxis.negate())
+        aimAt(lolimbXfo, aimPos=self.handleCtrl.xfo.tr, upPos=self.uplimbCtrl.xfo.tr, aimAxis=self.boneAxis, upAxis=tuple([-x for x in self.upAxis]))
 
         # Get lengths
         uplimbLen = uplimbPosition.subtract(lolimbPosition).length()
@@ -332,7 +331,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.uplimbFKCtrl.scalePointsOnAxis(data['uplimbLen'], self.boneAxisStr)
         self.uplimbFKCtrlSpace = self.uplimbFKCtrl.insertCtrlSpace()
 
-
         # lolimb
         self.lolimbFKCtrl = FKControl(lolimbName, parent=self.uplimbFKCtrl, shape="cube")
         self.lolimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
@@ -341,15 +339,14 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbFKCtrl.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
         self.lolimbFKCtrlSpace = self.lolimbFKCtrl.insertCtrlSpace()
 
-
+        self.limbIKCtrlSpace = CtrlSpace(ikHandleName, parent=self.ctrlCmpGrp)
+        self.limbIKCtrlSpace.xfo = data['handleXfo']
         # handle
         if self.useOtherIKGoal: #Do not use this as a control, hide it
-            self.limbIKCtrl = Transform(ikHandleName, parent=self.ctrlCmpGrp)
+            self.limbIKCtrl = Transform(ikHandleName, parent=self.limbIKCtrlSpace)
         else:
-            self.limbIKCtrl = IKControl(ikHandleName, parent=self.ctrlCmpGrp, shape="jack")
+            self.limbIKCtrl = IKControl(ikHandleName, parent=self.limbIKCtrlSpace, shape="jack")
         self.limbIKCtrl.xfo = data['handleXfo']
-        self.limbIKCtrlSpace = self.limbIKCtrl.insertCtrlSpace()
-
 
 
         # Add Component Params to IK control
@@ -487,8 +484,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl)
         self.limbIKKLOp.setInput('bone1FK', self.lolimbFKCtrl)
         self.limbIKKLOp.setInput('upV', self.limbUpVCtrl)
-        self.limbIKKLOp.setInput('boneAxis', axisStrToIntMapping[self.boneAxisStr])
-        self.limbIKKLOp.setInput('upAxis', axisStrToIntMapping[self.upAxisStr])
+        self.limbIKKLOp.setInput('boneAxis', AXIS_NAME_TO_INT_MAP[self.boneAxisStr])
+        self.limbIKKLOp.setInput('upAxis', AXIS_NAME_TO_INT_MAP[self.upAxisStr])
         self.limbIKKLOp.setInput('ikHandle', self.limbIKCtrl)
 
 
@@ -557,12 +554,12 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             self.boneAxisStr = "NEGX"
-        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+        self.boneAxis = AXIS_NAME_TO_TUPLE_MAP[self.boneAxisStr]
 
         self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
             self.upAxisStr = "NEGZ"
-        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+        self.upAxis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
 
         self.createControls(data)
 

@@ -112,12 +112,10 @@ class KGraphViewWidget(GraphViewWidget):
         try:
             self.window().setCursor(QtCore.Qt.WaitCursor)
 
-            #Do it all from settings, should never be a need to read opened file path
             settings = self.window().getSettings()
             settings.beginGroup('Files')
             filePath = settings.value("lastFilePath", os.path.join(GetKrakenPath(), self.guideRig.getName()))
             settings.endGroup()
-            # Only resort to Kraken path if absolutly necessary
             if not filePath:
                 filePath = GetKrakenPath()
 
@@ -130,7 +128,6 @@ class KGraphViewWidget(GraphViewWidget):
                 fileDialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
                 fileDialog.setNameFilter('Kraken Rig (*.krg)')
                 fileDialog.setDefaultSuffix('krg')
-
 
                 if fileDialog.exec_() == QtGui.QFileDialog.Accepted:
                     filePath = fileDialog.selectedFiles()[0]
@@ -197,7 +194,6 @@ class KGraphViewWidget(GraphViewWidget):
             lastFilePath = settings.value("lastFilePath", os.path.join(GetKrakenPath(), self.guideRig.getName()))
             settings.endGroup()
 
-            # Only resort to Kraken path if absolutly necessary
             if not lastFilePath:
                 lastFilePath = GetKrakenPath()
 
@@ -218,7 +214,7 @@ class KGraphViewWidget(GraphViewWidget):
     def loadRigPreset(self, filePath):
         self.guideRig = Rig()
         self.guideRig.loadRigDefinitionFile(filePath)
-        self.setGuideRigName(self.guideRig.getName()) #Remove "_guide" from end of name
+        self.setGuideRigName(self.guideRig.getName()) # Remove "_guide" from end of name
         self.graphView.displayGraph(self.guideRig)
 
         settings = self.window().getSettings()
@@ -267,9 +263,11 @@ class KGraphViewWidget(GraphViewWidget):
 
     def synchGuideRig(self):
         synchronizer = plugins.getSynchronizer()
-        #Guide is always  built with "_guide" need this so synchronizer not confused with real Rig nodes
+
+        # Guide is always  built with "_guide" need this so synchronizer not confused with real Rig nodes
         if self.guideRig.getName().endswith('_guide') is False:
             self.guideRig.setName(self.guideRig.getName() + '_guide')
+
         synchronizer.setTarget(self.guideRig)
         synchronizer.sync()
 

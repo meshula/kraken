@@ -21,16 +21,27 @@ class Builder(Builder):
 
 
     def deleteBuildElements(self):
-        """
-        Clear out all dcc built elements from the scene if exist
-        """
+        """Clear out all dcc built elements from the scene if exist."""
+
+        si.SetValue("preferences.scripting.cmdlog", False, "")
 
         for builtElement in self._buildElements:
-            print ("Implement deleteBuildElements() in XSI: deleting "+builtElement['tgt'])
+            if builtElement['src'].isTypeOf('Attribute'):
+                continue
+
+            node = builtElement['tgt']
+            if node is not None:
+                try:
+                    si.DeleteObj("B:" + node.FullName)
+                    si.Desktop.RedrawUI()
+                except:
+                    continue
 
         self._buildElements = []
 
-        return None
+        si.SetValue("preferences.scripting.cmdlog", True, "")
+
+        return
 
     # ========================
     # SceneItem Build Methods
@@ -708,8 +719,8 @@ class Builder(Builder):
             # Create Splice Operator
             canvasOpPath = si.FabricCanvasOpApply(operatorOwner.FullName, "", True, "", "")
             canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
-            print ("XSI buildKLOperator(): make sure the folloing line makes sense...")
-            #self._registerSceneItemPair(kOperator, canvasOp)
+            self._registerSceneItemPair(kOperator, canvasOp)
+
             si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken" )
 
             si.FabricCanvasAddFunc(canvasOpPath, "", kOperator.getName(), "dfgEntry {}", "400", "0")
@@ -907,8 +918,8 @@ class Builder(Builder):
             # Create Splice Operator
             canvasOpPath = si.FabricCanvasOpApply(operatorOwner.FullName, "", True, "", "")
             canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
-            print ("XSI buildCanvasOperator(): make sure the folloing line makes sense...")
-            #self._registerSceneItemPair(kOperator, canvasOp)
+            self._registerSceneItemPair(kOperator, canvasOp)
+
             si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken" )
             uniqueNodeName = si.FabricCanvasInstPreset(canvasOpPath, "", kOperator.getPresetPath(), "400", "0")
 
@@ -968,7 +979,6 @@ class Builder(Builder):
                     raise Exception("Invalid connection type:" + portConnectionType)
 
                 canvasOpPath2 = str(canvasOpPath) + ":"
-                print "CanvasOpPath2: " + str(canvasOpPath2)
 
                 if portDataType.endswith('[]'):
                     elementDataType = portDataType[:-2]
@@ -1184,29 +1194,35 @@ class Builder(Builder):
         return True
 
     def setMat44Attr(self, dccSceneItemName, attr, mat44):
-        """Sets a matrix attribute directly with values from a fabric mat44
+        """Sets a matrix attribute directly with values from a fabric Mat44.
+
+        Note: Fabric and Softimage's matrix row orders are reversed, so we
+        transpose the matrix first.
 
         Args:
-            dccSceneItemName -- str: name of dccSceneItem
-            attr -- str: name of matrix attribute to set
-            mat44 -- mat44 with matrix value
+            dccSceneItemName (str): name of dccSceneItem.
+            attr (str): name of matrix attribute to set.
+            mat44 (Mat44): matrix value.
 
         Return:
             bool: True if successful.
 
-        Note: Fabric and Maya's matrix row orders are reversed, so we transpose the matrix first
-
         """
 
-        tmat44 = mat44.transpose()
+        xfo = XSIMath.CreateTransform()
+
+        mat44 = mat44.transpose()
         matrix = []
-        rows = [tmat44.row0, tmat44.row1, tmat44.row2, tmat44.row3]
+        rows = [mat44.row0, mat44.row1, mat44.row2, mat44.row3]
         for row in rows:
             matrix.extend([row.x, row.y, row.z, row.t])
 
-        raise Exception("setMat44Attr() needs Softimage implementation to set matrix!")
+        xfo.SetMatrix4(matrix)
+
+        dccSceneItem.Kinematics.Global.PutTransform2(None, xfo)
 
         return True
+
 
     # ==============
     # Build Methods

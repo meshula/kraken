@@ -280,7 +280,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.headWorldCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
         self.headWorldCtrlSpace  = self.headWorldCtrl.insertCtrlSpace()
 
-        
+
         # ==========
         # Deformers
         # ==========
@@ -308,9 +308,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # ==============
         # Constraint inputs
         self.neckCtrlSpaceConstraint = self.neckCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-        self.headIKUpVSpaceConstraint = self.headIKUpVSpace.constrainTo(self.headCtrl, type="Position", maintainOffset=True)
+        self.headIKUpVSpaceConstraint = self.headIKUpVSpace.constrainTo(self.headCtrl, constraintType="Position", maintainOffset=True)
 
-        self.headWorldSpaceConstraint = self.headWorldCtrlSpace.constrainTo(self.headCtrl, type="Position", maintainOffset=True)
+        self.headWorldSpaceConstraint = self.headWorldCtrlSpace.constrainTo(self.headCtrl, constraintType="Position", maintainOffset=True)
 
 
 
@@ -483,7 +483,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.controlRestInputs.append(self.neckHandleCtrlSpace.xfo)
         self.controlRestInputs.append(self.headHandleCtrlSpace.xfo)
         self.controlRestInputs.append(self.headAlignSpace.xfo)
-        
+
 
         self.alignSpaces.append(self.headCtrl)
         self.alignSpaces.append(self.headSpace)

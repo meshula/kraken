@@ -23,6 +23,10 @@ class Rig(Container):
         super(Rig, self).__init__(name)
         self._metaData = {}
 
+
+    # ====================
+    # Load / Save Methods
+    # ====================
     def writeRigDefinitionFile(self, filepath):
         """Load a rig definition from a file on disk.
 
@@ -118,33 +122,33 @@ class Rig(Container):
             sourceComponentDecoratedName, outputName = connectionData['source'].split('.')
             targetComponentDecoratedName, inputName = connectionData['target'].split('.')
 
-            fail = False
+            connectionFailure = False
 
             sourceComponent = self.getChildByDecoratedName(sourceComponentDecoratedName)
             if sourceComponent is None:
                 print("Warning: Error making connection:" + connectionData['source'] + " -> " + \
                     connectionData['target']+". Source component not found:" + sourceComponentDecoratedName)
-                fail = True
+                connectionFailure = True
 
             targetComponent = self.getChildByDecoratedName(targetComponentDecoratedName)
             if targetComponent is None:
                 print("Warning: Error making connection:" + connectionData['source'] + " -> " + \
                     connectionData['target']+". Target component not found:" + targetComponentDecoratedName)
-                fail = True
+                connectionFailure = True
 
             outputPort = sourceComponent.getOutputByName(outputName)
             if outputPort is None:
                 print("Warning: Error making connection:" + connectionData['source'] + " -> " + \
                     connectionData['target']+". Output '" + outputName + "' not found on Component:" + sourceComponent.getPath())
-                fail = True
+                connectionFailure = True
 
             inputPort = targetComponent.getInputByName(inputName)
             if inputPort is None:
                 print("Warning: Error making connection:" + connectionData['source'] + " -> " + \
                     connectionData['target']+". Input '" + inputName + "' not found on Component:" + targetComponent.getPath())
-                fail = True
+                connectionFailure = True
 
-            if not fail:
+            if connectionFailure is False:
                 inputPort.setConnection(outputPort)
                 inputPort.setIndex(connectionData.get('targetIndex', 0))
 
@@ -181,7 +185,6 @@ class Rig(Container):
                 self.setMetaData(k, v)
 
         Profiler.getInstance().pop()
-
 
 
     def writeGuideDefinitionFile(self, filepath):
@@ -261,11 +264,12 @@ class Rig(Container):
         guideComponents = self.getChildrenByType('Component')
         for component in guideComponents:
             componentsJson.append(component.getRigBuildData())
+
         guideData['components'] = componentsJson
 
         connectionsJson = []
         for component in guideComponents:
-            for i in range(component.getNumInputs()):
+            for i in xrange(component.getNumInputs()):
                 componentInput = component.getInputByIndex(i)
                 if componentInput.isConnected():
                     componentOutput = componentInput.getConnection()

@@ -110,8 +110,8 @@ class Synchronizer(Synchronizer):
 
         """
 
-        if kObject.getParent() is not None and kObject.getParent().__class__ is AttributeGroup:
-            if issubclass(kObject.getParent().getParent().__class__, Component):
+        if kObject.getParent() is not None and kObject.isTypeOf('AttributeGroup'):
+            if kObject.getParent().getParent().isTypeOf('Component'):
                 if kObject.getParent().getParent().getComponentType() == "Guide":
                     return False
 

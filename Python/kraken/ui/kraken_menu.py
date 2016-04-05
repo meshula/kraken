@@ -48,7 +48,6 @@ class KrakenMenu(QtGui.QWidget):
         self.saveAsAction.setObjectName("saveAsAction")
 
         self.fileMenu.addSeparator()
-        #self.recentFilesMenu = self.fileMenu.addMenu('&Recent Files') #Doesn't work for OSS causes error
         self.recentFilesMenu = QtGui.QMenu(title='&Recent Files', parent=self.fileMenu)
         self.fileMenu.addMenu(self.recentFilesMenu)
 
@@ -92,7 +91,7 @@ class KrakenMenu(QtGui.QWidget):
         # Tools Menu
         self.toolsMenu = self.menuBar.addMenu('&Tools')
         self.reloadComponentsAction = self.toolsMenu.addAction('Reload Component Modules')
-        self.reloadComponentsAction.setShortcut('Ctrl+R')
+        self.reloadComponentsAction.setShortcut('Ctrl+Shift+R')
 
         # View Menu
         self.viewMenu = self.menuBar.addMenu('&View')

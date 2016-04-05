@@ -59,7 +59,7 @@ class Operator(SceneItem):
         """
 
         if name not in self.inputs:
-            raise Exception("Input with name '" + name + "' was not found in operator: " + self.getName() + ".\nValid inputs are:\n"+"\n".join(self.inputs.keys()))
+            raise Exception("Input with name '" + name + "' was not found in operator: " + self.getName() + ".\nValid inputs are:\n" + "\n".join(self.inputs.keys()))
 
         if isinstance(self.inputs[name], list):
             # Set the entire output array
@@ -90,6 +90,17 @@ class Operator(SceneItem):
             raise Exception("Input with name '" + name + "' was not found in operator: " + self.getName() + ".")
 
         return self.inputs[name]
+
+
+    def getInputNames(self):
+        """Returns the names of all inputs.
+
+        Returns:
+            list: Names of all inputs.
+
+        """
+
+        return self.inputs.keys()
 
 
     # ==============
@@ -163,3 +174,15 @@ class Operator(SceneItem):
             raise Exception("Output with name '" + name + "' was not found in operator: " + self.getName() + ".")
 
         return self.outputs[name]
+
+
+    def getOutputNames(self):
+        """Returns the names of all outputs.
+
+        Returns:
+            list: Names of all outputs.
+
+        """
+
+        return self.outputs.keys()
+

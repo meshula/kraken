@@ -1,8 +1,8 @@
 
 import math, re
 
-from kraken.core.maths import Vec3
-from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping, axisStrToIntMapping
+from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP, AXIS_NAME_TO_INT_MAP
+from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
@@ -120,7 +120,7 @@ class OSSLipGuide(OSSLip):
                      self.R_loLipHandleCtrl]:
             ctrl.setColor("red")
 
-        
+
         self.defCtrls = []
         self.lipCtrls = []
         self.symMapping = {}
@@ -195,7 +195,7 @@ class OSSLipGuide(OSSLip):
 
         self.upLipControls = []
         self.upLipOutputs = []
-        
+
         self.upLipDebugOp.setInput('drawDebug', 1)
         self.upLipDebugOp.setInput('rigScale', 1.0)
         self.upLipDebugOp.setInput('degree', 3)
@@ -225,7 +225,7 @@ class OSSLipGuide(OSSLip):
 
         self.loLipControls = []
         self.loLipOutputs = []
-        
+
         self.loLipDebugOp.setInput('drawDebug', 1)
         self.loLipDebugOp.setInput('rigScale', 1.0)
         self.loLipDebugOp.setInput('degree', 3)
@@ -329,7 +329,7 @@ class OSSLipGuide(OSSLip):
         if ctrlType == "lipDeformers":
             parent = self.mouthCtrl
             defControlNameList = []
-            
+
             #Build Deformer Names
             half = int(math.floor(defNames/2))
             rSideControls = []
@@ -342,7 +342,7 @@ class OSSLipGuide(OSSLip):
 
             if not defNames % 2 == 0:
                 defControlNameList = rSideControls + ['Mid'] + lSideControls
-            else:    
+            else:
                 defControlNameList = rSideControls + lSideControls
 
             for i, defName in enumerate(defControlNameList):
@@ -357,7 +357,7 @@ class OSSLipGuide(OSSLip):
                         newCtrl.xfo = self.controlXforms[i][j]
 
 
-        if ctrlType == "lipControls":   
+        if ctrlType == "lipControls":
             parent = self.midLipCtrl
             defControlNameList =[]
 
@@ -365,7 +365,7 @@ class OSSLipGuide(OSSLip):
             defControlNameList = convertToStringList(defNames)
             if not defControlNameList:  # Nothing to build
                 return True
-                   
+
 
             # etting up names
             lSideControls = ["L_" + x for x in defControlNameList]
@@ -471,15 +471,15 @@ class OSSLipGuide(OSSLip):
         super(OSSLipGuide, self).loadData( data )
 
         self.loLipCtrl.xfo = data['loLipXfo']
-        self.L_loLipHandleCtrl.xfo = data['L_loLipHandleXfo'] 
+        self.L_loLipHandleCtrl.xfo = data['L_loLipHandleXfo']
         self.R_loLipHandleCtrl.xfo = data['R_loLipHandleXfo']
 
         self.upLipCtrl.xfo = data['upLipXfo']
-        self.L_upLipHandleCtrl.xfo = data['L_upLipHandleXfo'] 
+        self.L_upLipHandleCtrl.xfo = data['L_upLipHandleXfo']
         self.R_upLipHandleCtrl.xfo = data['R_upLipHandleXfo']
 
         self.midLipCtrl.xfo = data['midLipXfo']
-        self.L_midLipHandleCtrl.xfo = data['L_midLipHandleXfo'] 
+        self.L_midLipHandleCtrl.xfo = data['L_midLipHandleXfo']
         self.R_midLipHandleCtrl.xfo = data['R_midLipHandleXfo']
 
         self.lMouthCtrl.xfo = data['lMouthXfo']

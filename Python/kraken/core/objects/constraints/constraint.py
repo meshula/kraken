@@ -5,8 +5,9 @@ Constraint - Base Constraint.
 
 """
 
+from kraken.core.kraken_system import ks
 from kraken.core.objects.scene_item import SceneItem
-from kraken.core.objects.object_3d import Object3D
+from kraken.core.maths.xfo import Xfo
 
 
 class Constraint(SceneItem):
@@ -105,10 +106,11 @@ class Constraint(SceneItem):
 
         """
 
-        if not isinstance(kObject3D, Object3D):
+        if not kObject3D.isTypeOf('Object3D'):
             raise Exception("'kObject3D' argument is not a valid instance type. '"
                              + kObject3D.getName() + "': " + str(type(kObject3D)) +
                              ". Must be an instance of 'Object3D'.")
+
 
         if kObject3D in self._constrainers:
             raise Exception("'kObject3D' argument is already a constrainer: '" + kObject3D.getName() + "'.")
@@ -142,6 +144,80 @@ class Constraint(SceneItem):
 
         return self._constrainers
 
+
+    def compute(self, getGlobalXfoFunc):
+        """invokes the constraint and returns the resulting transform
+
+        Returns:
+            xfo: The result of the constraint in global space.
+
+        """
+        if self._constrainee is None:
+            return None
+        if len(self._constrainers) == 0:
+            return None
+
+        cls = self.__class__.__name__
+        ks.loadExtension('KrakenForCanvas')
+        rtVal = ks.rtVal('Kraken%s' % cls)
+
+        for c in self._constrainers:
+            rtVal.addConstrainer('', ks.rtVal('Xfo', getGlobalXfoFunc(c)))
+
+        return Xfo(rtVal.compute("Xfo", ks.rtVal('Xfo', getGlobalXfoFunc(self._constrainee))))
+
+
+    def computeOffset(self, getGlobalXfoFunc):
+        """invokes the constraint and computes the offset
+
+        Returns:
+            xfo: The offset to be used for the constraint.
+
+        """
+
+        if self._constrainee is None:
+            return Xfo()
+        if len(self._constrainers) == 0:
+            return Xfo()
+
+        cls = self.__class__.__name__
+        ks.loadExtension('KrakenForCanvas')
+        rtVal = ks.rtVal('Kraken%s' % cls)
+
+        rtVal.offset = ks.rtVal('Xfo', Xfo())
+        for c in self._constrainers:
+            rtVal.addConstrainer('', ks.rtVal('Xfo', getGlobalXfoFunc(c)))
+
+        return Xfo(rtVal.computeOffset("Xfo", ks.rtVal('Xfo', getGlobalXfoFunc(self._constrainee))))
+
+
+    def evaluate(self):
+        """invokes the constraint causing the output value to be computed.
+
+        Returns:
+            bool: True if successful.
+
+        """
+        print ("In Constraint.evaluate() for %s" % self.getName())
+        def getGlobalXfoFunc(c):
+            return c.xfo
+
+        if self.getMaintainOffset():
+            # We need to decide what the expectations are for evaluating constraints
+            # within a component outside of a DCC.
+            # Specifically, if there is an offset, at what point is the offset calculated
+            # and stored?  It really can't be in evaluate unless you make it the first evaluate.
+            # Arguably the offset should be calculated durin __init__(), but that requires everything
+            # to be in the right place when the constraint is created.  Our components are not setup
+            # for that right now, so for currently evaluate() if maintainOffset is True,
+            # will do nothing to the xfo of the object.
+            offset = self.computeOffset(getGlobalXfoFunc=getGlobalXfoFunc)
+            # Do nothing with this because we don't know when this is called.
+
+        else:
+            self.getConstrainee().xfo = self.compute(getGlobalXfoFunc=getGlobalXfoFunc)
+
+        return True
 
     # ================
     # Persistence Methods

@@ -1,6 +1,5 @@
-from kraken.core.maths import Vec3
-from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping
-from kraken.core.maths.xfo import xfoFromDirAndUpV
+from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP
+from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
@@ -212,12 +211,12 @@ class OSSFootComponentGuide(OSSFootComponent):
         self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             self.boneAxisStr = "NEGX"
-        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+        self.boneAxis = AXIS_NAME_TO_TUPLE_MAP[self.boneAxisStr]
 
         self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
             self.upAxisStr = "NEGZ"
-        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+        self.upAxis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
 
 
         # Values
@@ -259,11 +258,11 @@ class OSSFootComponentGuide(OSSFootComponent):
         ballPivotXfo = Xfo(ballXfo)
 
 
-        heelPivotXfo.aimAt(aimPos=ballTipPivotPosition, upPos=footPosition, aimAxis=(0, 0, 1), upAxis=(0, 1, 0))
+        aimAt(heelPivotXfo, aimPos=ballTipPivotPosition, upPos=footPosition, aimAxis=(0, 0, 1), upAxis=(0, 1, 0))
         # In the complete guide system, have live constraint for ball upvec, this assumes foot is higher than ball
-        ballXfo.aimAt(aimPos=ballTipPosition, upPos=footPosition, aimAxis=self.boneAxis, upAxis=self.upAxis)
+        aimAt(ballXfo, aimPos=ballTipPosition, upPos=footPosition, aimAxis=self.boneAxis, upAxis=self.upAxis)
         # Same here
-        footXfo.aimAt(aimPos=ballXfo.tr, upPos=ballTipPosition, aimAxis=self.boneAxis, upAxis=self.upAxis)
+        aimAt(footXfo, aimPos=ballXfo.tr, upPos=ballTipPosition, aimAxis=self.boneAxis, upAxis=self.upAxis)
 
         ballTipPivotXfo.ori = heelPivotXfo.ori
         innerPivotXfo.ori = heelPivotXfo.ori
@@ -506,12 +505,12 @@ class OSSFootComponentRig(OSSFootComponent):
         self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             self.boneAxisStr = "NEGX"
-        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+        self.boneAxis = AXIS_NAME_TO_TUPLE_MAP[self.boneAxisStr]
 
         self.upAxisStr = "POSZ"
         if self.getLocation() == 'R':
             self.upAxisStr = "NEGZ"
-        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+        self.upAxis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
 
 
         self.handleCtrl.xfo = data['handleXfo']

@@ -5,11 +5,13 @@ Builder -- Base builder object to build objects in DCC.
 
 """
 
+from collections import deque
 
 from kraken.core.kraken_system import KrakenSystem
 from kraken.core.configs.config import Config
 from kraken.core.profiler import Profiler
 
+from kraken.core.objects.scene_item import SceneItem
 from kraken.core.objects.components.component import Component
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
@@ -54,9 +56,7 @@ class Builder(object):
         return True
 
     def deleteBuildElements(self):
-        """
-        Clear out all dcc built elements from the scene if exist
-        """
+        """Clear out all dcc built elements from the scene if exist."""
 
         return None
 
@@ -72,18 +72,91 @@ class Builder(object):
 
         """
 
-        for builtElement in self._buildElements:
-
-            if builtElement['src'] == kSceneItem:
-                return builtElement['tgt']
-
+        if isinstance(kSceneItem, SceneItem):
+            for builtElement in self._buildElements:
+                if builtElement['src'] == kSceneItem:
+                    return builtElement['tgt']
 
         return None
+
+
+    def getDCCSceneItemPairs(self):
+        """Returns all of the built dcc scene item pairs.
+
+        Returns:
+            array: An array of dicts with 'src' and 'tgt' key value pairs
+
+        """
+        return self._buildElements
 
 
     # ========================
     # SceneItem Build Methods
     # ========================
+    def buildRig(self, kSceneItem, buildName):
+        """Builds a rig object.
+
+        We have to re-order component children by walking the graph to ensure
+        that inputs objects are in place for the dependent components.
+
+        Args:
+            kSceneItem (object): kSceneItem that represents a container to be built.
+            buildName (string): The name to use on the built object.
+
+        Returns:
+            object: DCC Scene Item that is created.
+
+        """
+
+        """
+        Don't check for cycles just now
+
+        resolvedComps = []
+        components = kSceneItem.getChildrenByType('Component')
+        compDeque = deque(components)
+        numComps = len(components)
+
+        for eachComp in components:
+            kSceneItem.removeChildByName(eachComp.getName())
+
+        i = 0
+        while len(resolvedComps) < numComps and i < 10 * numComps:
+            if i != 0:
+                compDeque.rotate(1)
+
+            comp = compDeque[0]
+            # print "Current Comp: " + comp.getName()
+
+            connectedInputs = [x for x in comp.getInputs() if x.isConnected() is True]
+            # print "\tConnected Inputs: " + ','.join([x.getName() for x in connectedInputs])
+            if len(connectedInputs) == 0:
+                resolvedComp = compDeque.popleft()
+                resolvedComps.append(resolvedComp)
+                i += 1
+                continue
+
+            connectedComps = [x.getConnection().getParent() for x in connectedInputs]
+            # print "\tConnected Comps: " + ','.join([x.getName() for x in set(connectedComps)])
+            if set(connectedComps) <= set(resolvedComps):
+                resolvedComp = compDeque.popleft()
+                resolvedComps.append(resolvedComp)
+
+            i += 1
+
+        if len(resolvedComps) < len(components):
+            circularComps = list(set(components) - set(resolvedComps))
+            print "Warning: Circular Dependencies detected!"
+            print "\t" + ",".join([x.getName() for x in circularComps])
+
+            resolvedComps = resolvedComps + circularComps
+
+        for eachComp in resolvedComps:
+            kSceneItem.addChild(eachComp)
+
+        """
+        return self.buildContainer(kSceneItem, buildName)
+
+
     def buildContainer(self, kSceneItem, buildName):
         """Builds a container / namespace object.
 
@@ -95,6 +168,8 @@ class Builder(object):
             object: DCC Scene Item that is created.
 
         """
+
+
 
         return None
 
@@ -404,6 +479,7 @@ class Builder(object):
 
         # There should be no offset between an output xfo from one component and the connected input of another
         # If connected, they should be exactly the same.
+        # Do not add this to the constraint list otherwise, it will get run during buildConstraints()
         constraint = inputTarget.constrainTo(connectionTarget, maintainOffset=False, addToConstraintList=False)
 
         dccSceneItem = self.buildPoseConstraint(constraint)
@@ -500,7 +576,10 @@ class Builder(object):
             print "building:" + kObject.getPath() + " as:" + buildName
 
         # Build Object
-        if kObject.isTypeOf("Container"):
+        if kObject.isTypeOf("Rig"):
+            dccSceneItem = self.buildRig(kObject, buildName)
+
+        elif kObject.isTypeOf("Container"):
             dccSceneItem = self.buildContainer(kObject, buildName)
 
         elif kObject.isTypeOf("Layer"):

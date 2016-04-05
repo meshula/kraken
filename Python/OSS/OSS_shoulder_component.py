@@ -1,5 +1,5 @@
-from kraken.core.maths import Vec3
-from kraken.core.maths.xfo import Xfo, axisStrToTupleMapping, axisStrToIntMapping
+from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP, AXIS_NAME_TO_INT_MAP
+from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
@@ -171,12 +171,12 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
         self.boneAxisStr = "POSX"
         if self.getLocation() == 'R':
             self.boneAxisStr = "NEGX"
-        self.boneAxis = axisStrToTupleMapping[self.boneAxisStr]
+        self.boneAxis = AXIS_NAME_TO_TUPLE_MAP[self.boneAxisStr]
 
         self.upAxisStr = "NEGY"
         if self.getLocation() == 'R':
             self.upAxisStr = "POSY"
-        self.upAxis = axisStrToTupleMapping[self.upAxisStr]
+        self.upAxis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
 
 
         # Values
@@ -187,7 +187,7 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
 
 
         shldrXfo = Xfo(self.shldrCtrl.xfo)
-        shldrXfo.aimAt(aimPos=self.shldrEndCtrl.xfo.tr, upVector=shldrUpV, aimAxis=self.boneAxis, upAxis=self.upAxis)
+        aimAt(shldrXfo, aimPos=self.shldrEndCtrl.xfo.tr, upVector=shldrUpV, aimAxis=self.boneAxis, upAxis=self.upAxis)
 
         shldrEndXfo = Xfo(self.shldrEndCtrl.xfo)
         shldrEndXfo.ori = shldrEndXfo.ori = shldrXfo.ori

@@ -15,6 +15,11 @@ from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 
+from kraken.core.objects.constraints.orientation_constraint import OrientationConstraint
+from kraken.core.objects.constraints.pose_constraint import PoseConstraint
+from kraken.core.objects.constraints.position_constraint import PositionConstraint
+from kraken.core.objects.constraints.scale_constraint import ScaleConstraint
+
 
 class Object3D(SceneItem):
     """Kraken base object type for any 3D object."""
@@ -445,7 +450,7 @@ class Object3D(SceneItem):
             names = []
             for c in self._children:
                 names.append(c.getName())
-            raise Exception("Object '"+self.getPath() + "' does not have child:"+child.getPath() + ". it does have:" + str(names))
+            raise Exception("Object '" + self.getPath() + "' does not have child:" + child.getPath() + ". it does have:" + str(names))
 
         child.setParent(None)
 
@@ -454,7 +459,6 @@ class Object3D(SceneItem):
             child.setComponent(None)
 
         return True
-
 
 
     def getChildren(self):
@@ -752,48 +756,46 @@ class Object3D(SceneItem):
         return True
 
 
-    def insertCtrlSpace(self, name=None):
-        """Adds a CtrlSpace object above this object
-
-        Args:
-            name (string) optional name for this CtrlSpace, default is same as this object
-
-        Returns:
-            string: New CtrlSpace object
-
-        """
-        if not name:
-            name = self.getName()
-
-        exec("from kraken.core.objects.ctrlSpace import CtrlSpace")
-        exec("newCtrlSpace = CtrlSpace(\""+name+"\", parent=self.getParent())")
-        if self.getParent() is not None:
-            self.getParent().removeChild(self) #Not sure why this does not happen in setParent()
-        self.setParent(newCtrlSpace)
-        newCtrlSpace.addChild(self) #Not sure why this does not happen in setParent()
-        newCtrlSpace.xfo = Xfo(self.xfo)
-
-        newCtrlSpace.setSecondType(self.__class__)
-
-        return newCtrlSpace
-
-
-    def constrainTo(self, constrainers, type="Pose", maintainOffset=False, name=None, addToConstraintList=True):
+    def constrainTo(self, constrainers, constraintType="Pose", maintainOffset=False, name=None, addToConstraintList=True):
         """Adds an constraint to this object.
 
         Args:
             constrainers (Object or Object list): Constraint object to add to this object or objects.
+            constraintType (str): String name of the constraint type.
+            maintainOffset (bool): Sets the constraint to maintain offset when creating the constraint.
+            name (str): Name of the constraint. If set to None, a name is automatically generated.
 
         Returns:
             string: Constraint object
 
         """
 
-        exec("from kraken.core.objects.constraints."+type.lower()+"_constraint import "+type+"Constraint")
-        exec("constraint = "+type+"Constraint('')")
+        if name is None:
+            constraintName = ""
+            if hasattr(constrainers, '__iter__'):
+                constraintName = '_'.join([self.getName(), 'To', constrainers[0].getName(), constraintType + 'Constraint'])
+            else:
+                constraintName = '_'.join([self.getName(), 'To', constrainers.getName(), constraintType + 'Constraint'])
+        else:
+            constraintName = name
 
-        # function overloading to accept a single object or a list of objects
-        if not hasattr(constrainers, '__iter__'):
+        constraint = None
+        if constraintType == "Orientation":
+            constraint = OrientationConstraint(constraintName)
+        elif constraintType == "Pose":
+            constraint = PoseConstraint(constraintName)
+        elif constraintType == "Position":
+            constraint = PositionConstraint(constraintName)
+        elif constraintType == "Scale":
+            constraint = ScaleConstraint(constraintName)
+        else:
+            raise ValueError("'" + constraintType + "' is not a valid constraint \
+                type. Valid types are Orientation, Pose, Position, or Scale")
+
+        # Accept a single object or a list of objects
+        if hasattr(constrainers, '__iter__'):
+            pass
+        else:
             constrainers = [constrainers]
 
         for constrainer in constrainers:
@@ -801,10 +803,6 @@ class Object3D(SceneItem):
 
         constraint.setMaintainOffset(maintainOffset)
 
-        if name is None:
-            name = ('_'.join([self.getName(), 'To', constrainer.getName(), type+'Constraint']))
-
-        constraint.setName(name)
         self.addConstraint(constraint, addToConstraintList=addToConstraintList)
 
         return constraint
@@ -821,14 +819,14 @@ class Object3D(SceneItem):
 
         """
 
-        if addToConstraintList:
-            if constraint.getName() in [x.getName() for x in self._constraints]:
+        if constraint.getName() in [x.getName() for x in self._constraints]:
                 raise IndexError("Constraint with name '" + constraint.getName() + "'' already exists as a constraint.")
-
-            self._constraints.append(constraint)
 
         constraint.setParent(self)
         constraint.setConstrainee(self)
+
+        if addToConstraintList:
+            self._constraints.append(constraint)
 
         return True
 
