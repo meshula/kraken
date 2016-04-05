@@ -817,9 +817,9 @@ class OSSLipRig(OSSLip):
                 ctrl = self.upLipCtrls[i]
                 ctrl.translatePoints(Vec3(Vec3(0, lipCtrlY, lipCtrlZ)))
                 ctrl.setColor("turqoise")
+                ctrlUberParent = ctrl.insertCtrlSpace()
                 ctrlParent = ctrl.insertCtrlSpace()
-                ctrlUberParent = ctrlParent.insertCtrlSpace()
-                
+
                 # if i < (half-1):
                 #     ctrlParent.constrainTo(self.upLipCtrls[i+1], maintainOffset=True)
                 # if (half+1) < i:
@@ -870,8 +870,8 @@ class OSSLipRig(OSSLip):
                 ctrl = self.loLipCtrls[i]
                 ctrl.translatePoints(Vec3(Vec3(0, lipCtrlY, lipCtrlZ)))
                 ctrl.scalePoints(Vec3(Vec3(1, -1, 1)))
+                ctrlUberParent = ctrl.insertCtrlSpace()
                 ctrlParent = ctrl.insertCtrlSpace()
-                ctrlUberParent = ctrlParent.insertCtrlSpace()
                 # if i < (half-1):
                 #     ctrlParent.constrainTo(self.loLipCtrls[i+1], maintainOffset=True)
                 # if (half+1) < i:
