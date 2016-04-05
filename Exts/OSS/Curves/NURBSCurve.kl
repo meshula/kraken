@@ -433,7 +433,6 @@ function Quat NURBSCurve.getNormal(Scalar param, Xfo xfoA, Xfo xfoB) {
 	return ori.setFromDirectionAndUpvector(side,up);
 }
 
-
 function Quat NURBSCurve.getOri(Scalar t, Scalar keepArcLength, Scalar keepRestLength) {
 	Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepRestLength);
 	return this.getOri(arcLenT);
@@ -622,7 +621,6 @@ function Scalar NURBSCurve.getClosestParam(in Vec3 p) {
 }
 
 
-
 function Vec3 NURBSCurve.getClosestPoint(in Vec3 p) {
 	Scalar closestU = this.getClosestParam(p);
 	return this.getPoint(closestU);
@@ -643,11 +641,13 @@ function Vec4 NURBSCurve.pointParam(in Vec3 p) {
 
 /// Return curve frame normal samples
 /// Based on: "Parallel Transport Approach to Curve Framing"
-
 /// SCALE
 
 function Vec3 NURBSCurve.getScale(Scalar t, Xfo xfoA, Xfo xfoB) {
-	return xfoA.sc.linearInterpolate(xfoB.sc, t);
+	Vec3 blend = xfoA.sc.linearInterpolate(xfoB.sc, t);
+	// We assume x as the down-axis and normalize it.
+	blend.x = 1;
+	return blend;
 }
 
 function Vec3 NURBSCurve.getScale(Scalar param, Scalar keepArcLength, Scalar keepCurveLen) {

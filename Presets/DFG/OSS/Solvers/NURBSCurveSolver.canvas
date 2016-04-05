@@ -1,0 +1,2920 @@
+{
+  "objectType" : "Graph",
+  "metadata" : {
+    "uiGraphZoom" : "{\n  \"value\" : 0.8053981065750122\n  }",
+    "uiGraphPan" : "{\n  \"x\" : -125.586961463272,\n  \"y\" : -646.0235227549711\n  }"
+    },
+  "title" : "NURBSCurveSolver",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44[]" : []
+        },
+      "name" : "controls",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 0
+        },
+      "name" : "degree",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 0
+        },
+      "name" : "keepArcLength",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44" : {
+          "row0" : {
+            "x" : 1,
+            "y" : 0,
+            "z" : 0,
+            "t" : 0
+            },
+          "row1" : {
+            "x" : 0,
+            "y" : 1,
+            "z" : 0,
+            "t" : 0
+            },
+          "row2" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 1,
+            "t" : 0
+            },
+          "row3" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0,
+            "t" : 1
+            }
+          }
+        },
+      "name" : "upVec",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "defaultValues" : {
+        "Vec3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0
+          }
+        },
+      "name" : "dummyResult",
+      "execPortType" : "Out"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "defaultValues" : {
+        "Mat44[]" : []
+        },
+      "name" : "outputs",
+      "execPortType" : "Out"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Boolean" : false
+        },
+      "name" : "drawDebug",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44[]" : []
+        },
+      "name" : "refMats",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 0
+        },
+      "name" : "rigScale",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "91E03140201B022208C7766CC0F77386",
+  "nodes" : [
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":238.48,\"y\":1275.14}"
+        },
+      "name" : "Curve_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "mats"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "positions"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "colors"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "degree"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "normals"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+          },
+        "title" : "Curve",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "mats",
+            "execPortType" : "In",
+            "typeSpec" : "Mat44[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "NURBSCurve"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "positions",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "colors",
+            "execPortType" : "Out",
+            "typeSpec" : "Color[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "UInt32" : 3
+              },
+            "name" : "degree",
+            "execPortType" : "In",
+            "typeSpec" : "UInt32"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "normals",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3[]"
+            }
+          ],
+        "extDeps" : {
+          "Curves" : "*"
+          },
+        "code" : "dfgEntry {
+  result = NURBSCurve();
+  result.initiate(mats,degree);
+  positions = result.positions.values;
+  colors  = result.colors.values;
+  normals = result.normals.values;
+}
+
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":524.09,\"y\":1447.69}"
+        },
+      "name" : "createXfosFromUpVec",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "keepArcLength"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "keepCurveLen"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "result"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "upVec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "results"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "params"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Graph",
+        "metadata" : {
+          "uiGraphZoom" : "{\n  \"value\" : 0.7881489396095276\n  }",
+          "uiGraphPan" : "{\n  \"x\" : -180.2289562821061,\n  \"y\" : -1305.925872557808\n  }"
+          },
+        "title" : "createXfosFromUpVec",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "keepArcLength",
+            "execPortType" : "In"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "keepCurveLen",
+            "execPortType" : "In"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "result",
+            "execPortType" : "In"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "upVec",
+            "execPortType" : "In"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "results",
+            "execPortType" : "Out",
+            "typeSpec" : "Xfo[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Scalar[]" : []
+              },
+            "name" : "params",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar[]"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1596.5,\"y\":2118.12}"
+              },
+            "name" : "xfosFromTwoVectors",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "results"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "upVectors"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "atVectors"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "positions"
+                }
+              ],
+            "definition" : {
+              "objectType" : "Func",
+              "metadata" : {
+                "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+                "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+                },
+              "title" : "CreateAlignFrame",
+              "ports" : [
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "In",
+                  "name" : "results",
+                  "execPortType" : "Out",
+                  "typeSpec" : "Xfo[]"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "upVectors",
+                  "execPortType" : "In",
+                  "typeSpec" : "Vec3[]"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "atVectors",
+                  "execPortType" : "In",
+                  "typeSpec" : "Vec3[]"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "positions",
+                  "execPortType" : "In",
+                  "typeSpec" : "Vec3[]"
+                  }
+                ],
+              "extDeps" : {
+                "Curves" : "*"
+                },
+              "code" : "
+/// Return points on curve that are evenly distributed
+function Xfo xfoFromTwoVectors
+(
+  in Vec3 position,
+  in Vec3 toUpVector,
+  in Vec3 toAtVector
+  )
+{
+  Vec3 normal = toAtVector.cross(toUpVector).unit_safe();
+  Vec3 yAxis = normal.cross(toAtVector).unit_safe();
+
+  Mat33 outAlignment;
+  outAlignment.setColumns(toAtVector, yAxis, normal);
+
+  Quat rotation = Quat();
+  rotation.setFromMat33(outAlignment); 
+  Xfo outXfo;
+  outXfo.tr = position;
+  outXfo.ori = rotation;
+
+  return outXfo;
+}
+  
+  
+operator __evalXfoFromTwoVectorsTask<<<index>>>(io Xfo results[], Vec3 positions[], Vec3 upVectors[], Vec3 atVectors[]) 
+{ 
+  Vec3 upVector = upVectors[index].unit_safe();
+  Vec3 atVector = atVectors[index].unit_safe();
+	results[index] = xfoFromTwoVectors(positions[index], upVector, atVector);
+}
+
+dfgEntry {
+  results.resize(positions.size());
+  __evalXfoFromTwoVectorsTask<<<positions.size()>>>(results, positions, upVectors, atVectors);
+}
+"
+              }
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":729.131,\"y\":2039.35}"
+              },
+            "name" : "getPositionsOnCurve",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "params"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar" : 1
+                  },
+                "name" : "keepArcLength"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar" : 0
+                  },
+                "name" : "keepCurveLen"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "results"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "curve"
+                }
+              ],
+            "definition" : {
+              "objectType" : "Func",
+              "title" : "getPositionsOnCurve",
+              "ports" : [
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "params",
+                  "execPortType" : "In",
+                  "typeSpec" : "Scalar[]"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "keepArcLength",
+                  "execPortType" : "In",
+                  "typeSpec" : "Scalar"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "keepCurveLen",
+                  "execPortType" : "In",
+                  "typeSpec" : "Scalar"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "In",
+                  "name" : "results",
+                  "execPortType" : "Out",
+                  "typeSpec" : "Vec3[]"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "curve",
+                  "execPortType" : "In",
+                  "typeSpec" : "NURBSCurve"
+                  }
+                ],
+              "extDeps" : {},
+              "code" : "operator __evalPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getPoint(params[index], keepArcLength, keepCurveLen);
+}
+
+dfgEntry {
+  results.resize(params.size());
+  __evalPositionsTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen);
+}
+"
+              }
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":654.9210000000001,\"y\":1898.71}"
+              },
+            "name" : "ToArray",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "value"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "size"
+                }
+              ],
+            "definition" : {
+              "objectType" : "Func",
+              "metadata" : {
+                "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+                "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+                },
+              "title" : "toArray",
+              "ports" : [
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "In",
+                  "defaultValues" : {
+                    "Vec3[]" : []
+                    },
+                  "name" : "result",
+                  "execPortType" : "Out",
+                  "typeSpec" : "$TYPE$[]"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "defaultValues" : {
+                    "Vec3" : {
+                      "x" : 0,
+                      "y" : 0,
+                      "z" : 0
+                      }
+                    },
+                  "name" : "value",
+                  "execPortType" : "In",
+                  "typeSpec" : "$TYPE$"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "defaultValues" : {
+                    "UInt32" : 0,
+                    "UInt64" : 0
+                    },
+                  "name" : "size",
+                  "execPortType" : "In",
+                  "typeSpec" : "UInt32"
+                  }
+                ],
+              "extDeps" : {},
+              "code" : "operator core_array_convert_task<<<index>>>($TYPE$ value, io $TYPE$[] result) {
+  result[index] = value;
+}
+
+dfgEntry {
+  result.resize(size);
+
+  if(size < 10000)
+  {
+    for(Size i=0;i<size;i++)
+      result[i] = value;
+  }
+  else
+  {
+    core_array_convert_task<<<size>>>(value, result);
+  }
+}
+"
+              }
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":726.037,\"y\":2192.04}"
+              },
+            "name" : "getTangentsOnCurve",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "params"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar" : 1
+                  },
+                "name" : "keepArcLength"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar" : 0
+                  },
+                "name" : "keepCurveLen"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "results"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "curve"
+                }
+              ],
+            "definition" : {
+              "objectType" : "Func",
+              "metadata" : {
+                "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+                "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+                },
+              "title" : "getPositionsOnCurve",
+              "ports" : [
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "params",
+                  "execPortType" : "In",
+                  "typeSpec" : "Scalar[]"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "keepArcLength",
+                  "execPortType" : "In",
+                  "typeSpec" : "Scalar"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "keepCurveLen",
+                  "execPortType" : "In",
+                  "typeSpec" : "Scalar"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "In",
+                  "name" : "results",
+                  "execPortType" : "Out",
+                  "typeSpec" : "Vec3[]"
+                  },
+                {
+                  "objectType" : "Port",
+                  "nodePortType" : "Out",
+                  "name" : "curve",
+                  "execPortType" : "In",
+                  "typeSpec" : "NURBSCurve"
+                  }
+                ],
+              "extDeps" : {},
+              "code" : "operator __evalTangentsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getTangent(params[index],true, keepArcLength, keepCurveLen);
+}
+
+dfgEntry {
+  results.resize(params.size());
+  __evalTangentsTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen);
+}
+
+"
+              }
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1309.57,\"y\":2003.5}"
+              },
+            "name" : "Sub_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "lhs"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "rhs"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Core.Array.Sub",
+            "presetGUID" : "ACCD924B148DD74A0C4A5CD08D5D89CD"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":409.229,\"y\":2378.43}"
+              },
+            "name" : "Translation_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Mat44.Translation",
+            "presetGUID" : "35DC8AE364F6509754699978B97928A7"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":430.412,\"y\":2447.42}"
+              },
+            "name" : "Size_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.FileIO.Func.Size",
+            "presetGUID" : "62CA6A5A38025953F25C7D07E2C75FF1"
+            }
+          ],
+        "connections" : {
+          "keepArcLength" : [
+            "getPositionsOnCurve.keepArcLength",
+            "getTangentsOnCurve.keepArcLength"
+            ],
+          "keepCurveLen" : [
+            "getTangentsOnCurve.keepCurveLen",
+            "getPositionsOnCurve.keepCurveLen"
+            ],
+          "result" : [
+            "getTangentsOnCurve.curve",
+            "getPositionsOnCurve.curve"
+            ],
+          "upVec" : [
+            "Translation_2.this"
+            ],
+          "params" : [
+            "getPositionsOnCurve.params",
+            "getTangentsOnCurve.params",
+            "Size_1.this"
+            ],
+          "xfosFromTwoVectors.results" : [
+            "results"
+            ],
+          "getPositionsOnCurve.results" : [
+            "Sub_1.lhs",
+            "xfosFromTwoVectors.positions"
+            ],
+          "ToArray.result" : [
+            "Sub_1.rhs"
+            ],
+          "getTangentsOnCurve.results" : [
+            "xfosFromTwoVectors.upVectors"
+            ],
+          "Sub_1.result" : [
+            "xfosFromTwoVectors.atVectors"
+            ],
+          "Translation_2.result" : [
+            "ToArray.value"
+            ],
+          "Size_1.result" : [
+            "ToArray.size"
+            ]
+          }
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":798.907,\"y\":1429.22}"
+        },
+      "name" : "DrawAxesInstances_3",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "transforms"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "dummyResult"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "instance"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances",
+      "presetGUID" : "A2DAC55CB1CE7426981A13F213257B7A"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":202.831,\"y\":1038.04}"
+        },
+      "name" : "EmptyDrawingHandle_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "handle"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle",
+      "presetGUID" : "2440020BA6A1CAB1CEB690A198F99C70"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":597.685,\"y\":1265.66}"
+        },
+      "name" : "drawCurve_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "points"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "color"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "dummyResult"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+          },
+        "title" : "drawCurve",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "points",
+            "execPortType" : "In",
+            "typeSpec" : "Vec3[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "color",
+            "execPortType" : "In",
+            "typeSpec" : "Color[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "InlineDebugShape"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "InlineDebugShape"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "dummyResult",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3"
+            }
+          ],
+        "extDeps" : {},
+        "code" : "dfgEntry {
+  Index firstIndex = this.allocateLines(points.size(), points.size()-1);
+  Index colorIndex = firstIndex;
+  Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
+  Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
+  ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
+  
+
+  for( Integer i=0; i<points.size(); i++){
+    vertexColorsAttr.values[firstIndex] = color[i];
+    positionsAttr.values[firstIndex] = points[i];
+    normalsAttr.values[firstIndex++] = this.defaultNormal;
+    if(i > 0){
+      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 2;
+      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 1;
+    }
+  }
+
+  positionsAttr.incrementVersion();
+  normalsAttr.incrementVersion();
+  vertexColorsAttr.incrementVersion();
+
+  result = this;
+}
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":390.973,\"y\":1156.48}"
+        },
+      "name" : "GetEmptyDebugShape_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.GetEmptyDebugShape",
+      "presetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1033.32,\"y\":1372.92}"
+        },
+      "name" : "Add_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "lhs"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "rhs"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Core.Math.Add",
+      "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":792.545,\"y\":1671.01}"
+        },
+      "name" : "convertXfoToMat44_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "xfoArray"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "mat44Array"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "convertXfoToMat44",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "xfoArray",
+            "execPortType" : "In",
+            "typeSpec" : "Xfo[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "mat44Array",
+            "execPortType" : "Out",
+            "typeSpec" : "Mat44[]"
+            }
+          ],
+        "extDeps" : {},
+        "code" : "dfgEntry {
+  for(UInt32 i=0;i<xfoArray.size();i++)
+  {
+    mat44Array.push(xfoArray[i].toMat44());
+  }
+}
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":243.509,\"y\":1140.21}"
+        },
+      "name" : "If_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "cond"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "if_true"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "if_false"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Core.Control.If",
+      "presetGUID" : "3182A478A21643455D549E483D35F831"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":322.285,\"y\":1592.28}"
+        },
+      "name" : "getClosestParams",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "refMats"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "curve"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "getClosestParams",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "refMats",
+            "execPortType" : "In",
+            "typeSpec" : "Mat44[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "curve",
+            "execPortType" : "In",
+            "typeSpec" : "NURBSCurve"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "Scalar[]"
+            }
+          ],
+        "extDeps" : {},
+        "code" : "dfgEntry {
+  result.resize(refMats.size());
+  for (UInt32 i =0; i< refMats.size(); i++) {
+    result[i] = curve.getClosestParam(refMats[i].translation());
+  //result = lhs + rhs;
+  }
+}
+"
+        }
+      }
+    ],
+  "connections" : {
+    "controls" : [
+      "Curve_1.mats"
+      ],
+    "degree" : [
+      "Curve_1.degree"
+      ],
+    "keepArcLength" : [
+      "createXfosFromUpVec.keepArcLength"
+      ],
+    "upVec" : [
+      "createXfosFromUpVec.upVec"
+      ],
+    "drawDebug" : [
+      "If_1.cond"
+      ],
+    "refMats" : [
+      "getClosestParams.refMats"
+      ],
+    "Curve_1.result" : [
+      "createXfosFromUpVec.result",
+      "getClosestParams.curve"
+      ],
+    "Curve_1.positions" : [
+      "drawCurve_1.points"
+      ],
+    "Curve_1.colors" : [
+      "drawCurve_1.color"
+      ],
+    "createXfosFromUpVec.results" : [
+      "DrawAxesInstances_3.transforms",
+      "convertXfoToMat44_2.xfoArray"
+      ],
+    "DrawAxesInstances_3.dummyResult" : [
+      "Add_1.rhs"
+      ],
+    "EmptyDrawingHandle_2.handle" : [
+      "If_1.if_true"
+      ],
+    "drawCurve_1.dummyResult" : [
+      "Add_1.lhs"
+      ],
+    "GetEmptyDebugShape_1.result" : [
+      "drawCurve_1.this"
+      ],
+    "Add_1.result" : [
+      "dummyResult"
+      ],
+    "convertXfoToMat44_2.mat44Array" : [
+      "outputs"
+      ],
+    "If_1.result" : [
+      "DrawAxesInstances_3.this",
+      "GetEmptyDebugShape_1.this"
+      ],
+    "getClosestParams.result" : [
+      "createXfosFromUpVec.params"
+      ]
+    },
+  "requiredPresets" : {
+    "OSS.Solvers.NURBSCurveSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiGraphZoom" : "{\n  \"value\" : 0.8053981065750122\n  }",
+        "uiGraphPan" : "{\n  \"x\" : -125.586961463272,\n  \"y\" : -646.0235227549711\n  }"
+        },
+      "title" : "NURBSCurveSolver",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Mat44[]" : []
+            },
+          "name" : "controls",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "UInt32" : 0
+            },
+          "name" : "degree",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 0
+            },
+          "name" : "keepArcLength",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Mat44" : {
+              "row0" : {
+                "x" : 1,
+                "y" : 0,
+                "z" : 0,
+                "t" : 0
+                },
+              "row1" : {
+                "x" : 0,
+                "y" : 1,
+                "z" : 0,
+                "t" : 0
+                },
+              "row2" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 1,
+                "t" : 0
+                },
+              "row3" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0,
+                "t" : 1
+                }
+              }
+            },
+          "name" : "upVec",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "dummyResult",
+          "execPortType" : "Out"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Mat44[]" : []
+            },
+          "name" : "outputs",
+          "execPortType" : "Out"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "name" : "drawDebug",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Mat44[]" : []
+            },
+          "name" : "refMats",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 0
+            },
+          "name" : "rigScale",
+          "execPortType" : "In",
+          "typeSpec" : "Float32"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "91E03140201B022208C7766CC0F77386",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":238.48,\"y\":1275.14}"
+            },
+          "name" : "Curve_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "mats"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "positions"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "colors"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "degree"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "normals"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "metadata" : {
+              "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+              "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+              },
+            "title" : "Curve",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "mats",
+                "execPortType" : "In",
+                "typeSpec" : "Mat44[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "result",
+                "execPortType" : "Out",
+                "typeSpec" : "NURBSCurve"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "positions",
+                "execPortType" : "Out",
+                "typeSpec" : "Vec3[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "colors",
+                "execPortType" : "Out",
+                "typeSpec" : "Color[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "defaultValues" : {
+                  "UInt32" : 3
+                  },
+                "name" : "degree",
+                "execPortType" : "In",
+                "typeSpec" : "UInt32"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "normals",
+                "execPortType" : "Out",
+                "typeSpec" : "Vec3[]"
+                }
+              ],
+            "extDeps" : {
+              "Curves" : "*"
+              },
+            "code" : "dfgEntry {
+  result = NURBSCurve();
+  result.initiate(mats,degree);
+  positions = result.positions.values;
+  colors  = result.colors.values;
+  normals = result.normals.values;
+}
+
+"
+            }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":524.09,\"y\":1447.69}"
+            },
+          "name" : "createXfosFromUpVec",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "keepArcLength"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "keepCurveLen"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "result"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "upVec"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "results"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "params"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Graph",
+            "metadata" : {
+              "uiGraphZoom" : "{\n  \"value\" : 0.7881489396095276\n  }",
+              "uiGraphPan" : "{\n  \"x\" : -180.2289562821061,\n  \"y\" : -1305.925872557808\n  }"
+              },
+            "title" : "createXfosFromUpVec",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "keepArcLength",
+                "execPortType" : "In"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "keepCurveLen",
+                "execPortType" : "In"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "result",
+                "execPortType" : "In"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "upVec",
+                "execPortType" : "In"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "results",
+                "execPortType" : "Out",
+                "typeSpec" : "Xfo[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "defaultValues" : {
+                  "Scalar[]" : []
+                  },
+                "name" : "params",
+                "execPortType" : "In",
+                "typeSpec" : "Scalar[]"
+                }
+              ],
+            "extDeps" : {},
+            "nodes" : [
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":1596.5,\"y\":2118.12}"
+                  },
+                "name" : "xfosFromTwoVectors",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "Out",
+                    "name" : "results"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "upVectors"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "atVectors"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "positions"
+                    }
+                  ],
+                "definition" : {
+                  "objectType" : "Func",
+                  "metadata" : {
+                    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+                    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+                    },
+                  "title" : "CreateAlignFrame",
+                  "ports" : [
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "In",
+                      "name" : "results",
+                      "execPortType" : "Out",
+                      "typeSpec" : "Xfo[]"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "upVectors",
+                      "execPortType" : "In",
+                      "typeSpec" : "Vec3[]"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "atVectors",
+                      "execPortType" : "In",
+                      "typeSpec" : "Vec3[]"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "positions",
+                      "execPortType" : "In",
+                      "typeSpec" : "Vec3[]"
+                      }
+                    ],
+                  "extDeps" : {
+                    "Curves" : "*"
+                    },
+                  "code" : "
+/// Return points on curve that are evenly distributed
+function Xfo xfoFromTwoVectors
+(
+  in Vec3 position,
+  in Vec3 toUpVector,
+  in Vec3 toAtVector
+  )
+{
+  Vec3 normal = toAtVector.cross(toUpVector).unit_safe();
+  Vec3 yAxis = normal.cross(toAtVector).unit_safe();
+
+  Mat33 outAlignment;
+  outAlignment.setColumns(toAtVector, yAxis, normal);
+
+  Quat rotation = Quat();
+  rotation.setFromMat33(outAlignment); 
+  Xfo outXfo;
+  outXfo.tr = position;
+  outXfo.ori = rotation;
+
+  return outXfo;
+}
+  
+  
+operator __evalXfoFromTwoVectorsTask<<<index>>>(io Xfo results[], Vec3 positions[], Vec3 upVectors[], Vec3 atVectors[]) 
+{ 
+  Vec3 upVector = upVectors[index].unit_safe();
+  Vec3 atVector = atVectors[index].unit_safe();
+	results[index] = xfoFromTwoVectors(positions[index], upVector, atVector);
+}
+
+dfgEntry {
+  results.resize(positions.size());
+  __evalXfoFromTwoVectorsTask<<<positions.size()>>>(results, positions, upVectors, atVectors);
+}
+"
+                  }
+                },
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":729.131,\"y\":2039.35}"
+                  },
+                "name" : "getPositionsOnCurve",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "params"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "Scalar" : 1
+                      },
+                    "name" : "keepArcLength"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "Scalar" : 0
+                      },
+                    "name" : "keepCurveLen"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "Out",
+                    "name" : "results"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "curve"
+                    }
+                  ],
+                "definition" : {
+                  "objectType" : "Func",
+                  "title" : "getPositionsOnCurve",
+                  "ports" : [
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "params",
+                      "execPortType" : "In",
+                      "typeSpec" : "Scalar[]"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "keepArcLength",
+                      "execPortType" : "In",
+                      "typeSpec" : "Scalar"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "keepCurveLen",
+                      "execPortType" : "In",
+                      "typeSpec" : "Scalar"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "In",
+                      "name" : "results",
+                      "execPortType" : "Out",
+                      "typeSpec" : "Vec3[]"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "curve",
+                      "execPortType" : "In",
+                      "typeSpec" : "NURBSCurve"
+                      }
+                    ],
+                  "extDeps" : {},
+                  "code" : "operator __evalPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getPoint(params[index], keepArcLength, keepCurveLen);
+}
+
+dfgEntry {
+  results.resize(params.size());
+  __evalPositionsTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen);
+}
+"
+                  }
+                },
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":654.9210000000001,\"y\":1898.71}"
+                  },
+                "name" : "ToArray",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "Out",
+                    "name" : "result"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "value"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "size"
+                    }
+                  ],
+                "definition" : {
+                  "objectType" : "Func",
+                  "metadata" : {
+                    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+                    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+                    },
+                  "title" : "toArray",
+                  "ports" : [
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "In",
+                      "defaultValues" : {
+                        "Vec3[]" : []
+                        },
+                      "name" : "result",
+                      "execPortType" : "Out",
+                      "typeSpec" : "$TYPE$[]"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "defaultValues" : {
+                        "Vec3" : {
+                          "x" : 0,
+                          "y" : 0,
+                          "z" : 0
+                          }
+                        },
+                      "name" : "value",
+                      "execPortType" : "In",
+                      "typeSpec" : "$TYPE$"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "defaultValues" : {
+                        "UInt32" : 0,
+                        "UInt64" : 0
+                        },
+                      "name" : "size",
+                      "execPortType" : "In",
+                      "typeSpec" : "UInt32"
+                      }
+                    ],
+                  "extDeps" : {},
+                  "code" : "operator core_array_convert_task<<<index>>>($TYPE$ value, io $TYPE$[] result) {
+  result[index] = value;
+}
+
+dfgEntry {
+  result.resize(size);
+
+  if(size < 10000)
+  {
+    for(Size i=0;i<size;i++)
+      result[i] = value;
+  }
+  else
+  {
+    core_array_convert_task<<<size>>>(value, result);
+  }
+}
+"
+                  }
+                },
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":726.037,\"y\":2192.04}"
+                  },
+                "name" : "getTangentsOnCurve",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "params"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "Scalar" : 1
+                      },
+                    "name" : "keepArcLength"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "Scalar" : 0
+                      },
+                    "name" : "keepCurveLen"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "Out",
+                    "name" : "results"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "curve"
+                    }
+                  ],
+                "definition" : {
+                  "objectType" : "Func",
+                  "metadata" : {
+                    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+                    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+                    },
+                  "title" : "getPositionsOnCurve",
+                  "ports" : [
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "params",
+                      "execPortType" : "In",
+                      "typeSpec" : "Scalar[]"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "keepArcLength",
+                      "execPortType" : "In",
+                      "typeSpec" : "Scalar"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "keepCurveLen",
+                      "execPortType" : "In",
+                      "typeSpec" : "Scalar"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "In",
+                      "name" : "results",
+                      "execPortType" : "Out",
+                      "typeSpec" : "Vec3[]"
+                      },
+                    {
+                      "objectType" : "Port",
+                      "nodePortType" : "Out",
+                      "name" : "curve",
+                      "execPortType" : "In",
+                      "typeSpec" : "NURBSCurve"
+                      }
+                    ],
+                  "extDeps" : {},
+                  "code" : "operator __evalTangentsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getTangent(params[index],true, keepArcLength, keepCurveLen);
+}
+
+dfgEntry {
+  results.resize(params.size());
+  __evalTangentsTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen);
+}
+
+"
+                  }
+                },
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":1309.57,\"y\":2003.5}"
+                  },
+                "name" : "Sub_1",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "lhs"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "rhs"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "Out",
+                    "name" : "result"
+                    }
+                  ],
+                "executable" : "Fabric.Core.Array.Sub",
+                "presetGUID" : "ACCD924B148DD74A0C4A5CD08D5D89CD"
+                },
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":409.229,\"y\":2378.43}"
+                  },
+                "name" : "Translation_2",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "this"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "Out",
+                    "name" : "result"
+                    }
+                  ],
+                "executable" : "Fabric.Exts.Math.Mat44.Translation",
+                "presetGUID" : "35DC8AE364F6509754699978B97928A7"
+                },
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":430.412,\"y\":2447.42}"
+                  },
+                "name" : "Size_1",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "this"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "Out",
+                    "name" : "result"
+                    }
+                  ],
+                "executable" : "Fabric.Exts.FileIO.Func.Size",
+                "presetGUID" : "62CA6A5A38025953F25C7D07E2C75FF1"
+                }
+              ],
+            "connections" : {
+              "keepArcLength" : [
+                "getPositionsOnCurve.keepArcLength",
+                "getTangentsOnCurve.keepArcLength"
+                ],
+              "keepCurveLen" : [
+                "getTangentsOnCurve.keepCurveLen",
+                "getPositionsOnCurve.keepCurveLen"
+                ],
+              "result" : [
+                "getTangentsOnCurve.curve",
+                "getPositionsOnCurve.curve"
+                ],
+              "upVec" : [
+                "Translation_2.this"
+                ],
+              "params" : [
+                "getPositionsOnCurve.params",
+                "getTangentsOnCurve.params",
+                "Size_1.this"
+                ],
+              "xfosFromTwoVectors.results" : [
+                "results"
+                ],
+              "getPositionsOnCurve.results" : [
+                "Sub_1.lhs",
+                "xfosFromTwoVectors.positions"
+                ],
+              "ToArray.result" : [
+                "Sub_1.rhs"
+                ],
+              "getTangentsOnCurve.results" : [
+                "xfosFromTwoVectors.upVectors"
+                ],
+              "Sub_1.result" : [
+                "xfosFromTwoVectors.atVectors"
+                ],
+              "Translation_2.result" : [
+                "ToArray.value"
+                ],
+              "Size_1.result" : [
+                "ToArray.size"
+                ]
+              }
+            }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":798.907,\"y\":1429.22}"
+            },
+          "name" : "DrawAxesInstances_3",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "name"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "transforms"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "dummyResult"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "instance"
+              }
+            ],
+          "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances",
+          "presetGUID" : "A2DAC55CB1CE7426981A13F213257B7A"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":202.831,\"y\":1038.04}"
+            },
+          "name" : "EmptyDrawingHandle_2",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "handle"
+              }
+            ],
+          "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle",
+          "presetGUID" : "2440020BA6A1CAB1CEB690A198F99C70"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":597.685,\"y\":1265.66}"
+            },
+          "name" : "drawCurve_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "points"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "color"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "dummyResult"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "metadata" : {
+              "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+              "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+              },
+            "title" : "drawCurve",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "points",
+                "execPortType" : "In",
+                "typeSpec" : "Vec3[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "color",
+                "execPortType" : "In",
+                "typeSpec" : "Color[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "result",
+                "execPortType" : "Out",
+                "typeSpec" : "InlineDebugShape"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "IO",
+                "name" : "this",
+                "execPortType" : "IO",
+                "typeSpec" : "InlineDebugShape"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "dummyResult",
+                "execPortType" : "Out",
+                "typeSpec" : "Vec3"
+                }
+              ],
+            "extDeps" : {},
+            "code" : "dfgEntry {
+  Index firstIndex = this.allocateLines(points.size(), points.size()-1);
+  Index colorIndex = firstIndex;
+  Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
+  Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
+  ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
+  
+
+  for( Integer i=0; i<points.size(); i++){
+    vertexColorsAttr.values[firstIndex] = color[i];
+    positionsAttr.values[firstIndex] = points[i];
+    normalsAttr.values[firstIndex++] = this.defaultNormal;
+    if(i > 0){
+      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 2;
+      this.linesIndices[this.linesIndicesOffset++] = firstIndex - 1;
+    }
+  }
+
+  positionsAttr.incrementVersion();
+  normalsAttr.incrementVersion();
+  vertexColorsAttr.incrementVersion();
+
+  result = this;
+}
+"
+            }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":390.973,\"y\":1156.48}"
+            },
+          "name" : "GetEmptyDebugShape_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "name"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.GetEmptyDebugShape",
+          "presetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":1033.32,\"y\":1372.92}"
+            },
+          "name" : "Add_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "lhs"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "rhs"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Core.Math.Add",
+          "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":792.545,\"y\":1671.01}"
+            },
+          "name" : "convertXfoToMat44_2",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "xfoArray"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "mat44Array"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "convertXfoToMat44",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "xfoArray",
+                "execPortType" : "In",
+                "typeSpec" : "Xfo[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "mat44Array",
+                "execPortType" : "Out",
+                "typeSpec" : "Mat44[]"
+                }
+              ],
+            "extDeps" : {},
+            "code" : "dfgEntry {
+  for(UInt32 i=0;i<xfoArray.size();i++)
+  {
+    mat44Array.push(xfoArray[i].toMat44());
+  }
+}
+"
+            }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":243.509,\"y\":1140.21}"
+            },
+          "name" : "If_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "cond"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "if_true"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "if_false"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Core.Control.If",
+          "presetGUID" : "3182A478A21643455D549E483D35F831"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":322.285,\"y\":1592.28}"
+            },
+          "name" : "getClosestParams",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "refMats"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "curve"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "getClosestParams",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "refMats",
+                "execPortType" : "In",
+                "typeSpec" : "Mat44[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "curve",
+                "execPortType" : "In",
+                "typeSpec" : "NURBSCurve"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "result",
+                "execPortType" : "Out",
+                "typeSpec" : "Scalar[]"
+                }
+              ],
+            "extDeps" : {},
+            "code" : "dfgEntry {
+  result.resize(refMats.size());
+  for (UInt32 i =0; i< refMats.size(); i++) {
+    result[i] = curve.getClosestParam(refMats[i].translation());
+  //result = lhs + rhs;
+  }
+}
+"
+            }
+          }
+        ],
+      "connections" : {
+        "controls" : [
+          "Curve_1.mats"
+          ],
+        "degree" : [
+          "Curve_1.degree"
+          ],
+        "keepArcLength" : [
+          "createXfosFromUpVec.keepArcLength"
+          ],
+        "upVec" : [
+          "createXfosFromUpVec.upVec"
+          ],
+        "drawDebug" : [
+          "If_1.cond"
+          ],
+        "refMats" : [
+          "getClosestParams.refMats"
+          ],
+        "Curve_1.result" : [
+          "createXfosFromUpVec.result",
+          "getClosestParams.curve"
+          ],
+        "Curve_1.positions" : [
+          "drawCurve_1.points"
+          ],
+        "Curve_1.colors" : [
+          "drawCurve_1.color"
+          ],
+        "createXfosFromUpVec.results" : [
+          "DrawAxesInstances_3.transforms",
+          "convertXfoToMat44_2.xfoArray"
+          ],
+        "DrawAxesInstances_3.dummyResult" : [
+          "Add_1.rhs"
+          ],
+        "EmptyDrawingHandle_2.handle" : [
+          "If_1.if_true"
+          ],
+        "drawCurve_1.dummyResult" : [
+          "Add_1.lhs"
+          ],
+        "GetEmptyDebugShape_1.result" : [
+          "drawCurve_1.this"
+          ],
+        "Add_1.result" : [
+          "dummyResult"
+          ],
+        "convertXfoToMat44_2.mat44Array" : [
+          "outputs"
+          ],
+        "If_1.result" : [
+          "DrawAxesInstances_3.this",
+          "GetEmptyDebugShape_1.this"
+          ],
+        "getClosestParams.result" : [
+          "createXfosFromUpVec.params"
+          ]
+        }
+      },
+    "Fabric.Core.Array.Sub" : {
+      "objectType" : "Func",
+      "title" : "Sub[]",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "lhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "rhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "ACCD924B148DD74A0C4A5CD08D5D89CD",
+      "code" : "
+operator core_array_sub_task<<<index>>>($TYPE$ lhs, $TYPE$ rhs, io $TYPE$ result) {
+  result[index] = lhs[index < lhs.size() ? index : lhs.size() - 1] - rhs[index < rhs.size() ? index : rhs.size() - 1];
+}
+
+dfgEntry {
+  if(lhs.size() == 0) return;
+  if(rhs.size() == 0) return;
+  Size size = lhs.size() > rhs.size() ? lhs.size() : rhs.size();
+  result.resize(size);
+
+  if(size < 10000)
+  {
+    for(Size i=0;i<size;i++)
+      core_array_sub_task(i, lhs, rhs, result);
+  }
+  else
+  {
+    core_array_sub_task<<<size>>>(lhs, rhs, result);
+  }
+}
+"
+      },
+    "Fabric.Exts.Math.Mat44.Translation" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Mat44.html",
+        "uiTooltip" : "Returns the translation components of\nthis matrix as a Vec3\n\n Supported by Mat44"
+        },
+      "title" : "Translation",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "35DC8AE364F6509754699978B97928A7",
+      "code" : "require Math;
+
+dfgEntry {
+  result = this.translation();
+}
+"
+      },
+    "Fabric.Exts.FileIO.Func.Size" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/FileIO/FileReader.html",
+        "uiTooltip" : "returns the size of the file being read\n\n Supported by FileReader,TextReader,BinaryReader"
+        },
+      "title" : "Size",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "UInt64"
+          }
+        ],
+      "extDeps" : {
+        "FileIO" : "*"
+        },
+      "presetGUID" : "62CA6A5A38025953F25C7D07E2C75FF1",
+      "code" : "require FileIO;
+
+dfgEntry {
+  result = this.size();
+}
+"
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiTooltip" : "helper function to draw axes at given transforms\n\n Supported by DrawingHandle"
+        },
+      "title" : "DrawAxesInstances",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "DrawingHandle"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "name",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "transforms",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo[]"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "dummyResult",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "instance",
+          "execPortType" : "Out",
+          "typeSpec" : "InlineInstance"
+          }
+        ],
+      "extDeps" : {
+        "InlineDrawing" : "*",
+        "FabricInterfaces" : "*"
+        },
+      "presetGUID" : "A2DAC55CB1CE7426981A13F213257B7A",
+      "code" : "require InlineDrawing;
+
+dfgEntry {
+  this.drawAxesInstances(name, transforms, dummyResult, instance);
+}
+"
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle" : {
+      "objectType" : "Graph",
+      "title" : "EmptyDrawingHandle",
+      "cacheRule" : "never",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "handle",
+          "execPortType" : "Out",
+          "typeSpec" : "DrawingHandle"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "2440020BA6A1CAB1CEB690A198F99C70",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 894, \"y\": 100}"
+            },
+          "name" : "Clear",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              }
+            ],
+          "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.Clear",
+          "presetGUID" : "39E8D81FA7C7C4A825877F16EFE3564F",
+          "cacheRule" : "never"
+          },
+        {
+          "objectType" : "Var",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":567.0,\"y\":56.0}",
+            "uiCollapsedState" : "0"
+            },
+          "name" : "handleVar",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "nodePortType" : "IO",
+              "name" : "value"
+              }
+            ],
+          "dataType" : "DrawingHandle",
+          "extDep" : "InlineDrawing:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":287.0,\"y\":56.0}"
+            },
+          "name" : "CreateDrawingHandle",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "handle"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "Create DrawingHandle",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "handle",
+                "execPortType" : "Out",
+                "typeSpec" : "DrawingHandle"
+                }
+              ],
+            "extDeps" : {
+              "InlineDrawing" : "*"
+              },
+            "code" : "dfgEntry {
+  handle = DrawingHandle();
+}
+"
+            }
+          }
+        ],
+      "connections" : {
+        "Clear.this" : [
+          "handle"
+          ],
+        "handleVar.value" : [
+          "Clear.this"
+          ],
+        "CreateDrawingHandle.handle" : [
+          "handleVar.value"
+          ]
+        }
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.Clear" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiTooltip" : "removes all contents from the DrawingHandle\n\n Supported by DrawingHandle"
+        },
+      "title" : "Clear",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "DrawingHandle"
+          }
+        ],
+      "extDeps" : {
+        "InlineDrawing" : "*"
+        },
+      "presetGUID" : "39E8D81FA7C7C4A825877F16EFE3564F",
+      "code" : "require InlineDrawing;
+
+dfgEntry {
+  this.clear();
+}
+"
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.GetEmptyDebugShape" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiTooltip" : "helper function to clear a debug drawing shape\n\n Supported by DrawingHandle"
+        },
+      "title" : "GetEmptyDebugShape",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "DrawingHandle"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "String" : "debug"
+            },
+          "name" : "name",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "InlineDebugShape"
+          }
+        ],
+      "extDeps" : {
+        "InlineDrawing" : "*",
+        "FabricInterfaces" : "*"
+        },
+      "presetGUID" : "DB3916AA2CE58EEAFAEDB9E2653EF4D6",
+      "code" : "require InlineDrawing;
+
+dfgEntry {
+  result = this.getEmptyDebugShape(name);
+}
+"
+      },
+    "Fabric.Core.Math.Add" : {
+      "objectType" : "Func",
+      "title" : "Add",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "lhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "rhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7",
+      "code" : "
+dfgEntry {
+	result = lhs + rhs;
+}
+"
+      },
+    "Fabric.Core.Control.If" : {
+      "objectType" : "Func",
+      "title" : "If",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "cond",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "if_true",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "if_false",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "3182A478A21643455D549E483D35F831",
+      "code" : "
+dfgEntry {
+	result = cond ? if_true : if_false;
+}
+"
+      }
+    }
+  }

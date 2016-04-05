@@ -1,0 +1,212 @@
+{
+  "objectType" : "Func",
+  "title" : "swapAxis",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Xfo" : {
+          "ori" : {
+            "v" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              },
+            "w" : 1
+            },
+          "tr" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          "sc" : {
+            "x" : 1,
+            "y" : 1,
+            "z" : 1
+            }
+          }
+        },
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "Xfo"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "SInt8" : 1
+        },
+      "name" : "alignX",
+      "execPortType" : "In",
+      "typeSpec" : "SInt8"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "SInt8" : 2
+        },
+      "name" : "alignY",
+      "execPortType" : "In",
+      "typeSpec" : "SInt8"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "SInt8" : 3
+        },
+      "name" : "alignZ",
+      "execPortType" : "In",
+      "typeSpec" : "SInt8"
+      }
+    ],
+  "extDeps" : {
+    "Math" : "*"
+    },
+  "presetGUID" : "9A87998E0ED64C835D9A3027C1D95E62",
+  "code" : "inline SInt8 SInt8.normalize(SInt8 v) {
+  if (this == v) {
+    return SInt8(1);
+  } else if (this == -v) {
+    return SInt8(-1);
+  } else {
+    return SInt8(0);
+  }
+}
+
+inline Mat33.fromXYZ!(SInt8 x, SInt8 y, SInt8 z) {
+  this.row0 = Vec3(x.normalize(1),x.normalize(2),x.normalize(3));
+  this.row1 = Vec3(y.normalize(1),y.normalize(2),y.normalize(3));
+  this.row2 = Vec3(z.normalize(1),z.normalize(2),z.normalize(3));
+}
+
+function Mat44.align!(SInt8 x, SInt8 y, SInt8 z)
+{
+  Mat33 mat33ori;
+  mat33ori.fromXYZ(x, y, z);
+  Mat44 mat44ori;
+  mat44ori.setFromMat33(mat33ori);
+  this = this*mat44ori;
+}
+
+function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
+{
+  Mat44 m = this.toMat44();
+  m.align(x, y, z);
+  this.setFromMat44(m);
+}
+
+dfgEntry {
+  this.align(alignX,alignY,alignZ);
+}
+",
+  "requiredPresets" : {
+    "OSS.Xfo.swapAxis" : {
+      "objectType" : "Func",
+      "title" : "swapAxis",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Xfo" : {
+              "ori" : {
+                "v" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0
+                  },
+                "w" : 1
+                },
+              "tr" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              "sc" : {
+                "x" : 1,
+                "y" : 1,
+                "z" : 1
+                }
+              }
+            },
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "SInt8" : 1
+            },
+          "name" : "alignX",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "SInt8" : 2
+            },
+          "name" : "alignY",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "SInt8" : 3
+            },
+          "name" : "alignZ",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "9A87998E0ED64C835D9A3027C1D95E62",
+      "code" : "inline SInt8 SInt8.normalize(SInt8 v) {
+  if (this == v) {
+    return SInt8(1);
+  } else if (this == -v) {
+    return SInt8(-1);
+  } else {
+    return SInt8(0);
+  }
+}
+
+inline Mat33.fromXYZ!(SInt8 x, SInt8 y, SInt8 z) {
+  this.row0 = Vec3(x.normalize(1),x.normalize(2),x.normalize(3));
+  this.row1 = Vec3(y.normalize(1),y.normalize(2),y.normalize(3));
+  this.row2 = Vec3(z.normalize(1),z.normalize(2),z.normalize(3));
+}
+
+function Mat44.align!(SInt8 x, SInt8 y, SInt8 z)
+{
+  Mat33 mat33ori;
+  mat33ori.fromXYZ(x, y, z);
+  Mat44 mat44ori;
+  mat44ori.setFromMat33(mat33ori);
+  this = this*mat44ori;
+}
+
+function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
+{
+  Mat44 m = this.toMat44();
+  m.align(x, y, z);
+  this.setFromMat44(m);
+}
+
+dfgEntry {
+  this.align(alignX,alignY,alignZ);
+}
+"
+      }
+    }
+  }
