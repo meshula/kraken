@@ -357,8 +357,6 @@ class OSSMouthComponentRig(OSSMouthComponent):
         # =========
         # Mouth
         self.mouthCtrlSpace = CtrlSpace('mouth', parent=self.ctrlCmpGrp)
-        self.mouthCtrl = Control('mouth', parent=self.mouthCtrlSpace, shape="square")
-        self.mouthCtrl.alignOnXAxis()
 
 
         # ==========
@@ -368,35 +366,11 @@ class OSSMouthComponentRig(OSSMouthComponent):
         self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
         self.ctrlCmpGrp.setComponent(self)
 
-        self.mouthDef = Joint('mouth', parent=self.defCmpGrp)
-        self.mouthDef.setComponent(self)
-
 
         # ==============
         # Constrain I/O
         # ==============
         self.mouthInputConstraint = self.mouthCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-        self.mouthConstraint = self.mouthOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
-        self.mouthEndConstraint = self.mouthEndOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
-
-
-        # ===============
-        # Add Splice Ops
-        # ===============
-        # Add Deformer Splice Op
-        spliceOp = KLOperator('mouthDeformerKLOp', 'PoseConstraintSolver', 'Kraken')
-        self.addOperator(spliceOp)
-
-        # Add Att Inputs
-        spliceOp.setInput('drawDebug', self.drawDebugInputAttr)
-        spliceOp.setInput('rigScale', self.rigScaleInputAttr)
-
-        # Add Xfo Inputs
-        spliceOp.setInput('constrainer', self.mouthOutputTgt)
-
-        # Add Xfo Outputs
-        spliceOp.setOutput('constrainee', self.mouthDef)
-
         Profiler.getInstance().pop()
 
 
@@ -537,9 +511,6 @@ class OSSMouthComponentRig(OSSMouthComponent):
         super(OSSMouthComponentRig, self).loadData( data )
 
         self.mouthCtrlSpace.xfo = data['mouthXfo']
-        self.mouthCtrl.xfo = data['mouthXfo']
-        self.mouthCtrl.rotatePoints(0.0, 0.0, 90.0)
-        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'], -0.5 , 0.0)))
         # ============
         # Set IO Xfos
         # ============
@@ -547,9 +518,6 @@ class OSSMouthComponentRig(OSSMouthComponent):
         self.mouthEndOutputTgt.xfo = data['mouthXfo']
         self.mouthOutputTgt.xfo = data['mouthXfo']
 
-        # Eval Constraints
-        self.mouthConstraint.evaluate()
-        self.mouthEndConstraint.evaluate()
 
 
         self.createControls(3, data["an3DNames"], data)

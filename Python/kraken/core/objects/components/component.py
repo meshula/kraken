@@ -960,6 +960,28 @@ class Component(Object3D):
     # ==================
     # Rig Build Methods
     # =================
+    # this should consider inherited types
+    def saveControlData(self, data, classType, inheritedClass = False):
+        """Stores the Guide data used by the Rig Component to define the layout of the final rig..
+
+        Returns:
+            dict: The JSON rig data object.
+
+        """
+        for obj in self.getAllHierarchyNodes(classType=classType, inheritedClass=inheritedClass):
+            data[obj.getName() + "Xfo"] = obj.xfo
+            try:
+                data[obj.getName() + "CurveData"] = obj.getCurveData()
+            except:
+                pass
+
+        return data
+
+    # ==================
+    # Rig Build Methods
+    # =================
+
+
     def getRigBuildData(self):
         """Returns the Guide data used by the Rig Component to define the layout of the final rig..
 
