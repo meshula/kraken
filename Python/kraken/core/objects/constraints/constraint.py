@@ -198,7 +198,6 @@ class Constraint(SceneItem):
             bool: True if successful.
 
         """
-        print ("In Constraint.evaluate() for %s" % self.getName())
         def getGlobalXfoFunc(c):
             return c.xfo
 
@@ -211,7 +210,8 @@ class Constraint(SceneItem):
             # to be in the right place when the constraint is created.  Our components are not setup
             # for that right now, so for currently evaluate() if maintainOffset is True,
             # will do nothing to the xfo of the object.
-            offset = self.computeOffset(getGlobalXfoFunc=getGlobalXfoFunc)
+            pass
+            #offset = self.computeOffset(getGlobalXfoFunc=getGlobalXfoFunc)
             # Do nothing with this because we don't know when this is called.
 
         else:
