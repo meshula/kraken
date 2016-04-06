@@ -1099,6 +1099,7 @@ class Builder(object):
         self.buildHierarchy(kSceneItem, component=None)
         self.buildAttrConnections(kSceneItem)
         self.buildInputConnections(kSceneItem)
+        self.buildOperators(kSceneItem)
         self.buildConstraints(kSceneItem)
 
         return True
