@@ -251,7 +251,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
 
         """
         #Reset all shapes, but really we should just recreate all controls from loadData instead of init
-        for ctrl in self.getAllHierarchyNodes(classType=Control):
+        for ctrl in self.getHierarchyNodes(classType=Control):
             ctrl.setShape(ctrl.getShape())
 
         #Grab the guide settings in case we want to use them here (and are not stored in data arg)

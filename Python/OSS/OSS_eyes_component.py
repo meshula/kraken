@@ -74,7 +74,7 @@ class OSSEyesComponentGuide(OSSEyesComponent):
 
         self.EyesCtrlNames = StringAttribute('EyesNames', value="L_Eye R_Eye", parent=guideSettingsAttrGrp)
 
- 
+
         # =========
         # Controls
         # =========
@@ -233,7 +233,7 @@ class OSSEyesComponentGuide(OSSEyesComponent):
 
         """
         #Reset all shapes, but really we should just recreate all controls from loadData instead of init
-        for ctrl in self.getAllHierarchyNodes(classType=Control):
+        for ctrl in self.getHierarchyNodes(classType=Control):
             ctrl.setShape(ctrl.getShape())
 
         #Grab the guide settings in case we want to use them here (and are not stored in data arg)

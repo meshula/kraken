@@ -258,4 +258,5 @@ class KLOperator(Operator):
                         setRTVal(self.outputs[argName][j], argVals[i][j])
                 else:
                     setRTVal(self.outputs[argName], argVals[i])
+
         return True

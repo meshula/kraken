@@ -120,7 +120,7 @@ class OSSLipGuide(OSSLip):
                      self.R_loLipHandleCtrl]:
             ctrl.setColor("red")
 
-        
+
         self.defCtrls = []
         self.lipCtrls = []
         self.symMapping = {}
@@ -194,7 +194,7 @@ class OSSLipGuide(OSSLip):
 
         self.upLipControls = []
         self.upLipOutputs = []
-        
+
         self.upLipGuideOp.setInput('drawDebug', 1)
         self.upLipGuideOp.setInput('rigScale', 1.0)
         self.upLipGuideOp.setInput('degree', 3)
@@ -219,7 +219,7 @@ class OSSLipGuide(OSSLip):
 
         self.loLipControls = []
         self.loLipOutputs = []
-        
+
         self.loLipGuideOp.setInput('drawDebug', 1)
         self.loLipGuideOp.setInput('rigScale', 1.0)
         self.loLipGuideOp.setInput('degree', 3)
@@ -246,7 +246,7 @@ class OSSLipGuide(OSSLip):
         self.reflectionOp.setInput('inputParents',  self.lSideParentObjs)
         self.reflectionOp.setOutput('results', self.rSideObjs)
 
-        self.allObject3Ds = self.getAllHierarchyNodes(classType=Control)
+        self.allObject3Ds = self.getHierarchyNodes(classType=Control)
         for ctrl in self.allObject3Ds:
             self.addToSymDict(ctrl)
 
@@ -311,7 +311,7 @@ class OSSLipGuide(OSSLip):
         if ctrlType == "lipDeformers":
             parent = self.mouthCtrl
             defControlNameList = []
-            
+
             #Build Deformer Names
             half = int(math.floor(defNames/2))
 
@@ -329,7 +329,7 @@ class OSSLipGuide(OSSLip):
 
             if not defNames % 2 == 0:
                 defControlNameList = lSideControls + ["Mid"] + rSideControls
-            else:    
+            else:
                 defControlNameList = lSideControls + rSideControls
 
             for i, defName in enumerate(defControlNameList):
@@ -339,7 +339,7 @@ class OSSLipGuide(OSSLip):
                 controlsList.append(newCtrl)
 
 
-        if ctrlType == "lipControls":   
+        if ctrlType == "lipControls":
             parent = self.midLipCtrl
             defControlNameList =[]
 
@@ -347,7 +347,7 @@ class OSSLipGuide(OSSLip):
             defControlNameList = convertToStringList(defNames)
             if not defControlNameList:  # Nothing to build
                 return True
-                   
+
 
             # etting up names
             lSideControls = ["L_" + x for x in defControlNameList]
@@ -424,7 +424,7 @@ class OSSLipGuide(OSSLip):
 
         # this should probably live in the GuideClase
         for ctype in [Control, Transform]:
-            for obj in self.getAllHierarchyNodes(classType=ctype):
+            for obj in self.getHierarchyNodes(classType=ctype):
                 objName = obj.getName()
                 try:
                     obj.xfo = data[objName + "Xfo"]
@@ -603,7 +603,7 @@ class OSSLipRig(OSSLip):
         self.upLipControls.append(self.R_upLipHandleCtrl)
         self.upLipControls.append(self.rMouthCtrl)
         self.upLipOutputs.append(self.upDummy)
-        
+
         self.upLipRigOp.setInput('drawDebug', 1)
         self.upLipRigOp.setInput('rigScale', 1.0)
         self.upLipRigOp.setInput('degree', 4)
@@ -634,7 +634,7 @@ class OSSLipRig(OSSLip):
         self.loLipControls.append(self.R_loLipHandleCtrl)
         self.loLipControls.append(self.rMouthCtrl)
         self.loLipOutputs.append(self.loDummy)
-        
+
         self.loLipRigOp.setInput('drawDebug', 1)
         self.loLipRigOp.setInput('rigScale', 1.0)
         self.loLipRigOp.setInput('degree', 4)
@@ -646,7 +646,7 @@ class OSSLipRig(OSSLip):
         self.loLipRigOp.setInput('params', self.params )
 
         self.loLipRigOp.setOutput('outputs', self.loLipOutputs)
-        self.loLipRigOp.setOutput('dummyResult', self.loDummy.xfo.tr) 
+        self.loLipRigOp.setOutput('dummyResult', self.loDummy.xfo.tr)
 
 
         # Add lowLip Guide Canvas Op
@@ -718,7 +718,7 @@ class OSSLipRig(OSSLip):
         if ctrlType == "upLipDef" or ctrlType == "loLipDef":
             parent = self.defCmpGrp
             defControlNameList = []
-            
+
             #Build Deformer Names
             half = int(math.floor(defNames/2))
 
@@ -733,7 +733,7 @@ class OSSLipRig(OSSLip):
 
             if not defNames % 2 == 0:
                 defControlNameList = rSideControls + ["Mid"] + lSideControls
-            else:    
+            else:
                 defControlNameList = rSideControls + lSideControls
 
             for i, defName in enumerate(defControlNameList):
@@ -742,7 +742,7 @@ class OSSLipRig(OSSLip):
                 controlsList.append(newCtrl)
 
 
-        if ctrlType == "lipControls":   
+        if ctrlType == "lipControls":
             parent = self.ctrlCmpGrp
             defControlNameList =[]
 
@@ -750,7 +750,7 @@ class OSSLipRig(OSSLip):
             defControlNameList = convertToStringList(defNames)
             if not defControlNameList:  # Nothing to build
                 return True
-                   
+
 
             # etting up names
             lSideControls = ["L_" + x for x in defControlNameList]
@@ -790,7 +790,7 @@ class OSSLipRig(OSSLip):
         """
 
         super(OSSLipRig, self).loadData( data )
-        
+
 
 
         self.upLipDefs = []
@@ -803,7 +803,7 @@ class OSSLipRig(OSSLip):
         self.rLoLipCorner = Transform('R_loLipCorner', parent=self.ctrlCmpGrp)
         self.lUpLipCorner = Transform('L_upLipCorner', parent=self.ctrlCmpGrp)
         self.rUpLipCorner = Transform('R_upLipCorner', parent=self.ctrlCmpGrp)
-        
+
         lipCtrlY = .2;
         lipCtrlZ = .45;
         if self.upLipCtrls:
@@ -889,7 +889,7 @@ class OSSLipRig(OSSLip):
         self.loLipControls = []
         self.loLipOutputs = []
         self.loLipDefs =  [self.rLoLipCorner] + self.loLipDefs + [self.lLoLipCorner]
-        
+
         self.loLipDefOp.setInput('drawDebug', 1)
         self.loLipDefOp.setInput('rigScale', 1.0)
         self.loLipDefOp.setInput('degree', 3)
@@ -948,7 +948,7 @@ class OSSLipRig(OSSLip):
 
 
 
-       
+
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
         self.topMouthCtrlSpace.xfo = data['midLipXfo']
@@ -1002,7 +1002,7 @@ class OSSLipRig(OSSLip):
         self.loLipCtrl.translatePoints(Vec3(Vec3(-.5, -.75,  .5)))
         self.upLipCtrl.translatePoints(Vec3(Vec3(-.5, 0.75,  .5)))
 
-        for ctrl in self.getAllHierarchyNodes(classType=Control):
+        for ctrl in self.getHierarchyNodes(classType=Control):
             ctrl.scalePoints(globalScale)
 
 

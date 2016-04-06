@@ -152,6 +152,7 @@ class Constraint(SceneItem):
             xfo: The result of the constraint in global space.
 
         """
+
         if self._constrainee is None:
             return None
         if len(self._constrainers) == 0:
@@ -165,7 +166,6 @@ class Constraint(SceneItem):
             rtVal.addConstrainer('', ks.rtVal('Xfo', getGlobalXfoFunc(c)))
 
         return Xfo(rtVal.compute("Xfo", ks.rtVal('Xfo', getGlobalXfoFunc(self._constrainee))))
-
 
     def computeOffset(self, getGlobalXfoFunc):
         """invokes the constraint and computes the offset
@@ -190,7 +190,6 @@ class Constraint(SceneItem):
 
         return Xfo(rtVal.computeOffset("Xfo", ks.rtVal('Xfo', getGlobalXfoFunc(self._constrainee))))
 
-
     def evaluate(self):
         """invokes the constraint causing the output value to be computed.
 
@@ -198,26 +197,15 @@ class Constraint(SceneItem):
             bool: True if successful.
 
         """
-        def getGlobalXfoFunc(c):
-            return c.xfo
 
-        if self.getMaintainOffset():
-            # We need to decide what the expectations are for evaluating constraints
-            # within a component outside of a DCC.
-            # Specifically, if there is an offset, at what point is the offset calculated
-            # and stored?  It really can't be in evaluate unless you make it the first evaluate.
-            # Arguably the offset should be calculated durin __init__(), but that requires everything
-            # to be in the right place when the constraint is created.  Our components are not setup
-            # for that right now, so for currently evaluate() if maintainOffset is True,
-            # will do nothing to the xfo of the object.
-            pass
-            #offset = self.computeOffset(getGlobalXfoFunc=getGlobalXfoFunc)
-            # Do nothing with this because we don't know when this is called.
+        if self.getMaintainOffset() is False:
+            def getGlobalXfoFunc(c):
+                return c.xfo
 
-        else:
             self.getConstrainee().xfo = self.compute(getGlobalXfoFunc=getGlobalXfoFunc)
+            return True
 
-        return True
+        return False
 
     # ================
     # Persistence Methods
