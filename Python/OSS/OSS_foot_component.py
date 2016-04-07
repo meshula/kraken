@@ -389,6 +389,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
 
         self.footDef = Joint('foot', parent=self.defCmpGrp)
         self.footDef.setComponent(self)

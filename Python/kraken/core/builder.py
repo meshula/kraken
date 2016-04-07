@@ -481,7 +481,6 @@ class Builder(object):
 
         # There should be no offset between an output xfo from one component and the connected input of another
         # If connected, they should be exactly the same.
-        # Do not add this to the constraint list otherwise, it will get run during buildConstraints()
 
         inputTarget.removeAllConstraints()
         constraint = inputTarget.constrainTo(connectionTarget, maintainOffset=False)
@@ -749,38 +748,6 @@ class Builder(object):
         for i in xrange(kObject.getNumChildren()):
             child = kObject.getChildByIndex(i)
             self.buildAttrConnections(child)
-
-        return True
-
-
-    def buildOperators(self, kObject):
-        """Build operators in the hierarchy.
-
-        Args:
-            kObject (object): kraken object to create operators for.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        if kObject.isTypeOf('Component'):
-
-            # Build operators
-            for i in xrange(kObject.getNumOperators()):
-                operator = kObject.getOperatorByIndex(i)
-
-                if operator.isTypeOf('KLOperator'):
-                    self.buildKLOperator(operator)
-                elif operator.isTypeOf('CanvasOperator'):
-                    self.buildCanvasOperator(operator)
-                else:
-                    raise NotImplementedError(operator.getName() + ' has an unsupported type: ' + str(type(operator)))
-
-        # Build connections for children.
-        for i in xrange(kObject.getNumChildren()):
-            child = kObject.getChildByIndex(i)
-            self.buildOperators(child)
 
         return True
 
@@ -1131,7 +1098,6 @@ class Builder(object):
         self.buildHierarchy(kSceneItem, component=None)
         self.buildAttrConnections(kSceneItem)
         self.buildInputConnections(kSceneItem)
-        self.buildOperators(kSceneItem)
         self.buildConstraints(kSceneItem)
 
         return True

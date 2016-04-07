@@ -252,10 +252,11 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # Deformers
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
-        defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
         self.ctrlCmpGrp.setComponent(self)
 
-        self.shldrDef = Joint('shldr', parent=defCmpGrp)
+        self.shldrDef = Joint('shldr', parent=self.defCmpGrp)
         self.shldrDef.setComponent(self)
 
 

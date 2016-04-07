@@ -183,7 +183,7 @@ class OSSTeethRig(OSSTeeth):
         # Controls
         # =========
         # Teeth
-        
+
         self.teethCtrl = Control(self.getName(), parent=self.ctrlCmpGrp, shape="circle")
         self.teethCtrlSpace = self.teethCtrl.insertCtrlSpace()
         self.teethCtrlSpace.xfo = data['teethXfo']
@@ -198,10 +198,11 @@ class OSSTeethRig(OSSTeeth):
         # Deformers
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
-        defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
         self.ctrlCmpGrp.setComponent(self)
 
-        self.teethDef = Joint(self.getName(), parent=defCmpGrp)
+        self.teethDef = Joint(self.getName(), parent=self.defCmpGrp)
         self.teethDef.setComponent(self)
 
 

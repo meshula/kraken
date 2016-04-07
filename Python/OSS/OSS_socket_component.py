@@ -201,10 +201,11 @@ class OSSSocketRig(OSSSocket):
         # Deformers
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
-        defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
         self.ctrlCmpGrp.setComponent(self)
 
-        self.socketDef = Joint(self.getName(), parent=defCmpGrp)
+        self.socketDef = Joint(self.getName(), parent=self.defCmpGrp)
         self.socketDef.setComponent(self)
 
 

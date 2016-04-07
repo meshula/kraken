@@ -14,8 +14,6 @@ class SceneItem(object):
         self._parent = parent
         self._name = name
         self._component = None
-        self._secondBuildNameType = None
-
 
 
     # ==============
@@ -115,12 +113,8 @@ class SceneItem(object):
             str: Decorated name of the object.
 
         """
-        decoration = ":"+self.__class__.__name__
 
-        if self.getSecondType():
-            decoration += ":"+self.getSecondType().__name__
-
-        return decoration
+        return ""
 
 
     def getDecoratedName(self):
@@ -203,33 +197,5 @@ class SceneItem(object):
         """
 
         self._component = component
-
-        return True
-
-
-    def getSecondType(self):
-        """Returns the second type of the object as a class.
-
-        Returns:
-            Class: second type of the object as a class.
-
-        """
-
-        return self._secondBuildNameType
-
-
-    def setSecondType(self, objectClass):
-        """Sets the second type of the object as a class.
-
-        Args:
-            type (Class): Class that is the secondary type (for use in getBuildName() later)
-            Maybe allow this to be a string later on for flexibilty?
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        self._secondBuildNameType = objectClass
 
         return True
