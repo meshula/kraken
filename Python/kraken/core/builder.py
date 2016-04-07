@@ -753,6 +753,38 @@ class Builder(object):
         return True
 
 
+    def buildOperators(self, kObject):
+        """Build operators in the hierarchy.
+
+        Args:
+            kObject (object): kraken object to create operators for.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if kObject.isTypeOf('Component'):
+
+            # Build operators
+            for i in xrange(kObject.getNumOperators()):
+                operator = kObject.getOperatorByIndex(i)
+
+                if operator.isTypeOf('KLOperator'):
+                    self.buildKLOperator(operator)
+                elif operator.isTypeOf('CanvasOperator'):
+                    self.buildCanvasOperator(operator)
+                else:
+                    raise NotImplementedError(operator.getName() + ' has an unsupported type: ' + str(type(operator)))
+
+        # Build connections for children.
+        for i in xrange(kObject.getNumChildren()):
+            child = kObject.getChildByIndex(i)
+            self.buildOperators(child)
+
+        return True
+
+
     def buildRig(self, kRig):
         """Builds a rig object.
 
