@@ -159,7 +159,7 @@ class OSSLipGuide(OSSLip):
                 "R_MouthXfo": Xfo(Vec3(-3, 15, 3)),
                 "L_MouthOutXfo": Xfo(Vec3(4, 15, 2)),
                 "R_MouthOutXfo": Xfo(Vec3(-4, 15, 2)),
-                "mouthEndXfo": Xfo(Vec3(0, 14, 4))
+                "mouthEndXfo": Xfo(Vec3(0, 15, 4))
                }
 
 
@@ -176,7 +176,6 @@ class OSSLipGuide(OSSLip):
         self.midLipGuideOp.setInput('refMats', self.midLipControls)
 
         self.midLipGuideOp.setOutput('result', self.paramOut )
-        self.midLipGuideOp.setOutput('dummyResult', self.midDummy)
 
         # update Inputs
         self.midLipControls.append(self.lMouthCtrl)
@@ -203,7 +202,6 @@ class OSSLipGuide(OSSLip):
         self.upLipGuideOp.setInput('refMats', self.upLipControls)
 
         self.upLipGuideOp.setOutput('result', self.paramOut )
-        self.upLipGuideOp.setOutput('dummyResult', self.upDummy)
 
         # update Inputs
         self.upLipControls.append(self.lMouthOutCtrl)
@@ -228,7 +226,6 @@ class OSSLipGuide(OSSLip):
         self.loLipGuideOp.setInput('refMats', self.loLipControls)
 
         self.loLipGuideOp.setOutput('result', self.paramOut )
-        self.loLipGuideOp.setOutput('dummyResult', self.loDummy)
 
         # update Inputs
         self.loLipControls.append(self.lMouthOutCtrl)
@@ -533,24 +530,23 @@ class OSSLipRig(OSSLip):
         self.mouthCtrl.alignOnXAxis()
 
         # midMouth
-        self.topMouthCtrlSpace = CtrlSpace('topMouth', parent=self.ctrlCmpGrp)
+        self.topMouthCtrlSpace = CtrlSpace('topMouth', parent=self.mouthCtrlSpace)
 
         # midMouth
         self.midMouthCtrlSpace = CtrlSpace('midMouth', parent=self.ctrlCmpGrp)
         self.midMouthCtrl = CtrlSpace('midMouth', parent=self.midMouthCtrlSpace)
 
+        # self.allMouthCtrl = Control('allMouth', parent=self.midMouthCtrlSpace, shape="square")
         # loLip
         self.loLipCtrlSpace = CtrlSpace('loLip', parent=self.mouthCtrl)
-        self.loLipCtrl = Control('loLip', parent=self.loLipCtrlSpace, shape="square")
-        self.loLipCtrl.alignOnXAxis()
+        self.loLipCtrl = Control('loLip', parent=self.loLipCtrlSpace, shape="halfCircle")
         self.L_loLipHandleCtrl = CtrlSpace('L_loLipHandle', parent=self.loLipCtrl)
         self.R_loLipHandleCtrl = CtrlSpace('R_loLipHandle', parent=self.loLipCtrl)
         self.loDummy = CtrlSpace('loDummy', parent=self.ctrlCmpGrp)
 
         # upLip
         self.upLipCtrlSpace = CtrlSpace('upLip', parent=self.mouthCtrlSpace)
-        self.upLipCtrl = Control('upLip', parent=self.upLipCtrlSpace, shape="square")
-        self.upLipCtrl.alignOnXAxis()
+        self.upLipCtrl = Control('upLip', parent=self.upLipCtrlSpace, shape="halfCircle")
         self.L_upLipHandleCtrl = CtrlSpace('L_upLipHandle', parent=self.upLipCtrl)
         self.R_upLipHandleCtrl = CtrlSpace('R_upLipHandle', parent=self.upLipCtrl)
         self.upDummy = CtrlSpace('upDummy', parent=self.ctrlCmpGrp)
@@ -559,10 +555,10 @@ class OSSLipRig(OSSLip):
 
 
         self.lMouthCtrlSpace = CtrlSpace('L_Mouth', parent=self.midMouthCtrl)
-        self.lMouthCtrl = Control('L_Mouth', parent=self.lMouthCtrlSpace, shape="circle")
+        self.lMouthCtrl = Control('L_Mouth_tweak', parent=self.lMouthCtrlSpace, shape="circle")
         self.lMouthCtrl.alignOnXAxis()
         self.rMouthCtrlSpace = CtrlSpace('R_Mouth', parent=self.midMouthCtrl)
-        self.rMouthCtrl = Control('R_Mouth', parent=self.rMouthCtrlSpace, shape="circle")
+        self.rMouthCtrl = Control('R_Mouth_tweak', parent=self.rMouthCtrlSpace, shape="circle")
         self.rMouthCtrl.alignOnXAxis()
 
 
@@ -590,11 +586,11 @@ class OSSLipRig(OSSLip):
         # ===============
         # Add Fabric Ops
         # ===============
-        # Add Spine Canvas Op
+        # Add NURBSCurveXfoSolver Canvas Op
         # Add lowLip Guide Canvas Op
         self.upLipRigOp = CanvasOperator('upLipRigOp', 'OSS.Solvers.NURBSCurveXfoSolver')
         self.addOperator(self.upLipRigOp)
-        self.params = [0, 0.025,0.125,0.3,0.5,0.7,0.875,0.975, 1]
+        self.params = [0.025,0.125,0.3,0.5,0.7,0.875,0.975]
         self.upLipControls = []
         self.upLipOutputs = []
         self.upLipControls.append(self.lMouthCtrl)
@@ -602,20 +598,19 @@ class OSSLipRig(OSSLip):
         self.upLipControls.append(self.upLipCtrl)
         self.upLipControls.append(self.R_upLipHandleCtrl)
         self.upLipControls.append(self.rMouthCtrl)
-        self.upLipOutputs.append(self.upDummy)
         
         self.upLipRigOp.setInput('drawDebug', 1)
         self.upLipRigOp.setInput('rigScale', 1.0)
         self.upLipRigOp.setInput('degree', 4)
         self.upLipRigOp.setInput('keepArcLength', 0.0)
         self.upLipRigOp.setInput('alignToCurve', 0.0)
+        self.upLipRigOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipRigOp.setInput('atVec', self.mouthCtrl)
         self.upLipRigOp.setInput('controls', self.upLipControls)
         self.upLipRigOp.setInput('params',self.params )
 
         self.upLipRigOp.setOutput('outputs', self.upLipOutputs)
-        self.upLipRigOp.setOutput('dummyResult', self.upDummy.xfo.tr)
 
 
         # ===============
@@ -633,20 +628,19 @@ class OSSLipRig(OSSLip):
         self.loLipControls.append(self.loLipCtrl)
         self.loLipControls.append(self.R_loLipHandleCtrl)
         self.loLipControls.append(self.rMouthCtrl)
-        self.loLipOutputs.append(self.loDummy)
         
         self.loLipRigOp.setInput('drawDebug', 1)
         self.loLipRigOp.setInput('rigScale', 1.0)
         self.loLipRigOp.setInput('degree', 4)
         self.loLipRigOp.setInput('keepArcLength', 0.0)
         self.loLipRigOp.setInput('alignToCurve', 0.0)
+        self.loLipRigOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipRigOp.setInput('atVec', self.mouthCtrl)
         self.loLipRigOp.setInput('controls', self.loLipControls)
         self.loLipRigOp.setInput('params', self.params )
 
         self.loLipRigOp.setOutput('outputs', self.loLipOutputs)
-        self.loLipRigOp.setOutput('dummyResult', self.loDummy.xfo.tr) 
 
 
         # Add lowLip Guide Canvas Op
@@ -676,12 +670,15 @@ class OSSLipRig(OSSLip):
         self.rigCtrls.append(self.mouthCtrl)
         self.rigDefs.append(self.mouthDef)
 
-        self.outputsToDeformersOKLOp = KLOperator('spineDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-        self.addOperator(self.outputsToDeformersOKLOp)
-        self.outputsToDeformersOKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.outputsToDeformersOKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.outputsToDeformersOKLOp.setInput('constrainers', self.rigCtrls)
-        self.outputsToDeformersOKLOp.setOutput('constrainees', self.rigDefs)
+        self.eyeCtrlConstraint = self.mouthDef.constrainTo(self.mouthCtrl, maintainOffset=False)
+
+
+        # self.outputsToDeformersOKLOp = KLOperator('MultiPoseConstraintOp', 'MultiPoseConstraintSolver', 'Kraken')
+        # self.addOperator(self.outputsToDeformersOKLOp)
+        # self.outputsToDeformersOKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        # self.outputsToDeformersOKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        # self.outputsToDeformersOKLOp.setInput('constrainers', self.rigCtrls)
+        # self.outputsToDeformersOKLOp.setOutput('constrainees', self.rigDefs)
 
 
 
@@ -768,6 +765,8 @@ class OSSLipRig(OSSLip):
                 newCtrl.xfo = parent.xfo
                 newCtrl.scalePoints(Vec3(.125,.125,.125))
                 controlsList.append(newCtrl)
+                newCtrl.lockRotation(x=True, y=True, z=True)
+                newCtrl.lockScale(x=True, y=True, z=True)
 
 
 
@@ -804,7 +803,7 @@ class OSSLipRig(OSSLip):
         self.lUpLipCorner = Transform('L_upLipCorner', parent=self.ctrlCmpGrp)
         self.rUpLipCorner = Transform('R_upLipCorner', parent=self.ctrlCmpGrp)
         
-        lipCtrlY = .2;
+        lipCtrlY = .15;
         lipCtrlZ = .45;
         if self.upLipCtrls:
             # build control hierarchy
@@ -837,7 +836,7 @@ class OSSLipRig(OSSLip):
         self.upLipControls = []
         self.upLipOutputs = []
         # numDefs plus two for the corners
-        self.paramsOut = [1, .96, .899, .809, .741, .664, .585, 0.5, 0.42, 0.34, 0.26, 0.19, 0.1, 0.04, 0]
+        self.paramsOut = [1, .96, .9, .81, .74, .66, .58, 0.5, 0.42, 0.34, 0.26, 0.19, 0.1, 0.04, 0]
 
         self.upLipDefs =  [self.rUpLipCorner] + self.upLipDefs + [self.lUpLipCorner]
 
@@ -846,13 +845,13 @@ class OSSLipRig(OSSLip):
         self.upLipDefOp.setInput('degree', 3)
         self.upLipDefOp.setInput('keepArcLength', 0.0)
         self.upLipDefOp.setInput('alignToCurve', 0.25)
+        self.upLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipDefOp.setInput('atVec', self.mouthCtrl)
         self.upLipDefOp.setInput('controls', self.upLipCtrls)
         self.upLipDefOp.setInput('params', self.paramsOut)
 
         self.upLipDefOp.setOutput('outputs', self.upLipDefs)
-        self.upLipDefOp.setOutput('dummyResult', self.upDummy.xfo.tr)
 
 
         self.loLipDefs = []
@@ -895,13 +894,13 @@ class OSSLipRig(OSSLip):
         self.loLipDefOp.setInput('degree', 3)
         self.loLipDefOp.setInput('keepArcLength', 0.0)
         self.loLipDefOp.setInput('alignToCurve', 0.25)
+        self.loLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipDefOp.setInput('atVec', self.mouthCtrl)
         self.loLipDefOp.setInput('controls', self.loLipCtrls)
         self.loLipDefOp.setInput('params', self.paramsOut )
 
         self.loLipDefOp.setOutput('outputs', self.loLipDefs)
-        self.loLipDefOp.setOutput('dummyResult', self.loDummy.xfo.tr)
 
 
 
@@ -960,12 +959,16 @@ class OSSLipRig(OSSLip):
         self.lMouthCtrl.xfo = data['L_MouthXfo']
         self.lMouthCtrl.translatePoints(Vec3(Vec3(-.5, .5,  0)))
         self.lMouthCtrl.rotatePoints(90.0, 0.0, 0.0)
+        self.lMouthCtrl.lockRotation(x=True, y=True, z=True)
+        self.lMouthCtrl.lockScale(x=True, y=True, z=True)
 
         self.rMouthCtrlSpace.xfo = data['R_MouthXfo']
         self.rMouthCtrlSpace.xfo.sc = Vec3(1.0, 1.0, -1.0)
         self.rMouthCtrl.xfo = data['R_MouthXfo']
         self.rMouthCtrl.translatePoints(Vec3(Vec3(-.5, .5,  0)))
         self.rMouthCtrl.rotatePoints(90.0, 0.0, 0.0)
+        self.rMouthCtrl.lockRotation(x=True, y=True, z=True)
+        self.rMouthCtrl.lockScale(x=True, y=True, z=True)
 
         self.mouthEndOutputTgt.xfo = data['mouthXfo']
         self.mouthOutputTgt.xfo = data['mouthXfo']
@@ -979,8 +982,9 @@ class OSSLipRig(OSSLip):
         self.loLipCtrlSpace.xfo = data['midLipXfo']
         self.loLipCtrl.xfo = data['midLipXfo']
         self.loLipCtrl.rotatePoints(90.0, 0.0, 0.0)
-        self.loLipCtrl.scalePoints(Vec3(Vec3(1, .25,1)))
+        self.loLipCtrl.scalePoints(Vec3(Vec3(.5, -.125,.5)))
         self.loLipCtrl.setColor("blue")
+        self.loLipCtrl.lockScale(x=True, y=True, z=True)
 
         self.L_loLipHandleCtrl.xfo = data['L_midLipHandleXfo']
         self.R_loLipHandleCtrl.xfo = data['R_midLipHandleXfo']
@@ -992,21 +996,23 @@ class OSSLipRig(OSSLip):
         self.upLipCtrlSpace.xfo = data['midLipXfo']
         self.upLipCtrl.xfo = data['midLipXfo']
         self.upLipCtrl.rotatePoints(90.0, 0.0, 0.0)
-        self.upLipCtrl.scalePoints(Vec3(Vec3(1, .25,1)))
+        self.upLipCtrl.scalePoints(Vec3(Vec3(.5, .125,.5)))
         self.upLipCtrl.setColor("turqoise")
+        self.upLipCtrl.lockScale(x=True, y=True, z=True)
 
         self.L_upLipHandleCtrl.xfo = data['L_midLipHandleXfo']
         self.R_upLipHandleCtrl.xfo = data['R_midLipHandleXfo']
-        print data
 
-        self.loLipCtrl.translatePoints(Vec3(Vec3(-.5, -.75,  .5)))
-        self.upLipCtrl.translatePoints(Vec3(Vec3(-.5, 0.75,  .5)))
+        self.loLipCtrl.translatePoints(Vec3(Vec3(0, -.75,  .5)))
+        self.loLipCtrl.alignOnZAxis()
+        self.upLipCtrl.translatePoints(Vec3(Vec3(0, 0.75,  .5)))
+        self.upLipCtrl.alignOnZAxis()
 
         for ctrl in self.getAllHierarchyNodes(classType=Control):
             ctrl.scalePoints(globalScale)
 
 
-        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'] + 2, -2 , 0.0)))
+        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'] + 1, -4 , 0.0)))
 
 
         # ============

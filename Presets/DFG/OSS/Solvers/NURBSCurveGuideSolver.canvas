@@ -1,8 +1,8 @@
 {
   "objectType" : "Graph",
   "metadata" : {
-    "uiGraphZoom" : "{\n  \"value\" : 0.8663123250007629\n  }",
-    "uiGraphPan" : "{\n  \"x\" : -368.8047485351563,\n  \"y\" : -1035.4033203125\n  }"
+    "uiGraphZoom" : "{\n  \"value\" : 0.9608851671218872\n  }",
+    "uiGraphPan" : "{\n  \"x\" : -605.2548828125,\n  \"y\" : -1188.462158203125\n  }"
     },
   "title" : "NURBSCurveGuideSolver",
   "ports" : [
@@ -61,46 +61,10 @@
       "name" : "result",
       "execPortType" : "Out",
       "typeSpec" : "Scalar[]"
-      },
-    {
-      "objectType" : "Port",
-      "metadata" : {},
-      "nodePortType" : "In",
-      "defaultValues" : {
-        "Mat44" : {
-          "row0" : {
-            "x" : 1,
-            "y" : 0,
-            "z" : 0,
-            "t" : 0
-            },
-          "row1" : {
-            "x" : 0,
-            "y" : 1,
-            "z" : 0,
-            "t" : 0
-            },
-          "row2" : {
-            "x" : 0,
-            "y" : 0,
-            "z" : 1,
-            "t" : 0
-            },
-          "row3" : {
-            "x" : 0,
-            "y" : 0,
-            "z" : 0,
-            "t" : 1
-            }
-          }
-        },
-      "name" : "dummyResult",
-      "execPortType" : "Out",
-      "typeSpec" : "Mat44"
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "41F4E2CB030531926F40D3931BE78838",
+  "presetGUID" : "5C5A640D786BDDA7006A7FADBFDFB741",
   "nodes" : [
     {
       "objectType" : "Inst",
@@ -211,7 +175,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":203.985,\"y\":1089.98}"
+        "uiGraphPos" : "{\"x\":-23.768,\"y\":1114.85}"
         },
       "name" : "EmptyDrawingHandle_2",
       "ports" : [
@@ -332,7 +296,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":401.372,\"y\":1173.25}"
+        "uiGraphPos" : "{\"x\":373.552,\"y\":1021.78}"
         },
       "name" : "GetEmptyDebugShape_1",
       "ports" : [
@@ -363,7 +327,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":242.355,\"y\":1149.44}"
+        "uiGraphPos" : "{\"x\":306.893,\"y\":1166.9}"
         },
       "name" : "If_1",
       "ports" : [
@@ -394,7 +358,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":528.84,\"y\":1453.41}"
+        "uiGraphPos" : "{\"x\":602.27,\"y\":1473.67}"
         },
       "name" : "getClosestParams",
       "ports" : [
@@ -454,7 +418,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":827.42,\"y\":1330.23}"
+        "uiGraphPos" : "{\"x\":835.776,\"y\":1269.23}"
         },
       "name" : "Xfo_1",
       "ports" : [
@@ -485,7 +449,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1070.98,\"y\":1446.83}"
+        "uiGraphPos" : "{\"x\":1022.51,\"y\":1308.95}"
         },
       "name" : "ToMat44_1",
       "ports" : [
@@ -543,17 +507,14 @@
       ],
     "Xfo_1.result" : [
       "ToMat44_1.this"
-      ],
-    "ToMat44_1.result" : [
-      "dummyResult"
       ]
     },
   "requiredPresets" : {
     "OSS.Solvers.NURBSCurveGuideSolver" : {
       "objectType" : "Graph",
       "metadata" : {
-        "uiGraphZoom" : "{\n  \"value\" : 0.8663123250007629\n  }",
-        "uiGraphPan" : "{\n  \"x\" : -368.8047485351563,\n  \"y\" : -1035.4033203125\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 0.9608851671218872\n  }",
+        "uiGraphPan" : "{\n  \"x\" : -605.2548828125,\n  \"y\" : -1188.462158203125\n  }"
         },
       "title" : "NURBSCurveGuideSolver",
       "ports" : [
@@ -612,46 +573,10 @@
           "name" : "result",
           "execPortType" : "Out",
           "typeSpec" : "Scalar[]"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {},
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Mat44" : {
-              "row0" : {
-                "x" : 1,
-                "y" : 0,
-                "z" : 0,
-                "t" : 0
-                },
-              "row1" : {
-                "x" : 0,
-                "y" : 1,
-                "z" : 0,
-                "t" : 0
-                },
-              "row2" : {
-                "x" : 0,
-                "y" : 0,
-                "z" : 1,
-                "t" : 0
-                },
-              "row3" : {
-                "x" : 0,
-                "y" : 0,
-                "z" : 0,
-                "t" : 1
-                }
-              }
-            },
-          "name" : "dummyResult",
-          "execPortType" : "Out",
-          "typeSpec" : "Mat44"
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "41F4E2CB030531926F40D3931BE78838",
+      "presetGUID" : "5C5A640D786BDDA7006A7FADBFDFB741",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -762,7 +687,7 @@
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":203.985,\"y\":1089.98}"
+            "uiGraphPos" : "{\"x\":-23.768,\"y\":1114.85}"
             },
           "name" : "EmptyDrawingHandle_2",
           "ports" : [
@@ -883,7 +808,7 @@
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":401.372,\"y\":1173.25}"
+            "uiGraphPos" : "{\"x\":373.552,\"y\":1021.78}"
             },
           "name" : "GetEmptyDebugShape_1",
           "ports" : [
@@ -914,7 +839,7 @@
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":242.355,\"y\":1149.44}"
+            "uiGraphPos" : "{\"x\":306.893,\"y\":1166.9}"
             },
           "name" : "If_1",
           "ports" : [
@@ -945,7 +870,7 @@
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":528.84,\"y\":1453.41}"
+            "uiGraphPos" : "{\"x\":602.27,\"y\":1473.67}"
             },
           "name" : "getClosestParams",
           "ports" : [
@@ -1005,7 +930,7 @@
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":827.42,\"y\":1330.23}"
+            "uiGraphPos" : "{\"x\":835.776,\"y\":1269.23}"
             },
           "name" : "Xfo_1",
           "ports" : [
@@ -1036,7 +961,7 @@
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1070.98,\"y\":1446.83}"
+            "uiGraphPos" : "{\"x\":1022.51,\"y\":1308.95}"
             },
           "name" : "ToMat44_1",
           "ports" : [
@@ -1094,9 +1019,6 @@
           ],
         "Xfo_1.result" : [
           "ToMat44_1.this"
-          ],
-        "ToMat44_1.result" : [
-          "dummyResult"
           ]
         }
       },

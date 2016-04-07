@@ -1,8 +1,8 @@
 {
   "objectType" : "Graph",
   "metadata" : {
-    "uiGraphZoom" : "{\n  \"value\" : 0.4029430747032166\n  }",
-    "uiGraphPan" : "{\n  \"x\" : 9.275271415710449,\n  \"y\" : -380.954833984375\n  }"
+    "uiGraphZoom" : "{\n  \"value\" : 0.8222241401672363\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 81.07647705078125,\n  \"y\" : -1452.744140625\n  }"
     },
   "title" : "NURBSCurveXfoSolver",
   "ports" : [
@@ -107,7 +107,17 @@
       },
     {
       "objectType" : "Port",
-      "nodePortType" : "In",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 0
+        },
+      "name" : "alignToCurve",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
       "defaultValues" : {
         "Mat44" : {
           "row0" : {
@@ -136,28 +146,18 @@
             }
           }
         },
-      "name" : "dummyResult",
-      "execPortType" : "Out",
-      "typeSpec" : "Mat44"
-      },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
-      "defaultValues" : {
-        "Scalar" : 0
-        },
-      "name" : "alignToCurve",
+      "name" : "parent",
       "execPortType" : "In",
-      "typeSpec" : "Scalar"
+      "typeSpec" : "Mat44"
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "1041DE933522B0B4F678A8F7A46018A4",
+  "presetGUID" : "34A5372C13CB09373306F0D77E8745DF",
   "nodes" : [
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":238.48,\"y\":1275.14}"
+        "uiGraphPos" : "{\"x\":250.642,\"y\":1299.46}"
         },
       "name" : "Curve_1",
       "ports" : [
@@ -263,7 +263,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":798.907,\"y\":1429.22}"
+        "uiGraphPos" : "{\"x\":801.3390000000001,\"y\":1465.71}"
         },
       "name" : "DrawAxesInstances_3",
       "ports" : [
@@ -482,7 +482,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":791.457,\"y\":1612.28}"
+        "uiGraphPos" : "{\"x\":814.564,\"y\":1702.28}"
         },
       "name" : "convertXfoToMat44_2",
       "ports" : [
@@ -612,7 +612,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":193.385,\"y\":1581.94}"
+        "uiGraphPos" : "{\"x\":187.304,\"y\":1601.4}"
         },
       "name" : "Translation_2",
       "ports" : [
@@ -633,7 +633,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":453.231,\"y\":1547.43}",
+        "uiGraphPos" : "{\"x\":486.069,\"y\":1576.61}",
         "uiCollapsedState" : "0"
         },
       "name" : "createXfosOnCurve_2",
@@ -691,8 +691,8 @@
         "metadata" : {
           "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
           "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-          "uiGraphZoom" : "{\n  \"value\" : 0.4886516928672791\n  }",
-          "uiGraphPan" : "{\n  \"x\" : -380.3873132783405,\n  \"y\" : -928.844226209756\n  }"
+          "uiGraphZoom" : "{\n  \"value\" : 0.7210278511047363\n  }",
+          "uiGraphPan" : "{\n  \"x\" : -575.4398193359375,\n  \"y\" : -1574.878540039063\n  }"
           },
         "title" : "createXfosFromUpVec",
         "ports" : [
@@ -1199,7 +1199,7 @@ dfgEntry {
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":1266.36,\"y\":2411.46}"
+              "uiGraphPos" : "{\"x\":1185.92,\"y\":2435.04}"
               },
             "name" : "getXfosOnCurve_1",
             "ports" : [
@@ -1296,7 +1296,7 @@ dfgEntry {
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":1838.03,\"y\":2387.83}"
+              "uiGraphPos" : "{\"x\":1967.01,\"y\":2405.86}"
               },
             "name" : "LinearInterpolateArray_1",
             "ports" : [
@@ -1327,7 +1327,7 @@ dfgEntry {
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":1673.33,\"y\":2260.78}"
+              "uiGraphPos" : "{\"x\":1674.72,\"y\":2260.78}"
               },
             "name" : "swapAxes_1",
             "ports" : [
@@ -1367,47 +1367,7 @@ dfgEntry {
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":1624.12,\"y\":2475.24}"
-              },
-            "name" : "swapAxes_2",
-            "ports" : [
-              {
-                "objectType" : "InstPort",
-                "nodePortType" : "IO",
-                "name" : "this"
-                },
-              {
-                "objectType" : "InstPort",
-                "nodePortType" : "In",
-                "defaultValues" : {
-                  "SInt8" : -1
-                  },
-                "name" : "alignX"
-                },
-              {
-                "objectType" : "InstPort",
-                "nodePortType" : "In",
-                "defaultValues" : {
-                  "SInt8" : 3
-                  },
-                "name" : "alignY"
-                },
-              {
-                "objectType" : "InstPort",
-                "nodePortType" : "In",
-                "defaultValues" : {
-                  "SInt8" : 2
-                  },
-                "name" : "alignZ"
-                }
-              ],
-            "executable" : "OSS.Xfo.swapAxes",
-            "presetGUID" : "20B9BD600F8C4E04C554DC509BBEB6B7"
-            },
-          {
-            "objectType" : "Inst",
-            "metadata" : {
-              "uiGraphPos" : "{\"x\":1608.98,\"y\":2620.32}"
+              "uiGraphPos" : "{\"x\":1610.37,\"y\":2620.32}"
               },
             "name" : "atVecArray_2",
             "ports" : [
@@ -1491,6 +1451,43 @@ dfgEntry {
 }
 "
               }
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1662.14,\"y\":2451.89}"
+              },
+            "name" : "swapAxesArray_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "SInt8" : -1
+                  },
+                "name" : "alignX"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "alignY"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "SInt8" : 2
+                  },
+                "name" : "alignZ"
+                }
+              ],
+            "executable" : "OSS.Xfo.swapAxesArray",
+            "presetGUID" : "89394CBC85DBE5F656D90B78780B62C1"
             }
           ],
         "connections" : {
@@ -1542,7 +1539,7 @@ dfgEntry {
             "xfosFromTwoVectors.atVectors"
             ],
           "getXfosOnCurve_1.results" : [
-            "swapAxes_2.this"
+            "swapAxesArray_1.this"
             ],
           "LinearInterpolateArray_1.result" : [
             "results"
@@ -1550,11 +1547,11 @@ dfgEntry {
           "swapAxes_1.this" : [
             "LinearInterpolateArray_1.this"
             ],
-          "swapAxes_2.this" : [
-            "LinearInterpolateArray_1.other"
-            ],
           "atVecArray_2.result" : [
             "LinearInterpolateArray_1.t"
+            ],
+          "swapAxesArray_1.this" : [
+            "LinearInterpolateArray_1.other"
             ]
           }
         }
@@ -1562,13 +1559,49 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":214.2,\"y\":1718.91}"
+        "uiGraphPos" : "{\"x\":338.015,\"y\":1901.85}"
         },
-      "name" : "Vec3_1",
+      "name" : "TransformVector_1",
       "ports" : [
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 1,
+              "z" : 0
+              }
+            },
+          "name" : "v"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Xfo.TransformVector",
+      "presetGUID" : "7E511063FAD0B6D2F219FD9BB07010E3"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":50.9879,\"y\":2080.65}"
+        },
+      "name" : "Vec3_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
           "name" : "x"
           },
         {
@@ -1582,6 +1615,9 @@ dfgEntry {
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
           "name" : "z"
           },
         {
@@ -1592,6 +1628,84 @@ dfgEntry {
         ],
       "executable" : "Fabric.Exts.Math.Vec3.Vec3",
       "presetGUID" : "A59E49949F21CFCB14B5711D52330BA7"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":53.4206,\"y\":1817.93}"
+        },
+      "name" : "SetFromMat44_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "m"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
+      "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":355.041,\"y\":1924.95}"
+        },
+      "name" : "RotateVector_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "v"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Quat.RotateVector",
+      "presetGUID" : "2C7ED2354B8B602EEF4921F8C6036307"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":147.069,\"y\":1924.96}"
+        },
+      "name" : "DecomposeXfo_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "ori"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "tr"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "sc"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Xfo.DecomposeXfo",
+      "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6"
       }
     ],
   "connections" : {
@@ -1615,6 +1729,9 @@ dfgEntry {
       ],
     "alignToCurve" : [
       "createXfosOnCurve_2.alignToCurve"
+      ],
+    "parent" : [
+      "SetFromMat44_1.m"
       ],
     "Curve_1.result" : [
       "createXfosOnCurve_2.curve"
@@ -1650,9 +1767,6 @@ dfgEntry {
     "Xfo_1.result" : [
       "ToMat44_1.this"
       ],
-    "ToMat44_1.result" : [
-      "dummyResult"
-      ],
     "Translation_2.result" : [
       "createXfosOnCurve_2.atVec"
       ],
@@ -1660,16 +1774,27 @@ dfgEntry {
       "DrawAxesInstances_3.transforms",
       "convertXfoToMat44_2.xfoArray"
       ],
-    "Vec3_1.result" : [
+    "Vec3_2.result" : [
+      "TransformVector_1.v",
+      "RotateVector_1.v"
+      ],
+    "SetFromMat44_1.this" : [
+      "TransformVector_1.this",
+      "DecomposeXfo_1.value"
+      ],
+    "RotateVector_1.result" : [
       "createXfosOnCurve_2.upVec"
+      ],
+    "DecomposeXfo_1.ori" : [
+      "RotateVector_1.this"
       ]
     },
   "requiredPresets" : {
     "OSS.Solvers.NURBSCurveXfoSolver" : {
       "objectType" : "Graph",
       "metadata" : {
-        "uiGraphZoom" : "{\n  \"value\" : 0.4029430747032166\n  }",
-        "uiGraphPan" : "{\n  \"x\" : 9.275271415710449,\n  \"y\" : -380.954833984375\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 0.8222241401672363\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 81.07647705078125,\n  \"y\" : -1452.744140625\n  }"
         },
       "title" : "NURBSCurveXfoSolver",
       "ports" : [
@@ -1774,7 +1899,17 @@ dfgEntry {
           },
         {
           "objectType" : "Port",
-          "nodePortType" : "In",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
+          "name" : "alignToCurve",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
           "defaultValues" : {
             "Mat44" : {
               "row0" : {
@@ -1803,28 +1938,18 @@ dfgEntry {
                 }
               }
             },
-          "name" : "dummyResult",
-          "execPortType" : "Out",
-          "typeSpec" : "Mat44"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Scalar" : 0
-            },
-          "name" : "alignToCurve",
+          "name" : "parent",
           "execPortType" : "In",
-          "typeSpec" : "Scalar"
+          "typeSpec" : "Mat44"
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "1041DE933522B0B4F678A8F7A46018A4",
+      "presetGUID" : "34A5372C13CB09373306F0D77E8745DF",
       "nodes" : [
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":238.48,\"y\":1275.14}"
+            "uiGraphPos" : "{\"x\":250.642,\"y\":1299.46}"
             },
           "name" : "Curve_1",
           "ports" : [
@@ -1930,7 +2055,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":798.907,\"y\":1429.22}"
+            "uiGraphPos" : "{\"x\":801.3390000000001,\"y\":1465.71}"
             },
           "name" : "DrawAxesInstances_3",
           "ports" : [
@@ -2149,7 +2274,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":791.457,\"y\":1612.28}"
+            "uiGraphPos" : "{\"x\":814.564,\"y\":1702.28}"
             },
           "name" : "convertXfoToMat44_2",
           "ports" : [
@@ -2279,7 +2404,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":193.385,\"y\":1581.94}"
+            "uiGraphPos" : "{\"x\":187.304,\"y\":1601.4}"
             },
           "name" : "Translation_2",
           "ports" : [
@@ -2300,7 +2425,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":453.231,\"y\":1547.43}",
+            "uiGraphPos" : "{\"x\":486.069,\"y\":1576.61}",
             "uiCollapsedState" : "0"
             },
           "name" : "createXfosOnCurve_2",
@@ -2358,8 +2483,8 @@ dfgEntry {
             "metadata" : {
               "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
               "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-              "uiGraphZoom" : "{\n  \"value\" : 0.4886516928672791\n  }",
-              "uiGraphPan" : "{\n  \"x\" : -380.3873132783405,\n  \"y\" : -928.844226209756\n  }"
+              "uiGraphZoom" : "{\n  \"value\" : 0.7210278511047363\n  }",
+              "uiGraphPan" : "{\n  \"x\" : -575.4398193359375,\n  \"y\" : -1574.878540039063\n  }"
               },
             "title" : "createXfosFromUpVec",
             "ports" : [
@@ -2866,7 +2991,7 @@ dfgEntry {
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":1266.36,\"y\":2411.46}"
+                  "uiGraphPos" : "{\"x\":1185.92,\"y\":2435.04}"
                   },
                 "name" : "getXfosOnCurve_1",
                 "ports" : [
@@ -2963,7 +3088,7 @@ dfgEntry {
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":1838.03,\"y\":2387.83}"
+                  "uiGraphPos" : "{\"x\":1967.01,\"y\":2405.86}"
                   },
                 "name" : "LinearInterpolateArray_1",
                 "ports" : [
@@ -2994,7 +3119,7 @@ dfgEntry {
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":1673.33,\"y\":2260.78}"
+                  "uiGraphPos" : "{\"x\":1674.72,\"y\":2260.78}"
                   },
                 "name" : "swapAxes_1",
                 "ports" : [
@@ -3034,47 +3159,7 @@ dfgEntry {
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":1624.12,\"y\":2475.24}"
-                  },
-                "name" : "swapAxes_2",
-                "ports" : [
-                  {
-                    "objectType" : "InstPort",
-                    "nodePortType" : "IO",
-                    "name" : "this"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "nodePortType" : "In",
-                    "defaultValues" : {
-                      "SInt8" : -1
-                      },
-                    "name" : "alignX"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "nodePortType" : "In",
-                    "defaultValues" : {
-                      "SInt8" : 3
-                      },
-                    "name" : "alignY"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "nodePortType" : "In",
-                    "defaultValues" : {
-                      "SInt8" : 2
-                      },
-                    "name" : "alignZ"
-                    }
-                  ],
-                "executable" : "OSS.Xfo.swapAxes",
-                "presetGUID" : "20B9BD600F8C4E04C554DC509BBEB6B7"
-                },
-              {
-                "objectType" : "Inst",
-                "metadata" : {
-                  "uiGraphPos" : "{\"x\":1608.98,\"y\":2620.32}"
+                  "uiGraphPos" : "{\"x\":1610.37,\"y\":2620.32}"
                   },
                 "name" : "atVecArray_2",
                 "ports" : [
@@ -3158,6 +3243,43 @@ dfgEntry {
 }
 "
                   }
+                },
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":1662.14,\"y\":2451.89}"
+                  },
+                "name" : "swapAxesArray_1",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "IO",
+                    "name" : "this"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "SInt8" : -1
+                      },
+                    "name" : "alignX"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "name" : "alignY"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "SInt8" : 2
+                      },
+                    "name" : "alignZ"
+                    }
+                  ],
+                "executable" : "OSS.Xfo.swapAxesArray",
+                "presetGUID" : "89394CBC85DBE5F656D90B78780B62C1"
                 }
               ],
             "connections" : {
@@ -3209,7 +3331,7 @@ dfgEntry {
                 "xfosFromTwoVectors.atVectors"
                 ],
               "getXfosOnCurve_1.results" : [
-                "swapAxes_2.this"
+                "swapAxesArray_1.this"
                 ],
               "LinearInterpolateArray_1.result" : [
                 "results"
@@ -3217,11 +3339,11 @@ dfgEntry {
               "swapAxes_1.this" : [
                 "LinearInterpolateArray_1.this"
                 ],
-              "swapAxes_2.this" : [
-                "LinearInterpolateArray_1.other"
-                ],
               "atVecArray_2.result" : [
                 "LinearInterpolateArray_1.t"
+                ],
+              "swapAxesArray_1.this" : [
+                "LinearInterpolateArray_1.other"
                 ]
               }
             }
@@ -3229,13 +3351,49 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":214.2,\"y\":1718.91}"
+            "uiGraphPos" : "{\"x\":338.015,\"y\":1901.85}"
             },
-          "name" : "Vec3_1",
+          "name" : "TransformVector_1",
           "ports" : [
             {
               "objectType" : "InstPort",
               "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Vec3" : {
+                  "x" : 0,
+                  "y" : 1,
+                  "z" : 0
+                  }
+                },
+              "name" : "v"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.Math.Xfo.TransformVector",
+          "presetGUID" : "7E511063FAD0B6D2F219FD9BB07010E3"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":50.9879,\"y\":2080.65}"
+            },
+          "name" : "Vec3_2",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Scalar" : 0
+                },
               "name" : "x"
               },
             {
@@ -3249,6 +3407,9 @@ dfgEntry {
             {
               "objectType" : "InstPort",
               "nodePortType" : "In",
+              "defaultValues" : {
+                "Scalar" : 0
+                },
               "name" : "z"
               },
             {
@@ -3259,6 +3420,84 @@ dfgEntry {
             ],
           "executable" : "Fabric.Exts.Math.Vec3.Vec3",
           "presetGUID" : "A59E49949F21CFCB14B5711D52330BA7"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":53.4206,\"y\":1817.93}"
+            },
+          "name" : "SetFromMat44_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "m"
+              }
+            ],
+          "executable" : "Fabric.Exts.Math.Xfo.SetFromMat44",
+          "presetGUID" : "59B1B738E9402F3006B2516B14A43848"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":355.041,\"y\":1924.95}"
+            },
+          "name" : "RotateVector_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "v"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.Math.Quat.RotateVector",
+          "presetGUID" : "2C7ED2354B8B602EEF4921F8C6036307"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":147.069,\"y\":1924.96}"
+            },
+          "name" : "DecomposeXfo_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "ori"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "tr"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "sc"
+              }
+            ],
+          "executable" : "Fabric.Exts.Math.Xfo.DecomposeXfo",
+          "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6"
           }
         ],
       "connections" : {
@@ -3282,6 +3521,9 @@ dfgEntry {
           ],
         "alignToCurve" : [
           "createXfosOnCurve_2.alignToCurve"
+          ],
+        "parent" : [
+          "SetFromMat44_1.m"
           ],
         "Curve_1.result" : [
           "createXfosOnCurve_2.curve"
@@ -3317,9 +3559,6 @@ dfgEntry {
         "Xfo_1.result" : [
           "ToMat44_1.this"
           ],
-        "ToMat44_1.result" : [
-          "dummyResult"
-          ],
         "Translation_2.result" : [
           "createXfosOnCurve_2.atVec"
           ],
@@ -3327,8 +3566,19 @@ dfgEntry {
           "DrawAxesInstances_3.transforms",
           "convertXfoToMat44_2.xfoArray"
           ],
-        "Vec3_1.result" : [
+        "Vec3_2.result" : [
+          "TransformVector_1.v",
+          "RotateVector_1.v"
+          ],
+        "SetFromMat44_1.this" : [
+          "TransformVector_1.this",
+          "DecomposeXfo_1.value"
+          ],
+        "RotateVector_1.result" : [
           "createXfosOnCurve_2.upVec"
+          ],
+        "DecomposeXfo_1.ori" : [
+          "RotateVector_1.this"
           ]
         }
       },
@@ -4058,89 +4308,55 @@ dfgEntry {
 
 "
       },
-    "OSS.Xfo.swapAxes" : {
+    "Fabric.Exts.Math.Xfo.TransformVector" : {
       "objectType" : "Func",
-      "title" : "swapAxes",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiTooltip" : "Transforms a vector with this transform\n\n Supported by Xfo"
+        },
+      "title" : "TransformVector",
       "ports" : [
         {
           "objectType" : "Port",
-          "nodePortType" : "IO",
-          "defaultValues" : {
-            "Xfo" : {
-              "ori" : {
-                "v" : {
-                  "x" : 0,
-                  "y" : 0,
-                  "z" : 0
-                  },
-                "w" : 1
-                },
-              "tr" : {
-                "x" : 0,
-                "y" : 0,
-                "z" : 0
-                },
-              "sc" : {
-                "x" : 1,
-                "y" : 1,
-                "z" : 1
-                }
-              },
-            "Xfo[]" : []
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
             },
+          "nodePortType" : "Out",
           "name" : "this",
-          "execPortType" : "IO",
-          "typeSpec" : "Xfo[]"
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
           },
         {
           "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "SInt8" : -1
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
             },
-          "name" : "alignX",
+          "nodePortType" : "Out",
+          "name" : "v",
           "execPortType" : "In",
-          "typeSpec" : "SInt8"
+          "typeSpec" : "Vec3"
           },
         {
           "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "SInt8" : 3
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
             },
-          "name" : "alignY",
-          "execPortType" : "In",
-          "typeSpec" : "SInt8"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "SInt8" : 2
-            },
-          "name" : "alignZ",
-          "execPortType" : "In",
-          "typeSpec" : "SInt8"
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
           }
         ],
       "extDeps" : {
         "Math" : "*"
         },
-      "presetGUID" : "20B9BD600F8C4E04C554DC509BBEB6B7",
-      "code" : "
-operator __alignXfosTask<<<index>>>(io Xfo results[], Xfo xfos[], UInt8 alignX,  UInt8 alignY,  UInt8 alignZ)
-{ 
-  Xfo x = xfos[index];
-  results[index] = x.align(alignX,alignY,alignZ);
-}
+      "presetGUID" : "7E511063FAD0B6D2F219FD9BB07010E3",
+      "code" : "require Math;
 
 dfgEntry {
-  Xfo results[];
-  results.resize(this.size());
-  __alignXfosTask<<<this.size()>>>(results, this, alignX, alignY, alignZ);
-  this = results;
+  result = this.transformVector(v);
 }
-
 "
       },
     "Fabric.Exts.Math.Vec3.Vec3" : {
@@ -4192,6 +4408,182 @@ dfgEntry {
 
 dfgEntry {
   result = Vec3(x, y, z);
+}
+"
+      },
+    "Fabric.Exts.Math.Xfo.SetFromMat44" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiTooltip" : "Sets this transform from a given Mat44\n\n Supported by Xfo"
+        },
+      "title" : "SetFromMat44",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "m",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "59B1B738E9402F3006B2516B14A43848",
+      "code" : "require Math;
+
+dfgEntry {
+  this.setFromMat44(m);
+}
+"
+      },
+    "Fabric.Exts.Math.Quat.RotateVector" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Quat.html",
+        "uiTooltip" : "Rotates a vector by this quaterion.\nDon't forget to normalize the quaternion unless\nyou want axial translation as well as rotation.\n\n Supported by Quat"
+        },
+      "title" : "RotateVector",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Quat"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "v",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "2C7ED2354B8B602EEF4921F8C6036307",
+      "code" : "require Math;
+
+dfgEntry {
+  result = this.rotateVector(v);
+}
+"
+      },
+    "Fabric.Exts.Math.Xfo.DecomposeXfo" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html"
+        },
+      "title" : "Xfo ->",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Xfo" : {
+              "ori" : {
+                "v" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0
+                  },
+                "w" : 1
+                },
+              "tr" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              "sc" : {
+                "x" : 1,
+                "y" : 1,
+                "z" : 1
+                }
+              }
+            },
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "ori",
+          "execPortType" : "Out",
+          "typeSpec" : "Quat"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "tr",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "sc",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6",
+      "code" : "require Math;
+
+dfgEntry {
+  ori = value.ori;
+  tr = value.tr;
+  sc = value.sc;
 }
 "
       }

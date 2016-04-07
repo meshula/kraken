@@ -29,13 +29,13 @@ from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
 
-COMPONENT_NAME = "mouth"
+COMPONENT_NAME = "face"
 
-class OSSMouthComponent(BaseExampleComponent):
-    """Mouth Component Base"""
+class OSSFaceComponent(BaseExampleComponent):
+    """Face Component Base"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
-        super(OSSMouthComponent, self).__init__(name, parent)
+        super(OSSFaceComponent, self).__init__(name, parent)
 
         # ===========
         # Declare IO
@@ -43,10 +43,6 @@ class OSSMouthComponent(BaseExampleComponent):
         # Declare Inputs Xfos
         self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-
-        # Declare Output Xfos
-        self.mouthOutputTgt = self.createOutput('mouth', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.mouthEndOutputTgt = self.createOutput('mouthEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
         self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
@@ -58,13 +54,13 @@ class OSSMouthComponent(BaseExampleComponent):
         self.setComponentColor(155, 155, 200, 255)
 
 
-class OSSMouthComponentGuide(OSSMouthComponent):
-    """Mouth Component Guide"""
+class OSSFaceComponentGuide(OSSFaceComponent):
+    """Face Component Guide"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
 
-        Profiler.getInstance().push("Construct Mouth Guide Component:" + name)
-        super(OSSMouthComponentGuide, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct Face Guide Component:" + name)
+        super(OSSFaceComponentGuide, self).__init__(name, parent)
 
 
          # Guide Settings
@@ -73,7 +69,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
         self.an1DCtrlNames = StringAttribute('an1DNames', value="L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut L_loLidInn L_loLidMid L_loLidOut R_loLidInn R_loLidMid R_loLidOut L_upLidInn L_upLidMid L_upLidOut R_upLidInn R_upLidMid R_upLidOut", parent=guideSettingsAttrGrp)
-        self.an2DCtrlNames = StringAttribute('an2DNames', value="L_Mouth R_Mouth", parent=guideSettingsAttrGrp)
+        self.an2DCtrlNames = StringAttribute('an2DNames', value="", parent=guideSettingsAttrGrp)
         self.an3DCtrlNames = StringAttribute('an3DNames', value="", parent=guideSettingsAttrGrp)
 
 
@@ -88,8 +84,8 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         # =========
         # Guide Controls
 
-        self.mouthCtrl = Control('mouth', parent=self.ctrlCmpGrp, shape="sphere")
-        self.mouthEndCtrl = Control('mouthEnd', parent=self.ctrlCmpGrp, shape="sphere")
+        self.faceCtrl = Control('face', parent=self.ctrlCmpGrp, shape="sphere")
+        self.faceEndCtrl = Control('faceEnd', parent=self.ctrlCmpGrp, shape="sphere")
 
 
         self.an1DCtrls = []
@@ -100,8 +96,8 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         data = {
                 "name": name,
                 "location": "M",
-                "mouthXfo": Xfo(Vec3(0, 15, 0)),
-                "mouthEndXfo": Xfo(Vec3(0, 14, 2))
+                "faceXfo": Xfo(Vec3(0, 15, 0)),
+                "faceEndXfo": Xfo(Vec3(0, 14, 2))
                }
 
         self.loadData(data)
@@ -126,7 +122,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         current = 0
         for i, ctrl in enumerate(controlsList):
 
-            if ctrl.getParent() is self.mouthCtrl:
+            if ctrl.getParent() is self.faceCtrl:
                 self.controlXforms.append([ctrl.xfo])
                 current = len(self.controlXforms) -1
             else:
@@ -149,7 +145,7 @@ class OSSMouthComponentGuide(OSSMouthComponent):
 
         offset = 0.0
         for i, handleName in enumerate(animControlNameList):
-            parent = self.mouthCtrl
+            parent = self.faceCtrl
             for j, segment in enumerate(segments):
 
 
@@ -226,10 +222,10 @@ class OSSMouthComponentGuide(OSSMouthComponent):
 
         """
 
-        data = super(OSSMouthComponentGuide, self).saveData()
+        data = super(OSSFaceComponentGuide, self).saveData()
 
-        data['mouthXfo'] = self.mouthCtrl.xfo
-        data['mouthEndXfo'] = self.mouthEndCtrl.xfo
+        data['faceXfo'] = self.faceCtrl.xfo
+        data['faceEndXfo'] = self.faceEndCtrl.xfo
 
         for ctrlListName in ["an1DCtrls", "an2DCtrls", "an3DCtrls"]:
             ctrls = getattr(self, ctrlListName)
@@ -259,10 +255,10 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         existing_data.update(data)
         data = existing_data
 
-        super(OSSMouthComponentGuide, self).loadData( data )
+        super(OSSFaceComponentGuide, self).loadData( data )
 
-        self.mouthCtrl.xfo = data['mouthXfo']
-        self.mouthEndCtrl.xfo = data['mouthEndXfo']
+        self.faceCtrl.xfo = data['faceXfo']
+        self.faceEndCtrl.xfo = data['faceEndXfo']
 
         for ctrlListName in ["an1DCtrls", "an2DCtrls", "an3DCtrls"]:
             ctrls = getattr(self, ctrlListName)
@@ -282,30 +278,30 @@ class OSSMouthComponentGuide(OSSMouthComponent):
         The JSON rig data object.
 
         """
-        data = super(OSSMouthComponentGuide, self).getRigBuildData()
+        data = super(OSSFaceComponentGuide, self).getRigBuildData()
 
         # Values
-        mouthPosition = self.mouthCtrl.xfo.tr
-        mouthEndPosition = self.mouthEndCtrl.xfo.tr
+        facePosition = self.faceCtrl.xfo.tr
+        faceEndPosition = self.faceEndCtrl.xfo.tr
 
-        # Calculate Mouth Xfo
+        # Calculate Face Xfo
 
         # UpVector
-        mouthUpV= Xfo(Vec3(0.0, 1.0, 0.0)).tr
+        faceUpV= Xfo(Vec3(0.0, 1.0, 0.0)).tr
 
-        rootToEnd = mouthEndPosition.subtract(mouthPosition).unit()
+        rootToEnd = faceEndPosition.subtract(facePosition).unit()
 
-        rootToUpV = mouthUpV.subtract(mouthPosition).unit()
+        rootToUpV = faceUpV.subtract(facePosition).unit()
         bone1ZAxis = rootToUpV.cross(rootToEnd).unit()
         bone1Normal = bone1ZAxis.cross(rootToEnd).unit()
 
-        mouthXfo = Xfo()
-        mouthXfo.setFromVectors(rootToEnd, bone1Normal, bone1ZAxis, mouthPosition)
+        faceXfo = Xfo()
+        faceXfo.setFromVectors(rootToEnd, bone1Normal, bone1ZAxis, facePosition)
 
-        mouthLen = mouthPosition.subtract(mouthEndPosition).length()
+        faceLen = facePosition.subtract(faceEndPosition).length()
 
-        data['mouthXfo'] = mouthXfo
-        data['mouthLen'] = mouthLen
+        data['faceXfo'] = faceXfo
+        data['faceLen'] = faceLen
 
         for ctrlListName in ["an1DCtrls", "an2DCtrls", "an3DCtrls"]:
             ctrls = getattr(self, ctrlListName)
@@ -340,23 +336,23 @@ class OSSMouthComponentGuide(OSSMouthComponent):
 
         """
 
-        return OSSMouthComponentRig
+        return OSSFaceComponentRig
 
 
-class OSSMouthComponentRig(OSSMouthComponent):
-    """Mouth Component"""
+class OSSFaceComponentRig(OSSFaceComponent):
+    """Face Component"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
 
-        Profiler.getInstance().push("Construct Mouth Rig Component:" + name)
-        super(OSSMouthComponentRig, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct Face Rig Component:" + name)
+        super(OSSFaceComponentRig, self).__init__(name, parent)
 
 
         # =========
         # Controls
         # =========
-        # Mouth
-        self.mouthCtrlSpace = CtrlSpace('mouth', parent=self.ctrlCmpGrp)
+        # Face
+        self.faceCtrlSpace = CtrlSpace('face', parent=self.ctrlCmpGrp)
 
 
         # ==========
@@ -370,7 +366,7 @@ class OSSMouthComponentRig(OSSMouthComponent):
         # ==============
         # Constrain I/O
         # ==============
-        self.mouthInputConstraint = self.mouthCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.faceInputConstraint = self.faceCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         Profiler.getInstance().pop()
 
 
@@ -386,7 +382,7 @@ class OSSMouthComponentRig(OSSMouthComponent):
 
 
         for i, handleName in enumerate(animControlNameList):
-            parent = self.mouthCtrlSpace
+            parent = self.faceCtrlSpace
             newCtrls = []
             newDefs = []
             for j, segment in enumerate(segments):
@@ -508,15 +504,13 @@ class OSSMouthComponentRig(OSSMouthComponent):
 
         """
 
-        super(OSSMouthComponentRig, self).loadData( data )
+        super(OSSFaceComponentRig, self).loadData( data )
 
-        self.mouthCtrlSpace.xfo = data['mouthXfo']
+        self.faceCtrlSpace.xfo = data['faceXfo']
         # ============
         # Set IO Xfos
         # ============
-        self.parentSpaceInputTgt.xfo = data['mouthXfo']
-        self.mouthEndOutputTgt.xfo = data['mouthXfo']
-        self.mouthOutputTgt.xfo = data['mouthXfo']
+        self.parentSpaceInputTgt.xfo = data['faceXfo']
 
 
 
@@ -549,5 +543,5 @@ def getAnimControlNameList(handleNames):
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
-ks.registerComponent(OSSMouthComponentGuide)
-ks.registerComponent(OSSMouthComponentRig)
+ks.registerComponent(OSSFaceComponentGuide)
+ks.registerComponent(OSSFaceComponentRig)
