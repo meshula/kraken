@@ -32,14 +32,14 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
-COMPONENT_NAME = "lip"
+COMPONENT_NAME = "mouth"
 
 
-class OSSLip(BaseExampleComponent):
-    """Lip Component Base"""
+class OSSMouth(BaseExampleComponent):
+    """Mouth Component Base"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
-        super(OSSLip, self).__init__(name, parent)
+        super(OSSMouth, self).__init__(name, parent)
 
         # ===========
         # Declare IO
@@ -63,13 +63,13 @@ class OSSLip(BaseExampleComponent):
         # Use this color for OSS components (should maybe get this color from a central source eventually)
         self.setComponentColor(155, 155, 200, 255)
 
-class OSSLipGuide(OSSLip):
-    """Lip Component Guide"""
+class OSSMouthGuide(OSSMouth):
+    """Mouth Component Guide"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
 
-        Profiler.getInstance().push("Construct Lip Guide Component:" + name)
-        super(OSSLipGuide, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct Mouth Guide Component:" + name)
+        super(OSSMouthGuide, self).__init__(name, parent)
 
 
         # =========
@@ -78,7 +78,7 @@ class OSSLipGuide(OSSLip):
         # Guide Controls
         self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
         self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
-        self.lipCtrlNames = StringAttribute('lipCtrlNames', value="UD Sneer Pinch", parent=self.guideSettingsAttrGrp)
+        self.lipCtrlNames = StringAttribute('lipCtrlNames', value="1 Sneer", parent=self.guideSettingsAttrGrp)
         self.numSpansAttr = IntegerAttribute('numSpans', value=13, minValue=0, maxValue=20,  parent=self.guideSettingsAttrGrp)
 
         # midLip
@@ -125,7 +125,7 @@ class OSSLipGuide(OSSLip):
         self.lipCtrls = []
         self.symMapping = {}
 
-        # Add Lip Symmetry Canvas Op
+        # Add Mouth Symmetry Canvas Op
         self.lSideObjs = []
         self.rSideObjs = []
         self.lSideParentObjs = []
@@ -358,7 +358,7 @@ class OSSLipGuide(OSSLip):
             for i, defName in enumerate(defControlNameList):
                 newCtrl = Control(defName, parent=parent, shape="circle")
                 newCtrl.rotatePoints(90,0,0)
-                newCtrl.setColor("blue")
+                newCtrl.setColor("brownMuted")
                 newCtrl.xfo = parent.xfo
                 newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0, 0, 8)))
                 newCtrl.scalePoints(Vec3(.5,.5,.5))
@@ -390,7 +390,7 @@ class OSSLipGuide(OSSLip):
         """
 
 
-        data = super(OSSLipGuide, self).saveData()
+        data = super(OSSMouthGuide, self).saveData()
 
         # this should live in the GuideClase - also should considere Inherited Types
         data = self.saveControlData(data, Control)
@@ -416,7 +416,7 @@ class OSSLipGuide(OSSLip):
         data = existing_data
 
 
-        super(OSSLipGuide, self).loadData( data )
+        super(OSSMouthGuide, self).loadData( data )
 
 
         # this should probably live in the GuideClase
@@ -464,7 +464,7 @@ class OSSLipGuide(OSSLip):
         mouthLen = mouthPosition.subtract(mouthEndPosition).length()
 
 
-        data = super(OSSLipGuide, self).getRigBuildData()
+        data = super(OSSMouthGuide, self).getRigBuildData()
 
         # should include getCurveData
         data = self.saveControlData(data, Control)
@@ -497,16 +497,16 @@ class OSSLipGuide(OSSLip):
 
         """
 
-        return OSSLipRig
+        return OSSMouthRig
 
 
-class OSSLipRig(OSSLip):
-    """Lip Component"""
+class OSSMouthRig(OSSMouth):
+    """Mouth Component"""
 
-    def __init__(self, name='Lip', parent=None):
+    def __init__(self, name='Mouth', parent=None):
 
-        Profiler.getInstance().push("Construct Lip Rig Component:" + name)
-        super(OSSLipRig, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct Mouth Rig Component:" + name)
+        super(OSSMouthRig, self).__init__(name, parent)
 
         # ==========
         # Deformers
@@ -526,8 +526,7 @@ class OSSLipRig(OSSLip):
         # Mouth
 
         self.mouthCtrlSpace = CtrlSpace('mouth', parent=self.ctrlCmpGrp)
-        self.mouthCtrl = Control('mouth', parent=self.mouthCtrlSpace, shape="square")
-        self.mouthCtrl.alignOnXAxis()
+        self.mouthCtrl = Control('mouth', parent=self.mouthCtrlSpace, shape="halfCircle")
 
         # midMouth
         self.topMouthCtrlSpace = CtrlSpace('topMouth', parent=self.mouthCtrlSpace)
@@ -591,6 +590,7 @@ class OSSLipRig(OSSLip):
         self.upLipRigOp = CanvasOperator('upLipRigOp', 'OSS.Solvers.NURBSCurveXfoSolver')
         self.addOperator(self.upLipRigOp)
         self.params = [0.025,0.125,0.3,0.5,0.7,0.875,0.975]
+        self.params = [0.05,0.25,0.5,0.75,0.95]
         self.upLipControls = []
         self.upLipOutputs = []
         self.upLipControls.append(self.lMouthCtrl)
@@ -761,7 +761,7 @@ class OSSLipRig(OSSLip):
             for i, defName in enumerate(defControlNameList):
                 newCtrl = Control(defName, parent=parent, shape="halfCircle")
                 newCtrl.rotatePoints(90,0,0)
-                newCtrl.setColor("blue")
+                newCtrl.setColor("brownMuted")
                 newCtrl.xfo = parent.xfo
                 newCtrl.scalePoints(Vec3(.125,.125,.125))
                 controlsList.append(newCtrl)
@@ -788,7 +788,7 @@ class OSSLipRig(OSSLip):
 
         """
 
-        super(OSSLipRig, self).loadData( data )
+        super(OSSMouthRig, self).loadData( data )
 
 
 
@@ -803,7 +803,7 @@ class OSSLipRig(OSSLip):
         self.lUpLipCorner = Transform('L_upLipCorner', parent=self.ctrlCmpGrp)
         self.rUpLipCorner = Transform('R_upLipCorner', parent=self.ctrlCmpGrp)
 
-        lipCtrlY = .15;
+        lipCtrlY = .05;
         lipCtrlZ = .45;
         if self.upLipCtrls:
             # build control hierarchy
@@ -815,7 +815,7 @@ class OSSLipRig(OSSLip):
             for i in range(numCtrls):
                 ctrl = self.upLipCtrls[i]
                 ctrl.translatePoints(Vec3(Vec3(0, lipCtrlY, lipCtrlZ)))
-                ctrl.setColor("turqoise")
+                ctrl.setColor("yellowMuted")
                 ctrlUberParent = ctrl.insertCtrlSpace()
                 ctrlParent = ctrl.insertCtrlSpace()
 
@@ -844,7 +844,7 @@ class OSSLipRig(OSSLip):
         self.upLipDefOp.setInput('rigScale', 1.0)
         self.upLipDefOp.setInput('degree', 3)
         self.upLipDefOp.setInput('keepArcLength', 0.0)
-        self.upLipDefOp.setInput('alignToCurve', 0.25)
+        self.upLipDefOp.setInput('alignToCurve', 0.5)
         self.upLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipDefOp.setInput('atVec', self.mouthCtrl)
@@ -893,7 +893,7 @@ class OSSLipRig(OSSLip):
         self.loLipDefOp.setInput('rigScale', 1.0)
         self.loLipDefOp.setInput('degree', 3)
         self.loLipDefOp.setInput('keepArcLength', 0.0)
-        self.loLipDefOp.setInput('alignToCurve', 0.25)
+        self.loLipDefOp.setInput('alignToCurve', 0.5)
         self.loLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipDefOp.setInput('atVec', self.mouthCtrl)
@@ -953,11 +953,13 @@ class OSSLipRig(OSSLip):
         self.topMouthCtrlSpace.xfo = data['midLipXfo']
         self.mouthCtrlSpace.xfo = data['mouthXfo']
         self.mouthCtrl.xfo = data['mouthXfo']
-        self.mouthCtrl.rotatePoints(0.0, 0.0, 90.0)
+        self.mouthCtrl.rotatePoints(-90.0, 0.0, 90.0)
+        self.mouthCtrl.scalePoints(Vec3(Vec3( .5, .5,  .5)))
 
         self.lMouthCtrlSpace.xfo = data['L_MouthXfo']
         self.lMouthCtrl.xfo = data['L_MouthXfo']
-        self.lMouthCtrl.translatePoints(Vec3(Vec3(-.5, .5,  0)))
+        self.lMouthCtrl.scalePoints(Vec3(Vec3( .5, .5,  .5)))
+        self.lMouthCtrl.translatePoints(Vec3(Vec3(.0, .5,  0)))
         self.lMouthCtrl.rotatePoints(90.0, 0.0, 0.0)
         self.lMouthCtrl.lockRotation(x=True, y=True, z=True)
         self.lMouthCtrl.lockScale(x=True, y=True, z=True)
@@ -965,7 +967,8 @@ class OSSLipRig(OSSLip):
         self.rMouthCtrlSpace.xfo = data['R_MouthXfo']
         self.rMouthCtrlSpace.xfo.sc = Vec3(1.0, 1.0, -1.0)
         self.rMouthCtrl.xfo = data['R_MouthXfo']
-        self.rMouthCtrl.translatePoints(Vec3(Vec3(-.5, .5,  0)))
+        self.rMouthCtrl.scalePoints(Vec3(Vec3(.5, .5,  .5)))
+        self.rMouthCtrl.translatePoints(Vec3(Vec3(.0, .5,  0)))
         self.rMouthCtrl.rotatePoints(90.0, 0.0, 0.0)
         self.rMouthCtrl.lockRotation(x=True, y=True, z=True)
         self.rMouthCtrl.lockScale(x=True, y=True, z=True)
@@ -983,8 +986,8 @@ class OSSLipRig(OSSLip):
         self.loLipCtrl.xfo = data['midLipXfo']
         self.loLipCtrl.rotatePoints(90.0, 0.0, 0.0)
         self.loLipCtrl.scalePoints(Vec3(Vec3(.5, -.125,.5)))
-        self.loLipCtrl.setColor("blue")
-        self.loLipCtrl.lockScale(x=True, y=True, z=True)
+        self.loLipCtrl.setColor("brownMuted")
+        self.loLipCtrl.lockScale(x=False, y=True, z=True)
 
         self.L_loLipHandleCtrl.xfo = data['L_midLipHandleXfo']
         self.R_loLipHandleCtrl.xfo = data['R_midLipHandleXfo']
@@ -997,8 +1000,8 @@ class OSSLipRig(OSSLip):
         self.upLipCtrl.xfo = data['midLipXfo']
         self.upLipCtrl.rotatePoints(90.0, 0.0, 0.0)
         self.upLipCtrl.scalePoints(Vec3(Vec3(.5, .125,.5)))
-        self.upLipCtrl.setColor("turqoise")
-        self.upLipCtrl.lockScale(x=True, y=True, z=True)
+        self.upLipCtrl.setColor("yellowMuted")
+        self.upLipCtrl.lockScale(x=False, y=True, z=True)
 
         self.L_upLipHandleCtrl.xfo = data['L_midLipHandleXfo']
         self.R_upLipHandleCtrl.xfo = data['R_midLipHandleXfo']
@@ -1012,7 +1015,7 @@ class OSSLipRig(OSSLip):
             ctrl.scalePoints(globalScale)
 
 
-        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'] + 1, -4 , 0.0)))
+        self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'], -3 , 0.0)))
 
 
         # ============
@@ -1068,5 +1071,5 @@ def convertToScalarList(inputString):
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
-ks.registerComponent(OSSLipGuide)
-ks.registerComponent(OSSLipRig)
+ks.registerComponent(OSSMouthGuide)
+ks.registerComponent(OSSMouthRig)
