@@ -93,75 +93,11 @@ class Builder(object):
     # ========================
     # SceneItem Build Methods
     # ========================
-    def buildRig(self, kSceneItem, buildName):
-        """Builds a rig object.
-
-        We have to re-order component children by walking the graph to ensure
-        that inputs objects are in place for the dependent components.
-
-        Args:
-            kSceneItem (object): kSceneItem that represents a container to be built.
-            buildName (string): The name to use on the built object.
-
-        Returns:
-            object: DCC Scene Item that is created.
-
-        """
-
-        """
-        Don't check for cycles just now
-
-        resolvedComps = []
-        components = kSceneItem.getChildrenByType('Component')
-        compDeque = deque(components)
-        numComps = len(components)
-
-        for eachComp in components:
-            kSceneItem.removeChildByName(eachComp.getName())
-
-        i = 0
-        while len(resolvedComps) < numComps and i < 10 * numComps:
-            if i != 0:
-                compDeque.rotate(1)
-
-            comp = compDeque[0]
-            # print "Current Comp: " + comp.getName()
-
-            connectedInputs = [x for x in comp.getInputs() if x.isConnected() is True]
-            # print "\tConnected Inputs: " + ','.join([x.getName() for x in connectedInputs])
-            if len(connectedInputs) == 0:
-                resolvedComp = compDeque.popleft()
-                resolvedComps.append(resolvedComp)
-                i += 1
-                continue
-
-            connectedComps = [x.getConnection().getParent() for x in connectedInputs]
-            # print "\tConnected Comps: " + ','.join([x.getName() for x in set(connectedComps)])
-            if set(connectedComps) <= set(resolvedComps):
-                resolvedComp = compDeque.popleft()
-                resolvedComps.append(resolvedComp)
-
-            i += 1
-
-        if len(resolvedComps) < len(components):
-            circularComps = list(set(components) - set(resolvedComps))
-            print "Warning: Circular Dependencies detected!"
-            print "\t" + ",".join([x.getName() for x in circularComps])
-
-            resolvedComps = resolvedComps + circularComps
-
-        for eachComp in resolvedComps:
-            kSceneItem.addChild(eachComp)
-
-        """
-        return self.buildContainer(kSceneItem, buildName)
-
-
-    def buildContainer(self, kSceneItem, buildName):
+    def buildContainer(self, kContainer, buildName):
         """Builds a container / namespace object.
 
         Args:
-            kSceneItem (object): kSceneItem that represents a container to be built.
+            kContainer (object): kContainer that represents a container to be built.
             buildName (string): The name to use on the built object.
 
         Returns:
@@ -169,7 +105,17 @@ class Builder(object):
 
         """
 
+        if self._debugMode:
+            print "buildContainer:" + kContainer.getPath() + " as:" + buildName
 
+        # Build any items(and thier subtrees) owned by this item.
+        items = kContainer.getItems()
+        for key, kObject in items.iteritems():
+
+            if kObject.isTypeOf("AttributeGroup") or kObject.isTypeOf("Attribute"):
+                continue
+
+            self.buildHierarchy(kObject)
 
         return None
 
@@ -186,6 +132,9 @@ class Builder(object):
 
         """
 
+        if self._debugMode:
+            print "buildLayer:" + kSceneItem.getPath() + " as:" + buildName
+
         return None
 
 
@@ -200,6 +149,10 @@ class Builder(object):
             object: DCC Scene Item that is created.
 
         """
+
+
+        if self._debugMode:
+            print "buildHierarchyGroup:" + kSceneItem.getPath() + " as:" + buildName
 
         return None
 
@@ -216,6 +169,9 @@ class Builder(object):
 
         """
 
+        if self._debugMode:
+            print "buildGroup:" + kSceneItem.getPath() + " as:" + buildName
+
         return None
 
 
@@ -230,6 +186,9 @@ class Builder(object):
             object: DCC Scene Item that is created.
 
         """
+
+        if self._debugMode:
+            print "buildJoint:" + kSceneItem.getPath() + " as:" + buildName
 
         return None
 
@@ -246,6 +205,10 @@ class Builder(object):
 
         """
 
+
+        if self._debugMode:
+            print "buildLocator:" + kSceneItem.getPath() + " as:" + buildName
+
         return None
 
 
@@ -261,6 +224,10 @@ class Builder(object):
 
         """
 
+        if self._debugMode:
+            print "buildCurve:" + kSceneItem.getPath() + " as:" + buildName
+
+
         return None
 
 
@@ -275,6 +242,9 @@ class Builder(object):
             object: DCC Scene Item that is created.
 
         """
+
+        if self._debugMode:
+            print "buildControl:" + kSceneItem.getPath() + " as:" + buildName
 
         return None
 
@@ -293,6 +263,9 @@ class Builder(object):
 
         """
 
+        if self._debugMode:
+            print "buildBoolAttribute:" + kAttribute.getPath()
+
         return True
 
 
@@ -306,6 +279,10 @@ class Builder(object):
             bool: True if successful.
 
         """
+
+
+        if self._debugMode:
+            print "buildScalarAttribute:" + kAttribute.getPath()
 
         return True
 
@@ -321,6 +298,10 @@ class Builder(object):
 
         """
 
+
+        if self._debugMode:
+            print "buildIntegerAttribute:" + kAttribute.getPath()
+
         return True
 
 
@@ -334,6 +315,9 @@ class Builder(object):
             bool: True if successful.
 
         """
+
+        if self._debugMode:
+            print "buildStringAttribute:" + kAttribute.getPath()
 
         return True
 
@@ -349,6 +333,9 @@ class Builder(object):
 
         """
 
+        if self._debugMode:
+            print "buildAttributeGroup:" + kAttributeGroup.getPath()
+
         return True
 
 
@@ -362,6 +349,10 @@ class Builder(object):
             bool: True if successful.
 
         """
+
+
+        if self._debugMode:
+            print "connectAttribute:" + kAttribute.getPath()
 
         return True
 
@@ -380,6 +371,9 @@ class Builder(object):
 
         """
 
+        if self._debugMode:
+            print "buildOrientationConstraint:" + kConstraint.getPath() + " to:" + kConstraint.getConstrainee().getPath()
+
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
         dccSceneItem = None # Add constraint object here.
         self._registerSceneItemPair(kConstraint, dccSceneItem)
@@ -397,6 +391,8 @@ class Builder(object):
             bool: True if successful.
 
         """
+        if self._debugMode:
+            print "buildPoseConstraint:" + kConstraint.getPath() + " to:" + kConstraint.getConstrainee().getPath()
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
         dccSceneItem = None # Add constraint object here.
@@ -415,6 +411,8 @@ class Builder(object):
             bool: True if successful.
 
         """
+        if self._debugMode:
+            print "buildPositionConstraint:" + kConstraint.getPath() + " to:" + kConstraint.getConstrainee().getPath()
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
         dccSceneItem = None # Add constraint object here.
@@ -433,6 +431,8 @@ class Builder(object):
             bool: True if successful.
 
         """
+        if self._debugMode:
+            print "buildScaleConstraint:" + kConstraint.getPath() + " to:" + kConstraint.getConstrainee().getPath()
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
         dccSceneItem = None # Add constraint object here.
@@ -454,6 +454,8 @@ class Builder(object):
             bool: True if successful.
 
         """
+        if self._debugMode:
+            print "buildXfoConnection:" + componentInput.getPath()
 
         if componentInput.isConnected() is False:
             return False
@@ -480,7 +482,9 @@ class Builder(object):
         # There should be no offset between an output xfo from one component and the connected input of another
         # If connected, they should be exactly the same.
         # Do not add this to the constraint list otherwise, it will get run during buildConstraints()
-        constraint = inputTarget.constrainTo(connectionTarget, maintainOffset=False, addToConstraintList=False)
+
+        inputTarget.removeAllConstraints()
+        constraint = inputTarget.constrainTo(connectionTarget, maintainOffset=False)
 
         dccSceneItem = self.buildPoseConstraint(constraint)
         self._registerSceneItemPair(componentInput, dccSceneItem)
@@ -498,6 +502,9 @@ class Builder(object):
             bool: True if successful.
 
         """
+        if self._debugMode:
+            print "buildAttributeConnection:" + componentInput.getPath()
+
 
         # Implemented in DCC Plugins.
 
@@ -517,6 +524,8 @@ class Builder(object):
             bool: True if successful.
 
         """
+        if self._debugMode:
+            print "buildKLOperator:" + kKLOperator.getPath()
 
         return True
 
@@ -530,6 +539,8 @@ class Builder(object):
             bool: True if successful.
 
         """
+        if self._debugMode:
+            print "buildCanvasOperator:" + kOperator.getPath()
 
         return True
 
@@ -547,6 +558,8 @@ class Builder(object):
             bool: True if successful.
 
         """
+        if self._debugMode:
+            print "buildAttributes:" + kObject.getPath()
 
         for i in xrange(kObject.getNumAttributeGroups()):
             attributeGroup = kObject.getAttributeGroupByIndex(i)
@@ -573,16 +586,10 @@ class Builder(object):
         buildName = kObject.getBuildName()
 
         if self._debugMode:
-            print "building:" + kObject.getPath() + " as:" + buildName
+            print "building:" + kObject.getPath() + " as:" + buildName + " type:" + kObject.getTypeName()
 
         # Build Object
-        if kObject.isTypeOf("Rig"):
-            dccSceneItem = self.buildRig(kObject, buildName)
-
-        elif kObject.isTypeOf("Container"):
-            dccSceneItem = self.buildContainer(kObject, buildName)
-
-        elif kObject.isTypeOf("Layer"):
+        if kObject.isTypeOf("Layer"):
             dccSceneItem = self.buildLayer(kObject, buildName)
 
         elif kObject.isTypeOf("Component"):
@@ -630,6 +637,7 @@ class Builder(object):
             self.setObjectColor(kObject)
 
         # Build children
+        # print "children:" + str(kObject.getNumChildren())
         for i in xrange(kObject.getNumChildren()):
             child = kObject.getChildByIndex(i)
             self.buildHierarchy(child, component)
@@ -773,6 +781,171 @@ class Builder(object):
         for i in xrange(kObject.getNumChildren()):
             child = kObject.getChildByIndex(i)
             self.buildOperators(child)
+
+        return True
+
+
+    def buildRig(self, kRig):
+        """Builds a rig object.
+
+        We have to re-order component children by walking the graph to ensure
+        that inputs objects are in place for the dependent components.
+
+        Args:
+            kRig (object): The rig to be built.
+
+        Returns:
+            object: DCC Scene Item that is created.
+
+        """
+
+        buildName = kRig.getBuildName()
+        dccSceneItem = self.buildContainer(kRig, buildName)
+
+        if dccSceneItem is not None:
+            self.buildAttributes(kRig)
+            self.setTransform(kRig)
+            self.lockParameters(kRig)
+            self.setVisibility(kRig)
+            self.setObjectColor(kRig)
+
+        for layer in kRig.getChildrenByType('Layer'):
+            buildName = layer.getBuildName()
+            dccSceneItem = self.buildLayer(layer, buildName)
+
+            if dccSceneItem is not None:
+                self.buildAttributes(layer)
+                self.setTransform(layer)
+                self.lockParameters(layer)
+                self.setVisibility(layer)
+                self.setObjectColor(layer)
+
+
+        def dep_walk(comp, visited, unseen):
+            """Recursively walks the input connections for the specified
+            component while adding visited components to the visited list.
+
+            Args:
+                comp (Component): the component to walk.
+                visited (list): list that holds the visited components.
+                unseen (list): list that holds the unseen components.
+
+            """
+
+            unseen.append(comp)
+
+            connectedInputs = [x for x in comp.getInputs() if x.isConnected() is True]
+            connectedComps = [x.getConnection().getParent() for x in connectedInputs]
+            for connComp in connectedComps:
+                if connComp not in visited:
+                    if connComp in unseen:
+                        raise Exception("Circular Dependency " + comp.getName() + " <-> " + connComp.getName())
+
+                    dep_walk(connComp, visited, unseen)
+
+            visited.append(comp)
+            unseen.remove(comp)
+
+        def getBuildOrder():
+            """Returns the build order for the components.
+
+            This also checks the components for cycles and raises an exception if any are found.
+
+            Returns:
+                list: List of components in build order.
+
+            """
+
+            # Get the components with no output connections.
+            # We start with the leaf components and walk up the graph to ensure that
+            # proper build order is generated.
+            leafComps = []
+            components = kRig.getChildrenByType('Component')
+            for comp in components:
+                connectedOutputs = [x for x in comp.getOutputs() if x.isConnected() is True]
+                if len(connectedOutputs) == 0:
+                    leafComps.append(comp)
+
+            unseen = []
+            orderedComponents = []
+            for comp in leafComps:
+                dep_walk(comp, orderedComponents, unseen)
+
+            cyclicMessages = []
+            cyclicComponents = list(set(components) - set(orderedComponents))
+            for comp in cyclicComponents:
+                connectedInputs = [x for x in comp.getInputs() if x.isConnected() is True]
+                connInputComps = [x.getConnection().getParent() for x in connectedInputs]
+
+                connCyclicComps = []
+                connectedOutputs = [x for x in comp.getOutputs() if x.isConnected() is True]
+                for connOutput in connectedOutputs:
+                    for i in xrange(connOutput.getNumConnections()):
+                        connComp = connOutput.getConnection(i).getParent()
+                        if connComp in connInputComps:
+                            if connComp not in connCyclicComps:
+                                connCyclicComps.append(connComp)
+                                cyclicMessages.append("\n > Circular Dependency " + comp.getName() + " <-> " + connComp.getName())
+
+            if len(cyclicMessages) > 0:
+                raise Exception("Circular Dependencies Detected:" + "".join([x for x in cyclicMessages]))
+
+            return orderedComponents
+
+        # orderedComponents = getBuildOrder()
+        orderedComponents = kRig.getChildrenByType('Component') # getBuildOrder()
+
+        # Build Components in the correct order
+        for component in orderedComponents:
+            self.buildComponent(component)
+
+        # Create the connections now that all the components are built.
+        for component in orderedComponents:
+            self.buildAttrConnections(component)
+            self.buildInputConnections(component)
+
+        for component in orderedComponents:
+            operators = component.getOperators()
+            for operator in operators:
+                # Build operators
+                if operator.isTypeOf('KLOperator'):
+                    self.buildKLOperator(operator)
+                elif operator.isTypeOf('CanvasOperator'):
+                    self.buildCanvasOperator(operator)
+                else:
+                    raise NotImplementedError(operator.getName() + ' has an unsupported type: ' + str(type(operator)))
+
+            items = component.getItems()
+            for key, kObject in items.iteritems():
+                self.buildConstraints(kObject)
+
+        return
+
+
+    def buildComponent(self, kComponent):
+        """Protected build method.
+
+        Args:
+            kComponent (object): kraken kComponent object to build.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        def buildHierarchy(obj):
+            for i in xrange(obj.getNumChildren()):
+                child = obj.getChildByIndex(i)
+                buildHierarchy(child)
+
+        items = kComponent.getItems()
+        for key, kObject in items.iteritems():
+
+            if kObject.isTypeOf("AttributeGroup") or kObject.isTypeOf("Attribute"):
+                continue
+
+            self.buildHierarchy(kObject)
+
 
         return True
 

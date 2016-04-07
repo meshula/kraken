@@ -26,7 +26,6 @@ class Object3D(SceneItem):
 
     def __init__(self, name, parent=None):
         super(Object3D, self).__init__(name, parent)
-        self._component = None
         self._children = []
         self._flags = {}
         self._attributeGroups = []
@@ -290,34 +289,6 @@ class Object3D(SceneItem):
         return parent
 
 
-    # ==================
-    # Component Methods
-    # ==================
-    def getComponent(self):
-        """Returns the component of the object as an object.
-
-        Returns:
-            Object: Component of this object.
-
-        """
-
-        return self._component
-
-    def setComponent(self, component):
-        """Sets the component attribute of this object.
-
-        Args:
-            component (Object): Object that is the component of this one.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        self._component = component
-
-        return True
-
 
     # ==============
     # Child Methods
@@ -461,6 +432,34 @@ class Object3D(SceneItem):
         return True
 
 
+    def getDescendents(self, nodeList=None, classType=None, inheritedClass=False):
+        """Gets the children of this object.
+
+        Args:
+            nodeList: (list): optional list to append children to
+            classType (class type):
+            inheritedClass (bool): Match nodes that is a sub-class of type.
+        Returns:
+            list: Child objects.
+
+        """
+        if nodeList is None:
+            nodeList = []
+
+        for child in self._children:
+                if classType:
+                    if inheritedClass and issubclass(child.__class__, classType):
+                        nodeList.append(child)
+                    elif isinstance(child, classType):
+                        nodeList.append(child)
+                else:
+                    nodeList.append(child)
+
+                child.getDescendents(classType=classType, nodeList=nodeList, inheritedClass=inheritedClass)
+
+        return nodeList
+
+
     def getChildren(self):
         """Gets the children of this object.
 
@@ -582,10 +581,7 @@ class Object3D(SceneItem):
 
         """
 
-        if name in self._flags:
-            return True
-
-        return False
+        return name in self._flags
 
 
     def clearFlag(self, name):
@@ -756,7 +752,7 @@ class Object3D(SceneItem):
         return True
 
 
-    def constrainTo(self, constrainers, constraintType="Pose", maintainOffset=False, name=None, addToConstraintList=True):
+    def constrainTo(self, constrainers, constraintType="Pose", maintainOffset=False, name=None):
         """Adds an constraint to this object.
 
         Args:
@@ -803,12 +799,12 @@ class Object3D(SceneItem):
 
         constraint.setMaintainOffset(maintainOffset)
 
-        self.addConstraint(constraint, addToConstraintList=addToConstraintList)
+        self.addConstraint(constraint)
 
         return constraint
 
 
-    def addConstraint(self, constraint, addToConstraintList=True):
+    def addConstraint(self, constraint):
         """Adds an constraint to this object.
 
         Args:
@@ -820,13 +816,11 @@ class Object3D(SceneItem):
         """
 
         if constraint.getName() in [x.getName() for x in self._constraints]:
-                raise IndexError("Constraint with name '" + constraint.getName() + "'' already exists as a constraint.")
+            raise IndexError("Constraint with name '" + constraint.getName() + "'' already exists as a constraint.")
 
         constraint.setParent(self)
         constraint.setConstrainee(self)
-
-        if addToConstraintList:
-            self._constraints.append(constraint)
+        self._constraints.append(constraint)
 
         return True
 
@@ -871,6 +865,19 @@ class Object3D(SceneItem):
             return False
 
         self.removeConstraintByIndex(removeIndex)
+
+        return True
+
+
+    def removeAllConstraints(self):
+        """Removes all of the constraints for this object.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        del self._constraints[:]
 
         return True
 

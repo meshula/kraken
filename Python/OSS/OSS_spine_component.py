@@ -136,7 +136,7 @@ class OSSSpineComponentGuide(OSSSpineComponent):
 
         """
         #Reset all shapes, but really we should just recreate all controls from loadData instead of init
-        for ctrl in self.getAllHierarchyNodes(classType=Control):
+        for ctrl in self.getHierarchyNodes(classType=Control):
             ctrl.setShape(ctrl.getShape())
 
         #saveData() will grab the guide settings values (and are not stored in data arg)
@@ -425,7 +425,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.controlRestInputs.append(self.chestCtrl.xfo)
         self.controlRestInputs.append(self.upChestCtrl.xfo)
         self.controlRestInputs.append(self.neckCtrlSpace.xfo)
-        
+
 
 
 

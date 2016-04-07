@@ -137,9 +137,9 @@ class CanvasOperator(Operator):
             portConnectionType = portTypeMap[self.node.getExecPortType(i)]
             rtVal = self.binding.getArgValue(portName)
             portDataType = rtVal.getTypeName().getSimpleType()
+
             portVal = None
             if portDataType == '$TYPE$':
-                # TODO: test for inputs[portName] is iterable, if so change dataType to based on elements and do the rest
                 return
 
             if portDataType in ('EvalContext', 'time', 'frame'):
@@ -153,7 +153,9 @@ class CanvasOperator(Operator):
                     rtValArray.resize(len(self.inputs[portName]))
                     for j in xrange(len(self.inputs[portName])):
                         rtVal = getRTVal(self.inputs[portName][j])
+
                         validateArg(rtVal, portName, portDataType[:-2])
+
                         rtValArray[j] = rtVal
 
                     portVal = rtValArray
@@ -167,7 +169,6 @@ class CanvasOperator(Operator):
             else:
                 if str(portDataType).endswith('[]'):
                     rtValArray = ks.rtVal(portDataType)
-
                     rtValArray.resize(len(self.outputs[portName]))
                     for j in xrange(len(self.outputs[portName])):
                         rtVal = getRTVal(self.outputs[portName][j])
@@ -231,8 +232,7 @@ class CanvasOperator(Operator):
 
             if portConnectionType != 'In':
                 outVal = self.binding.getArgValue(portName)
-
-                if str(portDataType).endswith('[]'):
+                if str(portDataType).endswith('[]' or hasattr(outVal.getSimpleType(), '__iter__')):
                     for j in xrange(len(outVal)):
                         setRTVal(self.outputs[portName][j], outVal[j])
                 else:

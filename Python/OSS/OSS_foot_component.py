@@ -151,7 +151,7 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         """
         #Reset all shapes, but really we should just recreate all controls from loadData instead of init
-        for ctrl in self.getAllHierarchyNodes(classType=Control):
+        for ctrl in self.getHierarchyNodes(classType=Control):
             ctrl.setShape(ctrl.getShape())
 
         #Grab the guide settings in case we want to use them here (and are not stored in data arg)
@@ -336,13 +336,11 @@ class OSSFootComponentRig(OSSFootComponent):
         # FK Foot
         self.footCtrl = FKControl('foot', parent=self.ctrlCmpGrp, shape="cube")
         self.footCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
-        self.footCtrl.alignOnXAxis()
         self.footCtrlSpace = self.footCtrl.insertCtrlSpace()
 
         # FK Ball
         self.ballCtrl = FKControl('ball', parent=self.footCtrl, shape="cube")
         self.ballCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
-        self.ballCtrl.alignOnXAxis()
         self.ballCtrlSpace = self.ballCtrl.insertCtrlSpace()
 
 
@@ -517,10 +515,12 @@ class OSSFootComponentRig(OSSFootComponent):
         self.handleCtrlSpace.xfo = Xfo(self.handleCtrl.xfo)
 
         self.footCtrl.xfo = data['footXfo']
+        self.footCtrl.alignOnXAxis()
         self.footCtrl.scalePointsOnAxis(data['footLen'], self.boneAxisStr)
         self.footCtrlSpace.xfo = Xfo(self.footCtrl.xfo)
 
         self.ballCtrl.xfo = data['ballXfo']
+        self.ballCtrl.alignOnXAxis()
         self.ballCtrl.scalePointsOnAxis(data['ballLen'], self.boneAxisStr)
         self.ballCtrlSpace.xfo = Xfo(self.ballCtrl.xfo)
 
