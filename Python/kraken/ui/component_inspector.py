@@ -79,6 +79,11 @@ class ComponentInspector(BaseInspector):
             attributeWidget = EditorFactory.constructEditor(attributeController, parent=self)
             self.addEditor(attribute.getName(), attributeWidget)
 
+            # Let the attribute know about it's inspector for updating graph
+            # Not the best way...
+            if attribute.getUpdateNode():
+                attribute.component_inspector = self
+
         for i in xrange(self.component.getNumAttributeGroups()):
             attrGrp = self.component.getAttributeGroupByIndex(i)
             if attrGrp.getName() == "implicitAttrGrp":
