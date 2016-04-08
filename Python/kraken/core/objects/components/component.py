@@ -394,31 +394,24 @@ class Component(Object3D):
 
         return componentInputPort
 
-    def deleteInput(self, name, **kwargs):
-        """Deletes an input object and also any connected target object that matches
-        the data type that is passed.
 
+    def deleteInput(self, name):
+        """Deletes an input object and also any connected target object
         Args:
             name (str): Name of the input to delete.
 
         """
-        dataType = None
-        for eachInput in self._inputs:
-            if eachInput.getName() == name:
-                dataType = eachInput.getDataType()
 
-        # Handle keyword arguments
-        for k, v in kwargs.iteritems():
-            if k == 'parent':
-                if dataType.startswith('Xfo'):
-                    v.removeChildByName(name)
-                else:
-                    v.removeAttributeByName(name)
-            else:
-                print "Keyword '" + k + "' is not supported with createInput method!"
+        inputObj = self.getInputByName(name)
+
+        target = inputObj.getTarget()
+
+        if issubclass(target.__class__, Object3D):
+            target.getParent().removeChildByName(target.getName())
+        else:
+            target.getParent().removeAttributeByName(target.getName())
 
         self.removeInputByName(name)
-
 
 
     def addInput(self, name, dataType):
@@ -663,6 +656,25 @@ class Component(Object3D):
         componentOutputPort.setTarget(newOutputTgt)
 
         return componentOutputPort
+
+
+    def deleteOutput(self, name):
+        """Deletes an input object and also any connected target object
+
+        Args:
+            name (str): Name of the input to delete.
+        """
+
+        outputObj = self.getOutputByName(name)
+
+        target = outputObj.getTarget()
+
+        if issubclass(target.__class__, Object3D):
+            target.getParent().removeChildByName(target.getName())
+        else:
+            target.getParent().removeAttributeByName(target.getName())
+
+        self.removeOutputByName(name)
 
 
     def addOutput(self, name, dataType):
