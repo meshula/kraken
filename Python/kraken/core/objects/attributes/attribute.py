@@ -59,12 +59,14 @@ class Attribute(SceneItem):
         if self._callback is not None:
             self._callback(value)
 
+        # For dynamic ports
         # Need a way that does not imbed knowledge of Kraken into HAppkit Editors
         # But this integrates UI into functionality.
         # Also, we do not want to recreate the whole graph, just this one node.  Don't leave this code like this.
         if self.getUpdateNode() and hasattr(self, "component_inspector"):
             if self.component_inspector is not None:
-                self.component_inspector.parent().graphView.displayGraph(None)
+                graphView = self.component_inspector.parent().graphView
+                graphView.displayGraph(graphView.getRig()) # Refresh existing rig graph
 
         return True
 
