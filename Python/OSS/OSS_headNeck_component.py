@@ -519,7 +519,6 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
             # Neck handle
             self.neckHandleMocapCtrlSpace = CtrlSpace('neckHandle', parent=self.neckMocapCtrlSpace)
-            self.neckHandleMocapCtrlSpace.setSecondType(MCControl)
             self.neckHandleMocapCtrlSpace.xfo.tr = neckHandlePosition
 
             # Head
@@ -532,7 +531,6 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
             # Head handle
             self.headHandleMocapCtrlSpace = CtrlSpace('headHandle_mocap', parent=self.headMocapCtrl)
-            self.headHandleMocapCtrlSpace.setSecondType(MCControl)
             self.headHandleMocapCtrlSpace.xfo.tr = headHandlePosition
 
             # Blend anim and mocap together
