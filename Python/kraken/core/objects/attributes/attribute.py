@@ -89,7 +89,7 @@ class Attribute(SceneItem):
 
 
     def setUpdateNode(self, value):
-        """Sets the animatable state of the attribute..
+        """Sets the toggled state of the attribute..
 
         Args:
             value (bool): should Kraken graph update the node if value is changed
@@ -108,7 +108,7 @@ class Attribute(SceneItem):
 
 
     def getUpdateNode(self):
-        """Returns the animatable state of the attribute..
+        """Returns the toggled state of the attribute..
 
         Returns:
             bool: True if  Kraken graph updates the node if value is changed
