@@ -242,11 +242,10 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
 
         # hips
-        self.hipsCtrl = FKControl('hips', parent=self.ctrlCmpGrp, shape="cube")
+        self.hipsCtrl = FKControl('hips', parent=self.ctrlCmpGrp, shape="squarePointed")
         self.hipsCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
-        height = 2.0
-        self.hipsCtrl.scalePoints(Vec3(4.5, height, 2.5))
-        self.hipsCtrl.translatePoints(Vec3(0, -height/2, 0))
+        self.hipsCtrl.rotatePoints(0, -90.0, 0)
+        self.hipsCtrl.scalePoints(Vec3(4.5, 3.0, 3.0))
         self.hipsCtrlSpace = self.hipsCtrl.insertCtrlSpace()
 
         # Pelvis
@@ -256,21 +255,24 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # self.pelvisCtrl.scalePoints(Vec3(1, 1, 1))
 
         # Torso
-        self.torsoCtrl = FKControl('torso', parent=self.ctrlCmpGrp, shape="square")
+        self.torsoCtrl = FKControl('torso', parent=self.ctrlCmpGrp, shape="squarePointed")
         self.torsoCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.torsoCtrl.rotatePoints(0, -90.0, 0)
         self.torsoCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
         self.torsoCtrlSpace = self.torsoCtrl.insertCtrlSpace()
 
 
         # Chest
-        self.chestCtrl = FKControl('chest', parent=self.torsoCtrl, shape="square")
+        self.chestCtrl = FKControl('chest', parent=self.torsoCtrl, shape="squarePointed")
         self.chestCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.chestCtrl.rotatePoints(0, -90.0, 0)
         self.chestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
         self.chestCtrlSpace = self.chestCtrl.insertCtrlSpace()
 
         # UpChest
-        self.upChestCtrl = FKControl('upChest', parent=self.chestCtrl, shape="square")
+        self.upChestCtrl = FKControl('upChest', parent=self.chestCtrl, shape="squarePointed")
         self.upChestCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.upChestCtrl.rotatePoints(0, -90.0, 0)
         self.upChestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
         self.upChestCtrlSpace = self.upChestCtrl.insertCtrlSpace()
 
@@ -414,6 +416,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.setNumDeformers(numDeformers)
 
 
+        self.pelvisHeight = pelvisPosition.subtract(torsoPosition)
+        self.hipsCtrl.translatePoints( self.pelvisHeight - Vec3(0,2,0))
 
         self.controlInputs.append(self.pelvisCtrlSpace)
         self.controlInputs.append(self.torsoCtrl)
@@ -437,17 +441,16 @@ class OSSSpineComponentRig(OSSSpineComponent):
         if self.mocap:
 
             self.mocapInputAttr = self.createInput('mocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+            height = 2.0
 
             # hips
             self.hipsMocapCtrl = MCControl('hips', parent=self.ctrlCmpGrp, shape="circle")
-            height = 2.0
             self.hipsMocapCtrl.scalePoints(Vec3(4.5, height, 2.5))
             self.hipsMocapCtrl.setColor("purpleLight")
             self.hipsMocapCtrl.xfo.tr = pelvisPosition
             self.hipsMocapCtrlSpace = self.hipsMocapCtrl.insertCtrlSpace()
 
             self.pelvisMocapCtrl = MCControl('pelvis', parent=self.hipsMocapCtrl, shape="circle")
-            height = 2.0
             self.pelvisMocapCtrl.scalePoints(Vec3(4.5, height, 2.5))
             self.pelvisMocapCtrl.setColor("purpleLight")
             self.pelvisMocapCtrl.xfo.tr = pelvisPosition
@@ -455,7 +458,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
             # Torso
             self.torsoMocapCtrl = MCControl('torso', parent=self.hipsMocapCtrl, shape="circle")
-            self.torsoMocapCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
+            self.torsoMocapCtrl.scalePoints(Vec3(5.0, height, 3.0))
             self.torsoMocapCtrl.setColor("purpleLight")
 
             self.torsoMocapCtrl.xfo.tr = torsoPosition
@@ -463,14 +466,14 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
             # Chest
             self.chestMocapCtrl = MCControl('chest', parent=self.torsoMocapCtrl, shape="circle")
-            self.chestMocapCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
+            self.chestMocapCtrl.scalePoints(Vec3(5.0, height, 3.0))
             self.chestMocapCtrl.setColor("purpleLight")
             self.chestMocapCtrl.xfo.tr = chestPosition
             self.chestMocapCtrlSpace = self.chestMocapCtrl.insertCtrlSpace()
 
             # UpChest
             self.upChestMocapCtrl = MCControl('upChest', parent=self.chestMocapCtrl, shape="circle")
-            self.upChestMocapCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
+            self.upChestMocapCtrl.scalePoints(Vec3(5.0, height, 3.0))
             self.upChestMocapCtrl.setColor("purpleLight")
             self.upChestMocapCtrl.xfo.tr = upChestPosition
             self.upChestMocapCtrlSpace = self.upChestMocapCtrl.insertCtrlSpace()
