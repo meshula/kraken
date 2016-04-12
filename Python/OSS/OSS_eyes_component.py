@@ -423,6 +423,8 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
                     upVSpaceBlendInputAttr = ScalarAttribute(handleName+'FKIK', value=1.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
 
+                    newConstraint = newRef.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+
                 if segment == "ik":
                     # break these out more explicitly
                     ikCtrl = Control(handleName+"_"+segment, parent=self.eyeTrackerIKSpace, shape="square")
