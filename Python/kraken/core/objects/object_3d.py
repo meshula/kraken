@@ -6,7 +6,6 @@ Object3D - Base Object3D Object.
 """
 
 import re
-import inspect
 
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
@@ -189,10 +188,6 @@ class Object3D(SceneItem):
                 builtName += location
 
             elif token is 'type':
-
-                secondType = self.getSecondType()
-                if secondType:
-                    builtName += nameTemplate['types'][secondType.__name__] + nameTemplate['separator']
 
                 if objectType == 'Locator' and self.testFlag('inputObject'):
                     objectType = 'ComponentInput'
@@ -437,7 +432,7 @@ class Object3D(SceneItem):
 
         Args:
             nodeList: (list): optional list to append children to
-            classType (class type):
+            classType (str): Name of the type of class to limit the search to
             inheritedClass (bool): Match nodes that is a sub-class of type.
         Returns:
             list: Child objects.
@@ -447,11 +442,12 @@ class Object3D(SceneItem):
             nodeList = []
 
         for child in self._children:
-                if classType:
-                    if inheritedClass and issubclass(child.__class__, classType):
+                if classType is not None:
+                    if inheritedClass is not None and child.isTypeOf(classType):
                         nodeList.append(child)
-                    elif isinstance(child, classType):
+                    elif child.getTypeName() == classType:
                         nodeList.append(child)
+
                 else:
                     nodeList.append(child)
 
@@ -818,9 +814,10 @@ class Object3D(SceneItem):
         if constraint.getName() in [x.getName() for x in self._constraints]:
             raise IndexError("Constraint with name '" + constraint.getName() + "'' already exists as a constraint.")
 
+        self._constraints.append(constraint)
+
         constraint.setParent(self)
         constraint.setConstrainee(self)
-        self._constraints.append(constraint)
 
         return True
 

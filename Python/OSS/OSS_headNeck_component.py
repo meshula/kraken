@@ -286,6 +286,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
         self.deformerJoints = []
         self.neckOutputs = []
         self.setNumDeformers(1)
@@ -518,7 +519,6 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
             # Neck handle
             self.neckHandleMocapCtrlSpace = CtrlSpace('neckHandle', parent=self.neckMocapCtrlSpace)
-            self.neckHandleMocapCtrlSpace.setSecondType(MCControl)
             self.neckHandleMocapCtrlSpace.xfo.tr = neckHandlePosition
 
             # Head
@@ -531,7 +531,6 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
             # Head handle
             self.headHandleMocapCtrlSpace = CtrlSpace('headHandle_mocap', parent=self.headMocapCtrl)
-            self.headHandleMocapCtrlSpace.setSecondType(MCControl)
             self.headHandleMocapCtrlSpace.xfo.tr = headHandlePosition
 
             # Blend anim and mocap together

@@ -65,7 +65,8 @@ class Attribute(SceneItem):
         # Also, we do not want to recreate the whole graph, just this one node.  Don't leave this code like this.
         if self.getUpdateNode() and hasattr(self, "component_inspector"):
             if self.component_inspector is not None:
-                self.component_inspector.parent().graphView.displayGraph(None)
+                graphView = self.component_inspector.parent().graphView
+                graphView.displayGraph(graphView.getRig()) # Refresh existing rig graph
 
         return True
 

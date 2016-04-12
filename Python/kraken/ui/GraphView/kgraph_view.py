@@ -46,8 +46,13 @@ class KGraphView(GraphView):
         """
         self.reset()
 
-        if rig is not None:
+        reframeNodes = True
+
+        if rig is self.__rig:
+            reframeNodes = False
+        else:
             self.__rig = rig
+
 
         guideComponents = self.__rig.getChildrenByType('Component')
 
@@ -74,7 +79,7 @@ class KGraphView(GraphView):
                 self.addNode(backdropNode)
                 backdropNode.setData(backdrop)
 
-        if rig is not None:
+        if reframeNodes:
             self.frameAllNodes()
 
 

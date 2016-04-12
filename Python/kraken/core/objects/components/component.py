@@ -280,7 +280,7 @@ class Component(Object3D):
         matches classType.
 
         Args:
-            classType (type): Optional Class type to match.
+            classType (str): Optional Class type to match.
             inheritedClass (bool): Optional Match nodes that is a sub-class of type.
 
         Returns:
@@ -292,10 +292,13 @@ class Component(Object3D):
 
         for name, item in self._items.iteritems():
 
+            if item.isTypeOf("Object3D") is False:
+                continue
+
             if classType:
-                if inheritedClass and issubclass(item.__class__, classType):
+                if inheritedClass and item.isTypeOf(classType):
                     nodeList.append(item)
-                elif isinstance(item, classType):
+                elif item.getTypeName() == classType:
                     nodeList.append(item)
             else:
                 nodeList.append(item)
@@ -388,32 +391,6 @@ class Component(Object3D):
 
         return componentInputPort
 
-    def deleteInput(self, name, **kwargs):
-        """Deletes an input object and also any connected target object that matches
-        the data type that is passed.
-
-        Args:
-            name (str): Name of the input to delete.
-
-        """
-        dataType = None
-        for eachInput in self._inputs:
-            if eachInput.getName() == name:
-                dataType = eachInput.getDataType()
-
-        # Handle keyword arguments
-        for k, v in kwargs.iteritems():
-            if k == 'parent':
-                if dataType.startswith('Xfo'):
-                    v.removeChildByName(name)
-                else:
-                    v.removeAttributeByName(name)
-            else:
-                print "Keyword '" + k + "' is not supported with createInput method!"
-
-        self.removeInputByName(name)
-
-
 
     def addInput(self, name, dataType):
         """Add input port Object to this object.
@@ -480,49 +457,6 @@ class Component(Object3D):
 
         return True
 
-
-    def removeOutputByIndex(self, index):
-        """Remove ComponentOutputPort at specified index.
-
-        Args:
-            index (int): Index of the ComponentOutputPort to remove.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        if self.checkOutputIndex(index) is not True:
-            return False
-
-        del self._outputs[index]
-
-        return True
-
-
-    def removeOutputByName(self, name):
-        """Removes a output from this object by name.
-
-        Args:
-            name (str): Name of output to remove.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        removeIndex = None
-
-        for i, eachOutput in enumerate(self._outputs):
-            if eachOutput.getName() == name:
-                removeIndex = i
-
-        if removeIndex is None:
-            raise ValueError("'" + name + "' is not a valid output of this object.")
-
-        self.removeOutputByIndex(removeIndex)
-
-        return True
 
     def getNumInputs(self):
         """Returns the number of inputs this component has.
@@ -1036,12 +970,55 @@ class Component(Object3D):
         return True
 
 
-    # ==================
-    # Rig Build Methods
-    # =================
-    # this should consider inherited types
-    def saveControlData(self, data, classType, inheritedClass = False):
-        """Stores the Guide data used by the Rig Component to define the layout of the final rig..
+    def saveAllObjectData(self, data, classType="Control", inheritedClass=False):
+        """Stores the Guide data for all objects of this type in the component.
+
+        Args:
+            data (dict): The JSON rig data object.
+            classType (str): The class of the type of object we want to store to data
+            inheritedClass (bool): Also include all objects that are inherited from classType
+
+        Returns:
+            dict: The JSON rig data object.
+
+        """
+        for obj in self.getHierarchyNodes(classType=classType, inheritedClass=inheritedClass):
+            self.saveObjectData(data, [obj])
+
+        return data
+
+
+    def saveObjectData(self, data, objectList):
+        """
+        Stores the Guide data for component objects in this list.
+        Guide data is xfo and curve information
+
+        Args:
+            data (dict): The JSON rig data object.
+            objectList (list): list of Object3D objects
+
+        Returns:
+            dict: The JSON rig data object.
+
+        """
+        for obj in objectList:
+            objName = obj.getName()
+            data[objName + "Xfo"] = obj.xfo
+            if obj.isTypeOf("Curve"):
+                data[objName + "CurveData"] = obj.getCurveData()
+
+        return data
+
+
+
+    def loadAllObjectData(self, data, classType="Control", inheritedClass=False):
+        """Stores the Guide data for all objects of this type in the component.
+
+        Args:
+
+            data (dict): The JSON rig data object.
+            classType (type): The class of the type of object we want to store to data
+            inheritedClass (bool): Also include all objects that are inherited from classType
 
         Returns:
             dict: The JSON rig data object.
@@ -1056,10 +1033,31 @@ class Component(Object3D):
 
         return data
 
+
+    def loadObjectData(self, data, objectList):
+        """
+        Loads the Guide data for component objects in this list.
+        Guide data is xfo and curve information
+
+        Args:
+            data (dict): The JSON rig data object.
+            objectList (list): list of Object3D objects
+
+        """
+             # this should probably live in the GuideClase
+        for obj in objectList:
+            objName = obj.getName()
+            if (objName + "Xfo") in data:
+                obj.xfo = data[objName + "Xfo"]
+
+            if obj.isTypeOf("Curve"):
+                if (objName + "CurveData") in data:
+                    obj.setCurveData(data[objName + "CurveData"])
+
+
     # ==================
     # Rig Build Methods
     # =================
-
 
     def getRigBuildData(self):
         """Returns the Guide data used by the Rig Component to define the layout of the final rig..

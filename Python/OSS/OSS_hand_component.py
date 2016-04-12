@@ -445,6 +445,7 @@ class OSSHandComponentRig(OSSHandComponent):
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
 
         self.handDef = Joint('hand', parent=self.defCmpGrp)
         self.handDef.setComponent(self)

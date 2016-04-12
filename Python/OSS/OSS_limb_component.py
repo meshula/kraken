@@ -430,6 +430,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
 
         self.uplimbDef = Joint(uplimbName, parent=self.defCmpGrp)
 

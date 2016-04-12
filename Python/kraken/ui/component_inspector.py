@@ -79,10 +79,6 @@ class ComponentInspector(BaseInspector):
             attributeWidget = EditorFactory.constructEditor(attributeController, parent=self)
             self.addEditor(attribute.getName(), attributeWidget)
 
-            # TTHack for updating graph
-            if attribute.getUpdateNode():
-                attribute.component_inspector = self
-
         for i in xrange(self.component.getNumAttributeGroups()):
             attrGrp = self.component.getAttributeGroupByIndex(i)
             if attrGrp.getName() == "implicitAttrGrp":

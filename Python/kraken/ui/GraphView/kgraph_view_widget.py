@@ -112,19 +112,24 @@ class KGraphViewWidget(GraphViewWidget):
         try:
             self.window().setCursor(QtCore.Qt.WaitCursor)
 
-            settings = self.window().getSettings()
-            settings.beginGroup('Files')
-            filePath = settings.value("lastFilePath", os.path.join(GetKrakenPath(), self.guideRig.getName()))
-            settings.endGroup()
-            if not filePath:
-                filePath = GetKrakenPath()
+            filePath = self.openedFile
 
-            if saveAs is True:
+            if saveAs is True or not filePath or not os.path.isdir(os.path.dirname(filePath)):
+
+                settings = self.window().getSettings()
+                settings.beginGroup('Files')
+                lastFilePath = settings.value("lastFilePath", os.path.join(GetKrakenPath(), self.guideRig.getName()))
+                settings.endGroup()
+
+                filePathDir = os.path.dirname(lastFilePath)
+
+                if not os.path.isdir(filePathDir):
+                    filePathDir = GetKrakenPath()
 
                 fileDialog = QtGui.QFileDialog(self)
                 fileDialog.setOption(QtGui.QFileDialog.DontUseNativeDialog, on=True)
                 fileDialog.setWindowTitle('Save Rig Preset As')
-                fileDialog.setDirectory(os.path.dirname(os.path.abspath(filePath)))
+                fileDialog.setDirectory(os.path.abspath(filePathDir))
                 fileDialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
                 fileDialog.setNameFilter('Kraken Rig (*.krg)')
                 fileDialog.setDefaultSuffix('krg')
@@ -237,7 +242,9 @@ class KGraphViewWidget(GraphViewWidget):
 
             initConfigIndex = self.window().krakenMenu.configsWidget.currentIndex()
 
-            #Append "_guide" to rig name when building guide
+            builder = plugins.getBuilder()
+
+            # Append "_guide" to rig name when building guide
             if self.guideRig.getName().endswith('_guide') is False:
                 self.guideRig.setName(self.guideRig.getName() + '_guide')
 
@@ -246,7 +253,7 @@ class KGraphViewWidget(GraphViewWidget):
                     self._guideBuilder.deleteBuildElements()
 
             self._guideBuilder = plugins.getBuilder()
-            self._guideBuilder.build(self.guideRig)
+            self._guideBuilder.buildRig(self.guideRig)
 
             self.reportMessage('Guide Rig Build Success', level='information', timeOut=6000)
 
@@ -294,7 +301,7 @@ class KGraphViewWidget(GraphViewWidget):
                     self._builder.deleteBuildElements()
 
             self._builder = plugins.getBuilder()
-            self._builder.build(rig)
+            self._builder.buildRig(rig)
 
             self.reportMessage('Rig Build Success', level='information', timeOut=6000)
 

@@ -198,10 +198,11 @@ class OSSTongueRig(OSSTongue):
         # Deformers
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
-        defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
         self.ctrlCmpGrp.setComponent(self)
 
-        self.tongueDef = Joint(self.getName(), parent=defCmpGrp)
+        self.tongueDef = Joint(self.getName(), parent=self.defCmpGrp)
         self.tongueDef.setComponent(self)
 
 

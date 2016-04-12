@@ -393,8 +393,8 @@ class OSSMouthGuide(OSSMouth):
         data = super(OSSMouthGuide, self).saveData()
 
         # this should live in the GuideClase - also should considere Inherited Types
-        data = self.saveControlData(data, Control)
-        data = self.saveControlData(data, Transform)
+        data = self.saveAllObjectData(data, "Control")
+        data = self.saveAllObjectData(data, "Transform")
 
         return data
 
@@ -419,17 +419,8 @@ class OSSMouthGuide(OSSMouth):
         super(OSSMouthGuide, self).loadData( data )
 
 
-        # this should probably live in the GuideClase
-        for ctype in [Control, Transform]:
-            for obj in self.getHierarchyNodes(classType=ctype):
-                objName = obj.getName()
-                try:
-                    obj.xfo = data[objName + "Xfo"]
-                    if classType == Control:
-                        obj.setShape(obj.getShape())
-                        obj.setCurveData = data[objName + "CurveData"]
-                except:
-                    pass
+        self.loadAllObjectData(data, "Control")
+        self.loadAllObjectData(data, "Transform")
 
 
         return True
@@ -467,8 +458,8 @@ class OSSMouthGuide(OSSMouth):
         data = super(OSSMouthGuide, self).getRigBuildData()
 
         # should include getCurveData
-        data = self.saveControlData(data, Control)
-        data = self.saveControlData(data, Transform)
+        data = self.saveAllObjectData(data, "Control")
+        data = self.saveAllObjectData(data, "Transform")
         data['mouthXfo'] = mouthXfo
         data['mouthLen'] = mouthLen
         return data
@@ -513,6 +504,7 @@ class OSSMouthRig(OSSMouth):
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
         self.ctrlCmpGrp.setComponent(self)
 
         # Mouth

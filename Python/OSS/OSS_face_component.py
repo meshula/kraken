@@ -360,6 +360,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.addItem("defCmpGrp", self.defCmpGrp)
         self.ctrlCmpGrp.setComponent(self)
 
 
