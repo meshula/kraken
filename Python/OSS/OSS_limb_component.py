@@ -29,7 +29,7 @@ from OSS.OSS_control import *
 
 COMPONENT_NAME = "limb"
 
-# SneeperDiddle
+# Frinkies
 class OSSLimbComponent(BaseExampleComponent):
     """Limb Component"""
 
