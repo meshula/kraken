@@ -22,7 +22,7 @@ from kraken.core.objects.layer import Layer
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
-from kraken.core.objects.operators.canvas_operator import CanvasOperator
+# from kraken.core.objects.operators.canvas_operator import CanvasOperator
 
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
@@ -316,37 +316,31 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Add Fabric Ops
         # ===============
         # Add Spine Canvas Op
-        self.NURBSSpineCanvasOp = CanvasOperator('NURBSSpineCanvasOp', 'OSS.Solvers.NURBSSpineSolver')
-
-        self.addOperator(self.NURBSSpineCanvasOp)
+        self.NURBSSpineKLOp = KLOperator('NURBSSpineKLOp', 'OSS_NURBSSpineKLSolver', 'OSS_Kraken')
+        self.addOperator(self.NURBSSpineKLOp)
 
         # Add Att Inputs
-        self.NURBSSpineCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.NURBSSpineCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.NURBSSpineCanvasOp.setInput('numDeformers',  1)
-        self.NURBSSpineCanvasOp.setInput('compressionAmt', 0)
-
-        self.NURBSSpineCanvasOp.setInput('controls', self.controlInputs)
-        self.NURBSSpineCanvasOp.setInput('controlsRest', self.controlRestInputs)
-
-
-        # Add Xfo Outputs
-        self.NURBSSpineCanvasOp.setOutput('outputs', self.spineOutputs)
+        self.NURBSSpineKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.NURBSSpineKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.NURBSSpineKLOp.setInput('numDeformers',  1)
+        self.NURBSSpineKLOp.setInput('compressionAmt', 0.4)
+        self.NURBSSpineKLOp.setInput('controlsRest', self.controlRestInputs)
+        self.NURBSSpineKLOp.setInput('controls', self.controlInputs)
+        self.NURBSSpineKLOp.setOutput('outputs', self.spineOutputs)
 
         # Add Deformer Splice Op
-        self.outputsToDeformersOKLOp = KLOperator('spineDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.outputsToDeformersOKLOp = KLOperator('spineMultiPoseConstraintKLOp', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersOKLOp)
 
         # Add Att Inputs
-        self.outputsToDeformersOKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.outputsToDeformersOKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.outputsToDeformersOKLOp.setInput('drawDebug', self.drawDebugInputAttr)
 
         # Add Xfo Outputs
         self.outputsToDeformersOKLOp.setInput('constrainers', self.spineOutputs)
 
         # Add Xfo Outputs
         self.outputsToDeformersOKLOp.setOutput('constrainees', self.deformerJoints)
-
 
 
         Profiler.getInstance().pop()
@@ -366,8 +360,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
             spineDef.setComponent(self)
             self.deformerJoints.append(spineDef)
 
-        if hasattr(self, 'NURBSSpineCanvasOp'):  # Check in case this is ever called from Guide callback
-            self.NURBSSpineCanvasOp.setInput('numDeformers',  numDeformers)
+        if hasattr(self, 'NURBSSpineKLOp'):  # Check in case this is ever called from Guide callback
+            self.NURBSSpineKLOp.setInput('numDeformers',  numDeformers)
 
         return True
 
@@ -541,7 +535,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
             # Add Xfo Outputs
             self.mcControlInputs = []
-            self.NURBSSpineCanvasOp.setInput('controls', self.mcControlInputs)
+            self.NURBSSpineKLOp.setInput('controls', self.mcControlInputs)
             self.mcControlInputs.append(self.pelvisCtrlSpace_link)
             self.mcControlInputs.append(self.torsoCtrl_link)
             self.mcControlInputs.append(self.chestCtrl_link)

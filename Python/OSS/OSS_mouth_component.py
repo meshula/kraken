@@ -581,7 +581,7 @@ class OSSMouthRig(OSSMouth):
         # Add lowLip Guide Canvas Op
         self.upLipRigOp = CanvasOperator('upLipRigOp', 'OSS.Solvers.NURBSCurveXfoSolver')
         self.addOperator(self.upLipRigOp)
-        self.params = [0.025,0.125,0.3,0.5,0.7,0.875,0.975]
+        # self.params = [0.025,0.125,0.3,0.5,0.7,0.875,0.975]
         self.params = [0.05,0.25,0.5,0.75,0.95]
         self.upLipControls = []
         self.upLipOutputs = []
@@ -593,9 +593,13 @@ class OSSMouthRig(OSSMouth):
 
         self.upLipRigOp.setInput('drawDebug', 1)
         self.upLipRigOp.setInput('rigScale', 1.0)
+        self.upLipRigOp.setInput('alignX', 2)
+        self.upLipRigOp.setInput('alignY', 3)
+        self.upLipRigOp.setInput('alignZ', 1)
         self.upLipRigOp.setInput('degree', 4)
         self.upLipRigOp.setInput('keepArcLength', 0.0)
-        self.upLipRigOp.setInput('alignToCurve', 0.0)
+        self.upLipRigOp.setInput('followCurveTangent', 0.0)
+        self.upLipRigOp.setInput('altTangent',  (0.0,1.0,0.0))
         self.upLipRigOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipRigOp.setInput('atVec', self.mouthCtrl)
@@ -623,9 +627,13 @@ class OSSMouthRig(OSSMouth):
 
         self.loLipRigOp.setInput('drawDebug', 1)
         self.loLipRigOp.setInput('rigScale', 1.0)
+        self.loLipRigOp.setInput('alignX', 2)
+        self.loLipRigOp.setInput('alignY', 3)
+        self.loLipRigOp.setInput('alignZ', 1)
         self.loLipRigOp.setInput('degree', 4)
         self.loLipRigOp.setInput('keepArcLength', 0.0)
-        self.loLipRigOp.setInput('alignToCurve', 0.0)
+        self.loLipRigOp.setInput('followCurveTangent', 0.0)
+        self.loLipRigOp.setInput('altTangent',  (0.0,1.0,0.0))
         self.loLipRigOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipRigOp.setInput('atVec', self.mouthCtrl)
@@ -757,7 +765,7 @@ class OSSMouthRig(OSSMouth):
                 newCtrl.xfo = parent.xfo
                 newCtrl.scalePoints(Vec3(.125,.125,.125))
                 controlsList.append(newCtrl)
-                newCtrl.lockRotation(x=True, y=True, z=True)
+                newCtrl.lockRotation(x=False, y=True, z=True)
                 newCtrl.lockScale(x=True, y=True, z=True)
 
 
@@ -835,8 +843,12 @@ class OSSMouthRig(OSSMouth):
         self.upLipDefOp.setInput('drawDebug', 1)
         self.upLipDefOp.setInput('rigScale', 1.0)
         self.upLipDefOp.setInput('degree', 3)
+        self.upLipDefOp.setInput('alignX', -1)
+        self.upLipDefOp.setInput('alignY', 3)
+        self.upLipDefOp.setInput('alignZ', 2)
         self.upLipDefOp.setInput('keepArcLength', 0.0)
-        self.upLipDefOp.setInput('alignToCurve', 0.5)
+        self.upLipDefOp.setInput('followCurveTangent', 0.5)
+        self.upLipDefOp.setInput('altTangent',  (0.0,0.0,1.0))
         self.upLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipDefOp.setInput('atVec', self.mouthCtrl)
@@ -884,8 +896,12 @@ class OSSMouthRig(OSSMouth):
         self.loLipDefOp.setInput('drawDebug', 1)
         self.loLipDefOp.setInput('rigScale', 1.0)
         self.loLipDefOp.setInput('degree', 3)
+        self.loLipDefOp.setInput('alignX', -1)
+        self.loLipDefOp.setInput('alignY', 3)
+        self.loLipDefOp.setInput('alignZ', 2)
         self.loLipDefOp.setInput('keepArcLength', 0.0)
-        self.loLipDefOp.setInput('alignToCurve', 0.5)
+        self.loLipDefOp.setInput('followCurveTangent', 0.5)
+        self.loLipDefOp.setInput('altTangent', (0.0,0.0,1.0))
         self.loLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipDefOp.setInput('atVec', self.mouthCtrl)

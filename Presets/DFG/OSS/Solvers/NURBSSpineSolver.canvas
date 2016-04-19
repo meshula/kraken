@@ -2,8 +2,8 @@
   "objectType" : "Graph",
   "metadata" : {
     "maya_id" : "2",
-    "uiGraphZoom" : "{\n  \"value\" : 0.8076779842376709\n  }",
-    "uiGraphPan" : "{\n  \"x\" : -49.96762084960938,\n  \"y\" : -1136.119140625\n  }"
+    "uiGraphZoom" : "{\n  \"value\" : 1.041219115257263\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 111.4359893798828,\n  \"y\" : -1229.579345703125\n  }"
     },
   "title" : "NURBSSpineSolver",
   "ports" : [
@@ -13,6 +13,9 @@
         "uiPersistValue" : "true"
         },
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 0
+        },
       "name" : "rigScale",
       "execPortType" : "In",
       "typeSpec" : "Scalar"
@@ -23,6 +26,9 @@
         "uiPersistValue" : "true"
         },
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Boolean" : false
+        },
       "name" : "drawDebug",
       "execPortType" : "In",
       "typeSpec" : "Boolean"
@@ -33,6 +39,9 @@
         "uiPersistValue" : "true"
         },
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer" : 0
+        },
       "name" : "numDeformers",
       "execPortType" : "In",
       "typeSpec" : "Integer"
@@ -40,6 +49,9 @@
     {
       "objectType" : "Port",
       "nodePortType" : "In",
+      "defaultValues" : {
+        "Mat44[]" : []
+        },
       "name" : "outputs",
       "execPortType" : "Out",
       "typeSpec" : "Mat44[]"
@@ -57,6 +69,9 @@
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44[]" : []
+        },
       "name" : "controls",
       "execPortType" : "In",
       "typeSpec" : "Mat44[]"
@@ -64,6 +79,9 @@
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44[]" : []
+        },
       "name" : "controlsRest",
       "execPortType" : "In",
       "typeSpec" : "Mat44[]"
@@ -72,7 +90,7 @@
   "extDeps" : {
     "Math" : "*"
     },
-  "presetGUID" : "7A306810F590F09B07A98F5028A5A25F",
+  "presetGUID" : "D864BAFA52FC87E7912B253F327125AC",
   "nodes" : [
     {
       "objectType" : "Inst",
@@ -124,7 +142,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":100.845,\"y\":2038.89}"
+        "uiGraphPos" : "{\"x\":115.703,\"y\":1979.46}"
         },
       "name" : "Size_1",
       "ports" : [
@@ -463,7 +481,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":118.735,\"y\":1489.1}"
+        "uiGraphPos" : "{\"x\":37.0193,\"y\":1468.05}"
         },
       "name" : "Curve_1",
       "ports" : [
@@ -569,43 +587,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\n  \"x\" : 343.3489379882813,\n  \"y\" : 1436.808959960938\n  }"
-        },
-      "name" : "getXfosOnCurve_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "params"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "keepArcLength"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "keepCurveLen"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "results"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "curve"
-          }
-        ],
-      "executable" : "OSS.Exts.Curves.NURBS.getXfosOnCurve",
-      "presetGUID" : "0296C21FEE50B004A6960559AB313198"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":89.8531,\"y\":1302.68}"
+        "uiGraphPos" : "{\"x\":16.8042,\"y\":1294.01}"
         },
       "name" : "FillInterpolated_1",
       "ports" : [
@@ -647,7 +629,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":327.502,\"y\":1596.04}"
+        "uiGraphPos" : "{\"x\":415.41,\"y\":1607.18}"
         },
       "name" : "getXfosOnCurve_2",
       "ports" : [
@@ -682,81 +664,13 @@ dfgEntry {
           "name" : "restCurve"
           }
         ],
-      "definition" : {
-        "objectType" : "Func",
-        "metadata" : {
-          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
-          },
-        "title" : "getXfosOnCurve",
-        "ports" : [
-          {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
-            "name" : "params",
-            "execPortType" : "In",
-            "typeSpec" : "Scalar[]"
-            },
-          {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
-            "defaultValues" : {
-              "Scalar" : 1
-              },
-            "name" : "keepArcLength",
-            "execPortType" : "In",
-            "typeSpec" : "Scalar"
-            },
-          {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
-            "defaultValues" : {
-              "Scalar" : 0
-              },
-            "name" : "keepCurveLen",
-            "execPortType" : "In",
-            "typeSpec" : "Scalar"
-            },
-          {
-            "objectType" : "Port",
-            "nodePortType" : "In",
-            "name" : "results",
-            "execPortType" : "Out",
-            "typeSpec" : "Scalar[]"
-            },
-          {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
-            "name" : "curve",
-            "execPortType" : "In",
-            "typeSpec" : "NURBSCurve"
-            },
-          {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
-            "name" : "restCurve",
-            "execPortType" : "In",
-            "typeSpec" : "NURBSCurve"
-            }
-          ],
-        "extDeps" : {},
-        "code" : "operator __evalCompressionTask<<<index>>>(io Scalar results[], Ref<NURBSCurve> curve, Ref<NURBSCurve> restCurve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
-{	
-	results[index] = curve.getCompression(params[index], restCurve, keepArcLength, keepCurveLen);
-}
-
-dfgEntry {
-  results.resize(params.size());
-  __evalCompressionTask<<<params.size()>>>(results, curve, restCurve, params, keepArcLength, keepCurveLen);
-}
-
-"
-        }
+      "executable" : "OSS.Exts.Curves.NURBS.getCompressionOnCurve",
+      "presetGUID" : "EA34A37E847B5B1A2CABFE6389C4D2FA"
       },
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":114.577,\"y\":1661.41}"
+        "uiGraphPos" : "{\"x\":34.0993,\"y\":1637.88}"
         },
       "name" : "Curve_2",
       "ports" : [
@@ -797,7 +711,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":609.574,\"y\":1668.84}"
+        "uiGraphPos" : "{\"x\":886.043,\"y\":1672.73}"
         },
       "name" : "scaleByCompression",
       "ports" : [
@@ -1020,7 +934,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":812.547,\"y\":1946.56}"
+        "uiGraphPos" : "{\"x\":883.12,\"y\":1926.75}"
         },
       "name" : "SwapFirstAndLast",
       "ports" : [
@@ -1075,6 +989,116 @@ dfgEntry {
 }
 "
         }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":718.433,\"y\":1514.99}"
+        },
+      "name" : "swapAxesArray_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "SInt8" : 1
+            },
+          "name" : "alignX"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "SInt8" : 3
+            },
+          "name" : "alignY"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "SInt8" : -2
+            },
+          "name" : "alignZ"
+          }
+        ],
+      "executable" : "OSS.Xfo.swapAxesArray",
+      "presetGUID" : "89394CBC85DBE5F656D90B78780B62C1"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":434.517,\"y\":1300.35}"
+        },
+      "name" : "getXfosOnCurve_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "params"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
+          "name" : "keepArcLength"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "keepCurveLen"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "results"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "curve"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "altTangent"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "altNormal"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "uselocalNormal"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "followCurveTangent"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "followCurveNormal"
+          }
+        ],
+      "executable" : "OSS.Exts.Curves.NURBS.getXfosOnCurve",
+      "presetGUID" : "488F40F26F7A8546D26A46B3B23952BC"
       }
     ],
   "connections" : {
@@ -1118,15 +1142,12 @@ dfgEntry {
       "SwapFirstAndLast.first"
       ],
     "Curve_1.result" : [
-      "getXfosOnCurve_1.curve",
-      "getXfosOnCurve_2.curve"
-      ],
-    "getXfosOnCurve_1.results" : [
-      "scaleByCompression.this"
+      "getXfosOnCurve_2.curve",
+      "getXfosOnCurve_1.curve"
       ],
     "FillInterpolated_1.array" : [
-      "getXfosOnCurve_1.params",
-      "getXfosOnCurve_2.params"
+      "getXfosOnCurve_2.params",
+      "getXfosOnCurve_1.params"
       ],
     "getXfosOnCurve_2.results" : [
       "scaleByCompression.compression"
@@ -1148,6 +1169,12 @@ dfgEntry {
       ],
     "SwapFirstAndLast.this" : [
       "convertXfoToMat44.xfoArray"
+      ],
+    "swapAxesArray_1.this" : [
+      "scaleByCompression.this"
+      ],
+    "getXfosOnCurve_1.results" : [
+      "swapAxesArray_1.this"
       ]
     },
   "requiredPresets" : {
@@ -1155,8 +1182,8 @@ dfgEntry {
       "objectType" : "Graph",
       "metadata" : {
         "maya_id" : "2",
-        "uiGraphZoom" : "{\n  \"value\" : 0.8076779842376709\n  }",
-        "uiGraphPan" : "{\n  \"x\" : -49.96762084960938,\n  \"y\" : -1136.119140625\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 1.041219115257263\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 111.4359893798828,\n  \"y\" : -1229.579345703125\n  }"
         },
       "title" : "NURBSSpineSolver",
       "ports" : [
@@ -1166,6 +1193,9 @@ dfgEntry {
             "uiPersistValue" : "true"
             },
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
           "name" : "rigScale",
           "execPortType" : "In",
           "typeSpec" : "Scalar"
@@ -1176,6 +1206,9 @@ dfgEntry {
             "uiPersistValue" : "true"
             },
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
           "name" : "drawDebug",
           "execPortType" : "In",
           "typeSpec" : "Boolean"
@@ -1186,6 +1219,9 @@ dfgEntry {
             "uiPersistValue" : "true"
             },
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Integer" : 0
+            },
           "name" : "numDeformers",
           "execPortType" : "In",
           "typeSpec" : "Integer"
@@ -1193,6 +1229,9 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "Mat44[]" : []
+            },
           "name" : "outputs",
           "execPortType" : "Out",
           "typeSpec" : "Mat44[]"
@@ -1210,6 +1249,9 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Mat44[]" : []
+            },
           "name" : "controls",
           "execPortType" : "In",
           "typeSpec" : "Mat44[]"
@@ -1217,6 +1259,9 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Mat44[]" : []
+            },
           "name" : "controlsRest",
           "execPortType" : "In",
           "typeSpec" : "Mat44[]"
@@ -1225,7 +1270,7 @@ dfgEntry {
       "extDeps" : {
         "Math" : "*"
         },
-      "presetGUID" : "7A306810F590F09B07A98F5028A5A25F",
+      "presetGUID" : "D864BAFA52FC87E7912B253F327125AC",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -1277,7 +1322,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":100.845,\"y\":2038.89}"
+            "uiGraphPos" : "{\"x\":115.703,\"y\":1979.46}"
             },
           "name" : "Size_1",
           "ports" : [
@@ -1616,7 +1661,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":118.735,\"y\":1489.1}"
+            "uiGraphPos" : "{\"x\":37.0193,\"y\":1468.05}"
             },
           "name" : "Curve_1",
           "ports" : [
@@ -1722,43 +1767,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\n  \"x\" : 343.3489379882813,\n  \"y\" : 1436.808959960938\n  }"
-            },
-          "name" : "getXfosOnCurve_1",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "params"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "keepArcLength"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "keepCurveLen"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "results"
-              },
-            {
-              "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "curve"
-              }
-            ],
-          "executable" : "OSS.Exts.Curves.NURBS.getXfosOnCurve",
-          "presetGUID" : "0296C21FEE50B004A6960559AB313198"
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":89.8531,\"y\":1302.68}"
+            "uiGraphPos" : "{\"x\":16.8042,\"y\":1294.01}"
             },
           "name" : "FillInterpolated_1",
           "ports" : [
@@ -1800,7 +1809,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":327.502,\"y\":1596.04}"
+            "uiGraphPos" : "{\"x\":415.41,\"y\":1607.18}"
             },
           "name" : "getXfosOnCurve_2",
           "ports" : [
@@ -1835,81 +1844,13 @@ dfgEntry {
               "name" : "restCurve"
               }
             ],
-          "definition" : {
-            "objectType" : "Func",
-            "metadata" : {
-              "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-              "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
-              },
-            "title" : "getXfosOnCurve",
-            "ports" : [
-              {
-                "objectType" : "Port",
-                "nodePortType" : "Out",
-                "name" : "params",
-                "execPortType" : "In",
-                "typeSpec" : "Scalar[]"
-                },
-              {
-                "objectType" : "Port",
-                "nodePortType" : "Out",
-                "defaultValues" : {
-                  "Scalar" : 1
-                  },
-                "name" : "keepArcLength",
-                "execPortType" : "In",
-                "typeSpec" : "Scalar"
-                },
-              {
-                "objectType" : "Port",
-                "nodePortType" : "Out",
-                "defaultValues" : {
-                  "Scalar" : 0
-                  },
-                "name" : "keepCurveLen",
-                "execPortType" : "In",
-                "typeSpec" : "Scalar"
-                },
-              {
-                "objectType" : "Port",
-                "nodePortType" : "In",
-                "name" : "results",
-                "execPortType" : "Out",
-                "typeSpec" : "Scalar[]"
-                },
-              {
-                "objectType" : "Port",
-                "nodePortType" : "Out",
-                "name" : "curve",
-                "execPortType" : "In",
-                "typeSpec" : "NURBSCurve"
-                },
-              {
-                "objectType" : "Port",
-                "nodePortType" : "Out",
-                "name" : "restCurve",
-                "execPortType" : "In",
-                "typeSpec" : "NURBSCurve"
-                }
-              ],
-            "extDeps" : {},
-            "code" : "operator __evalCompressionTask<<<index>>>(io Scalar results[], Ref<NURBSCurve> curve, Ref<NURBSCurve> restCurve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
-{	
-	results[index] = curve.getCompression(params[index], restCurve, keepArcLength, keepCurveLen);
-}
-
-dfgEntry {
-  results.resize(params.size());
-  __evalCompressionTask<<<params.size()>>>(results, curve, restCurve, params, keepArcLength, keepCurveLen);
-}
-
-"
-            }
+          "executable" : "OSS.Exts.Curves.NURBS.getCompressionOnCurve",
+          "presetGUID" : "EA34A37E847B5B1A2CABFE6389C4D2FA"
           },
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":114.577,\"y\":1661.41}"
+            "uiGraphPos" : "{\"x\":34.0993,\"y\":1637.88}"
             },
           "name" : "Curve_2",
           "ports" : [
@@ -1950,7 +1891,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":609.574,\"y\":1668.84}"
+            "uiGraphPos" : "{\"x\":886.043,\"y\":1672.73}"
             },
           "name" : "scaleByCompression",
           "ports" : [
@@ -2173,7 +2114,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":812.547,\"y\":1946.56}"
+            "uiGraphPos" : "{\"x\":883.12,\"y\":1926.75}"
             },
           "name" : "SwapFirstAndLast",
           "ports" : [
@@ -2228,6 +2169,116 @@ dfgEntry {
 }
 "
             }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":718.433,\"y\":1514.99}"
+            },
+          "name" : "swapAxesArray_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "SInt8" : 1
+                },
+              "name" : "alignX"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "SInt8" : 3
+                },
+              "name" : "alignY"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "SInt8" : -2
+                },
+              "name" : "alignZ"
+              }
+            ],
+          "executable" : "OSS.Xfo.swapAxesArray",
+          "presetGUID" : "89394CBC85DBE5F656D90B78780B62C1"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":434.517,\"y\":1300.35}"
+            },
+          "name" : "getXfosOnCurve_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "params"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Scalar" : 0
+                },
+              "name" : "keepArcLength"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "keepCurveLen"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "results"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "curve"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "altTangent"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "altNormal"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "uselocalNormal"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Scalar" : 1
+                },
+              "name" : "followCurveTangent"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Scalar" : 1
+                },
+              "name" : "followCurveNormal"
+              }
+            ],
+          "executable" : "OSS.Exts.Curves.NURBS.getXfosOnCurve",
+          "presetGUID" : "488F40F26F7A8546D26A46B3B23952BC"
           }
         ],
       "connections" : {
@@ -2271,15 +2322,12 @@ dfgEntry {
           "SwapFirstAndLast.first"
           ],
         "Curve_1.result" : [
-          "getXfosOnCurve_1.curve",
-          "getXfosOnCurve_2.curve"
-          ],
-        "getXfosOnCurve_1.results" : [
-          "scaleByCompression.this"
+          "getXfosOnCurve_2.curve",
+          "getXfosOnCurve_1.curve"
           ],
         "FillInterpolated_1.array" : [
-          "getXfosOnCurve_1.params",
-          "getXfosOnCurve_2.params"
+          "getXfosOnCurve_2.params",
+          "getXfosOnCurve_1.params"
           ],
         "getXfosOnCurve_2.results" : [
           "scaleByCompression.compression"
@@ -2301,13 +2349,19 @@ dfgEntry {
           ],
         "SwapFirstAndLast.this" : [
           "convertXfoToMat44.xfoArray"
+          ],
+        "swapAxesArray_1.this" : [
+          "scaleByCompression.this"
+          ],
+        "getXfosOnCurve_1.results" : [
+          "swapAxesArray_1.this"
           ]
         }
       },
     "Fabric.Exts.Geometry.Func.Size" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Geometry/GeometryAttribute.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Geometry/GeometryAttribute.html",
         "uiTooltip" : "Returns the size of the attribute array.\n\n Supported by GeometryAttribute,GeometryAttributes,BaseAttribute,SkinningAttributeData,Points"
         },
       "title" : "Size",
@@ -2342,7 +2396,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html",
         "uiTooltip" : "Sets this transform from a given Mat44\n\n Supported by Xfo"
         },
       "title" : "SetFromMat44",
@@ -2377,70 +2431,6 @@ dfgEntry {
 dfgEntry {
   this.setFromMat44(m);
 }
-"
-      },
-    "OSS.Exts.Curves.NURBS.getXfosOnCurve" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
-        },
-      "title" : "getXfosOnCurve",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "params",
-          "execPortType" : "In",
-          "typeSpec" : "Scalar[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Scalar" : 1
-            },
-          "name" : "keepArcLength",
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Scalar" : 0
-            },
-          "name" : "keepCurveLen",
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "results",
-          "execPortType" : "Out",
-          "typeSpec" : "Xfo[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "curve",
-          "execPortType" : "In",
-          "typeSpec" : "NURBSCurve"
-          }
-        ],
-      "extDeps" : {},
-      "presetGUID" : "0296C21FEE50B004A6960559AB313198",
-      "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
-{	
-	results[index] = curve.getXfo(params[index], keepArcLength, keepCurveLen);
-}
-
-dfgEntry {
-  results.resize(params.size());
-  __evalXfosTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen);
-}
-
 "
       },
     "Fabric.Core.Array.FillInterpolated" : {
@@ -2494,6 +2484,89 @@ dfgEntry {
     array[i] = (1.0 - ratio) * a + ratio * b;
   }
 }
+"
+      },
+    "OSS.Exts.Curves.NURBS.getCompressionOnCurve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "getCompressionOnCurve",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar[]" : []
+            },
+          "name" : "params",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "keepArcLength",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
+          "name" : "keepCurveLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar[]" : []
+            },
+          "name" : "results",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "NURBSCurve" : null
+            },
+          "name" : "curve",
+          "execPortType" : "In",
+          "typeSpec" : "NURBSCurve"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "NURBSCurve" : null
+            },
+          "name" : "restCurve",
+          "execPortType" : "In",
+          "typeSpec" : "NURBSCurve"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "EA34A37E847B5B1A2CABFE6389C4D2FA",
+      "code" : "operator __evalCompressionTask<<<index>>>(io Scalar results[], Ref<NURBSCurve> curve, Ref<NURBSCurve> restCurve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getCompression(params[index], restCurve, keepArcLength, keepCurveLen);
+}
+
+dfgEntry {
+  results.resize(params.size());
+  __evalCompressionTask<<<params.size()>>>(results, curve, restCurve, params, keepArcLength, keepCurveLen);
+}
+
 "
       },
     "OSS.Exts.Curves.NURBS.Curve" : {
@@ -2595,6 +2668,281 @@ dfgEntry {
       "code" : "
 dfgEntry {
 	result = lhs - rhs;
+}
+"
+      },
+    "OSS.Xfo.swapAxesArray" : {
+      "objectType" : "Func",
+      "title" : "swapAxesArray",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Xfo" : {
+              "ori" : {
+                "v" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0
+                  },
+                "w" : 1
+                },
+              "tr" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              "sc" : {
+                "x" : 1,
+                "y" : 1,
+                "z" : 1
+                }
+              },
+            "Xfo[]" : []
+            },
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "Xfo[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "SInt8" : 2
+            },
+          "name" : "alignX",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "SInt8" : 3
+            },
+          "name" : "alignY",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "SInt8" : 1
+            },
+          "name" : "alignZ",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "89394CBC85DBE5F656D90B78780B62C1",
+      "code" : "
+
+operator __alignXfosTask<<<index>>>(io Xfo results[], Xfo xfos[], UInt8 alignX,  UInt8 alignY,  UInt8 alignZ)
+{ 
+  Xfo x = xfos[index];
+  results[index] = x.align(alignX,alignY,alignZ);
+}
+
+dfgEntry {
+  Xfo results[];
+  results.resize(this.size());
+  __alignXfosTask<<<this.size()>>>(results, this, alignX, alignY, alignZ);
+  this = results;
+}
+
+"
+      },
+    "OSS.Exts.Curves.NURBS.getXfosOnCurve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "getXfosOnCurve",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar[]" : []
+            },
+          "name" : "params",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
+          "name" : "keepArcLength",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
+          "name" : "keepCurveLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Xfo[]" : []
+            },
+          "name" : "results",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "NURBSCurve" : null
+            },
+          "name" : "curve",
+          "execPortType" : "In",
+          "typeSpec" : "NURBSCurve"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Vec3[]" : [
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                }
+              ]
+            },
+          "name" : "altTangent",
+          "execPortType" : "IO",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Vec3[]" : [
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                }
+              ]
+            },
+          "name" : "altNormal",
+          "execPortType" : "IO",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "uselocalNormal",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "followCurveTangent",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "followCurveNormal",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          }
+        ],
+      "extDeps" : {
+        "Curves" : "*"
+        },
+      "presetGUID" : "488F40F26F7A8546D26A46B3B23952BC",
+      "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[]) 
+{	
+	results[index] = curve.getXfo(params[index], keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent[index], altNormal[index]);
+}
+
+
+dfgEntry {
+  results.resize(params.size());
+  altTangent.resize(params.size());
+  altNormal.resize(params.size());
+  __evalXfosTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
 }
 "
       }

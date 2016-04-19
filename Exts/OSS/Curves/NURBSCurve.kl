@@ -52,7 +52,6 @@ object NURBSCurve {
   // depends on firstpoint, degree, closed and clamped
   Size knots[]; // per curve
 
-
   // per curve, cache size of resolution times number of curves
   // potentially add colors
   GeometryAttributes resolutionAttributes;
@@ -67,9 +66,7 @@ object NURBSCurve {
 
 /// - - - - - - 
 /// CONSTRUCTORS
-
 /// Default constructor
-/// set the transform to the identity
 
 function NURBSCurve() {
   // this.parent._init("NURBSCurve");
@@ -79,7 +76,6 @@ function NURBSCurve() {
 
 function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
 	// INITIATE POINTS
-	//
 	this.numPoints = 2;
 	this.numCurves = 1;
 	if (this.resolution < 1) this.resolution = 25;
@@ -106,7 +102,7 @@ function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
 
 	for(UInt32 p=0; p<this.numPoints; p++){
 		this.controlMat44s.values[p] = cMats[p];
-		this.ori.values[p] = Quat();
+		this.ori.values[p] = Quat(cMats[p].upperLeft());
 		this.weights.values[p] = 1.0;
 		this.controlPoints.values[p] = Vec4(cMats[p].translation().x, cMats[p].translation().y, cMats[p].translation().z, this.weights.values[p]);
 		// default weight (for now)
@@ -192,9 +188,24 @@ function NURBSCurve(Vec3 cps[], Integer degree)
 
 
 /// Sample points on curve at equally spaced parametric intervals
-operator __evalPositionsTask<<<index>>>(io Vec3 results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
+operator __evalPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
 {	
 	results[index] = curve.getPoint(index*stepSize(curve.resolution), keepArcLength, keepCurveLen);
+}
+
+operator __evalOffsetPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen, Vec3 offset, Boolean local)
+{	
+	results[index] = curve.getOffsetPoint(index*stepSize(curve.resolution), keepArcLength, keepCurveLen, offset, local);
+}
+
+operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[]) 
+{ 
+  results[index] = curve.getXfo(params[index], keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent[index], altNormal[index]);
+}
+
+operator __evalCompressionTask<<<index>>>(io Scalar results[], Ref<NURBSCurve> curve, Ref<NURBSCurve> restCurve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getCompression(params[index], restCurve, keepArcLength, keepCurveLen);
 }
 
 /// Return colors with gradient between curve ends, sampled at equally spaced parametric intervals
@@ -203,17 +214,16 @@ operator __evalColorsTask<<<index>>>(io Color results[], io Ref<NURBSCurve> curv
 	Scalar hue = mathRandomScalar(0,1);
 	Scalar saturation = 3;
 	results[index] = randomColor(hue*180,saturation,index*stepSize(curve.resolution)); 	
-
 }		
 
 /// Sample tangents on curve at equally spaced parametric intervals
-operator __evalTangentsTask<<<index>>>(io Vec3 results[], io Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
+operator __evalTangentsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
 {	
 	results[index] = curve.getTangent(index*stepSize(curve.resolution),true, keepArcLength, keepCurveLen);
 }
 
 /// Return accumulative distances to first point of curve, sampled at equally spaced parametric intervals
-operator __evalDistancesTask<<<index>>>(io Scalar results[], io Ref<NURBSCurve> curve)
+operator __evalDistancesTask<<<index>>>(io Scalar results[], Ref<NURBSCurve> curve)
 {	
 	results[index] = curve.getDistanceAtIndex(index);	
 }	
@@ -344,12 +354,10 @@ inline Scalar NURBSCurve.getDistanceAtIndex(UInt32 index) {
 
 
 
-
 /// POSITION
 
 
-
-/// Get a point on the curve
+/// Return a point on the curve
 /// \param param Parameter on curve between 0-1
 function Vec3 NURBSCurve.getPoint(Scalar param, Scalar keepArcLength, Scalar keepCurveLen)
 {
@@ -377,6 +385,34 @@ function Vec3 NURBSCurve.getPoint(Scalar param)
 	return hpoint.makeHomogeneousVec3();
 }	
 
+/// Returns a point offset from the original curve by a Vec3 
+/// \param param Parameter on curve between 0-1
+function Vec3 NURBSCurve.getOffsetPoint(Scalar param, Scalar keepArcLength, Scalar keepCurveLen, Vec3 offset, Boolean local)
+{	
+	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
+	Quat quat;
+	Vec4 offsetPoints[];
+	Vec3 localOffset = offset;
+	offsetPoints.resize(this.numPoints);
+	// offset Points by Vector, consider local rotation
+	for(UInt32 p=0; p<this.numPoints; p++) {
+		// rotate local if 
+		if (local) 
+		{
+			quat = Quat(this.cmats[p].upperLeft());
+			quat = quat.unit_safe();
+			localOffset = quat.rotateVector(offset);
+		}
+		offsetPoints[p].x = this.controlPoints.values[p].x + localOffset.x;
+		offsetPoints[p].y = this.controlPoints.values[p].y + localOffset.y;
+		offsetPoints[p].z = this.controlPoints.values[p].z + localOffset.z;
+		offsetPoints[p].t = this.weights.values[p];
+	}
+	// following results in (wx, wy, wz, w) homogeneous point
+	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, offsetPoints, u );
+	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
+	return hpoint.makeHomogeneousVec3();
+}	
 
 
 
@@ -393,7 +429,7 @@ function Vec3 NURBSCurve.getTangent(Scalar param, Boolean normalize, Scalar keep
 	Vec3 tangent = ders[1].clone().xyz();
 
 	if (normalize)
-		return tangent.unit();
+		return tangent.unit_safe();
 	else
 		return tangent;
 }
@@ -419,17 +455,81 @@ function Vec3 NURBSCurve.getFakeTangent(Scalar param, Boolean normalize, Scalar 
 }
 
 
-function Quat NURBSCurve.getNormal(Scalar param, Xfo xfoA, Xfo xfoB) {
-	Vec3 tangent = this.getTangent(param,true,0.0,0.0);
-	// to determine upvec, use linear rotation inperpolation for simplicity - this could be better
-	
-	Quat ori = xfoA.ori.sphericalLinearInterpolate(xfoB.ori, param);
+function Vec3 NURBSCurve.getNormal(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen) {
+	Vec3 normalDir = Vec3(0,0,1);
+	Vec3 normal = this.getOffsetPoint(param, keepArcLength, keepCurveLen, normalDir, true) - this.getPoint(param, keepArcLength, keepCurveLen);
 
-	Vec3 upVecTemp = ori.getXaxis();
-	
-	Vec3 side = upVecTemp.cross(-tangent);
+	if (normalize)
+		return normal.unit();
+	else
+		return normal;
+}
+
+function Vec3 NURBSCurve.getNormal(Scalar param) {
+	Scalar keepArcLength = 0.0;
+	Scalar keepCurveLen = 0.0;
+	Boolean normalize = true;
+	return this.getNormal(param, normalize, keepArcLength, keepCurveLen);
+}
+
+
+function Quat NURBSCurve.getOri(Scalar param, Scalar keepArcLength, Scalar keepCurveLen,  Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent, Vec3 altNormal)
+{
+	Vec3 pointOnCurve = this.getPoint(param,keepArcLength, keepCurveLen);
+	Quat ori;
+	Vec3 normal, tangent;
+	Vec3 altNormalSafe = altNormal;
+	Vec3 altTangentSafe = altTangent;
+
+	if (altTangent.length() == 0) {
+    	altTangentSafe = Vec3(1,0,0);
+    }
+	if (altNormal.length() == 0) {
+    	altNormalSafe = Vec3(0,0,1);
+	}
+
+	// Tangent Vector
+    if (followCurveNormal > 0.0) {
+    	Vec3 nonLocalNormal;
+    	Vec3 localNormal;
+		// need localNormal if smaller than 1
+		// if (uselocalNormal < 1) {
+			Vec3 pointOnOffset = this.getOffsetPoint(param, keepArcLength, keepCurveLen, Vec3(0,0,1), true);
+			localNormal = pointOnOffset - pointOnCurve;
+		// }
+		// need nonLocalNormal if larger than 0
+		// if (uselocalNormal > 0) {
+			Xfo XfoA, XfoB;
+			XfoA.setFromMat44(this.cmats[0]);
+		  	XfoB.setFromMat44(this.cmats[this.cmats.size()-1]);
+		  	Quat nonLocalOri = XfoA.ori.sphericalLinearInterpolate(XfoB.ori, param);
+			nonLocalNormal = nonLocalOri.getZaxis();
+		// }
+
+		if (uselocalNormal <= 0 ) {
+			normal = nonLocalNormal;
+		} else if (uselocalNormal >= 1 ) {
+			normal = localNormal;
+		} else {
+			normal = nonLocalNormal*(1-uselocalNormal) + localNormal*uselocalNormal;
+		}
+
+		// calculate the final normal
+		normal = altNormalSafe*(1-followCurveNormal) + normal*followCurveNormal;
+    } else {
+      	normal = altNormalSafe;
+    }
+
+	// Tangent Vector
+	Vec3 curveTangent = this.getTangent(param, true, keepArcLength, keepCurveLen);
+	tangent = altTangentSafe*(1-followCurveTangent) + curveTangent*followCurveTangent;
+
+	normal = normal.unit_safe();
+	tangent = tangent.unit_safe();
+
+	Vec3 side = normal.cross(-tangent);
 	Vec3 up = side.cross(tangent);
-	// Set the quat to represent the direction as the Z axis and the upvector pointing along the XY plane.
+
 	return ori.setFromDirectionAndUpvector(side,up);
 }
 
@@ -438,27 +538,15 @@ function Quat NURBSCurve.getOri(Scalar t, Scalar keepArcLength, Scalar keepRestL
 	return this.getOri(arcLenT);
 }
 
-
-function Quat NURBSCurve.getOri(Scalar param, Xfo xfoA, Xfo xfoB) {
-	Vec3 tangent = this.getTangent(param,true,0.0,0.0);
-	// to determine upvec, use linear rotation inperpolation for simplicity - this could be better
-	
-	Quat ori = xfoA.ori.sphericalLinearInterpolate(xfoB.ori, param);
-
-	Vec3 upVecTemp = ori.getZaxis();
-	
-	Vec3 side = upVecTemp.cross(-tangent);
-	Vec3 up = side.cross(tangent);
-	// Set the quat to represent the direction as the Z axis and the upvector pointing along the XY plane.
-	return ori.setFromDirectionAndUpvector(side,up);
-}
-
-
 function Quat NURBSCurve.getOri(Scalar t) {
-	Xfo XfoA, XfoB;
-	XfoA.setFromMat44(this.cmats[0]);
-  	XfoB.setFromMat44(this.cmats[this.cmats.size()-1]);
-	return this.getOri(t, XfoA, XfoB);
+	Scalar keepArcLength = 0.0;
+	Scalar keepCurveLen = 0.0;
+	Scalar uselocalNormal = 1.0;
+	Scalar followCurveTangent = 1;
+	Scalar followCurveNormal = 1;
+	Vec3 altTangent = Vec3(1,0,0);
+	Vec3 altNormal = Vec3(0,0,1);
+	return this.getOri(t, keepArcLength, keepCurveLen,  uselocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
 }
 
 
@@ -467,6 +555,20 @@ function Xfo NURBSCurve.getXfo(Scalar param, Scalar keepArcLength, Scalar keepCu
     return Xfo(
     	this.getPoint(param,keepArcLength, keepCurveLen),
         this.getOri(param,  keepArcLength, keepCurveLen),
+        this.getScale(param,keepArcLength, keepCurveLen)
+    );
+}
+
+function Xfo NURBSCurve.getXfo(Scalar param, Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent, Vec3 altNormal)
+{	
+	Vec3 pointOnCurve = this.getPoint(param,keepArcLength, keepCurveLen);
+	// Todo: optimize this - we already have calculated the pointOnCurve, getOri does that again.
+
+	Quat ori = this.getOri(param, keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
+
+    return Xfo(
+    	pointOnCurve,
+        ori,
         this.getScale(param,keepArcLength, keepCurveLen)
     );
 }

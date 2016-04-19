@@ -9,6 +9,9 @@
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar[]" : []
+        },
       "name" : "params",
       "execPortType" : "In",
       "typeSpec" : "Scalar[]"
@@ -17,7 +20,7 @@
       "objectType" : "Port",
       "nodePortType" : "Out",
       "defaultValues" : {
-        "Scalar" : 1
+        "Scalar" : 0
         },
       "name" : "keepArcLength",
       "execPortType" : "In",
@@ -36,6 +39,9 @@
     {
       "objectType" : "Port",
       "nodePortType" : "In",
+      "defaultValues" : {
+        "Xfo[]" : []
+        },
       "name" : "results",
       "execPortType" : "Out",
       "typeSpec" : "Xfo[]"
@@ -43,23 +49,142 @@
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
+      "defaultValues" : {
+        "NURBSCurve" : null
+        },
       "name" : "curve",
       "execPortType" : "In",
       "typeSpec" : "NURBSCurve"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Vec3[]" : [
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            }
+          ]
+        },
+      "name" : "altTangent",
+      "execPortType" : "IO",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Vec3[]" : [
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            }
+          ]
+        },
+      "name" : "altNormal",
+      "execPortType" : "IO",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 1
+        },
+      "name" : "uselocalNormal",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 1
+        },
+      "name" : "followCurveTangent",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 1
+        },
+      "name" : "followCurveNormal",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
       }
     ],
-  "extDeps" : {},
-  "presetGUID" : "0296C21FEE50B004A6960559AB313198",
-  "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+  "extDeps" : {
+    "Curves" : "*"
+    },
+  "presetGUID" : "488F40F26F7A8546D26A46B3B23952BC",
+  "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[]) 
 {	
-	results[index] = curve.getXfo(params[index], keepArcLength, keepCurveLen);
+	results[index] = curve.getXfo(params[index], keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent[index], altNormal[index]);
 }
+
 
 dfgEntry {
   results.resize(params.size());
-  __evalXfosTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen);
+  altTangent.resize(params.size());
+  altNormal.resize(params.size());
+  __evalXfosTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
 }
-
 ",
   "requiredPresets" : {
     "OSS.Exts.Curves.NURBS.getXfosOnCurve" : {
@@ -73,6 +198,9 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar[]" : []
+            },
           "name" : "params",
           "execPortType" : "In",
           "typeSpec" : "Scalar[]"
@@ -81,7 +209,7 @@ dfgEntry {
           "objectType" : "Port",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "Scalar" : 1
+            "Scalar" : 0
             },
           "name" : "keepArcLength",
           "execPortType" : "In",
@@ -100,6 +228,9 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "Xfo[]" : []
+            },
           "name" : "results",
           "execPortType" : "Out",
           "typeSpec" : "Xfo[]"
@@ -107,23 +238,142 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "NURBSCurve" : null
+            },
           "name" : "curve",
           "execPortType" : "In",
           "typeSpec" : "NURBSCurve"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Vec3[]" : [
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                }
+              ]
+            },
+          "name" : "altTangent",
+          "execPortType" : "IO",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Vec3[]" : [
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                }
+              ]
+            },
+          "name" : "altNormal",
+          "execPortType" : "IO",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "uselocalNormal",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "followCurveTangent",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "followCurveNormal",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
           }
         ],
-      "extDeps" : {},
-      "presetGUID" : "0296C21FEE50B004A6960559AB313198",
-      "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+      "extDeps" : {
+        "Curves" : "*"
+        },
+      "presetGUID" : "488F40F26F7A8546D26A46B3B23952BC",
+      "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[]) 
 {	
-	results[index] = curve.getXfo(params[index], keepArcLength, keepCurveLen);
+	results[index] = curve.getXfo(params[index], keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent[index], altNormal[index]);
 }
+
 
 dfgEntry {
   results.resize(params.size());
-  __evalXfosTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen);
+  altTangent.resize(params.size());
+  altNormal.resize(params.size());
+  __evalXfosTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
 }
-
 "
       }
     }

@@ -249,10 +249,17 @@ class KLOperator(Operator):
         for i in xrange(len(argVals)):
             arg = self.args[i]
             argName = arg.name.getSimpleType()
+            # Bernhard debug print
+            print argName
             argDataType = arg.dataType.getSimpleType()
             argConnectionType = arg.connectionType.getSimpleType()
 
             if argConnectionType != 'In':
+                # Bernhard: does this need update as in Canvas_operator?
+                # if str(argDataType).endswith('[]') or hasattr(argVals[i].getSimpleType(), '__iter__')):
+                #     for j in xrange(len(outVal)):
+                #         setRTVal(self.outputs[portName][j], outVal[j])
+
                 if str(argDataType).endswith('[]'):
                     for j in xrange(len(argVals[i])):
                         setRTVal(self.outputs[argName][j], argVals[i][j])
