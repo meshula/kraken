@@ -51,6 +51,7 @@ class OSSHeadNeckComponent(BaseExampleComponent):
         self.neckVertebraeOutput = self.createOutput('neckVertebrae', dataType='Xfo[]')
 
         # Declare Input Attrs
+        self.buildWithCanvasOps = self.createInput('buildWithCanvasOps', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
         self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
         self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
@@ -319,65 +320,59 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Add Fabric Ops
         # ===============
         # Add Neck Canvas Op
-        self.NURBSNeckCanvasOp = CanvasOperator('NURBSNeckCanvasOp', 'OSS.Solvers.NURBSSpineSolver')
+        self.NURBSNeckKLOp = KLOperator('NURBSNeckKLOp', 'OSS_NURBSSpineKLSolver', 'OSS_Kraken')
 
-        self.addOperator(self.NURBSNeckCanvasOp)
+        self.addOperator(self.NURBSNeckKLOp)
 
-        self.NURBSNeckCanvasOp.setInput('controls', self.controlInputs)
-        self.NURBSNeckCanvasOp.setInput('controlsRest', self.controlRestInputs)
+        self.NURBSNeckKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.NURBSNeckKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.NURBSNeckKLOp.setInput('numDeformers',  1)
+        self.NURBSNeckKLOp.setInput('compressionAmt', 0)
+        self.NURBSNeckKLOp.setInput('controls', self.controlInputs)
+        self.NURBSNeckKLOp.setInput('controlsRest', self.controlRestInputs)
+        self.NURBSNeckKLOp.setOutput('outputs', self.neckOutputs)
+        self.buildWithCanvasOps = False
+        if self.buildWithCanvasOps:
+            # ===============
+            # Add Fabric Ops
+            # ===============
+            # Add Spine Canvas Op
+            self.HeadAlignCanvasOp = CanvasOperator('HeadAlignCanvasOp', 'OSS.Solvers.AlignSolver')
+            self.addOperator(self.HeadAlignCanvasOp)
 
-        # Add Xfo Inputs
-        self.NURBSNeckCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.NURBSNeckCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.NURBSNeckCanvasOp.setInput('numDeformers',  1)
-        self.NURBSNeckCanvasOp.setInput('compressionAmt', 0)
+            # Add Att Inputs
+            self.HeadAlignCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
+            self.HeadAlignCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
+            self.HeadAlignCanvasOp.setInput('translationAmt',  0)
+            self.HeadAlignCanvasOp.setInput('rotationAmt',  1)
+            self.HeadAlignCanvasOp.setInput('scaleAmt',  0)
+            self.HeadAlignCanvasOp.setInput('atAxis',  0)
+            self.HeadAlignCanvasOp.setInput('upAxis',  1)
+            self.HeadAlignCanvasOp.setInput('mat44Parent',  self.headCtrl)
 
-        # Add Xfo Outputs
-        self.NURBSNeckCanvasOp.setOutput('outputs', self.neckOutputs)
+            self.HeadAlignCanvasOp.setInput('spaces', self.alignSpaces)
+            self.HeadAlignCanvasOp.setInput('spaceWeights', self.alignWeights)
 
-
-
-        # ===============
-        # Add Fabric Ops
-        # ===============
-        # Add Spine Canvas Op
-        self.HeadAlignCanvasOp = CanvasOperator('HeadAlignCanvasOp', 'OSS.Solvers.AlignSolver')
-        self.addOperator(self.HeadAlignCanvasOp)
-
-        # Add Att Inputs
-        self.HeadAlignCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.HeadAlignCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.HeadAlignCanvasOp.setInput('translationAmt',  0)
-        self.HeadAlignCanvasOp.setInput('rotationAmt',  1)
-        self.HeadAlignCanvasOp.setInput('scaleAmt',  0)
-        self.HeadAlignCanvasOp.setInput('atAxis',  0)
-        self.HeadAlignCanvasOp.setInput('upAxis',  1)
-        self.HeadAlignCanvasOp.setInput('mat44Parent',  self.headCtrl)
-
-        self.HeadAlignCanvasOp.setInput('spaces', self.alignSpaces)
-        self.HeadAlignCanvasOp.setInput('spaceWeights', self.alignWeights)
-
-        self.HeadAlignCanvasOp.setOutput('result', self.headAlignSpace)
+            self.HeadAlignCanvasOp.setOutput('result', self.headAlignSpace)
 
 
-        # Add Aim Splice Op
-        # =================
-        # self.headIKCanvasOp = KLOperator('headIKCanvasOp', 'DirectionConstraintSolver', 'Kraken')
-        self.headIKCanvasOp = CanvasOperator('headIKCanvasOp', 'Kraken.Solvers.DirectionConstraintSolver')
-        self.addOperator(self.headIKCanvasOp)
+            # Add Aim Splice Op
+            # =================
+            # self.headIKCanvasOp = KLOperator('headIKCanvasOp', 'DirectionConstraintSolver', 'Kraken')
+            self.headIKCanvasOp = CanvasOperator('headIKCanvasOp', 'Kraken.Solvers.DirectionConstraintSolver')
+            self.addOperator(self.headIKCanvasOp)
 
-        # Add Att Inputs
-        self.headIKCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.headIKCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
+            # Add Att Inputs
+            self.headIKCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
+            self.headIKCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
 
-        # Add Xfo Inputs
-        self.headIKCanvasOp.setInput('position', self.headCtrl)
-        self.headIKCanvasOp.setInput('upVector', self.headIKUpV)
-        self.headIKCanvasOp.setInput('atVector', self.headIKCtrl)
+            # Add Xfo Inputs
+            self.headIKCanvasOp.setInput('position', self.headCtrl)
+            self.headIKCanvasOp.setInput('upVector', self.headIKUpV)
+            self.headIKCanvasOp.setInput('atVector', self.headIKCtrl)
 
-        # Add Xfo Outputs
-        self.headIKCanvasOp.setOutput('constrainee', self.headSpace)
-
+            # Add Xfo Outputs
+            self.headIKCanvasOp.setOutput('constrainee', self.headSpace)
 
 
         # Add Deformer Splice Op
@@ -426,8 +421,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
             self.deformerJoints.append(neckDef)
 
-        if hasattr(self, 'NURBSNeckCanvasOp'):  # Check in case this is ever called from Guide callback
-            self.NURBSNeckCanvasOp.setInput('numDeformers',  numDeformers)
+        if hasattr(self, 'NURBSNeckKLOp'):  # Check in case this is ever called from Guide callback
+            self.NURBSNeckKLOp.setInput('numDeformers',  numDeformers)
 
         return True
 
@@ -580,10 +575,10 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.mocapHierBlendSolver.evaluate()
 
             # Add Xfo Outputs
-            self.NURBSNeckCanvasOp.setInput('neck', self.neckCtrlSpace_link)
-            self.NURBSNeckCanvasOp.setInput('head', self.headCtrlSpace_link)
-            self.NURBSNeckCanvasOp.setInput('neckHandle', self.neckHandleCtrlSpace_link)
-            self.NURBSNeckCanvasOp.setInput('headHandle', self.headHandleCtrlSpace_link)
+            self.NURBSNeckKLOp.setInput('neck', self.neckCtrlSpace_link)
+            self.NURBSNeckKLOp.setInput('head', self.headCtrlSpace_link)
+            self.NURBSNeckKLOp.setInput('neckHandle', self.neckHandleCtrlSpace_link)
+            self.NURBSNeckKLOp.setInput('headHandle', self.headHandleCtrlSpace_link)
 
         self.neckBaseOutputConstraint = self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0], maintainOffset=True)
         self.neckEndOutputConstraint = self.neckEndOutputTgt.constrainTo(self.neckOutputs[-1], maintainOffset=True)
