@@ -69,40 +69,35 @@ function OSS_NURBSSpineKLSolver.solve!(
   
   Vec3 altNormal[];
   Vec3 altTangent[];
-  altTangent.resize(params.size());
-  altNormal.resize(params.size());
-  
   Xfo xfos[];
+  Xfo outputsXfo[];
+  Scalar compression[];
+
   xfos.resize(count);
+  outputsXfo.resize(count);
+  altTangent.resize(count);
+  altNormal.resize(count);
+  compression.resize(count);
+  outputs.resize(count);
   
   Scalar useLocalNormal = 1; 
   Scalar followCurveTangent =1;
   Scalar followCurveNormal = 1; 
-  
-  Ref <NURBSCurve> posedCurveRef = posedCurve;
-  Ref <NURBSCurve> restCurveRef = restCurve;
-  __evalXfosTask<<<count>>>(xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
 
-  Scalar compression[];
-  compression.resize(count);
-  __evalCompressionTask<<<count>>>(compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
-
-  for (UInt32 i =0; i<xfos.size(); i++) {
-    Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
-    xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
-  }
-
-  Xfo outputsXfo[];
-  outputsXfo.resize(count);
-  
   UInt32 alignX = 1;
   UInt32 alignY = 2;
   UInt32 alignZ = 3;
   
-  __alignXfosTask<<<count>>>(outputsXfo, xfos, alignX, alignY, alignZ);
+
+  Ref <NURBSCurve> posedCurveRef = posedCurve;
+  Ref <NURBSCurve> restCurveRef = restCurve;
   
-  for(UInt32 i=0;i<count;i++)
-  {
-    outputs.push(outputsXfo[i].toMat44());
+  for (UInt32 i =0; i<count; i++) {
+    __evalXfosTask(i, xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
+    __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
+    Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
+    xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
+    __alignXfosTask(i, outputsXfo, xfos, alignX, alignY, alignZ);
+    outputs[i] = outputsXfo[i].toMat44();
   }
 }
