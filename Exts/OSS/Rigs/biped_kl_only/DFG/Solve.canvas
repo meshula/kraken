@@ -1,0 +1,27 @@
+{
+  "objectType" : "Func",
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "rig",
+      "execPortType" : "IO",
+      "typeSpec" : "KRK_biped_guide"
+      }
+    ],
+  "extDeps" : {
+    "KRK_biped_guide" : "*"
+    },
+  "code" : "dfgEntry {
+  rig.solve();
+}
+",
+  "args" : [
+    {
+      "type" : "KRK_biped_guide",
+      "value" : null,
+      "ext" : "KRK_biped_guide"
+      }
+    ]
+  }

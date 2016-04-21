@@ -1,0 +1,39 @@
+{
+  "objectType" : "Func",
+  "title" : "GetJoints",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "rig",
+      "execPortType" : "In",
+      "typeSpec" : "KRK_biped_guide"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      }
+    ],
+  "extDeps" : {
+    "KRK_biped_guide" : "*"
+    },
+  "code" : "dfgEntry {
+  result = rig.getJointXfos();
+}
+",
+  "args" : [
+    {
+      "type" : "KRK_biped_guide",
+      "value" : null,
+      "ext" : "KRK_biped_guide"
+      },
+    {
+      "type" : "Xfo[]",
+      "value" : [],
+      "ext" : "Math"
+      }
+    ]
+  }
