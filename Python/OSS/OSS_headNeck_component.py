@@ -583,11 +583,11 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.neckBaseOutputConstraint = self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0], maintainOffset=True)
         self.neckEndOutputConstraint = self.neckEndOutputTgt.constrainTo(self.neckOutputs[-1], maintainOffset=True)
 
-
         # ====================
         # Evaluate Fabric Ops
         # ====================
         # Eval Operators # Order is important
+        self.NURBSNeckKLOp.evaluate()
 
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)

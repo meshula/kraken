@@ -1,0 +1,7 @@
+require KRK_biped_guide;
+
+operator entry() {
+  KRK_biped_guide rig();
+  rig.solve();
+  report(rig.getJointXfos());
+}

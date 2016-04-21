@@ -76,7 +76,7 @@ class OSSConfig(Config):
                                    "FKControl"       : ["location", "sep", "name", "sep", "type"],
                                    "IKControl"       : ["location", "sep", "name", "sep", "type"],
                                    "MCControl"       : ["location", "sep", "name", "sep", "type"],
-                                   "default"         : ["location", "sep", "name", "sep", "type"],
+                                   "default"         : ["component", "sep", "location", "sep", "name", "sep", "type"],
                                    "Transform"       : ["location", "sep", "name", "sep", "type"]
                                   }
                        }

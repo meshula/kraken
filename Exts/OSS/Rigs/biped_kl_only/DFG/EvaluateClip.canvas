@@ -1,0 +1,51 @@
+{
+  "objectType" : "Func",
+  "title" : "EvaluateClip",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "rig",
+      "execPortType" : "IO",
+      "typeSpec" : "KRK_biped_guide"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "time",
+      "execPortType" : "In",
+      "typeSpec" : "Float64"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "clip",
+      "execPortType" : "In",
+      "typeSpec" : "KrakenClip"
+      }
+    ],
+  "extDeps" : {
+    "KRK_biped_guide" : "*"
+    },
+  "code" : "dfgEntry {
+  KrakenClipContext ctxt(time);
+  rig.evaluateClip(ctxt, clip);
+}
+",
+  "args" : [
+    {
+      "type" : "KRK_biped_guide",
+      "value" : null,
+      "ext" : "KRK_biped_guide"
+      },
+    {
+      "type" : "Float64",
+      "value" : 0
+      },
+    {
+      "type" : "KrakenClip",
+      "value" : null,
+      "ext" : "KrakenAnimation"
+      }
+    ]
+  }
