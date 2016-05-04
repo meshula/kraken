@@ -77,6 +77,7 @@ class OSSConfig(Config):
                                    "IKControl"       : ["location", "sep", "name", "sep", "type"],
                                    "MCControl"       : ["location", "sep", "name", "sep", "type"],
                                    "default"         : ["component", "sep", "location", "sep", "name", "sep", "type"],
+                                   "Joint"           : ["location", "sep", "name", "sep", "type"],
                                    "Transform"       : ["location", "sep", "name", "sep", "type"]
                                   }
                        }
