@@ -1,0 +1,103 @@
+require Math;
+require Curves;
+require InlineDrawing;
+
+
+object OSS_NURBSSpineKLSolver : KrakenSolver {
+};
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_NURBSSpineKLSolver.getArguments() {
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('numDeformers', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('compressionAmt', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('controlsRest', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('controls', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('outputs', 'Out', 'Mat44[]'));
+  return args;
+}
+
+
+operator __alignXfosTask<<<index>>>(io Xfo results[], Xfo xfos[], UInt8 alignX,  UInt8 alignY,  UInt8 alignZ)
+{ 
+  Xfo x = xfos[index];
+  results[index] = x.align(alignX,alignY,alignZ);
+}
+
+
+// Solve
+function OSS_NURBSSpineKLSolver.solve!(
+    in Boolean drawDebug,
+    in Scalar rigScale,
+    in UInt32 numDeformers,
+    in Scalar compressionAmt,
+    in Mat44 controlsRest[],
+    in Mat44 controls[],
+    io Mat44 outputs[]
+    )
+{
+  if(controls.size() != controlsRest.size())
+    throw("Error in OSS_NURBSSpineKLSolver. The number of controls must match the number of controlsRest. controls.size:" + controls.size() + "; constrainees.size:" + controlsRest.size());
+
+  UInt32 count = numDeformers;
+   
+  Scalar keepArcLength = 0;
+  Scalar keepCurveLen = 0;
+  
+  // set interpolated params between a and b
+  Scalar params[]; 
+  params.resize(count);
+  outputs.resize(count);
+  Scalar a = 0;
+  Scalar b = 1;
+  Boolean popLast = false; 
+  for(Size i=0;i<count;i++)
+  {
+    Float32 ratio = Float32(i) / Float32(popLast ? count : count-1);
+    params[i] = (1.0 - ratio) * a + ratio * b;
+  }
+
+  UInt32 degree = 3;
+  NURBSCurve restCurve = NURBSCurve();
+  NURBSCurve posedCurve = NURBSCurve();
+  restCurve.initiate(controlsRest, degree);
+  posedCurve.initiate(controls, degree);
+  // positions = restCurve.positions.values;
+  // colors  = restCurve.colors.values;
+  // normals = restCurve.normals.values;
+  
+  Vec3 altNormal[];
+  Vec3 altTangent[];
+  Xfo xfos[];
+  Xfo outputsXfo[];
+  Scalar compression[];
+
+  xfos.resize(count);
+  outputsXfo.resize(count);
+  altTangent.resize(count);
+  altNormal.resize(count);
+  compression.resize(count);
+  outputs.resize(count);
+  
+  Scalar useLocalNormal = 1; 
+  Scalar followCurveTangent =1;
+  Scalar followCurveNormal = 1; 
+
+  UInt32 alignX = 1;
+  UInt32 alignY = 2;
+  UInt32 alignZ = 3;
+  
+
+  Ref <NURBSCurve> posedCurveRef = posedCurve;
+  Ref <NURBSCurve> restCurveRef = restCurve;
+  
+  for (UInt32 i =0; i<count; i++) {
+    __evalXfosTask(i, xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
+    __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
+    Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
+    xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
+    __alignXfosTask(i, outputsXfo, xfos, alignX, alignY, alignZ);
+    outputs[i] = outputsXfo[i].toMat44();
+  }
+}

@@ -43,9 +43,19 @@ class KGraphView(GraphView):
     # Graph
     # ======
     def displayGraph(self, rig):
+        """
+        Builds the Kraken node graph
+        Pass None as rig parameter to refresh current rig graph
+        """
         self.reset()
 
-        self.__rig = rig
+        reframeNodes = True
+
+        if rig is self.__rig:
+            reframeNodes = False
+        else:
+            self.__rig = rig
+
 
         guideComponents = self.__rig.getChildrenByType('Component')
 
@@ -72,7 +82,8 @@ class KGraphView(GraphView):
                 self.addNode(backdropNode)
                 backdropNode.setData(backdrop)
 
-        self.frameAllNodes()
+        if reframeNodes:
+            self.frameAllNodes()
 
     def addConnection(self, connection, emitSignal=True):
 

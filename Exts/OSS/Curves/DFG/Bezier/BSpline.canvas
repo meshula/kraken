@@ -1,0 +1,60 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "Bezier",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "knots",
+      "execPortType" : "In",
+      "typeSpec" : "BezierKnot[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Bezier"
+      }
+    ],
+  "extDeps" : {
+    "Curves" : "*"
+    },
+  "presetGUID" : "C248850F0BD598C1D6012C075581F07A",
+  "code" : "dfgEntry {\n  result = Bezier(knots);\n}",
+  "requiredPresets" : {
+    "OSS.Exts.Curves.Bezier.Bezier" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "Bezier",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "knots",
+          "execPortType" : "In",
+          "typeSpec" : "BezierKnot[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Bezier"
+          }
+        ],
+      "extDeps" : {
+        "Curves" : "*"
+        },
+      "presetGUID" : "C248850F0BD598C1D6012C075581F07A",
+      "code" : "dfgEntry {\n  result = Bezier(knots);\n}"
+      }
+    }
+  }

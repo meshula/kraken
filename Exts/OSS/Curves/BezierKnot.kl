@@ -1,0 +1,35 @@
+/*
+The :kl-ref:`BSpline` type represents a B-spline interpolation of control points of any dimensionality using de Boor's algorithm.
+
+The interpolator can take an optional weight vector, making the resulting curve a Non-Uniform Rational B-Spline (NURBS) curve if you wish so.
+
+The knot vector is optional too, and when not provided an unclamped uniform knot vector will be generated internally.
+
+Some curve math is adapted/extended from - https://github.com/thibauts/b-splines.
+
+*/
+require Math;
+
+
+struct BezierKnot {
+  Xfo knot;
+  Scalar tangentLength;
+  Vec3 in_tangent;
+  Vec3 out_tangent;
+};
+
+/// Default constructor
+function BezierKnot() {
+  this.knot.setIdentity();
+  this.tangentLength = 10.0;
+  this.in_tangent  = Vec3(-this.tangentLength,0.0,0.0);
+  this.out_tangent = Vec3( this.tangentLength,0.0,0.0);
+}
+
+/// Constructor from just a matrix
+inline BezierKnot(Mat44 mat) {
+  this.knot.setFromMat44(mat);
+  this.tangentLength = 10.0;
+  this.in_tangent  = Vec3(-this.tangentLength,0.0,0.0);
+  this.out_tangent = Vec3( this.tangentLength,0.0,0.0);
+}

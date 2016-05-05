@@ -1,0 +1,96 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "getArrayValue",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "UInt32" : 0
+        },
+      "name" : "spaceID",
+      "execPortType" : "IO",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "Math" : "*"
+    },
+  "presetGUID" : "41045A9B5744BD3D01E891084F574220",
+  "code" : "
+// Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
+dfgEntry {
+  $TYPE$ defaultVal;
+  UInt32 i = Math_min( Math_max(spaceID,0),this.size()-1) ;
+  result = this[i];
+}
+",
+  "requiredPresets" : {
+    "OSS.Math.getArrayValue" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "getArrayValue",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "UInt32" : 0
+            },
+          "name" : "spaceID",
+          "execPortType" : "IO",
+          "typeSpec" : "UInt32"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "41045A9B5744BD3D01E891084F574220",
+      "code" : "
+// Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
+dfgEntry {
+  $TYPE$ defaultVal;
+  UInt32 i = Math_min( Math_max(spaceID,0),this.size()-1) ;
+  result = this[i];
+}
+"
+      }
+    }
+  }

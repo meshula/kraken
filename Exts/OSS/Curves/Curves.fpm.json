@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "code": [
+    "BSplineKnot.kl",
+    "BSpline.kl",
+    "NURBSCurve.kl",
+    "NURBSUtils.kl",
+    "NURBSSurface.kl"
+  ],
+  "dfgPresets": {
+    "dir": "DFG",
+    "presetPath": "OSS.Exts.Curves",
+    }
+}

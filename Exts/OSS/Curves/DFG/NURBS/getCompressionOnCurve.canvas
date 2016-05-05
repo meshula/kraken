@@ -1,0 +1,168 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "getCompressionOnCurve",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar[]" : []
+        },
+      "name" : "params",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 1
+        },
+      "name" : "keepArcLength",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 0
+        },
+      "name" : "keepCurveLen",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "defaultValues" : {
+        "Scalar[]" : []
+        },
+      "name" : "results",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "NURBSCurve" : null
+        },
+      "name" : "curve",
+      "execPortType" : "In",
+      "typeSpec" : "NURBSCurve"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "NURBSCurve" : null
+        },
+      "name" : "restCurve",
+      "execPortType" : "In",
+      "typeSpec" : "NURBSCurve"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "EA34A37E847B5B1A2CABFE6389C4D2FA",
+  "code" : "operator __evalCompressionTask<<<index>>>(io Scalar results[], Ref<NURBSCurve> curve, Ref<NURBSCurve> restCurve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getCompression(params[index], restCurve, keepArcLength, keepCurveLen);
+}
+
+dfgEntry {
+  results.resize(params.size());
+  __evalCompressionTask<<<params.size()>>>(results, curve, restCurve, params, keepArcLength, keepCurveLen);
+}
+
+",
+  "requiredPresets" : {
+    "OSS.Exts.Curves.NURBS.getCompressionOnCurve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "getCompressionOnCurve",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar[]" : []
+            },
+          "name" : "params",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "keepArcLength",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
+          "name" : "keepCurveLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar[]" : []
+            },
+          "name" : "results",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "NURBSCurve" : null
+            },
+          "name" : "curve",
+          "execPortType" : "In",
+          "typeSpec" : "NURBSCurve"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "NURBSCurve" : null
+            },
+          "name" : "restCurve",
+          "execPortType" : "In",
+          "typeSpec" : "NURBSCurve"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "EA34A37E847B5B1A2CABFE6389C4D2FA",
+      "code" : "operator __evalCompressionTask<<<index>>>(io Scalar results[], Ref<NURBSCurve> curve, Ref<NURBSCurve> restCurve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getCompression(params[index], restCurve, keepArcLength, keepCurveLen);
+}
+
+dfgEntry {
+  results.resize(params.size());
+  __evalCompressionTask<<<params.size()>>>(results, curve, restCurve, params, keepArcLength, keepCurveLen);
+}
+
+"
+      }
+    }
+  }

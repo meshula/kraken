@@ -1,0 +1,123 @@
+require InlineDrawing;
+require Geometry;
+require Kraken;
+
+object OSS_HierBlendSolver : KrakenSolver {
+};
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_HierBlendSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('hierA', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('hierB', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('parentIndexes', 'In', 'Integer[]'));
+  args.push(KrakenSolverArg('blend', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('hierOut', 'Out', 'Mat44[]'));
+  return args;
+}
+
+
+// Solve
+function OSS_HierBlendSolver.solve!
+(
+    in Boolean drawDebug,
+    in Scalar rigScale,
+    in Mat44 hierA[],
+    in Mat44 hierB[],
+    in Integer parentIndexes[],  // NOTE:  No child indices can come before parent indices
+    in Scalar blend,
+    io Mat44 hierOut[]
+  )
+{
+  if(hierA.size() != hierB.size())
+    throw("Error in OSS_HierBlendSolver. The number of hierOut must be 1 or match the number of hierA. hierA.size:" + hierA.size() + "; hierOut.size:" + hierOut.size());
+
+    // TODO:  Check for invalid indexes, indexes that are not in the right order....
+
+    Scalar size = hierA.size();
+    Xfo hierAXfos[];
+    Xfo hierBXfos[];
+    Xfo hierOutXfos[];
+
+    hierAXfos.resize(size);
+    hierBXfos.resize(size);
+    hierOutXfos.resize(size);
+
+    Integer parentIndexesResolved[];
+    parentIndexesResolved.resize(size);  // Why does Integer parentIndexesResolved[size] not work?
+
+
+    // To optimize test for blend value
+
+    if (blend == 1)
+    {
+      for(Integer i=0; i<size; i++)
+      {
+          hierOut[i] = hierB[i];
+
+      }
+      return;
+    }
+    else if (blend == 0)
+    {
+      for(Integer i=0; i<size; i++)
+      {
+          hierOut[i] = hierA[i];
+
+      }
+      return;
+    }
+    else {
+
+      // If no parent indexes are provided or not enough, generate them automatically
+
+      for(Integer i=0; i<size; i++)
+      {
+        if (i < parentIndexes.size())
+        {
+          parentIndexesResolved[i] = parentIndexes[i];
+        }
+        else
+        {
+          parentIndexesResolved[i] = i-1;
+        }
+      }
+
+
+      // Convert to Xfos
+      for(Integer i=0; i<size; i++)
+      {
+          hierAXfos[i] = Xfo(hierA[i]);
+          hierBXfos[i] = Xfo(hierB[i]);
+      }
+
+      for(Integer i=0; i<size; i++)
+      {
+          if (parentIndexesResolved[i] < 0)
+          {
+              hierOutXfos[i] = hierAXfos[i].linearInterpolate(hierBXfos[i], blend).toMat44();
+          }
+          else
+          {
+              Xfo localAXfo = hierAXfos[parentIndexesResolved[i]].inverse() * hierAXfos[i];
+              Xfo localBXfo = hierBXfos[parentIndexesResolved[i]].inverse() * hierBXfos[i];
+              Xfo localXfo = localAXfo.linearInterpolate(localBXfo, blend);
+              hierOutXfos[i] = hierOutXfos[parentIndexesResolved[i]] * localXfo;
+          }
+      }
+
+      for(Integer i=0; i<size; i++)
+      {
+            hierOut[i] = hierOutXfos[i].toMat44();
+      }
+    }
+
+  // Set debugging visibility.
+  this.setDebug(drawDebug);
+  if(this.drawDebug){
+    Color boneColor(1.0, 1.0, 0);
+    for(Integer i=0; i<hierA.size(); i++)
+      etDrawBone(this.handle.rootTransform, 'constraint'+i, hierOut[i], 1.0, 0.25, boneColor);
+  }
+}

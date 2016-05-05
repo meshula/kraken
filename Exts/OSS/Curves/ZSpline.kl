@@ -1,0 +1,301 @@
+/*
+The :kl-ref:`ZSpline` type combines n B-spline segments into a single Spline of varying order and type.
+
+*/
+require Math;
+
+struct ZSpline {
+	BSpline BSplines[];
+	Boolean closed;
+  // distance vector array
+	Scalar distances[];
+  Vec3 positions[];
+  Scalar restLength;
+};
+
+/// Default constructor - set to identity
+inline ZSpline() {
+  this.closed = 0;
+}
+
+inline UInt32 ZSpline.getSegmentFromT(in Scalar t) {
+	Scalar normt = t * this.BSplines.size();
+	UInt32 segment = Math_clamp(floor(normt),0.0,this.BSplines.size()-1);
+	return segment;
+}
+
+inline Scalar ZSpline.normalizeT(Scalar t) {
+	UInt32 noSegments = this.BSplines.size();
+	return (t * noSegments-this.getSegmentFromT(t));
+}
+
+
+
+// CONSTRUCTORS
+
+function ZSpline.buildZSpline!(Mat44 mat44s[], io Boolean isSegmentStarts[], io Scalar weights[],  io UInt32 order[] , io UInt32 resolution[], io UInt32 defSegs[], io Boolean clamped[], Boolean closed) {
+  UInt32 s = mat44s.size();
+  // isSegmentStart defines the beginning of a new Segment
+  isSegmentStarts.resizeWithDefault(s,0);
+  // order defines the order of the curve segment that begins with this controlPoint
+  order.resizeWithDefault(s,4);
+  // weight sets the weight of this controlPoint
+  weights.resizeWithDefault(s,1);
+  // resolution defines the resolution of the curve segment that begin with this controlPoint
+  resolution.resizeWithDefault(s,25);
+  // defSegs defines the number of deformation/export Xfo's that begin with this controlPoint
+  defSegs.resizeWithDefault(s,5);
+  // clamped defines whether this curve is clamped (TODO - set clamping to END/Beginning, set order and controlMat44s accordingly)
+  clamped.resizeWithDefault(s,1);
+
+
+  Mat44 controlMat44s[];
+  Scalar bweights[];
+
+  for(UInt32 m=0; m<s;m++){
+    controlMat44s.push(mat44s[m]);
+    bweights.push(weights[m]);
+
+    if ((!m==0 && isSegmentStarts[m]==1) || m==(s-1)) {
+      BSpline b;
+      
+      // need to get this to work
+      // b(controlMat44s.clone(), order, closed, clamped);
+      
+      b.setOrder(order[m]);
+      b.setClosed(closed);
+      b.setClamped(clamped[m]);
+      b.setresolution(resolution[m]);
+      b.setDefSegs(defSegs[m]);
+      
+      b.setcontrolMat44s(controlMat44s.clone());
+      b.setWeightVector(bweights.clone());
+
+      this.BSplines.push(b);
+
+      // reset control points and repeat last point for enxt curve segment
+      controlMat44s.resize(0);
+      controlMat44s.push(mat44s[m]);
+    }
+  }
+  // result.setRestLength(restLength);
+  this.initiate();
+}
+
+function ZSpline.buildZSpline!(Mat44 mat44s[]) {
+  UInt32 s = mat44s.size();
+  Boolean isSegmentStarts[];
+  isSegmentStarts.resize(s);
+  Mat44 controlMat44s[];
+  // defaults
+  Boolean closed = 0;
+  Boolean clamped = 1;
+  UInt32 order = 4;
+  UInt32 resolution = 100;
+  UInt32 defSegs = 10;
+  for(UInt32 m=0; m<s;m++){
+    controlMat44s.push(mat44s[m]);
+    if ((!m==0 && isSegmentStarts[m]==1) || m==(s-1)) {
+      BSpline b;
+      
+      // need to get this to work
+      // b(controlMat44s.clone(), order, closed, clamped);
+      
+      b.setOrder(order);
+      b.setClosed(closed);
+      b.setClamped(clamped);
+      b.setresolution(resolution);
+      b.setDefSegs(defSegs);
+      b.setcontrolMat44s(controlMat44s.clone());
+
+      this.BSplines.push(b);
+
+      // reset control points and repeat last point for enxt curve segment
+      controlMat44s.resize(0);
+      controlMat44s.push(mat44s[m]);
+    }
+  }
+  // result.setRestLength(restLength);
+  this.initiate();
+}
+
+
+
+// POSITION
+
+function Vec3 ZSpline.evalPosition(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
+  Scalar arct = this.arcLengthParam(t,keepArcLength,keepCurveLen);
+  // determine subSpline and respective t ( segment and segmentT )
+  UInt32 segment = this.getSegmentFromT(arct);
+  Scalar segmentT = this.normalizeT(arct);
+  // get the position from the curve as usual
+  return this.BSplines[segment].evalPosition(segmentT, 0, 0);
+}
+
+function Vec3 ZSpline.evalPosition(Scalar t) {
+  // determine subSpline and respective t ( segment and segmentT )
+	UInt32 segment = this.getSegmentFromT(t);
+	Scalar segmentT = this.normalizeT(t);
+  // get the position from the curve as usual
+	return this.BSplines[segment].evalPosition(segmentT);
+}
+
+function Vec3 ZSpline.evalTangent(Scalar t) {
+	UInt32 segment = this.getSegmentFromT(t);
+	Scalar segmentT = this.normalizeT(t);
+	return this.BSplines[segment].evalTangent(segmentT);
+}
+
+
+
+// SCALE
+
+function Vec3 ZSpline.evalScale(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
+  Scalar arct = this.arcLengthParam(t,keepArcLength,keepCurveLen);
+  // determine subSpline and respective t ( segment and segmentT )
+  UInt32 segment = this.getSegmentFromT(arct);
+  Scalar segmentT = this.normalizeT(arct);
+  return this.BSplines[segment].evalScale(segmentT);
+}
+
+function Vec3 ZSpline.evalScale(Scalar t) {
+  UInt32 segment = this.getSegmentFromT(t);
+  Scalar segmentT = this.normalizeT(t);
+  return this.BSplines[segment].evalScale(segmentT);
+}
+
+function Scalar ZSpline.evalCompression(Scalar t, ZSpline referenceCurve, Scalar keepArcLength, Scalar keepCurveLen) {
+  Scalar arct = this.arcLengthParam(t,keepArcLength,keepCurveLen);
+  UInt32 segment = this.getSegmentFromT(arct);
+  Scalar segmentT = this.normalizeT(arct);
+  return this.BSplines[segment].evalCompression(segmentT, referenceCurve.BSplines[segment]);
+}
+
+function Scalar ZSpline.evalCompression(Scalar t, ZSpline referenceCurve) {
+  UInt32 segment = this.getSegmentFromT(t);
+  Scalar segmentT = this.normalizeT(t);
+  return this.BSplines[segment].evalCompression(segmentT, referenceCurve.BSplines[segment]);
+}
+
+// ORIENTATION
+
+function Quat ZSpline.evalOri(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
+  Scalar arct = this.arcLengthParam(t,keepArcLength,keepCurveLen);
+  // determine subSpline and respective t ( segment and segmentT )
+  UInt32 segment = this.getSegmentFromT(arct);
+  Scalar segmentT = this.normalizeT(arct);
+  return this.BSplines[segment].evalOri(segmentT);
+}
+
+function Quat ZSpline.evalOri(Scalar t) {
+	UInt32 segment = this.getSegmentFromT(t);
+	Scalar segmentT = this.normalizeT(t);
+	return this.BSplines[segment].evalOri(segmentT);
+}
+
+inline ZSpline.initiate!() {
+	this.setDistanceVector();
+  this.setPositionsVector();
+}
+
+
+// LENGTH
+
+inline ZSpline.setDistanceVector!() {
+  this.distances.resize(0);
+  Scalar lastVal = 0;
+  if (this.BSplines.size()) {
+	  for(UInt32 b=0; b<this.BSplines.size(); b++) {
+	  	  for(UInt32 v=0; v<this.BSplines[b].distances.size(); v++) {
+          if (v==0 && b==0) this.distances.push(0.0);
+          if (v>0) this.distances.push(this.BSplines[b].distances[v] + lastVal);
+  	  	}
+	  	lastVal = this.distances[this.distances.size()-1];
+	  }
+  }
+}
+
+inline ZSpline.setPositionsVector!() {
+  this.positions.resize(0);
+  if (this.BSplines.size()) {
+    for(UInt32 b=0; b<this.BSplines.size(); b++) {
+        for(UInt32 v=0; v<this.BSplines[b].positions.size(); v++) {
+          if ((v==0 && b==0) || (v>0)) {
+            this.positions.push(this.BSplines[b].positions[v]);
+          }
+        }
+    }
+  }
+}
+
+function Scalar ZSpline.getCurveLength(Scalar keepCurveLen) {
+  Scalar Length =  (1-keepCurveLen)*(this.distances[this.distances.size()-1]) + keepCurveLen*this.restLength;
+  return Length;
+}
+
+
+function Scalar ZSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
+  UInt32 distanceVectorSize = this.distances.size()-1;
+  Scalar actualLength = this.distances[this.distances.size()-1];
+  Scalar tipLength   = t*this.getCurveLength(keepCurveLen);
+  Scalar nonArcLengthT = tipLength/actualLength;
+  if (keepArcLength == 0) {
+    return nonArcLengthT;
+  }
+  
+  // tipLength is t multiplied by the maximum length
+  // tipLength is the approximated distanceVectorSize at incoming param t
+  
+  // do a fast, binary search for the closest matching distance index
+  Scalar low = 0, high = distanceVectorSize, index = 0;
+  while (low < high) {
+    index = low + (((high - low) / 2) | 0);  
+    if (this.distances[index] < tipLength) {
+      low = index + 1;
+    } else {
+      high = index;
+    }
+  }
+  if (this.distances[index] > tipLength) {
+    index -= 1;
+  }
+  
+  // from the distance index, extrapolate 
+  Scalar lengthBefore = this.distances[index];
+  Scalar arcLenghtT   = (index + (tipLength - lengthBefore) / (this.distances[index + 1] - lengthBefore)) / distanceVectorSize;
+  
+  // return lerped parameterization using the blend value keepArcLength
+  return (keepArcLength*arcLenghtT) + (1.0-keepArcLength)*nonArcLengthT;
+}
+
+
+
+// HELPER FUNCTIONS - shouldn't be here
+
+function UInt32[].resizeWithDefault!(UInt32 size, UInt32 defaultVal) {
+  UInt32 currentSize;
+  currentSize = this.size();
+  this.resize(size);
+  for(UInt32 i=currentSize; i<size ;i++){
+    this[i] = defaultVal;
+  }
+}
+
+function Scalar[].resizeWithDefault!(UInt32 size, Scalar defaultVal) {
+  UInt32 currentSize;
+  currentSize = this.size();
+  this.resize(size);
+  for(UInt32 i=currentSize; i<size ;i++){
+    this[i] = defaultVal;
+  }
+}
+
+function Boolean[].resizeWithDefault!(UInt32 size, Boolean defaultVal) {
+  UInt32 currentSize;
+  currentSize = this.size();
+  this.resize(size);
+  for(UInt32 i=currentSize; i<size ;i++){
+    this[i] = defaultVal;
+  }
+}
+

@@ -1,0 +1,120 @@
+{
+  "objectType" : "Func",
+  "title" : "getPositionsOnCurve",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "params",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 1
+        },
+      "name" : "keepArcLength",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 0
+        },
+      "name" : "keepCurveLen",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "results",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "curve",
+      "execPortType" : "In",
+      "typeSpec" : "NURBSCurve"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "CDA833B0D8633D1AA2E496723F2484A6",
+  "code" : "operator __evalPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getPoint(params[index], keepArcLength, keepCurveLen);
+}
+
+dfgEntry {
+  results.resize(params.size());
+  __evalPositionsTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen);
+}
+",
+  "requiredPresets" : {
+    "OSS.Exts.Curves.NURBS.getPositionsOnCurve" : {
+      "objectType" : "Func",
+      "title" : "getPositionsOnCurve",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "params",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "name" : "keepArcLength",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
+          "name" : "keepCurveLen",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "results",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "curve",
+          "execPortType" : "In",
+          "typeSpec" : "NURBSCurve"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "CDA833B0D8633D1AA2E496723F2484A6",
+      "code" : "operator __evalPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
+{	
+	results[index] = curve.getPoint(params[index], keepArcLength, keepCurveLen);
+}
+
+dfgEntry {
+  results.resize(params.size());
+  __evalPositionsTask<<<params.size()>>>(results, curve, params, keepArcLength, keepCurveLen);
+}
+"
+      }
+    }
+  }

@@ -1,0 +1,473 @@
+/*
+The :kl-ref:`BSpline` type represents a B-spline interpolation of control points of any dimensionality using de Boor's algorithm.
+
+The interpolator can take an optional weight vector, making the resulting curve a Non-Uniform Rational B-Spline (NURBS) curve if you wish so.
+
+The knot vector is optional too, and when not provided an unclamped uniform knot vector will be generated internally.
+
+Some curve math is shamelessly adapted/extended from this great repo - https://github.com/thibauts/b-splines.
+
+*/
+require Math;
+
+// construct bspline curve
+
+
+struct BSpline {
+	UInt32 resolution;
+	UInt32 order;
+	Mat44 controlMat44s[];
+	Vec3 points[];
+	Quat ori[];
+	Scalar knotVector[];
+	Scalar weights[];
+	Scalar restLength;
+	// distance vector array
+	Scalar distances[];
+	Vec3 positions[];
+	// are curve Ends clamped
+	Boolean clamped;
+	// is curve closed
+	Boolean closed;
+	// point dimensionality
+	UInt32 d;
+	UInt32 defSegs;
+};
+
+
+/// Default constructor
+function BSpline() {
+	this.setIdentity();
+}
+
+
+inline BSpline(in Mat44 controlMat44s[], in UInt32 order, in Boolean closed, in Boolean clamped) {
+	this.setOrder(order);
+	this.setClosed(closed);
+	this.setClamped(clamped);
+	this.setcontrolMat44s(controlMat44s);
+	this.initiate();
+}
+
+inline BSpline(in Vec3 points[], in UInt32 order, in Boolean closed, in Boolean clamped) {
+	this.setOrder(order);
+	this.setClamped(clamped);
+	this.setClosed(closed);
+	this.setPoints(points);
+ 	this.initiate();
+}
+
+inline BSpline(in Mat44 controlMat44s[]) {
+	this.setcontrolMat44s(controlMat44s);
+	this.initiate();
+}
+
+inline BSpline.setcontrolMat44s!(in Mat44 controlMat44s[]){
+	this.controlMat44s.resize(controlMat44s.size());
+	this.controlMat44s = controlMat44s;
+	this.setPointsFromcontrolMat44s(controlMat44s);
+	this.initiate();
+}
+
+inline BSpline.setPoints!(in Vec3 points[]){
+	this.points.resize(points.size());
+	this.points = points;
+	this.setcontrolMat44sFromPoints(points);
+}
+
+inline BSpline.setOrder!(in UInt32 order) {
+	this.order = Math_max(2,order);
+}
+
+inline BSpline.setClamped!(in Boolean clamped) {
+	this.clamped = clamped;
+}
+
+inline BSpline.setClosed!(in Boolean closed) {
+	this.closed = closed;
+}
+
+inline BSpline.setresolution!(in UInt32 resolution) {
+	this.resolution = Math_max(2,resolution);
+}
+
+inline BSpline.setDefSegs!(in UInt32 defSegs) {
+	this.defSegs = Math_max(0,defSegs);;
+}
+
+inline BSpline.setcontrolMat44sFromPoints!(in Vec3 points[]){
+	this.controlMat44s.resize(0);
+	for (UInt32 i=0;i<points.size();i++) {
+		Mat44 m ;
+		m.setTranslation(points[i]);
+		this.controlMat44s.push(m);
+	}
+}
+
+inline BSpline.setPointsFromcontrolMat44s!(in Mat44 controlMat44s[]){
+	this.points.resize(0);
+	for (UInt32 i=0;i<controlMat44s.size();i++) {
+		this.points.push(controlMat44s[i].translation());
+	}	
+}
+
+
+/// precomputes weights Vector 
+inline BSpline.initiate!() {
+	UInt32 numpoints = this.points.size();
+	// error if no points given
+	if (!numpoints) setError("no points");
+
+	// set order, set to possible value, minimum of 2
+    this.order = Math_max(2,this.order);
+    this.order = Math_min(this.order,numpoints);
+
+    // calculate weight Vector
+	this.setWeightVector();
+	
+	// adjust for closed curve, adding the curve order number of points
+	if(this.closed) {
+		// closed curves need to be unclamped
+		this.clamped = false; 
+		this.controlMat44s.resize(numpoints+this.order-1);
+		this.points.resize(numpoints+this.order-1);
+		this.weights.resize(numpoints+this.order-1);
+		for (UInt32 p = 0; p<this.order-1; p++) {
+			this.controlMat44s[numpoints+p] = this.controlMat44s[p];
+			this.points[numpoints+p] = this.points[p];
+			this.weights[numpoints+p] = this.weights[p];
+		}
+	}
+
+	
+	this.setKnotVector();
+	this.setDistanceVector();
+}
+
+/// Sets this transform to the identity
+inline BSpline.setIdentity!() {
+	this.resolution = 25;
+	this.defSegs = 5;
+	this.order = 2;
+	this.closed = 0;
+	this.clamped = 1;
+	this.d = 3;
+
+	// Setting a default fail-safe curve with 4 points and a curve order of 2
+	UInt32 numpoints = 2;
+	this.controlMat44s.resize(numpoints);
+	this.points.resize(numpoints);
+	this.ori.resize(numpoints);
+
+	for (UInt32 k = 0; k<numpoints; k++) {
+		this.controlMat44s[k].setIdentity();
+		this.points[k].setNull();
+		this.ori[k].setIdentity();
+	}
+}
+
+inline BSpline.setKnotVector!() {
+	// report("Rebuilding knotVector");
+	UInt32 n = this.points.size();
+	// build knot vector
+	if(!this.knotVector.size() && !this.clamped) {
+		// report("Rebuilding unclamped knotVector");
+		this.knotVector.resize(n+this.order);
+		for(UInt32 i=0; i<n+this.order; i++) {
+			this.knotVector[i] = i;
+		}
+	} else if (!this.knotVector.size() && this.clamped){
+		// report("Rebuilding clamped knotVector");
+		this.knotVector.resize(n+this.order);
+
+		for (UInt32 k=0; k<(n+this.order); k++) {
+			this.knotVector[k] = 0;
+			if(k>=this.order && k < n) {
+					this.knotVector[k] = k-this.order+1;
+			} else if (k>=n) {
+				this.knotVector[k] = n - (this.order)+1;
+			}
+		}
+	} else if(this.knotVector.size() != n+this.order) {
+		setError('bad knot vector length');
+		report("Should be " + (n+this.order) + " but is " + this.knotVector);
+	}
+}
+
+inline BSpline.setWeightVectorAtPoint!(Scalar weight, UInt32 point) {
+	// report("Rebuilding Weight Vector");
+	UInt32 n = this.points.size();
+	this.weights.resize(n);
+	this.weights[point] = weight;
+}
+
+inline BSpline.setWeightVector!(Scalar weights[]) {
+	// report("Rebuilding Weight Vector");
+	UInt32 n = this.points.size();
+	this.weights.resize(n);
+	for(UInt32 i=0; i<n; i++) {
+		this.weights[i] = Math_max(0.001,weights[i]);
+	}
+}
+
+inline BSpline.setWeightVector!() {
+	// report("Rebuilding Weight Vector");
+	UInt32 n = this.points.size();
+	this.weights.resize(n);
+	for(UInt32 i=0; i<n; i++) {
+		this.weights[i] = 1;
+	}
+}
+
+// sets distanceVector and positionsVector
+inline BSpline.setDistanceVector!() {
+	this.distances.resize(this.resolution);
+	this.positions.resize(this.resolution);
+	Vec3 p_prev;
+	// Accumulatively store lengths in distance array
+	// the last value is the total approximated length of the curve
+	for(UInt32 i=0; i<this.resolution; i++){
+		Scalar t = Scalar(i)/Scalar(this.resolution-1);
+		this.positions[i] = this.evalPosition(t);
+		if(i == 0)
+			this.distances[0] = 0.0;
+		else
+			this.distances[i] = this.distances[i-1] + this.positions[i].distanceTo(p_prev);
+		p_prev = this.positions[i];
+	}
+}
+
+inline BSpline.setRestLength!(Scalar length) {
+  this.restLength = length;
+}
+
+
+// POSITION
+
+function Vec3 BSpline.evalPosition(Scalar t, Scalar keepArcLength, Scalar keepRestLength) {
+	Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepRestLength);
+	return this.evalPosition(arcLenT);
+}
+
+function Vec3 BSpline.evalPosition(Scalar tUnclamped) {
+	UInt32 domain[];
+
+	Scalar t = Math_clamp(tUnclamped,0.0,1.0);
+
+	domain.push(this.order-1);
+	domain.push(this.knotVector.size() -1 - (this.order-1));
+
+	// remap t to the domain where the spline is defined 
+	// disregarding knotVector for clamping
+	UInt32 low  = this.knotVector[domain[0]];
+	UInt32 high = this.knotVector[domain[1]];
+	Scalar normt = t * (high - low) + low;
+	if(normt < low || normt > high) setError('out of bounds');
+	
+
+	UInt32 segment;
+
+	//walk through the segments by order, break if normt outside of segment
+	for(segment=domain[0]; segment<domain[1]; segment++) {
+		if(normt >= this.knotVector[segment] && normt <= this.knotVector[segment+1]) {
+			break;
+		}
+	}
+
+	// convert points to homogeneous coordinates
+	// Array Size is d + 1 (here Size 4 for 3 dimensional curve points)
+	Scalar v[][4];
+	UInt32 n = this.points.size();
+	v.resize(n);
+	for(UInt32 i=0; i<n; i++) {
+		for(UInt32 j=0; j<this.d; j++) {
+			v[i][j] = this.points[i].component(j) * this.weights[i];
+		}
+		v[i][this.d] =  this.weights[i];
+	}
+
+	// l (level) goes from 1 to the curve order
+	for(UInt32 l=1; l<=this.order; l++) {
+		// build level l of the pyramid
+		for(UInt32 i=segment; i>segment-this.order+l; i--) {
+			// determine local ratio a
+			Scalar a = (normt - this.knotVector[i]) / (this.knotVector[i+this.order-l] - this.knotVector[i]);
+			// interpolate each component
+			for(UInt32 j=0; j<this.d+1; j++) {
+				v[i][j] =  (1-a)*v[i-1][j] + a*v[i][j];
+			}
+		}
+	}
+
+	Vec3 result;
+
+	// convert back to cartesian and return
+	for(UInt32 i=0; i<this.d; i++) {
+		result.setComponent(i,v[segment][i] / v[segment][this.d]);
+	}
+	return result;
+}
+
+// SCALE
+
+function Vec3 BSpline.evalScale(Scalar t, Xfo xfoA, Xfo xfoB) {
+	return xfoA.sc.linearInterpolate(xfoB.sc, t);
+}
+
+function Vec3 BSpline.evalScale(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
+	Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepCurveLen);
+	return this.evalScale(arcLenT);
+}
+
+function Vec3 BSpline.evalScale(Scalar t) {
+	Xfo XfoA, XfoB;
+	XfoA.setFromMat44(this.controlMat44s[0]);
+  	XfoB.setFromMat44(this.controlMat44s[this.controlMat44s.size()-1]);
+	return this.evalScale(t, XfoA, XfoB);
+}
+
+function Scalar BSpline.evalCompression(Scalar t, BSpline referenceCurve, Scalar keepArcLength, Scalar keepCurveLen) {
+  Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepCurveLen);
+  return this.evalCompression(t,referenceCurve);
+}
+
+
+function Scalar BSpline.evalCompression(Scalar t, BSpline referenceCurve) {
+  Scalar keepCurveLen = 0;
+  UInt32 index = this.getClosestDistanceIndex(t,keepCurveLen)+1;
+  Scalar lengthSample = this.distances[index];
+  Scalar lengthSampleRef = referenceCurve.distances[index];
+  if(lengthSample == 0) return 1.0;
+  return lengthSampleRef/lengthSample;
+}
+
+
+
+// ORIENTATION
+
+function Vec3 BSpline.evalTangent(Scalar tUnclamped) {
+	// this should be a straight deriviative look-up
+	Scalar epsilon = 0.001;
+	Scalar t = Math_clamp(tUnclamped,0.0,1.0-epsilon);
+
+	Vec3 pa, pb, tangent;
+	pa = this.evalPosition(t);
+	pb = this.evalPosition(t+epsilon);
+	tangent = pb-pa;
+	return tangent.normalize();
+}
+
+function Quat BSpline.evalOri(Scalar t, Scalar keepArcLength, Scalar keepRestLength) {
+	Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepRestLength);
+	return this.evalOri(arcLenT);
+}
+
+function Quat BSpline.evalOri(Scalar t, Xfo xfoA, Xfo xfoB) {
+	Vec3 tangent = this.evalTangent(t);
+	// to determine upvec, use linear rotation inperpolation for simplicity - this could be better
+	
+	Quat ori = xfoA.ori.sphericalLinearInterpolate(xfoB.ori, t);
+
+	Vec3 upVecTemp = ori.getXaxis();
+	
+	Vec3 side = upVecTemp.cross(-tangent);
+	Vec3 up = side.cross(tangent);
+	// Set the quat to represent the direction as the Z axis and the upvector pointing along the XY plane.
+	return ori.setFromDirectionAndUpvector(side,up);
+}
+
+function Quat BSpline.evalOri(Scalar t) {
+	Xfo XfoA, XfoB;
+	XfoA.setFromMat44(this.controlMat44s[0]);
+  	XfoB.setFromMat44(this.controlMat44s[this.controlMat44s.size()-1]);
+	return this.evalOri(t, XfoA, XfoB);
+}
+
+
+// LENGTH
+
+// do a fast, binary search for the closest matching distance index
+inline UInt32 BSpline.getClosestDistanceIndex(Scalar t, Scalar keepCurveLen) {
+  // tipLength is the approximated, curvelength at incoming param t, considering attenuated restDistance
+  Scalar tipLength   = t*this.getCurveLength(keepCurveLen);
+
+  // do a fast, binary search for the closest matching distance index
+  UInt32 low = 0;
+  UInt32 high = this.distances.size()-1;
+  UInt32 index = 0;
+
+  while (low < high) {
+    index = low + (((high - low) / 2) | 0);  
+    if (this.distances[index] < tipLength) {
+      low = index + 1;
+    } else {
+      high = index;
+    }
+  }
+  if (this.distances[index] > tipLength) {
+    index -= 1;
+  }
+  return index;
+}
+
+
+function Scalar BSpline.getCurveLength(Scalar keepCurveLen) {
+  Scalar Length =  (1-keepCurveLen)*(this.distances[this.distances.size()-1]) + keepCurveLen*this.restLength;
+  return Length;
+}
+
+
+function Scalar BSpline.arcLengthParam(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
+  UInt32 distanceVectorSize = this.distances.size()-1;
+  Scalar actualLength = this.distances[this.distances.size()-1];
+  Scalar tipLength   = t*this.getCurveLength(keepCurveLen);
+  Scalar nonArcLengthT = tipLength/actualLength;
+
+  if (keepArcLength == 0) {
+    return nonArcLengthT;
+  }
+  UInt32 index = this.getClosestDistanceIndex(t,keepCurveLen);
+
+  // from the distance index, extrapolate 
+  Scalar lengthBefore = this.distances[index];
+  Scalar arcLenghtT   = (index + (tipLength - lengthBefore) / (this.distances[index + 1] - lengthBefore)) / distanceVectorSize;
+  
+  // return lerped parameterization using the blend value keepArcLength
+  return (keepArcLength*arcLenghtT) + (1.0-keepArcLength)*nonArcLengthT;
+}
+
+/*
+function Scalar BSpline.DistanceToPoint(Vec3 point, Scalar t0, Scalar t1, UInt32 iteration) {
+    // iteration += 1;
+    Scalar n0, n1;
+    n0 = t0;
+	n1 = t1;
+    UInt32 it = iteration + 1;
+    Vec3 a = this.evalPosition(t0);
+    Vec3 b = this.evalPosition(t1);
+    
+    Scalar distanceA = point.DistanceTo(a);
+    Scalar distanceB = point.DistanceTo(b);
+    
+    Scalar m = (t1 - t0) / 2.0;
+    
+    if (it > 50) {
+        // OK, we've gone deep enough.
+        Scalar globalBestT = distanceA < distanceB ? t0 : t1;
+        
+        Vec3 bestPoint =  this.evalPosition(globalBestT);
+        
+        return Math_min(distanceA, distanceB);
+    }
+    
+    if (distanceA < distanceB) {
+        n1 -= m;
+    }
+    else {
+        n0 += m;
+    }
+    
+    return this.DistanceToPoint(point, n0, n1, it);
+}
+
+*/

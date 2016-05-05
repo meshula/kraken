@@ -1,0 +1,88 @@
+{
+  "objectType" : "Func",
+  "title" : "weightedAverageVec3",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "vectors",
+      "execPortType" : "IO",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "weights",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "8FEF4604E2CB59EC14EEF05EB6B2DDD6",
+  "code" : "//NOTE: weights need to be normalized
+
+dfgEntry {
+  UInt32 numVecs = weights.size();
+  Vec3 cumVec = Vec3()*0;
+  vectors.resize(numVecs);
+ 
+  for (UInt32 i=0; i<numVecs; i++)
+  { 
+    Vec3 wVec = vectors[i]*weights[i];
+    
+    result += wVec;
+  }
+}",
+  "requiredPresets" : {
+    "OSS.Math.weightedAverageVec3" : {
+      "objectType" : "Func",
+      "title" : "weightedAverageVec3",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "vectors",
+          "execPortType" : "IO",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "weights",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "8FEF4604E2CB59EC14EEF05EB6B2DDD6",
+      "code" : "//NOTE: weights need to be normalized
+
+dfgEntry {
+  UInt32 numVecs = weights.size();
+  Vec3 cumVec = Vec3()*0;
+  vectors.resize(numVecs);
+ 
+  for (UInt32 i=0; i<numVecs; i++)
+  { 
+    Vec3 wVec = vectors[i]*weights[i];
+    
+    result += wVec;
+  }
+}"
+      }
+    }
+  }
