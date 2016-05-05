@@ -331,12 +331,12 @@ class OSSFootComponentRig(OSSFootComponent):
         # IK Handle
         self.handleCtrl = IKControl("foot", parent=self.ctrlCmpGrp, shape="jack")
         self.handleCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later careful when combining with foot!
-        self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace()
+        self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace(name="foot_ik")
 
         # FK Foot
         self.footCtrl = FKControl('foot', parent=self.ctrlCmpGrp, shape="cube")
         self.footCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
-        self.footCtrlSpace = self.footCtrl.insertCtrlSpace()
+        self.footCtrlSpace = self.footCtrl.insertCtrlSpace(name="foot_fk") #avoid name clash with ik spacectrl
 
         # FK Ball
         self.ballCtrl = FKControl('ball', parent=self.footCtrl, shape="cube")

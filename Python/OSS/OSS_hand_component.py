@@ -393,14 +393,14 @@ class OSSHandComponentRig(OSSHandComponent):
         # IK Handle
         self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="jack")
         self.handleCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later careful when combining with foot!
-        self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace()
+        self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace(name="hand_ik") # To avoid clashes
         self.handleIKCtrlSpace = CtrlSpace('handIK', parent=self.handleCtrl)
 
         # FK Hand
         self.handCtrl = FKControl('hand', parent=self.ctrlCmpGrp, shape="cube")
         self.handCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
         self.handCtrl.alignOnXAxis()
-        self.handCtrlSpace = self.handCtrl.insertCtrlSpace()
+        self.handCtrlSpace = self.handCtrl.insertCtrlSpace(name="hand_fk")
 
         # FK palm
         self.palmCtrl = FKControl('palm', parent=self.handCtrl, shape="cube")
