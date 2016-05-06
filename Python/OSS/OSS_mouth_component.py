@@ -827,8 +827,8 @@ class OSSMouthRig(OSSMouth):
 
         self.upLipCtrls = [self.lMouthCtrl] + self.upLipCtrls + [self.rMouthCtrl]
 
-
         self.upLipRigOp.setOutput('outputs', self.upLipOutputs)
+
         # Add lowLip Debug Canvas Op
         self.upLipDefOp = CanvasOperator('upLipDefOp', 'OSS.Solvers.NURBSCurveXfoSolver')
         self.addOperator(self.upLipDefOp)
@@ -1024,6 +1024,21 @@ class OSSMouthRig(OSSMouth):
 
 
         self.mouthCtrl.translatePoints(Vec3(Vec3(data['mouthLen'], -3 , 0.0)))
+
+        # update the positions of the lip controls to match their uberparents
+        # after we eval the operators and get the uber positions
+        self.upLipRigOp.evaluate()
+        for ctrl in self.upLipCtrls:
+            if ctrl is not self.lMouthCtrl and ctrl is not self.rMouthCtrl:
+                uber = ctrl.getParent().getParent()
+                ctrl.getParent().xfo = Xfo(uber.xfo)
+                ctrl.xfo = Xfo(uber.xfo)
+        self.loLipRigOp.evaluate()
+        for ctrl in self.loLipCtrls:
+            if ctrl is not self.lMouthCtrl and ctrl is not self.rMouthCtrl:
+                uber = ctrl.getParent().getParent()
+                ctrl.getParent().xfo = Xfo(uber.xfo)
+                ctrl.xfo = Xfo(uber.xfo)
 
 
         # ============
