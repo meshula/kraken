@@ -168,7 +168,7 @@ class OSSMouthGuide(OSSMouth):
         self.midLipGuideOp = CanvasOperator('midLipGuideOp', 'OSS.Solvers.NURBSCurveGuideSolver')
         self.addOperator(self.midLipGuideOp)
 
-        self.midLipGuideOp.setInput('drawDebug', 1)
+        self.midLipGuideOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.midLipGuideOp.setInput('rigScale', 1.0)
         self.midLipGuideOp.setInput('degree', 4)
 
@@ -194,7 +194,7 @@ class OSSMouthGuide(OSSMouth):
         self.upLipControls = []
         self.upLipOutputs = []
 
-        self.upLipGuideOp.setInput('drawDebug', 1)
+        self.upLipGuideOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.upLipGuideOp.setInput('rigScale', 1.0)
         self.upLipGuideOp.setInput('degree', 3)
 
@@ -218,7 +218,7 @@ class OSSMouthGuide(OSSMouth):
         self.loLipControls = []
         self.loLipOutputs = []
 
-        self.loLipGuideOp.setInput('drawDebug', 1)
+        self.loLipGuideOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.loLipGuideOp.setInput('rigScale', 1.0)
         self.loLipGuideOp.setInput('degree', 3)
 
@@ -591,7 +591,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipControls.append(self.R_upLipHandleCtrl)
         self.upLipControls.append(self.rMouthCtrl)
 
-        self.upLipRigOp.setInput('drawDebug', 1)
+        self.upLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.upLipRigOp.setInput('rigScale', 1.0)
         self.upLipRigOp.setInput('alignX', 2)
         self.upLipRigOp.setInput('alignY', 3)
@@ -599,7 +599,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipRigOp.setInput('degree', 4)
         self.upLipRigOp.setInput('keepArcLength', 0.0)
         self.upLipRigOp.setInput('followCurveTangent', 0.0)
-        self.upLipRigOp.setInput('altTangent',  (0.0,1.0,0.0))
+        self.upLipRigOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         self.upLipRigOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipRigOp.setInput('atVec', self.mouthCtrl)
@@ -625,7 +625,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipControls.append(self.R_loLipHandleCtrl)
         self.loLipControls.append(self.rMouthCtrl)
 
-        self.loLipRigOp.setInput('drawDebug', 1)
+        self.loLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.loLipRigOp.setInput('rigScale', 1.0)
         self.loLipRigOp.setInput('alignX', 2)
         self.loLipRigOp.setInput('alignY', 3)
@@ -633,7 +633,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipRigOp.setInput('degree', 4)
         self.loLipRigOp.setInput('keepArcLength', 0.0)
         self.loLipRigOp.setInput('followCurveTangent', 0.0)
-        self.loLipRigOp.setInput('altTangent',  (0.0,1.0,0.0))
+        self.loLipRigOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         self.loLipRigOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipRigOp.setInput('atVec', self.mouthCtrl)
@@ -647,7 +647,7 @@ class OSSMouthRig(OSSMouth):
         self.blendMidMouthRigOp = CanvasOperator('blendMidMouthRigOp', 'OSS.Solvers.blendMat44Solver')
         self.addOperator(self.blendMidMouthRigOp)
 
-        # self.blendMidMouthRigOp.setInput('drawDebug', 1)
+        # self.blendMidMouthRigOp.setInput('drawDebug', self.drawDebugInputAttr)
         # self.blendMidMouthRigOp.setInput('rigScale', 1.0)
         self.blendMidMouthRigOp.setInput('rotationAmt', .5)
         self.blendMidMouthRigOp.setInput('translationAmt', .5)
@@ -835,12 +835,12 @@ class OSSMouthRig(OSSMouth):
 
         self.upLipControls = []
         self.upLipOutputs = []
-        # numDefs plus two for the corners
+        # numDefs plus two for the corners, this should be determined per closest point on curve
         self.paramsOut = [1, .96, .9, .81, .74, .66, .58, 0.5, 0.42, 0.34, 0.26, 0.19, 0.1, 0.04, 0]
 
         self.upLipDefs =  [self.rUpLipCorner] + self.upLipDefs + [self.lUpLipCorner]
 
-        self.upLipDefOp.setInput('drawDebug', 1)
+        self.upLipDefOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.upLipDefOp.setInput('rigScale', 1.0)
         self.upLipDefOp.setInput('degree', 3)
         self.upLipDefOp.setInput('alignX', -1)
@@ -848,7 +848,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipDefOp.setInput('alignZ', 2)
         self.upLipDefOp.setInput('keepArcLength', 0.0)
         self.upLipDefOp.setInput('followCurveTangent', 0.5)
-        self.upLipDefOp.setInput('altTangent',  (0.0,0.0,1.0))
+        self.upLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.upLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipDefOp.setInput('atVec', self.mouthCtrl)
@@ -856,7 +856,6 @@ class OSSMouthRig(OSSMouth):
         self.upLipDefOp.setInput('params', self.paramsOut)
 
         self.upLipDefOp.setOutput('outputs', self.upLipDefs)
-
 
         self.loLipDefs = []
         self.loLipCtrls = []
@@ -893,7 +892,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipOutputs = []
         self.loLipDefs =  [self.rLoLipCorner] + self.loLipDefs + [self.lLoLipCorner]
 
-        self.loLipDefOp.setInput('drawDebug', 1)
+        self.loLipDefOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.loLipDefOp.setInput('rigScale', 1.0)
         self.loLipDefOp.setInput('degree', 3)
         self.loLipDefOp.setInput('alignX', -1)
@@ -901,7 +900,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipDefOp.setInput('alignZ', 2)
         self.loLipDefOp.setInput('keepArcLength', 0.0)
         self.loLipDefOp.setInput('followCurveTangent', 0.5)
-        self.loLipDefOp.setInput('altTangent', (0.0,0.0,1.0))
+        self.loLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.loLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipDefOp.setInput('atVec', self.mouthCtrl)
@@ -920,7 +919,7 @@ class OSSMouthRig(OSSMouth):
         self.blendLeftCornerOp = CanvasOperator('blendLeftCornerOp', 'OSS.Solvers.blendMat44Solver')
         self.addOperator(self.blendLeftCornerOp)
 
-        # self.blendLeftCornerOp.setInput('drawDebug', 1)
+        # self.blendLeftCornerOp.setInput('drawDebug', self.drawDebugInputAttr)
         # self.blendLeftCornerOp.setInput('rigScale', 1.0)
         self.blendLeftCornerOp.setInput('rotationAmt', .5)
         self.blendLeftCornerOp.setInput('translationAmt', .5)
@@ -940,7 +939,7 @@ class OSSMouthRig(OSSMouth):
         self.blendRightCornerOp = CanvasOperator('blendRightCornerOp', 'OSS.Solvers.blendMat44Solver')
         self.addOperator(self.blendRightCornerOp)
 
-        # self.blendRightCornerOp.setInput('drawDebug', 1)
+        # self.blendRightCornerOp.setInput('drawDebug', self.drawDebugInputAttr)
         # self.blendRightCornerOp.setInput('rigScale', 1.0)
         self.blendRightCornerOp.setInput('rotationAmt', .5)
         self.blendRightCornerOp.setInput('translationAmt', .5)
@@ -984,6 +983,7 @@ class OSSMouthRig(OSSMouth):
         self.mouthEndOutputTgt.xfo = data['mouthXfo']
         self.mouthOutputTgt.xfo = data['mouthXfo']
 
+        self.evalOperators()
 
         # Eval Constraints
         self.mouthConstraint.evaluate()
