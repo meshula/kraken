@@ -191,7 +191,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
         else:
             if self.limbMocapInputAttr is not None:
-                self.deleteInput('limbMocap', parent=self.cmpInputAttrGrp)
+                # self.deleteInput('limbMocap', parent=self.cmpInputAttrGrp)
                 self.limbMocapInputAttr = None
                 self.mocap = False
 
@@ -208,10 +208,10 @@ class OSSLimbComponentGuide(OSSLimbComponent):
                 self.stretchAttr = self.createInput('stretch', dataType='Float', parent=self.cmpInputAttrGrp)
         else:
             if self.ikgoal_cmpIn is not None:
-                self.deleteInput('ikGoalInput', parent=self.inputHrcGrp)
-                self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
-                self.deleteInput('softDist', parent=self.cmpInputAttrGrp)
-                self.deleteInput('stretch', parent=self.cmpInputAttrGrp)
+                # self.deleteInput('ikGoalInput', parent=self.inputHrcGrp)
+                # self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
+                # self.deleteInput('softDist', parent=self.cmpInputAttrGrp)
+                # self.deleteInput('stretch', parent=self.cmpInputAttrGrp)
                 self.ikgoal_cmpIn = None
 
 
