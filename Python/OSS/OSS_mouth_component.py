@@ -599,7 +599,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipRigOp.setInput('degree', 4)
         self.upLipRigOp.setInput('keepArcLength', 0.0)
         self.upLipRigOp.setInput('followCurveTangent', 0.0)
-        self.upLipRigOp.setInput('altTangent',  (0.0,1.0,0.0))
+        self.upLipRigOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         self.upLipRigOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipRigOp.setInput('atVec', self.mouthCtrl)
@@ -633,7 +633,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipRigOp.setInput('degree', 4)
         self.loLipRigOp.setInput('keepArcLength', 0.0)
         self.loLipRigOp.setInput('followCurveTangent', 0.0)
-        self.loLipRigOp.setInput('altTangent',  (0.0,1.0,0.0))
+        self.loLipRigOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         self.loLipRigOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipRigOp.setInput('atVec', self.mouthCtrl)
@@ -848,7 +848,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipDefOp.setInput('alignZ', 2)
         self.upLipDefOp.setInput('keepArcLength', 0.0)
         self.upLipDefOp.setInput('followCurveTangent', 0.5)
-        self.upLipDefOp.setInput('altTangent',  (0.0,0.0,1.0))
+        self.upLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.upLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipDefOp.setInput('atVec', self.mouthCtrl)
@@ -900,7 +900,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipDefOp.setInput('alignZ', 2)
         self.loLipDefOp.setInput('keepArcLength', 0.0)
         self.loLipDefOp.setInput('followCurveTangent', 0.5)
-        self.loLipDefOp.setInput('altTangent', (0.0,0.0,1.0))
+        self.loLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.loLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipDefOp.setInput('atVec', self.mouthCtrl)
@@ -983,6 +983,7 @@ class OSSMouthRig(OSSMouth):
         self.mouthEndOutputTgt.xfo = data['mouthXfo']
         self.mouthOutputTgt.xfo = data['mouthXfo']
 
+        self.evalOperators()
 
         # Eval Constraints
         self.mouthConstraint.evaluate()
