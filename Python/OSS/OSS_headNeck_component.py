@@ -580,8 +580,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.NURBSNeckKLOp.setInput('neckHandle', self.neckHandleCtrlSpace_link)
             self.NURBSNeckKLOp.setInput('headHandle', self.headHandleCtrlSpace_link)
 
-        self.neckBaseOutputConstraint = self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0], maintainOffset=True)
-        self.neckEndOutputConstraint = self.neckEndOutputTgt.constrainTo(self.neckOutputs[-1], maintainOffset=True)
+        self.neckBaseOutputConstraint = self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0])
+        self.neckEndOutputConstraint = self.neckEndOutputTgt.constrainTo(self.neckOutputs[-1])
 
         # ====================
         # Evaluate Fabric Ops
