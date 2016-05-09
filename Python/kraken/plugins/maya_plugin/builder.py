@@ -11,7 +11,7 @@ from kraken.log import getLogger
 
 from kraken.core.kraken_system import ks
 
-from kraken.core.maths import Vec2, Vec3, Xfo, Mat44, Math_radToDeg
+from kraken.core.maths import Vec2, Vec3, Xfo, Mat44, Math_radToDeg, RotationOrder
 
 from kraken.core.builder import Builder
 from kraken.core.objects.object_3d import Object3D
@@ -540,8 +540,23 @@ class Builder(Builder):
             maintainOffset=kConstraint.getMaintainOffset())
 
         if kConstraint.getMaintainOffset() is True:
+
+            # Maya's rotation order enums:
+            # 0 XYZ
+            # 1 YZX
+            # 2 ZXY
+            # 3 XZY
+            # 4 YXZ <-- 5 in Fabric
+            # 5 ZYX <-- 4 in Fabric
+            order = kConstraint.getConstrainee().ro.order
+            if order == 4:
+                order = 5
+            elif order == 5:
+                order = 4
+
             offsetXfo = kConstraint.computeOffset()
-            offsetAngles = offsetXfo.ori.toEulerAngles()
+            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
+                RotationOrder(order))
 
             dccSceneItem.attr('offset').set([offsetAngles.x,
                                              offsetAngles.y,
@@ -576,8 +591,23 @@ class Builder(Builder):
             maintainOffset=kConstraint.getMaintainOffset())
 
         if kConstraint.getMaintainOffset() is True:
+
+            # Maya's rotation order enums:
+            # 0 XYZ
+            # 1 YZX
+            # 2 ZXY
+            # 3 XZY
+            # 4 YXZ <-- 5 in Fabric
+            # 5 ZYX <-- 4 in Fabric
+            order = kConstraint.getConstrainee().ro.order
+            if order == 4:
+                order = 5
+            elif order == 5:
+                order = 4
+
             offsetXfo = kConstraint.computeOffset()
-            offsetAngles = offsetXfo.ori.toEulerAngles()
+            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
+                RotationOrder(order))
 
             # Set offsets on parent constraint
             dccSceneItem.target[0].targetOffsetTranslate.set([offsetXfo.tr.x,
