@@ -383,11 +383,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.deformersToOutputsKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.deformersToOutputsKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
-        # Add Xfo Outputs
         self.deformersToOutputsKLOp.setInput('constrainers', self.neckOutputs)
 
-        # Add Xfo Outputs
-        self.deformersToOutputsKLOp.setOutput('constrainees', self.deformerJoints)
+
 
 
 
@@ -589,6 +587,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Eval Operators # Order is important
         self.NURBSNeckKLOp.evaluate()
 
+        self.deformersToOutputsKLOp.setOutput('constrainees', self.deformerJoints)
+
+        self.deformersToOutputsKLOp.evaluate()
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # ====================
