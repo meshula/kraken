@@ -383,11 +383,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.deformersToOutputsKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.deformersToOutputsKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
-        # Add Xfo Outputs
         self.deformersToOutputsKLOp.setInput('constrainers', self.neckOutputs)
 
-        # Add Xfo Outputs
-        self.deformersToOutputsKLOp.setOutput('constrainees', self.deformerJoints)
+
 
 
 
@@ -589,6 +587,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Eval Operators # Order is important
         self.NURBSNeckKLOp.evaluate()
 
+        self.deformersToOutputsKLOp.setOutput('constrainees', self.deformerJoints)
+
+        self.deformersToOutputsKLOp.evaluate()
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # ====================
@@ -610,6 +611,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.headWorldCtrl.rotatePoints(-90, 0, 0)
         self.headWorldCtrl.translatePoints(Vec3(0, 1.5, 0.0))
         self.headWorldCtrl.scalePoints(globalScale)
+
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
