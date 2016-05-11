@@ -1,29 +1,15 @@
 
-import sys, string, os
+import os
+import sys
 import argparse
 import subprocess
 import StringIO
 import contextlib
 import traceback
+import logging
 
 
-import os
-import sys
-
-
-# krakenDir=os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
-# print krakenDir
-
-# fabricEngineDir=os.path.normpath("D:/temp/FabricEngine-pablo-Windows-x86_64-20150909-105847/")
-
-# os.environ['PATH'] = os.path.join(fabricEngineDir, 'bin') + os.pathsep + os.environ['PATH']
-
-# PYTHON_VERSION = sys.version[:3]
-# sys.path.append( os.path.join(fabricEngineDir, 'Python', PYTHON_VERSION ) )
-
-# os.environ['FABRIC_EXTS_PATH'] = os.path.join(fabricEngineDir, 'Exts') + os.pathsep + os.path.join(krakenDir, 'Exts') + ';' + os.environ['FABRIC_EXTS_PATH']
-
-
+from kraken.log import getLogger
 
 failedTests = []
 updatedReferences = []
@@ -34,7 +20,7 @@ def checkTestOutput(filepath, output, update, printoutput=False):
     referencefileExists = os.path.exists(referencefile)
     match = False
     if referencefileExists:
-        referenceTxt = str(open( referencefile ).read())
+        referenceTxt = str(open(referencefile).read())
         match = (referenceTxt == output)
 
     if not referencefileExists or update:
@@ -56,7 +42,7 @@ def checkTestOutput(filepath, output, update, printoutput=False):
             print "Test Passed:" + filepath
         else:
             print "Test Failed:" + filepath
-            resultfile = os.path.splitext(filepath)[0]+'.result'
+            resultfile = os.path.splitext(filepath)[0] + '.result'
             with open(resultfile, 'w') as f:
                 f.write(output)
 
@@ -105,7 +91,13 @@ def runPytonTest(filepath, update, printoutput):
 
     with stdoutIO() as s:
         try:
-            execfile( filepath, {} )
+            logger = getLogger('kraken')
+            logger.setLevel(logging.DEBUG)
+
+            for handler in logger.handlers:
+                handler.setLevel(logging.DEBUG)
+
+            execfile(filepath, {})
             output = s.getvalue()
         except Exception as e:
             print(format_exception(e))
@@ -141,22 +133,22 @@ def runKLTest(filepath, update, printoutput=False):
 
 
 def runTest(filepath, update, printoutput=False):
-    skipile = os.path.splitext(filepath)[0]+'.skip'
+    skipile = os.path.splitext(filepath)[0] + '.skip'
     if os.path.exists(skipile):
         print "Test Skipped:" + filepath
         return
 
     if filepath.endswith(".py"):
-        runPytonTest( filepath, update, printoutput )
+        runPytonTest(filepath, update, printoutput)
     elif filepath.endswith(".kl"):
-        runKLTest( filepath, update, printoutput )
+        runKLTest(filepath, update, printoutput)
 
 
 if __name__ == '__main__':
     # Parse the commandline args.
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file', required=False, help = "The python or kl File to use in the test (optional)")
-    parser.add_argument('--update', required=False, action='store_const', const=True, default=False, help = "Force the update of the reference file(s). (optional)")
+    parser.add_argument('--file', required=False, help="The python or kl File to use in the test (optional)")
+    parser.add_argument('--update', required=False, action='store_const', const=True, default=False, help="Force the update of the reference file(s). (optional)")
     args = parser.parse_args()
     update = args.update
 

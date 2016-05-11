@@ -1,5 +1,7 @@
-import os
 import glob
+import logging
+import os
+import sys
 
 __all__ = [os.path.splitext(os.path.basename(plugin))[0]
            for path in __path__
@@ -86,6 +88,16 @@ def getLogHandler():
             loaded_class = getattr(loaded_mod, 'DCCHandler')
 
             handler = loaded_class()
+
+    if handler is None:
+
+        class DCCHandler(logging.StreamHandler):
+            """DCC Handler class for stand alone."""
+
+            def __init__(self, stream=None):
+                super(DCCHandler, self).__init__(stream)
+
+        handler = DCCHandler(sys.stdout)
 
     return handler
 
