@@ -1080,6 +1080,11 @@ class Builder(Builder):
 
                 if portDataType == 'EvalContext':
                     continue
+                elif portDataType == 'DrawingHandle':
+                    continue
+                elif portDataType == 'InlineDebugShape':
+                    continue
+
                 if portName == 'time':
                     pm.expression(o=canvasNode + '.time', s=canvasNode + '.time = time;')
                     continue
