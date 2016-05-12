@@ -1,0 +1,30 @@
+
+require Kraken;
+
+operator entry(){
+  DirectionConstraintSolver solver();
+
+  Boolean drawDebug = true;
+  Scalar rigScale = 1.0;
+
+  Mat44 parentMatrix;
+  parentMatrix.setTranslation(Vec3(0, 0, 0));
+  Mat44 position;
+  position.setTranslation(Vec3(0, 15, 0));
+  Mat44 upVector;
+  upVector.setTranslation(Vec3(0, 17, 0));
+  Mat44 atVector;
+  atVector.setTranslation(Vec3(0, 15, 12));
+
+  Mat44 constrainee;
+
+  solver.solve(drawDebug, rigScale, parentMatrix, position, upVector, atVector, constrainee);
+
+  Xfo constraineeXfo = constrainee;
+
+  Euler angles = constraineeXfo.ori.toEulerAngles();
+
+  report('Constrainee pos: ' + constraineeXfo.tr);
+  report('Constrainee rot: ' + "x: " + Math_radToDeg(angles.x) + ", y: " + Math_radToDeg(angles.y) + ", z:" + Math_radToDeg(angles.z));
+  report('Constrainee sc: ' + constraineeXfo.sc);
+}

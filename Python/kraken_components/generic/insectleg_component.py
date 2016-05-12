@@ -28,6 +28,11 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from kraken.log import getLogger
+
+
+logger = getLogger('kraken')
+
 
 class InsectLegComponent(BaseExampleComponent):
     """Insect Leg Base"""
@@ -471,6 +476,9 @@ class InsectLegComponentRig(InsectLegComponent):
         boneLengths = data['boneLengths']
         numJoints = data['numJoints']
         endXfo = data['endXfo']
+
+        for i in xrange(len(boneXfos)):
+            logger.info(boneXfos[i])
 
         # Add extra controls and outputs
         self.setNumControls(numJoints)

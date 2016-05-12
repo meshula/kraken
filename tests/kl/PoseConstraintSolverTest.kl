@@ -1,0 +1,20 @@
+
+require Kraken;
+
+operator entry(){
+  PoseConstraintSolver solver();
+
+  Boolean debug     = true;
+  Scalar rigScale   = 1.0;
+
+  Xfo constrainer();
+  constrainer.tr = Vec3(0, 5, 0);
+  constrainer.ori.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(45));
+
+  Mat44 constrainee = Xfo().toMat44();
+
+  solver.solve(debug, rigScale, constrainer.toMat44(), constrainee);
+
+  report(constrainee.translation());
+  report(Math_radToDeg(Quat(constrainee.upperLeft()).toEulerAngles().y));
+}

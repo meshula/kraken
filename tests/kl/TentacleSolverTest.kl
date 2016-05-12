@@ -1,0 +1,48 @@
+
+require Kraken;
+
+operator entry(){
+  TentacleSolver solver();
+
+  Boolean drawDebug = true;
+  Scalar rigScale = 1.0;
+
+  Mat44 fkcontrols[];
+  fkcontrols.resize(6);
+
+  // Outputs
+  Mat44 pose[];
+  pose.resize(6);
+
+  Mat44 tentacleEnd;
+
+  // TODO: Finish setting up test values and test with simulation.
+
+  // solver.solve(
+  //   drawDebug,
+  //   rigScale,
+  //   time,
+  //   ikblend,
+  //   waveLength_Y,
+  //   waveAmplitude_Y,
+  //   waveFrequency_Y,
+  //   waveLength_Z,
+  //   waveAmplitude_Z,
+  //   waveFrequency_Z,
+  //   tipBias,
+
+  //   springStrength,
+  //   dampening,
+  //   simulationWeight,
+  //   softLimitBounds,
+
+  //   chainBase,
+  //   ikgoal,
+  //   fkcontrols,
+  //   tipBoneLen,
+  //   pose,
+  //   tentacleEnd
+  // )
+
+  report(pose);
+}
