@@ -8,6 +8,7 @@ object DirectionConstraintSolver : KrakenSolver {
 // Return Arguments for Kraken
 function KrakenSolverArg[] DirectionConstraintSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('parentMatrix', 'In', 'Mat44'));
   args.push(KrakenSolverArg('position', 'In', 'Mat44'));
   args.push(KrakenSolverArg('upVector', 'In', 'Mat44'));
   args.push(KrakenSolverArg('atVector', 'In', 'Mat44'));
@@ -21,6 +22,7 @@ function DirectionConstraintSolver.solve!
 (
   in Boolean drawDebug,
   in Scalar rigScale,
+  in Mat44 parentMatrix,
   in Mat44 position,
   in Mat44 upVector,
   in Mat44 atVector,
@@ -38,18 +40,34 @@ function DirectionConstraintSolver.solve!
   Quat rotation;
   rotation.setFromMat33(outAlignment);
 
+  Xfo parentInverseXfo = parentMatrix.inverse();
+
+  Quat xAlignOri;
+  xAlignOri.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-90));
+
   Xfo outXfo;
-  outXfo.tr = position.translation();
-  outXfo.ori = rotation;
+  outXfo = position.translation();
+  outXfo.ori.setFromDirectionAndUpvector(toAtVector, toUpVector);
+
+  outXfo = parentInverseXfo * outXfo;
+  outXfo.ori *= xAlignOri;
 
   constrainee = outXfo.toMat44();
+
+  Vec3 debugPositions[];
+  debugPositions.resize(2);
+
+  debugPositions[0] = position.translation();
+  debugPositions[1] = atVector.translation();
 
   // Set debugging visibility.
   this.setDebug(this.drawDebug);
   if(this.drawDebug){
     if(!this.handle)
       this.handle = DrawingHandle();
-    Color boneColor = Color(0.0, 0.0, 1.0);
-    etDrawBone(this.handle.rootTransform, 'singleBone', constrainee, 1.0, 0.25, boneColor);
+
+    Color lineColor(1.0, 1.0, 0);
+    drawLineStrip(this.handle.rootTransform, 'DirConstraintLine', debugPositions, lineColor);
+
   }
 }
