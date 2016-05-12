@@ -235,15 +235,9 @@ class OSSMouthGuide(OSSMouth):
         self.loLipControls.append(self.rMouthOutCtrl)
 
 
-        # Add reflection Canvas Op, should feed inputs from self.symMapping
-        self.reflectionOp = CanvasOperator('reflectionOp', 'OSS.Solvers.reflectMat44Solver')
-        self.addOperator(self.reflectionOp)
 
-        self.reflectionOp.setInput('inputs',   self.lSideObjs)
-        self.reflectionOp.setInput('inputParents',  self.lSideParentObjs)
-        self.reflectionOp.setOutput('results', self.rSideObjs)
-
-        self.allObject3Ds = self.getHierarchyNodes(classType=Control)
+        self.allObject3Ds = self.getHierarchyNodes(classType="Control")
+        
         for ctrl in self.allObject3Ds:
             self.addToSymDict(ctrl)
 
@@ -251,6 +245,15 @@ class OSSMouthGuide(OSSMouth):
             self.lSideObjs.append(value["lSide"])
             self.lSideParentObjs.append(value["lSideParent"])
             self.rSideObjs.append(value["rSide"])
+
+
+        # Add reflection Canvas Op, should feed inputs from self.symMapping
+        self.reflectionOp = CanvasOperator('reflectionOp', 'OSS.Solvers.reflectMat44Solver')
+        self.addOperator(self.reflectionOp)
+
+        self.reflectionOp.setInput('inputs',   self.lSideObjs)
+        self.reflectionOp.setInput('inputParents',  self.lSideParentObjs)
+        self.reflectionOp.setOutput('results', self.rSideObjs)
 
         self.loadData(data)
 
@@ -1019,7 +1022,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipCtrl.translatePoints(Vec3(Vec3(0, 0.75,  .5)))
         self.upLipCtrl.alignOnZAxis()
 
-        for ctrl in self.getHierarchyNodes(classType=Control):
+        for ctrl in self.getHierarchyNodes(classType="Control"):
             ctrl.scalePoints(globalScale)
 
 
