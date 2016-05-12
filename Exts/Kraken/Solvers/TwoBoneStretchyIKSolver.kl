@@ -1,0 +1,284 @@
+require InlineDrawing;
+require Kraken;
+require Math;
+require Animation;
+
+
+object TwoBoneStretchyIKSolver : KrakenSolver {
+  Xfo initPose[];
+};
+
+
+// Default Constructor
+function TwoBoneStretchyIKSolver()
+{
+
+}
+
+
+function TwoBoneStretchyIKSolver(
+  Xfo initPose[])
+{
+  this.initPose = initPose;
+}
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] TwoBoneStretchyIKSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('rightSide', 'In', 'Boolean'));
+
+  args.push(KrakenSolverArg('ikblend', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('softIK', 'In', 'Boolean'));
+  args.push(KrakenSolverArg('softRatio', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('stretch', 'In', 'Boolean'));
+  args.push(KrakenSolverArg('stretchBlend', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('slide', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('pin', 'In', 'Scalar'));
+
+  args.push(KrakenSolverArg('root', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('bone0FK', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('bone1FK', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('ikHandle', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('upV', 'In', 'Mat44'));
+
+  args.push(KrakenSolverArg('bone0Len', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('bone1Len', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('bone0Out', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('bone1Out', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('bone2Out', 'Out', 'Mat44'));
+  return args;
+}
+
+
+// Solve
+function TwoBoneStretchyIKSolver.solve!
+(
+  Boolean drawDebug,
+  Scalar rigScale,
+  Boolean rightSide,
+
+  Scalar ikblend,
+  Boolean softIK,
+  Scalar softRatio,
+  Boolean stretch,
+  Scalar stretchBlend,
+  Scalar slide,
+  Scalar pin,
+
+  Mat44 root,
+  Mat44 bone0FK,
+  Mat44 bone1FK,
+  Mat44 ikHandle,
+  Mat44 upV,
+
+  Scalar bone0Len,
+  Scalar bone1Len,
+  io Mat44 bone0Out,
+  io Mat44 bone1Out,
+  io Mat44 bone2Out
+){
+
+  Xfo bone0FkXfo = Xfo(bone0FK);
+  Xfo bone1FkXfo = Xfo(bone1FK);
+
+  Xfo bone0Xfo;
+  Xfo bone1Xfo;
+  Xfo bone2Xfo;
+
+  // Scale to global rig scale
+  Scalar scaledBone0Len = bone0Len * rigScale;
+  Scalar scaledBone1Len = bone1Len * rigScale;
+
+  // Ensure minimum length (clamp)
+  if (scaledBone0Len < 1e-6) scaledBone0Len = 1e-6;
+  if (scaledBone1Len < 1e-6) scaledBone1Len = 1e-6;
+
+  // Whether a scale should be applied in one axis
+  // when the IK chain stretches
+  Boolean scaleOnStretch = false; // hardcoded for now
+
+  // Solve IK
+  if(ikblend > 0.0)
+  {
+
+    Vec3 ikHandlePos = ikHandle.translation();
+    Vec3 rootPos = root.translation();
+    Vec3 upVPos = upV.translation();
+    Scalar distanceToIK = (rootPos - ikHandlePos).length();
+
+    // Lock mid to the upVector (pole vector)
+    // e.g. could be used to lock an elbow on a table
+    if (pin > 0.0)
+    {
+        scaledBone0Len = Math_linearInterpolate(scaledBone0Len, (upVPos - rootPos).length(), pin);
+        scaledBone1Len = Math_linearInterpolate(scaledBone1Len, (upVPos - ikHandlePos).length(), pin);
+    }
+
+    if (pin != 1.0)
+    {
+
+      // TODO: Allow scale of zero and the evaluation to finish
+      Scalar chainLen = scaledBone0Len + scaledBone1Len;
+
+      // Slide mid to end (+1) or to start (-1)
+      if (slide != 0.0)
+      {
+        Scalar shift;
+        if (slide > 0.0)
+          shift = slide * scaledBone1Len;
+        else
+          shift = slide * scaledBone0Len;
+
+        // Fix pinning blend (when 0 < pin < 1)
+        if (pin > 0.0) shift = Math_linearInterpolate(shift, 0.0, pin);
+
+        // Update the bone lengths
+        scaledBone0Len += shift;
+        scaledBone1Len -= shift;
+        chainLen = scaledBone0Len + scaledBone1Len;
+      }
+
+      // Soft IK scale
+      Scalar finalRatio = 1.0;
+      if (softIK && softRatio > 0.0)
+      {
+        Scalar softLen = softRatio * chainLen;
+        Scalar hardLen = chainLen - softLen;
+
+        // If we left the hardDistArea we entered the soft area
+        if (distanceToIK > hardLen)
+        {
+          Scalar exponent = -(distanceToIK - hardLen) / softLen;
+          Scalar softTargetDistance = softLen * (1 - exp(exponent)) + hardLen;
+
+          finalRatio = softTargetDistance / distanceToIK;
+
+          // Fix pinning blend (when 0 < pin < 1)
+          if (pin > 0.0) finalRatio = Math_linearInterpolate(finalRatio, 1.0, pin);
+
+          if (!stretch || stretchBlend < 1.0)
+          {
+            // For this we drag the IK handle behind after the softDist
+            // See: http://www.softimageblog.com/archives/108
+            // Compute soft IK location for non-stretchy
+            Scalar nonStretchyFinalRatio = Math_linearInterpolate(finalRatio, 1.0, stretchBlend);
+            Vec3 direction = ikHandlePos - rootPos;
+            direction = direction.multiplyScalar(nonStretchyFinalRatio);
+            ikHandlePos = rootPos + direction;
+            distanceToIK *= nonStretchyFinalRatio;
+          }
+
+          if (stretch && stretchBlend > 0.0)
+          { 
+            // Scale bones by ratio between IK and Soft IK so that we preserve the soft IK 
+            // motion while hitting the IK handle. See: http://www.softimageblog.com/archives/109
+            Scalar stretchyFinalRatio = 1.0 / Math_linearInterpolate(1.0, finalRatio, stretchBlend);
+
+            chainLen *= stretchyFinalRatio;
+            scaledBone0Len *= stretchyFinalRatio;
+            scaledBone1Len *= stretchyFinalRatio;
+          }
+
+        }
+      }
+      
+      // Stretchy
+      if (stretch && stretchBlend > 0.0)
+      {
+          if (chainLen < distanceToIK)
+          {
+              Scalar diff = distanceToIK / chainLen;
+              diff = Math_linearInterpolate(1.0, diff, stretchBlend);
+              scaledBone0Len *= diff;
+              scaledBone1Len *= diff;
+          }
+
+      }
+    }
+
+    solve2BoneIK(
+      scaledBone0Len,
+      scaledBone1Len,
+      rootPos,
+      upVPos,
+      ikHandlePos,
+      bone0Xfo,
+      bone1Xfo
+    );
+
+    // Project bone2 to the end of bone1
+    bone2Xfo = bone1Xfo;
+    bone2Xfo.tr = bone1Xfo.transformVector(Vec3(scaledBone1Len, 0.0, 0.0));
+
+    // Set IK bone scaling
+    if (scaleOnStretch)
+    {
+      bone0Xfo.sc = Vec3(scaledBone0Len / bone0Len, rigScale, rigScale);
+      bone1Xfo.sc = Vec3(scaledBone1Len / bone1Len, rigScale, rigScale);
+      bone2Xfo.sc = Vec3(rigScale, rigScale, rigScale);
+    }
+    else
+    {
+      bone0Xfo.sc = Vec3(rigScale, rigScale, rigScale);
+      bone1Xfo.sc = Vec3(rigScale, rigScale, rigScale);
+      bone2Xfo.sc = Vec3(rigScale, rigScale, rigScale);
+    }
+
+  }
+
+  // Solve FK
+  if (ikblend < 1.0)
+  {
+    // Project bone2 to the end of bone1
+    Xfo bone2FkXfo = bone1FkXfo;
+    bone2FkXfo.tr = bone1FkXfo.transformVector(Vec3(bone1Len, 0.0, 0.0));
+
+    // Set FK scale
+    bone0FkXfo.sc = bone0FkXfo.sc.multiplyScalar(rigScale);
+    bone1FkXfo.sc = bone1FkXfo.sc.multiplyScalar(rigScale);
+    bone2FkXfo.sc = bone2FkXfo.sc.multiplyScalar(rigScale);
+
+    // Only FK
+    if (ikblend == 0.0)
+    {
+      bone0Xfo = bone0FkXfo;
+      bone1Xfo = bone1FkXfo;
+      bone2Xfo = bone2FkXfo;
+    }
+    // Solve IK/FK blend
+    else 
+    { 
+      // Orient and scale the bone and then position the child bone based on the parent's length
+      // We don't use the Xfo.transformVector() so we don't get the "scaled" transform value along
+      // with the length of the bone that already contains that "scale". Otherwise we'd have double
+      // transformation.
+      bone0Xfo.ori = bone0FkXfo.ori.sphericalLinearInterpolate(bone0Xfo.ori, ikblend);
+      bone0Xfo.sc =  bone0FkXfo.sc.linearInterpolate(bone0Xfo.sc, ikblend);
+
+      Scalar bone0OutLen = Math_linearInterpolate(bone0FkXfo.sc.x * bone0Len * rigScale, scaledBone0Len, ikblend);
+      bone1Xfo.tr =  bone0Xfo.tr + bone0Xfo.ori.rotateVector(Vec3(bone0OutLen, 0, 0));
+      bone1Xfo.ori = bone1FkXfo.ori.sphericalLinearInterpolate(bone1Xfo.ori, ikblend);
+      bone1Xfo.sc =  bone1FkXfo.sc.linearInterpolate(bone1Xfo.sc, ikblend);
+      
+      Scalar bone1OutLen = Math_linearInterpolate(bone1FkXfo.sc.x * bone1Len * rigScale, scaledBone1Len, ikblend);
+      bone2Xfo.tr =  bone1Xfo.tr + bone1Xfo.ori.rotateVector(Vec3(bone1OutLen, 0, 0));
+      bone2Xfo.ori = bone2FkXfo.ori.sphericalLinearInterpolate(bone2Xfo.ori, ikblend);
+      bone2Xfo.sc =  bone2FkXfo.sc.linearInterpolate(bone2Xfo.sc, ikblend);
+    }
+  }
+
+  bone0Out = bone0Xfo.toMat44();
+  bone1Out = bone1Xfo.toMat44();
+  bone2Out = bone2Xfo.toMat44();
+
+  // Set debugging visibility.
+  this.setDebug(drawDebug);
+  if(this.drawDebug){
+    if(!this.handle)
+      this.handle = DrawingHandle();
+    Color boneColor(1.0, 1.0, 0);
+    etDrawBone(this.handle.rootTransform, 'bone0', bone0Xfo, scaledBone0Len, scaledBone0Len * 0.15, boneColor);
+    etDrawBone(this.handle.rootTransform, 'bone1', bone1Xfo, scaledBone1Len, scaledBone1Len * 0.15, boneColor);
+  }
+}

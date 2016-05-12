@@ -20,6 +20,17 @@ class Constraint(SceneItem):
         self._constrainers = []
         self._maintainOffset = False
 
+    # ===============
+    # Source Methods
+    # ===============
+    def getSources(self):
+        """Returns the sources of the object.
+
+        Returns:
+            list: All sources of this object.
+
+        """
+        return super(Constraint, self).getSources() + self._constrainers
 
     # ===================
     # Constraint Methods
@@ -62,6 +73,7 @@ class Constraint(SceneItem):
         """
 
         self._constrainee = constrainee
+        self._constrainee.addSource(self)
 
         return True
 
@@ -107,13 +119,14 @@ class Constraint(SceneItem):
         """
 
         if not kObject3D.isTypeOf('Object3D'):
-            raise Exception("'kObject3D' argument is not a valid instance type. '"
-                             + kObject3D.getName() + "': " + str(type(kObject3D)) +
-                             ". Must be an instance of 'Object3D'.")
+            raise Exception("'kObject3D' argument is not a valid instance type. '" +
+                            kObject3D.getName() + "': " + str(type(kObject3D)) +
+                            ". Must be an instance of 'Object3D'.")
 
 
         if kObject3D in self._constrainers:
-            raise Exception("'kObject3D' argument is already a constrainer: '" + kObject3D.getName() + "'.")
+            raise Exception("'kObject3D' argument is already a constrainer: '" +
+                            kObject3D.getName() + "'.")
 
         self._constrainers[index] = kObject3D
 
@@ -145,7 +158,7 @@ class Constraint(SceneItem):
         return self._constrainers
 
 
-    def compute(self, getGlobalXfoFunc):
+    def compute(self):
         """invokes the constraint and returns the resulting transform
 
         Returns:
@@ -157,18 +170,22 @@ class Constraint(SceneItem):
             return None
         if len(self._constrainers) == 0:
             return None
+        if self.getMaintainOffset():
+            return self._constrainee.xfo
 
         cls = self.__class__.__name__
         ks.loadExtension('KrakenForCanvas')
         rtVal = ks.rtVal('Kraken%s' % cls)
 
         for c in self._constrainers:
-            rtVal.addConstrainer('', ks.rtVal('Xfo', getGlobalXfoFunc(c)))
+            rtVal.addConstrainer('', ks.rtVal('Xfo', c.globalXfo))
 
-        return Xfo(rtVal.compute("Xfo", ks.rtVal('Xfo', getGlobalXfoFunc(self._constrainee))))
+        # Using globalXfo here would cause a recursion
+        return Xfo(rtVal.compute("Xfo",
+                                 ks.rtVal('Xfo', self._constrainee.xfo)))
 
-    def computeOffset(self, getGlobalXfoFunc):
-        """invokes the constraint and computes the offset
+    def computeOffset(self):
+        """Invokes the constraint and computes the offset
 
         Returns:
             xfo: The offset to be used for the constraint.
@@ -179,6 +196,8 @@ class Constraint(SceneItem):
             return Xfo()
         if len(self._constrainers) == 0:
             return Xfo()
+        if not self.getMaintainOffset():
+            return Xfo()
 
         cls = self.__class__.__name__
         ks.loadExtension('KrakenForCanvas')
@@ -186,12 +205,13 @@ class Constraint(SceneItem):
 
         rtVal.offset = ks.rtVal('Xfo', Xfo())
         for c in self._constrainers:
-            rtVal.addConstrainer('', ks.rtVal('Xfo', getGlobalXfoFunc(c)))
+            rtVal.addConstrainer('', ks.rtVal('Xfo', c.globalXfo))
 
-        return Xfo(rtVal.computeOffset("Xfo", ks.rtVal('Xfo', getGlobalXfoFunc(self._constrainee))))
+        return Xfo(rtVal.computeOffset("Xfo",
+                                       ks.rtVal('Xfo', self._constrainee.xfo)))
 
     def evaluate(self):
-        """invokes the constraint causing the output value to be computed.
+        """Invokes the constraint causing the output value to be computed.
 
         Returns:
             bool: True if successful.
@@ -199,17 +219,14 @@ class Constraint(SceneItem):
         """
 
         if self.getMaintainOffset() is False:
-            def getGlobalXfoFunc(c):
-                return c.xfo
-
-            self.getConstrainee().xfo = self.compute(getGlobalXfoFunc=getGlobalXfoFunc)
+            self.getConstrainee().xfo = self.compute()
             return True
 
         return False
 
-    # ================
+    # ====================
     # Persistence Methods
-    # ================
+    # ====================
     def jsonEncode(self, saver):
         """Encodes the object to a JSON structure.
 
@@ -237,7 +254,6 @@ class Constraint(SceneItem):
             jsonData['constrainers'].append(cnstrnr.getName())
 
         return jsonData
-
 
     def jsonDecode(self, loader, jsonData):
         """Returns the color of the object..

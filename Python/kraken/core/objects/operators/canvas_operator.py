@@ -5,7 +5,6 @@ CanvasOperator - Splice operator object.
 
 """
 
-import json
 import pprint
 
 from kraken.core.maths import MathObject, Mat44, Xfo
@@ -33,11 +32,11 @@ class CanvasOperator(Operator):
             2: 'Out'
         }
 
-        ownerOutPortData = {
-            'name': None,
-            'typeSpec': None,
-            'execPortType': None
-        }
+        # ownerOutPortData = {
+        #     'name': None,
+        #     'typeSpec': None,
+        #     'execPortType': None
+        # }
 
         # Initialize the inputs and outputs based on the given args.
         for i in xrange(self.node.getExecPortCount()):
@@ -57,9 +56,9 @@ class CanvasOperator(Operator):
                 else:
                     self.outputs[portName] = None
 
-
     def getPresetPath(self):
-        """Returns the preset path within the Canvas library for the node used by this operator.
+        """Returns the preset path within the Canvas library for the node used
+        by this operator.
 
         Returns:
             str: Path of the preset files used by this operator.
@@ -67,7 +66,6 @@ class CanvasOperator(Operator):
         """
 
         return self.canvasPresetPath
-
 
     def getGraphDesc(self):
         """Returns the json description of the node used by this operator
@@ -79,18 +77,22 @@ class CanvasOperator(Operator):
 
         return self.graphDesc
 
-
     def evaluate(self):
-        """invokes the Canvas node causing the output values to be computed.
+        """Invokes the Canvas node causing the output values to be computed.
 
         Returns:
             bool: True if successful.
 
         """
 
-        def getRTVal(obj):
+        super(CanvasOperator, self).evaluate()
+
+        def getRTVal(obj, asInput=True):
             if isinstance(obj, Object3D):
-                return obj.xfo.getRTVal().toMat44('Mat44')
+                if asInput:
+                    return obj.globalXfo.getRTVal().toMat44('Mat44')
+                else:
+                    return obj.xfo.getRTVal().toMat44('Mat44')
             elif isinstance(obj, Xfo):
                 return obj.getRTVal().toMat44('Mat44')
             elif isinstance(obj, MathObject):
@@ -114,7 +116,7 @@ class CanvasOperator(Operator):
             if type(rtVal) in (bool, str, int, float):
                 if portDataType in ('Scalar', 'Float32', 'UInt32', 'Integer'):
                     if type(rtVal) not in (float, int):
-                        raise TypeError(self.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
+                        raise TypeError(self.getName() + ".evaluate(): Invalid Arg Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
 
                 elif portDataType == 'Boolean':
                     if type(rtVal) != bool:
@@ -171,7 +173,7 @@ class CanvasOperator(Operator):
                     rtValArray = ks.rtVal(portDataType)
                     rtValArray.resize(len(self.outputs[portName]))
                     for j in xrange(len(self.outputs[portName])):
-                        rtVal = getRTVal(self.outputs[portName][j])
+                        rtVal = getRTVal(self.outputs[portName][j], asInput=False)
 
                         validateArg(rtVal, portName, portDataType[:-2])
 
@@ -180,7 +182,7 @@ class CanvasOperator(Operator):
                     portVal = rtValArray
                     self.binding.setArgValue(portName, portVal, False)
                 else:
-                    rtVal = getRTVal(self.outputs[portName])
+                    rtVal = getRTVal(self.outputs[portName], asInput=False)
 
                     validateArg(rtVal, portName, portDataType)
 
@@ -189,8 +191,8 @@ class CanvasOperator(Operator):
             portDebug = {
                 portName: [
                     {
-                     "portDataType": portDataType,
-                     "portConnectionType": portConnectionType
+                        "portDataType": portDataType,
+                        "portConnectionType": portConnectionType
                     },
                     portVal
                 ]
@@ -201,7 +203,9 @@ class CanvasOperator(Operator):
         try:
             self.binding.execute()
         except:
-            errorMsg = "Possible problem with Canvas operator '" + self.getName() + "' port values:"
+            errorMsg = "Possible problem with Canvas operator '" + \
+                self.getName() + "' port values:"
+
             print errorMsg
             pprint.pprint(debug, width=800)
 
@@ -219,9 +223,12 @@ class CanvasOperator(Operator):
                 obj.setValue(rtval)
             else:
                 if hasattr(obj, '__iter__'):
-                    print "Warning: trying to set a canvas port item with an array directly."
-                print "Warning: Not setting rtval: %s\n\tfor output object: %s\n\ton port: %s\n\tof canvas object: %s\n." % \
-                (rtval, obj, portName, self.getName())
+                    print "Warning: Trying to set a canvas port item with an \
+                        array directly."
+
+                print "Warning: Not setting rtval: %s\n\tfor output object: \
+                    %s\n\ton port: %s\n\tof canvas object: %s\n." % \
+                    (rtval, obj, portName, self.getName())
 
 
         for i in xrange(self.node.getExecPortCount()):
@@ -232,7 +239,10 @@ class CanvasOperator(Operator):
 
             if portConnectionType != 'In':
                 outVal = self.binding.getArgValue(portName)
-                if str(portDataType).endswith('[]' or hasattr(outVal.getSimpleType(), '__iter__')):
+                if str(portDataType).endswith('[]' or
+                                              hasattr(outVal.getSimpleType(),
+                                                      '__iter__')):
+
                     for j in xrange(len(outVal)):
                         setRTVal(self.outputs[portName][j], outVal[j])
                 else:
