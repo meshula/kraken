@@ -3,7 +3,7 @@ require Kraken;
 
 operator entry() {
 
-	TwistSolver solver();
+  TwistSolver solver();
 
   Scalar bias = 0.75;
 

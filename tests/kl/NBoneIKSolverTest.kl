@@ -1,0 +1,47 @@
+
+require Kraken;
+
+operator entry(){
+	NBoneIKSolver solver();
+
+    Mat44 chainBase = Xfo(Vec3(0, 8, 0)).toMat44();
+    Mat44 ikgoal = Xfo(Vec3(8, 0, 0)).toMat44();
+    Mat44 upVector = Xfo(Vec3(4, 10, 0)).toMat44();
+
+    Mat44 fkcontrols[];
+    fkcontrols.resize(5);
+
+    fkcontrols[0] = Xfo(Quat(Vec3(-0.0,0.0,-0.0784591585398),0.996917426586), Vec3(-6.12323399823e-16,10.0,0.0), Vec3(1.0,1.0,1.0)).toMat44();
+    fkcontrols[1] = Xfo(Quat(Vec3(-0.0,0.0,-0.233445361257),0.972370028496), Vec3(3.09016990662,9.51056480408,0.0), Vec3(1.0,1.0,1.0)).toMat44();
+    fkcontrols[2] = Xfo(Quat(Vec3(-0.0,0.0,-0.382683426142),0.923879563808), Vec3(5.87785243988,8.09016990662,0.0), Vec3(1.0,1.0,1.0)).toMat44();
+    fkcontrols[3] = Xfo(Quat(Vec3(-0.0,0.0,-0.522498607635),0.852640151978), Vec3(8.09016990662,5.87785243988,0.0), Vec3(1.0,1.0,1.0)).toMat44();
+    fkcontrols[4] = Xfo(Quat(Vec3(-0.0,0.0,-0.649447977543),0.760406017303), Vec3(9.51056480408,3.09016990662,0.0), Vec3(1.0,1.0,1.0)).toMat44();
+
+    Mat44 pose[];
+    pose.resize(5);
+    Mat44 legEnd;
+
+    solver.solve
+    (
+      true,
+      1.0,
+      true,
+      1.0,
+      chainBase,
+      ikgoal,
+      upVector,
+      fkcontrols,
+      1,
+      0,
+      pose,
+      legEnd
+    );
+
+    for(Integer i=0; i < 5; i++) {
+      report("Pose" + i + ".tr: " + pose[i].translation());
+      report("Pose" + i + ".ori: " + Quat(pose[i].upperLeft()).toEulerAngles());
+      report("");
+    }
+
+    report("Leg End: " + Xfo(legEnd));
+}

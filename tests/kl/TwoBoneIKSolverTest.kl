@@ -3,7 +3,7 @@ require Kraken;
 
 operator entry() {
 
-	TwoBoneIKSolver solver();
+  TwoBoneIKSolver solver();
 
   Xfo femurXfo = Xfo(Quat(Vec3(0.739961385727, -0.67020791769, -0.0422816127539), 0.0386102125049),
                     Vec3(0.981100022793, 9.76900005341, -0.457199990749),
