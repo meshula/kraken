@@ -6,6 +6,7 @@
     "Solvers/OSS_TwoBoneIKSolver.kl",
     "Solvers/OSS_HierBlendSolver.kl",
     "Solvers/OSS_NURBSSpineKLSolver.kl",
+    "Solvers/OSS_NURBSCurveXfoKLSolver.kl",
     "Solvers/OSS_RemapScalarValueSolver.kl"
   ]
 }
