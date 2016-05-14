@@ -27,10 +27,11 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
 
 COMPONENT_NAME = "foot"
 
-class OSSFootComponent(BaseExampleComponent):
+class OSSFootComponent(OSS_Component):
     """Foot Component"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
@@ -41,8 +42,6 @@ class OSSFootComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.footSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.foot_cmpOut = self.createOutput('foot', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -50,20 +49,12 @@ class OSSFootComponent(BaseExampleComponent):
         self.ikgoal_cmpOut = self.createOutput('ikgoal', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', value=1.0, dataType='Float', parent=self.cmpInputAttrGrp).getTarget()
-        self.rightSideInputAttr = self.createInput('rightSide', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
 
         # Declare Output Attrs
-        self.drawDebugOutputAttr = self.createOutput('drawDebug', dataType='Boolean', value=False, parent=self.cmpOutputAttrGrp).getTarget()
         self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=1.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.limbMocap_cmpOutAttr = self.createOutput('limbMocap', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.softDist_cmpOutAttr = self.createOutput('softDist', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.stretch_cmpOutAttr = self.createOutput('stretch', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
-
-
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 
 class OSSFootComponentGuide(OSSFootComponent):
@@ -80,10 +71,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         # ========
 
         # Guide Settings
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-        self.ikHandleSizeInputAttr = ScalarAttribute('ikHandleSize', value=1, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        self.ikHandleSizeInputAttr = ScalarAttribute('ikHandleSize', value=1, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
 
         # Guide Controls
         self.footCtrl = Control('foot', parent=self.ctrlCmpGrp, shape="sphere")
@@ -387,15 +375,20 @@ class OSSFootComponentRig(OSSFootComponent):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
 
-        self.footDef = Joint('foot', parent=self.defCmpGrp)
+        self.footDef = Joint('foot', parent=self.deformersLayer)
         self.footDef.setComponent(self)
+        self.footDef.constrainTo(self.foot_cmpOut)
+        self.foot_cmpOut.joint = self.footDef
 
-        self.ballDef = Joint('ball', parent=self.defCmpGrp)
+
+        self.ballDef = Joint('ball', parent=self.footDef)
         self.ballDef.setComponent(self)
+        self.ballDef.constrainTo(self.ball_cmpOut)
+        self.ball_cmpOut.joint = self.ballDef
+
+        self.parentSpaceInputTgt.joints = [self.footDef]
+
 
 
         # ==============
@@ -404,7 +397,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # Constraint inputs
 
         self.handleCtrlSpaceConstraint = self.handleCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
-        self.footCtrlSpaceConstraint = self.footCtrlSpace.constrainTo(self.footSpaceInputTgt, maintainOffset=True)
+        self.footCtrlSpaceConstraint = self.footCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # Constraint outputs
         #self.ikgoal_cmpOutConstraint = self.ikgoal_cmpOut.constrainTo(self.handleCtrl, maintainOffset=False)
@@ -420,7 +413,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # Add Att Inputs
         self.footRockerKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.footRockerKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.footRockerKLOp.setInput('rightSide', self.rightSideInputAttr)
+        #self.footRockerKLOp.setInput('rightSide', self.getLocation() == 'R')
         self.footRockerKLOp.setInput('footRocker', footRockerAttr)
         self.footRockerKLOp.setInput('ballBreak', ballBreakAttr)
         self.footRockerKLOp.setInput('footTilt', footTiltAttr)
@@ -468,15 +461,6 @@ class OSSFootComponentRig(OSSFootComponent):
 
 
         # Add Deformer Joint Constrain
-        self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-        self.addOperator(self.outputsToDeformersKLOp)
-        # Add Att Inputs
-        self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        # Add Xfo Inputs
-        self.outputsToDeformersKLOp.setInput('constrainers', [self.foot_cmpOut, self.ball_cmpOut])
-        # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [self.footDef, self.ballDef])
 
 
 
@@ -527,6 +511,8 @@ class OSSFootComponentRig(OSSFootComponent):
 
         self.ikGoalRefTransform.xfo = data['handleXfo']
 
+        self.footRockerKLOp.setInput('rightSide', self.getLocation() == 'R')
+
         if self.getLocation() == "R":
             pass
             #self.legIKCtrl.rotatePoints(0, 90, 0)
@@ -536,8 +522,6 @@ class OSSFootComponentRig(OSSFootComponent):
             #self.legIKCtrl.rotatePoints(0, -90, 0)
             #self.legIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
 
-
-        self.rightSideInputAttr.setValue(self.getLocation() == 'R')
 
 
         if self.mocap:
@@ -603,8 +587,8 @@ class OSSFootComponentRig(OSSFootComponent):
 
 
 
-        self.footSpaceInputTgt.xfo = data["footXfo"]
-        self.footSpaceInputTgt.xfo.ori = Xfo(data["heelPivotXfo"]).ori
+        self.parentSpaceInputTgt.xfo = data["footXfo"]
+        self.parentSpaceInputTgt.xfo.ori = Xfo(data["heelPivotXfo"]).ori
 
         self.ballJointTransform.xfo = data["ballXfo"]
         self.footJointTransform.xfo = data["footXfo"]

@@ -25,10 +25,11 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
 
 COMPONENT_NAME = "shoulder"
 
-class OSSShoulderComponent(BaseExampleComponent):
+class OSSShoulderComponent(OSS_Component):
     """Shoulder Component Base"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None, data=None):
@@ -38,21 +39,12 @@ class OSSShoulderComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.shldrOutputTgt = self.createOutput('shldr', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.shldrEndOutputTgt = self.createOutput('shldrEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
-        self.rightSideInputAttr = self.createInput('rightSide', dataType='Boolean', value=self.getLocation() is 'R', parent=self.cmpInputAttrGrp).getTarget()
-
-        # Declare Output Attrs
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
-
 
 class OSSShoulderComponentGuide(OSSShoulderComponent):
     """Shoulder Component Guide"""
@@ -64,11 +56,9 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
 
 
          # Guide Settings
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
+        #self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
         self.mocapInputAttr = None
+
 
         # =========
         # Controls
@@ -123,6 +113,7 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
         True if successful.
 
         """
+
         #Reset all shapes, but really we should just recreate all controls from loadData instead of init
         for ctrl in self.getHierarchyNodes(classType="Control"):
             ctrl.setShape(ctrl.getShape())
@@ -251,38 +242,17 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
+
         self.ctrlCmpGrp.setComponent(self)
-
-        self.shldrDef = Joint('shldr', parent=self.defCmpGrp)
-        self.shldrDef.setComponent(self)
-
 
         # ==============
         # Constrain I/O
         # ==============
         # Constraint inputs
 
-        self.shldrCtrlConstraint = self.shldrCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.shldrSpaceCtrlConstraint = self.shldrCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
-        # ===============
-        # Add Splice Ops
-        # ===============
-        # Add Deformer Splice Op
-        spliceOp = KLOperator('shldrDeformerKLOp', 'PoseConstraintSolver', 'Kraken')
-        self.addOperator(spliceOp)
 
-        # Add Att Inputs
-        spliceOp.setInput('drawDebug', self.drawDebugInputAttr)
-        spliceOp.setInput('rigScale', self.rigScaleInputAttr)
-
-        # Add Xfo Inputs
-        spliceOp.setInput('constrainer', self.shldrOutputTgt)
-
-        # Add Xfo Outputs
-        spliceOp.setOutput('constrainee', self.shldrDef)
 
         Profiler.getInstance().pop()
 
@@ -299,10 +269,19 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         """
 
 
-        super(OSSShoulderComponentRig, self).loadData( data )
+        super(OSSShoulderComponentRig, self).loadData(data)
 
 
         self.mocap = bool(data["mocap"])
+
+        self.shldrDef = Joint('shldr', parent=self.deformersParent)
+        self.shldrDef.setComponent(self)
+
+        self.parentSpaceInputTgt.joints = [self.shldrDef]
+
+        self.shldrOutputTgt.joint = self.shldrDef
+
+
 
         self.shldrCtrlSpace.xfo = data['shldrXfo']
         self.shldrCtrl.xfo = data['shldrXfo']
@@ -383,6 +362,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # Eval Operators # Order is important
         self.evalOperators()
 
+        self.shldrDef.constrainTo(self.shldrOutputTgt)
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # ====================

@@ -25,10 +25,11 @@ from kraken.helpers.utility_methods import logHierarchy
 from kraken.core.configs.config import Config
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
 
 COMPONENT_NAME = "main"
 
-class OSSMainComponent(BaseExampleComponent):
+class OSSMainComponent(OSS_Component):
     """Main Component Base"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None, data=None):
@@ -39,19 +40,22 @@ class OSSMainComponent(BaseExampleComponent):
         # ===========
         # Declare Inputs Xfos
 
+        # The graph throws error when this is not here.
+        # Seems like we can't connect inputs to outputs of the same name.
+        # Have Eric / Phil take a look at this
+        self.removeInputByName("rigScale")
+
         # Declare Output Xfos
         self.masterOutputTgt = self.createOutput('master', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.offsetOutputTgt = self.createOutput('offset', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.cogOutputTgt = self.createOutput('cog', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.rootOutputTgt = self.createOutput('root', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
 
         # Declare Output Attrs
         self.rigScaleOutputAttr = self.createOutput('rigScale', dataType='Float', value=1.0, parent=self.cmpOutputAttrGrp).getTarget()
 
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 
 class OSSMainComponentGuide(OSSMainComponent):
@@ -68,10 +72,7 @@ class OSSMainComponentGuide(OSSMainComponent):
         self.mocap = False
 
         # Guide Settings
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
+        #self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
 
         # =========
         # Controls
@@ -289,6 +290,12 @@ class OSSMainComponentRig(OSSMainComponent):
 
         self.rigScaleOutputAttr.connect(self.rigScaleAttr)
 
+        # ==========
+        # Deformers
+        # ==========
+        self.deformersLayer = self.getOrCreateLayer('deformers')
+        self.deformersParent = self.deformersLayer
+
 
 
         # ==========
@@ -337,7 +344,7 @@ class OSSMainComponentRig(OSSMainComponent):
 
         """
 
-        super(OSSMainComponentRig, self).loadData( data )
+        super(OSSMainComponentRig, self).loadData(data)
 
         self.mocap = bool(data["mocap"])
 
@@ -359,12 +366,6 @@ class OSSMainComponentRig(OSSMainComponent):
         self.cogCtrlSpace.xfo.tr = data["cogPosition"]
         self.cogCtrl.xfo.tr = data["cogPosition"]
 
-        # ============
-        # Set IO Xfos
-        # ============
-        self.masterOutputTgt.xfo = data["mainXfo"]
-        self.offsetOutputTgt.xfo = data["mainXfo"]
-        self.cogOutputTgt.xfo.tr = data["cogPosition"]
 
         self.visIconCtrl.xfo = data['visIconXfo']
         self.visIconCtrl.scalePoints(Vec3(8, 1.0, 8))
@@ -418,7 +419,11 @@ class OSSMainComponentRig(OSSMainComponent):
             self.cogOutputTgtConstraint = self.cogOutputTgt.constrainTo(self.cogCtrl)
 
 
-
+        self.rootDef = Joint('root', parent=self.deformersParent)
+        self.rootDef.setComponent(self) # Need an elegant automatic way to do this
+        self.rootDef.constrainTo(self.cogCtrl, maintainOffset=True)
+        self.rootOutputTargetConstraint = self.rootOutputTgt.constrainTo(self.cogCtrl, maintainOffset=True)
+        self.rootOutputTgt.joint = self.rootDef
 
         # ====================
         # Evaluate Fabric Ops
@@ -429,6 +434,7 @@ class OSSMainComponentRig(OSSMainComponent):
         self.masterOutputTgtConstraint.evaluate()
         self.offsetOutputTgtConstraint.evaluate()
         self.cogOutputTgtConstraint.evaluate()
+        self.rootOutputTargetConstraint.evaluate()
 
 
 

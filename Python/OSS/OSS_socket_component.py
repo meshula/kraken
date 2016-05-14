@@ -22,10 +22,14 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+
+from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
+
 COMPONENT_NAME = "socket"
 
 
-class OSSSocket(BaseExampleComponent):
+class OSSSocket(OSS_Component):
     """Socket Component Base"""
 
     def __init__(self, name='socket', parent=None):
@@ -35,22 +39,12 @@ class OSSSocket(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-
 
         # Declare Output Xfos
         self.socketOutputTgt = self.createOutput('socket', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
-        # Declare Output Attrs
-
-
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 class OSSSocketGuide(OSSSocket):
     """Socket Component Guide"""
@@ -65,9 +59,6 @@ class OSSSocketGuide(OSSSocket):
         # Controls
         # =========
         # Guide Controls
-        self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
-
         self.socketCtrl = Control('socket', parent=self.ctrlCmpGrp, shape="null")
         self.socketCtrl.setColor("pink")
 
@@ -200,14 +191,10 @@ class OSSSocketRig(OSSSocket):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
-        self.ctrlCmpGrp.setComponent(self)
-
-        self.socketDef = Joint(self.getName(), parent=self.defCmpGrp)
+        self.socketDef = Joint(self.getName(), parent=self.deformersParent)
         self.socketDef.setComponent(self)
 
+        self.parentSpaceInputTgt.joints = [self.socketDef]
 
         # ==============
         # Constrain I/O
@@ -223,8 +210,9 @@ class OSSSocketRig(OSSSocket):
         # Constraint outputs
         self.socketOutputTgtConstraint = self.socketOutputTgt.constrainTo(self.socketCtrl)
         self.socketDefConstraint = self.socketDef.constrainTo(self.socketCtrl)
-
         self.socketOutputTgtConstraint.evaluate()
+
+        self.socketOutputTgt.joint = self.socketDef
 
         Profiler.getInstance().pop()
 

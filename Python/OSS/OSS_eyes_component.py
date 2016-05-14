@@ -18,6 +18,8 @@ from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
+from kraken.core.objects.locator import Locator
+
 
 from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.objects.operators.canvas_operator import CanvasOperator
@@ -26,10 +28,11 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
 
 COMPONENT_NAME = "eyes"
 
-class OSSEyesComponent(BaseExampleComponent):
+class OSSEyesComponent(OSS_Component):
     """Eyes Component Base"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
@@ -39,22 +42,12 @@ class OSSEyesComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.eyesOutputTgt = self.createOutput('eyes', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.eyesEndOutputTgt = self.createOutput('eyesEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
-        self.rightSideInputAttr = self.createInput('rightSide', dataType='Boolean', value=self.getLocation() is 'R', parent=self.cmpInputAttrGrp).getTarget()
-
-        # Declare Output Attrs
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
-
 
 class OSSEyesComponentGuide(OSSEyesComponent):
     """Eyes Component Guide"""
@@ -64,16 +57,9 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         Profiler.getInstance().push("Construct Eyes Guide Component:" + name)
         super(OSSEyesComponentGuide, self).__init__(name, parent)
 
-
          # Guide Settings
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-
-        self.EyeRadius = ScalarAttribute('EyeRadius', value=2.0, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-
-        self.EyesCtrlNames = StringAttribute('EyesNames', value="L_Eye R_Eye", parent=guideSettingsAttrGrp)
-
+        self.EyeRadius = ScalarAttribute('EyeRadius', value=2.0, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
+        self.EyesCtrlNames = StringAttribute('EyesNames', value="L_Eye R_Eye", parent=self.guideSettingsAttrGrp)
 
         # =========
         # Controls
@@ -326,7 +312,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
         Profiler.getInstance().push("Construct Eyes Rig Component:" + name)
         super(OSSEyesComponentRig, self).__init__(name, parent)
 
-
+        self.parentSpaceInputTgt.joints = []
         # =========
         # Controls
         # =========
@@ -345,11 +331,6 @@ class OSSEyesComponentRig(OSSEyesComponent):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
-        self.ctrlCmpGrp.setComponent(self)
-
 
         # ==============
         # Constrain I/O
@@ -418,13 +399,22 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     fkCtrl.translatePoints(Vec3(0,0,1))
                     fkCtrl.scalePoints(Vec3(1,1,data['EyeRadius']))
                     # newCtrls.append(fkCtrl)
-                    newDef = Joint(handleName+"_fk", parent=self.defCmpGrp)
-                    newRef = Joint(handleName+"_ref", parent=self.defCmpGrp)
+                    newRef = Joint(handleName+"_ref", parent=self.deformersParent)
+                    newRef.setComponent(self)
+                    newRefConstraint = newRef.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+                    self.parentSpaceInputTgt.joints.append(newRef)
+
+                    newLoc = Locator(handleName+"_fk", parent=self.ctrlCmpGrp)
+                    newLoc.setVisibility(False)
+
+                    newDef = Joint(handleName+"_fk", parent=newRef)
+                    newDef.setComponent(self)
+                    newDefConstraint = newDef.constrainTo(newLoc)
 
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
                     upVSpaceBlendInputAttr = ScalarAttribute(handleName+'FKIK', value=1.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
 
-                    newConstraint = newRef.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+
 
                 if segment == "ik":
                     # break these out more explicitly
@@ -472,7 +462,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
             self.EyeIkFkBlendCanvasOp.setInput('atAxis',  0)
             self.EyeIkFkBlendCanvasOp.setInput('upAxis',  2)
 
-            self.EyeIkFkBlendCanvasOp.setOutput('result', newDef)
+            self.EyeIkFkBlendCanvasOp.setOutput('result', newLoc)
             self.EyeIkFkBlendCanvasOp.setInput('ik', ikCtrl)
             self.EyeIkFkBlendCanvasOp.setInput('fk', fkCtrl)
             # Add Xfo Inputs

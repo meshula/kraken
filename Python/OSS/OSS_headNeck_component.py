@@ -20,6 +20,7 @@ from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.control import Control
+from kraken.core.objects.locator import Locator
 
 from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.objects.operators.canvas_operator import CanvasOperator
@@ -28,10 +29,11 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
 
 COMPONENT_NAME = "headNeck"
 
-class OSSHeadNeckComponent(BaseExampleComponent):
+class OSSHeadNeckComponent(OSS_Component):
     """Neck Component"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
@@ -41,25 +43,16 @@ class OSSHeadNeckComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.neckBaseOutputTgt = self.createOutput('neckBase', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.neckEndOutputTgt = self.createOutput('neckEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.headOutputTgt = self.createOutput('head', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         self.neckVertebraeOutput = self.createOutput('neckVertebrae', dataType='Xfo[]')
 
         # Declare Input Attrs
         self.buildWithCanvasOps = self.createInput('buildWithCanvasOps', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
-        # Declare Output Attrs
-
-
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
     """Neck Component Guide"""
@@ -72,8 +65,6 @@ class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
         # =========
         # Controls
         # ========
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-
         # Guide Controls
         self.neckHandleCtrl = Control('neckHandlePosition', parent=self.ctrlCmpGrp, shape='null')
         self.neckCtrl = Control('neckPosition', parent=self.ctrlCmpGrp, shape='circle')
@@ -81,12 +72,10 @@ class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
         self.neckCtrl.setColor('red')
         self.headCtrl = Control('headPosition', parent=self.ctrlCmpGrp, shape='cube')
         self.headHandleCtrl = Control('headHandlePosition', parent=self.ctrlCmpGrp, shape='null')
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
-        self.numDeformersAttr = IntegerAttribute('numDeformers', value=4, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
+        self.numDeformersAttr = IntegerAttribute('numDeformers', value=4, minValue=0, maxValue=20, parent=self.guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
+        #self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
         self.mocapInputAttr = None
 
         data = {
@@ -285,12 +274,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
         self.deformerJoints = []
         self.neckOutputs = []
-        self.setNumDeformers(1)
+        #self.setNumDeformers(1)
 
         self.controlInputs = []
         self.controlRestInputs = []
@@ -375,20 +361,6 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.headIKCanvasOp.setOutput('constrainee', self.headSpace)
 
 
-        # Add Deformer Splice Op
-        self.deformersToOutputsKLOp = KLOperator('neckDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-        self.addOperator(self.deformersToOutputsKLOp)
-
-        # Add Att Inputs
-        self.deformersToOutputsKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.deformersToOutputsKLOp.setInput('rigScale', self.rigScaleInputAttr)
-
-        self.deformersToOutputsKLOp.setInput('constrainers', self.neckOutputs)
-
-
-
-
-
         Profiler.getInstance().pop()
 
 
@@ -405,19 +377,23 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Add new deformers and outputs
         for i in xrange(numDeformers):
             name = 'neck' + str(i + 1).zfill(2)
-            neckOutput = ComponentOutput(name, parent=self.outputHrcGrp)
+            #Need dynamic ports branch to be able to see this updated in Graph
+            neckOutput = self.createOutput(name, dataType='Xfo', parent=self.outputHrcGrp).getTarget()
             self.neckOutputs.append(neckOutput)
 
+        parent = self.deformersParent
         for i in xrange(numDeformers):
-
             if i == numDeformers-1:
                 name = 'head'
             else:
                 name = 'neck' + str(i + 1).zfill(2)
-            neckDef = Joint(name, parent=self.defCmpGrp)
+            if i > 0:
+                parent = self.deformerJoints[-1]
+            neckDef = Joint(name, parent=parent)
             neckDef.setComponent(self)
-
             self.deformerJoints.append(neckDef)
+            if i == 0:
+                self.parentSpaceInputTgt.joints = [neckDef]
 
         if hasattr(self, 'NURBSNeckKLOp'):  # Check in case this is ever called from Guide callback
             self.NURBSNeckKLOp.setInput('numDeformers',  numDeformers)
@@ -579,7 +555,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.NURBSNeckKLOp.setInput('headHandle', self.headHandleCtrlSpace_link)
 
         self.neckBaseOutputConstraint = self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0])
-        self.neckEndOutputConstraint = self.neckEndOutputTgt.constrainTo(self.neckOutputs[-1])
+        self.headOutputConstraint = self.headOutputTgt.constrainTo(self.neckOutputs[-1])
 
         # ====================
         # Evaluate Fabric Ops
@@ -587,16 +563,19 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Eval Operators # Order is important
         self.NURBSNeckKLOp.evaluate()
 
-        self.deformersToOutputsKLOp.setOutput('constrainees', self.deformerJoints)
-
-        self.deformersToOutputsKLOp.evaluate()
+        for i in xrange(len(self.neckOutputs)):
+            constraint = self.deformerJoints[i].constrainTo(self.neckOutputs[i])
+            constraint.evaluate()
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # ====================
         # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
         self.neckBaseOutputConstraint.evaluate()
-        self.neckEndOutputConstraint.evaluate()
+        self.headOutputConstraint.evaluate()
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
+
+        self.neckBaseOutputTgt.joint = self.deformerJoints[0]
+        self.headOutputTgt.joint = self.deformerJoints[-1]
 
 
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info

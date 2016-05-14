@@ -505,8 +505,10 @@ class Builder(object):
         dccSceneItem = None
 
         buildName = kObject.getName()
+
         if hasattr(kObject, 'getBuildName'):
             buildName = kObject.getBuildName()
+
 
         logger.debug("building(" + str(phase) + "): " + kObject.getPath() +
                      " as: " + buildName + " type: " + kObject.getTypeName())
@@ -627,6 +629,7 @@ class Builder(object):
         if dccSceneItem is not None and isinstance(kObject, Object3D) and \
                 phase == self._buildPhase_ConstraintsOperators:
 
+
             self.setTransform(kObject)
             self.lockParameters(kObject)
             self.setVisibility(kObject)
@@ -666,6 +669,33 @@ class Builder(object):
 
         Profiler.getInstance().push("build:" + kSceneItem.getName())
 
+
+        orderedComponents = kSceneItem.getChildrenByType('Component')  # getBuildOrder()
+        # Build Components in the correct order
+        for component in orderedComponents:
+            for i in xrange(component.getNumInputs()):
+
+                componentInput = component.getInputByIndex(i)
+                if componentInput.getName() != "parentSpace" or componentInput.isConnected() is False:
+                    continue
+
+                connection = componentInput.getConnection()
+                print("\nTTPrint: connection:"),;print(connection)
+                connectionTarget = connection.getTarget()
+                print("TTPrint: connectionTarget:"),;print(connectionTarget),
+                print(":"),;print(connectionTarget.getName())
+                inputTarget = componentInput.getTarget()
+                print("TTPrint: inputTarget:"),;print(inputTarget),
+                print(":"),;print(inputTarget.getName())
+
+                if hasattr(connectionTarget, "joint") and hasattr(inputTarget, "joints"):
+                    for targetJoint in inputTarget.joints:
+                        print("TTPrint: Parenting %s to %s..." % (targetJoint.getName(), connectionTarget.getName()))
+                        targetJoint.setParent(connectionTarget.joint) #this calls addSource()
+
+
+
+
         traverser = Traverser('Children')
         traverser.addRootItem(kSceneItem)
 
@@ -684,7 +714,6 @@ class Builder(object):
             objects3d = traverser.getItemsOfType('Object3D')
             attributeGroups = traverser.getItemsOfType(['AttributeGroup'])
             attributes = traverser.getItemsOfType(['Attribute'])
-
             # build all 3D objects and attributes
             self.__buildSceneItemList(objects3d,
                                       self._buildPhase_3DObjectsAttributes)

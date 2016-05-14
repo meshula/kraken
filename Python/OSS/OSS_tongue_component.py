@@ -22,10 +22,13 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
+
 COMPONENT_NAME = "tongue"
 
 
-class OSSTongue(BaseExampleComponent):
+class OSSTongue(OSS_Component):
     """Tongue Component Base"""
 
     def __init__(self, name='tongue', parent=None):
@@ -35,20 +38,12 @@ class OSSTongue(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.tongueOutputTgt = self.createOutput('tongue', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
-        # Declare Output Attrs
-
-
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 class OSSTongueGuide(OSSTongue):
     """Tongue Component Guide"""
@@ -63,9 +58,6 @@ class OSSTongueGuide(OSSTongue):
         # Controls
         # =========
         # Guide Controls
-        self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
-
         self.tongueCtrl = Control('tongue', parent=self.ctrlCmpGrp, shape="null")
         self.tongueCtrl.setColor("red")
 
@@ -175,7 +167,7 @@ class OSSTongueRig(OSSTongue):
         Profiler.getInstance().push("Construct Tongue Rig Component:" + name)
         super(OSSTongueRig, self).__init__(name, parent)
 
-
+        self.parentSpaceInputTgt.joints = []
 
     def createControls(self, data):
 
@@ -197,13 +189,10 @@ class OSSTongueRig(OSSTongue):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
-        self.ctrlCmpGrp.setComponent(self)
-
-        self.tongueDef = Joint(self.getName(), parent=self.defCmpGrp)
+        self.tongueDef = Joint(self.getName(), parent=self.deformersParent)
         self.tongueDef.setComponent(self)
+        self.parentSpaceInputTgt.joints.append(self.tongueDef)
+        self.tongueOutputTgt.joint = self.tongueDef
 
 
         # ==============
