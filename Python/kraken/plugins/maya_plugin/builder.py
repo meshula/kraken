@@ -725,6 +725,12 @@ class Builder(Builder):
                             pm.connectAttr(dccSceneItem.attr('worldMatrix'), tgt)
                         elif isinstance(opObject, Xfo):
                             self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
+                        elif isinstance(opObject, Mat44):
+                            self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject)
+                        elif isinstance(opObject, Vec2):
+                            pm.setAttr(tgt, opObject.x, opObject.y, type="double2")
+                        elif isinstance(opObject, Vec3):
+                            pm.setAttr(tgt, opObject.x, opObject.y, opObject.z, type="double3")
                         else:
                             validateArg(opObject, argName, argDataType)
 
