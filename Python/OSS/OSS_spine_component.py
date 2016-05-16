@@ -560,9 +560,9 @@ class OSSSpineComponentRig(OSSSpineComponent):
         #self.pelvisOutputConstraint.evaluate()
         self.spineEndOutputConstraint.evaluate()
 
-        self.hipsOutputTgt.parentJoint =  self.deformerJoints[0]
-        self.pelvisOutputTgt.parentJoint =  self.deformerJoints[0]
-        self.spineEndOutputTgt.parentJoint =  self.deformerJoints[-1]
+        self.hipsOutputTgt.parentJoint = self.deformerJoints[0]
+        self.pelvisOutputTgt.parentJoint = self.deformerJoints[0]
+        self.spineEndOutputTgt.parentJoint = self.deformerJoints[-1]
 
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 
