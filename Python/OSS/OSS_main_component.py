@@ -423,7 +423,12 @@ class OSSMainComponentRig(OSSMainComponent):
         self.rootDef.setComponent(self) # Need an elegant automatic way to do this
         self.rootDef.constrainTo(self.cogCtrl, maintainOffset=True)
         self.rootOutputTargetConstraint = self.rootOutputTgt.constrainTo(self.cogCtrl, maintainOffset=True)
-        self.rootOutputTgt.joint = self.rootDef
+
+        #Set all parents to rootDef since that is the only joint option
+        self.rootOutputTgt.parentJoint = self.rootDef
+        self.masterOutputTgt.parentJoint = self.rootDef
+        self.offsetOutputTgt.parentJoint = self.rootDef
+        self.cogOutputTgt.parentJoint = self.rootDef
 
         # ====================
         # Evaluate Fabric Ops

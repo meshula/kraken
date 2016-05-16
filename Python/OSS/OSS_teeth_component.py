@@ -194,7 +194,7 @@ class OSSTeethRig(OSSTeeth):
         self.teethDef = Joint(self.getName(), parent=self.deformersLayer)
         self.teethDef.setComponent(self)
 
-        self.parentSpaceInputTgt.joints = [self.teethDef]
+        self.parentSpaceInputTgt.childJoints = [self.teethDef]
 
         # ==============
         # Constrain I/O

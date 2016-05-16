@@ -312,7 +312,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
         Profiler.getInstance().push("Construct Eyes Rig Component:" + name)
         super(OSSEyesComponentRig, self).__init__(name, parent)
 
-        self.parentSpaceInputTgt.joints = []
+        self.parentSpaceInputTgt.childJoints = []
         # =========
         # Controls
         # =========
@@ -402,7 +402,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     newRef = Joint(handleName+"_ref", parent=self.deformersParent)
                     newRef.setComponent(self)
                     newRefConstraint = newRef.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-                    self.parentSpaceInputTgt.joints.append(newRef)
+                    self.parentSpaceInputTgt.childJoints.append(newRef)
 
                     newLoc = Locator(handleName+"_fk", parent=self.ctrlCmpGrp)
                     newLoc.setVisibility(False)

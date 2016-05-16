@@ -277,9 +277,10 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         self.shldrDef = Joint('shldr', parent=self.deformersParent)
         self.shldrDef.setComponent(self)
 
-        self.parentSpaceInputTgt.joints = [self.shldrDef]
+        self.parentSpaceInputTgt.childJoints = [self.shldrDef]
 
-        self.shldrOutputTgt.joint = self.shldrDef
+        self.shldrOutputTgt.parentJoint = self.shldrDef
+        self.shldrEndOutputTgt.parentJoint = self.shldrDef # only one joint option
 
 
 

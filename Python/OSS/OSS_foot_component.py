@@ -379,15 +379,15 @@ class OSSFootComponentRig(OSSFootComponent):
         self.footDef = Joint('foot', parent=self.deformersLayer)
         self.footDef.setComponent(self)
         self.footDef.constrainTo(self.foot_cmpOut)
-        self.foot_cmpOut.joint = self.footDef
+        self.foot_cmpOut.parentJoint =  self.footDef
 
 
         self.ballDef = Joint('ball', parent=self.footDef)
         self.ballDef.setComponent(self)
         self.ballDef.constrainTo(self.ball_cmpOut)
-        self.ball_cmpOut.joint = self.ballDef
+        self.ball_cmpOut.parentJoint =  self.ballDef
 
-        self.parentSpaceInputTgt.joints = [self.footDef]
+        self.parentSpaceInputTgt.childJoints = [self.footDef]
 
 
 

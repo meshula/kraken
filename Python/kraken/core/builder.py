@@ -688,10 +688,10 @@ class Builder(object):
                 print("TTPrint: inputTarget:"),;print(inputTarget),
                 print(":"),;print(inputTarget.getName())
 
-                if hasattr(connectionTarget, "joint") and hasattr(inputTarget, "joints"):
-                    for targetJoint in inputTarget.joints:
-                        print("TTPrint: Parenting %s to %s..." % (targetJoint.getName(), connectionTarget.getName()))
-                        targetJoint.setParent(connectionTarget.joint) #this calls addSource()
+                if hasattr(connectionTarget, "parentJoint") and hasattr(inputTarget, "childJoints"):
+                    for childJoint in inputTarget.childJoints:
+                        print("TTPrint: Parenting %s to %s..." % (childJoint.getName(), connectionTarget.parentJoint.getName()))
+                        childJoint.setParent(connectionTarget.parentJoint) #this calls addSource()
 
 
 

@@ -194,7 +194,7 @@ class OSSSocketRig(OSSSocket):
         self.socketDef = Joint(self.getName(), parent=self.deformersParent)
         self.socketDef.setComponent(self)
 
-        self.parentSpaceInputTgt.joints = [self.socketDef]
+        self.parentSpaceInputTgt.childJoints = [self.socketDef]
 
         # ==============
         # Constrain I/O
@@ -212,7 +212,7 @@ class OSSSocketRig(OSSSocket):
         self.socketDefConstraint = self.socketDef.constrainTo(self.socketCtrl)
         self.socketOutputTgtConstraint.evaluate()
 
-        self.socketOutputTgt.joint = self.socketDef
+        self.socketOutputTgt.parentJoint =  self.socketDef
 
         Profiler.getInstance().pop()
 

@@ -438,7 +438,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbendDef = Joint(name+'end', parent=self.lolimbDef)
         self.limbendDef.setComponent(self)
 
-        self.parentSpaceInputTgt.joints = [self.uplimbDef]
+        self.parentSpaceInputTgt.childJoints = [self.uplimbDef]
 
 
         # ==============
@@ -524,11 +524,11 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         # Add Deformer Joint Constrain
         self.uplimbDef.constrainTo(self.uplimb_cmpOut).evaluate()
-        self.uplimb_cmpOut.joint = self.uplimbDef
+        self.uplimb_cmpOut.parentJoint =  self.uplimbDef
         self.lolimbDef.constrainTo(self.lolimb_cmpOut).evaluate()
-        self.lolimb_cmpOut.joint = self.lolimbDef
+        self.lolimb_cmpOut.parentJoint =  self.lolimbDef
         self.limbendDef.constrainTo(self.endlimb_cmpOut).evaluate()
-        self.endlimb_cmpOut.joint = self.limbendDef
+        self.endlimb_cmpOut.parentJoint =  self.limbendDef
 
 
 

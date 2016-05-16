@@ -485,7 +485,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         self.parentSpaceInputTgt.xfo = data['faceXfo']
 
 
-        self.parentSpaceInputTgt.joints = []
+        self.parentSpaceInputTgt.childJoints = []
 
         self.createControls(3, data["an3DNames"], data)
         self.createControls(2, data["an2DNames"], data)

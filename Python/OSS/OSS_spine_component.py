@@ -42,7 +42,7 @@ class OSSSpineComponent(OSS_Component):
 
 
         # Declare Output Xfos
-        self.spineHipsOutputTgt = self.createOutput('hips', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.hipsOutputTgt = self.createOutput('hips', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.pelvisOutputTgt = self.createOutput('pelvis', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.spineEndOutputTgt = self.createOutput('spineEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
@@ -349,7 +349,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
             spineDef.setComponent(self)
             self.deformerJoints.append(spineDef)
             if name == "pelvis":
-                self.parentSpaceInputTgt.joints = [spineDef]
+                self.parentSpaceInputTgt.childJoints = [spineDef]
 
         if hasattr(self, 'NURBSSpineKLOp'):  # Check in case this is ever called from Guide callback
             self.NURBSSpineKLOp.setInput('numDeformers',  numDeformers)
@@ -532,10 +532,10 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.mcControlInputs.append(self.upChestCtrl_link)
             self.mcControlInputs.append(self.neckCtrlSpace_link)
 
-            self.spineHipsOutputConstraint = self.spineHipsOutputTgt.constrainTo(self.hipsCtrl_link)
+            self.hipsOutputConstraint = self.hipsOutputTgt.constrainTo(self.hipsCtrl_link)
             #self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace_link)
         else:     # Constraint outputs
-            self.spineHipsOutputConstraint = self.spineHipsOutputTgt.constrainTo(self.hipsCtrl)
+            self.hipsOutputConstraint = self.hipsOutputTgt.constrainTo(self.hipsCtrl)
             #self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace)
 
 
@@ -555,13 +555,14 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
         self.hipsCtrlSpaceConstraint.evaluate()
         self.torsoCtrlSpaceConstraint.evaluate()
-        self.spineHipsOutputConstraint.evaluate()
+        self.hipsOutputConstraint.evaluate()
         #self.spineBaseOutputConstraint.evaluate()
         #self.pelvisOutputConstraint.evaluate()
         self.spineEndOutputConstraint.evaluate()
 
-        self.pelvisOutputTgt.joint = self.deformerJoints[0]
-        self.spineEndOutputTgt.joint = self.deformerJoints[-1]
+        self.hipsOutputTgt.parentJoint =  self.deformerJoints[0]
+        self.pelvisOutputTgt.parentJoint =  self.deformerJoints[0]
+        self.spineEndOutputTgt.parentJoint =  self.deformerJoints[-1]
 
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 

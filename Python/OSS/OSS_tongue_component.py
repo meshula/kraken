@@ -167,7 +167,7 @@ class OSSTongueRig(OSSTongue):
         Profiler.getInstance().push("Construct Tongue Rig Component:" + name)
         super(OSSTongueRig, self).__init__(name, parent)
 
-        self.parentSpaceInputTgt.joints = []
+        self.parentSpaceInputTgt.childJoints = []
 
     def createControls(self, data):
 
@@ -191,8 +191,8 @@ class OSSTongueRig(OSSTongue):
         # ==========
         self.tongueDef = Joint(self.getName(), parent=self.deformersParent)
         self.tongueDef.setComponent(self)
-        self.parentSpaceInputTgt.joints.append(self.tongueDef)
-        self.tongueOutputTgt.joint = self.tongueDef
+        self.parentSpaceInputTgt.childJoints.append(self.tongueDef)
+        self.tongueOutputTgt.parentJoint =  self.tongueDef
 
 
         # ==============

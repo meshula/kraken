@@ -498,12 +498,12 @@ class OSSMouthRig(OSSMouth):
         # Deformers
         # ==========
 
-        self.parentSpaceInputTgt.joints = []
+        self.parentSpaceInputTgt.childJoints = []
 
         # Mouth
         self.mouthDef = Joint('mouth', parent=self.deformersParent)
         self.mouthDef.setComponent(self)
-        self.parentSpaceInputTgt.joints.append(self.mouthDef)
+        self.parentSpaceInputTgt.childJoints.append(self.mouthDef)
 
         # =========
         # Controls
@@ -555,7 +555,7 @@ class OSSMouthRig(OSSMouth):
         self.mouthConstraint = self.mouthOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
         self.mouthEndConstraint = self.mouthEndOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
 
-        self.mouthOutputTgt.joint = self.mouthDef
+        self.mouthOutputTgt.parentJoint =  self.mouthDef
 
         # Lip
         # lipInputConstraint = PoseConstraint('_'.join([self.midLipCtrl.getName(), 'To', self.parentSpaceInputTgt.getName()]))
