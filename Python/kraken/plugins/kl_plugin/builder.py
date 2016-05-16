@@ -151,7 +151,7 @@ class Builder(Builder):
         return "KRK_" + self.__rigTitle.replace(' ', '')
 
     def __visitKLObject(self, item):
-        
+
         kl = []
         if item['visited']:
             return kl
@@ -256,7 +256,7 @@ class Builder(Builder):
                                 kl += ["  %s[%d] = \"%s\";" % (argVarName, j, connected)]
                             else:
                                 kl += ["  %s[%d] = %s;" % (argVarName, j, str(connected))]
-  
+
                         continue
 
                     if argConnectionType == 'Out':
@@ -285,6 +285,8 @@ class Builder(Builder):
                             kl += ["  %s %s = %s;" % (argDataType, argVarName, self.__getXfoAsStr(connected))]
                     elif isinstance(connected, str):
                         kl += ["  %s %s = \"%s\";" % (argDataType, argVarName, connected)]
+                    elif isinstance(connected, bool):
+                        kl += ["  %s %s = %s;" % (argDataType, argVarName, str(connected).lower())]
                     else:
                         kl += ["  %s %s = %s;" % (argDataType, argVarName, str(connected))]
 
@@ -389,6 +391,8 @@ class Builder(Builder):
         kl += ["require Kraken;"]
         kl += ["require KrakenForCanvas;"]
         kl += ["require KrakenAnimation;"]
+        for extension in self.__klExtensions:
+            kl += ["require %s;" % extension]
         kl += [""]
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  Float64 solveTimeMs;"]
@@ -446,7 +450,7 @@ class Builder(Builder):
 
             if attr['cls'] == "BoolAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s);" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -456,7 +460,7 @@ class Builder(Builder):
                 )]
             elif attr['cls'] == "ColorAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s);" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -471,7 +475,7 @@ class Builder(Builder):
                 )]
             elif attr['cls'] == "IntegerAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s, %s, %d);" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -483,7 +487,7 @@ class Builder(Builder):
                 )]
             elif attr['cls'] == "ScalarAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s, %s, %f, floatAnimation);" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -495,7 +499,7 @@ class Builder(Builder):
                 )]
             elif attr['cls'] == "StringAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, \"%s\");" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -630,14 +634,14 @@ class Builder(Builder):
         kl += ["    throw(\"Expected number of values does not match (\"+values.size()+\" given, %d expected).\");" % len(controls)]
         for i in range(len(controls)):
             kl += ["  this.%s.xfo = values[%d];" % (controls[i]['member'], i)]
-        kl += ["}", ""]        
+        kl += ["}", ""]
 
         kl += ["function %s.setScalarAttributeValues!(Float32 values<>) {" % self.getKLExtensionName()]
         kl += ["  if(values.size() != %d)" % len(scalarAttributes)]
         kl += ["    throw(\"Expected number of values does not match (\"+values.size()+\" given, %d expected).\");" % len(scalarAttributes)]
         for i in range(len(scalarAttributes)):
             kl += ["  this.%s.value = values[%d];" % (scalarAttributes[i]['member'], i)]
-        kl += ["}", ""]        
+        kl += ["}", ""]
 
         kl += ["function %s.setClip!(KrakenClip clip) {" % self.getKLExtensionName()]
         kl += ["  this.clip = clip;"]
@@ -723,7 +727,7 @@ class Builder(Builder):
         klCode = self.generateKLCode()
         extName = self.getKLExtensionName()
         return [{
-            "filename": "%s.kl" % extName, 
+            "filename": "%s.kl" % extName,
             "sourceCode": klCode
         }]
 
@@ -798,7 +802,7 @@ class Builder(Builder):
         clipInput = dfgExec.addExecPort('clip', client.DFG.PortTypes.In, "KrakenClip")
         dfgExec.setCode("dfgEntry {\n  %s.setClip(%s);\n}\n" % (funcResult, clipInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # Solve preset
         filePath = os.path.join(presetFolder, 'Solve.canvas')
@@ -809,7 +813,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
         dfgExec.setCode("dfgEntry {\n  %s.solve();\n}\n" % (funcResult))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)   
+        open(filePath, "w").write(content)
 
         # Evaluate preset
         filePath = os.path.join(presetFolder, 'Evaluate.canvas')
@@ -821,7 +825,7 @@ class Builder(Builder):
         contextInput = dfgExec.addExecPort('context', client.DFG.PortTypes.In, "KrakenClipContext")
         dfgExec.setCode("dfgEntry {\n  %s.evaluate(%s);\n}\n" % (funcResult, contextInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)   
+        open(filePath, "w").write(content)
 
         # ResetPose preset
         filePath = os.path.join(presetFolder, 'ResetPose.canvas')
@@ -832,7 +836,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
         dfgExec.setCode("dfgEntry {\n  %s.resetPose();\n}\n" % (funcResult))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetControlXfos preset
         filePath = os.path.join(presetFolder, 'GetControlXfos.canvas')
@@ -844,7 +848,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getControlXfos();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetJointXfos preset
         filePath = os.path.join(presetFolder, 'GetJointXfos.canvas')
@@ -856,7 +860,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getJointXfos();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetAllXfos preset
         filePath = os.path.join(presetFolder, 'GetAllXfos.canvas')
@@ -868,7 +872,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getAllXfos();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetControlNames preset
         filePath = os.path.join(presetFolder, 'GetControlNames.canvas')
@@ -880,7 +884,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'String[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getControlNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetJointNames preset
         filePath = os.path.join(presetFolder, 'GetJointNames.canvas')
@@ -892,7 +896,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'String[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getJointNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetAllNames preset
         filePath = os.path.join(presetFolder, 'GetAllNames.canvas')
@@ -904,7 +908,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'String[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getAllNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
     def findKLObjectForSI(self, kSceneItem):
         member = self.getUniqueName(kSceneItem)
@@ -977,7 +981,7 @@ class Builder(Builder):
         else:
             self.reportError("buildKLSceneItem: Unexpected class " + cls)
             return False
-            
+
         if kSceneItem.isTypeOf('ComponentInput') or \
             kSceneItem.isTypeOf('ComponentOutput') or \
             kSceneItem.isTypeOf('Layer') or \
@@ -1390,6 +1394,10 @@ class Builder(Builder):
         self.__klMembers.append({'name': self.getUniqueName(kOperator), 'type': solver['type']})
         self.__klSolvers.append(solver)
 
+        if kOperator.extension != "Kraken" and kOperator.extension not in self.__klExtensions:
+            self.__klExtensions.append(kOperator.extension)
+
+
         return True
 
 
@@ -1554,6 +1562,7 @@ class Builder(Builder):
         self.__debugMode = False
         self.__names = {}
         self.__pathToName = {}
+        self.__klExtensions = []
         self.__klMembers = []
         self.__klObjects = []
         self.__klAttributes = []
