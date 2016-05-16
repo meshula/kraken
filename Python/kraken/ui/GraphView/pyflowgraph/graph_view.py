@@ -363,12 +363,6 @@ class GraphView(QtGui.QGraphicsView):
 
     def connectPorts(self, srcNode, outputName, tgtNode, inputName):
 
-        print("TTPrint: self:"),;print(self)
-        print("TTPrint: srcNode:"),;print(srcNode)
-        print("TTPrint: outputName:"),;print(outputName)
-        print("TTPrint: tgtNode:"),;print(tgtNode)
-        print("TTPrint: inputName:"),;print(inputName)
-
         if isinstance(srcNode, Node):
             sourceNode = srcNode
         elif isinstance(srcNode, basestring):
@@ -398,9 +392,7 @@ class GraphView(QtGui.QGraphicsView):
             raise Exception("Node '" + targetNode.getName() + "' does not have input:" + inputName)
 
         outCircle = sourcePort.outCircle()
-        print("TTPrint: outCircle:"),;print(outCircle)
         inCircle = targetPort.inCircle()
-        print("TTPrint: inCircle:"),;print(inCircle)
 
         connection = Connection(self, sourcePort.outCircle(), targetPort.inCircle())
         self.addConnection(connection, emitSignal=False)
