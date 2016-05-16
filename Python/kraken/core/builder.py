@@ -487,6 +487,34 @@ class Builder(object):
 
         return True
 
+
+    def __reparentJoints(self, kRig):
+        """Sets override reparenting based on port object attributes
+        """
+
+        if not kRig.isTypeOf("Rig"):
+            raise ValueError("argument kRig is not of type \"Rig\"")
+
+        components = kRig.getChildrenByType('Component')
+
+        for component in components:
+            print("---TTPrint: component:"),;print(component)
+            for i in xrange(component.getNumInputs()):
+
+                componentInput = component.getInputByIndex(i)
+                if componentInput.getName() != "parentSpace" or componentInput.isConnected() is False:
+                    continue
+                connection = componentInput.getConnection()
+                connectionTarget = connection.getTarget()
+                inputTarget = componentInput.getTarget()
+
+                # A little crude, but simple and it works
+                if hasattr(connectionTarget, "parentJoint") and hasattr(inputTarget, "childJoints"):
+                    for childJoint in inputTarget.childJoints:
+                        logger.debug("Parenting %s to %s..." % (childJoint.getName(), connectionTarget.parentJoint.getName()))
+                        childJoint.setParent(connectionTarget.parentJoint) #this calls addSource()
+
+
     # =====================
     # Build Object Methods
     # =====================
@@ -669,32 +697,7 @@ class Builder(object):
 
         Profiler.getInstance().push("build:" + kSceneItem.getName())
 
-
-        orderedComponents = kSceneItem.getChildrenByType('Component')  # getBuildOrder()
-        # Build Components in the correct order
-        for component in orderedComponents:
-            for i in xrange(component.getNumInputs()):
-
-                componentInput = component.getInputByIndex(i)
-                if componentInput.getName() != "parentSpace" or componentInput.isConnected() is False:
-                    continue
-
-                connection = componentInput.getConnection()
-                print("\nTTPrint: connection:"),;print(connection)
-                connectionTarget = connection.getTarget()
-                print("TTPrint: connectionTarget:"),;print(connectionTarget),
-                print(":"),;print(connectionTarget.getName())
-                inputTarget = componentInput.getTarget()
-                print("TTPrint: inputTarget:"),;print(inputTarget),
-                print(":"),;print(inputTarget.getName())
-
-                if hasattr(connectionTarget, "parentJoint") and hasattr(inputTarget, "childJoints"):
-                    for childJoint in inputTarget.childJoints:
-                        print("TTPrint: Parenting %s to %s..." % (childJoint.getName(), connectionTarget.parentJoint.getName()))
-                        childJoint.setParent(connectionTarget.parentJoint) #this calls addSource()
-
-
-
+        self.__reparentJoints(kSceneItem) # Must occur before traverser
 
         traverser = Traverser('Children')
         traverser.addRootItem(kSceneItem)
