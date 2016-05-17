@@ -1,0 +1,146 @@
+{
+  "objectType" : "Func",
+  "title" : "swapAxesViaAlignArray",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Xfo" : {
+          "ori" : {
+            "v" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              },
+            "w" : 1
+            },
+          "tr" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          "sc" : {
+            "x" : 1,
+            "y" : 1,
+            "z" : 1
+            }
+          },
+        "Xfo[]" : [],
+        "Mat44[]" : []
+        },
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "SInt8" : 1,
+        "Vec3[]" : []
+        },
+      "name" : "alignArray",
+      "execPortType" : "IO",
+      "typeSpec" : "Vec3[]"
+      }
+    ],
+  "extDeps" : {
+    "Math" : "*"
+    },
+  "presetGUID" : "E774C00B05595BDDF44042B4FEDEF07E",
+  "code" : "
+
+operator __alignMatsTask<<<index>>>(io Mat44 results[], Mat44 mats[], Vec3 alignArray[])
+{ 
+  Mat44 m = mats[index];
+  UInt8 alignX = 1; // alignArray[index].x;
+  UInt8 alignY = 2; // alignArray[index].y;
+  UInt8 alignZ = 3; // alignArray[index].z;
+  results[index] = m.align(alignX,alignY,alignZ);
+}
+
+dfgEntry {
+  Mat44 results[];
+  results.resize(this.size());
+  alignArray.resize(this.size());
+  __alignMatsTask<<<this.size()>>>(results, this, alignArray);
+  this = results;
+}
+
+",
+  "requiredPresets" : {
+    "OSS.Math.swapAxesViaAlignArray" : {
+      "objectType" : "Func",
+      "title" : "swapAxesViaAlignArray",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Xfo" : {
+              "ori" : {
+                "v" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0
+                  },
+                "w" : 1
+                },
+              "tr" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              "sc" : {
+                "x" : 1,
+                "y" : 1,
+                "z" : 1
+                }
+              },
+            "Xfo[]" : [],
+            "Mat44[]" : []
+            },
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "SInt8" : 1,
+            "Vec3[]" : []
+            },
+          "name" : "alignArray",
+          "execPortType" : "IO",
+          "typeSpec" : "Vec3[]"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "E774C00B05595BDDF44042B4FEDEF07E",
+      "code" : "
+
+operator __alignMatsTask<<<index>>>(io Mat44 results[], Mat44 mats[], Vec3 alignArray[])
+{ 
+  Mat44 m = mats[index];
+  UInt8 alignX = 1; // alignArray[index].x;
+  UInt8 alignY = 2; // alignArray[index].y;
+  UInt8 alignZ = 3; // alignArray[index].z;
+  results[index] = m.align(alignX,alignY,alignZ);
+}
+
+dfgEntry {
+  Mat44 results[];
+  results.resize(this.size());
+  alignArray.resize(this.size());
+  __alignMatsTask<<<this.size()>>>(results, this, alignArray);
+  this = results;
+}
+
+"
+      }
+    }
+  }

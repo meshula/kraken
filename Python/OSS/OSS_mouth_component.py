@@ -193,7 +193,7 @@ class OSSMouthGuide(OSSMouth):
         self.upLipGuideOp.setInput('controls', self.upLipControls)
         self.upLipGuideOp.setInput('refMats', self.upLipControls)
 
-        self.upLipGuideOp.setOutput('result', self.paramOut )
+        self.upLipGuideOp.setOutput('result', self.paramOut)
 
         # update Inputs
         self.upLipControls.append(self.lMouthOutCtrl)
@@ -225,8 +225,6 @@ class OSSMouthGuide(OSSMouth):
         self.loLipControls.append(self.loLipCtrl)
         self.loLipControls.append(self.R_loLipHandleCtrl)
         self.loLipControls.append(self.rMouthOutCtrl)
-
-
 
         self.allObject3Ds = self.getHierarchyNodes(classType="Control")
 
@@ -536,15 +534,12 @@ class OSSMouthRig(OSSMouth):
         self.upDummy = CtrlSpace('upDummy', parent=self.ctrlCmpGrp)
 
 
-
-
         self.lMouthCtrlSpace = CtrlSpace('L_Mouth', parent=self.midMouthCtrl)
         self.lMouthCtrl = Control('L_Mouth_tweak', parent=self.lMouthCtrlSpace, shape="circle")
         self.lMouthCtrl.alignOnXAxis()
         self.rMouthCtrlSpace = CtrlSpace('R_Mouth', parent=self.midMouthCtrl)
         self.rMouthCtrl = Control('R_Mouth_tweak', parent=self.rMouthCtrlSpace, shape="circle")
         self.rMouthCtrl.alignOnXAxis()
-
 
 
         # ==============
@@ -567,116 +562,6 @@ class OSSMouthRig(OSSMouth):
         # lipConstraint = PoseConstraint('_'.join([self.lipOutputTgt.getName(), 'To', self.midLipCtrl.getName()]))
         # lipConstraint.addConstrainer(self.midLipCtrl)
         # self.lipOutputTgt.addConstraint(lipConstraint)
-
-
-        # ===============
-        # Add Fabric Ops
-        # ===============
-        # Add NURBSCurveXfoSolver Canvas Op
-        # Add lowLip Guide Canvas Op
-        self.upLipRigOp = CanvasOperator('upLipRigOp', 'OSS.Solvers.NURBSCurveXfoSolver')
-        self.addOperator(self.upLipRigOp)
-        # self.params = [0.025,0.125,0.3,0.5,0.7,0.875,0.975]
-        self.params = [0.05,0.25,0.5,0.75,0.95]
-        self.upLipControls = []
-        self.upLipOutputs = []
-        self.upLipControls.append(self.lMouthCtrl)
-        self.upLipControls.append(self.L_upLipHandleCtrl)
-        self.upLipControls.append(self.upLipCtrl)
-        self.upLipControls.append(self.R_upLipHandleCtrl)
-        self.upLipControls.append(self.rMouthCtrl)
-
-        self.upLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.upLipRigOp.setInput('rigScale', 1.0)
-        self.upLipRigOp.setInput('alignX', 2)
-        self.upLipRigOp.setInput('alignY', 3)
-        self.upLipRigOp.setInput('alignZ', 1)
-        self.upLipRigOp.setInput('degree', 4)
-        self.upLipRigOp.setInput('keepArcLength', 0.0)
-        self.upLipRigOp.setInput('followCurveTangent', 0.0)
-        self.upLipRigOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
-        self.upLipRigOp.setInput('parent', self.mouthCtrlSpace)
-
-        self.upLipRigOp.setInput('atVec', self.mouthCtrl)
-        self.upLipRigOp.setInput('controls', self.upLipControls)
-        self.upLipRigOp.setInput('params',self.params )
-
-        self.upLipRigOp.setOutput('outputs', self.upLipOutputs)
-
-
-        # ===============
-        # Add Fabric Ops
-        # ===============
-        # Add Spine Canvas Op
-        # Add lowLip Guide Canvas Op
-        self.loLipRigOp = CanvasOperator('loLipRigOp', 'OSS.Solvers.NURBSCurveXfoSolver')
-        self.addOperator(self.loLipRigOp)
-
-        self.loLipControls = []
-        self.loLipOutputs = []
-        self.loLipControls.append(self.lMouthCtrl)
-        self.loLipControls.append(self.L_loLipHandleCtrl)
-        self.loLipControls.append(self.loLipCtrl)
-        self.loLipControls.append(self.R_loLipHandleCtrl)
-        self.loLipControls.append(self.rMouthCtrl)
-
-        self.loLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.loLipRigOp.setInput('rigScale', 1.0)
-        self.loLipRigOp.setInput('alignX', 2)
-        self.loLipRigOp.setInput('alignY', 3)
-        self.loLipRigOp.setInput('alignZ', 1)
-        self.loLipRigOp.setInput('degree', 4)
-        self.loLipRigOp.setInput('keepArcLength', 0.0)
-        self.loLipRigOp.setInput('followCurveTangent', 0.0)
-        self.loLipRigOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
-        self.loLipRigOp.setInput('parent', self.mouthCtrlSpace)
-
-        self.loLipRigOp.setInput('atVec', self.mouthCtrl)
-        self.loLipRigOp.setInput('controls', self.loLipControls)
-        self.loLipRigOp.setInput('params', self.params )
-
-        self.loLipRigOp.setOutput('outputs', self.loLipOutputs)
-
-
-        # Add lowLip Guide Canvas Op
-        self.blendMidMouthRigOp = CanvasOperator('blendMidMouthRigOp', 'OSS.Solvers.blendMat44Solver')
-        self.addOperator(self.blendMidMouthRigOp)
-
-        # self.blendMidMouthRigOp.setInput('drawDebug', self.drawDebugInputAttr)
-        # self.blendMidMouthRigOp.setInput('rigScale', 1.0)
-        self.blendMidMouthRigOp.setInput('rotationAmt', .5)
-        self.blendMidMouthRigOp.setInput('translationAmt', .5)
-        self.blendMidMouthRigOp.setInput('scaleAmt', .5)
-
-        self.blendMidMouthRigOp.setInput('parentSpace', self.ctrlCmpGrp)
-        self.blendMidMouthRigOp.setInput('A', self.topMouthCtrlSpace)
-        self.blendMidMouthRigOp.setInput('B', self.loLipCtrlSpace)
-
-        self.blendMidMouthRigOp.setOutput('result', self.midMouthCtrlSpace)
-
-
-        # ===============
-        # Add Splice Ops
-        # ===============
-        # Add Deformer Splice Op
-
-        self.rigCtrls = []
-        self.rigDefs = []
-        self.rigCtrls.append(self.mouthCtrl)
-        self.rigDefs.append(self.mouthDef)
-
-        self.eyeCtrlConstraint = self.mouthDef.constrainTo(self.mouthCtrl, maintainOffset=False)
-
-
-        # self.outputsToDeformersOKLOp = KLOperator('MultiPoseConstraintOp', 'MultiPoseConstraintSolver', 'Kraken')
-        # self.addOperator(self.outputsToDeformersOKLOp)
-        # self.outputsToDeformersOKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        # self.outputsToDeformersOKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        # self.outputsToDeformersOKLOp.setInput('constrainers', self.rigCtrls)
-        # self.outputsToDeformersOKLOp.setOutput('constrainees', self.rigDefs)
-
-
-
         Profiler.getInstance().pop()
 
 
@@ -789,6 +674,140 @@ class OSSMouthRig(OSSMouth):
         super(OSSMouthRig, self).loadData( data )
 
 
+        # ===============
+        # Add Fabric Ops
+        # ===============
+        # Add NURBSCurveXfoSolver Canvas Op
+        # Add lowLip Guide Canvas Op
+        self.upLipRigOp = KLOperator('upLipRigOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
+
+        self.addOperator(self.upLipRigOp)
+        # self.params = [0.025,0.125,0.3,0.5,0.7,0.875,0.975]
+        self.params = [0.05,0.25,0.5,0.75,0.95]
+
+        self.upLipControls = []
+        self.upLipOutputs = []
+        self.rigControlAligns = []
+        self.upLipControls.append(self.lMouthCtrl)
+        self.upLipControls.append(self.L_upLipHandleCtrl)
+        self.upLipControls.append(self.upLipCtrl)
+        self.upLipControls.append(self.R_upLipHandleCtrl)
+        self.upLipControls.append(self.rMouthCtrl)
+
+        '''
+
+        for i in range(len(self.upLipControls)):
+            ctrl = self.upLipControls[i]
+            newSpace = CtrlSpace(ctrl._name + 'out', parent=ctrl)
+            self.upLipControls[i] = newSpace
+
+
+        for i in range(len(self.loLipControls)):
+            ctrl = self.upLipControls[i]
+            newSpace = CtrlSpace(ctrl._name + 'out', parent=ctrl)
+            self.loLipControls[i] = newSpace
+        '''
+
+
+        self.upLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.upLipRigOp.setInput('rigScale', 1.0)
+        self.upLipRigOp.setInput('alignX', 2)
+        self.upLipRigOp.setInput('alignY', 3)
+        self.upLipRigOp.setInput('alignZ', 1)
+        self.upLipRigOp.setInput('degree', 4)
+        self.upLipRigOp.setInput('keepArcLength', 0.0)
+        self.upLipRigOp.setInput('compressionAmt', 0.0)
+        self.upLipRigOp.setInput('followCurveTangent', 0.0)
+        self.upLipRigOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
+        self.upLipRigOp.setInput('parent', self.mouthCtrlSpace)
+
+        self.upLipRigOp.setInput('atVec', self.mouthCtrl)
+        self.upLipRigOp.setInput('controlAligns', self.rigControlAligns)
+        self.upLipRigOp.setInput('controls', self.upLipControls)
+        self.upLipRigOp.setInput('controlsRest', self.upLipControls)
+        self.upLipRigOp.setInput('params',self.params )
+
+        self.upLipRigOp.setOutput('outputs', self.upLipOutputs)
+
+
+        # ===============
+        # Add Fabric Ops
+        # ===============
+        # Add Spine Canvas Op
+        # Add lowLip Guide Canvas Op
+        self.loLipRigOp = KLOperator('loLipRigOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
+        self.addOperator(self.loLipRigOp)
+
+        self.loLipControls = []
+        self.loLipOutputs = []
+        self.loLipControls.append(self.lMouthCtrl)
+        self.loLipControls.append(self.L_loLipHandleCtrl)
+        self.loLipControls.append(self.loLipCtrl)
+        self.loLipControls.append(self.R_loLipHandleCtrl)
+        self.loLipControls.append(self.rMouthCtrl)
+
+        self.loLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.loLipRigOp.setInput('rigScale', 1.0)
+        self.loLipRigOp.setInput('alignX', 2)
+        self.loLipRigOp.setInput('alignY', 3)
+        self.loLipRigOp.setInput('alignZ', 1)
+        self.loLipRigOp.setInput('degree', 4)
+        self.loLipRigOp.setInput('keepArcLength', 0.0)
+        self.loLipRigOp.setInput('compressionAmt', 0.0)
+        self.loLipRigOp.setInput('followCurveTangent', 0.0)
+        self.loLipRigOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
+        self.loLipRigOp.setInput('parent', self.mouthCtrlSpace)
+
+        self.loLipRigOp.setInput('atVec', self.mouthCtrl)
+        self.loLipRigOp.setInput('controlAligns', self.rigControlAligns)
+        self.loLipRigOp.setInput('controls', self.loLipControls)
+        self.loLipRigOp.setInput('controlsRest', self.loLipControls)
+        self.loLipRigOp.setInput('params', self.params )
+
+        self.loLipRigOp.setOutput('outputs', self.loLipOutputs)
+
+        for i in range(len(self.loLipControls)):
+            self.rigControlAligns.append(Vec3(1,2,3));
+
+
+        # Add lowLip Guide Canvas Op
+        self.blendMidMouthRigOp = CanvasOperator('blendMidMouthRigOp', 'OSS.Solvers.blendMat44Solver')
+        self.addOperator(self.blendMidMouthRigOp)
+
+        # self.blendMidMouthRigOp.setInput('drawDebug', self.drawDebugInputAttr)
+        # self.blendMidMouthRigOp.setInput('rigScale', 1.0)
+        self.blendMidMouthRigOp.setInput('rotationAmt', .5)
+        self.blendMidMouthRigOp.setInput('translationAmt', .5)
+        self.blendMidMouthRigOp.setInput('scaleAmt', .5)
+
+        self.blendMidMouthRigOp.setInput('parentSpace', self.ctrlCmpGrp)
+        self.blendMidMouthRigOp.setInput('A', self.topMouthCtrlSpace)
+        self.blendMidMouthRigOp.setInput('B', self.loLipCtrlSpace)
+
+        self.blendMidMouthRigOp.setOutput('result', self.midMouthCtrlSpace)
+
+
+        # ===============
+        # Add Splice Ops
+        # ===============
+        # Add Deformer Splice Op
+
+        self.rigCtrls = []
+        self.rigDefs = []
+        self.rigCtrls.append(self.mouthCtrl)
+        self.rigDefs.append(self.mouthDef)
+
+        self.eyeCtrlConstraint = self.mouthDef.constrainTo(self.mouthCtrl, maintainOffset=False)
+
+
+        # self.outputsToDeformersOKLOp = KLOperator('MultiPoseConstraintOp', 'MultiPoseConstraintSolver', 'Kraken')
+        # self.addOperator(self.outputsToDeformersOKLOp)
+        # self.outputsToDeformersOKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        # self.outputsToDeformersOKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        # self.outputsToDeformersOKLOp.setInput('constrainers', self.rigCtrls)
+        # self.outputsToDeformersOKLOp.setOutput('constrainees', self.rigDefs)
+
+
 
         self.upLipDefs = []
         self.upLipCtrls = []
@@ -828,11 +847,12 @@ class OSSMouthRig(OSSMouth):
         self.upLipRigOp.setOutput('outputs', self.upLipOutputs)
 
         # Add lowLip Debug Canvas Op
-        self.upLipDefOp = CanvasOperator('upLipDefOp', 'OSS.Solvers.NURBSCurveXfoSolver')
+        self.upLipDefOp = KLOperator('upLipDefOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(self.upLipDefOp)
 
         self.upLipControls = []
         self.upLipOutputs = []
+        self.defControlAligns = []
         # numDefs plus two for the corners, this should be determined per closest point on curve
         self.paramsOut = [1, .96, .9, .81, .74, .66, .58, 0.5, 0.42, 0.34, 0.26, 0.19, 0.1, 0.04, 0]
 
@@ -845,12 +865,15 @@ class OSSMouthRig(OSSMouth):
         self.upLipDefOp.setInput('alignY', 3)
         self.upLipDefOp.setInput('alignZ', 2)
         self.upLipDefOp.setInput('keepArcLength', 0.0)
+        self.upLipDefOp.setInput('compressionAmt', 0.0)
         self.upLipDefOp.setInput('followCurveTangent', 0.5)
         self.upLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.upLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.upLipDefOp.setInput('atVec', self.mouthCtrl)
+        self.upLipDefOp.setInput('controlAligns', self.defControlAligns)
         self.upLipDefOp.setInput('controls', self.upLipCtrls)
+        self.upLipDefOp.setInput('controlsRest', self.upLipCtrls)
         self.upLipDefOp.setInput('params', self.paramsOut)
 
         self.upLipDefOp.setOutput('outputs', self.upLipDefs)
@@ -858,7 +881,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipDefs = []
         self.loLipCtrls = []
         self.loLipCtrls = self.createGuideControls("lipControls", self.loLipCtrls, data["lipCtrlNames"])
-        self.loLipDefs = self.createGuideControls("loLipDef", self.loLipDefs, data["numSpans"])
+        self.loLipDefs  = self.createGuideControls("loLipDef", self.loLipDefs, data["numSpans"])
 
         if self.loLipCtrls:
             # build control hierarchy
@@ -883,10 +906,10 @@ class OSSMouthRig(OSSMouth):
 
         self.loLipRigOp.setOutput('outputs', self.loLipOutputs)
         # Add lowLip Debug Canvas Op
-        self.loLipDefOp = CanvasOperator('loLipDefOp', 'OSS.Solvers.NURBSCurveXfoSolver')
+        self.loLipDefOp = KLOperator('loLipDefOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(self.loLipDefOp)
 
-        self.loLipControls = []
+        self.c = []
         self.loLipOutputs = []
         self.loLipDefs =  [self.rLoLipCorner] + self.loLipDefs + [self.lLoLipCorner]
 
@@ -897,17 +920,22 @@ class OSSMouthRig(OSSMouth):
         self.loLipDefOp.setInput('alignY', 3)
         self.loLipDefOp.setInput('alignZ', 2)
         self.loLipDefOp.setInput('keepArcLength', 0.0)
+        self.loLipDefOp.setInput('compressionAmt', 0.0)
         self.loLipDefOp.setInput('followCurveTangent', 0.5)
         self.loLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.loLipDefOp.setInput('parent', self.mouthCtrlSpace)
 
         self.loLipDefOp.setInput('atVec', self.mouthCtrl)
+        self.loLipDefOp.setInput('controlAligns', self.defControlAligns)
         self.loLipDefOp.setInput('controls', self.loLipCtrls)
+        self.loLipDefOp.setInput('controlsRest', self.loLipCtrls)
         self.loLipDefOp.setInput('params', self.paramsOut )
 
         self.loLipDefOp.setOutput('outputs', self.loLipDefs)
 
 
+        for i in range(len(self.loLipCtrls)):
+            self.defControlAligns.append(Vec3(1,2,3));
 
 
 

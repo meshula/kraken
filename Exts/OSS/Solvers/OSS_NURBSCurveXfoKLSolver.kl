@@ -21,6 +21,7 @@ function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   args.push(KrakenSolverArg('atVec', 'In', 'Mat44'));
   args.push(KrakenSolverArg('parent', 'In', 'Mat44'));
   args.push(KrakenSolverArg('compressionAmt', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('controlAligns', 'In', 'Vec3[]'));
   args.push(KrakenSolverArg('controlsRest', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('controls', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('outputs', 'Out', 'Mat44[]'));
@@ -43,18 +44,38 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     in Mat44 atVec,
     in Mat44 parent,
     in Scalar compressionAmt,
+    in Vec3 controlAligns[],
     in Mat44 controlsRest[],
     in Mat44 controls[],
-    out Mat44 outputs[]
+    io Mat44 outputs[]
     )
 {
   if(controls.size() != controlsRest.size())
-    throw("Error in OSS_NURBSCurveXfoKLSolver. The number of controls must match the number of controlsRest. controls.size:" + controls.size() + "; constrainees.size:" + controlsRest.size());
+    throw("Error in OSS_NURBSCurveXfoKLSolver. The number of controls must match the number of controlsRest. controls.size:" + controls.size() + "; constrainees.size:" + controlsRest.size() + "; controlAligns.size:" + controlAligns.size());
 
-  UInt32 count = params.size();
+  UInt32 inCount  = controls.size();
+  UInt32 outCount = params.size();
+  Xfo posedXfo;
+  Xfo restXfo;
+  UInt8 tAlignX;
+  UInt8 tAlignY;
+  UInt8 tAlignZ;
+  // realign the inputs
+  // for (UInt32 i =0; i<inCount; i++) {
+  //   posedXfo = Xfo(controls[i]);
+  //   restXfo  = Xfo(controlsRest[i]);
+  //   tAlignX = controlAligns[i].x;
+  //   tAlignY = controlAligns[i].y;
+  //   tAlignZ = controlAligns[i].z;
+  //   posedXfo.align(tAlignX, tAlignY, tAlignZ);
+  //   restXfo.align(tAlignX, tAlignY, tAlignZ);
+  //   controls[i] = posedXfo.toMat44();
+  //   controlsRest[i] = restXfo.toMat44();
+  // }
+
   Scalar keepCurveLen = 0;
   
-  outputs.resize(count);
+  outputs.resize(outCount);
 
   NURBSCurve restCurve = NURBSCurve();
   NURBSCurve posedCurve = NURBSCurve();
@@ -66,24 +87,27 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   // normals = restCurve.normals.values;
   
   Vec3 altNormals[];
+  altNormals.resize(outCount);
+
   Vec3 altTangents[];
+  altTangents.resize(outCount);
+
   Xfo xfos[];
-  Xfo outputsXfo[];
+  xfos.resize(outCount);
+
   Vec3 positions[];
+  positions.resize(outCount);
   
   Scalar compression[];
+  compression.resize(outCount);
+
   Xfo parentXfo;
   parentXfo.setFromMat44(parent);
+
   Quat parentRotation = parentXfo.ori;
   Vec3 localAltTangent = parentRotation.rotateVector(altTangent);
   
-  positions.resize(count);
-  xfos.resize(count);
-  outputsXfo.resize(count);
-  altTangents.resize(count);
-  altNormals.resize(count);
-  compression.resize(count);
-  outputs.resize(count);
+  outputs.resize(outCount);
   
   Scalar useLocalNormal = 1; 
   Scalar followCurveNormal = 1; 
@@ -91,7 +115,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   Ref <NURBSCurve> posedCurveRef = posedCurve;
   Ref <NURBSCurve> restCurveRef = restCurve;
   
-  for (UInt32 i =0; i<count; i++) {
+  for (UInt32 i =0; i<outCount; i++) {
     positions[i] = posedCurveRef.getPoint(params[i], keepArcLength, keepCurveLen);
     altNormals[i] = positions[i] - parent.translation();
     
@@ -103,7 +127,6 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
     xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
     xfos[i].align(alignX, alignY, alignZ);
-    outputs[i] = outputsXfo[i].toMat44();
+    outputs[i] = xfos[i].toMat44();
   }
-  report(outputs);
 }
