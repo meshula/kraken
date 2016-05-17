@@ -498,7 +498,6 @@ class Builder(object):
         components = kRig.getChildrenByType('Component')
 
         for component in components:
-            print("---TTPrint: component:"),;print(component)
             for i in xrange(component.getNumInputs()):
 
                 componentInput = component.getInputByIndex(i)
