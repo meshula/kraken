@@ -1,5 +1,7 @@
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo
+from kraken.core.maths.quat import Quat
+from kraken.core.maths import Math_degToRad
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -11,6 +13,7 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
+from kraken.core.objects.transform import Transform
 from kraken.core.objects.locator import Locator
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
@@ -20,6 +23,10 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
+
+from kraken.log import getLogger
+
+logger = getLogger('kraken')
 
 
 class HeadComponent(BaseExampleComponent):
@@ -32,7 +39,8 @@ class HeadComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.headBaseInputTgt = self.createInput('headBase', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.neckRefInputTgt = self.createInput('neckRef', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.worldRefInputTgt = self.createInput('worldRef', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.headOutputTgt = self.createOutput('head', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -61,23 +69,49 @@ class HeadComponentGuide(HeadComponent):
         # =========
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
 
-        self.headCtrl = Control('head', parent=self.ctrlCmpGrp, shape="cube")
-        self.headEndCtrl = Control('headEnd', parent=self.ctrlCmpGrp, shape="sphere")
-        self.eyeLeftCtrl = Control('eyeLeft', parent=self.ctrlCmpGrp, shape="sphere")
-        self.eyeRightCtrl = Control('eyeRight', parent=self.ctrlCmpGrp, shape="sphere")
-        self.jawCtrl = Control('jaw', parent=self.ctrlCmpGrp, shape="cube")
 
-        data = {
-                "name": name,
-                "location": "M",
-                "headPosition": Vec3(0.0, 17.4756, -0.421),
-                "headEndPosition": Vec3(0.0, 19.5, -0.421),
-                "eyeLeftPosition": Vec3(0.3497, 18.0878, 0.6088),
-                "eyeRightPosition": Vec3(-0.3497, 18.0878, 0.6088),
-                "jawPosition": Vec3(0.0, 17.613, -0.2731)
-               }
+        sphereCtrl = Control('sphere', shape='sphere')
+        sphereCtrl.scalePoints(Vec3(0.375, 0.375, 0.375))
 
-        self.loadData(data)
+        self.headCtrl = Control('head', parent=self.ctrlCmpGrp, shape='square')
+        self.headCtrl.rotatePoints(90, 0, 0)
+        self.headCtrl.translatePoints(Vec3(0.0, 0.5, 0.0))
+        self.headCtrl.scalePoints(Vec3(1.8, 2.0, 2.0))
+
+        self.eyeLeftCtrl = Control('eyeLeft', parent=self.headCtrl, shape='arrow_thin')
+        self.eyeLeftCtrl.translatePoints(Vec3(0, 0, 0.5))
+        self.eyeLeftCtrl.rotatePoints(0, 90, 0)
+        self.eyeLeftCtrl.appendCurveData(sphereCtrl.getCurveData())
+
+        self.eyeRightCtrl = Control('eyeRight', parent=self.headCtrl, shape='arrow_thin')
+        self.eyeRightCtrl.translatePoints(Vec3(0, 0, 0.5))
+        self.eyeRightCtrl.rotatePoints(0, 90, 0)
+        self.eyeRightCtrl.appendCurveData(sphereCtrl.getCurveData())
+
+        self.jawCtrl = Control('jaw', parent=self.headCtrl, shape='square')
+        self.jawCtrl.rotatePoints(90, 0, 0)
+        self.jawCtrl.rotatePoints(0, 90, 0)
+        self.jawCtrl.translatePoints(Vec3(0.0, -0.5, 0.5))
+        self.jawCtrl.scalePoints(Vec3(1.0, 0.8, 1.5))
+        self.jawCtrl.setColor('orange')
+
+        eyeXAlignOri = Quat()
+        eyeXAlignOri.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-90))
+
+        self.default_data = {
+            "name": name,
+            "location": "M",
+            "headXfo": Xfo(Vec3(0.0, 17.5, -0.5)),
+            "headCrvData": self.headCtrl.getCurveData(),
+            "eyeLeftXfo": Xfo(tr=Vec3(0.375, 18.5, 0.5), ori=eyeXAlignOri),
+            "eyeLeftCrvData": self.eyeLeftCtrl.getCurveData(),
+            "eyeRightXfo": Xfo(tr=Vec3(-0.375, 18.5, 0.5), ori=eyeXAlignOri),
+            "eyeRightCrvData": self.eyeRightCtrl.getCurveData(),
+            "jawXfo": Xfo(Vec3(0.0, 17.875, -0.275)),
+            "jawCrvData": self.jawCtrl.getCurveData()
+       }
+
+        self.loadData(self.default_data)
 
         Profiler.getInstance().pop()
 
@@ -95,11 +129,14 @@ class HeadComponentGuide(HeadComponent):
 
         data = super(HeadComponentGuide, self).saveData()
 
-        data['headPosition'] = self.headCtrl.xfo.tr
-        data['headEndPosition'] = self.headEndCtrl.xfo.tr
-        data['eyeLeftPosition'] = self.eyeLeftCtrl.xfo.tr
-        data['eyeRightPosition'] = self.eyeRightCtrl.xfo.tr
-        data['jawPosition'] = self.jawCtrl.xfo.tr
+        data['headXfo'] = self.headCtrl.xfo
+        data['headCrvData'] = self.headCtrl.getCurveData()
+        data['eyeLeftXfo'] = self.eyeLeftCtrl.xfo
+        data['eyeLeftCrvData'] = self.eyeLeftCtrl.getCurveData()
+        data['eyeRightXfo'] = self.eyeRightCtrl.xfo
+        data['eyeRightCrvData'] = self.eyeRightCtrl.getCurveData()
+        data['jawXfo'] = self.jawCtrl.xfo
+        data['jawCrvData'] = self.jawCtrl.getCurveData()
 
         return data
 
@@ -115,13 +152,16 @@ class HeadComponentGuide(HeadComponent):
 
         """
 
-        super(HeadComponentGuide, self).loadData( data )
+        super(HeadComponentGuide, self).loadData(data)
 
-        self.headCtrl.xfo.tr = data['headPosition']
-        self.headEndCtrl.xfo.tr = data['headEndPosition']
-        self.eyeLeftCtrl.xfo.tr = data['eyeLeftPosition']
-        self.eyeRightCtrl.xfo.tr = data['eyeRightPosition']
-        self.jawCtrl.xfo.tr = data['jawPosition']
+        self.headCtrl.xfo = data.get('headXfo', self.default_data['headXfo'])
+        self.headCtrl.setCurveData(data.get('headCrvData', self.default_data['headCrvData']))
+        self.eyeLeftCtrl.xfo = data.get('eyeLeftXfo', self.default_data['eyeLeftXfo'])
+        self.eyeLeftCtrl.setCurveData(data.get('eyeLeftCrvData', self.default_data['eyeLeftCrvData']))
+        self.eyeRightCtrl.xfo = data.get('eyeRightXfo', self.default_data['eyeRightXfo'])
+        self.eyeRightCtrl.setCurveData(data.get('eyeRightCrvData', self.default_data['eyeRightCrvData']))
+        self.jawCtrl.xfo = data.get('jawXfo', self.default_data['jawXfo'])
+        self.jawCtrl.setCurveData(data.get('jawCrvData', self.default_data['jawCrvData']))
 
         return True
 
@@ -136,11 +176,18 @@ class HeadComponentGuide(HeadComponent):
 
         data = super(HeadComponentGuide, self).getRigBuildData()
 
-        data['headPosition'] = self.headCtrl.xfo.tr
-        data['headEndPosition'] = self.headEndCtrl.xfo.tr
-        data['eyeLeftPosition'] = self.eyeLeftCtrl.xfo.tr
-        data['eyeRightPosition'] = self.eyeRightCtrl.xfo.tr
-        data['jawPosition'] = self.jawCtrl.xfo.tr
+        data['headXfo'] = self.headCtrl.xfo
+        data['headCrvData'] = self.headCtrl.getCurveData()
+
+        data['eyeLeftXfo'] = self.eyeLeftCtrl.xfo
+        data['eyeLeftCrvData'] = self.eyeLeftCtrl.getCurveData()
+
+        data['eyeRightXfo'] = self.eyeRightCtrl.xfo
+        data['eyeRightCrvData'] = self.eyeRightCtrl.getCurveData()
+
+        data['jawXfo'] = self.jawCtrl.xfo
+        data['jawCrvData'] = self.jawCtrl.getCurveData()
+
 
         return data
 
@@ -184,32 +231,46 @@ class HeadComponentRig(HeadComponent):
         # Controls
         # =========
         # Head
-        self.headCtrlSpace = CtrlSpace('head', parent=self.ctrlCmpGrp)
-        self.headCtrl = Control('head', parent=self.headCtrlSpace, shape="circle")
+        self.headCtrl = Control('head', parent=self.ctrlCmpGrp, shape='circle')
+        self.headCtrlSpace = self.headCtrl.insertCtrlSpace()
         self.headCtrl.rotatePoints(0, 0, 90)
         self.headCtrl.scalePoints(Vec3(3, 3, 3))
         self.headCtrl.translatePoints(Vec3(0, 1, 0.25))
 
         # Eye Left
-        self.eyeLeftCtrlSpace = CtrlSpace('eyeLeft', parent=self.headCtrl)
-        self.eyeLeftCtrl = Control('eyeLeft', parent=self.eyeLeftCtrlSpace, shape="sphere")
+        self.eyeLeftCtrl = Control('eyeLeft', parent=self.headCtrl, shape='sphere')
+        self.eyeLeftCtrlSpace = self.eyeLeftCtrl.insertCtrlSpace()
+        self.eyeLeftCtrl.rotatePoints(0, 90, 0)
         self.eyeLeftCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
-        self.eyeLeftCtrl.setColor("blueMedium")
+        self.eyeLeftCtrl.setColor('blueMedium')
 
         # Eye Right
-        self.eyeRightCtrlSpace = CtrlSpace('eyeRight', parent=self.headCtrl)
-        self.eyeRightCtrl = Control('eyeRight', parent=self.eyeRightCtrlSpace, shape="sphere")
+        self.eyeRightCtrl = Control('eyeRight', parent=self.headCtrl, shape='sphere')
+        self.eyeRightCtrlSpace = self.eyeRightCtrl.insertCtrlSpace()
+        self.eyeRightCtrl.rotatePoints(0, 90, 0)
         self.eyeRightCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
-        self.eyeRightCtrl.setColor("blueMedium")
+        self.eyeRightCtrl.setColor('blueMedium')
+
+        # LookAt Control
+        self.lookAtCtrl = Control('lookAt', parent=self.ctrlCmpGrp, shape='square')
+        self.lookAtCtrl.rotatePoints(90, 0, 0)
+        self.lookAtCtrlSpace = self.lookAtCtrl.insertCtrlSpace()
+
+        self.eyeLeftBase = Transform('eyeLeftBase', parent=self.headCtrl)
+        self.eyeRightBase = Transform('eyeRightBase', parent=self.headCtrl)
+        self.eyeLeftUpV = Transform('eyeLeftUpV', parent=self.headCtrl)
+        self.eyeRightUpV = Transform('eyeRightUpV', parent=self.headCtrl)
+        self.eyeLeftAtV = Transform('eyeLeftAtV', parent=self.lookAtCtrl)
+        self.eyeRightAtV = Transform('eyeRightAtV', parent=self.lookAtCtrl)
 
         # Jaw
         self.jawCtrlSpace = CtrlSpace('jawCtrlSpace', parent=self.headCtrl)
-        self.jawCtrl = Control('jaw', parent=self.jawCtrlSpace, shape="cube")
+        self.jawCtrl = Control('jaw', parent=self.jawCtrlSpace, shape='cube')
         self.jawCtrl.alignOnYAxis(negative=True)
         self.jawCtrl.alignOnZAxis()
         self.jawCtrl.scalePoints(Vec3(1.45, 0.65, 1.25))
         self.jawCtrl.translatePoints(Vec3(0, -0.25, 0))
-        self.jawCtrl.setColor("orange")
+        self.jawCtrl.setColor('orange')
 
 
         # ==========
@@ -236,37 +297,74 @@ class HeadComponentRig(HeadComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        headInputConstraint = PoseConstraint('_'.join([self.headCtrlSpace.getName(), 'To', self.headBaseInputTgt.getName()]))
-        headInputConstraint.setMaintainOffset(True)
-        headInputConstraint.addConstrainer(self.headBaseInputTgt)
-        self.headCtrlSpace.addConstraint(headInputConstraint)
+        self.headInputConstraint = PoseConstraint('_'.join([self.headCtrlSpace.getName(), 'To', self.neckRefInputTgt.getName()]))
+        self.headInputConstraint.setMaintainOffset(True)
+        self.headInputConstraint.addConstrainer(self.neckRefInputTgt)
+        self.headCtrlSpace.addConstraint(self.headInputConstraint)
 
         # # Constraint outputs
-        headOutputConstraint = PoseConstraint('_'.join([self.headOutputTgt.getName(), 'To', self.headCtrl.getName()]))
-        headOutputConstraint.addConstrainer(self.headCtrl)
-        self.headOutputTgt.addConstraint(headOutputConstraint)
+        self.headOutputConstraint = PoseConstraint('_'.join([self.headOutputTgt.getName(), 'To', self.headCtrl.getName()]))
+        self.headOutputConstraint.addConstrainer(self.headCtrl)
+        self.headOutputTgt.addConstraint(self.headOutputConstraint)
 
-        jawOutputConstraint = PoseConstraint('_'.join([self.jawOutputTgt.getName(), 'To', self.jawCtrl.getName()]))
-        jawOutputConstraint.addConstrainer(self.jawCtrl)
-        self.jawOutputTgt.addConstraint(jawOutputConstraint)
+        self.jawOutputConstraint = PoseConstraint('_'.join([self.jawOutputTgt.getName(), 'To', self.jawCtrl.getName()]))
+        self.jawOutputConstraint.addConstrainer(self.jawCtrl)
+        self.jawOutputTgt.addConstraint(self.jawOutputConstraint)
 
-        eyeLOutputConstraint = PoseConstraint('_'.join([self.eyeLOutputTgt.getName(), 'To', self.eyeLeftCtrl.getName()]))
-        eyeLOutputConstraint.addConstrainer(self.eyeLeftCtrl)
-        self.eyeLOutputTgt.addConstraint(eyeLOutputConstraint)
+        self.eyeLOutputConstraint = PoseConstraint('_'.join([self.eyeLOutputTgt.getName(), 'To', self.eyeLeftCtrl.getName()]))
+        self.eyeLOutputConstraint.addConstrainer(self.eyeLeftCtrl)
+        self.eyeLOutputTgt.addConstraint(self.eyeLOutputConstraint)
 
-        eyeROutputConstraint = PoseConstraint('_'.join([self.eyeROutputTgt.getName(), 'To', self.eyeRightCtrl.getName()]))
-        eyeROutputConstraint.addConstrainer(self.eyeRightCtrl)
-        self.eyeROutputTgt.addConstraint(eyeROutputConstraint)
+        self.eyeROutputConstraint = PoseConstraint('_'.join([self.eyeROutputTgt.getName(), 'To', self.eyeRightCtrl.getName()]))
+        self.eyeROutputConstraint.addConstrainer(self.eyeRightCtrl)
+        self.eyeROutputTgt.addConstraint(self.eyeROutputConstraint)
+
+        # Add Eye Left Direction KL Op
+        self.eyeLeftDirKLOp = KLOperator('eyeLeftDirKLOp', 'DirectionConstraintSolver', 'Kraken')
+        self.addOperator(self.eyeLeftDirKLOp)
+
+        # Add Att Inputs
+        self.eyeLeftDirKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.eyeLeftDirKLOp.setInput('rigScale', self.rigScaleInputAttr)
+
+        # Add Xfo Inputs
+        self.eyeLeftDirKLOp.setInput('parentMatrix', self.headCtrl)
+        self.eyeLeftDirKLOp.setInput('position', self.eyeLeftBase)
+        self.eyeLeftDirKLOp.setInput('upVector', self.eyeLeftUpV)
+        self.eyeLeftDirKLOp.setInput('atVector', self.eyeLeftAtV)
+
+        # Add Xfo Outputs
+        self.eyeLeftDirKLOp.setOutput('constrainee', self.eyeLeftCtrlSpace)
+
+        # Add Eye Right Direction KL Op
+        self.eyeRightDirKLOp = KLOperator('eyeRightDirKLOp', 'DirectionConstraintSolver', 'Kraken')
+        self.addOperator(self.eyeRightDirKLOp)
+
+        # Add Att Inputs
+        self.eyeRightDirKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.eyeRightDirKLOp.setInput('rigScale', self.rigScaleInputAttr)
+
+        # Add Xfo Inputs
+        self.eyeRightDirKLOp.setInput('parentMatrix', self.headCtrl)
+        self.eyeRightDirKLOp.setInput('position', self.eyeRightBase)
+        self.eyeRightDirKLOp.setInput('upVector', self.eyeRightUpV)
+        self.eyeRightDirKLOp.setInput('atVector', self.eyeRightAtV)
+
+        # Add Xfo Outputs
+        self.eyeRightDirKLOp.setOutput('constrainee', self.eyeRightCtrlSpace)
 
 
-        # Add Deformer Joints Splice Op
+        # Add Deformer Joints KL Op
         self.outputsToDeformersKLOp = KLOperator('headDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
+
         # Add Att Inputs
         self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
+
         # Add Xfo Inputs
         self.outputsToDeformersKLOp.setInput('constrainers', [self.headOutputTgt, self.jawOutputTgt, self.eyeROutputTgt, self.eyeLOutputTgt])
+
         # Add Xfo Outputs
         self.outputsToDeformersKLOp.setOutput('constrainees', [headDef, jawDef, eyeLeftDef, eyeRightDef])
 
@@ -284,25 +382,81 @@ class HeadComponentRig(HeadComponent):
 
         """
 
-        super(HeadComponentRig, self).loadData( data )
+        super(HeadComponentRig, self).loadData(data)
 
-        self.headCtrlSpace.xfo.tr = data['headPosition']
-        self.headCtrl.xfo.tr = data['headPosition']
-        self.eyeLeftCtrlSpace.xfo.tr = data['eyeLeftPosition']
-        self.eyeLeftCtrl.xfo.tr = data['eyeLeftPosition']
-        self.eyeRightCtrlSpace.xfo.tr = data['eyeRightPosition']
-        self.eyeRightCtrl.xfo.tr = data['eyeRightPosition']
-        self.jawCtrlSpace.xfo.tr = data['jawPosition']
-        self.jawCtrl.xfo.tr = data['jawPosition']
+        headXfo = data.get('headXfo')
+        headCrvData = data.get('headCrvData')
+        eyeLeftXfo = data.get('eyeLeftXfo')
+        eyeLeftCrvData = data.get('eyeLeftCrvData')
+        eyeRightXfo = data.get('eyeRightXfo')
+        eyeRightCrvData = data.get('eyeRightCrvData')
+        jawXfo = data.get('jawXfo')
+        jawCrvData = data.get('jawCrvData')
+
+        self.headCtrlSpace.xfo = headXfo
+        self.headCtrl.xfo = headXfo
+        self.headCtrl.setCurveData(headCrvData)
+
+        # self.eyeLeftCtrlSpace.xfo = eyeLeftXfo
+        # self.eyeLeftCtrl.xfo = eyeLeftXfo
+        self.eyeLeftCtrl.setCurveData(eyeLeftCrvData)
+
+        # self.eyeRightCtrlSpace.xfo = eyeRightXfo
+        # self.eyeRightCtrl.xfo = eyeRightXfo
+        self.eyeRightCtrl.setCurveData(eyeRightCrvData)
+
+        # LookAt
+        eyeLeftRelXfo = headXfo.inverse() * eyeLeftXfo
+        eyeRightRelXfo = headXfo.inverse() * eyeRightXfo
+        eyeMidRelPos = eyeLeftRelXfo.tr.linearInterpolate(eyeRightRelXfo.tr, 0.5)
+        eyeMidRelPos = eyeMidRelPos + Vec3(0.0, 0.0, 8.0)
+        eyeLen = eyeLeftRelXfo.tr.distanceTo(eyeRightRelXfo.tr)
+
+        self.eyeLeftBase.xfo = eyeLeftXfo
+        self.eyeRightBase.xfo = eyeRightXfo
+
+        self.eyeLeftUpV.xfo = eyeLeftXfo * Xfo(Vec3(0, 1, 0))
+        self.eyeRightUpV.xfo = eyeRightXfo * Xfo(Vec3(0, 1, 0))
+
+        self.eyeLeftAtV.xfo.tr = eyeLeftXfo.transformVector(Vec3(8.0, 0.0, 0.0))
+        self.eyeRightAtV.xfo.tr = eyeRightXfo.transformVector(Vec3(8.0, 0.0, 0.0))
+
+        lookAtXfo = headXfo.clone()
+        lookAtXfo.tr = headXfo.transformVector(eyeMidRelPos)
+
+        self.lookAtCtrl.scalePoints(Vec3(eyeLen * 1.6, eyeLen * 0.65, 1.0))
+        self.lookAtCtrl.xfo = lookAtXfo
+        self.lookAtCtrlSpace.xfo = lookAtXfo
+
+        self.jawCtrlSpace.xfo = jawXfo
+        self.jawCtrl.xfo = jawXfo
+        self.jawCtrl.setCurveData(jawCrvData)
 
         # ============
         # Set IO Xfos
         # ============
-        self.headBaseInputTgt.xfo.tr = data['headPosition']
-        self.headOutputTgt.xfo.tr = data['headPosition']
-        self.jawOutputTgt.xfo.tr = data['jawPosition']
-        self.eyeLOutputTgt.xfo.tr = data['eyeLeftPosition']
-        self.eyeROutputTgt.xfo.tr = data['eyeRightPosition']
+        self.neckRefInputTgt.xfo = headXfo
+        self.worldRefInputTgt.xfo = headXfo
+        self.headOutputTgt.xfo = headXfo
+        self.jawOutputTgt.xfo = jawXfo
+        self.eyeLOutputTgt.xfo = eyeLeftXfo
+        self.eyeROutputTgt.xfo = eyeRightXfo
+
+        # Eval Constraints
+        self.headInputConstraint.evaluate()
+        self.headOutputConstraint.evaluate()
+        self.jawOutputConstraint.evaluate()
+        self.eyeLOutputConstraint.evaluate()
+        self.eyeROutputConstraint.evaluate()
+
+        # Eval Operators
+        self.eyeLeftDirKLOp.evaluate()
+        self.eyeRightDirKLOp.evaluate()
+        self.outputsToDeformersKLOp.evaluate()
+
+        # Have to set the eye control xfos to match the evaluated xfos from
+        self.eyeLeftCtrl.xfo = self.eyeLeftCtrlSpace.xfo
+        self.eyeRightCtrl.xfo = self.eyeRightCtrlSpace.xfo
 
 
 from kraken.core.kraken_system import KrakenSystem

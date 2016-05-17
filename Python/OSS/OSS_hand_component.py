@@ -30,10 +30,11 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
 
 COMPONENT_NAME = "hand"
 
-class OSSHandComponent(BaseExampleComponent):
+class OSSHandComponent(OSS_Component):
     """Hand Component"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
@@ -44,8 +45,6 @@ class OSSHandComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.handSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.hand_cmpOut = self.createOutput('hand', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -53,9 +52,6 @@ class OSSHandComponent(BaseExampleComponent):
         self.ikgoal_cmpOut = self.createOutput('ikgoal', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', value=1.0, dataType='Float', parent=self.cmpInputAttrGrp).getTarget()
-        self.rightSideInputAttr = self.createInput('rightSide', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
 
         # Declare Output Attrs
         self.drawDebugOutputAttr = self.createOutput('drawDebug', dataType='Boolean', value=False, parent=self.cmpOutputAttrGrp).getTarget()
@@ -63,8 +59,7 @@ class OSSHandComponent(BaseExampleComponent):
         self.limbMocap_cmpOutAttr = self.createOutput('limbMocap', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.softDist_cmpOutAttr = self.createOutput('softDist', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.stretch_cmpOutAttr = self.createOutput('stretch', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
+
 
 
 class OSSHandComponentGuide(OSSHandComponent):
@@ -81,14 +76,11 @@ class OSSHandComponentGuide(OSSHandComponent):
         # ========
 
         # Guide Settings
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-        self.ikHandleSizeInputAttr = ScalarAttribute('ikHandleSize', value=1, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-        #self.numDigits = IntegerAttribute('numDigits', value=5, minValue=1, maxValue=20, parent=guideSettingsAttrGrp)
-        self.digit3SegmentNames = StringAttribute('Digit3SegmentNames', value="index middle ring pinky", parent=guideSettingsAttrGrp)
-        self.digit2SegmentNames = StringAttribute('Digit2SegmentNames', value="thumb", parent=guideSettingsAttrGrp)
-        self.digit1SegmentNames = StringAttribute('Digit1SegmentNames', value="", parent=guideSettingsAttrGrp)
+        self.ikHandleSizeInputAttr = ScalarAttribute('ikHandleSize', value=1, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
+        #self.numDigits = IntegerAttribute('numDigits', value=5, minValue=1, maxValue=20, parent=self.guideSettingsAttrGrp)
+        self.digit3SegmentNames = StringAttribute('Digit3SegmentNames', value="index middle ring pinky", parent=self.guideSettingsAttrGrp)
+        self.digit2SegmentNames = StringAttribute('Digit2SegmentNames', value="thumb", parent=self.guideSettingsAttrGrp)
+        self.digit1SegmentNames = StringAttribute('Digit1SegmentNames', value="", parent=self.guideSettingsAttrGrp)
 
 
 
@@ -443,23 +435,25 @@ class OSSHandComponentRig(OSSHandComponent):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
 
-        self.handDef = Joint('hand', parent=self.defCmpGrp)
+        self.handDef = Joint('hand', parent=self.deformersParent)
         self.handDef.setComponent(self)
+        self.handDef.constrainTo(self.handCtrl)
+        self.hand_cmpOut.parentJoint =  self.handDef
 
-        self.palmDef = Joint('palm', parent=self.defCmpGrp)
+        self.palmDef = Joint('palm', parent=self.handDef)
         self.palmDef.setComponent(self)
+        self.palmDef.constrainTo(self.palmCtrl)
+        self.palm_cmpOut.parentJoint =  self.palmDef
 
+        self.parentSpaceInputTgt.childJoints = [self.handDef]
 
         # ==============
         # Constrain I/O
         # ==============
         # Constraint inputs
 
-        self.handCtrlSpaceConstraint = self.handCtrlSpace.constrainTo(self.handSpaceInputTgt, maintainOffset=True)
+        self.handCtrlSpaceConstraint = self.handCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         self.handleCtrlSpaceConstraint = self.handleCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
         # Constraint outputs
         self.ikgoal_cmpOutConstraint = self.ikgoal_cmpOut.constrainTo(self.handleCtrl, maintainOffset=False)
@@ -474,9 +468,6 @@ class OSSHandComponentRig(OSSHandComponent):
         # ===============
         # Add KL Ops
         # ===============
-
-
-
 
         # Wait, can this be a hier blend op?
         # Add Hand Blend KL Op
@@ -522,8 +513,10 @@ class OSSHandComponentRig(OSSHandComponent):
         if self.upAxisStr.startswith("NEG"):
             upVector = upVector.negate()
 
+
         for i, digitName in enumerate(digitNameList):
             parent = self.palm_cmpOut
+            defParent = self.handDef
             newCtrls = []
             newDefs = []
             for j, segment in enumerate(segments):
@@ -538,8 +531,13 @@ class OSSHandComponentRig(OSSHandComponent):
                 newCtrl.scalePoints(globalScale)
                 newCtrls.append(newCtrl)
 
-                newDef = Joint(digitName+"_"+segment, parent=self.defCmpGrp)
+                newDef = Joint(digitName+"_"+segment, parent=defParent)
+                newDef.setComponent(self)
                 newDefs.append(newDef)
+
+                newDef.constrainTo(newCtrl)
+
+                defParent = newDef
 
                 parent = newCtrl
                 ctrlListName = "digit"+str(numSegments)+"SegmentCtrls"
@@ -559,21 +557,6 @@ class OSSHandComponentRig(OSSHandComponent):
                                 newCtrl.xfo.ori = newCtrls[-2].xfo.ori
                                 newCtrl.insertCtrlSpace()
 
-
-
-
-
-
-            # Add Deformer Joint Constrain
-            outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+digitName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-            self.addOperator(outputsToDeformersKLOp)
-            # Add Att Inputs
-            outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-            outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
-            # Add Xfo Inputs
-            outputsToDeformersKLOp.setInput('constrainers', newCtrls)
-            # Add Xfo Outputs
-            outputsToDeformersKLOp.setOutput('constrainees', newDefs)
 
         return True
 
@@ -639,8 +622,6 @@ class OSSHandComponentRig(OSSHandComponent):
             #self.legIKCtrl.rotatePoints(0, -90, 0)
             #self.legIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
 
-
-        self.rightSideInputAttr.setValue(self.getLocation() == 'R')
 
         self.createControls(3, data["Digit3SegmentNames"], data)
         self.createControls(2, data["Digit2SegmentNames"], data)
@@ -708,16 +689,6 @@ class OSSHandComponentRig(OSSHandComponent):
             self.palm_cmpOutConstraint = self.palm_cmpOut.constrainTo(self.IKHandBlendKLOpPalm_out)
 
 
-        # Add Deformer Joint Constrain
-        self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-        self.addOperator(self.outputsToDeformersKLOp)
-        # Add Att Inputs
-        self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        # Add Xfo Inputs
-        self.outputsToDeformersKLOp.setInput('constrainers', [self.hand_cmpOut, self.palm_cmpOut])
-        # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [self.handDef, self.palmDef])
 
         # ====================
         # Evaluate Fabric Ops
@@ -732,6 +703,8 @@ class OSSHandComponentRig(OSSHandComponent):
         self.ikgoal_cmpOutConstraint.evaluate()
         self.hand_cmpOutConstraint.evaluate()
         self.palm_cmpOutConstraint.evaluate()
+
+
 
 
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info

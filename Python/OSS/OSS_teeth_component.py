@@ -22,10 +22,13 @@ from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
+from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
+
 COMPONENT_NAME = "teeth"
 
 
-class OSSTeeth(BaseExampleComponent):
+class OSSTeeth(OSS_Component):
     """Teeth Component Base"""
 
     def __init__(self, name='teeth', parent=None):
@@ -35,20 +38,13 @@ class OSSTeeth(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.teethOutputTgt = self.createOutput('teeth', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
-
-        # Declare Output Attrs
 
 
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 class OSSTeethGuide(OSSTeeth):
     """Teeth Component Guide"""
@@ -63,9 +59,6 @@ class OSSTeethGuide(OSSTeeth):
         # Controls
         # =========
         # Guide Controls
-        self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
-
         self.teethCtrl = Control('teeth', parent=self.ctrlCmpGrp, shape="null")
         self.teethCtrl.setColor("pink")
 
@@ -197,14 +190,11 @@ class OSSTeethRig(OSSTeeth):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
-        self.ctrlCmpGrp.setComponent(self)
 
-        self.teethDef = Joint(self.getName(), parent=self.defCmpGrp)
+        self.teethDef = Joint(self.getName(), parent=self.deformersLayer)
         self.teethDef.setComponent(self)
 
+        self.parentSpaceInputTgt.childJoints = [self.teethDef]
 
         # ==============
         # Constrain I/O

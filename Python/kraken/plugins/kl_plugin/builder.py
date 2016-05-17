@@ -151,68 +151,68 @@ class Builder(Builder):
         return "KRK_" + self.__rigTitle.replace(' ', '')
 
     def __visitKLObject(self, item):
-        
+
         kl = []
         if item['visited']:
             return kl
         item['visited'] = True
 
         member = item['member']
-        driver = item['driver']
+        source = item['sceneItem'].getCurrentSource()
 
-        if driver is None:
+        if source is None:
             kl += ["", "  // solving global transform %s" % member]
             kl += ["  this.%s.globalXfo = this.%s.xfo;" % (member, member)]
             self.__krkVisitedObjects.append(item);
             return kl
 
-        driverObj = self.findKLObjectForSI(driver)
-        if driverObj:
-            kl += self.__visitKLObject(driverObj)
+        sourceObj = self.findKLObjectForSI(source)
+        if sourceObj:
+            kl += self.__visitKLObject(sourceObj)
             kl += ["", "  // solving parent child constraint %s" % member]
             if self.__debugMode:
                 kl += ["  report(\"solving parent child constraint %s\");" % member]
-            kl += ["  this.%s.globalXfo = this.%s.globalXfo * this.%s.xfo;" % (member, driverObj['member'], member)]
+            kl += ["  this.%s.globalXfo = this.%s.globalXfo * this.%s.xfo;" % (member, sourceObj['member'], member)]
             self.__krkVisitedObjects.append(item);
             return kl
 
-        driverConstraint = self.findKLConstraint(driver)
-        if driverConstraint:
-            driverMember = driverConstraint['member']
-            constraint = driverConstraint['sceneItem']
+        sourceConstraint = self.findKLConstraint(source)
+        if sourceConstraint:
+            sourceMember = sourceConstraint['member']
+            constraint = sourceConstraint['sceneItem']
             for i in range(len(constraint.getConstrainers())):
                 constrainer = constraint.getConstrainers()[i]
                 constrainerObj = self.findKLObjectForSI(constrainer)
                 kl += self.__visitKLObject(constrainerObj)
 
-            kl += ["", "  // solving %s constraint %s" % (driverConstraint['sceneItem'].__class__.__name__, driverMember)]
+            kl += ["", "  // solving %s constraint %s" % (sourceConstraint['sceneItem'].__class__.__name__, sourceMember)]
             if self.__debugMode:
-                kl += ["  report(\"solving %s constraint %s\");" % (driverConstraint['sceneItem'].__class__.__name__, driverMember)]
+                kl += ["  report(\"solving %s constraint %s\");" % (sourceConstraint['sceneItem'].__class__.__name__, sourceMember)]
             for i in range(len(constraint.getConstrainers())):
                 constrainer = constraint.getConstrainers()[i]
                 constrainerObj = self.findKLObjectForSI(constrainer)
-                kl += ['  this.%s.constrainers[%d] = this.%s.globalXfo;' % (driverMember, i, constrainerObj['member'])]
+                kl += ['  this.%s.constrainers[%d] = this.%s.globalXfo;' % (sourceMember, i, constrainerObj['member'])]
 
             constrainee = constraint.getConstrainee()
             constraineeObj = self.findKLObjectForSI(constrainee)
 
-            kl += ['  this.%s.globalXfo = this.%s.compute(this.%s.globalXfo);' % (constraineeObj['member'], driverMember, constraineeObj['member'])]
-            self.__krkVisitedObjects.append(driverConstraint);
+            kl += ['  this.%s.globalXfo = this.%s.compute(this.%s.globalXfo);' % (constraineeObj['member'], sourceMember, constraineeObj['member'])]
+            self.__krkVisitedObjects.append(sourceConstraint);
             self.__krkVisitedObjects.append(item);
             return kl
 
-        driverSolver = self.findKLSolver(driver)
-        if driverSolver:
-            driverMember = driverSolver['member']
-            kOperator = driverSolver['sceneItem']
+        sourceSolver = self.findKLSolver(source)
+        if sourceSolver:
+            sourceMember = sourceSolver['member']
+            kOperator = sourceSolver['sceneItem']
             args = kOperator.getSolverArgs()
 
-            if not driverSolver.get('visited', False):
-                driverSolver['visited'] = True
+            if not sourceSolver.get('visited', False):
+                sourceSolver['visited'] = True
 
-                kl += ["", "  // solving KLSolver %s" % (driverMember)]
+                kl += ["", "  // solving KLSolver %s" % (sourceMember)]
                 if self.__debugMode:
-                    kl += ["  report(\"solving KLSolver %s\");" % (driverMember)]
+                    kl += ["  report(\"solving KLSolver %s\");" % (sourceMember)]
 
                 # first let's find all args which are arrays and prepare storage
                 for i in xrange(len(args)):
@@ -221,7 +221,7 @@ class Builder(Builder):
                     argDataType = arg.dataType.getSimpleType()
                     argConnectionType = arg.connectionType.getSimpleType()
                     connectedObjects = None
-                    argVarName = "%s_%s" % (driverMember, argName)
+                    argVarName = "%s_%s" % (sourceMember, argName)
                     isArray = argDataType.endswith('[]')
 
                     if argConnectionType == 'In':
@@ -256,7 +256,7 @@ class Builder(Builder):
                                 kl += ["  %s[%d] = \"%s\";" % (argVarName, j, connected)]
                             else:
                                 kl += ["  %s[%d] = %s;" % (argVarName, j, str(connected))]
-  
+
                         continue
 
                     if argConnectionType == 'Out':
@@ -285,6 +285,8 @@ class Builder(Builder):
                             kl += ["  %s %s = %s;" % (argDataType, argVarName, self.__getXfoAsStr(connected))]
                     elif isinstance(connected, str):
                         kl += ["  %s %s = \"%s\";" % (argDataType, argVarName, connected)]
+                    elif isinstance(connected, bool):
+                        kl += ["  %s %s = %s;" % (argDataType, argVarName, str(connected).lower())]
                     else:
                         kl += ["  %s %s = %s;" % (argDataType, argVarName, str(connected))]
 
@@ -297,20 +299,20 @@ class Builder(Builder):
                         argConnectionType = arg.connectionType.getSimpleType()
                         if argConnectionType != 'In':
                             continue
-                        kl += ["  report(\"arg %s \" + %s_%s);" % (argName, driverMember, argName)]
+                        kl += ["  report(\"arg %s \" + %s_%s);" % (argName, sourceMember, argName)]
 
-                kl += ["  this.%s.solve(" % driverMember]
+                kl += ["  this.%s.solve(" % sourceMember]
                 for i in xrange(len(args)):
                     arg = args[i]
                     argName = arg.name.getSimpleType()
-                    argVarName = "%s_%s" % (driverMember, argName)
+                    argVarName = "%s_%s" % (sourceMember, argName)
                     comma = ""
                     if i < len(args) - 1:
                         comma = ","
                     kl += ["    %s%s" % (argVarName, comma)]
 
                 kl += ["  );"]
-                self.__krkVisitedObjects.append(driverSolver);
+                self.__krkVisitedObjects.append(sourceSolver);
 
             # output to the results!
             for i in xrange(len(args)):
@@ -320,7 +322,7 @@ class Builder(Builder):
                 argConnectionType = arg.connectionType.getSimpleType()
                 if argConnectionType == 'In':
                   continue
-                argVarName = "%s_%s" % (driverMember, argName)
+                argVarName = "%s_%s" % (sourceMember, argName)
                 connectedObjects = kOperator.getOutput(argName)
                 if not argDataType.endswith('[]'):
                     connectedObjects = [connectedObjects]
@@ -328,11 +330,11 @@ class Builder(Builder):
                 for j in xrange(len(connectedObjects)):
                     connected = connectedObjects[j]
                     if connected.getDecoratedPath() == item['sceneItem'].getDecoratedPath():
-                        kl += ["", "  // retrieving value for %s from solver %s" % (member, driverMember)]
+                        kl += ["", "  // retrieving value for %s from solver %s" % (member, sourceMember)]
                         if argDataType.endswith('[]'):
-                            kl += ["  this.%s.globalXfo = %s_%s[%d];" % (member, driverMember, argName, j)]
+                            kl += ["  this.%s.globalXfo = %s_%s[%d];" % (member, sourceMember, argName, j)]
                         else:
-                            kl += ["  this.%s.globalXfo = %s_%s;" % (member, driverMember, argName)]
+                            kl += ["  this.%s.globalXfo = %s_%s;" % (member, sourceMember, argName)]
                         self.__krkVisitedObjects.append(item);
                     else:
                         connectedObj = self.findKLObjectForSI(connected)
@@ -340,15 +342,15 @@ class Builder(Builder):
 
             return kl
 
-        driverCanvasOp = self.findKLCanvasOp(driver)
-        if driverCanvasOp:
-            driverMember = driverCanvasOp['member']
-            kOperator = driverCanvasOp['sceneItem']
+        sourceCanvasOp = self.findKLCanvasOp(source)
+        if sourceCanvasOp:
+            sourceMember = sourceCanvasOp['member']
+            kOperator = sourceCanvasOp['sceneItem']
 
             # todo...
-            # if not driverCanvasOp.get('visited', False):
-            #     driverCanvasOp['visited'] = True
-            #     kl += ["", "  // TODO: Canvas solver %s missing!" % driverMember]
+            # if not sourceCanvasOp.get('visited', False):
+            #     sourceCanvasOp['visited'] = True
+            #     kl += ["", "  // TODO: Canvas solver %s missing!" % sourceMember]
             self.__krkVisitedObjects.append(item);
             return kl
 
@@ -360,11 +362,14 @@ class Builder(Builder):
         klCode = []
         if attr.get('visited', False):
             return klCode
-        if attr.get('driver', None) is None:
+
+        source = attr['sceneItem'].getCurrentSource()
+        if not isinstance(source, Attribute):
             return klCode
-        driverAttr = self.findKLAttribute(attr['driver'])
-        klCode += self.__visitKLAttribute(driverAttr)
-        klCode += ["  this.%s.value = this.%s.value;" % (attr['member'], driverAttr['member'])]
+
+        sourceAttr = self.findKLAttribute(source)
+        klCode += self.__visitKLAttribute(sourceAttr)
+        klCode += ["  this.%s.value = this.%s.value;" % (attr['member'], sourceAttr['member'])]
         return klCode
 
     def generateKLCode(self):
@@ -376,7 +381,8 @@ class Builder(Builder):
 
         scalarAttributes = []
         for attr in self.__klAttributes:
-            if attr['sceneItem'].isTypeOf('ScalarAttribute') and attr.get('driver', None) is None:
+            source = attr['sceneItem'].getCurrentSource()
+            if attr['sceneItem'].isTypeOf('ScalarAttribute') and not isinstance(source, Attribute):
                 scalarAttributes.append(attr)
 
         kl = []
@@ -385,6 +391,8 @@ class Builder(Builder):
         kl += ["require Kraken;"]
         kl += ["require KrakenForCanvas;"]
         kl += ["require KrakenAnimation;"]
+        for extension in self.__klExtensions:
+            kl += ["require %s;" % extension]
         kl += [""]
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  Float64 solveTimeMs;"]
@@ -417,7 +425,8 @@ class Builder(Builder):
         kl += ["", "  // build constraints"]
         for constraint in self.__klConstraints:
             memberName = constraint['member']
-            kl += ["  this.%s.offset = %s;" % (memberName, constraint.get('offset', 'Xfo()'))]
+            if constraint['sceneItem'].getMaintainOffset():
+                kl += ["  this.%s.offset = %s;" % (memberName, self.__getXfoAsStr(constraint['sceneItem'].computeOffset()))]
             kl += ["  this.%s.constrainers.resize(%d);" % (memberName, len(constraint['constrainers']))]
 
         kl += ["", "  // build kl solvers"]
@@ -441,7 +450,7 @@ class Builder(Builder):
 
             if attr['cls'] == "BoolAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s);" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -451,7 +460,7 @@ class Builder(Builder):
                 )]
             elif attr['cls'] == "ColorAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s);" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -466,7 +475,7 @@ class Builder(Builder):
                 )]
             elif attr['cls'] == "IntegerAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s, %s, %d);" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -478,7 +487,7 @@ class Builder(Builder):
                 )]
             elif attr['cls'] == "ScalarAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s, %s, %f, floatAnimation);" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -490,7 +499,7 @@ class Builder(Builder):
                 )]
             elif attr['cls'] == "StringAttribute":
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, \"%s\");" % (
-                    attr['member'], 
+                    attr['member'],
                     attr['cls'],
                     name,
                     path,
@@ -504,7 +513,7 @@ class Builder(Builder):
         kl += ["function %s.resetPose!() {" % self.getKLExtensionName()]
         kl += ["  // reset objects"]
         for obj in self.__klObjects:
-            kl += ["  this.%s.xfo = %s;" % (obj['member'], obj.get('xfo', 'Xfo()'))]
+            kl += ["  this.%s.xfo = %s;" % (obj['member'], self.__getXfoAsStr(obj['sceneItem'].localXfo))]
         kl += ["  // reset attributes"]
         for attr in scalarAttributes:
             kl += ["  this.%s.value = %f;" % (attr['member'], attr['value'])]
@@ -625,14 +634,14 @@ class Builder(Builder):
         kl += ["    throw(\"Expected number of values does not match (\"+values.size()+\" given, %d expected).\");" % len(controls)]
         for i in range(len(controls)):
             kl += ["  this.%s.xfo = values[%d];" % (controls[i]['member'], i)]
-        kl += ["}", ""]        
+        kl += ["}", ""]
 
         kl += ["function %s.setScalarAttributeValues!(Float32 values<>) {" % self.getKLExtensionName()]
         kl += ["  if(values.size() != %d)" % len(scalarAttributes)]
         kl += ["    throw(\"Expected number of values does not match (\"+values.size()+\" given, %d expected).\");" % len(scalarAttributes)]
         for i in range(len(scalarAttributes)):
             kl += ["  this.%s.value = values[%d];" % (scalarAttributes[i]['member'], i)]
-        kl += ["}", ""]        
+        kl += ["}", ""]
 
         kl += ["function %s.setClip!(KrakenClip clip) {" % self.getKLExtensionName()]
         kl += ["  this.clip = clip;"]
@@ -718,7 +727,7 @@ class Builder(Builder):
         klCode = self.generateKLCode()
         extName = self.getKLExtensionName()
         return [{
-            "filename": "%s.kl" % extName, 
+            "filename": "%s.kl" % extName,
             "sourceCode": klCode
         }]
 
@@ -793,7 +802,7 @@ class Builder(Builder):
         clipInput = dfgExec.addExecPort('clip', client.DFG.PortTypes.In, "KrakenClip")
         dfgExec.setCode("dfgEntry {\n  %s.setClip(%s);\n}\n" % (funcResult, clipInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # Solve preset
         filePath = os.path.join(presetFolder, 'Solve.canvas')
@@ -804,7 +813,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
         dfgExec.setCode("dfgEntry {\n  %s.solve();\n}\n" % (funcResult))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)   
+        open(filePath, "w").write(content)
 
         # Evaluate preset
         filePath = os.path.join(presetFolder, 'Evaluate.canvas')
@@ -816,7 +825,7 @@ class Builder(Builder):
         contextInput = dfgExec.addExecPort('context', client.DFG.PortTypes.In, "KrakenClipContext")
         dfgExec.setCode("dfgEntry {\n  %s.evaluate(%s);\n}\n" % (funcResult, contextInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)   
+        open(filePath, "w").write(content)
 
         # ResetPose preset
         filePath = os.path.join(presetFolder, 'ResetPose.canvas')
@@ -827,7 +836,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
         dfgExec.setCode("dfgEntry {\n  %s.resetPose();\n}\n" % (funcResult))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetControlXfos preset
         filePath = os.path.join(presetFolder, 'GetControlXfos.canvas')
@@ -839,7 +848,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getControlXfos();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetJointXfos preset
         filePath = os.path.join(presetFolder, 'GetJointXfos.canvas')
@@ -851,7 +860,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getJointXfos();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetAllXfos preset
         filePath = os.path.join(presetFolder, 'GetAllXfos.canvas')
@@ -863,7 +872,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getAllXfos();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetControlNames preset
         filePath = os.path.join(presetFolder, 'GetControlNames.canvas')
@@ -875,7 +884,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'String[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getControlNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetJointNames preset
         filePath = os.path.join(presetFolder, 'GetJointNames.canvas')
@@ -887,7 +896,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'String[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getJointNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
         # GetAllNames preset
         filePath = os.path.join(presetFolder, 'GetAllNames.canvas')
@@ -899,7 +908,7 @@ class Builder(Builder):
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'String[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getAllNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)        
+        open(filePath, "w").write(content)
 
     def findKLObjectForSI(self, kSceneItem):
         member = self.getUniqueName(kSceneItem)
@@ -972,7 +981,7 @@ class Builder(Builder):
         else:
             self.reportError("buildKLSceneItem: Unexpected class " + cls)
             return False
-            
+
         if kSceneItem.isTypeOf('ComponentInput') or \
             kSceneItem.isTypeOf('ComponentOutput') or \
             kSceneItem.isTypeOf('Layer') or \
@@ -986,8 +995,7 @@ class Builder(Builder):
             'buildName': buildName,
             'type': "Kraken%s" % cls,
             'path': kSceneItem.getDecoratedPath(),
-            'parent': None,
-            'driver': None
+            'parent': None
         }
 
         if kSceneItem.isTypeOf('Joint'):
@@ -1006,7 +1014,6 @@ class Builder(Builder):
             parent = kSceneItem.getParent()
             if not parent is None:
                 obj['parent'] = parent.getDecoratedPath()
-                obj['driver'] = parent
 
         self.__klMembers.append({'name': self.getUniqueName(kSceneItem), 'type': obj['type']})
         self.__klObjects.append(obj)
@@ -1066,10 +1073,6 @@ class Builder(Builder):
             'constrainee': kConstraint.getConstrainee(),
             'constrainers': kConstraint.getConstrainers()
         }
-
-        constrainee = self.findKLObjectForSI(constraint['constrainee'])
-        if constrainee:
-            constrainee['driver'] = kConstraint
 
         self.__klMembers.append({'name': self.getUniqueName(kConstraint), 'type': constraint['type']})
         self.__klConstraints.append(constraint)
@@ -1278,24 +1281,6 @@ class Builder(Builder):
 
         """
 
-        for i in xrange(kAttributeGroup.getNumAttributes()):
-            kAttribute = kAttributeGroup.getAttributeByIndex(i)
-
-            if kAttribute.isTypeOf("BoolAttribute"):
-                self.buildBoolAttribute(kAttribute)
-
-            elif kAttribute.isTypeOf("ScalarAttribute"):
-                self.buildScalarAttribute(kAttribute)
-
-            elif kAttribute.isTypeOf("IntegerAttribute"):
-                self.buildIntegerAttribute(kAttribute)
-
-            elif kAttribute.isTypeOf("StringAttribute"):
-                self.buildStringAttribute(kAttribute)
-
-            else:
-                raise NotImplementedError(kAttribute.getName() + ' has an unsupported type: ' + str(type(kAttribute)))
-
         return True
 
     def connectAttribute(self, kAttribute):
@@ -1308,17 +1293,8 @@ class Builder(Builder):
             bool: True if successful.
 
         """
-        if not kAttribute.isConnected():
-            return True
 
-        connection = kAttribute.getConnection()
-
-        attrA = self.findKLAttribute(connection)
-        attrB = self.findKLAttribute(kAttribute)
-        if attrA is None or attrB is None:
-            return False
-
-        attrB['driver'] = attrA['sceneItem']
+        # we rely completely on the SceneItem source mechanism for this
         return True
 
 
@@ -1388,24 +1364,7 @@ class Builder(Builder):
 
         """
 
-        if not connectionInput.isConnected():
-            return True
-
-        connection = connectionInput.getConnection()
-        connectionTarget = connection.getTarget()
-        inputTarget = connectionInput.getTarget()
-
-        if connection.getDataType().endswith('[]'):
-            connectionTarget = connection.getTarget()[connectionInput.getIndex()]
-        else:
-            connectionTarget = connection.getTarget()
-
-        attrA = self.findKLAttribute(connectionTarget)
-        attrB = self.findKLAttribute(inputTarget)
-        if attrA is None or attrB is None:
-            return False
-
-        attrB['driver'] = attrA['sceneItem']
+        # we reply completely on the SceneItem getCurrentSource mechanism for this
         return True
 
     # =========================
@@ -1435,25 +1394,9 @@ class Builder(Builder):
         self.__klMembers.append({'name': self.getUniqueName(kOperator), 'type': solver['type']})
         self.__klSolvers.append(solver)
 
-        args = kOperator.getSolverArgs()
-        for i in xrange(len(args)):
-            arg = args[i]
-            argName = arg.name.getSimpleType()
-            argDataType = arg.dataType.getSimpleType()
-            argConnectionType = arg.connectionType.getSimpleType()
+        if kOperator.extension != "Kraken" and kOperator.extension not in self.__klExtensions:
+            self.__klExtensions.append(kOperator.extension)
 
-            if argConnectionType == 'In':
-                continue;
-            if argDataType == 'EvalContext':
-                continue
-
-            connectedObjects = kOperator.getOutput(argName)
-            if not argDataType.endswith('[]'):
-                connectedObjects = [connectedObjects]
-
-            for item in connectedObjects:
-                itemObj = self.findKLObjectForSI(item)
-                itemObj['driver'] = kOperator
 
         return True
 
@@ -1491,22 +1434,6 @@ class Builder(Builder):
           "path": kOperator.getDecoratedPath()
         }
         self.__klCanvasOps.append(canvasOp)
-
-        for i in xrange(subExec.getExecPortCount()):
-            portName = subExec.getExecPortName(i)
-            portConnectionType = portTypeMap[subExec.getExecPortType(i)]
-            portDataType = self.__canvasGraph.getNodePortResolvedType(node, portName)
-            if portConnectionType == 'In':
-                continue
-            if portDataType == 'EvalContext':
-                continue
-            connectedObjects = kOperator.getOutput(portName)
-            if not portDataType.endswith('[]'):
-                connectedObjects = [connectedObjects]
-
-            for item in connectedObjects:
-                itemObj = self.findKLObjectForSI(item)
-                itemObj['driver'] = kOperator
 
         return False
 
@@ -1610,7 +1537,7 @@ class Builder(Builder):
         obj['initialXfo'].sc.y = round(obj['initialXfo'].sc.y.getSimpleType(), 4)
         obj['initialXfo'].sc.z = round(obj['initialXfo'].sc.z.getSimpleType(), 4)
 
-        if obj['driver'] is None:
+        if obj['sceneItem'].getCurrentSource() is None:
             obj['xfo'] = valueStr
         else:
             obj['globalXfo'] = valueStr
@@ -1635,6 +1562,7 @@ class Builder(Builder):
         self.__debugMode = False
         self.__names = {}
         self.__pathToName = {}
+        self.__klExtensions = []
         self.__klMembers = []
         self.__klObjects = []
         self.__klAttributes = []
@@ -1650,60 +1578,6 @@ class Builder(Builder):
 
         return True
 
-    def __computeGlobalTransform(self, item, rig):
-        if isinstance(item, Constraint):
-            itemObj = self.findKLObjectForSI(item.getConstrainee())
-            constraintObj = self.findKLConstraint(item)
-            krkConstraint = getattr(rig, constraintObj['member'])
-
-            for i in range(len(item.getConstrainers())):
-                constrainer = item.getConstrainers()[i]
-                globalXfo = self.__computeGlobalTransform(constrainer, rig)
-                krkConstraint.constrainers[i] = globalXfo
-
-            initialXfo = itemObj.get('initialXfo', Xfo().getRTVal())
-            return krkConstraint.compute("Xfo", initialXfo)
-        else:
-            itemObj = self.findKLObjectForSI(item)
-
-            driverConstraint = itemObj['driver']
-            if driverConstraint and isinstance(driverConstraint, Constraint):
-                if driverConstraint.getMaintainOffset() == False:
-                    return self.__computeGlobalTransform(driverConstraint, rig)
-
-            return itemObj.get('initialXfo', Xfo().getRTVal())
-
-    def __computeOffset(self, item, rig):
-        if isinstance(item['sceneItem'], Object3D):
-            driver = item['driver']
-            if isinstance(driver, Object3D):
-                driverObj = self.findKLObjectForSI(driver)
-                print 'Solving local xfo for '+item['member']
-                rig.solve("")
-
-                parentXfo = getattr(rig, driverObj['member']).globalXfo
-                initialXfo = item.get('initialXfo', Xfo().getRTVal())
-                localXfo = parentXfo.inverse('Xfo').multiply('Xfo', initialXfo)
-                krkObj = getattr(rig, item['member'])
-                krkObj.xfo = localXfo
-                setattr(rig, item['member'], krkObj)
-                item['xfo'] = self.__getXfoAsStr(Xfo(localXfo))
-
-            elif isinstance(driver, Constraint):
-
-                if not driver.getMaintainOffset():
-                    return
-                    
-                driverObj = self.findKLConstraint(driver)
-                print 'Solving offset for '+driverObj['member']
-                rig.solve("")
-
-                krkConstraint = getattr(rig, driverObj['member'])
-                initialXfo = item.get('initialXfo', Xfo().getRTVal())
-                offsetXfo = krkConstraint.computeOffset('Xfo', initialXfo)
-                krkConstraint.offset = offsetXfo
-                setattr(rig, driverObj['member'], krkConstraint)
-                driverObj['offset'] = self.__getXfoAsStr(Xfo(offsetXfo))
 
     def _postBuild(self):
         """Post-Build commands.
@@ -1712,16 +1586,5 @@ class Builder(Builder):
             bool: True if successful.
 
         """
-
-        # self.saveKLExtension()
-        self.loadKLExtension()
-        client = ks.getCoreClient()
-
-        # get the rig
-        rt = client.RT.types
-        rig = getattr(rt, self.getKLExtensionName()).create()
-
-        for item in self.__krkVisitedObjects:
-            self.__computeOffset(item, rig)
 
         return self.saveKLExtension()

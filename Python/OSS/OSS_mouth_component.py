@@ -23,6 +23,7 @@ from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.layer import Layer
+from kraken.core.objects.locator import Locator
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
@@ -32,10 +33,12 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
+
 COMPONENT_NAME = "mouth"
 
 
-class OSSMouth(BaseExampleComponent):
+class OSSMouth(OSS_Component):
     """Mouth Component Base"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
@@ -45,8 +48,6 @@ class OSSMouth(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.lipOutputTgt = self.createOutput('lip', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -54,14 +55,7 @@ class OSSMouth(BaseExampleComponent):
         self.mouthEndOutputTgt = self.createOutput('mouthEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
-        # Declare Output Attrs
-
-
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 class OSSMouthGuide(OSSMouth):
     """Mouth Component Guide"""
@@ -76,8 +70,6 @@ class OSSMouthGuide(OSSMouth):
         # Controls
         # =========
         # Guide Controls
-        self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
         self.lipCtrlNames = StringAttribute('lipCtrlNames', value="1 Sneer", parent=self.guideSettingsAttrGrp)
         self.numSpansAttr = IntegerAttribute('numSpans', value=13, minValue=0, maxValue=20,  parent=self.guideSettingsAttrGrp)
 
@@ -237,7 +229,7 @@ class OSSMouthGuide(OSSMouth):
 
 
         self.allObject3Ds = self.getHierarchyNodes(classType="Control")
-        
+
         for ctrl in self.allObject3Ds:
             self.addToSymDict(ctrl)
 
@@ -505,15 +497,13 @@ class OSSMouthRig(OSSMouth):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
-        self.ctrlCmpGrp.setComponent(self)
+
+        self.parentSpaceInputTgt.childJoints = []
 
         # Mouth
-        self.mouthDef = Joint('mouth', parent=self.defCmpGrp)
+        self.mouthDef = Joint('mouth', parent=self.deformersParent)
         self.mouthDef.setComponent(self)
-
+        self.parentSpaceInputTgt.childJoints.append(self.mouthDef)
 
         # =========
         # Controls
@@ -564,6 +554,8 @@ class OSSMouthRig(OSSMouth):
         self.mouthInputConstraint = self.mouthCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         self.mouthConstraint = self.mouthOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
         self.mouthEndConstraint = self.mouthEndOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
+
+        self.mouthOutputTgt.parentJoint =  self.mouthDef
 
         # Lip
         # lipInputConstraint = PoseConstraint('_'.join([self.midLipCtrl.getName(), 'To', self.parentSpaceInputTgt.getName()]))
@@ -713,10 +705,9 @@ class OSSMouthRig(OSSMouth):
             ctrl.getParent().removeChild(ctrl)
         del controlsList[:]
 
-
+        parent = self.ctrlCmpGrp
 
         if ctrlType == "upLipDef" or ctrlType == "loLipDef":
-            parent = self.defCmpGrp
             defControlNameList = []
 
             #Build Deformer Names
@@ -737,13 +728,17 @@ class OSSMouthRig(OSSMouth):
                 defControlNameList = rSideControls + lSideControls
 
             for i, defName in enumerate(defControlNameList):
-                newCtrl = Joint(defName + "_" + ctrlType.replace("Def",""), parent=self.defCmpGrp)
+                newCtrl = Locator(defName + "_" + ctrlType.replace("Def",""), parent= self.ctrlCmpGrp)
+                newCtrl.setShapeVisibility(False)
                 newCtrl.xfo = parent.xfo
                 controlsList.append(newCtrl)
 
+                newDef = Joint(defName + "_" + ctrlType.replace("Def",""), parent= self.mouthDef)
+                newDef.setComponent(self)
+                newDef.constrainTo(newCtrl)
+
 
         if ctrlType == "lipControls":
-            parent = self.ctrlCmpGrp
             defControlNameList =[]
 
             # Lets build all new handles
@@ -917,7 +912,8 @@ class OSSMouthRig(OSSMouth):
 
 
         # Add lowLip Guide Canvas Op
-        self.lMouthCornerDef = Joint('L_mouthCorner', parent=self.defCmpGrp)
+        self.lMouthCornerLoc = Locator('L_mouthCorner', parent=self.ctrlCmpGrp)
+        self.lMouthCornerLoc.setShapeVisibility(False)
 
         self.blendLeftCornerOp = CanvasOperator('blendLeftCornerOp', 'OSS.Solvers.blendMat44Solver')
         self.addOperator(self.blendLeftCornerOp)
@@ -932,13 +928,17 @@ class OSSMouthRig(OSSMouth):
         self.blendLeftCornerOp.setInput('A', self.lUpLipCorner)
         self.blendLeftCornerOp.setInput('B', self.lLoLipCorner)
 
-        self.blendLeftCornerOp.setOutput('result', self.lMouthCornerDef)
+        self.blendLeftCornerOp.setOutput('result', self.lMouthCornerLoc)
+
+        self.lMouthCornerDef = Joint('L_mouthCorner',  parent=self.mouthDef)
+        self.lMouthCornerDef.setComponent(self)
+        self.lMouthCornerDef.constrainTo(self.lMouthCornerLoc)
 
 
 
         # Add lowLip Guide Canvas Op
-        self.rMouthCornerDef = Joint('R_mouthCorner', parent=self.defCmpGrp)
-
+        self.rMouthCornerLoc = Locator('R_mouthCorner', parent=self.ctrlCmpGrp)
+        self.rMouthCornerLoc.setShapeVisibility(False)
         self.blendRightCornerOp = CanvasOperator('blendRightCornerOp', 'OSS.Solvers.blendMat44Solver')
         self.addOperator(self.blendRightCornerOp)
 
@@ -952,7 +952,11 @@ class OSSMouthRig(OSSMouth):
         self.blendRightCornerOp.setInput('A', self.rUpLipCorner)
         self.blendRightCornerOp.setInput('B', self.rLoLipCorner)
 
-        self.blendRightCornerOp.setOutput('result', self.rMouthCornerDef)
+        self.blendRightCornerOp.setOutput('result', self.rMouthCornerLoc)
+
+        self.rMouthCornerDef = Joint('R_mouthCorner',  parent=self.mouthDef)
+        self.rMouthCornerDef.setComponent(self)
+        self.rMouthCornerDef.constrainTo(self.rMouthCornerLoc)
 
 
 

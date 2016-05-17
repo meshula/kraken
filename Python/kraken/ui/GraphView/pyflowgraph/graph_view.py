@@ -391,6 +391,9 @@ class GraphView(QtGui.QGraphicsView):
         if not targetPort:
             raise Exception("Node '" + targetNode.getName() + "' does not have input:" + inputName)
 
+        outCircle = sourcePort.outCircle()
+        inCircle = targetPort.inCircle()
+
         connection = Connection(self, sourcePort.outCircle(), targetPort.inCircle())
         self.addConnection(connection, emitSignal=False)
 

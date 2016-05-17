@@ -1,0 +1,32 @@
+
+require Kraken;
+
+operator entry(){
+	MultiPoseConstraintSolver solver();
+
+  Boolean debug     = true;
+  Scalar rigScale   = 1.0;
+
+  Mat44 constrainers[];
+  constrainers.resize(6);
+
+  Xfo utilXfo;
+  for(Integer i=0; i < 6; i++) {
+      utilXfo.ori.setFromAxisAndAngle(Vec3(1.0, 0, 0), Math_degToRad(Scalar(i) * 10.0));
+
+      if(i > 0) {
+        utilXfo.tr = constrainers[i - 1].multiplyVector3(Vec3(0, 1, 0));
+      }
+
+      constrainers[i] = utilXfo.toMat44();
+  }
+
+  Mat44 constrainees[];
+  constrainees.resize(6);
+
+  solver.solve(debug, rigScale, constrainers, constrainees);
+
+  for(Integer i=0; i < 6; i++) {
+    report(constrainees[i] == constrainers[i]);
+  }
+}

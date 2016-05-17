@@ -26,11 +26,12 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
 
 COMPONENT_NAME = "limb"
 
 # Sweet Sweet
-class OSSLimbComponent(BaseExampleComponent):
+class OSSLimbComponent(OSS_Component):
     """Limb Component"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
@@ -41,8 +42,6 @@ class OSSLimbComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         # If the useOtherIKGoalInput is True, this will be actual ik goal as offset by another component like the foot
         self.ikgoal_cmpIn = None
 
@@ -52,15 +51,8 @@ class OSSLimbComponent(BaseExampleComponent):
         self.endlimb_cmpOut = self.createOutput('endlimb', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', value=1.0, dataType='Float', parent=self.cmpInputAttrGrp).getTarget()
-        self.rightSideInputAttr = self.createInput('rightSide', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-
         # Declare Output Attrs
         self.drawDebugOutputAttr = self.createOutput('drawDebug', dataType='Boolean', value=False, parent=self.cmpOutputAttrGrp).getTarget()
-
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 
 class OSSLimbComponentGuide(OSSLimbComponent):
@@ -77,14 +69,10 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         # ========
 
         # Guide Settings
-        self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
         self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=self.guideSettingsAttrGrp)
         self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=self.guideSettingsAttrGrp)
         self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=self.guideSettingsAttrGrp)
         self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=self.guideSettingsAttrGrp)
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=self.guideSettingsAttrGrp) # inputAttribute=limbMocap #TODO later
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
-
 
         # Guide Controls
         self.uplimbCtrl = Control('uplimb', parent=self.ctrlCmpGrp, shape="sphere")
@@ -92,7 +80,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="jack")
 
         self.useOtherIKGoalInput.setValueChangeCallback(self.updateUseOtherIKGoal, updateNodeGraph=True)
-        self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
+        #self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
 
         self.limbMocapInputAttr = None
 
@@ -440,15 +428,18 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getLocation()+self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
 
-        self.uplimbDef = Joint(uplimbName, parent=self.defCmpGrp)
+        self.uplimbDef = Joint(uplimbName, parent=self.deformersParent)
+        self.uplimbDef.setComponent(self)
 
-        self.lolimbDef = Joint(lolimbName, parent=self.defCmpGrp)
+        self.lolimbDef = Joint(lolimbName, parent=self.uplimbDef)
+        self.lolimbDef.setComponent(self)
 
-        self.limbendDef = Joint(name+'end', parent=self.defCmpGrp)
+        self.limbendDef = Joint(name+'end', parent=self.lolimbDef)
+        self.limbendDef.setComponent(self)
+
+        self.parentSpaceInputTgt.childJoints = [self.uplimbDef]
+
 
         # ==============
         # Constrain I/O
@@ -491,7 +482,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('ikBlend', self.ikBlendAttr)
         self.limbIKKLOp.setInput('softDist', self.softDistAttr)
         self.limbIKKLOp.setInput('stretch', self.stretchAttr)
-        #self.limbIKKLOp.setInput('rightSide', self.rightSideInputAttr)
         # Add Xfo Inputs
         self.limbIKKLOp.setInput('root', self.uplimbFKCtrlSpace)
         self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl)
@@ -533,15 +523,14 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
 
         # Add Deformer Joint Constrain
-        self.outputsToDeformersKLOp = KLOperator(self.getLocation()+self.getName()+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-        self.addOperator(self.outputsToDeformersKLOp)
-        # Add Att Inputs
-        self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        # Add Xfo Inputs
-        self.outputsToDeformersKLOp.setInput('constrainers', [self.uplimb_cmpOut, self.lolimb_cmpOut, self.endlimb_cmpOut])
-        # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [self.uplimbDef, self.lolimbDef, self.limbendDef])
+        self.uplimbDef.constrainTo(self.uplimb_cmpOut).evaluate()
+        self.uplimb_cmpOut.parentJoint = self.uplimbDef
+
+        self.lolimbDef.constrainTo(self.lolimb_cmpOut).evaluate()
+        self.lolimb_cmpOut.parentJoint = self.lolimbDef
+
+        self.limbendDef.constrainTo(self.endlimb_cmpOut).evaluate()
+        self.endlimb_cmpOut.parentJoint = self.limbendDef
 
 
 
@@ -592,7 +581,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
 
 
-        self.rightSideInputAttr.setValue(self.getLocation() == 'R')
         self.limbBone0LenInputAttr.setMin(0.0)
         self.limbBone0LenInputAttr.setMax(data['uplimbLen'] * 3.0)
         self.limbBone0LenInputAttr.setValue(data['uplimbLen'])

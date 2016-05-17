@@ -28,10 +28,11 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
 
 COMPONENT_NAME = "face"
 
-class OSSFaceComponent(BaseExampleComponent):
+class OSSFaceComponent(OSS_Component):
     """Face Component Base"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
@@ -41,17 +42,9 @@ class OSSFaceComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
-        self.rightSideInputAttr = self.createInput('rightSide', dataType='Boolean', value=self.getLocation() is 'R', parent=self.cmpInputAttrGrp).getTarget()
 
-        # Declare Output Attrs
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 
 class OSSFaceComponentGuide(OSSFaceComponent):
@@ -64,19 +57,14 @@ class OSSFaceComponentGuide(OSSFaceComponent):
 
 
          # Guide Settings
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
-
-        self.an1DCtrlNames = StringAttribute('an1DNames', value="L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut L_loLidInn L_loLidMid L_loLidOut R_loLidInn R_loLidMid R_loLidOut L_upLidInn L_upLidMid L_upLidOut R_upLidInn R_upLidMid R_upLidOut", parent=guideSettingsAttrGrp)
-        self.an2DCtrlNames = StringAttribute('an2DNames', value="", parent=guideSettingsAttrGrp)
-        self.an3DCtrlNames = StringAttribute('an3DNames', value="", parent=guideSettingsAttrGrp)
+        self.an1DCtrlNames = StringAttribute('an1DNames', value="L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut L_loLidInn L_loLidMid L_loLidOut R_loLidInn R_loLidMid R_loLidOut L_upLidInn L_upLidMid L_upLidOut R_upLidInn R_upLidMid R_upLidOut", parent=self.guideSettingsAttrGrp)
+        self.an2DCtrlNames = StringAttribute('an2DNames', value="", parent=self.guideSettingsAttrGrp)
+        self.an3DCtrlNames = StringAttribute('an3DNames', value="", parent=self.guideSettingsAttrGrp)
 
 
         self.an1DCtrlNames.setValueChangeCallback(self.updateAn1DControls)
         self.an2DCtrlNames.setValueChangeCallback(self.updateAn2DControls)
         self.an3DCtrlNames.setValueChangeCallback(self.updateAn3DControls)
-
 
 
         # =========
@@ -353,15 +341,10 @@ class OSSFaceComponentRig(OSSFaceComponent):
         # =========
         # Face
         self.faceCtrlSpace = CtrlSpace('face', parent=self.ctrlCmpGrp)
-
-
+        self.ctrlCmpGrp.setComponent(self)
         # ==========
         # Deformers
         # ==========
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
-        self.ctrlCmpGrp.setComponent(self)
 
 
         # ==============
@@ -385,7 +368,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         for i, handleName in enumerate(animControlNameList):
             parent = self.faceCtrlSpace
             newCtrls = []
-            newDefs = []
+
             for j, segment in enumerate(segments):
                 #Eventually, we need outputs and ports for this component for each handle segment
                 #spineOutput = ComponentOutput(handleName+"_"+segment, parent=self.outputHrcGrp)
@@ -446,9 +429,6 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
                 newCtrls.append(newCtrl)
 
-                newDef = Joint(handleName+"_"+segment, parent=self.defCmpGrp)
-                newDefs.append(newDef)
-
                 #self.handleConstraints.append(newDef.constrainTo(newCtrl, maintainOffset=False))
                 #controlsList.append(newCtrl)
                 parent = newCtrl
@@ -478,15 +458,6 @@ class OSSFaceComponentRig(OSSFaceComponent):
             self.RemapScalarValueSolverKLOp.setInput('drawDebug', self.drawDebugInputAttr)
             self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
-
-            # Add Xfo Inputs
-            self.outputsToDeformersKLOp.setInput('constrainers', newCtrls)
-            # Add Xfo Outputs
-
-            self.outputsToDeformersKLOp.setOutput('constrainees', newDefs)
-
-            self.outputsToDeformersKLOp.setOutput('constrainees', newDefs)
-
             self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         return True
@@ -514,12 +485,15 @@ class OSSFaceComponentRig(OSSFaceComponent):
         self.parentSpaceInputTgt.xfo = data['faceXfo']
 
 
+        self.parentSpaceInputTgt.childJoints = []
 
         self.createControls(3, data["an3DNames"], data)
         self.createControls(2, data["an2DNames"], data)
         self.createControls(1, data["an1DNames"], data)
         # Eval Operators
         # self.evalOperators()
+
+
 
 
 def getAnimControlNameList(handleNames):

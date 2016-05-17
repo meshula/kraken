@@ -2,8 +2,6 @@ from kraken.core.maths import Vec3
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
-from kraken.core.objects.components.base_example_component import BaseExampleComponent
-
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.attributes.integer_attribute import IntegerAttribute
@@ -28,10 +26,11 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 from OSS.OSS_control import *
+from OSS.OSS_component import OSS_Component
 
 COMPONENT_NAME = "spine"
 
-class OSSSpineComponent(BaseExampleComponent):
+class OSSSpineComponent(OSS_Component):
     """Spine Component"""
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
@@ -40,25 +39,19 @@ class OSSSpineComponent(BaseExampleComponent):
         # ===========
         # Declare IO
         # ===========
-        # Declare Inputs Xfos
-        self.parentSpaceInputTgt = self.createInput('parentSpace', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+
 
         # Declare Output Xfos
-        self.spineHipsOutputTgt = self.createOutput('hips', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.spineBaseOutputTgt = self.createOutput('spineBase', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.hipsOutputTgt = self.createOutput('hips', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.pelvisOutputTgt = self.createOutput('pelvis', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.spineEndOutputTgt = self.createOutput('spineEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         self.spineVertebraeOutput = self.createOutput('spineVertebrae', dataType='Xfo[]')
 
         # Declare Input Attrs
-        self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
-        self.rigScaleInputAttr = self.createInput('rigScale', dataType='Float', value=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
         # Declare Output Attrs
 
-        # Use this color for OSS components (should maybe get this color from a central source eventually)
-        self.setComponentColor(155, 155, 200, 255)
 
 
 class OSSSpineComponentGuide(OSSSpineComponent):
@@ -72,23 +65,20 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         # =========
         # Controls
         # ========
-        guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-
-
+        self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=self.guideSettingsAttrGrp)
+        #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
+        #self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
+        self.mocapInputAttr = None
         # Guide Controls
+
 
         self.pelvisCtrl = Control('pelvisPosition', parent=self.ctrlCmpGrp, shape='null')
         self.torsoCtrl = Control('torsoPosition', parent=self.ctrlCmpGrp, shape='sphere')
         self.chestCtrl = Control('chestPosition', parent=self.ctrlCmpGrp, shape='sphere')
         self.upChestCtrl = Control('upChestPosition', parent=self.ctrlCmpGrp, shape='sphere')
         self.neckCtrl = Control('neckPosition', parent=self.ctrlCmpGrp, shape='null')
-        self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.5, minValue=0.0,   maxValue=50.0, parent=guideSettingsAttrGrp)
 
-        self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=20, parent=guideSettingsAttrGrp)
-        #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
-        self.mocapAttr = BoolAttribute('mocap', value=False, parent=guideSettingsAttrGrp)
-        self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
-        self.mocapInputAttr = None
+
 
         data = {
             'pelvisPosition': Vec3(0.0, 9, 0),
@@ -153,7 +143,7 @@ class OSSSpineComponentGuide(OSSSpineComponent):
         self.neckCtrl.xfo.tr = data["neckPosition"]
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
-        globalScaleVec =Vec3(globalScale, globalScale, globalScale)
+        globalScaleVec = Vec3(globalScale, globalScale, globalScale)
 
         self.pelvisCtrl.scalePoints(globalScaleVec)
         self.torsoCtrl.scalePoints(globalScaleVec)
@@ -283,10 +273,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Deformers
         # ==========
 
-
-        deformersLayer = self.getOrCreateLayer('deformers')
-        self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
-        self.addItem("defCmpGrp", self.defCmpGrp)
         self.deformerJoints = []
         self.spineOutputs = []
 
@@ -295,7 +281,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         self.spineOutputs = []
 
-        self.setNumDeformers(1)
+        #self.setNumDeformers(1)
 
         # =====================
         # Create Component I/O
@@ -328,37 +314,42 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.NURBSSpineKLOp.setInput('controls', self.controlInputs)
         self.NURBSSpineKLOp.setOutput('outputs', self.spineOutputs)
 
-        # Add Deformer Splice Op
-        self.outputsToDeformersOKLOp = KLOperator('spineMultiPoseConstraintKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-        self.addOperator(self.outputsToDeformersOKLOp)
-
-        # Add Att Inputs
-        self.outputsToDeformersOKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.outputsToDeformersOKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-
-        # Add Xfo Outputs
-        self.outputsToDeformersOKLOp.setInput('constrainers', self.spineOutputs)
-
-        # Add Xfo Outputs
-        self.outputsToDeformersOKLOp.setOutput('constrainees', self.deformerJoints)
-
-
         Profiler.getInstance().pop()
 
 
     def setNumDeformers(self, numDeformers):
 
+        for output in reversed(self.spineOutputs):
+            output.getParent().removeChild(output)
+        del self.spineOutputs[:] #Clear since this array obj is tied to output already
+
+        for joint in reversed(self.deformerJoints):
+            joint.getParent().removeChild(joint)
+        del self.deformerJoints[:] #Clear since this array obj is tied to output already
+
         # Add new deformers and outputs
         for i in xrange(len(self.spineOutputs), numDeformers):
-            name = 'spine' + str(i + 1).zfill(2)
-            spineOutput = ComponentOutput(name, parent=self.outputHrcGrp)
-            self.spineOutputs.append(spineOutput)
+            if i == 0:
+                name = "pelvis"
+                self.spineOutputs.append(self.pelvisOutputTgt)
+            else:
+                name = 'spine' + str(i).zfill(2)
+                #Need dynamic ports branch to be able to see this updated in Graph
+                spineOutput = self.createOutput(name, dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+                self.spineOutputs.append(spineOutput)
 
+        parent = self.deformersParent
         for i in xrange(len(self.deformerJoints), numDeformers):
-            name = 'spine' + str(i + 1).zfill(2)
-            spineDef = Joint(name, parent=self.defCmpGrp)
+            if i == 0:
+                name = "pelvis"
+            else:
+                name = 'spine' + str(i).zfill(2)
+                parent = self.deformerJoints[-1]
+            spineDef = Joint(name, parent=parent)
             spineDef.setComponent(self)
             self.deformerJoints.append(spineDef)
+            if name == "pelvis":
+                self.parentSpaceInputTgt.childJoints = [spineDef]
 
         if hasattr(self, 'NURBSSpineKLOp'):  # Check in case this is ever called from Guide callback
             self.NURBSSpineKLOp.setInput('numDeformers',  numDeformers)
@@ -429,7 +420,6 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
 
         # Constrain Outputs
-        self.spineBaseOutputConstraint = self.spineBaseOutputTgt.constrainTo(self.spineOutputs[0])
         self.spineEndOutputConstraint = self.spineEndOutputTgt.constrainTo(self.spineOutputs[-1])
 
         if self.mocap:
@@ -542,11 +532,11 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.mcControlInputs.append(self.upChestCtrl_link)
             self.mcControlInputs.append(self.neckCtrlSpace_link)
 
-            self.spineHipsOutputConstraint = self.spineHipsOutputTgt.constrainTo(self.hipsCtrl_link)
-            self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace_link)
+            self.hipsOutputConstraint = self.hipsOutputTgt.constrainTo(self.hipsCtrl_link)
+            #self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace_link)
         else:     # Constraint outputs
-            self.spineHipsOutputConstraint = self.spineHipsOutputTgt.constrainTo(self.hipsCtrl)
-            self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace)
+            self.hipsOutputConstraint = self.hipsOutputTgt.constrainTo(self.hipsCtrl)
+            #self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace)
 
 
         # ====================
@@ -555,16 +545,24 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Eval Operators # Order is important
         self.evalOperators()
 
+        for i in xrange(len(self.spineOutputs)):
+            constraint = self.deformerJoints[i].constrainTo(self.spineOutputs[i])
+            constraint.evaluate()
+
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # ====================
         # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
         self.hipsCtrlSpaceConstraint.evaluate()
         self.torsoCtrlSpaceConstraint.evaluate()
-        self.spineHipsOutputConstraint.evaluate()
-        self.spineBaseOutputConstraint.evaluate()
-        self.pelvisOutputConstraint.evaluate()
+        self.hipsOutputConstraint.evaluate()
+        #self.spineBaseOutputConstraint.evaluate()
+        #self.pelvisOutputConstraint.evaluate()
         self.spineEndOutputConstraint.evaluate()
+
+        self.hipsOutputTgt.parentJoint = self.deformerJoints[0]
+        self.pelvisOutputTgt.parentJoint = self.deformerJoints[0]
+        self.spineEndOutputTgt.parentJoint = self.deformerJoints[-1]
 
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 
