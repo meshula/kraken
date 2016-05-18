@@ -5,7 +5,7 @@ from kraken.log.utils import fabricCallback
 def getClient():
 
     options = {
-        'contextID': contextID,
+        #'contextID': contextID,
         'reportCallback': fabricCallback,
         'guarded': True
     }
