@@ -272,7 +272,7 @@ class Object3D(SceneItem):
             bool: True if successful.
 
         """
-
+        self._originalName = name
         # check for name collision and adjust the name if they exist
         if self.getParent() is not None:
             # Increment name if it already exists
@@ -373,6 +373,7 @@ class Object3D(SceneItem):
             bool: True if successful.
 
         """
+        SceneItem.setParent(child, self)
 
         if child.getParent() is not None:
             parent = child.getParent()
@@ -380,25 +381,32 @@ class Object3D(SceneItem):
                 parent.getChildren().remove(child)
 
 
-        # check for name collision and adjust the name if they exist
-        # Increment name if it already exists
-        initName = child.getName()
-        name = initName
-        suffix = 1
-
-        while self.getChildByDecoratedName(name + child.getNameDecoration()) is not None:
-            name = initName + str(suffix).zfill(2)
-            suffix += 1
-
-        if initName != name:
-            child.setName(name)
+        # Under new parent, name may not require collision numbers appended
+        child.setName(child.getOriginalName())
 
         self.getChildren().append(child)
-        child.setParent(self)
 
         # Assign the child the same component.
         if self._component is not None:
             child.setComponent(self._component)
+
+        return True
+
+
+    def setParent(self, parent):
+        """Sets the parent of this object.
+
+        Arguments:
+        parent (Object): Object that is the parent of this one.
+
+        Returns:
+            bool: True if successful.
+
+        """
+        if parent:
+            parent.addChild(self)
+        else:
+            SceneItem.setParent(self, None)
 
         return True
 

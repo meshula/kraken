@@ -15,6 +15,7 @@ class SceneItem(object):
         super(SceneItem, self).__init__()
         self._parent = parent
         self._name = name
+        self._originalName = name
         self._component = None
         self._sources = []
         self._id = SceneItem.__maxId
@@ -115,6 +116,20 @@ class SceneItem(object):
 
         return True
 
+    # =============
+    # Name methods
+    # =============
+    def getOriginalName(self):
+        """Returns the original name of the object as a string.
+           The name attribute may have been procedurally incremented
+
+        Returns:
+            str: Object's originally set name.
+
+        """
+
+        return self._originalName
+
     def getPath(self):
         """Returns the full hierarchical path to this object.
 
@@ -135,7 +150,9 @@ class SceneItem(object):
             str: Decorated name of the object.
 
         """
-
+        component = self.getComponent()
+        if component and component.isTypeOf("Component"):
+            return component.getLocation()
         return ""
 
     def getDecoratedName(self):
@@ -186,6 +203,7 @@ class SceneItem(object):
 
         """
 
+        self.removeSource(self._parent)
         self._parent = parent
         self.addSource(parent)
 
@@ -238,6 +256,21 @@ class SceneItem(object):
         self._sources.append(source)
 
         return True
+
+
+    def removeSource(self, source):
+        """Removes a source from this object.
+
+        Arguments:
+        source (Object): Object that is no longer a source of this one.
+
+        """
+
+        if not isinstance(source, SceneItem):
+            return False
+
+        self._sources[:] = [s for s in self._sources if s != source]
+
 
     def setSource(self, index, source):
         """Sets the source of this object.
