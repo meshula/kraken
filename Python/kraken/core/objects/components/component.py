@@ -265,7 +265,7 @@ class Component(Object3D):
 
         """
 
-        raise Exception("We should not be here. This mehtod is to be deprecated")
+        raise Exception("We should not be here. This method is to be deprecated")
 
         super(Component, self).addChild(child)
 
