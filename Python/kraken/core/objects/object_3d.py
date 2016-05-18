@@ -406,6 +406,8 @@ class Object3D(SceneItem):
         if parent:
             parent.addChild(self)
         else:
+            if self._parent is not None:
+                parent.removeChild(self)
             SceneItem.setParent(self, None)
 
         return True
@@ -424,7 +426,7 @@ class Object3D(SceneItem):
         if self._checkChildIndex(index) is not True:
             return False
 
-        del self.getChildren()[index]
+        self.removeChild(self.getChildren()[index])
 
         return True
 
@@ -471,7 +473,7 @@ class Object3D(SceneItem):
                             "' does not have child:" + child.getPath() +
                             ". it does have:" + str(names))
 
-        child.setParent(None)
+        SceneItem.setParent(child, None)
 
         # Un-assign the child the component.
         if self._component is not None:
