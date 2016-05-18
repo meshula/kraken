@@ -275,7 +275,7 @@ class Component(Object3D):
         return True
 
 
-    def getHierarchyNodes(self, classType=None, inheritedClass=False):
+    def getHierarchyNodes(self, classType='', inheritedClass=False):
         """Returns a nodeList with all children in component hierarchy that
         matches classType.
 
@@ -287,6 +287,8 @@ class Component(Object3D):
             list: Nodes that match the class type.
 
         """
+        if not isinstance(classType,str):
+            print "Warning in Component %s: getHierarchyNodes needs classType to be passed as string"%(self._name)
 
         nodeList = []
 
