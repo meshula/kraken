@@ -487,6 +487,35 @@ class Builder(object):
 
         return True
 
+
+    def __reparentJoints(self, kRig):
+        """Sets override reparenting based on port object attributes
+        """
+
+        if not kRig.isTypeOf("Rig"):
+            raise ValueError("argument kRig is not of type \"Rig\"")
+
+        components = kRig.getChildrenByType('Component')
+
+        for component in components:
+            for i in xrange(component.getNumInputs()):
+
+                componentInput = component.getInputByIndex(i)
+                if componentInput.getName() != "parentSpace" or componentInput.isConnected() is False:
+                    continue
+                connection = componentInput.getConnection()
+                connectionTarget = connection.getTarget()
+                inputTarget = componentInput.getTarget()
+
+                # A little crude, but simple and it works
+                if hasattr(connectionTarget, "parentJoint") and hasattr(inputTarget, "childJoints"):
+                    for childJoint in inputTarget.childJoints:
+                        logger.debug("Parenting %s to %s..." % (childJoint.getName(), connectionTarget.parentJoint.getName()))
+                        component = childJoint.getComponent()
+                        childJoint.setParent(connectionTarget.parentJoint) #this calls addSource()
+                        childJoint.setComponent(component)
+
+
     # =====================
     # Build Object Methods
     # =====================
@@ -666,6 +695,8 @@ class Builder(object):
 
         Profiler.getInstance().push("build:" + kSceneItem.getName())
 
+        self.__reparentJoints(kSceneItem) # Must occur before traverser
+
         traverser = Traverser('Children')
         traverser.addRootItem(kSceneItem)
 
@@ -684,7 +715,6 @@ class Builder(object):
             objects3d = traverser.getItemsOfType('Object3D')
             attributeGroups = traverser.getItemsOfType(['AttributeGroup'])
             attributes = traverser.getItemsOfType(['Attribute'])
-
             # build all 3D objects and attributes
             self.__buildSceneItemList(objects3d,
                                       self._buildPhase_3DObjectsAttributes)
