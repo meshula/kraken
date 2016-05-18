@@ -24,8 +24,6 @@ def argOpts():
 
     options, args = parser.parse_args()
 
-    print("TTPrint: args:"),;print(args)
-
     options.name = None
     if len(args) != 2:
         print "\nPlease provide the rig file to convert and the target folder as command line arguments."
