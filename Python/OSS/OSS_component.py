@@ -26,7 +26,7 @@ class OSS_Component(BaseExampleComponent):
 
         if self.getComponentType() == "Guide":
             self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
-            self.unifiedJointsAttr = BoolAttribute('UnifiedJointHierarchy', value=True, parent=self.guideSettingsAttrGrp)
+            self.singleDeformerGroupAttr = BoolAttribute('SingleDeformerGroup', value=True, parent=self.guideSettingsAttrGrp)
             self.mocapAttr = BoolAttribute('mocap', value=False, parent=self.guideSettingsAttrGrp)
             self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
         else: # Rig
@@ -42,8 +42,8 @@ class OSS_Component(BaseExampleComponent):
         if self.getComponentType() == "Guide":
             pass
         else: # Rig
-            self.unifiedJoints = bool(data.get("UnifiedJointHierarchy", False))
-            if not self.unifiedJoints:
+            self.singleDeformerGroup = bool(data.get("SingleDeformerGroup", True))
+            if not self.singleDeformerGroup:
                 self.defCmpGrp = ComponentGroup(self.getName(), self, parent=self.deformersLayer)
                 self.addItem("defCmpGrp", self.defCmpGrp)
                 self.deformersParent = self.defCmpGrp
