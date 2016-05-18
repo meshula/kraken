@@ -511,7 +511,9 @@ class Builder(object):
                 if hasattr(connectionTarget, "parentJoint") and hasattr(inputTarget, "childJoints"):
                     for childJoint in inputTarget.childJoints:
                         logger.debug("Parenting %s to %s..." % (childJoint.getName(), connectionTarget.parentJoint.getName()))
+                        component = childJoint.getComponent()
                         childJoint.setParent(connectionTarget.parentJoint) #this calls addSource()
+                        childJoint.setComponent(component)
 
 
     # =====================
@@ -535,7 +537,6 @@ class Builder(object):
 
         if hasattr(kObject, 'getBuildName'):
             buildName = kObject.getBuildName()
-
 
         logger.debug("building(" + str(phase) + "): " + kObject.getPath() +
                      " as: " + buildName + " type: " + kObject.getTypeName())
