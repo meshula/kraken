@@ -185,10 +185,12 @@ class ComponentInputPort(SceneItem):
         if isinstance(connectedTarget, list):
             connectedTarget = connectedTarget[self._index]
 
-        if self._sourceIndex is None:
-            self._sourceIndex = target.addSource(connectedTarget)
-        else:
-            target.setSource(self._sourceIndex, connectedTarget)
+        # Why do we need these if constrainTo and connect add the source?
+        # Where is _sourceIndex supposed to be used?
+        # if self._sourceIndex is None:
+        #     self._sourceIndex = target.addSource(connectedTarget)
+        # else:
+        #     target.setSource(self._sourceIndex, connectedTarget)
 
         if isinstance(target, Attribute):
             target.connect(connectedTarget)
