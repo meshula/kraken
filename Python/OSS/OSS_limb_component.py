@@ -79,7 +79,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         self.lolimbCtrl = Control('lolimb', parent=self.ctrlCmpGrp, shape="sphere")
         self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="jack")
 
-        self.useOtherIKGoalInput.setValueChangeCallback(self.updateUseOtherIKGoal, updateNodeGraph=True)
+        self.useOtherIKGoalInput.setValueChangeCallback(self.updateUseOtherIKGoal)
         #self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
 
         self.limbMocapInputAttr = None
