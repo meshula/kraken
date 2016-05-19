@@ -149,11 +149,19 @@ class CanvasOperator(Operator):
                 self.binding.setArgValue(portName, portVal, False)
                 continue
 
+
             if portConnectionType == 'In':
+                if self.inputs[portName] is None:
+                    continue
+
                 if str(portDataType).endswith('[]'):
+                    if not len(self.outputs[portName]):
+                        continue
                     rtValArray = ks.rtVal(portDataType)
                     rtValArray.resize(len(self.inputs[portName]))
                     for j in xrange(len(self.inputs[portName])):
+                        if self.inputs[portName][j] is None:
+                            continue
                         rtVal = getRTVal(self.inputs[portName][j])
 
                         validateArg(rtVal, portName, portDataType[:-2])
@@ -169,10 +177,17 @@ class CanvasOperator(Operator):
 
                     self.binding.setArgValue(portName, rtVal, False)
             else:
+                if self.outputs[portName] is None:
+                    continue
+
                 if str(portDataType).endswith('[]'):
+                    if not len(self.outputs[portName]):
+                        continue
                     rtValArray = ks.rtVal(portDataType)
                     rtValArray.resize(len(self.outputs[portName]))
                     for j in xrange(len(self.outputs[portName])):
+                        if self.outputs[portName][j] is None:
+                            continue
                         rtVal = getRTVal(self.outputs[portName][j], asInput=False)
 
                         validateArg(rtVal, portName, portDataType[:-2])
@@ -182,6 +197,7 @@ class CanvasOperator(Operator):
                     portVal = rtValArray
                     self.binding.setArgValue(portName, portVal, False)
                 else:
+
                     rtVal = getRTVal(self.outputs[portName], asInput=False)
 
                     validateArg(rtVal, portName, portDataType)

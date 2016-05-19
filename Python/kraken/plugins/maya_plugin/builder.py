@@ -21,8 +21,6 @@ from kraken.plugins.maya_plugin.utils import *
 import maya.cmds as cmds
 
 logger = getLogger('kraken')
-logger.setLevel(logging.INFO)
-
 
 class Builder(Builder):
     """Builder object for building Kraken objects in Maya."""
@@ -819,6 +817,7 @@ class Builder(Builder):
             arraySizes = {}
             # connect the operator to the objects in the DCC
             args = kOperator.getSolverArgs()
+
             for i in xrange(len(args)):
                 arg = args[i]
                 argName = arg.name.getSimpleType()

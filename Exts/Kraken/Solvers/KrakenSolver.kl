@@ -5,12 +5,14 @@ interface IKrakenSolver {
 };
 
 object KrakenSolver : IKrakenSolver {
+    Boolean hasDefaults;
     Boolean drawDebug;
     DrawingHandle handle;
 };
 
 // Default Constructor
 inline KrakenSolver() {
+  this.hasDefaults = false;
   this.drawDebug = false;
   this.handle = null;
 }
