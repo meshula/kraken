@@ -39,14 +39,8 @@ class KLOperator(Operator):
         if self.extension != 'Kraken':
             ks.loadExtension(self.extension)
         self.solverRTVal = ks.constructRTVal(self.solverTypeName)
-        print("TTPrint: self.solverRTVal:"),;print(self.solverRTVal)
-        #print("TTPrint: self.solverRTVal.getMembers():"),;print(self.solverRTVal.getMembers())
 
-        if self.solverRTVal.hasDefaults.getSimpleType(): # Could not figure out how to get parent class of RTVal
-            self.args = self.solverRTVal.getArguments('KrakenSolverDefaultsArg[]')
-        else:
-            self.args = self.solverRTVal.getArguments('KrakenSolverArg[]') #Still need to pass return type as string, Fabric needs to get rid of this!
-
+        self.args = self.solverRTVal.getArguments('KrakenSolverArg[]') #Still need to pass return type as string, Fabric needs to get rid of this!
 
         # Initialize the inputs and outputs based on the given args.
         for i in xrange(len(self.args)):
@@ -114,7 +108,7 @@ class KLOperator(Operator):
 
         if self.inputs[name] is None:
             for arg in self.args:
-                if arg.name.getSimpleType() == name and arg.getTypeName().getSimpleType() == "KrakenSolverDefaultsArg":
+                if arg.name.getSimpleType() == name and arg.defaultValue.getSimpleType() != "":
                     argDefaultValue = eval(arg.defaultValue.getSimpleType())
                     logger.debug("Using default value for %s.%s.inputs[%s] to %s." % (self.solverTypeName, self.getName(), name, argDefaultValue))
                     return argDefaultValue

@@ -4,8 +4,6 @@
     "Solvers/Math.kl",
     "Solvers/KrakenSolverArg.kl",
     "Solvers/KrakenSolver.kl",
-    "Solvers/KrakenSolverDefaultsArg.kl",
-    "Solvers/KrakenSolverDefaults.kl",
     "Solvers/RigScaleSolver.kl",
     "Solvers/DirectionConstraintSolver.kl",
     "Solvers/PoseConstraintSolver.kl",

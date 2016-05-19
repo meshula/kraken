@@ -2,17 +2,17 @@ require InlineDrawing;
 require Geometry;
 require Kraken;
 
-object OSS_HierBlendSolver : KrakenSolverDefaults {
+object OSS_HierBlendSolver : KrakenSolver {
 };
 
 // Return Arguments for Kraken
-function KrakenSolverDefaultsArg[] OSS_HierBlendSolver.getArguments(){
-  KrakenSolverDefaultsArg args[] = this.parent.getArguments();
-  args.push(KrakenSolverDefaultsArg('hierA', 'In', 'Mat44[]', 'list()'));
-  args.push(KrakenSolverDefaultsArg('hierB', 'In', 'Mat44[]', 'list()'));
-  args.push(KrakenSolverDefaultsArg('parentIndexes', 'In', 'Integer[]', 'list()'));
-  args.push(KrakenSolverDefaultsArg('blend', 'In', 'Scalar', '0.0'));
-  args.push(KrakenSolverDefaultsArg('hierOut', 'Out', 'Mat44[]', 'list()'));
+function KrakenSolverArg[] OSS_HierBlendSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('hierA', 'In', 'Mat44[]', 'list()'));
+  args.push(KrakenSolverArg('hierB', 'In', 'Mat44[]', 'list()'));
+  args.push(KrakenSolverArg('parentIndexes', 'In', 'Integer[]', 'list()'));
+  args.push(KrakenSolverArg('blend', 'In', 'Scalar', '0.0'));
+  args.push(KrakenSolverArg('hierOut', 'Out', 'Mat44[]', 'list()'));
   return args;
 }
 
