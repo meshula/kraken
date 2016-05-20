@@ -54,7 +54,7 @@ class KLOperator(Operator):
                     self.inputs[argName] = []
                 else:
                     self.inputs[argName] = None
-                    self.inputs[argName] = self.getInput(argName)
+                    self.inputs[argName] = self.getInput(argName, init=True)
             else:
                 if argDataType.endswith('[]'):
                     self.outputs[argName] = []
@@ -91,7 +91,7 @@ class KLOperator(Operator):
 
         return self.args
 
-    def getInput(self, name):
+    def getInput(self, name, init=False):
         """Returns the input with the specified name.
 
         Args:
@@ -110,7 +110,8 @@ class KLOperator(Operator):
             for arg in self.args:
                 if arg.name.getSimpleType() == name and arg.defaultValue.getSimpleType() != "":
                     argDefaultValue = eval(arg.defaultValue.getSimpleType())
-                    logger.debug("Using default value for %s.%s.inputs[%s] to %s." % (self.solverTypeName, self.getName(), name, argDefaultValue))
+                    if not init:
+                        logger.debug("Using default value for %s.%s.inputs[%s] --> %s." % (self.solverTypeName, self.getName(), name, argDefaultValue))
                     return argDefaultValue
 
 
@@ -209,7 +210,6 @@ class KLOperator(Operator):
                 elif argDataType == 'String':
                     if type(rtVal) != str:
                         raise TypeError(self.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + argName + " (" + argDataType + ")")
-
 
         argVals = []
         debug = []
