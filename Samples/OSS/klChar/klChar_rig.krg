@@ -1,7 +1,7 @@
 {
   "connections": [
     {
-      "source": "main:M.root", 
+      "source": "main:M.cog", 
       "target": "spine:M.parentSpace", 
       "targetIndex": 0
     }, 
@@ -288,7 +288,6 @@
           }
         }
       }, 
-      "SingleDeformerGroup": true, 
       "mainXfo": {
         "sc": {
           "y": 1.0, 
@@ -342,12 +341,13 @@
       "location": "M", 
       "globalComponentCtrlSize": 3.0, 
       "class": "OSS.OSS_main_component.OSSMainComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "mocap": false
     }, 
     {
       "graphPos": {
-        "y": 34.42543029785156, 
-        "x": -1064.3712158203125, 
+        "y": 205.02415466308594, 
+        "x": -948.8043212890625, 
         "__mathObjectClass__": "Vec2"
       }, 
       "torsoPosition": {
@@ -365,7 +365,6 @@
       }, 
       "numDeformers": 6, 
       "visibility": true, 
-      "SingleDeformerGroup": true, 
       "chestPosition": {
         "y": 84.3914794921875, 
         "x": -5.9992872932916705e-31, 
@@ -388,6 +387,7 @@
         "z": 6.047295376924327e-16
       }, 
       "class": "OSS.OSS_spine_component.OSSSpineComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "name": "spine"
     }, 
     {
@@ -424,7 +424,6 @@
       }, 
       "ShapeVisibility": false, 
       "visibility": true, 
-      "SingleDeformerGroup": true, 
       "location": "L", 
       "shldrEndXfo": {
         "sc": {
@@ -478,6 +477,7 @@
         }
       }, 
       "class": "OSS.OSS_shoulder_component.OSSShoulderComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "mocap": false
     }, 
     {
@@ -514,7 +514,6 @@
       }, 
       "ShapeVisibility": false, 
       "visibility": true, 
-      "SingleDeformerGroup": true, 
       "location": "R", 
       "shldrEndXfo": {
         "sc": {
@@ -568,6 +567,7 @@
         }
       }, 
       "class": "OSS.OSS_shoulder_component.OSSShoulderComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "mocap": false
     }, 
     {
@@ -582,7 +582,6 @@
       "ikHandleName": "footIK", 
       "useOtherIKGoal": true, 
       "visibility": true, 
-      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
       "uplimbXfo": {
         "sc": {
           "y": 1.0, 
@@ -661,7 +660,8 @@
       }, 
       "mocap": false, 
       "globalComponentCtrlSize": 7.0, 
-      "SingleDeformerGroup": true, 
+      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "location": "L"
     }, 
     {
@@ -723,7 +723,6 @@
           }
         }
       }, 
-      "globalComponentCtrlSize": 4.0, 
       "ballXfo": {
         "sc": {
           "y": 1.0, 
@@ -827,7 +826,7 @@
           }
         }
       }, 
-      "SingleDeformerGroup": true, 
+      "globalComponentCtrlSize": 4.0, 
       "innerPivotXfo": {
         "sc": {
           "y": 1.0, 
@@ -878,6 +877,7 @@
           }
         }
       }, 
+      "UnifiedJointHierarchy": true, 
       "location": "L"
     }, 
     {
@@ -939,7 +939,6 @@
           }
         }
       }, 
-      "globalComponentCtrlSize": 4.0, 
       "ballXfo": {
         "sc": {
           "y": 1.0, 
@@ -1043,7 +1042,7 @@
           }
         }
       }, 
-      "SingleDeformerGroup": true, 
+      "globalComponentCtrlSize": 4.0, 
       "innerPivotXfo": {
         "sc": {
           "y": 1.0, 
@@ -1094,6 +1093,7 @@
           }
         }
       }, 
+      "UnifiedJointHierarchy": true, 
       "location": "R"
     }, 
     {
@@ -1108,7 +1108,6 @@
       "ikHandleName": "footIK", 
       "useOtherIKGoal": true, 
       "visibility": true, 
-      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
       "uplimbXfo": {
         "sc": {
           "y": 1.0, 
@@ -1187,7 +1186,8 @@
       }, 
       "mocap": false, 
       "globalComponentCtrlSize": 7.0, 
-      "SingleDeformerGroup": true, 
+      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "location": "R"
     }, 
     {
@@ -1202,7 +1202,6 @@
       "ikHandleName": "handIK", 
       "useOtherIKGoal": true, 
       "visibility": true, 
-      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
       "uplimbXfo": {
         "sc": {
           "y": 1.0, 
@@ -1281,7 +1280,8 @@
       }, 
       "mocap": false, 
       "globalComponentCtrlSize": 8.0, 
-      "SingleDeformerGroup": true, 
+      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "location": "R"
     }, 
     {
@@ -1296,7 +1296,6 @@
       "ikHandleName": "handIK", 
       "useOtherIKGoal": true, 
       "visibility": true, 
-      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
       "uplimbXfo": {
         "sc": {
           "y": 1.0, 
@@ -1375,7 +1374,8 @@
       }, 
       "mocap": false, 
       "globalComponentCtrlSize": 8.0, 
-      "SingleDeformerGroup": true, 
+      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "location": "L"
     }, 
     {
@@ -1388,7 +1388,7 @@
       "name": "hand", 
       "Digit1SegmentNames": "", 
       "ShapeVisibility": false, 
-      "class": "OSS.OSS_hand_component.OSSHandComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "digit3SegmentCtrlsXfos": [
         {
           "sc": {
@@ -2074,7 +2074,7 @@
           }
         }
       ], 
-      "SingleDeformerGroup": true, 
+      "class": "OSS.OSS_hand_component.OSSHandComponentGuide", 
       "palmTipXfo": {
         "sc": {
           "y": 1.0, 
@@ -2112,7 +2112,7 @@
       "name": "hand", 
       "Digit1SegmentNames": "", 
       "ShapeVisibility": false, 
-      "class": "OSS.OSS_hand_component.OSSHandComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "digit3SegmentCtrlsXfos": [
         {
           "sc": {
@@ -2798,7 +2798,7 @@
           }
         }
       ], 
-      "SingleDeformerGroup": true, 
+      "class": "OSS.OSS_hand_component.OSSHandComponentGuide", 
       "palmTipXfo": {
         "sc": {
           "y": 1.0, 
@@ -2828,8 +2828,8 @@
     }, 
     {
       "graphPos": {
-        "y": -272.22222900390625, 
-        "x": -797.8327026367188, 
+        "y": -288.4566345214844, 
+        "x": -903.3562622070312, 
         "__mathObjectClass__": "Vec2"
       }, 
       "name": "headNeck", 
@@ -2854,7 +2854,6 @@
       }, 
       "numDeformers": 4, 
       "visibility": true, 
-      "SingleDeformerGroup": true, 
       "headPosition": {
         "y": 119.21429443359375, 
         "x": 0.0, 
@@ -2864,6 +2863,7 @@
       "location": "M", 
       "globalComponentCtrlSize": 5.0, 
       "class": "OSS.OSS_headNeck_component.OSSHeadNeckComponentGuide", 
+      "UnifiedJointHierarchy": true, 
       "mocap": false
     }
   ], 

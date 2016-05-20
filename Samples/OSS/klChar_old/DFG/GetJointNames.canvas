@@ -1,0 +1,38 @@
+{
+  "objectType" : "Func",
+  "title" : "GetJointNames",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "rig",
+      "execPortType" : "In",
+      "typeSpec" : "KRK_klChar_guide"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "String[]"
+      }
+    ],
+  "extDeps" : {
+    "KRK_klChar_guide" : "*"
+    },
+  "code" : "dfgEntry {
+  result = rig.getJointNames();
+}
+",
+  "args" : [
+    {
+      "type" : "KRK_klChar_guide",
+      "value" : null,
+      "ext" : "KRK_klChar_guide"
+      },
+    {
+      "type" : "String[]",
+      "value" : []
+      }
+    ]
+  }

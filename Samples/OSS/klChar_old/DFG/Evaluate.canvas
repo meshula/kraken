@@ -1,0 +1,41 @@
+{
+  "objectType" : "Func",
+  "title" : "Evaluate",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "rig",
+      "execPortType" : "IO",
+      "typeSpec" : "KRK_klChar_guide"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "context",
+      "execPortType" : "In",
+      "typeSpec" : "KrakenClipContext"
+      }
+    ],
+  "extDeps" : {
+    "KRK_klChar_guide" : "*"
+    },
+  "code" : "dfgEntry {
+  rig.evaluate(context);
+}
+",
+  "args" : [
+    {
+      "type" : "KRK_klChar_guide",
+      "value" : null,
+      "ext" : "KRK_klChar_guide"
+      },
+    {
+      "type" : "KrakenClipContext",
+      "value" : {
+        "time" : 0
+        },
+      "ext" : "KrakenAnimation"
+      }
+    ]
+  }
