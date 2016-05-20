@@ -1,0 +1,46 @@
+{
+  "objectType" : "Func",
+  "title" : "GetControlXfos",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "rig",
+      "execPortType" : "In",
+      "typeSpec" : "KRK_klChar_guide"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      }
+    ],
+  "extDeps" : {
+    "KRK_klChar_guide" : "*"
+    },
+  "code" : "dfgEntry {
+  result = rig.getControlXfos();
+}
+",
+  "args" : [
+    {
+      "type" : "KRK_klChar_guide",
+      "value" : null,
+      "ext" : "KRK_klChar_guide"
+      },
+    {
+      "type" : "Xfo[]",
+      "value" : [],
+      "ext" : "Math"
+      }
+    ]
+  }

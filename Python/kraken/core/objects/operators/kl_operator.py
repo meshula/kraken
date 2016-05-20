@@ -40,7 +40,7 @@ class KLOperator(Operator):
             ks.loadExtension(self.extension)
         self.solverRTVal = ks.constructRTVal(self.solverTypeName)
 
-        self.args = self.solverRTVal.getArguments('KrakenSolverArg[]') #Still need to pass return type as string, Fabric needs to get rid of this!
+        self.args = self.solverRTVal.getArguments('KrakenSolverArg[]')
 
         # Initialize the inputs and outputs based on the given args.
         for i in xrange(len(self.args)):
@@ -219,10 +219,9 @@ class KLOperator(Operator):
             argDataType = arg.dataType.getSimpleType()
             argConnectionType = arg.connectionType.getSimpleType()
             argDefaultValue = None
-            try:
+            if arg.defaultValue.getSimpleType() != "":
                 argDefaultValue = eval(arg.defaultValue.getSimpleType())
-            except:
-                pass
+
 
 
             if argDataType == 'EvalContext':
