@@ -1,6 +1,5 @@
 # Kraken_Plugin
 
-import win32com.client
 from win32com.client import constants
 import os
 import sys
@@ -31,17 +30,17 @@ def XSILoadPlugin(in_reg):
 
     pluginPath = in_reg.OriginPath
     krakenDir = os.path.normpath(XSIUtils.BuildPath(pluginPath, "..", "..", "..", ".."))
-    os.environ['KRAKEN_PATH']  = krakenDir
-    os.environ['KRAKEN_DCC']  = 'Softimage'
+    os.environ['KRAKEN_PATH'] = krakenDir
+    os.environ['KRAKEN_DCC'] = 'Softimage'
 
     # Add the path to the module search paths so we can import the module.
-    sys.path.append( os.path.join(krakenDir, 'Python' ) )
+    sys.path.append(os.path.join(krakenDir, 'Python' ))
 
     krakenExtsDir = os.path.join(krakenDir, 'Exts')
     if 'FABRIC_EXTS_PATH' not in os.environ:
         LogMessage('Unable to Load Kraken becase Fabric Engine has not be loaded.')
         return
-    if krakenExtsDir not in  os.environ['FABRIC_EXTS_PATH']:
+    if krakenExtsDir not in os.environ['FABRIC_EXTS_PATH']:
         os.environ['FABRIC_EXTS_PATH'] = krakenExtsDir + os.pathsep + os.environ['FABRIC_EXTS_PATH']
 
     canvasPresetsDir = os.path.join(krakenDir, 'Presets', 'DFG')
@@ -55,8 +54,8 @@ def XSILoadPlugin(in_reg):
         in_reg.RegisterMenu(constants.siMenuMainTopLevelID, "Kraken", False, False)
 
     in_reg.RegisterCommand('OpenKrakenEditor', 'OpenKrakenEditor')
-    in_reg.RegisterCommand('BuildKrakenGuide', 'BuildKrakenGuide')
-    in_reg.RegisterCommand('BuildKrakenRig', 'BuildKrakenRig')
+    in_reg.RegisterCommand('KrakenBuildBipedGuide', 'KrakenBuildBipedGuide')
+    in_reg.RegisterCommand('KrakenBuildBipedRig', 'KrakenBuildBipedRig')
 
 
 def XSIUnloadPlugin(in_reg):
@@ -65,15 +64,15 @@ def XSIUnloadPlugin(in_reg):
     return True
 
 
-def Kraken_Init( in_ctxt ):
+def Kraken_Init(in_ctxt):
 
     menu = in_ctxt.source
-    menu.AddCommandItem( "Open UI", "OpenKrakenEditor")
+    menu.AddCommandItem("Open UI", "OpenKrakenEditor")
     menu.AddSeparatorItem()
-    menu.AddCommandItem("Build Guide", "BuildKrakenGuide")
-    menu.AddCommandItem("Build Rig", "BuildKrakenRig")
+    menu.AddCommandItem("Build Biped Guide", "KrakenBuildBipedGuide")
+    menu.AddCommandItem("Build Biped Rig", "KrakenBuildBipedRig")
     menu.AddSeparatorItem()
-    menu.AddCallbackItem( "Help", "OpenKrakenHelp" )
+    menu.AddCallbackItem("Help", "OpenKrakenHelp")
 
 
 # =========
@@ -121,45 +120,25 @@ def OpenKrakenEditor_Execute():
     return True
 
 
-def BuildKrakenGuide_Init(in_ctxt):
+def KrakenBuildBipedGuide_Init(in_ctxt):
     cmd = in_ctxt.Source
-    cmd.Description = 'Builds a Kraken Guide from a .krg File'
+    cmd.Description = 'Builds the default Kraken Biped Guide'
     cmd.ReturnValue = True
 
     args = cmd.Arguments
-    args.Add('rigFilePath', constants.siArgumentInput, "", constants.siString)
 
     return True
 
 
-def BuildKrakenGuide_Execute(rigFilePath):
+def KrakenBuildBipedGuide_Execute():
 
     # Deffered importing: We can only import the kraken modules after the
     # plugin has loaded, as it configures the python import paths on load.
     from kraken.core.objects.rig import Rig
     from kraken import plugins
 
-    if rigFilePath == "" and si.Interactive is True:
-
-        fileBrowser = XSIUIToolkit.FileBrowser
-        fileBrowser.DialogTitle = "Select a Kraken Rig File"
-        fileBrowser.InitialDirectory = si.ActiveProject3.Path
-        fileBrowser.Filter = "Kraken Rig (*.krg)|*.krg||"
-        fileBrowser.ShowOpen()
-
-        fileName = fileBrowser.FilePathName
-        if fileName != "":
-            rigFilePath = fileName
-        else:
-            log("User Cancelled.", 4)
-            return False
-
-    elif rigFilePath == "" and si.Interactive is False:
-        log("No rig file path specified in batch mode!", 2)
-        return False
-
-    guideRig = Rig()
-    guideRig.loadRigDefinitionFile(rigFilePath)
+    bipedGuideRig = Rig()
+    # guideRig.loadRigDefinitionFile()
 
     builtRig = None
     progressBar = None
@@ -180,7 +159,7 @@ def BuildKrakenGuide_Execute(rigFilePath):
     return builtRig
 
 
-def BuildKrakenRig_Init(in_ctxt):
+def KrakenBuildBipedRig_Init(in_ctxt):
     cmd = in_ctxt.Source
     cmd.Description = 'Builds a Kraken Rig from a .krg File'
     cmd.ReturnValue = True
@@ -191,7 +170,7 @@ def BuildKrakenRig_Init(in_ctxt):
     return True
 
 
-def BuildKrakenRig_Execute(rigFilePath):
+def KrakenBuildBipedRig_Execute(rigFilePath):
 
     # Deffered importing: We can only import the kraken modules after the
     # plugin has loaded, as it configures the python import paths on load.
