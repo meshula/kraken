@@ -189,9 +189,9 @@ class OSSSingleFKRig(OSSSingleFK):
         # =========
         # SingleFK
 
-        self.SingleFK_offsetCtrl = Control(self.getName() + '_offset', parent=self.ctrlCmpGrp, shape="circle")
+        self.SingleFK_offsetCtrl = Control(self.getName() + '_offset', parent=self.ctrlCmpGrp, shape="cube")
         self.SingleFK_offsetCtrl.xfo = data[self.getName() + 'Xfo']
-        self.SingleFK_offsetCtrl.alignOnYAxis()
+        self.SingleFK_offsetCtrl.alignOnXAxis()
         self.SingleFK_offsetCtrlSpace = self.SingleFK_offsetCtrl.insertCtrlSpace()
 
         self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFK_offsetCtrl, shape="null")
