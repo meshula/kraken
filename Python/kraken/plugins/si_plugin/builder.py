@@ -1125,11 +1125,11 @@ class Builder(Builder):
                     si.FabricCanvasConnect(canvasOpPath, "", canvasGraphPort, portName)
 
                 if portDataType == 'EvalContext':
-                    continue
+                    return
                 elif portDataType == 'DrawingHandle':
-                    continue
+                    return
                 elif portDataType == 'InlineDebugShape':
-                    continue
+                    return
 
                 # Append the suffix based on the argument type, Softimage Only
                 if portDataType in ('Xfo', 'Mat44'):
