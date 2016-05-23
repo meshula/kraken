@@ -154,7 +154,7 @@ class HandComponentGuide(HandComponent):
         if fingersGuideXfos is not None:
 
             for finger in self.fingers.keys():
-                for i in xrange(len(self.fingers[finger]) - 1):
+                for i in xrange(len(self.fingers[finger])):
                     self.fingers[finger][i].xfo = fingersGuideXfos[finger][i]
 
                     if hasattr(self.fingers[finger][i], 'shapeCtrl'):

@@ -74,7 +74,7 @@ class ClavicleComponentGuide(ClavicleComponent):
 
         self.drawDebugInputAttr.connect(self.handDebugInputAttr)
 
-        self.clavicleUpVCtrl = Control('clavicleUpV', parent=self.ctrlCmpGrp, shape="triangle")
+        self.clavicleUpVCtrl = Control('clavicleUpV', parent=self.clavicleCtrl, shape="triangle")
         self.clavicleUpVCtrl.setColor('red')
         self.clavicleUpVCtrl.rotatePoints(-90.0, 0.0, 0.0)
         self.clavicleUpVCtrl.rotatePoints(0.0, 90.0, 0.0)
