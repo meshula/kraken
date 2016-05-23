@@ -21,6 +21,11 @@ class NeckComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
+        self.globalSRTInputTgt = self.createInput(
+            'globalSRT',
+            dataType='Xfo',
+            parent=self.inputHrcGrp).getTarget()
+
         self.neckBaseInputTgt = self.createInput(
             'neckBase', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 

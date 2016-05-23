@@ -39,6 +39,7 @@ class HeadComponent(BaseExampleComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
+        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.neckRefInputTgt = self.createInput('neckRef', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.worldRefInputTgt = self.createInput('worldRef', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 

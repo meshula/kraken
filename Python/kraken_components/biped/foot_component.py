@@ -86,15 +86,15 @@ class FootComponentGuide(FootComponent):
 
 
         self.default_data = {
-            'name': name,
-            'location': 'L',
-            'ankleXfo': Xfo(Vec3(1.75, 1.15, -1.25)),
-            'toeXfo': Xfo(Vec3(1.75, 0.4, 0.25)),
-            'toeTipXfo': Xfo(Vec3(1.75, 0.4, 1.5)),
-            'backPivotXfo': Xfo(Vec3(1.75, 0.0, -2.5)),
-            'frontPivotXfo': Xfo(Vec3(1.75, 0.0, 2.0)),
-            'outerPivotXfo': Xfo(Vec3(2.5, 0.0, -1.25)),
-            'innerPivotXfo': Xfo(Vec3(1.0, 0.0, -1.25))
+            "name": name,
+            "location": 'L',
+            "ankleXfo": Xfo(Vec3(1.75, 1.15, -1.25)),
+            "toeXfo": Xfo(Vec3(1.75, 0.4, 0.25)),
+            "toeTipXfo": Xfo(Vec3(1.75, 0.4, 1.5)),
+            "backPivotXfo": Xfo(Vec3(1.75, 0.0, -2.5)),
+            "frontPivotXfo": Xfo(Vec3(1.75, 0.0, 2.0)),
+            "outerPivotXfo": Xfo(Vec3(2.5, 0.0, -1.25)),
+            "innerPivotXfo": Xfo(Vec3(1.0, 0.0, -1.25))
         }
 
         self.loadData(self.default_data)

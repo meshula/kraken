@@ -101,8 +101,8 @@ class LegComponentGuide(LegComponent):
                 "name": name,
                 "location": "L",
                 "createIKHandle": False,
-                "femurXfo": Xfo(Vec3(0.9811, 9.769, -0.4572)),
-                "kneeXfo": Xfo(Vec3(1.408, 5.4371, -0.5043)),
+                "femurXfo": Xfo(Vec3(1.0, 9.75, -0.5)),
+                "kneeXfo": Xfo(Vec3(1.5, 5.5, -0.5)),
                 "ankleXfo": Xfo(Vec3(1.75, 1.15, -1.25))
                }
 

@@ -102,9 +102,9 @@ class ArmComponentGuide(ArmComponent):
         self.default_data = {
             "name": name,
             "location": "L",
-            "bicepXfo": Xfo(Vec3(2.27, 15.295, -0.753)),
-            "forearmXfo": Xfo(Vec3(5.039, 13.56, -0.859)),
-            "wristXfo": Xfo(Vec3(7.1886, 12.2819, 0.4906)),
+            "bicepXfo": Xfo(Vec3(2.275, 15.3, -0.75)),
+            "forearmXfo": Xfo(Vec3(5.0, 13.5, -0.75)),
+            "wristXfo": Xfo(Vec3(7.2, 12.25, 0.5)),
             "bicepFKCtrlSize": self.bicepFKCtrlSizeInputAttr.getValue(),
             "forearmFKCtrlSize": self.forearmFKCtrlSizeInputAttr.getValue()
         }
