@@ -5,10 +5,6 @@ from PySide import QtGui
 
 import types
 
-import kraken
-from kraken.ui.kraken_window import KrakenWindow
-from kraken.ui.kraken_splash import KrakenSplash
-
 import maya
 from maya import cmds
 import maya.OpenMaya as OpenMaya
@@ -23,6 +19,12 @@ try:
 except:
     # Maya 2014 and higher
     import shiboken
+
+import kraken
+from kraken import plugins
+from kraken.ui.kraken_window import KrakenWindow
+from kraken.ui.kraken_splash import KrakenSplash
+from kraken_examples.biped.biped_guide_rig import BipedGuideRig
 
 os.environ['KRAKEN_DCC'] = 'Maya'
 
@@ -75,7 +77,11 @@ class KrakenBipedBuildGuideCmd(OpenMayaMPx.MPxCommand):
 
     def doIt(self, argList):
 
-        print "Building Kraken Guide"
+        guideRig = BipedGuideRig('Biped')
+
+        builder = plugins.getBuilder()
+        builtRig = builder.build(guideRig)
+
 
     # Creator
     @staticmethod

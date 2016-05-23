@@ -137,17 +137,19 @@ def KrakenBuildBipedGuide_Execute():
     from kraken.core.objects.rig import Rig
     from kraken import plugins
 
-    bipedGuideRig = Rig()
-    # guideRig.loadRigDefinitionFile()
+    from kraken_examples.biped.biped_guide_rig import BipedGuideRig
+
 
     builtRig = None
     progressBar = None
     try:
+        guideRig = BipedGuideRig('Biped')
 
         progressBar = XSIUIToolkit.ProgressBar
         progressBar.Caption = "Building Kraken Guide: " + guideRig.getName()
         progressBar.CancelEnabled = False
         progressBar.Visible = True
+
 
         builder = plugins.getBuilder()
         builtRig = builder.build(guideRig)
