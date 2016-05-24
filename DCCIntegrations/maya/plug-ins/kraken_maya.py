@@ -22,6 +22,7 @@ except:
 
 import kraken
 from kraken import plugins
+from kraken.core.objects.rig import Rig
 from kraken.ui.kraken_window import KrakenWindow
 from kraken.ui.kraken_splash import KrakenSplash
 from kraken_examples.biped.biped_guide_rig import BipedGuideRig
@@ -77,11 +78,46 @@ class KrakenBipedBuildGuideCmd(OpenMayaMPx.MPxCommand):
 
     def doIt(self, argList):
 
-        guideRig = BipedGuideRig('Biped')
+        result = pm.promptDialog(title='Kraken: Build Biped',
+                       message='Rig Name',
+                       button=['OK', 'Cancel'],
+                       defaultButton='OK',
+                       cancelButton='Cancel',
+                       text='Biped')
 
-        builder = plugins.getBuilder()
-        builtRig = builder.build(guideRig)
+        if result == 'OK':
+            guideName = pm.promptDialog(query=True, text=True)
+            guideName.replace(' ', '')
+            guideName += '_guide'
 
+            guideRig = BipedGuideRig(guideName)
+
+            builder = plugins.getBuilder()
+
+            OpenMaya.MGlobal.displayInfo('Kraken: Building Guide Rig: ' + guideName)
+
+            try:
+                buildMsgWin = pm.window("KrakenBuildBipedWin",
+                                        title="Kraken: Build Biped",
+                                        width=200,
+                                        height=100,
+                                        sizeable=False,
+                                        titleBar=False)
+
+                buildMsglayout = pm.verticalLayout(spacing=10)
+                buildMsgText = pm.text('Kraken: Building Biped')
+                buildMsglayout.redistribute()
+                buildMsgWin.show()
+
+                pm.refresh()
+
+                builtRig = builder.build(guideRig)
+            finally:
+                if pm.window("KrakenBuildBipedWin", exists=True) is True:
+                    pm.deleteUI(buildMsgWin)
+
+        else:
+            OpenMaya.MGlobal.displayWarning('Kraken: Build Guide Rig Cancelled!')
 
     # Creator
     @staticmethod
@@ -98,7 +134,23 @@ class KrakenBipedBuildRigCmd(OpenMayaMPx.MPxCommand):
 
     def doIt(self, argList):
 
-        print "Building Kraken Rig"
+        guideRig = BipedGuideRig('Biped_guide')
+
+        synchronizer = plugins.getSynchronizer()
+
+        if guideRig.getName().endswith('_guide') is False:
+            guideRig.setName(guideRig.getName() + '_guide')
+
+        synchronizer.setTarget(guideRig)
+        synchronizer.sync()
+
+        rigBuildData = guideRig.getRigBuildData()
+        rig = Rig()
+        rig.loadRigDefinition(rigBuildData)
+
+        rig.setName(rig.getName().replace('_guide', ''))
+        builder = plugins.getBuilder()
+        builtRig = builder.build(rig)
 
     # Creator
     @staticmethod
@@ -117,11 +169,13 @@ def setupKrakenMenu():
     krakenMenu = pm.menu(menuName, parent=mainWindow, label=menuName, to=True)
 
     pm.menuItem(parent=krakenMenu, label="Open Kraken Editor", c="from maya import cmds; cmds.openKrakenEditor()")
-    pm.menuItem(parent=krakenMenu, divider=True)
+    pm.menuItem(parent=krakenMenu, divider=True, dividerLabel='Biped')
     pm.menuItem(parent=krakenMenu, label="Build Biped Guide", c="from maya import cmds; cmds.krakenBipedBuildGuide()")
     pm.menuItem(parent=krakenMenu, label="Build Biped Rig", c="from maya import cmds; cmds.krakenBipedBuildRig()")
-    pm.menuItem(parent=krakenMenu, divider=True)
-    pm.menuItem(parent=krakenMenu, label="Help", c="import webbrowser; webbrowser.open_new_tab('http://fabric-engine.github.io/Kraken')")
+    pm.menuItem(parent=krakenMenu, divider=True, dividerLabel='Resources')
+    pm.menuItem(parent=krakenMenu, label="Kraken Web Site", c="import webbrowser; webbrowser.open_new_tab('http://fabric-engine.github.io/Kraken')")
+    pm.menuItem(parent=krakenMenu, label="Kraken Documentation", c="import webbrowser; webbrowser.open_new_tab('http://kraken-rigging-framework.readthedocs.io')")
+    pm.menuItem(parent=krakenMenu, label="Fabric Forums", c="import webbrowser; webbrowser.open_new_tab('http://forums.fabricengine.com/categories/kraken')")
 
 
 def removeKrakenMenu():
