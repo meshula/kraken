@@ -13,13 +13,13 @@ class DCCHandler(logging.Handler):
         msg = self.format(record)
 
         if record.levelno == logging.CRITICAL:
-            om.MGlobal.displayWarning(msg)
+            om.MGlobal.displayError(msg)
 
         elif record.levelno == logging.ERROR:
-            om.MGlobal.displayWarning(msg)
+            om.MGlobal.displayError(msg)
 
         elif record.levelno == logging.WARNING:
-            om.MGlobal.displayError(msg)
+            om.MGlobal.displayWarning(msg)
 
         elif record.levelno == logging.INFORM:
             om.MGlobal.displayInfo(msg)
