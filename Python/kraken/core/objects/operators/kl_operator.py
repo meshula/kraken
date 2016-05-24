@@ -39,6 +39,11 @@ class KLOperator(Operator):
         if self.extension != 'Kraken':
             ks.loadExtension(self.extension)
         self.solverRTVal = ks.constructRTVal(self.solverTypeName)
+        print("TTPrint: self.solverRTVal:"),;print(self.solverRTVal)
+        result = self.solverRTVal.result
+        print("TTPrint: result:"),;print(result)
+        bone0Length = self.solverRTVal.bone0Length
+        print("TTPrint: bone0Length:"),;print(bone0Length)
 
         self.args = self.solverRTVal.getArguments('KrakenSolverArg[]')
 
