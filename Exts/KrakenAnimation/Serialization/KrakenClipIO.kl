@@ -44,3 +44,15 @@ function KrakenClip KrakenClip_loadFromFile(String filePath) {
     clip.loadFromJson(doc.root.get('content'));
   return clip;
 }
+
+struct KrakenClipHandle
+{
+};
+
+function KrakenClip KrakenClipHandle.loadFromFile(String filePath) {
+  return KrakenClip_loadFromFile(filePath);
+}
+
+function Boolean KrakenClipHandle.saveToFile(Ref<KrakenClip> clipRef, String filePath) {
+  return KrakenClip_saveToFile(clipRef, filePath);
+}

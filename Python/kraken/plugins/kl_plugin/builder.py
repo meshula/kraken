@@ -54,6 +54,7 @@ class Builder(Builder):
     __klCanvasOps = None
     __klPreCode = None
     __klExtExecuted = None
+    __klArgs = None
     __krkItems = None
     __krkAttributes = None
     __krkDeformers = None
@@ -131,6 +132,27 @@ class Builder(Builder):
         self.__pathToName[item.getDecoratedPath()] = name
 
         return name
+
+    def getUniqueArgMember(self, item, arg, argType):
+        member = self.getUniqueName(item)
+
+        argLookup = member + ' | ' + arg
+        if self.__klArgs['lookup'].has_key(argLookup):
+            return self.__klArgs['lookup'][argLookup]
+
+        typedArgs = self.__klArgs['members'].get(argType, [])
+        index = len(typedArgs)
+        typedArgs.append(argLookup)
+
+        baseArgType = argType
+        if argType.find('[') > -1:
+          baseArgType = argType[0:argType.find('[')]+'Array'
+        argMember = 'args_%s[%d]' % (baseArgType, index)
+
+        self.__klArgs['lookup'][argLookup] = argMember
+        self.__klArgs['members'][argType] = typedArgs
+
+        return argMember
 
     def __getXfoAsStr(self, xfo):
         valueStr = "Xfo(Vec3(%.4f, %.4f, %.4f), Quat(%.4f, %.4f, %.4f, %.4f), Vec3(%.4f, %.4f, %.4f))" % (
@@ -226,7 +248,7 @@ class Builder(Builder):
                         argDataType = arg.dataType.getSimpleType()
                         argConnectionType = arg.connectionType.getSimpleType()
                         connectedObjects = None
-                        argVarName = "%s_%s" % (sourceMember, argName)
+                        argMember = self.getUniqueArgMember(kOperator, argName, argDataType)
                         isArray = argDataType.endswith('[]')
 
                         if argConnectionType == 'In':
@@ -235,7 +257,7 @@ class Builder(Builder):
                             connectedObjects = kOperator.getOutput(argName)
 
                         if isArray:
-                            kl += ["  %s %s[](%d);" % (argDataType[:-2], argVarName, len(connectedObjects))]
+                            kl += ["  this.%s.resize(%d);" % (argMember, len(connectedObjects))]
                             if argConnectionType == 'Out':
                                 continue
                             for j in xrange(len(connectedObjects)):
@@ -243,35 +265,31 @@ class Builder(Builder):
 
                                 if isinstance(connected, Attribute):
                                     connectedObj = self.findKLAttribute(connected)
-                                    kl += ["  %s[%d] = this.%s.value;" % (argVarName, j, connectedObj['member'])]
+                                    kl += ["  this.%s[%d] = this.%s.value;" % (argMember, j, connectedObj['member'])]
                                     continue
                                 elif isinstance(connected, SceneItem):
                                     connectedObj = self.findKLObjectForSI(connected)
                                     kl += self.__visitKLObject(connectedObj)
                                     if argDataType == "Mat44[]":
-                                        kl += ["  %s[%d] = this.%s.globalXfo.toMat44();" % (argVarName, j, connectedObj['member'])]
+                                        kl += ["  this.%s[%d] = this.%s.globalXfo.toMat44();" % (argMember, j, connectedObj['member'])]
                                     else:
-                                        kl += ["  %s[%d] = this.%s.globalXfo;" % (argVarName, j, connectedObj['member'])]
+                                        kl += ["  this.%s[%d] = this.%s.globalXfo;" % (argMember, j, connectedObj['member'])]
                                 elif isinstance(connected, Xfo):
                                     if argDataType == "Mat44[]":
-                                        kl += ["  %s[%d] = %s.toMat44();" % (argVarName, j, self.__getXfoAsStr(connected))]
+                                        kl += ["  this.%s[%d] = %s.toMat44();" % (argMember, j, self.__getXfoAsStr(connected))]
                                     else:
-                                        kl += ["  %s[%d] = %s;" % (argVarName, j, self.__getXfoAsStr(connected))]
+                                        kl += ["  this.%s[%d] = %s;" % (argMember, j, self.__getXfoAsStr(connected))]
                                 elif isinstance(connected, str):
-                                    kl += ["  %s[%d] = \"%s\";" % (argVarName, j, connected)]
+                                    kl += ["  this.%s[%d] = \"%s\";" % (argMember, j, connected)]
                                 else:
-                                    kl += ["  %s[%d] = %s;" % (argVarName, j, str(connected))]
+                                    kl += ["  this.%s[%d] = %s;" % (argMember, j, str(connected))]
 
-                            continue
-
-                        if argConnectionType == 'Out':
-                            kl += ["  %s %s;" % (argDataType, argVarName)]
                             continue
 
                         connected = connectedObjects
                         if isinstance(connected, Attribute):
                             connectedObj = self.findKLAttribute(connected)
-                            kl += ["  %s %s = this.%s.value;" % (argDataType, argVarName, connectedObj['member'])]
+                            kl += ["  this.%s = this.%s.value;" % (argMember, connectedObj['member'])]
                             continue
 
                         if isinstance(connected, SceneItem):
@@ -279,21 +297,21 @@ class Builder(Builder):
                             kl += self.__visitKLObject(connectedObj)
 
                             if argDataType == "Mat44":
-                                kl += ["  %s %s = this.%s.globalXfo.toMat44();" % (argDataType, argVarName, connectedObj['member'])]
+                                kl += ["  this.%s = this.%s.globalXfo.toMat44();" % (argMember, connectedObj['member'])]
                             else:
-                                kl += ["  %s %s = this.%s.globalXfo;" % (argDataType, argVarName, connectedObj['member'])]
+                                kl += ["  this.%s = this.%s.globalXfo;" % (argMember, connectedObj['member'])]
 
                         elif isinstance(connected, Xfo):
                             if argDataType == "Mat44":
-                                kl += ["  %s %s = %s.toMat44();" % (argDataType, argVarName, self.__getXfoAsStr(connected))]
+                                kl += ["  this.%s = %s.toMat44();" % (argMember, self.__getXfoAsStr(connected))]
                             else:
-                                kl += ["  %s %s = %s;" % (argDataType, argVarName, self.__getXfoAsStr(connected))]
+                                kl += ["  this.%s = %s;" % (argMember, self.__getXfoAsStr(connected))]
                         elif isinstance(connected, str):
-                            kl += ["  %s %s = \"%s\";" % (argDataType, argVarName, connected)]
+                            kl += ["  this.%s = \"%s\";" % (argMember, connected)]
                         elif isinstance(connected, bool):
-                            kl += ["  %s %s = %s;" % (argDataType, argVarName, str(connected).lower())]
+                            kl += ["  this.%s = %s;" % (argMember, str(connected).lower())]
                         else:
-                            kl += ["  %s %s = %s;" % (argDataType, argVarName, str(connected))]
+                            kl += ["  this.%s = %s;" % (argMember, str(connected))]
 
                     # perform the solve
                     if self.__debugMode:
@@ -304,17 +322,17 @@ class Builder(Builder):
                             argConnectionType = arg.connectionType.getSimpleType()
                             if argConnectionType != 'In':
                                 continue
-                            kl += ["  report(\"arg %s \" + %s_%s);" % (argName, sourceMember, argName)]
+                            kl += ["  report(\"arg %s \" + this.%s);" % (argName, argMember)]
 
                     kl += ["  this.%s.solve(" % sourceMember]
                     for i in xrange(len(args)):
                         arg = args[i]
                         argName = arg.name.getSimpleType()
-                        argVarName = "%s_%s" % (sourceMember, argName)
+                        argMember = self.getUniqueArgMember(kOperator, argName, argDataType)
                         comma = ""
                         if i < len(args) - 1:
                             comma = ","
-                        kl += ["    %s%s" % (argVarName, comma)]
+                        kl += ["    this.%s%s" % (argMember, comma)]
 
                     kl += ["  );"]
                     self.__krkVisitedObjects.append(sourceSolver);
@@ -327,7 +345,7 @@ class Builder(Builder):
                     argConnectionType = arg.connectionType.getSimpleType()
                     if argConnectionType == 'In':
                       continue
-                    argVarName = "%s_%s" % (sourceMember, argName)
+                    argMember = self.getUniqueArgMember(kOperator, argName, argDataType)
                     connectedObjects = kOperator.getOutput(argName)
                     if not argDataType.endswith('[]'):
                         connectedObjects = [connectedObjects]
@@ -337,9 +355,9 @@ class Builder(Builder):
                         if connected.getDecoratedPath() == item['sceneItem'].getDecoratedPath():
                             kl += ["", "  // retrieving value for %s from solver %s" % (member, sourceMember)]
                             if argDataType.endswith('[]'):
-                                kl += ["  this.%s.globalXfo = %s_%s[%d];" % (member, sourceMember, argName, j)]
+                                kl += ["  this.%s.globalXfo = this.%s[%d];" % (member, argMember, j)]
                             else:
-                                kl += ["  this.%s.globalXfo = %s_%s;" % (member, sourceMember, argName)]
+                                kl += ["  this.%s.globalXfo = this.%s;" % (member, argMember)]
                         else:
                             connectedObj = self.findKLObjectForSI(connected)
                             kl += self.__visitKLObject(connectedObj)
@@ -387,6 +405,14 @@ class Builder(Builder):
             if attr['sceneItem'].isTypeOf('ScalarAttribute') and not isinstance(source, Attribute):
                 scalarAttributes.append(attr)
 
+        for solver in self.__klSolvers:
+            args = solver['sceneItem'].getSolverArgs()
+            for i in xrange(len(args)):
+                arg = args[i]
+                argName = arg.name.getSimpleType()
+                argDataType = arg.dataType.getSimpleType()
+                argMember = self.getUniqueArgMember(solver['sceneItem'], argName, argDataType)
+
         kl = []
         kl += ["require Math;"]
         kl += ["require Geometry;"]
@@ -401,6 +427,17 @@ class Builder(Builder):
         kl += ["  KrakenClip clip; // the default clip of the rig"]
         for member in self.__klMembers:
             kl += ["  %s %s;" % (member['type'], member['name'])]
+
+        for argType in self.__klArgs['members']:
+            prefix = argType
+            midfix = ""
+            suffix = ""
+            if argType.find('[') > -1:
+              prefix = argType[:-2]
+              midfix = "Array"
+              suffix = "[]"
+            kl += ["  %s args_%s%s[%d]%s;" % (prefix, prefix, midfix, len(self.__klArgs['members'][argType]), suffix)]
+
         kl += ["};"]
         kl += [""]
         kl += ["function %s() {" % self.getKLExtensionName()]
@@ -1572,6 +1609,7 @@ class Builder(Builder):
         self.__klSolvers = []
         self.__klCanvasOps = []
         self.__klExtExecuted = False
+        self.__klArgs = {'members': {}, 'lookup': {}}
         self.__klPreCode = []
         self.__krkItems = {}
         self.__krkAttributes = {}
