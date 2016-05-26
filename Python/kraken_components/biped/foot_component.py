@@ -26,8 +26,8 @@ from kraken.helpers.utility_methods import logHierarchy
 class FootComponent(BaseExampleComponent):
     """Foot Component"""
 
-    def __init__(self, name="footBase", parent=None):
-        super(FootComponent, self).__init__(name, parent)
+    def __init__(self, name="footBase", parent=None, *args, **kwargs):
+        super(FootComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -54,10 +54,10 @@ class FootComponent(BaseExampleComponent):
 class FootComponentGuide(FootComponent):
     """Foot Component Guide"""
 
-    def __init__(self, name='foot', parent=None):
+    def __init__(self, name='foot', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Foot Component:" + name)
-        super(FootComponentGuide, self).__init__(name, parent)
+        super(FootComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
         # =========
         # Controls

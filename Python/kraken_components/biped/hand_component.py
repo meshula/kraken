@@ -30,8 +30,8 @@ from kraken.core.profiler import Profiler
 class HandComponent(BaseExampleComponent):
     """Hand Component Base"""
 
-    def __init__(self, name='hand', parent=None):
-        super(HandComponent, self).__init__(name, parent)
+    def __init__(self, name='hand', parent=None, *args, **kwargs):
+        super(HandComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -53,10 +53,10 @@ class HandComponent(BaseExampleComponent):
 class HandComponentGuide(HandComponent):
     """Hand Component Guide"""
 
-    def __init__(self, name='hand', parent=None):
+    def __init__(self, name='hand', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Hand Guide Component:" + name)
-        super(HandComponentGuide, self).__init__(name, parent)
+        super(HandComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
 
         # =========
@@ -161,6 +161,10 @@ class HandComponentGuide(HandComponent):
                         if fingerShapeCtrlData is not None:
                             if finger in fingerShapeCtrlData:
                                 self.fingers[finger][i].shapeCtrl.setCurveData(fingerShapeCtrlData[finger][i])
+
+        for op in self.getOperators():
+            guideOpName = ''.join([op.getName().split('FingerGuideOp')[0], self.getLocation(), 'FingerGuideOp'])
+            op.setName(guideOpName)
 
         return True
 
@@ -284,7 +288,7 @@ class HandComponentGuide(HandComponent):
         # Create Canvas Operators
         # ===========================
         # Add Finger Guide Canvas Op
-        fingerGuideCanvasOp = CanvasOperator(name + self.getLocation() + 'FingerGuideOp', 'Kraken.Solvers.Biped.BipedFingerGuideSolver')
+        fingerGuideCanvasOp = CanvasOperator(name + 'FingerGuideOp', 'Kraken.Solvers.Biped.BipedFingerGuideSolver')
         self.addOperator(fingerGuideCanvasOp)
 
         # Add Att Inputs

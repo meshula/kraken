@@ -27,8 +27,8 @@ from kraken.helpers.utility_methods import logHierarchy
 class ClavicleComponent(BaseExampleComponent):
     """Clavicle Component Base"""
 
-    def __init__(self, name='clavicle', parent=None):
-        super(ClavicleComponent, self).__init__(name, parent)
+    def __init__(self, name='clavicle', parent=None, *args, **kwargs):
+        super(ClavicleComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -53,10 +53,10 @@ class ClavicleComponent(BaseExampleComponent):
 class ClavicleComponentGuide(ClavicleComponent):
     """Clavicle Component Guide"""
 
-    def __init__(self, name='clavicle', parent=None):
+    def __init__(self, name='clavicle', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Clavicle Guide Component:" + name)
-        super(ClavicleComponentGuide, self).__init__(name, parent)
+        super(ClavicleComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
 
         # =========

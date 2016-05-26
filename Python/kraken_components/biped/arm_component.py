@@ -24,8 +24,8 @@ from kraken.core.profiler import Profiler
 class ArmComponent(BaseExampleComponent):
     """Arm Component Base"""
 
-    def __init__(self, name='arm', parent=None):
-        super(ArmComponent, self).__init__(name, parent)
+    def __init__(self, name='arm', parent=None, *args, **kwargs):
+        super(ArmComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -50,13 +50,12 @@ class ArmComponent(BaseExampleComponent):
         self.ikBlendOutputAttr = self.createOutput('ikBlend', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
 
 
-
 class ArmComponentGuide(ArmComponent):
     """Arm Component Guide"""
 
-    def __init__(self, name='arm', parent=None):
+    def __init__(self, name='arm', parent=None, *args, **kwargs):
         Profiler.getInstance().push("Construct Arm Guide Component:" + name)
-        super(ArmComponentGuide, self).__init__(name, parent)
+        super(ArmComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Attributes
@@ -84,20 +83,20 @@ class ArmComponentGuide(ArmComponent):
         self.guideOpHost = Transform('guideOpHost', self.ctrlCmpGrp)
 
         # Guide Operator
-        self.neckGuideKLOp = KLOperator(name + self.getLocation() + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
-        self.addOperator(self.neckGuideKLOp)
+        self.armGuideKLOp = KLOperator(name + self.getLocation() + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
+        self.addOperator(self.armGuideKLOp)
 
         # Add Att Inputs
-        self.neckGuideKLOp.setInput('drawDebug', self.armGuideDebugAttr)
-        self.neckGuideKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.armGuideKLOp.setInput('drawDebug', self.armGuideDebugAttr)
+        self.armGuideKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Source Inputs
-        self.neckGuideKLOp.setInput('root', self.bicepCtrl)
-        self.neckGuideKLOp.setInput('mid', self.forearmCtrl)
-        self.neckGuideKLOp.setInput('end', self.wristCtrl)
+        self.armGuideKLOp.setInput('root', self.bicepCtrl)
+        self.armGuideKLOp.setInput('mid', self.forearmCtrl)
+        self.armGuideKLOp.setInput('end', self.wristCtrl)
 
         # Add Target Outputs
-        self.neckGuideKLOp.setOutput('guideOpHost', self.guideOpHost)
+        self.armGuideKLOp.setOutput('guideOpHost', self.guideOpHost)
 
         self.default_data = {
             "name": name,
@@ -151,6 +150,9 @@ class ArmComponentGuide(ArmComponent):
         self.bicepCtrl.xfo = data['bicepXfo']
         self.forearmCtrl.xfo = data['forearmXfo']
         self.wristCtrl.xfo = data['wristXfo']
+
+        guideOpName = ''.join([self.getName().split('GuideKLOp')[0], self.getLocation(), 'GuideKLOp'])
+        self.armGuideKLOp.setName(guideOpName)
 
         return True
 

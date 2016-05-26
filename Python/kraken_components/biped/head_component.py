@@ -32,8 +32,8 @@ logger = getLogger('kraken')
 class HeadComponent(BaseExampleComponent):
     """Head Component Base"""
 
-    def __init__(self, name='headBase', parent=None):
-        super(HeadComponent, self).__init__(name, parent)
+    def __init__(self, name='headBase', parent=None, *args, **kwargs):
+        super(HeadComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -59,10 +59,10 @@ class HeadComponent(BaseExampleComponent):
 class HeadComponentGuide(HeadComponent):
     """Head Component Guide"""
 
-    def __init__(self, name='head', parent=None):
+    def __init__(self, name='head', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Head Guide Component:" + name)
-        super(HeadComponentGuide, self).__init__(name, parent)
+        super(HeadComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
 
         # =========
@@ -303,7 +303,7 @@ class HeadComponentRig(HeadComponent):
         self.headInputConstraint.addConstrainer(self.neckRefInputTgt)
         self.headCtrlSpace.addConstraint(self.headInputConstraint)
 
-        # # Constraint outputs
+        # Constraint outputs
         self.headOutputConstraint = PoseConstraint('_'.join([self.headOutputTgt.getName(), 'To', self.headCtrl.getName()]))
         self.headOutputConstraint.addConstrainer(self.headCtrl)
         self.headOutputTgt.addConstraint(self.headOutputConstraint)

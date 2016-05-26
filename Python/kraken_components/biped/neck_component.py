@@ -14,8 +14,8 @@ from kraken.core.profiler import Profiler
 class NeckComponent(BaseExampleComponent):
     """Neck Component"""
 
-    def __init__(self, name="neckBase", parent=None):
-        super(NeckComponent, self).__init__(name, parent)
+    def __init__(self, name="neckBase", parent=None, *args, **kwargs):
+        super(NeckComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -52,10 +52,10 @@ class NeckComponent(BaseExampleComponent):
 class NeckComponentGuide(NeckComponent):
     """Neck Component Guide"""
 
-    def __init__(self, name='neck', parent=None):
+    def __init__(self, name='neck', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push('Construct Neck Component:' + name)
-        super(NeckComponentGuide, self).__init__(name, parent)
+        super(NeckComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
         # =========
         # Controls

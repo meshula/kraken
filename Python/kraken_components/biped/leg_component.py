@@ -27,9 +27,9 @@ from kraken.helpers.utility_methods import logHierarchy
 class LegComponent(BaseExampleComponent):
     """Leg Component"""
 
-    def __init__(self, name='legBase', parent=None):
+    def __init__(self, name='legBase', parent=None, *args, **kwargs):
 
-        super(LegComponent, self).__init__(name, parent)
+        super(LegComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -59,10 +59,10 @@ class LegComponent(BaseExampleComponent):
 class LegComponentGuide(LegComponent):
     """Leg Component Guide"""
 
-    def __init__(self, name='leg', parent=None):
+    def __init__(self, name='leg', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Leg Guide Component:" + name)
-        super(LegComponentGuide, self).__init__(name, parent)
+        super(LegComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
 
         # =========
@@ -81,20 +81,20 @@ class LegComponentGuide(LegComponent):
         self.guideOpHost = Transform('guideOpHost', self.ctrlCmpGrp)
 
         # Guide Operator
-        self.neckGuideKLOp = KLOperator(name + self.getLocation() + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
-        self.addOperator(self.neckGuideKLOp)
+        self.legGuideKLOp = KLOperator(name + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
+        self.addOperator(self.legGuideKLOp)
 
         # Add Att Inputs
-        self.neckGuideKLOp.setInput('drawDebug', self.armGuideDebugAttr)
-        self.neckGuideKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.legGuideKLOp.setInput('drawDebug', self.armGuideDebugAttr)
+        self.legGuideKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Source Inputs
-        self.neckGuideKLOp.setInput('root', self.femurCtrl)
-        self.neckGuideKLOp.setInput('mid', self.kneeCtrl)
-        self.neckGuideKLOp.setInput('end', self.ankleCtrl)
+        self.legGuideKLOp.setInput('root', self.femurCtrl)
+        self.legGuideKLOp.setInput('mid', self.kneeCtrl)
+        self.legGuideKLOp.setInput('end', self.ankleCtrl)
 
         # Add Target Outputs
-        self.neckGuideKLOp.setOutput('guideOpHost', self.guideOpHost)
+        self.legGuideKLOp.setOutput('guideOpHost', self.guideOpHost)
 
 
         self.default_data = {
@@ -148,6 +148,9 @@ class LegComponentGuide(LegComponent):
         self.femurCtrl.xfo = data.get('femurXfo')
         self.kneeCtrl.xfo = data.get('kneeXfo')
         self.ankleCtrl.xfo = data.get('ankleXfo')
+
+        guideOpName = ''.join([self.getName().split('GuideKLOp')[0], self.getLocation(), 'GuideKLOp'])
+        self.legGuideKLOp.setName(guideOpName)
 
         return True
 
