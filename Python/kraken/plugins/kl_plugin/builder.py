@@ -212,7 +212,6 @@ class Builder(Builder):
             self.__krkVisitedObjects.append(item);
             return kl
 
-
         objects = [self.findKLObjectForSI(obj) for obj in sources if self.findKLObjectForSI(obj)]
         if len(objects) > 1:
             print ("WARNING: object %s has more than one object source: %s (Parenting to last)." % (item['sceneItem'], [o["member"] for o in objects]))
@@ -255,9 +254,9 @@ class Builder(Builder):
         for sourceSolver in solvers:
 
             if sourceSolver:
-                sourceMember = sourceSolver['member']
-                sourceName = self.getUniqueName(sourceSolver['sceneItem'])
                 kOperator = sourceSolver['sceneItem']
+                sourceMember = sourceSolver['member']
+                sourceName = self.getUniqueName(kOperator)
                 args = kOperator.getSolverArgs()
 
                 if not sourceSolver.get('visited', False):
@@ -354,6 +353,7 @@ class Builder(Builder):
                     for i in xrange(len(args)):
                         arg = args[i]
                         argName = arg.name.getSimpleType()
+                        argDataType = arg.dataType.getSimpleType()
                         argMember = self.getUniqueArgMember(kOperator, argName, argDataType)
                         comma = ""
                         if i < len(args) - 1:
@@ -378,6 +378,7 @@ class Builder(Builder):
 
                     for j in xrange(len(connectedObjects)):
                         connected = connectedObjects[j]
+
                         if connected.getDecoratedPath() == item['sceneItem'].getDecoratedPath():
                             kl += ["", "  // retrieving value for %s from solver %s" % (member, sourceName)]
                             if argDataType.endswith('[]'):
