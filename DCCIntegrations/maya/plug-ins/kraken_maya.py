@@ -155,7 +155,7 @@ class KrakenBipedBuildRigCmd(OpenMayaMPx.MPxCommand):
             OpenMaya.MGlobal.displayWarning('Kraken: Selected object is not the top node of a Kraken Rig!')
             return False
 
-        guideName = firstObjDepNode.name()
+        guideName = str(firstObjDepNode.name())
         if guideName.endswith('_guide') is False:
             OpenMaya.MGlobal.displayWarning("Kraken: Biped Guide name must end in '_guide'!")
             return False
