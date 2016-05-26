@@ -53,6 +53,7 @@ class Builder(Builder):
     __klSolvers = None
     __klCanvasOps = None
     __klPreCode = None
+    __klConstants = None
     __klExtExecuted = None
     __klArgs = None
     __krkItems = None
@@ -167,9 +168,10 @@ class Builder(Builder):
         index = len(typedArgs)
         typedArgs.append(name)
 
-        # todo: switch this to constants!
+        constantName = '%s_%s' % (self.getKLExtensionName(), name)
+        self.__klConstants[constantName] = index
 
-        member = '_%s[%d]' % (argType, index)
+        member = '_%s[%s]' % (argType, constantName)
         self.__klMembers['lookup'][name] = member
         self.__klMembers['members'][argType] = typedArgs
 
@@ -201,10 +203,11 @@ class Builder(Builder):
         item['visited'] = True
 
         member = item['member']
+        name = self.getUniqueName(item['sceneItem'])
 
         sources = item['sceneItem'].getSources()
         if not sources:
-            kl += ["", "  // solving global transform %s" % member]
+            kl += ["", "  // solving global transform %s" % name]
             kl += ["  this.%s.globalXfo = this.%s.xfo;" % (member, member)]
             self.__krkVisitedObjects.append(item);
             return kl
@@ -216,9 +219,9 @@ class Builder(Builder):
         if len(objects):
             parent = objects[-1]
             kl += self.__visitKLObject(parent)
-            kl += ["", "  // solving parent child constraint %s" % member]
+            kl += ["", "  // solving parent child constraint %s" % name]
             if self.__debugMode:
-                kl += ["  report(\"solving parent child constraint %s\");" % member]
+                kl += ["  report(\"solving parent child constraint %s\");" % name]
             kl += ["  this.%s.globalXfo = this.%s.globalXfo * this.%s.xfo;" % (member, parent['member'], member)]
 
         constraints = [self.findKLConstraint(constraint) for constraint in sources if self.findKLConstraint(constraint)]
@@ -226,15 +229,16 @@ class Builder(Builder):
 
             if sourceConstraint:
                 sourceMember = sourceConstraint['member']
+                sourceName = self.getUniqueName(sourceConstraint['sceneItem'])
                 constraint = sourceConstraint['sceneItem']
                 for i in range(len(constraint.getConstrainers())):
                     constrainer = constraint.getConstrainers()[i]
                     constrainerObj = self.findKLObjectForSI(constrainer)
                     kl += self.__visitKLObject(constrainerObj)
 
-                kl += ["", "  // solving %s constraint %s" % (sourceConstraint['sceneItem'].__class__.__name__, sourceMember)]
+                kl += ["", "  // solving %s constraint %s" % (sourceConstraint['sceneItem'].__class__.__name__, sourceName)]
                 if self.__debugMode:
-                    kl += ["  report(\"solving %s constraint %s\");" % (sourceConstraint['sceneItem'].__class__.__name__, sourceMember)]
+                    kl += ["  report(\"solving %s constraint %s\");" % (sourceConstraint['sceneItem'].__class__.__name__, sourceName)]
                 for i in range(len(constraint.getConstrainers())):
                     constrainer = constraint.getConstrainers()[i]
                     constrainerObj = self.findKLObjectForSI(constrainer)
@@ -252,15 +256,16 @@ class Builder(Builder):
 
             if sourceSolver:
                 sourceMember = sourceSolver['member']
+                sourceName = self.getUniqueName(sourceSolver['sceneItem'])
                 kOperator = sourceSolver['sceneItem']
                 args = kOperator.getSolverArgs()
 
                 if not sourceSolver.get('visited', False):
                     sourceSolver['visited'] = True
 
-                    kl += ["", "  // solving KLSolver %s" % (sourceMember)]
+                    kl += ["", "  // solving KLSolver %s" % (sourceName)]
                     if self.__debugMode:
-                        kl += ["  report(\"solving KLSolver %s\");" % (sourceMember)]
+                        kl += ["  report(\"solving KLSolver %s\");" % (sourceName)]
 
                     # first let's find all args which are arrays and prepare storage
                     for i in xrange(len(args)):
@@ -374,7 +379,7 @@ class Builder(Builder):
                     for j in xrange(len(connectedObjects)):
                         connected = connectedObjects[j]
                         if connected.getDecoratedPath() == item['sceneItem'].getDecoratedPath():
-                            kl += ["", "  // retrieving value for %s from solver %s" % (member, sourceMember)]
+                            kl += ["", "  // retrieving value for %s from solver %s" % (member, sourceName)]
                             if argDataType.endswith('[]'):
                                 kl += ["  this.%s.globalXfo = this.%s[%d];" % (member, argMember, j)]
                             else:
@@ -442,6 +447,9 @@ class Builder(Builder):
         kl += ["require KrakenAnimation;"]
         for extension in self.__klExtensions:
             kl += ["require %s;" % extension]
+        kl += [""]
+        for constant in self.__klConstants:
+            kl += ["const UInt32 %s = %d;" % (constant, self.__klConstants[constant])]
         kl += [""]
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  Float64 solveTimeMs;"]
@@ -1625,6 +1633,7 @@ class Builder(Builder):
         self.__klConstraints = []
         self.__klSolvers = []
         self.__klCanvasOps = []
+        self.__klConstants = {}
         self.__klExtExecuted = False
         self.__klArgs = {'members': {}, 'lookup': {}}
         self.__klPreCode = []
