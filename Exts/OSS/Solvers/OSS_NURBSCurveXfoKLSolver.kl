@@ -2,10 +2,8 @@ require Math;
 require Curves;
 require InlineDrawing;
 
-
 object OSS_NURBSCurveXfoKLSolver : KrakenSolver {
 };
-
 
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
@@ -27,7 +25,6 @@ function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   args.push(KrakenSolverArg('outputs', 'Out', 'Mat44[]'));
   return args;
 }
-
 
 // Solve
 function OSS_NURBSCurveXfoKLSolver.solve!(
@@ -57,76 +54,77 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   UInt32 outCount = params.size();
   Xfo posedXfo;
   Xfo restXfo;
-  UInt8 tAlignX;
-  UInt8 tAlignY;
-  UInt8 tAlignZ;
-  // realign the inputs
-  // for (UInt32 i =0; i<inCount; i++) {
-  //   posedXfo = Xfo(controls[i]);
-  //   restXfo  = Xfo(controlsRest[i]);
-  //   tAlignX = controlAligns[i].x;
-  //   tAlignY = controlAligns[i].y;
-  //   tAlignZ = controlAligns[i].z;
-  //   posedXfo.align(tAlignX, tAlignY, tAlignZ);
-  //   restXfo.align(tAlignX, tAlignY, tAlignZ);
-  //   controls[i] = posedXfo.toMat44();
-  //   controlsRest[i] = restXfo.toMat44();
-  // }
 
   Scalar keepCurveLen = 0;
-  
   outputs.resize(outCount);
+
+  Mat44 alignedControls[];
+  alignedControls.resize(inCount);
+  Mat44 alignedControlsRest[];
+  alignedControlsRest.resize(inCount);
+  for (UInt32 i =0; i<inCount; i++) {
+    alignedControls[i] = controls[i];
+    alignedControls[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
+    alignedControlsRest[i] = controlsRest[i];
+    alignedControlsRest[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
+  }
 
   NURBSCurve restCurve = NURBSCurve();
   NURBSCurve posedCurve = NURBSCurve();
 
-  restCurve.initiate(controlsRest, degree);
-  posedCurve.initiate(controls, degree);
+  restCurve.initiate(alignedControlsRest, degree);
+  posedCurve.initiate(alignedControls, degree);
+  Ref <NURBSCurve> posedCurveRef = posedCurve;
+  Ref <NURBSCurve> restCurveRef = restCurve;
+
   // positions = restCurve.positions.values;
   // colors  = restCurve.colors.values;
   // normals = restCurve.normals.values;
   
   Vec3 altNormals[];
-  altNormals.resize(outCount);
-
   Vec3 altTangents[];
-  altTangents.resize(outCount);
-
   Xfo xfos[];
-  xfos.resize(outCount);
-
   Vec3 positions[];
-  positions.resize(outCount);
-  
   Scalar compression[];
+
+  altNormals.resize(outCount);
+  altTangents.resize(outCount);
+  xfos.resize(outCount);
+  positions.resize(outCount);
   compression.resize(outCount);
+  outputs.resize(outCount);
 
   Xfo parentXfo;
   parentXfo.setFromMat44(parent);
-
   Quat parentRotation = parentXfo.ori;
   Vec3 localAltTangent = parentRotation.rotateVector(altTangent);
-  
-  outputs.resize(outCount);
   
   Scalar useLocalNormal = 1; 
   Scalar followCurveNormal = 1; 
 
-  Ref <NURBSCurve> posedCurveRef = posedCurve;
-  Ref <NURBSCurve> restCurveRef = restCurve;
-  
   for (UInt32 i =0; i<outCount; i++) {
-    positions[i] = posedCurveRef.getPoint(params[i], keepArcLength, keepCurveLen);
-    altNormals[i] = positions[i] - parent.translation();
+    positions[i]   = posedCurveRef.getPoint(params[i], keepArcLength, keepCurveLen);
+    altNormals[i]  = positions[i] - parent.translation();
     
     altTangents[i] = localAltTangent;
-    altNormals[i] = positions[i] - parent.translation();
-    __evalXfosTask(i, xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, altTangents, altNormals);
-    __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
-
-    Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
-    xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
-    xfos[i].align(alignX, alignY, alignZ);
+    altNormals[i]  = positions[i] - parent.translation();
+    __evalXfosTask(i, xfos, posedCurveRef, params, keepArcLength, 1, useLocalNormal, followCurveTangent, followCurveNormal, altTangents, altNormals);
+    // __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
+    // Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
+    // xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
     outputs[i] = xfos[i].toMat44();
   }
+  // Set debugging visibility.
+  // this.setDebug(drawDebug);
+  // if(this.drawDebug) {
+  //   if(!this.handle)
+  //     report('creating new handle');
+  //     this.handle = DrawingHandle();
+  //   // this.handle.drawAxesInstances('axes', outputs, dummyResult, instance);
+  //   this.handle = DrawingHandle();
+  //   drawLineStrip(this.handle.rootTransform, 'curve', positions, Color(1.0, 0.0, 0));
+
+        
+      // InlinePointsShape myShape = drawPoints(root, 'tipPositions', positions, Color(0.0, 1.0, 0), 2);
+  // }
 }
