@@ -140,8 +140,6 @@ class KLOperator(Operator):
             object: Input object.
 
         """
-        print("TTPrint: name:"),;print(name)
-
         if name in self.inputs and self.inputs[name] is not None:
             return self.inputs[name]
 
