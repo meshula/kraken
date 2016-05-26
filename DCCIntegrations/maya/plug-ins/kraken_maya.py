@@ -43,7 +43,7 @@ class OpenKrakenEditorCmd(OpenMayaMPx.MPxCommand):
         OpenMayaMPx.MPxCommand.__init__(self)
 
     # Invoked when the command is run.
-    def doIt(self, argList):
+    def doIt(self, args):
 
         app = QtGui.QApplication.instance()
         if not app:
@@ -77,7 +77,7 @@ class KrakenBipedBuildGuideCmd(OpenMayaMPx.MPxCommand):
     def isUndoable(self):
         return True
 
-    def doIt(self, argList):
+    def doIt(self, args):
 
         result = pm.promptDialog(title='Kraken: Build Biped',
                                  message='Rig Name',
@@ -142,7 +142,25 @@ class KrakenBipedBuildRigCmd(OpenMayaMPx.MPxCommand):
 
     def doIt(self, argList):
 
-        guideRig = BipedGuideRig('Biped_guide')
+        selObjects = self.parseArgs(argList)
+        if selObjects.length() < 1:
+            OpenMaya.MGlobal.displayWarning('Kraken: No objects selected, Build Rig cancelled.')
+            return False
+
+        firstObj = OpenMaya.MObject()
+        selObjects.getDependNode(0, firstObj)
+
+        firstObjDepNode = maya.OpenMaya.MFnDependencyNode(firstObj)
+        if firstObjDepNode.hasAttribute('krakenRig') is False:
+            OpenMaya.MGlobal.displayWarning('Kraken: Selected object is not the top node of a Kraken Rig!')
+            return False
+
+        guideName = firstObjDepNode.name()
+        if guideName.endswith('_guide') is False:
+            OpenMaya.MGlobal.displayWarning("Kraken: Biped Guide name must end in '_guide'!")
+            return False
+
+        guideRig = BipedGuideRig(guideName)
 
         synchronizer = plugins.getSynchronizer()
 
@@ -159,6 +177,25 @@ class KrakenBipedBuildRigCmd(OpenMayaMPx.MPxCommand):
         rig.setName(rig.getName().replace('_guide', ''))
         builder = plugins.getBuilder()
         builtRig = builder.build(rig)
+
+        return builtRig
+
+    def parseArgs(self, args):
+        argData = OpenMaya.MArgDatabase(self.syntax(), args)
+
+        selObjects = OpenMaya.MSelectionList()
+        argData.getObjects(selObjects)
+
+        return selObjects
+
+    @staticmethod
+    def syntaxCreator():
+        syntax = OpenMaya.MSyntax()
+
+        syntax.useSelectionAsDefault(True)
+        syntax.setObjectType(syntax.kSelectionList, 0, 1)
+
+        return syntax
 
     # Creator
     @staticmethod
@@ -218,7 +255,7 @@ def initializePlugin(mobject):
         raise
 
     try:
-        mplugin.registerCommand('krakenBipedBuildRig', KrakenBipedBuildRigCmd.creator)
+        mplugin.registerCommand('krakenBipedBuildRig', KrakenBipedBuildRigCmd.creator, KrakenBipedBuildRigCmd.syntaxCreator)
     except:
         sys.stderr.write('Failed to register commands: krakenBipedBuildRig')
         raise
