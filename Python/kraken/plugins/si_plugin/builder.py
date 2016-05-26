@@ -72,6 +72,10 @@ class Builder(Builder):
         dccSceneItem = parentDCCSceneItem.AddModel(None, buildName)
         dccSceneItem.Name = buildName
 
+        # Add custom param set to indicate that this object is the top level
+        # Kraken Rig object
+        dccSceneItem.AddProperty("CustomParameterSet", False, 'krakenRig')
+
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
         return dccSceneItem

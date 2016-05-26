@@ -67,6 +67,14 @@ class Builder(Builder):
         pm.parent(dccSceneItem, parentNode)
         pm.rename(dccSceneItem, buildName)
 
+        krakenRigAttr = dccSceneItem.addAttr('krakenRig',
+                                             niceName='krakenRig',
+                                             attributeType="bool",
+                                             defaultValue=True,
+                                             keyable=False)
+
+        dccSceneItem.attr('krakenRig').setLocked(True)
+
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
         return dccSceneItem
