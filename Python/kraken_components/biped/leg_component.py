@@ -403,13 +403,6 @@ class LegComponentRig(LegComponent):
         femurLen = data.get('femurLen')
         shinLen = data.get('shinLen')
 
-        print femurXfo
-        print kneeXfo
-        print handleXfo
-        print upVXfo
-        print femurLen
-        print shinLen
-
         self.femurFKCtrlSpace.xfo = femurXfo
         self.femurFKCtrl.xfo = femurXfo
         self.femurFKCtrl.scalePoints(Vec3(femurLen, 1.75, 1.75))
