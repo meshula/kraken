@@ -311,6 +311,9 @@ class Builder(Builder):
 
                             continue
 
+                        if argConnectionType == 'Out':
+                            continue
+                            
                         connected = connectedObjects
                         if isinstance(connected, Attribute):
                             connectedObj = self.findKLAttribute(connected)
