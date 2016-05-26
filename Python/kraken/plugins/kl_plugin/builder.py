@@ -147,12 +147,33 @@ class Builder(Builder):
         baseArgType = argType
         if argType.find('[') > -1:
           baseArgType = argType[0:argType.find('[')]+'Array'
-        argMember = 'args_%s[%d]' % (baseArgType, index)
+        argMember = 'arg_%s[%d]' % (baseArgType, index)
 
         self.__klArgs['lookup'][argLookup] = argMember
         self.__klArgs['members'][argType] = typedArgs
 
         return argMember
+
+    def getUniqueObjectMember(self, item, argType):
+        name = self.getUniqueName(item)
+
+        if self.__klMembers['lookup'].has_key(name):
+            return self.__klMembers['lookup'][name]
+
+        if argType is None:
+          return None
+
+        typedArgs = self.__klMembers['members'].get(argType, [])
+        index = len(typedArgs)
+        typedArgs.append(name)
+
+        # todo: switch this to constants!
+
+        member = '_%s[%d]' % (argType, index)
+        self.__klMembers['lookup'][name] = member
+        self.__klMembers['members'][argType] = typedArgs
+
+        return member
 
     def __getXfoAsStr(self, xfo):
         valueStr = "Xfo(Vec3(%.4f, %.4f, %.4f), Quat(%.4f, %.4f, %.4f, %.4f), Vec3(%.4f, %.4f, %.4f))" % (
@@ -425,8 +446,8 @@ class Builder(Builder):
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  Float64 solveTimeMs;"]
         kl += ["  KrakenClip clip; // the default clip of the rig"]
-        for member in self.__klMembers:
-            kl += ["  %s %s;" % (member['type'], member['name'])]
+        for argType in self.__klMembers['members']:
+            kl += ["  %s _%s[%d];" % (argType, argType, len(self.__klMembers['members'][argType]))]
 
         for argType in self.__klArgs['members']:
             prefix = argType
@@ -436,7 +457,7 @@ class Builder(Builder):
               prefix = argType[:-2]
               midfix = "Array"
               suffix = "[]"
-            kl += ["  %s args_%s%s[%d]%s;" % (prefix, prefix, midfix, len(self.__klArgs['members'][argType]), suffix)]
+            kl += ["  %s arg_%s%s[%d]%s;" % (prefix, prefix, midfix, len(self.__klArgs['members'][argType]), suffix)]
 
         kl += ["};"]
         kl += [""]
@@ -950,35 +971,35 @@ class Builder(Builder):
         open(filePath, "w").write(content)
 
     def findKLObjectForSI(self, kSceneItem):
-        member = self.getUniqueName(kSceneItem)
+        member = self.getUniqueObjectMember(kSceneItem, None)
         for obj in self.__klObjects:
             if obj['member'] == member:
                 return obj
         return None
 
     def findKLAttribute(self, kAttribute):
-        member = self.getUniqueName(kAttribute)
+        member = self.getUniqueObjectMember(kAttribute, None)
         for attr in self.__klAttributes:
             if attr['member'] == member:
                 return attr
         return None
 
     def findKLConstraint(self, kConstraint):
-        member = self.getUniqueName(kConstraint)
+        member = self.getUniqueObjectMember(kConstraint, None)
         for constraint in self.__klConstraints:
             if constraint['member'] == member:
                 return constraint
         return None
 
     def findKLSolver(self, kOperator):
-        member = self.getUniqueName(kOperator)
+        member = self.getUniqueObjectMember(kOperator, None)
         for solver in self.__klSolvers:
             if solver['member'] == member:
                 return solver
         return None
 
     def findKLCanvasOp(self, kOperator):
-        member = self.getUniqueName(kOperator)
+        member = self.getUniqueObjectMember(kOperator, None)
         for canvasOp in self.__klCanvasOps:
             if canvasOp['member'] == member:
                 return canvasOp
@@ -1029,7 +1050,7 @@ class Builder(Builder):
 
         obj = {
             'sceneItem': kSceneItem,
-            'member': self.getUniqueName(kSceneItem),
+            'member': self.getUniqueObjectMember(kSceneItem, "Kraken%s" % cls),
             'name': kSceneItem.getName(),
             'buildName': buildName,
             'type': "Kraken%s" % cls,
@@ -1054,7 +1075,6 @@ class Builder(Builder):
             if not parent is None:
                 obj['parent'] = parent.getDecoratedPath()
 
-        self.__klMembers.append({'name': self.getUniqueName(kSceneItem), 'type': obj['type']})
         self.__klObjects.append(obj)
         return True
 
@@ -1075,7 +1095,7 @@ class Builder(Builder):
             return False
 
         attr = {
-            'member': self.getUniqueName(kAttribute),
+            'member': self.getUniqueObjectMember(kAttribute, 'Kraken'+cls),
             'sceneItem': kAttribute,
             'name': kAttribute.getName(),
             'path': kAttribute.getDecoratedPath(),
@@ -1091,7 +1111,6 @@ class Builder(Builder):
             if not kAttribute.getMax() is None:
               attr['max'] = kAttribute.getMax()
 
-        self.__klMembers.append({'name': self.getUniqueName(kAttribute), 'type': 'Kraken'+cls})
         self.__klAttributes.append(attr)
         return kAttribute
 
@@ -1104,7 +1123,7 @@ class Builder(Builder):
 
         constraint = {
             'sceneItem': kConstraint,
-            'member': self.getUniqueName(kConstraint),
+            'member': self.getUniqueObjectMember(kConstraint, 'Kraken'+cls),
             'name': kConstraint.getName(),
             'buildName': kConstraint.getName(),
             'type': "Kraken%s" % cls,
@@ -1113,7 +1132,6 @@ class Builder(Builder):
             'constrainers': kConstraint.getConstrainers()
         }
 
-        self.__klMembers.append({'name': self.getUniqueName(kConstraint), 'type': constraint['type']})
         self.__klConstraints.append(constraint)
         return kConstraint
 
@@ -1425,12 +1443,11 @@ class Builder(Builder):
         solver = {
           "sceneItem": kOperator,
           "name": kOperator.getName(),
-          "member": self.getUniqueName(kOperator),
+          "member": self.getUniqueObjectMember(kOperator, kOperator.getSolverTypeName()),
           "path": kOperator.getDecoratedPath(),
           "type": kOperator.getSolverTypeName(),
         }
 
-        self.__klMembers.append({'name': self.getUniqueName(kOperator), 'type': solver['type']})
         self.__klSolvers.append(solver)
 
         if kOperator.extension != "Kraken" and kOperator.extension not in self.__klExtensions:
@@ -1602,7 +1619,7 @@ class Builder(Builder):
         self.__names = {}
         self.__pathToName = {}
         self.__klExtensions = []
-        self.__klMembers = []
+        self.__klMembers = {'members': {}, 'lookup': {}}
         self.__klObjects = []
         self.__klAttributes = []
         self.__klConstraints = []
