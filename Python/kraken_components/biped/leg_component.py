@@ -81,7 +81,7 @@ class LegComponentGuide(LegComponent):
         self.guideOpHost = Transform('guideOpHost', self.ctrlCmpGrp)
 
         # Guide Operator
-        self.neckGuideKLOp = KLOperator(name + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
+        self.neckGuideKLOp = KLOperator(name + self.getLocation() + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
         self.addOperator(self.neckGuideKLOp)
 
         # Add Att Inputs

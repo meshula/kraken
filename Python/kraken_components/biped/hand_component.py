@@ -284,7 +284,7 @@ class HandComponentGuide(HandComponent):
         # Create Canvas Operators
         # ===========================
         # Add Finger Guide Canvas Op
-        fingerGuideCanvasOp = CanvasOperator(name + 'FingerGuideOp', 'Kraken.Solvers.Biped.BipedFingerGuideSolver')
+        fingerGuideCanvasOp = CanvasOperator(name + self.getLocation() + 'FingerGuideOp', 'Kraken.Solvers.Biped.BipedFingerGuideSolver')
         self.addOperator(fingerGuideCanvasOp)
 
         # Add Att Inputs
