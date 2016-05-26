@@ -3,32 +3,33 @@ require Geometry;
 require Kraken;
 
 
-object OSS_TwoBoneIKSolverDefaults{  // :: KrakenSolverDefaults
-    Scalar ikBlend;
-    Scalar softDist;
-    Scalar stretch;
-    Mat44 root;
-    Mat44 bone0FK;
-    Mat44 bone1FK;
-    Mat44 ikHandle;
-    Mat44 upV;
-    UInt32 boneAxis;
-    UInt32 upAxis;
-    Mat44 upV;
-    Scalar bone0Len;
-    Scalar bone1Len;
+struct OSS_TwoBoneIKSolverDefaults : KrakenSolverDefaults {
+  Scalar ikBlend;
+  Scalar softDist;
+  Scalar stretch;
+  Mat44 root;
+  Mat44 bone0FK;
+  Mat44 bone1FK;
+  Mat44 ikHandle;
+  Mat44 upV;
+  UInt32 boneAxis;
+  UInt32 upAxis;
+  UInt32 upV;
+  Scalar bone0Len;
+  Scalar bone1Len;
 };
 // Default Constructor
 function OSS_TwoBoneIKSolverDefaults()
 {
-  this.ikBlend = 0.0;
+  //Default parent constructor automatically to get parent attr vals, I think
+  this.ikBlend = 0.5;
   this.softDist = 0.0;
   this.stretch = 0.0;
   this.root = Mat44();
   this.bone0FK = Mat44();
   this.bone1FK = Mat44();
+  this.ikHandle = Mat44();
   this.upV = Mat44();
-  this.root = Mat44();
   this.boneAxis = 0;
   this.upAxis = 1;
   this.upV =  Mat44();
@@ -37,35 +38,13 @@ function OSS_TwoBoneIKSolverDefaults()
 }
 
 object OSS_TwoBoneIKSolver : KrakenSolver {
-  Xfo initPose[];
-
-  Mat44 bone0Length;
-
   OSS_TwoBoneIKSolverDefaults defaults;
 };
-
-
-
-// struct OSS_TwoBoneIKSolver_Defaults {
-//     String name;
-//     String connectionType;
-//     String dataType;
-//     String defaultValue;
-// };
-
-
 
 // Default Constructor
 function OSS_TwoBoneIKSolver()
 {
-  this.defaults = OSS_TwoBoneIKSolverDefaults();
-}
-
-function OSS_TwoBoneIKSolver(
-  Xfo initPose[])
-{
-  this.defaults = OSS_TwoBoneIKSolverDefaults();
-  this.initPose = initPose;
+  //this.defaults = OSS_TwoBoneIKSolverDefaults();
 }
 
 
