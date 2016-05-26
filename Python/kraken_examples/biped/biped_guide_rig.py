@@ -31,25 +31,27 @@ class BipedGuideRig(Rig):
         # ===========
         # Components
         # ===========
-        mainSrtComponentGuide = MainSrtComponentGuide("mainSrt", parent=self)
-        spineComponentGuide = SpineComponentGuide("spine", parent=self)
-        neckComponentGuide = NeckComponentGuide("neck", parent=self)
-        headComponentGuide = HeadComponentGuide("head", parent=self)
+        mainSrtComponentGuide = MainSrtComponentGuide('mainSrt', parent=self)
+        spineComponentGuide = SpineComponentGuide('spine', parent=self)
+        neckComponentGuide = NeckComponentGuide('neck', parent=self)
+        headComponentGuide = HeadComponentGuide('head', parent=self)
 
-        clavicleLeftComponentGuide = ClavicleComponentGuide("clavicle", parent=self)
-        clavicleRightComponentGuide = ClavicleComponentGuide("clavicle", parent=self)
+        clavicleLeftComponentGuide = ClavicleComponentGuide('clavicle', parent=self)
+        clavicleRightComponentGuide = ClavicleComponentGuide('clavicle', parent=self)
         clavicleRightComponentGuide.loadData({
-            "location": "R",
+            "name": 'clavicle',
+            "location": 'R',
             "clavicleXfo": Xfo(Vec3(-0.15, 15.5, -0.5)),
             "clavicleUpVXfo": Xfo(Vec3(-0.15, 16.5, -0.5)),
             "clavicleEndXfo": Xfo(Vec3(-2.25, 15.5, -0.75))
         })
 
 
-        armLeftComponentGuide = ArmComponentGuide("arm", parent=self)
-        armRightComponentGuide = ArmComponentGuide("arm", parent=self)
+        armLeftComponentGuide = ArmComponentGuide('arm', parent=self)
+        armRightComponentGuide = ArmComponentGuide('arm', parent=self)
         armRightComponentGuide.loadData({
-            "location": "R",
+            "name": 'arm',
+            "location": 'R',
             "bicepXfo": Xfo(Vec3(-2.275, 15.3, -0.75)),
             "forearmXfo": Xfo(Vec3(-5.0, 13.5, -0.75)),
             "wristXfo": Xfo(Vec3(-7.2, 12.25, 0.5)),
@@ -57,14 +59,15 @@ class BipedGuideRig(Rig):
             "forearmFKCtrlSize": 1.5
         })
 
-        handLeftComponentGuide = HandComponentGuide("hand", parent=self)
-        handRightComponentGuide = HandComponentGuide("hand", parent=self)
+        handLeftComponentGuide = HandComponentGuide('hand', parent=self)
+        handRightComponentGuide = HandComponentGuide('hand', parent=self)
 
         handRightOri = Quat()
         handRightOri.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(180))
 
         handRightComponentGuide.loadData({
-            "location": "R",
+            "name": 'hand',
+            "location": 'R',
             "handXfo": Xfo(tr=Vec3(-7.1886, 12.2819, 0.4906), ori=handRightOri),
             "digitNames": "thumb,index,middle,ring,pinky",
             "numJoints": 4,
@@ -154,20 +157,22 @@ class BipedGuideRig(Rig):
             }
         })
 
-        legLeftComponentGuide = LegComponentGuide("leg", parent=self)
-        legRightComponentGuide = LegComponentGuide("leg", parent=self)
+        legLeftComponentGuide = LegComponentGuide('leg', parent=self)
+        legRightComponentGuide = LegComponentGuide('leg', parent=self)
         legRightComponentGuide.loadData({
-            "location": "R",
+            "name": 'leg',
+            "location": 'R',
             "createIKHandle": False,
             "femurXfo": Xfo(Vec3(-1.0, 9.75, -0.5)),
             "kneeXfo": Xfo(Vec3(-1.5, 5.5, -0.5)),
             "ankleXfo": Xfo(Vec3(-1.75, 1.15, -1.25))
         })
 
-        footLeftComponentGuide = FootComponentGuide("foot", parent=self)
-        footRightComponentGuide = FootComponentGuide("foot", parent=self)
+        footLeftComponentGuide = FootComponentGuide('foot', parent=self)
+        footRightComponentGuide = FootComponentGuide('foot', parent=self)
         footRightComponentGuide.loadData({
-            'location': 'R',
+            "name": 'foot',
+            "location": 'R',
             'ankleXfo': Xfo(Vec3(-1.75, 1.15, -1.25)),
             'toeXfo': Xfo(Vec3(-1.75, 0.4, 0.25)),
             'toeTipXfo': Xfo(Vec3(-1.75, 0.4, 1.5)),
@@ -292,13 +297,15 @@ class BipedGuideRig(Rig):
 if __name__ == "__main__":
     from kraken import plugins
 
-    Profiler.getInstance().push("bob_guide_build")
+    try:
+        Profiler.getInstance().push('bob_guide_build')
 
-    bipedGuide = BipedGuideRig("char_biped_guide")
+        bipedGuide = BipedGuideRig('char_biped_guide')
 
-    builder = plugins.getBuilder()
-    builder.build(bipedGuide)
+        builder = plugins.getBuilder()
+        builder.build(bipedGuide)
 
-    Profiler.getInstance().pop()
+    finally:
+        Profiler.getInstance().pop()
 
     print Profiler.getInstance().generateReport()
