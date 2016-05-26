@@ -2,7 +2,7 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "1000",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.972856342792511,\n    \"y\" : -0.08593996614217758,\n    \"z\" : 0.2147745043039322,\n    \"t\" : 305.8386840820313\n    },\n  \"row1\" : {\n    \"x\" : -1.877511294878786e-06,\n    \"y\" : 0.9283424019813538,\n    \"z\" : 0.3715350329875946,\n    \"t\" : 117.7456359863281\n    },\n  \"row2\" : {\n    \"x\" : -0.2313292175531387,\n    \"y\" : -0.3614285886287689,\n    \"z\" : 0.9032323360443115,\n    \"t\" : 237.0614318847656\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.972856342792511,\n    \"y\" : -0.08593996614217758,\n    \"z\" : 0.2147745043039322,\n    \"t\" : 305.8386840820313\n    },\n  \"row1\" : {\n    \"x\" : -1.873786118267162e-06,\n    \"y\" : 0.9283424019813538,\n    \"z\" : 0.3715350329875946,\n    \"t\" : 117.7456359863281\n    },\n  \"row2\" : {\n    \"x\" : -0.2313292175531387,\n    \"y\" : -0.3614285886287689,\n    \"z\" : 0.9032323360443115,\n    \"t\" : 237.0614318847656\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "101",
     "uiGraphZoom" : "{\n  \"value\" : 0.8242183923721314\n  }",
     "timeline_loopMode" : "1",
@@ -10,10 +10,17 @@
     "camera_focalDistance" : "204.3941955566406",
     "timeline_current" : "282",
     "timeline_end" : "562",
-    "uiGraphPan" : "{\n  \"x\" : -484.8299560546875,\n  \"y\" : 456.186279296875\n  }"
+    "uiGraphPan" : "{\n  \"x\" : -452.8299560546875,\n  \"y\" : 130.186279296875\n  }"
     },
   "title" : "",
   "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
     {
       "objectType" : "Port",
       "nodePortType" : "In",
@@ -70,6 +77,11 @@
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
             "String" : "V:\\fabric\\kraken\\Samples\\OSS\\klChar\\klChar.fbx"
@@ -94,6 +106,11 @@
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "this"
           },
@@ -115,6 +132,11 @@
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "value"
           }
@@ -129,6 +151,11 @@
         },
       "name" : "EmptyDrawingHandle",
       "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
         {
           "objectType" : "InstPort",
           "nodePortType" : "Out",
@@ -232,6 +259,11 @@
         {
           "objectType" : "InstPort",
           "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
           "name" : "this"
           },
         {
@@ -256,6 +288,13 @@
           },
         "title" : "GetDeformedMesh",
         "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
           {
             "objectType" : "Port",
             "nodePortType" : "IO",
@@ -303,6 +342,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "ori"
           },
@@ -341,6 +385,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "value"
           }
@@ -357,6 +406,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "Out",
           "name" : "result"
           }
@@ -370,6 +424,11 @@ dfgEntry {
         },
       "name" : "SetClip_1",
       "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
         {
           "objectType" : "InstPort",
           "nodePortType" : "IO",
@@ -392,6 +451,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "time"
           },
@@ -411,6 +475,11 @@ dfgEntry {
         },
       "name" : "FrameToTime_1",
       "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
@@ -442,6 +511,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "rig"
           },
@@ -468,6 +542,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "val"
           },
@@ -487,6 +566,11 @@ dfgEntry {
         },
       "name" : "UpdateFromRig_1",
       "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
         {
           "objectType" : "InstPort",
           "nodePortType" : "IO",
@@ -564,6 +648,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "this"
           },
@@ -586,6 +675,11 @@ dfgEntry {
         {
           "objectType" : "InstPort",
           "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
           "name" : "rig"
           }
         ],
@@ -598,6 +692,11 @@ dfgEntry {
         },
       "name" : "Convert_2",
       "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
@@ -621,6 +720,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "Out",
           "name" : "result"
           }
@@ -635,6 +739,11 @@ dfgEntry {
         },
       "name" : "AddClip_1",
       "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
         {
           "objectType" : "InstPort",
           "nodePortType" : "IO",
@@ -668,6 +777,11 @@ dfgEntry {
         {
           "objectType" : "InstPort",
           "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
           "name" : "this"
           },
         {
@@ -693,6 +807,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "this"
           },
@@ -712,6 +831,11 @@ dfgEntry {
         },
       "name" : "OffsetAnim",
       "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
         {
           "objectType" : "InstPort",
           "nodePortType" : "Out",
@@ -782,6 +906,13 @@ dfgEntry {
           },
         "title" : "OffsetAnim",
         "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
           {
             "objectType" : "Port",
             "nodePortType" : "In",
@@ -866,6 +997,11 @@ dfgEntry {
             "ports" : [
               {
                 "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
                 "nodePortType" : "Out",
                 "name" : "result"
                 }
@@ -880,6 +1016,11 @@ dfgEntry {
               },
             "name" : "SetFloat32_1",
             "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
               {
                 "objectType" : "InstPort",
                 "nodePortType" : "IO",
@@ -912,6 +1053,11 @@ dfgEntry {
               },
             "name" : "SetXfo_1",
             "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
               {
                 "objectType" : "InstPort",
                 "nodePortType" : "IO",
@@ -965,6 +1111,11 @@ dfgEntry {
             "ports" : [
               {
                 "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "name" : "val"
                 },
@@ -984,6 +1135,11 @@ dfgEntry {
               },
             "name" : "SetXfo_2",
             "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
               {
                 "objectType" : "InstPort",
                 "nodePortType" : "IO",
@@ -1038,6 +1194,11 @@ dfgEntry {
             "ports" : [
               {
                 "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "name" : "ori"
                 },
@@ -1077,6 +1238,11 @@ dfgEntry {
             "ports" : [
               {
                 "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "name" : "ori"
                 },
@@ -1113,6 +1279,11 @@ dfgEntry {
               },
             "name" : "SetXfo_3",
             "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
               {
                 "objectType" : "InstPort",
                 "nodePortType" : "IO",
@@ -1167,6 +1338,11 @@ dfgEntry {
             "ports" : [
               {
                 "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "name" : "ori"
                 },
@@ -1206,6 +1382,11 @@ dfgEntry {
               {
                 "objectType" : "InstPort",
                 "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
                 "name" : "this"
                 },
               {
@@ -1235,6 +1416,11 @@ dfgEntry {
               },
             "name" : "SetXfo_4",
             "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
               {
                 "objectType" : "InstPort",
                 "nodePortType" : "IO",
@@ -1287,6 +1473,11 @@ dfgEntry {
               },
             "name" : "Xfo_4",
             "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
               {
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
@@ -1386,6 +1577,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "Out",
           "name" : "value"
           }
@@ -1398,6 +1594,13 @@ dfgEntry {
           },
         "title" : "AlembicAnim",
         "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
           {
             "objectType" : "Port",
             "nodePortType" : "In",
@@ -1415,6 +1618,11 @@ dfgEntry {
               },
             "name" : "KrakenAbcClip_1",
             "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
               {
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
@@ -1440,6 +1648,11 @@ dfgEntry {
               },
             "name" : "Cache_1",
             "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
               {
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
@@ -1529,6 +1742,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "In",
           "name" : "cond"
           },
@@ -1604,6 +1822,11 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
           "nodePortType" : "Out",
           "name" : "handle"
           }
@@ -1618,6 +1841,11 @@ dfgEntry {
         },
       "name" : "If_2",
       "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
@@ -1762,6 +1990,11 @@ dfgEntry {
         {
           "objectType" : "InstPort",
           "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
           "name" : "this"
           },
         {
@@ -1790,6 +2023,13 @@ dfgEntry {
           },
         "title" : "GetDeformedMesh",
         "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
           {
             "objectType" : "Port",
             "nodePortType" : "IO",
@@ -1842,7 +2082,7 @@ dfgEntry {
     meshes[i] = this.getDeformedMesh(i);
     xfos[i] = Xfo();
   }
-  report(indices);
+  //report(indices);
 }
 "
         }
@@ -1854,6 +2094,11 @@ dfgEntry {
         },
       "name" : "Cache_1",
       "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
@@ -1985,11 +2230,18 @@ dfgEntry {
     "Fabric.Exts.FbxHelpers.FbxCharacter.FbxCharacter" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/FbxHelpers/FbxCharacter.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/FbxHelpers/FbxCharacter.html",
         "uiTooltip" : "Constructor taking a file path to load the fbx file on disk\n\n Supported by FbxCharacter"
         },
       "title" : "FbxCharacter",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
@@ -2019,11 +2271,18 @@ dfgEntry {
     "Fabric.Exts.FbxHelpers.FbxCharacter.ToCharacter" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/FbxHelpers/FbxCharacter.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/FbxHelpers/FbxCharacter.html",
         "uiTooltip" : "returns this FBXCharacter as a character\n\n Supported by FbxCharacter"
         },
       "title" : "ToCharacter",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
@@ -2062,6 +2321,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "Out",
           "name" : "value",
           "execPortType" : "In",
@@ -2081,6 +2347,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "In",
           "name" : "handle",
           "execPortType" : "Out",
@@ -2097,6 +2370,11 @@ dfgEntry {
             },
           "name" : "Clear",
           "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
             {
               "objectType" : "InstPort",
               "nodePortType" : "IO",
@@ -2133,6 +2411,11 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
               "nodePortType" : "Out",
               "name" : "handle"
               }
@@ -2141,6 +2424,13 @@ dfgEntry {
             "objectType" : "Func",
             "title" : "Create DrawingHandle",
             "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "IO",
+                "name" : "exec",
+                "execPortType" : "IO",
+                "typeSpec" : "Execute"
+                },
               {
                 "objectType" : "Port",
                 "nodePortType" : "In",
@@ -2174,11 +2464,18 @@ dfgEntry {
     "Fabric.Exts.InlineDrawing.DrawingHandle.Clear" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
         "uiTooltip" : "removes all contents from the DrawingHandle\n\n Supported by DrawingHandle"
         },
       "title" : "Clear",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
@@ -2201,7 +2498,7 @@ dfgEntry {
     "Fabric.Exts.InlineDrawing.DrawingHandle.DrawPolygonMesh" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
         "uiTooltip" : "helper function to draw a mesh given a color + a single transform\n\n Supported by DrawingHandle"
         },
       "title" : "DrawPolygonMesh",
@@ -2341,10 +2638,17 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html"
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Math/Xfo.html"
         },
       "title" : "-> Xfo",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "metadata" : {
@@ -2429,6 +2733,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "In",
           "name" : "result",
           "execPortType" : "Out"
@@ -2457,6 +2768,11 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
               "nodePortType" : "Out",
               "name" : "result"
               }
@@ -2465,6 +2781,13 @@ dfgEntry {
             "objectType" : "Func",
             "title" : "constructor",
             "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "IO",
+                "name" : "exec",
+                "execPortType" : "IO",
+                "typeSpec" : "Execute"
+                },
               {
                 "objectType" : "Port",
                 "nodePortType" : "In",
@@ -2499,6 +2822,13 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
           "name" : "rig",
           "execPortType" : "IO",
           "typeSpec" : "KRK_klChar_guide"
@@ -2526,6 +2856,13 @@ dfgEntry {
         },
       "title" : "KrakenClipContext",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
@@ -2560,6 +2897,13 @@ dfgEntry {
         },
       "title" : "FrameToTime",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "metadata" : {
@@ -2607,6 +2951,11 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
               "nodePortType" : "In",
               "name" : "val1"
               },
@@ -2634,6 +2983,11 @@ dfgEntry {
             },
           "name" : "Div",
           "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
             {
               "objectType" : "InstPort",
               "nodePortType" : "In",
@@ -2679,6 +3033,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "Out",
           "name" : "val1",
           "execPortType" : "In",
@@ -2714,6 +3075,13 @@ dfgEntry {
       "objectType" : "Func",
       "title" : "Div",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
@@ -2753,6 +3121,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "Out",
           "name" : "rig",
           "execPortType" : "In",
@@ -2790,6 +3165,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "Out",
           "name" : "val",
           "execPortType" : "In",
@@ -2818,6 +3200,13 @@ dfgEntry {
         },
       "title" : "UpdateFromRig",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
@@ -2861,7 +3250,7 @@ dfgEntry {
     "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
         "uiTooltip" : "helper function to draw axes at given transforms\n\n Supported by DrawingHandle"
         },
       "title" : "DrawAxesInstances",
@@ -2936,6 +3325,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "Out",
           "name" : "this",
           "execPortType" : "In",
@@ -2970,6 +3366,13 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
           "name" : "rig",
           "execPortType" : "IO",
           "typeSpec" : "KRK_klChar_guide"
@@ -2990,6 +3393,13 @@ dfgEntry {
         },
       "title" : "KrakenClipStack",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "In",
@@ -3016,6 +3426,13 @@ dfgEntry {
         },
       "title" : "AddClip",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
@@ -3061,6 +3478,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "Out",
           "name" : "this",
           "execPortType" : "In",
@@ -3097,6 +3521,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "In",
           "name" : "result",
           "execPortType" : "Out",
@@ -3121,6 +3552,13 @@ dfgEntry {
         },
       "title" : "SetFloat32",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
@@ -3164,6 +3602,13 @@ dfgEntry {
         {
           "objectType" : "Port",
           "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
           "name" : "this",
           "execPortType" : "IO",
           "typeSpec" : "KrakenStaticClip"
@@ -3201,11 +3646,18 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Math/Xfo.html",
         "uiTooltip" : "Constructor from the orientation, translation and scaling\n\n Supported by Xfo"
         },
       "title" : "Xfo",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "metadata" : {
@@ -3274,6 +3726,13 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
           "nodePortType" : "Out",
           "name" : "filePath",
           "execPortType" : "In",
@@ -3302,6 +3761,13 @@ dfgEntry {
       "objectType" : "Func",
       "title" : "If",
       "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
         {
           "objectType" : "Port",
           "nodePortType" : "Out",
