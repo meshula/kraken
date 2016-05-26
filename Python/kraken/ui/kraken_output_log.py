@@ -45,7 +45,7 @@ class OutputLogDialog(QtGui.QDialog):
     def write(self, msg, level):
 
         if level == 'DEBUG':
-            messageColor = QtGui.QColor("#B4EEB4")
+            messageColor = QtGui.QColor("#CCCCFF")
         elif level == 'INFO':
             messageColor = QtGui.QColor(QtCore.Qt.white)
         elif level == 'INFORM':

@@ -21,6 +21,9 @@ from kraken.core.objects.components.component_input import ComponentInput
 from kraken.core.objects.components.component_output_port import ComponentOutputPort
 from kraken.core.objects.components.component_output import ComponentOutput
 
+from kraken.log import getLogger
+
+logger = getLogger('kraken')
 
 # Note: does a Component need to inherit off 'Object3D'?
 # These items exist only to structure a rig as a graph.
@@ -288,7 +291,8 @@ class Component(Object3D):
 
         """
         if not isinstance(classType,str):
-            print "Warning in Component %s: getHierarchyNodes needs classType to be passed as string"%(self._name)
+            logger.warning("Warning in Component %s: getHierarchyNodes needs classType to be passed as string" % self._name)
+
 
         nodeList = []
 
@@ -387,7 +391,7 @@ class Component(Object3D):
                 else:
                     v.addAttribute(newInputTgt)
             else:
-                print "Keyword '" + k + "' is not supported with createInput method!"
+                logger.warning("Keyword '%s' is not supported with createInput method!" % k)
 
         componentInputPort.setTarget(newInputTgt)
 
@@ -588,7 +592,7 @@ class Component(Object3D):
                 else:
                     v.addAttribute(newOutputTgt)
             else:
-                print "Keyword '" + k + "' is not supported with createOutput method!"
+                logger.warning("Keyword '%s' is not supported with createOutput method!" % k)
 
         componentOutputPort.setTarget(newOutputTgt)
 
