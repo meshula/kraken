@@ -70,6 +70,7 @@ class OpenKrakenEditorCmd(OpenMayaMPx.MPxCommand):
 
 
 class KrakenBipedBuildGuideCmd(OpenMayaMPx.MPxCommand):
+
     def __init__(self):
         OpenMayaMPx.MPxCommand.__init__(self)
 
@@ -79,11 +80,11 @@ class KrakenBipedBuildGuideCmd(OpenMayaMPx.MPxCommand):
     def doIt(self, argList):
 
         result = pm.promptDialog(title='Kraken: Build Biped',
-                       message='Rig Name',
-                       button=['OK', 'Cancel'],
-                       defaultButton='OK',
-                       cancelButton='Cancel',
-                       text='Biped')
+                                 message='Rig Name',
+                                 button=['OK', 'Cancel'],
+                                 defaultButton='OK',
+                                 cancelButton='Cancel',
+                                 text='Biped')
 
         if result == 'OK':
             guideName = pm.promptDialog(query=True, text=True)
@@ -97,12 +98,16 @@ class KrakenBipedBuildGuideCmd(OpenMayaMPx.MPxCommand):
             OpenMaya.MGlobal.displayInfo('Kraken: Building Guide Rig: ' + guideName)
 
             try:
+                main_window = pm.ui.Window(pm.MelGlobals.get('gMainWindow'))
+                main_win_width = pm.window(main_window, query=True, width=True)
+
                 buildMsgWin = pm.window("KrakenBuildBipedWin",
                                         title="Kraken: Build Biped",
                                         width=200,
                                         height=100,
                                         sizeable=False,
-                                        titleBar=False)
+                                        titleBar=False,
+                                        leftEdge=(main_win_width / 2) - 100)
 
                 buildMsglayout = pm.verticalLayout(spacing=10)
                 buildMsgText = pm.text('Kraken: Building Biped')
@@ -112,6 +117,9 @@ class KrakenBipedBuildGuideCmd(OpenMayaMPx.MPxCommand):
                 pm.refresh()
 
                 builtRig = builder.build(guideRig)
+
+                return builtRig
+
             finally:
                 if pm.window("KrakenBuildBipedWin", exists=True) is True:
                     pm.deleteUI(buildMsgWin)
