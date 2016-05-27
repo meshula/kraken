@@ -27,13 +27,14 @@ from kraken.helpers.utility_methods import logHierarchy
 class ClavicleComponent(BaseExampleComponent):
     """Clavicle Component Base"""
 
-    def __init__(self, name='clavicle', parent=None):
-        super(ClavicleComponent, self).__init__(name, parent)
+    def __init__(self, name='clavicle', parent=None, *args, **kwargs):
+        super(ClavicleComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
         # ===========
         # Declare Inputs Xfos
+        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.spineEndInputTgt = self.createInput('spineEnd', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
@@ -52,10 +53,10 @@ class ClavicleComponent(BaseExampleComponent):
 class ClavicleComponentGuide(ClavicleComponent):
     """Clavicle Component Guide"""
 
-    def __init__(self, name='clavicle', parent=None):
+    def __init__(self, name='clavicle', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Clavicle Guide Component:" + name)
-        super(ClavicleComponentGuide, self).__init__(name, parent)
+        super(ClavicleComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
 
         # =========
@@ -68,7 +69,12 @@ class ClavicleComponentGuide(ClavicleComponent):
         self.clavicleCtrl.scalePoints(Vec3(0.75, 0.75, 0.75))
         self.clavicleCtrl.rotatePoints(0.0, 0.0, 90.0)
 
-        self.clavicleUpVCtrl = Control('clavicleUpV', parent=self.ctrlCmpGrp, shape="triangle")
+        self.clavicleGuideSettingsAttrGrp = AttributeGroup("Settings", parent=self.clavicleCtrl)
+        self.handDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=self.clavicleGuideSettingsAttrGrp)
+
+        self.drawDebugInputAttr.connect(self.handDebugInputAttr)
+
+        self.clavicleUpVCtrl = Control('clavicleUpV', parent=self.clavicleCtrl, shape="triangle")
         self.clavicleUpVCtrl.setColor('red')
         self.clavicleUpVCtrl.rotatePoints(-90.0, 0.0, 0.0)
         self.clavicleUpVCtrl.rotatePoints(0.0, 90.0, 0.0)
@@ -77,15 +83,15 @@ class ClavicleComponentGuide(ClavicleComponent):
         self.clavicleEndCtrl = Control('clavicleEnd', parent=self.ctrlCmpGrp, shape="cube")
         self.clavicleEndCtrl.scalePoints(Vec3(0.25, 0.25, 0.25))
 
-        data = {
-                "name": name,
-                "location": "L",
-                "clavicleXfo": Xfo(Vec3(0.1322, 15.403, -0.5723)),
-                "clavicleUpVXfo": Xfo(Vec3(0.1322, 16.403, -0.5723)),
-                "clavicleEndXfo": Xfo(Vec3(2.27, 15.295, -0.753))
-               }
+        self.default_data = {
+            "name": name,
+            "location": "L",
+            "clavicleXfo": Xfo(Vec3(0.15, 15.5, -0.5)),
+            "clavicleUpVXfo": Xfo(Vec3(0.15, 16.5, -0.5)),
+            "clavicleEndXfo": Xfo(Vec3(2.25, 15.5, -0.75))
+        }
 
-        self.loadData(data)
+        self.loadData(self.default_data)
 
         Profiler.getInstance().pop()
 

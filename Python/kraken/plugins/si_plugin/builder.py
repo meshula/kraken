@@ -72,6 +72,10 @@ class Builder(Builder):
         dccSceneItem = parentDCCSceneItem.AddModel(None, buildName)
         dccSceneItem.Name = buildName
 
+        # Add custom param set to indicate that this object is the top level
+        # Kraken Rig object
+        dccSceneItem.AddProperty("CustomParameterSet", False, 'krakenRig')
+
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
         return dccSceneItem
@@ -1125,11 +1129,11 @@ class Builder(Builder):
                     si.FabricCanvasConnect(canvasOpPath, "", canvasGraphPort, portName)
 
                 if portDataType == 'EvalContext':
-                    continue
+                    return
                 elif portDataType == 'DrawingHandle':
-                    continue
+                    return
                 elif portDataType == 'InlineDebugShape':
-                    continue
+                    return
 
                 # Append the suffix based on the argument type, Softimage Only
                 if portDataType in ('Xfo', 'Mat44'):

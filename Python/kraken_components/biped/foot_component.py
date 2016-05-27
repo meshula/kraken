@@ -26,8 +26,8 @@ from kraken.helpers.utility_methods import logHierarchy
 class FootComponent(BaseExampleComponent):
     """Foot Component"""
 
-    def __init__(self, name="footBase", parent=None):
-        super(FootComponent, self).__init__(name, parent)
+    def __init__(self, name="footBase", parent=None, *args, **kwargs):
+        super(FootComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -54,10 +54,10 @@ class FootComponent(BaseExampleComponent):
 class FootComponentGuide(FootComponent):
     """Foot Component Guide"""
 
-    def __init__(self, name='foot', parent=None):
+    def __init__(self, name='foot', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Foot Component:" + name)
-        super(FootComponentGuide, self).__init__(name, parent)
+        super(FootComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
         # =========
         # Controls
@@ -86,15 +86,15 @@ class FootComponentGuide(FootComponent):
 
 
         self.default_data = {
-            'name': name,
-            'location': 'L',
-            'ankleXfo': Xfo(Vec3(1.75, 1.15, -1.25)),
-            'toeXfo': Xfo(Vec3(1.75, 0.4, 0.25)),
-            'toeTipXfo': Xfo(Vec3(1.75, 0.4, 1.5)),
-            'backPivotXfo': Xfo(Vec3(1.75, 0.0, -2.5)),
-            'frontPivotXfo': Xfo(Vec3(1.75, 0.0, 2.0)),
-            'outerPivotXfo': Xfo(Vec3(2.5, 0.0, -1.25)),
-            'innerPivotXfo': Xfo(Vec3(1.0, 0.0, -1.25))
+            "name": name,
+            "location": 'L',
+            "ankleXfo": Xfo(Vec3(1.75, 1.15, -1.25)),
+            "toeXfo": Xfo(Vec3(1.75, 0.4, 0.25)),
+            "toeTipXfo": Xfo(Vec3(1.75, 0.4, 1.5)),
+            "backPivotXfo": Xfo(Vec3(1.75, 0.0, -2.5)),
+            "frontPivotXfo": Xfo(Vec3(1.75, 0.0, 2.0)),
+            "outerPivotXfo": Xfo(Vec3(2.5, 0.0, -1.25)),
+            "innerPivotXfo": Xfo(Vec3(1.0, 0.0, -1.25))
         }
 
         self.loadData(self.default_data)

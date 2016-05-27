@@ -24,9 +24,9 @@ from kraken.core.profiler import Profiler
 class StretchyLimbComponent(BaseExampleComponent):
     """StretchyLimb Component"""
 
-    def __init__(self, name='limbBase', parent=None):
+    def __init__(self, name='limbBase', parent=None, *args, **kwargs):
 
-        super(StretchyLimbComponent, self).__init__(name, parent)
+        super(StretchyLimbComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -52,10 +52,10 @@ class StretchyLimbComponent(BaseExampleComponent):
 class StretchyLimbComponentGuide(StretchyLimbComponent):
     """StretchyLimb Component Guide"""
 
-    def __init__(self, name='limb', parent=None):
+    def __init__(self, name='limb', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct StretchyLimb Guide Component:" + name)
-        super(StretchyLimbComponentGuide, self).__init__(name, parent)
+        super(StretchyLimbComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
 
         # =========
