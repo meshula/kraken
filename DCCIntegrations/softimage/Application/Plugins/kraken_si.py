@@ -141,22 +141,32 @@ def KrakenBuildBipedGuide_Execute():
 
 
     builtRig = None
-    progressBar = None
-    try:
-        guideRig = BipedGuideRig('Biped')
 
-        progressBar = XSIUIToolkit.ProgressBar
-        progressBar.Caption = "Building Kraken Guide: " + guideRig.getName()
-        progressBar.CancelEnabled = False
-        progressBar.Visible = True
+    result = si.XSIInputbox("Rig Name", "Kraken: Build Biped", "Biped")
+    if result != "":
+        guideName = result
+        guideName.replace(' ', '')
+        guideName += '_guide'
 
+        progressBar = None
+        try:
+            guideRig = BipedGuideRig(guideName)
 
-        builder = plugins.getBuilder()
-        builtRig = builder.build(guideRig)
+            progressBar = XSIUIToolkit.ProgressBar
+            progressBar.Caption = "Building Kraken Guide: " + guideRig.getName()
+            progressBar.CancelEnabled = False
+            progressBar.Visible = True
 
-    finally:
-        if progressBar is not None:
-            progressBar.Visible = False
+            builder = plugins.getBuilder()
+            builtRig = builder.build(guideRig)
+
+        finally:
+            if progressBar is not None:
+                progressBar.Visible = False
+
+    else:
+        log('Kraken: Build Guide Rig Cancelled!', 4)
+        return False
 
     return builtRig
 
@@ -167,44 +177,54 @@ def KrakenBuildBipedRig_Init(in_ctxt):
     cmd.ReturnValue = True
 
     args = cmd.Arguments
-    args.Add('rigFilePath', constants.siArgumentInput, "", constants.siString)
+    args.AddObjectArgument('bipedGuide')
 
     return True
 
 
-def KrakenBuildBipedRig_Execute(rigFilePath):
+def KrakenBuildBipedRig_Execute(bipedGuide):
 
     # Deffered importing: We can only import the kraken modules after the
     # plugin has loaded, as it configures the python import paths on load.
     from kraken.core.objects.rig import Rig
     from kraken import plugins
 
-    if rigFilePath == "" and si.Interactive is True:
+    from kraken_examples.biped.biped_guide_rig import BipedGuideRig
 
-        fileBrowser = XSIUIToolkit.FileBrowser
-        fileBrowser.DialogTitle = "Select a Kraken Rig File"
-        fileBrowser.InitialDirectory = si.ActiveProject3.Path
-        fileBrowser.Filter = "Kraken Rig (*.krg)|*.krg||"
-        fileBrowser.ShowOpen()
-
-        fileName = fileBrowser.FilePathName
-        if fileName != "":
-             rigFilePath = fileName
+    guideName = "Biped"
+    if bipedGuide == None and si.Interactive is True:
+        pickGuide = si.PickElement(constants.siModelFilter, "Kraken: Pick Guide Rig", "Kraken: Pick Guide Rig")
+        if pickGuide('ButtonPressed') == 0:
+            pass
         else:
-            log("User Cancelled.", 4)
+            pickedGuide = pickGuide('PickedElement')
+
+            if pickedGuide.Properties('krakenRig') is None:
+                log("Kraken: Picked object is not the top node of a Kraken Rig!", 4)
+                return False
+
+            guideName = pickedGuide.Name
+    else:
+        if bipedGuide.Properties('krakenRig') is None:
+            log("Kraken: 'bipedGuide' argument is not the top node of a Kraken Rig!", 4)
             return False
 
-    elif rigFilePath == "" and si.Interactive is False:
-        log("No rig file path specified in batch mode!", 2)
-        return False
+        guideName = bipedGuide.Name
 
-    guideRig = Rig()
-    guideRig.loadRigDefinitionFile(rigFilePath)
+    guideRig = BipedGuideRig(guideName)
+
+    synchronizer = plugins.getSynchronizer()
+
+    if guideRig.getName().endswith('_guide') is False:
+        guideRig.setName(guideRig.getName() + '_guide')
+
+    synchronizer.setTarget(guideRig)
+    synchronizer.sync()
+
     rigBuildData = guideRig.getRigBuildData()
-
     rig = Rig()
     rig.loadRigDefinition(rigBuildData)
-    rig.setName(guideRig.getName().replace('_guide', ''))
+    rig.setName(rig.getName().replace('_guide', '_rig'))
 
     builtRig = None
     progressBar = None

@@ -155,11 +155,6 @@ class KrakenBipedBuildRigCmd(OpenMayaMPx.MPxCommand):
             OpenMaya.MGlobal.displayWarning('Kraken: Selected object is not the top node of a Kraken Rig!')
             return False
 
-        guideName = str(firstObjDepNode.name())
-        if guideName.endswith('_guide') is False:
-            OpenMaya.MGlobal.displayWarning("Kraken: Biped Guide name must end in '_guide'!")
-            return False
-
         guideRig = BipedGuideRig(guideName)
 
         synchronizer = plugins.getSynchronizer()
@@ -173,8 +168,8 @@ class KrakenBipedBuildRigCmd(OpenMayaMPx.MPxCommand):
         rigBuildData = guideRig.getRigBuildData()
         rig = Rig()
         rig.loadRigDefinition(rigBuildData)
+        rig.setName(rig.getName().replace('_guide', '_rig'))
 
-        rig.setName(rig.getName().replace('_guide', ''))
         builder = plugins.getBuilder()
         builtRig = builder.build(rig)
 
