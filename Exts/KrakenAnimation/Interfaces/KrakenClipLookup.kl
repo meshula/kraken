@@ -6,8 +6,16 @@ object KrakenClipLookup {
 
 /// \dfgPresetOmit
 function KrakenClipLookup(Ref<KrakenKLRig> rig, Ref<KrakenClip> clip) {
-  SInt32 controlToId[String] = this.computeNameMap(rig.getControlNames());
-  SInt32 scalarToId[String] = this.computeNameMap(rig.getScalarAttributeNames());
+
+  SInt32 controlToId[String];
+  KrakenControl controls<> = rig.getControls();
+  for(Size i=0;i<controls.size();i++)
+    controlToId[controls[i].name] = i;
+
+  SInt32 scalarToId[String];
+  KrakenScalarAttribute scalarAttributes<> = rig.getScalarAttributes();
+  for(Size i=0;i<scalarAttributes.size();i++)
+    scalarToId[scalarAttributes[i].name] = i;
 
   this.channelToControl.resize(clip.getChannelCount());
   this.channelToScalarAttribute.resize(clip.getChannelCount());
@@ -20,32 +28,21 @@ function KrakenClipLookup(Ref<KrakenKLRig> rig, Ref<KrakenClip> clip) {
 }
 
 /// \dfgPresetOmit
-private function SInt32[String] KrakenClipLookup.computeNameMap(String names[]) {
-  SInt32 map[String];
-  for(Size i=0;i<names.size();i++)
-    map[names[i]] = i;
-  return map;
-}
-
-/// \dfgPresetOmit
 function KrakenClipLookup.applyClip(io KrakenKLRig rig, Ref<KrakenClip> clipRef, KrakenClipContext context, Float32 factor) {
   KrakenClip clip = clipRef;
-  Xfo xfos[] = rig.getControlXfos();
-  Float32 scalarAttributes[] = rig.getScalarAttributeValues();
+  KrakenControl controls<> = rig.getControls();
+  KrakenScalarAttribute scalarAttributes<> = rig.getScalarAttributes();
 
   for(Size i=0;i<this.channelToControl.size();i++) {
     if(this.channelToControl[i] != -1) {
-      Xfo xfo = xfos[this.channelToControl[i]];
+      Xfo xfo = controls[this.channelToControl[i]].xfo;
       xfo = xfo.linearInterpolate(clip.evaluateXfo(i, context), factor);
-      xfos[this.channelToControl[i]] = xfo;
+      controls[this.channelToControl[i]].xfo = xfo;
     }
     if(this.channelToScalarAttribute[i] != -1) {
-      Float32 value = scalarAttributes[this.channelToScalarAttribute[i]];
+      Float32 value = scalarAttributes[this.channelToScalarAttribute[i]].value;
       value = Math_linearInterpolate(value, clip.evaluateFloat32(i, context), factor);
-      scalarAttributes[this.channelToScalarAttribute[i]] = value;
+      scalarAttributes[this.channelToScalarAttribute[i]].value = value;
     }
   }
-
-  rig.setControlXfos(xfos);
-  rig.setScalarAttributeValues(scalarAttributes);
 }
