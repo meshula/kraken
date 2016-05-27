@@ -162,14 +162,16 @@ class Builder(Builder):
             return self.__klMembers['lookup'][name]
 
         if argType is None:
-          return None
+            return None
 
         typedArgs = self.__klMembers['members'].get(argType, [])
         index = len(typedArgs)
         typedArgs.append(name)
 
-        constantName = '%s_%s' % (self.getKLExtensionName(), name)
-        self.__klConstants[constantName] = index
+        constantName = str(index)
+        if self.__useRigConstants:
+            constantName = '%s_%s' % (self.getKLExtensionName(), name)
+            self.__klConstants[constantName] = index
 
         member = '_%s[%s]' % (argType, constantName)
         self.__klMembers['lookup'][name] = member
@@ -1626,6 +1628,7 @@ class Builder(Builder):
         """
 
         self.__rigTitle = self.getConfig().getMetaData('RigTitle', 'Rig')
+        self.__useRigConstants = self.getConfig().getMetaData('UseRigConstants', False)
         self.__canvasGraph = GraphManager()
         self.__debugMode = False
         self.__names = {}
