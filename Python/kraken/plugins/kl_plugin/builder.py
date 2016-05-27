@@ -20,6 +20,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.components.component_input import ComponentInput
 from kraken.core.objects.components.component_output import ComponentOutput
 from kraken.core.objects.attributes.attribute import Attribute
+from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.objects.operators.canvas_operator import CanvasOperator
@@ -163,6 +164,9 @@ class Builder(Builder):
 
         if argType is None:
             return None
+
+        if isinstance(item, ScalarAttribute) and isinstance(item.getCurrentSource(), Attribute):
+          argType = argType+'_Driven'
 
         typedArgs = self.__klMembers['members'].get(argType, [])
         index = len(typedArgs)
@@ -461,7 +465,7 @@ class Builder(Builder):
         kl += ["  Float64 solveTimeMs;"]
         kl += ["  KrakenClip clip; // the default clip of the rig"]
         for argType in self.__klMembers['members']:
-            kl += ["  %s _%s[%d];" % (argType, argType, len(self.__klMembers['members'][argType]))]
+            kl += ["  %s _%s[%d];" % (argType.replace('_Driven', ''), argType, len(self.__klMembers['members'][argType]))]
 
         for argType in self.__klArgs['members']:
             prefix = argType
@@ -486,8 +490,8 @@ class Builder(Builder):
             kl += ["  // build 3D objects"]
         for obj in self.__klObjects:
             memberName = obj['member']
+            kl += ["  this.%s.name = \"%s\";" % (memberName, obj['sceneItem'].getBuildName())]
             if self.__debugMode:
-                kl += ["  this.%s.name = \"%s\";" % (memberName, obj['name'])]
                 kl += ["  this.%s.buildName = \"%s\";" % (memberName, obj['buildName'])]
                 kl += ["  this.%s.path = \"%s\";" % (memberName, obj['path'])]
                 kl += ["  this.%s.layer = \"%s\";" % (memberName, obj.get('layer', ''))]
@@ -516,10 +520,11 @@ class Builder(Builder):
 
         kl += ["", "  // build attributes"]
         for attr in self.__klAttributes:
-            name = attr['name']
+            ownerName = attr['sceneItem'].getParent().getParent().getBuildName()
+            name = "%s.%s" % (ownerName, attr['name'])
+
             path = attr['path']
             if not self.__debugMode:
-              name = ""
               path = ""
 
             if attr['cls'] == "BoolAttribute":
@@ -625,7 +630,7 @@ class Builder(Builder):
         kl += ["  this.solve();"]
         kl += ["}", ""]
 
-        kl += ["function %s.evaluate!(KrakenClipContext context, Boolean inGlobalSpace, io Xfo joints<>) {" % self.getKLExtensionName()]
+        kl += ["function %s.evaluate!(KrakenClipContext context, io Xfo joints<>) {" % self.getKLExtensionName()]
         kl += ["  if(joints.size() != %d)" % len(self.__krkDeformers)]
         kl += ["    throw(\"Expected number of joints does not match (\"+joints.size()+\" given, %d expected).\");" % len(self.__krkDeformers)]
         kl += ["  if(this.clip != null) {"]
@@ -633,44 +638,24 @@ class Builder(Builder):
         kl += ["    this.clip.apply(rig, context, 1.0);"]
         kl += ["  }"]
         kl += ["  this.solve();"]
-        kl += ["  if(inGlobalSpace) {"]
-        for i in range(len(self.__krkDeformers)):
-            kl += ["    joints[%d] = this.%s.globalXfo;" % (i, self.__krkDeformers[i]['member'])]
-        kl += ["  } else {", ]
-        for i in range(len(self.__krkDeformers)):
-            parentObj = self.findKLObjectForSI(self.__krkDeformers[i]['sceneItem'].getParent())
-            if parentObj:
-                kl += ["    joints[%d] = this.%s.globalXfo.inverse() * this.%s.globalXfo;" % (i, parentObj['member'], self.__krkDeformers[i]['member'])]
-            else:
-                kl += ["    joints[%d] = this.%s.globalXfo;" % (i, self.__krkDeformers[i]['member'])]
-        kl += ["  }"]
-        kl += ["}", ""]
-
-        kl += ["function Xfo[] %s.getControlXfos() {" % self.getKLExtensionName()]
-        kl += ["  Xfo result[](%d);" % len(controls)]
-        for i in range(len(controls)):
-            kl += ["  result[%d] = this.%s.xfo;" % (i, controls[i]['member'])]
-        kl += ["  return result;"]
-        kl += ["}", ""]
-
-        kl += ["function String[] %s.getControlNames() {" % self.getKLExtensionName()]
-        kl += ["  String result[](%d);" % len(controls)]
-        for i in range(len(controls)):
-            kl += ["  result[%d] = \"%s\";" % (i, controls[i]['sceneItem'].getBuildName())]
-        kl += ["  return result;"]
+        if len(self.__krkDeformers) > 0:
+            kl += ["  for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
+            kl += ["    joints[i] = this._KrakenJoint[i].globalXfo;"]
         kl += ["}", ""]
 
         kl += ["function Xfo[] %s.getJointXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(self.__krkDeformers)]
-        for i in range(len(self.__krkDeformers)):
-            kl += ["  result[%d] = this.%s.globalXfo;" % (i, self.__krkDeformers[i]['member'])]
+        if len(self.__krkDeformers) > 0:
+            kl += ["  for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
+            kl += ["    result[i] = this._KrakenJoint[i].globalXfo;"]
         kl += ["  return result;"]
         kl += ["}", ""]
 
         kl += ["function String[] %s.getJointNames() {" % self.getKLExtensionName()]
         kl += ["  String result[](%d);" % len(self.__krkDeformers)]
-        for i in range(len(self.__krkDeformers)):
-            kl += ["  result[%d] = \"%s\";" % (i, self.__krkDeformers[i]['sceneItem'].getBuildName())]
+        if len(self.__krkDeformers) > 0:
+            kl += ["  for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
+            kl += ["    result[i] = this._KrakenJoint[i].name;"]
         kl += ["  return result;"]
         kl += ["}", ""]
 
@@ -688,33 +673,20 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function Float32[] %s.getScalarAttributeValues() {" % self.getKLExtensionName()]
-        kl += ["  Float32 result[](%d);" % len(scalarAttributes)]
-        for i in range(len(scalarAttributes)):
-            kl += ["  result[%d] = this.%s.value;" % (i, scalarAttributes[i]['member'])]
+        kl += ["function KrakenScalarAttribute<> %s.getScalarAttributes() {" % self.getKLExtensionName()]
+        if len(scalarAttributes) == 0:
+          kl += ["  KrakenScalarAttribute result<>;"]
+        else:
+          kl += ["  KrakenScalarAttribute result<>(this._KrakenScalarAttribute);"]
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function String[] %s.getScalarAttributeNames() {" % self.getKLExtensionName()]
-        kl += ["  String result[](%d);" % len(scalarAttributes)]
-        for i in range(len(scalarAttributes)):
-            ownerName = scalarAttributes[i]['sceneItem'].getParent().getParent().getBuildName()
-            kl += ["  result[%d] = \"%s.%s\";" % (i, ownerName, scalarAttributes[i]['name'])]
+        kl += ["function KrakenControl<> %s.getControls() {" % self.getKLExtensionName()]
+        if len(controls) == 0:
+          kl += ["  KrakenControl result<>;"]
+        else:
+          kl += ["  KrakenControl result<>(this._KrakenControl);"]
         kl += ["  return result;"]
-        kl += ["}", ""]
-
-        kl += ["function %s.setControlXfos!(Xfo values<>) {" % self.getKLExtensionName()]
-        kl += ["  if(values.size() != %d)" % len(controls)]
-        kl += ["    throw(\"Expected number of values does not match (\"+values.size()+\" given, %d expected).\");" % len(controls)]
-        for i in range(len(controls)):
-            kl += ["  this.%s.xfo = values[%d];" % (controls[i]['member'], i)]
-        kl += ["}", ""]
-
-        kl += ["function %s.setScalarAttributeValues!(Float32 values<>) {" % self.getKLExtensionName()]
-        kl += ["  if(values.size() != %d)" % len(scalarAttributes)]
-        kl += ["    throw(\"Expected number of values does not match (\"+values.size()+\" given, %d expected).\");" % len(scalarAttributes)]
-        for i in range(len(scalarAttributes)):
-            kl += ["  this.%s.value = values[%d];" % (scalarAttributes[i]['member'], i)]
         kl += ["}", ""]
 
         kl += ["function %s.setClip!(KrakenClip clip) {" % self.getKLExtensionName()]
@@ -1027,40 +999,34 @@ class Builder(Builder):
         cls = kSceneItem.__class__.__name__
 
         if kSceneItem.isTypeOf('ComponentGroup'):
-            cls = 'ComponentGroup'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('ComponentInput'):
-            cls = 'ComponentInput'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('ComponentOutput'):
-            cls = 'ComponentOutput'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Rig'):
-            cls = 'Rig'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Layer'):
-            cls = 'Layer'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('CtrlSpace'):
-            cls = 'CtrlSpace'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Curve'):
-            cls = 'Curve'
+            cls = 'Control'
         elif kSceneItem.isTypeOf('Control'):
             cls = 'Control'
         elif kSceneItem.isTypeOf('Joint'):
             cls = 'Joint'
         elif kSceneItem.isTypeOf('Locator'):
-            cls = 'Locator'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('HierarchyGroup'):
-            cls = 'HierarchyGroup'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Container'):
-            cls = 'Container'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Transform'):
             cls = 'Transform'
         else:
             self.reportError("buildKLSceneItem: Unexpected class " + cls)
             return False
-
-        if kSceneItem.isTypeOf('ComponentInput') or \
-            kSceneItem.isTypeOf('ComponentOutput') or \
-            kSceneItem.isTypeOf('Layer') or \
-            kSceneItem.isTypeOf('Rig'):
-            cls = 'Transform'
 
         obj = {
             'sceneItem': kSceneItem,

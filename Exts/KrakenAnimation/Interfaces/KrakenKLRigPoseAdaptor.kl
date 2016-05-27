@@ -38,7 +38,7 @@ function KrakenKLRigPoseAdaptor(KrakenKLRig rig, Character character) {
 function KrakenKLRigPoseAdaptor.updateFromRig!(KrakenClipContext context, out KrakenKLRig rig, out Character character) {
 
   Xfo xfos<>(this.rigBones.data(), this.rigBones.size());
-  this.rig.evaluate(context, true, xfos);
+  this.rig.evaluate(context, xfos);
   for(Size i=0;i<this.boneMap.size();i++) {
     if(this.boneMap[i] == -1)
       continue;
