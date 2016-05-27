@@ -25,6 +25,7 @@ from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.objects.operators.canvas_operator import CanvasOperator
 from kraken.core.objects.constraints.constraint import Constraint
+from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.maths.vec3 import Vec3
@@ -221,7 +222,19 @@ class Builder(Builder):
         objects = [self.findKLObjectForSI(obj) for obj in sources if self.findKLObjectForSI(obj)]
         if len(objects) > 1:
             print ("WARNING: object %s has more than one object source: %s (Parenting to last)." % (item['sceneItem'], [o["member"] for o in objects]))
-        if len(objects):
+
+        # let's check if this objects has a source pose constraint or not
+        needParentConstraint = True
+        constraints = [self.findKLConstraint(constraint) for constraint in sources if self.findKLConstraint(constraint)]
+        for sourceConstraint in constraints:
+            if isinstance(sourceConstraint, PoseConstraint):
+              needParentConstraint = False
+        solvers = [self.findKLSolver(solver) for solver in sources if self.findKLSolver(solver)]
+        for sourceSolver in solvers:
+            if sourceSolver:
+              needParentConstraint = False
+
+        if len(objects) and needParentConstraint:
             parent = objects[-1]
             kl += self.__visitKLObject(parent)
             kl += ["", "  // solving parent child constraint %s" % name]
