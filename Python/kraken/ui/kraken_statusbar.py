@@ -31,7 +31,7 @@ class KrakenStatusBar(QtGui.QStatusBar):
 
         messageConfig = {
             'DEBUG': {
-                'color': '#B4EEB4',
+                'color': '#CCCCFF',
                 'timeout': 3500
             },
             'INFO': {

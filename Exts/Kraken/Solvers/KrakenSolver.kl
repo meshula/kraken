@@ -1,25 +1,36 @@
 require InlineDrawing;
 
+struct KrakenSolverDefaults {
+    Boolean drawDebug;
+    Scalar rigScale;
+};
+// Default Constructor
+function KrakenSolverDefaults()
+{
+  this.drawDebug = false;
+  this.rigScale = 1.0;
+}
+
 interface IKrakenSolver {
     KrakenSolverArg[] getArguments();
 };
 
 object KrakenSolver : IKrakenSolver {
+    KrakenSolverDefaults defaults;
     Boolean drawDebug;
     DrawingHandle handle;
 };
 
 // Default Constructor
 inline KrakenSolver() {
-  this.drawDebug = false;
-  this.handle = null;
+  this.drawDebug = this.defaults.drawDebug;
 }
 
 // Return Arguments for Kraken
 function KrakenSolverArg[] KrakenSolver.getArguments(){
     KrakenSolverArg args[];
-    args.push(KrakenSolverArg('drawDebug', 'In', 'Boolean', "False"));
-    args.push(KrakenSolverArg('rigScale', 'In', 'Scalar', "1.0"));
+    args.push(KrakenSolverArg('drawDebug', 'In', 'Boolean'));
+    args.push(KrakenSolverArg('rigScale', 'In', 'Scalar'));
     return args;
 }
 
