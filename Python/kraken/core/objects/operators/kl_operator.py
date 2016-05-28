@@ -39,7 +39,10 @@ class KLOperator(Operator):
         if self.extension != 'Kraken':
             ks.loadExtension(self.extension)
         self.solverRTVal = ks.constructRTVal(self.solverTypeName)
-        self.json = json.loads(self.solverRTVal.getJSON().getSimpleType())
+        try:
+          self.json = json.loads(self.solverRTVal.getJSON().getSimpleType())
+        except:
+          self.json = None
         logger.debug("Creating kl operator object [%s] of type [%s] from extension [%s]:" % (self.getName(), self.solverTypeName, self.extension))
         #logger.debug(pprint.pformat(self.json))  Too much for standard debug.  Hopefully we can get more granular. Uncomment if you want to see object properties
 

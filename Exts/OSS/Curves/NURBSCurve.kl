@@ -8,6 +8,9 @@
 require Math, FabricStatistics;
 require Geometry, Color;
 
+const UInt32 NURBSCurve_StandardResolution = 25;
+const UInt32 NURBSCurve_MaxDegree = 16;
+
 /// An implementation of a Non-uniform rational B-spline curve.
 object NURBSCurve {
 
@@ -27,6 +30,9 @@ object NURBSCurve {
   UInt32 numCurves;
   UInt32 numPoints;
   UInt32 resolution;
+  UInt32 degree;
+  Scalar stepSize;
+  Boolean computeColors;
   Mat44 cmats[];
 
   UInt32 pointSizes[];
@@ -36,12 +42,10 @@ object NURBSCurve {
 	  Mat44Attribute controlMat44s;
 	  Vec4Attribute controlPoints;
 	  UInt32Attribute isSegmentStart;
-	  QuatAttribute ori;
 	  ScalarAttribute weights;
 
   // per curve, size numCurves
   GeometryAttributes curveAttributes;
-	  UInt32Attribute degree;
 	  ScalarAttribute restLength;
 	  UInt32Attribute closed;
 	  // UInt32Attribute resolution;
@@ -55,12 +59,14 @@ object NURBSCurve {
   // per curve, cache size of resolution times number of curves
   // potentially add colors
   GeometryAttributes resolutionAttributes;
-	  Vec3Attribute positions;   // per curve
-	  ScalarAttribute segLengths; // per curve
-	  ScalarAttribute distances; // per curve
-	  ColorAttribute colors; // per curve
-	  Vec3Attribute normals; // per curve
+  Vec3Attribute positions;   // per curve point
+	ScalarAttribute segLengths; // per curve point
+	ScalarAttribute distances; // per curve point
+	ColorAttribute colors; // per curve point
+	Vec3Attribute normals; // per curve point
 
+  Scalar basises[]; // supports degrees up to NURBSCurve_MaxDegree
+  UInt32 spans[];
 };
 
 
@@ -71,96 +77,134 @@ object NURBSCurve {
 function NURBSCurve() {
   // this.parent._init("NURBSCurve");
   // this.raycastThickness = 1e-4;
-  ;
+  this.pointAttributes = GeometryAttributes();
+  this.controlMat44s   = this.pointAttributes.getOrCreateMat44Attribute('controlMat44s');
+  this.controlPoints   = this.pointAttributes.getOrCreateVec4Attribute("controlPoints");
+  this.isSegmentStart  = this.pointAttributes.getOrCreateUInt32Attribute('isSegmentStart');
+  this.weights         = this.pointAttributes.getOrCreateScalarAttribute('weights');
+
+  this.curveAttributes = GeometryAttributes();
+  this.numCurves = 1;
+  this.curveAttributes.resize(this.numCurves);
+
+  // this.firstPoint      = this.curveAttributes.getOrCreateUInt32Attribute("firstPoint");
+  this.restLength      = this.curveAttributes.getOrCreateScalarAttribute("restLength");
+  this.closed          = this.curveAttributes.getOrCreateUInt32Attribute("closed");
+  // this.resolution      = this.curveAttributes.getOrCreateUInt32Attribute("resolution");
+  this.clamped         = this.curveAttributes.getOrCreateUInt32Attribute('clamped');
+
+  this.resolutionAttributes = GeometryAttributes();
+  this.positions     = this.resolutionAttributes.getOrCreateVec3Attribute("positions");
+  this.segLengths    = this.resolutionAttributes.getOrCreateScalarAttribute("segLengths");
+  this.distances     = this.resolutionAttributes.getOrCreateScalarAttribute("distances");
+  this.colors        = this.resolutionAttributes.getOrCreateColorAttribute("colors");
+  this.normals       = this.resolutionAttributes.getOrCreateVec3Attribute("normals");
+
+  this.computeColors = true;
 }
 
 function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
+
 	// INITIATE POINTS
-	this.numPoints = 2;
-	this.numCurves = 1;
-	if (this.resolution < 1) this.resolution = 25;
-	
-  	this.numCurves = 0;
-  	this.cmats = cMats;
+	if (this.resolution < 1)
+    this.resolution = NURBSCurve_StandardResolution;
+
+  this.stepSize = stepSize(this.resolution);
+
+	this.cmats = cMats;
 	this.numPoints = cMats.size();
+  this.degree = Math_min(Math_max(degree,1),this.numPoints-1);
 
+  // per point, size numPoints
+  if(this.pointAttributes.size() != this.numPoints) {
 
-    // per point, size numPoints
-	this.pointAttributes = GeometryAttributes();
-	this.pointAttributes.resize(this.numPoints);
-	// define the geomAttrs
-	this.controlMat44s   = this.pointAttributes.getOrCreateMat44Attribute('controlMat44s');
-	this.controlPoints   = this.pointAttributes.getOrCreateVec4Attribute("controlPoints");
-	this.isSegmentStart  = this.pointAttributes.getOrCreateUInt32Attribute('isSegmentStart');
-	this.ori             = this.pointAttributes.getOrCreateQuatAttribute('ori');
-	this.weights         = this.pointAttributes.getOrCreateScalarAttribute('weights');
+  	this.pointAttributes.resize(this.numPoints);
 
-	// first point is always a Segment Start
-	this.isSegmentStart.values[0] = 1;
-	// last point is never a Segment Start
-	this.isSegmentStart.values[this.numPoints-1] = 0;
+  	// first point is always a Segment Start
+  	this.isSegmentStart.values[0] = 1;
+  	// last point is never a Segment Start
+  	this.isSegmentStart.values[this.numPoints-1] = 0;
 
-	for(UInt32 p=0; p<this.numPoints; p++){
-		this.controlMat44s.values[p] = cMats[p];
-		this.ori.values[p] = Quat(cMats[p].upperLeft());
-		this.weights.values[p] = 1.0;
-		this.controlPoints.values[p] = Vec4(cMats[p].translation().x, cMats[p].translation().y, cMats[p].translation().z, this.weights.values[p]);
-		// default weight (for now)
-		// get number of curves in List
-		this.numCurves += this.isSegmentStart.values[p];
-	}
-	// INITIATE CURVES
+    this.numCurves = 0;
+    for(UInt32 p=0; p<this.numPoints; p++){
+      this.weights.values[p] = 1.0;
+      this.numCurves += this.isSegmentStart.values[p];
+    }
+
+    this.curveAttributes.resize(1);
+  }
+
+  for(UInt32 p=0; p<this.numPoints; p++){
+    this.controlMat44s.values[p] = cMats[p];
+    this.controlPoints.values[p] = Vec4(cMats[p].translation().x, cMats[p].translation().y, cMats[p].translation().z, this.weights.values[p]);
+  }
+	
+  // INITIATE CURVES
 	//
-    // per curve, size numCurves
-	this.curveAttributes = GeometryAttributes();
-	this.curveAttributes.resize(this.numCurves);
-	// define the geomAttrs
-	// this.firstPoint      = this.curveAttributes.getOrCreateUInt32Attribute("firstPoint");
-	this.degree          = this.curveAttributes.getOrCreateUInt32Attribute("degree");
-	this.restLength      = this.curveAttributes.getOrCreateScalarAttribute("restLength");
-	this.closed          = this.curveAttributes.getOrCreateUInt32Attribute("closed");
-	// this.resolution      = this.curveAttributes.getOrCreateUInt32Attribute("resolution");
-	this.clamped         = this.curveAttributes.getOrCreateUInt32Attribute('clamped');
+  // per curve, size numCurves
+  if(this.numCurves != this.curveAttributes.size()) {
+  	this.curveAttributes.resize(this.numCurves);
 
-
+    for(UInt32 c=0; c<this.numCurves; c++){
+      // clamping curve order automatically
+      this.closed.values[c] = 0;
+      this.clamped.values[c] = 1;
+    }
+  }
 
 	// INITIATE RESOLUTION ATTRS
 	//
-    // one Array, size is resolution times numCurves
-	this.resolutionAttributes = GeometryAttributes();
-	this.resolutionAttributes.resize(this.numCurves*this.resolution);
-	// define the geomAttrs
-	this.positions     = this.resolutionAttributes.getOrCreateVec3Attribute("positions");
-	this.segLengths    = this.resolutionAttributes.getOrCreateScalarAttribute("segLengths");
-	this.distances     = this.resolutionAttributes.getOrCreateScalarAttribute("distances");
-	this.colors        = this.resolutionAttributes.getOrCreateColorAttribute("colors");
-	this.normals       = this.resolutionAttributes.getOrCreateVec3Attribute("normals");
+  // one Array, size is resolution times numCurves
+  if(this.numCurves * this.resolution != this.resolutionAttributes.size()) {
+    this.resolutionAttributes.resize(this.numCurves*this.resolution);
+  }
 
-
-	for(UInt32 c=0; c<this.numCurves; c++){
-		// default values (for now)
-		// this.firstPoint.values[c] = 1;
-
-		// clamping curve order automatically
-		this.degree.values[c] = Math_min(Math_max(degree,1),this.numPoints-1);
-		this.closed.values[c] = 0;
-		// this.resolution.values[c] = 100;
-		this.clamped.values[c] = 1;
-	}
-	//temp
 	this.computeUniformKnots();
-	// this.positions.values = this.samplePoints(this.resolution);
+
 	Scalar keepArcLen = 0.0;
 	Scalar keepCurveLen = 0.0;
 
+  if(this.positions.size() >= 1000) {
+
     __evalPositionsTask<<<this.positions.size()>>>(this.positions.values, this, keepArcLen, keepCurveLen);
-    // __evalDistancesTask<<<this.distances.size()>>>(this.distances.values, this);
-
-	for (UInt32 i=0;i<this.distances.size();i++) __evalDistancesTask(i, this.distances.values, this);
-
-
-    __evalColorsTask<<<this.colors.size()>>>(this.colors.values, this, keepArcLen, keepCurveLen);
+    for (UInt32 i=0;i<this.positions.size();i++)
+      __evalDistancesTask(i, this.distances.values, this);
     __evalTangentsTask<<<this.normals.size()>>>(this.normals.values, this, keepArcLen, keepCurveLen);
+    if(this.computeColors)
+      __evalColorsTask<<<this.colors.size()>>>(this.colors.values, this, keepArcLen, keepCurveLen);
+  
+  } else if(this.positions.size() == NURBSCurve_StandardResolution) {
+
+    // special case: if we have the standard resolution we can use const loops
+    // which means the compiler is going to unroll them and remove the counter compute
+
+    for (UInt32 i=0;i<NURBSCurve_StandardResolution;i++)
+      __evalPositionsTask(i, this.positions.values, this, keepArcLen, keepCurveLen);
+
+    for (UInt32 i=0;i<NURBSCurve_StandardResolution;i++) {
+      __evalDistancesTask(i, this.distances.values, this);
+      __evalTangentsTask(i, this.normals.values, this, keepArcLen, keepCurveLen);
+    }
+
+    if(this.computeColors) {
+      for (UInt32 i=0;i<NURBSCurve_StandardResolution;i++)
+        __evalColorsTask(i, this.colors.values, this, keepArcLen, keepCurveLen);
+    }
+
+  } else {
+
+    for (UInt32 i=0;i<this.positions.size();i++)
+      __evalPositionsTask(i, this.positions.values, this, keepArcLen, keepCurveLen);
+    for (UInt32 i=0;i<this.positions.size();i++) {
+      __evalDistancesTask(i, this.distances.values, this);
+      __evalTangentsTask(i, this.normals.values, this, keepArcLen, keepCurveLen);
+    }
+    if(this.computeColors) {
+      for (UInt32 i=0;i<this.positions.size();i++)
+      __evalColorsTask(i, this.colors.values, this, keepArcLen, keepCurveLen);
+    }
+
+  }
 }
 
 /*
@@ -190,12 +234,12 @@ function NURBSCurve(Vec3 cps[], Integer degree)
 /// Sample points on curve at equally spaced parametric intervals
 operator __evalPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
 {	
-	results[index] = curve.getPoint(index*stepSize(curve.resolution), keepArcLength, keepCurveLen);
+	results[index] = curve.getPointByIndex(index, keepArcLength, keepCurveLen);
 }
 
 operator __evalOffsetPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen, Vec3 offset, Boolean local)
 {	
-	results[index] = curve.getOffsetPoint(index*stepSize(curve.resolution), keepArcLength, keepCurveLen, offset, local);
+	results[index] = curve.getOffsetPoint(index*curve.stepSize, keepArcLength, keepCurveLen, offset, local);
 }
 
 operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[]) 
@@ -213,13 +257,14 @@ operator __evalColorsTask<<<index>>>(io Color results[], io Ref<NURBSCurve> curv
 {	
 	Scalar hue = mathRandomScalar(0,1);
 	Scalar saturation = 3;
-	results[index] = randomColor(hue*180,saturation,index*stepSize(curve.resolution)); 	
+	results[index] = randomColor(hue*180,saturation,index*curve.stepSize); 	
 }		
 
 /// Sample tangents on curve at equally spaced parametric intervals
 operator __evalTangentsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
 {	
-	results[index] = curve.getTangent(index*stepSize(curve.resolution),true, keepArcLength, keepCurveLen);
+  results[index] = curve.getFakeTangent(index*curve.stepSize,true, keepArcLength, keepCurveLen);
+	// results[index] = curve.getTangent(index*curve.stepSize,true, keepArcLength, keepCurveLen);
 }
 
 /// Return accumulative distances to first point of curve, sampled at equally spaced parametric intervals
@@ -283,7 +328,7 @@ function Scalar NURBSCurve.arcLengthParam(Scalar param, Scalar keepArcLength, Sc
 inline Scalar NURBSCurve.uFromParam(Scalar param, Scalar keepArcLength, Scalar keepCurveLen)
 {	
 
-    Scalar keepArcLengthClamped = Math_clamp( keepArcLength, 0, 1 );
+  Scalar keepArcLengthClamped = Scalar(Math_clamp( keepArcLength, 0, 1 ));
 	Scalar arcLenT = 0;
 	// linear mapping t->u
 	if (keepArcLengthClamped > 0) {
@@ -317,25 +362,42 @@ function NURBSCurve.computeUniformKnots!()
 	// TODO: This seems non-uniform in the results? Test some more!
 
 	UInt32 counter = 0;
-	UInt32 knotsSize = this.degree.values[0] + this.controlPoints.values.size() + 1;
-	this.knots.resize(knotsSize);
+	UInt32 knotsSize = this.degree + this.controlPoints.values.size() + 1;
 
-	for(UInt32 i=0; i<knotsSize; i++)
-	{
+  if(knotsSize != this.knots.size()) {
+  	this.knots.resize(knotsSize);
 
-		// Degree + 1 at start of 0 knots to clamp the curve
-		if (i <= this.degree.values[0])
-			this.knots[i] = 0;
+  	for(UInt32 i=0; i<knotsSize; i++)
+  	{
 
-		// Degree + 1 at the end of the highest knots value to clamp the curve
-		else if (i > knotsSize - this.degree.values[0] - 1)
-			this.knots[i] = counter;
+  		// Degree + 1 at start of 0 knots to clamp the curve
+  		if (i <= this.degree)
+  			this.knots[i] = 0;
 
-		// Otherise increase knot gradually
-		else
-			this.knots[i] = ++counter;	
+  		// Degree + 1 at the end of the highest knots value to clamp the curve
+  		else if (i > knotsSize - this.degree - 1)
+  			this.knots[i] = counter;
 
-	}
+  		// Otherise increase knot gradually
+  		else
+  			this.knots[i] = ++counter;	
+
+  	}
+  }
+
+  Size numSpans = this.resolutionAttributes.size();
+  if(this.spans.size() != numSpans) {
+    this.basises.resize(numSpans * NURBSCurve_MaxDegree);
+    this.spans.resize(numSpans);
+
+    for(UInt32 i=0;i<numSpans;i++) {
+      Scalar u = Scalar(i)*this.stepSize;
+      this.spans[i] = NURBSUtils_findSpan(this.degree, u, this.knots);
+      Scalar basis[] = NURBSUtils_calcBasisFunctions(this.spans[i], u, this.degree, this.knots);
+      for(Size j=0;j<basis.size();j++)
+        this.basises[i*NURBSCurve_MaxDegree+j] = basis[j];
+    }
+  }
 }
 
 
@@ -364,11 +426,26 @@ function Vec3 NURBSCurve.getPoint(Scalar param, Scalar keepArcLength, Scalar kee
 	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
 
 	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
+	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.controlPoints.values, u );
 
 	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
 	return hpoint.makeHomogeneousVec3();
 }
+
+/// Return a point on the curve
+/// \param param Parameter on curve between 0-1
+function Vec3 NURBSCurve.getPointByIndex(Index index, Scalar keepArcLength, Scalar keepCurveLen)
+{
+  Scalar param = index * this.stepSize;
+  Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
+
+  // following results in (wx, wy, wz, w) homogeneous point
+  Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.controlPoints.values, u, this.spans[index], this.basises, index * NURBSCurve_MaxDegree );
+
+  // project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
+  return hpoint.makeHomogeneousVec3();
+}
+
 
 /// Get a point on the curve
 /// \param param Parameter on curve between 0-1
@@ -379,7 +456,7 @@ function Vec3 NURBSCurve.getPoint(Scalar param)
 	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
 
 	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
+	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.controlPoints.values, u );
 
 	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
 	return hpoint.makeHomogeneousVec3();
@@ -409,12 +486,10 @@ function Vec3 NURBSCurve.getOffsetPoint(Scalar param, Scalar keepArcLength, Scal
 		offsetPoints[p].t = this.weights.values[p];
 	}
 	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, offsetPoints, u );
+	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree, this.knots, offsetPoints, u );
 	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
 	return hpoint.makeHomogeneousVec3();
 }	
-
-
 
 /// ORIENTATION
 
@@ -425,7 +500,7 @@ function Vec3 NURBSCurve.getTangent(Scalar param, Boolean normalize, Scalar keep
 {
 	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
 
-	Vec4 ders[] = NURBSUtils_calcNURBSDerivatives( this.degree.values[0], this.knots, this.controlPoints.values, u, 1 );
+	Vec4 ders[] = NURBSUtils_calcNURBSDerivatives( this.degree, this.knots, this.controlPoints.values, u, 1 );
 	Vec3 tangent = ders[1].clone().xyz();
 
 	if (normalize)
@@ -694,7 +769,7 @@ function Scalar NURBSCurve.getClosestParam(in Vec3 p) {
 	Scalar cu = u;
 	while(i < maxits) {
 		// calculate derivatives
-		Vec4 e[] = NURBSUtils_calcNURBSDerivatives( this.degree.values[0], this.knots, this.controlPoints.values, cu, 2 );
+		Vec4 e[] = NURBSUtils_calcNURBSDerivatives( this.degree, this.knots, this.controlPoints.values, cu, 2 );
 		Vec3 e0 = e[0].xyz();
 		Vec3 e1 = e[1].xyz();
 		Vec3 e2 = e[2].xyz();

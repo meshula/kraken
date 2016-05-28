@@ -38,8 +38,8 @@ function OSS_RemapScalarValueSolver.solve!
   result.resize(size);
 
   for(UInt32 i=0; i<inputValues.size(); i++){
-    resultPos.push(Math_max(0,inputValues[i])*scale);
-    resultNeg.push(abs(Math_min(0,inputValues[i]))*scale);
+    resultPos.push(Scalar(Math_max(0,inputValues[i]))*scale);
+    resultNeg.push(abs(Scalar(Math_min(0,inputValues[i])))*scale);
     result.push(resultPos[i] - resultNeg[i]);
   }
 }

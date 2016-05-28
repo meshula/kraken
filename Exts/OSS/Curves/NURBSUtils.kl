@@ -104,23 +104,28 @@ u : parametric point
 returns point for given u
 */
 /// \internal
+function Vec4 NURBSUtils_calcBSplinePoint(UInt32 degree, UInt32 knots[], Vec4 controlPoints[], Scalar u, UInt32 span, Scalar basises[], UInt32 basisOffset) {
+
+    Vec4 result(0, 0, 0, 0);
+
+    for ( UInt32 j = 0; j <= degree; ++ j ) {
+      Vec4 point = controlPoints[span - degree + j];
+      Scalar basis = basises[basisOffset+j];
+      Scalar weight = point.t * basis;
+      result.x += point.x * weight;
+      result.y += point.y * weight;
+      result.z += point.z * weight;
+      result.t += point.t * basis;
+    }
+
+    return result;
+}
+
 function Vec4 NURBSUtils_calcBSplinePoint(UInt32 degree, UInt32 knots[], Vec4 controlPoints[], Scalar u) {
 
 		UInt32 span = NURBSUtils_findSpan(degree, u, knots);
 		Scalar basises[] = NURBSUtils_calcBasisFunctions(span, u, degree, knots);
-		Vec4 result(0, 0, 0, 0);
-
-		for ( UInt32 j = 0; j <= degree; ++ j ) {
-			Vec4 point = controlPoints[span - degree + j];
-			Scalar basis = basises[j];
-			Scalar weight = point.t * basis;
-			result.x += point.x * weight;
-			result.y += point.y * weight;
-			result.z += point.z * weight;
-			result.t += point.t * basis;
-
-		}
-		return result;
+    return NURBSUtils_calcBSplinePoint(degree, knots, controlPoints, u, span, basises, 0);
 }
 
 /*
@@ -277,7 +282,7 @@ function Vec4[] NURBSUtils_calcBSplineDerivatives( UInt32 degree, UInt32 knots[]
 	
 	for (UInt32 i = 0; i < controlPoints.size(); ++ i) {
 
-		Vec4 point = controlPoints[i].clone();
+		Vec4 point = controlPoints[i];
 		Scalar t = point.t;
 
 		point.x *= t;
@@ -289,10 +294,10 @@ function Vec4[] NURBSUtils_calcBSplineDerivatives( UInt32 degree, UInt32 knots[]
 
 	for (UInt32 k = 0; k <= du; ++ k) {
 
-		Vec4 point = pw[span - degree].clone() * nders[k][0];
+		Vec4 point = pw[span - degree] * nders[k][0];
 
 		for (UInt32 j = 1; j <= degree; ++ j) {
-			point += pw[span - degree + j].clone() * nders[k][j];
+			point += pw[span - degree + j] * nders[k][j];
 		}
 
 		ck.push(point);
@@ -369,10 +374,10 @@ function Vec4[] NURBSUtils_calcRationalCurveDerivatives( Vec4 pders[] ) {
 
 	for ( UInt32 k = 0; k < nd; ++ k ) {
 
-		Vec3 v_tmp = aders[k].clone();
+		Vec3 v_tmp = aders[k];
 		Vec4 v = Vec4(v_tmp.x, v_tmp.y, v_tmp.z, 1.0);
 		for ( UInt32 i = 1; i <= k; ++ i ) {
-			v -= ck[k - i].clone() * (NURBSUtils_calcKoverI(k, i) * wders[i]);
+			v -= ck[k - i] * (NURBSUtils_calcKoverI(k, i) * wders[i]);
 		}
 
 		ck[k] = v / wders[0];
@@ -436,7 +441,7 @@ function Vec3 NURBSUtils_calcSurfacePoint( UInt32 degreeU, UInt32 degreeV, UInt3
 		temp[l] = Vec4( 0, 0, 0, 1.0 );
 		for (UInt32 k = 0; k <= degreeU; ++k) {
 
-			Vec4 point = controlPoints[uspan - degreeU + k][vspan - degreeV + l].clone();
+			Vec4 point = controlPoints[uspan - degreeU + k][vspan - degreeV + l];
 			Scalar t = point.t;
 			point.x *= t;
 			point.y *= t;

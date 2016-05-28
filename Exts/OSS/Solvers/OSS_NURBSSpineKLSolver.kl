@@ -2,10 +2,30 @@ require Math;
 require Curves;
 require InlineDrawing;
 
-
 object OSS_NURBSSpineKLSolver : KrakenSolver {
+  NURBSCurve restCurve;
+  NURBSCurve posedCurve;
+  Ref <NURBSCurve> posedCurveRef;
+  Ref <NURBSCurve> restCurveRef;
+
+  Scalar params[]; 
+  Vec3 altNormal[];
+  Vec3 altTangent[];
+  Xfo xfos[];
+  Xfo outputsXfo[];
+  Scalar compression[];
 };
 
+function OSS_NURBSSpineKLSolver()
+{
+  this.restCurve = NURBSCurve();
+  this.posedCurve = NURBSCurve();
+  this.posedCurveRef = this.posedCurve;
+  this.restCurveRef = this.restCurve;
+
+  this.restCurve.computeColors = false;
+  this.posedCurve.computeColors = false;
+}
 
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_NURBSSpineKLSolver.getArguments() {
@@ -46,58 +66,49 @@ function OSS_NURBSSpineKLSolver.solve!(
   Scalar keepCurveLen = 0;
   
   // set interpolated params between a and b
-  Scalar params[]; 
-  params.resize(count);
+  if(this.params.size() != count) {
+    this.params.resize(count);
+    this.xfos.resize(count);
+    this.outputsXfo.resize(count);
+    this.altTangent.resize(count);
+    this.altNormal.resize(count);
+    this.compression.resize(count);
+  }
+
   outputs.resize(count);
-  Scalar a = 0;
-  Scalar b = 1;
-  Boolean popLast = false; 
+  // Boolean popLast = false; 
+
   for(Size i=0;i<count;i++)
   {
-    Float32 ratio = Float32(i) / Float32(popLast ? count : count-1);
-    params[i] = (1.0 - ratio) * a + ratio * b;
+    // this.params[i] = Float32(i) / Float32(popLast ? count : count-1);
+    this.params[i] = Float32(i) / Float32(count-1);
   }
 
   UInt32 degree = 3;
-  NURBSCurve restCurve = NURBSCurve();
-  NURBSCurve posedCurve = NURBSCurve();
-  restCurve.initiate(controlsRest, degree);
-  posedCurve.initiate(controls, degree);
-  // positions = restCurve.positions.values;
-  // colors  = restCurve.colors.values;
-  // normals = restCurve.normals.values;
-  
-  Vec3 altNormal[];
-  Vec3 altTangent[];
-  Xfo xfos[];
-  Xfo outputsXfo[];
-  Scalar compression[];
+  {
+    this.posedCurve.initiate(controls, degree);
 
-  xfos.resize(count);
-  outputsXfo.resize(count);
-  altTangent.resize(count);
-  altNormal.resize(count);
-  compression.resize(count);
-  outputs.resize(count);
+    // the rest curve does not change over time
+    //if(this.restCurve.numPoints != controlsRest.size())
+      this.restCurve.initiate(controlsRest, degree);
+  }
   
   Scalar useLocalNormal = 1; 
   Scalar followCurveTangent =1;
   Scalar followCurveNormal = 1; 
 
-  UInt32 alignX = 1;
-  UInt32 alignY = 2;
-  UInt32 alignZ = 3;
+  UInt8 alignX = 1;
+  UInt8 alignY = 2;
+  UInt8 alignZ = 3;
   
-
-  Ref <NURBSCurve> posedCurveRef = posedCurve;
-  Ref <NURBSCurve> restCurveRef = restCurve;
-  
-  for (UInt32 i =0; i<count; i++) {
-    __evalXfosTask(i, xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
-    __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
-    Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
-    xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
-    __alignXfosTask(i, outputsXfo, xfos, alignX, alignY, alignZ);
-    outputs[i] = outputsXfo[i].toMat44();
+  {
+    for (UInt32 i =0; i<count; i++) {
+      __evalXfosTask(i, this.xfos, this.posedCurveRef, this.params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, this.altTangent, this.altNormal);
+      __evalCompressionTask(i, this.compression, this.posedCurveRef, this.restCurveRef, this.params, keepArcLength, keepCurveLen);
+      Scalar localCompression = Float32(Math_linearInterpolate(1, this.compression[i], compressionAmt));
+      this.xfos[i].sc = this.xfos[i].sc*Vec3(1,localCompression,localCompression);
+      __alignXfosTask(i, this.outputsXfo, this.xfos, alignX, alignY, alignZ);
+      outputs[i] = this.outputsXfo[i].toMat44();
+    }
   }
 }
