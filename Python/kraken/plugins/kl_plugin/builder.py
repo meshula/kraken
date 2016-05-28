@@ -287,7 +287,7 @@ class Builder(Builder):
                     if self.__debugMode:
                         kl += ["  report(\"solving KLSolver %s\");" % (sourceName)]
                     if self.__profilingFrames > 0:
-                        kl += ["  { AutoProfilingEvent solverEvent_%s(\"%s\");" % (eventSolverName, eventSolverName)]
+                        kl += ["  { AutoProfilingEvent solverEvent_%s(\"%s\");" % (eventSolverName, kOperator.getDecoratedPath())]
 
                     # first let's find all args which are arrays and prepare storage
                     for i in xrange(len(args)):
