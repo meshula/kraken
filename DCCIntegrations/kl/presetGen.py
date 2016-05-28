@@ -17,6 +17,15 @@ def argOpts():
     parser.add_option("-c", "--config", dest="config",
             help="Create the directory structure of a new asset locally.")
 
+    parser.add_option("-p", "--profiling", dest="numframes", type="int",
+            help="Embeds profiling inside the generated rig for the provided number of frames")
+
+    parser.add_option("-f", "--logfile", dest="logfile",
+            help="Stores the profiling results in a file instead of reporting them")
+
+    parser.add_option("-C", "--constants", dest="constants", action="store_true",
+            help="Enables the use of constants for the array indices - thus easier to read code")
+
     description = optparse.OptionGroup(parser, "Description", "Generate a kl character from krg input")
 
     parser.add_option_group(description)
@@ -72,9 +81,12 @@ def main():
     config = builder.getConfig()
 
     config.setMetaData('RigTitle', os.path.split(args[0])[1].partition('.')[0])
-    config.setMetaData('SetupDebugDrawing', True)
-    config.setMetaData('CollapseComponents', False)
-    config.setMetaData('AddCollectJointsNode', True)
+    if options.constants:
+      config.setMetaData('UseRigConstants', True)
+    if options.numframes:
+      config.setMetaData('ProfilingFrames', options.numframes)
+    if options.logfile:
+      config.setMetaData('ProfilingLogFile', options.logfile)
 
     builder.build(rig)
 
