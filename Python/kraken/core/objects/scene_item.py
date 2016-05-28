@@ -186,6 +186,7 @@ class SceneItem(object):
 
         """
 
+        self.removeSource(self._parent)
         self._parent = parent
         self.addSource(parent)
 
@@ -238,6 +239,21 @@ class SceneItem(object):
         self._sources.append(source)
 
         return True
+
+
+    def removeSource(self, source):
+        """Removes a source from this object.
+
+        Arguments:
+        source (Object): Object that is no longer a source of this one.
+
+        """
+
+        if not isinstance(source, SceneItem):
+            return False
+
+        self._sources[:] = [s for s in self._sources if s != source]
+
 
     def setSource(self, index, source):
         """Sets the source of this object.
