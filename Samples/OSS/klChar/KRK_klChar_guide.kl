@@ -7,7 +7,6 @@ require OSS_Kraken;
 
 
 object KRK_klChar_guide : KrakenKLRig {
-  Float64 solveTimeMs;
   KrakenClip clip; // the default clip of the rig
   OSS_HierBlendSolver _OSS_HierBlendSolver[4];
   OSS_TwoBoneIKSolver _OSS_TwoBoneIKSolver[4];
@@ -1631,7 +1630,6 @@ function KRK_klChar_guide.resetPose!() {
 }
 
 function KRK_klChar_guide.solve!() {
-  UInt64 timerStart = getCurrentTicks();
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[1].value = this._KrakenScalarAttribute_Driven[0].value;
@@ -3970,8 +3968,6 @@ function KRK_klChar_guide.solve!() {
   // solving PoseConstraint constraint deformers_rootM_pelvisM_upLegR_loLegR_legendR_footR_ballR_ball_To_ball_PoseConstraint
   this._KrakenPoseConstraint[151].constrainers[0] = this._KrakenTransform[124].globalXfo;
   this._KrakenJoint[70].globalXfo = this._KrakenPoseConstraint[151].compute(this._KrakenJoint[70].globalXfo);
-  UInt64 timerEnd = getCurrentTicks();
-  this.solveTimeMs = 1000.0 * getSecondsBetweenTicks(timerStart, timerEnd);
 }
 
 function KRK_klChar_guide.evaluate!(KrakenClipContext context) {
@@ -3990,8 +3986,10 @@ function KRK_klChar_guide.evaluate!(KrakenClipContext context, io Xfo joints<>) 
     this.clip.apply(rig, context, 1.0);
   }
   this.solve();
-  for(Size i=0;i<71;i++)
-    joints[i] = this._KrakenJoint[i].globalXfo;
+  {
+    for(Size i=0;i<71;i++)
+      joints[i] = this._KrakenJoint[i].globalXfo;
+  }
 }
 
 function Xfo[] KRK_klChar_guide.getJointXfos() {
