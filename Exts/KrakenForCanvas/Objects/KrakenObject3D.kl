@@ -9,16 +9,12 @@ struct KrakenObject3D {
   String path;
   String layer;
   String component;
-  Xfo xfo;
-  Xfo globalXfo;
+  Mat44 local;
+  Mat44 global;
   Boolean visibility;
   Color color;
   String flags[String];
 };
-
-function KrakenObject3D.setLocalXfo!(Xfo xfo) {
-  this.xfo = xfo;
-}
 
 function KrakenObject3D_DrawIntoLines_VertexColors(KrakenObject3D obj, Index firstIndex, io Lines lines) {
   GeometryAttributes attributes = lines.getAttributes();

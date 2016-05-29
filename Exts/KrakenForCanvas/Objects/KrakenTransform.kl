@@ -19,14 +19,9 @@ function KrakenTransform(
   this.path = path;
   this.layer = layer;
   this.component = component;
-  this.xfo = xfo;
+  this.local = xfo.toMat44();
   this.visibility = visibility;
   this.color = color;
-}
-
-/// \dfgPresetFolder Objects
-function Xfo KrakenTransform.getXfo() {
-  return this.xfo;
 }
 
 /// \dfgPresetFolder DebugDrawing

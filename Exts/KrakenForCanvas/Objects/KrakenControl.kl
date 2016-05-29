@@ -22,41 +22,38 @@ function KrakenControl(
   this.path = path;
   this.layer = layer;
   this.component = component;
-  this.xfo = xfo;
   this.visibility = visibility;
   this.color = color;
   this.shapeHash = shapeHash;
 
   // xfo animation
-  this.xfo = xfoAnimation.get(this.path, this.xfo);
+  Xfo localXfo = xfo;
+  localXfo = xfoAnimation.get(this.path, localXfo);
 
   // component wise float animation
-  this.xfo.tr.x = floatAnimation.get(this.path+'.tr.x', this.xfo.tr.x);
-  this.xfo.tr.y = floatAnimation.get(this.path+'.tr.y', this.xfo.tr.y);
-  this.xfo.tr.z = floatAnimation.get(this.path+'.tr.z', this.xfo.tr.z);
-  this.xfo.ori.v.x = floatAnimation.get(this.path+'.ori.v.x', this.xfo.ori.v.x);
-  this.xfo.ori.v.y = floatAnimation.get(this.path+'.ori.v.y', this.xfo.ori.v.y);
-  this.xfo.ori.v.z = floatAnimation.get(this.path+'.ori.v.z', this.xfo.ori.v.z);
-  this.xfo.ori.w = floatAnimation.get(this.path+'.ori.w', this.xfo.ori.w);
-  this.xfo.sc.x = floatAnimation.get(this.path+'.sc.x', this.xfo.sc.x);
-  this.xfo.sc.y = floatAnimation.get(this.path+'.sc.y', this.xfo.sc.y);
-  this.xfo.sc.z = floatAnimation.get(this.path+'.sc.z', this.xfo.sc.z);
+  localXfo.tr.x = floatAnimation.get(this.path+'.tr.x', localXfo.tr.x);
+  localXfo.tr.y = floatAnimation.get(this.path+'.tr.y', localXfo.tr.y);
+  localXfo.tr.z = floatAnimation.get(this.path+'.tr.z', localXfo.tr.z);
+  localXfo.ori.v.x = floatAnimation.get(this.path+'.ori.v.x', localXfo.ori.v.x);
+  localXfo.ori.v.y = floatAnimation.get(this.path+'.ori.v.y', localXfo.ori.v.y);
+  localXfo.ori.v.z = floatAnimation.get(this.path+'.ori.v.z', localXfo.ori.v.z);
+  localXfo.ori.w = floatAnimation.get(this.path+'.ori.w', localXfo.ori.w);
+  localXfo.sc.x = floatAnimation.get(this.path+'.sc.x', localXfo.sc.x);
+  localXfo.sc.y = floatAnimation.get(this.path+'.sc.y', localXfo.sc.y);
+  localXfo.sc.z = floatAnimation.get(this.path+'.sc.z', localXfo.sc.z);
 
   // also do euler values, just in case
   if(floatAnimation.has(this.path+'.rot.x') || 
     floatAnimation.has(this.path+'.rot.y') || 
     floatAnimation.has(this.path+'.rot.z')) {
-    Vec3 angles = this.xfo.ori.toEulerAngles();
+    Vec3 angles = localXfo.ori.toEulerAngles();
     angles.x = floatAnimation.get(this.path+'.rot.x', angles.x);
     angles.y = floatAnimation.get(this.path+'.rot.y', angles.y);
     angles.z = floatAnimation.get(this.path+'.rot.z', angles.z);
-    this.xfo.ori.setFromEulerAngles(angles);
+    localXfo.ori.setFromEulerAngles(angles);
   }
-}
 
-/// \dfgPresetFolder Objects
-function Xfo KrakenControl.getXfo() {
-  return this.xfo;
+  this.local = localXfo.toMat44();
 }
 
 /// \dfgPresetFolder DebugDrawing

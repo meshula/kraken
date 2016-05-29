@@ -8,6 +8,7 @@ Constraint - Base Constraint.
 from kraken.core.kraken_system import ks
 from kraken.core.objects.scene_item import SceneItem
 from kraken.core.maths.xfo import Xfo
+from kraken.core.maths.mat44 import Mat44
 
 
 class Constraint(SceneItem):
@@ -178,11 +179,11 @@ class Constraint(SceneItem):
         rtVal = ks.rtVal('Kraken%s' % cls)
 
         for c in self._constrainers:
-            rtVal.addConstrainer('', ks.rtVal('Xfo', c.globalXfo))
+            rtVal.addConstrainer('', ks.rtVal('Xfo', c.globalXfo).toMat44('Mat44'))
 
         # Using globalXfo here would cause a recursion
         return Xfo(rtVal.compute("Xfo",
-                                 ks.rtVal('Xfo', self._constrainee.xfo)))
+                                 ks.rtVal('Xfo', self._constrainee.xfo).toMat44('Mat44')))
 
     def computeOffset(self):
         """Invokes the constraint and computes the offset
@@ -203,12 +204,12 @@ class Constraint(SceneItem):
         ks.loadExtension('KrakenForCanvas')
         rtVal = ks.rtVal('Kraken%s' % cls)
 
-        rtVal.offset = ks.rtVal('Xfo', Xfo())
+        rtVal.offset = ks.rtVal('Mat44', Mat44())
         for c in self._constrainers:
-            rtVal.addConstrainer('', ks.rtVal('Xfo', c.globalXfo))
+            rtVal.addConstrainer('', ks.rtVal('Xfo', c.globalXfo).toMat44('Mat44'))
 
         return Xfo(rtVal.computeOffset("Xfo",
-                                       ks.rtVal('Xfo', self._constrainee.xfo)))
+                                       ks.rtVal('Xfo', self._constrainee.xfo).toMat44('Mat44')))
 
     def evaluate(self):
         """Invokes the constraint causing the output value to be computed.

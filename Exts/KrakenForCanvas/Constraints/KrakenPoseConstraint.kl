@@ -6,60 +6,61 @@ struct KrakenPoseConstraint : KrakenConstraint {
 
 /// \dfgPresetFolder Constraints
 function KrakenPoseConstraint(
-  Xfo offset,
+  Mat44 offset,
 ) {
   this.offset = offset;
 }
 
 /// \dfgPresetFolder Constraints
 function KrakenPoseConstraint.addConstrainer!(
-  Xfo constrainer
+  Mat44 constrainer
 ) {
   this.constrainers.push(constrainer);
 }
 
 /// \dfgPresetFolder Constraints
-function Xfo KrakenPoseConstraint.compute?(
-  Xfo xfo
+function Mat44 KrakenPoseConstraint.compute?(
+  Mat44 m
 ) {
-  Xfo result = xfo;
+  Xfo result = m;
   result.tr = Vec3();
   result.ori = Quat();
 
   for(Size i=0;i<this.constrainers.size();i++) {
-    result.tr = result.tr.add(this.constrainers[i].tr);
-    result.ori = result.ori.add(this.constrainers[i].ori);
+    Xfo constrainer(this.constrainers[i]);
+    result.tr = result.tr.add(constrainer.tr);
+    result.ori = result.ori.add(constrainer.ori);
     // todo: scaling is not maintained here!
   }
 
   result.ori.setUnit();
   result.tr *= 1.0 / Float32(this.constrainers.size());
   
-  return result.toMat44() * this.offset.toMat44();
+  return result.toMat44() * this.offset;
 }
 
 /// \dfgPresetFolder Constraints
-function Xfo computeKrakenPoseConstraint(Xfo offset, Xfo constrainer, Xfo constrainee) {
+function Mat44 computeKrakenPoseConstraint(Mat44 offset, Mat44 constrainer, Mat44 constrainee) {
   KrakenPoseConstraint constraint(offset);
   constraint.addConstrainer(constrainer);
   return constraint.compute(constrainee);
 }
 
 /// \dfgPresetFolder Constraints
-function Xfo KrakenPoseConstraint.computeOffset?(
-  Xfo constrainee
+function Mat44 KrakenPoseConstraint.computeOffset?(
+  Mat44 constrainee
 ) {
 
-  KrakenPoseConstraint tmpConstraint(Xfo());
+  KrakenPoseConstraint tmpConstraint(Mat44());
   tmpConstraint.constrainers = this.constrainers;
 
-  Mat44 global = tmpConstraint.compute(constrainee).toMat44();
-  return global.inverse() * constrainee.toMat44();
+  Mat44 global = tmpConstraint.compute(constrainee);
+  return global.inverse() * constrainee;
 }
 
 /// \dfgPresetFolder Constraints
-function Xfo KrakenPoseConstraint.computeOffsetSimple!(Xfo constrainee, Xfo constrainer) {
-  this.offset = Xfo();
+function Mat44 KrakenPoseConstraint.computeOffsetSimple!(Mat44 constrainee, Mat44 constrainer) {
+  this.offset = Mat44();
   this.constrainers.resize(1);
   this.constrainers[0] = constrainer;
   return this.computeOffset(constrainee);

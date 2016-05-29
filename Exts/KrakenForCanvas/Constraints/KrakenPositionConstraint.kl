@@ -5,62 +5,61 @@ struct KrakenPositionConstraint : KrakenConstraint {
 
 /// \dfgPresetFolder Constraints
 function KrakenPositionConstraint(
-  Xfo offset,
+  Mat44 offset,
 ) {
   this.offset = offset;
 }
 
 /// \dfgPresetFolder Constraints
 function KrakenPositionConstraint.addConstrainer!(
-  Xfo constrainer
+  Mat44 constrainer
 ) {
   this.constrainers.push(constrainer);
 }
 
 /// \dfgPresetFolder Constraints
-function Xfo KrakenPositionConstraint.compute?(
-  Xfo xfo
+function Mat44 KrakenPositionConstraint.compute?(
+  Mat44 m
 ) {
-  Xfo result = xfo;
-  result.tr = Vec3();
-  result.ori = Quat();
+  Mat44 result = m;
+  Vec3 tr;
 
   for(Size i=0;i<this.constrainers.size();i++) {
-    result.tr = result.tr.add(this.constrainers[i].tr);
+    tr += this.constrainers[i].translation();
   }
 
-  result.ori.setUnit();
-  result.tr *= 1.0 / Float32(this.constrainers.size());
+  tr *= 1.0 / Float32(this.constrainers.size());
+  result.setTranslation(tr);
 
-  return result.toMat44() * this.offset.toMat44();
+  return result * this.offset;
 }
 
 /// \dfgPresetFolder Constraints
-function Xfo computeKrakenPositionConstraint(Xfo offset, Xfo constrainer, Xfo constrainee) {
+function Mat44 computeKrakenPositionConstraint(Mat44 offset, Mat44 constrainer, Mat44 constrainee) {
   KrakenPositionConstraint constraint(offset);
   constraint.addConstrainer(constrainer);
   return constraint.compute(constrainee);
 }
 
 /// \dfgPresetFolder Constraints
-function Xfo KrakenPositionConstraint.computeOffset?(
-  Xfo constrainee
+function Mat44 KrakenPositionConstraint.computeOffset?(
+  Mat44 constrainee
 ) {
 
-  KrakenPositionConstraint tmpConstraint(Xfo());
+  KrakenPositionConstraint tmpConstraint(Mat44());
   tmpConstraint.constrainers = this.constrainers;
 
-  Mat44 global = tmpConstraint.compute(constrainee).toMat44();
-  Xfo result = global.inverse() * constrainee.toMat44();
-  result.sc = Vec3(1.0);
-  result.ori = Quat();
-
+  Mat44 global = tmpConstraint.compute(constrainee);
+  Mat44 result = global.inverse() * constrainee;
+  Vec3 tr = result.translation();
+  result = Mat44();
+  result.setTranslation(tr);
   return result;
 }
 
 /// \dfgPresetFolder Constraints
-function Xfo KrakenPositionConstraint.computeOffsetSimple!(Xfo constrainee, Xfo constrainer) {
-  this.offset = Xfo();
+function Mat44 KrakenPositionConstraint.computeOffsetSimple!(Mat44 constrainee, Mat44 constrainer) {
+  this.offset = Mat44();
   this.constrainers.resize(1);
   this.constrainers[0] = constrainer;
   return this.computeOffset(constrainee);

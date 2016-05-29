@@ -35,9 +35,9 @@ function KrakenClipLookup.applyClip(io KrakenKLRig rig, Ref<KrakenClip> clipRef,
 
   for(Size i=0;i<this.channelToControl.size();i++) {
     if(this.channelToControl[i] != -1) {
-      Xfo xfo = controls[this.channelToControl[i]].xfo;
+      Xfo xfo = controls[this.channelToControl[i]].local;
       xfo = xfo.linearInterpolate(clip.evaluateXfo(i, context), factor);
-      controls[this.channelToControl[i]].xfo = xfo;
+      controls[this.channelToControl[i]].local = xfo.toMat44();
     }
     if(this.channelToScalarAttribute[i] != -1) {
       Float32 value = scalarAttributes[this.channelToScalarAttribute[i]].value;
