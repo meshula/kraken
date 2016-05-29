@@ -23,6 +23,7 @@ function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   args.push(KrakenSolverArg('controlsRest', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('controls', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('outputs', 'Out', 'Mat44[]'));
+  args.push(KrakenSolverArg('dummyResult', 'Out', 'Vec3'));
   return args;
 }
 
@@ -44,7 +45,8 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     in Vec3 controlAligns[],
     in Mat44 controlsRest[],
     in Mat44 controls[],
-    io Mat44 outputs[]
+    io Mat44 outputs[],
+    io Vec3 dummyResult
     )
 {
   if(controls.size() != controlsRest.size())
@@ -112,6 +114,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     // __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
     // Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
     // xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
+    xfos[i].sc = Vec3(1,1,1);
     outputs[i] = xfos[i].toMat44();
   }
   // Set debugging visibility.
@@ -122,9 +125,9 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   //     this.handle = DrawingHandle();
   //   // this.handle.drawAxesInstances('axes', outputs, dummyResult, instance);
   //   this.handle = DrawingHandle();
-  //   drawLineStrip(this.handle.rootTransform, 'curve', positions, Color(1.0, 0.0, 0));
 
-        
-      // InlinePointsShape myShape = drawPoints(root, 'tipPositions', positions, Color(0.0, 1.0, 0), 2);
+  //   handle.drawAxesInstances('axes', outputs, dummyResult, instance);
+  //   drawLineStrip(this.handle.rootTransform, 'curve', positions, Color(1.0, 0.0, 0));
+  //   InlinePointsShape myShape = drawPoints(root, 'tipPositions', positions, Color(0.0, 1.0, 0), 2);
   // }
 }
