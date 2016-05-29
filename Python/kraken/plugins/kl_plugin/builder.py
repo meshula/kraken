@@ -226,9 +226,10 @@ class Builder(Builder):
         # let's check if this objects has a source pose constraint or not
         needParentConstraint = True
         constraints = [self.findKLConstraint(constraint) for constraint in sources if self.findKLConstraint(constraint)]
-        for sourceConstraint in constraints:
-            if isinstance(sourceConstraint, PoseConstraint):
-              needParentConstraint = False
+        # for sourceConstraint in constraints:
+        #     if sourceConstraint:
+        #         if isinstance(sourceConstraint['sceneItem'], PoseConstraint):
+        #             needParentConstraint = False
         solvers = [self.findKLSolver(solver) for solver in sources if self.findKLSolver(solver)]
         for sourceSolver in solvers:
             if sourceSolver:
@@ -676,7 +677,7 @@ class Builder(Builder):
             kl += ["  this.processProfiling();"]
         kl += ["}", ""]
 
-        kl += ["function %s.evaluate!(KrakenClipContext context, io Xfo joints<>) {" % self.getKLExtensionName()]
+        kl += ["function %s.evaluate!(KrakenClipContext context, io Mat44 joints<>) {" % self.getKLExtensionName()]
         if self.__profilingFrames > 0:
             kl += ["  if(this.profilingFrame >= 0)"]
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]

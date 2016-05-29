@@ -9,7 +9,7 @@ interface KrakenKLRig {
   setClip!(KrakenClip clip);
   loadClipFromFile!(String filePath);
   evaluate!(KrakenClipContext context);
-  evaluate!(KrakenClipContext context, io Xfo joints<>);
+  evaluate!(KrakenClipContext context, io Mat44 joints<>);
 
   Xfo[] getJointXfos();
   String[] getJointNames();

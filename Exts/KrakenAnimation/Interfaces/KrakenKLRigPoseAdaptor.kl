@@ -6,7 +6,7 @@ object KrakenKLRigPoseAdaptor : IPose {
   Skeleton skeleton;
   Character character;
   SInt32 boneMap[];
-  Xfo rigBones[];
+  Mat44 rigBones[];
   Xfo bones[];
   UInt64 version;
 };
@@ -37,8 +37,8 @@ function KrakenKLRigPoseAdaptor(KrakenKLRig rig, Character character) {
 
 function KrakenKLRigPoseAdaptor.updateFromRig!(KrakenClipContext context, out KrakenKLRig rig, out Character character) {
 
-  Xfo xfos<>(this.rigBones.data(), this.rigBones.size());
-  this.rig.evaluate(context, xfos);
+  Mat44 mats<>(this.rigBones.data(), this.rigBones.size());
+  this.rig.evaluate(context, mats);
   for(Size i=0;i<this.boneMap.size();i++) {
     if(this.boneMap[i] == -1)
       continue;
