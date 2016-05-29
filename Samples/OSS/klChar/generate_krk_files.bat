@@ -2,9 +2,9 @@ set FABRIC_LOG_LEVEL=4
 
 set FABRIC_PATH=Z:\dist\fabric\releases\FabricEngine-2.3.0-auto-2016052610-Windows-x86_64
 
-set KRAKEN_PATH=Z:\dist\fabric\Kraken
+set KRAKEN_PATH=X:\dev\fabric\Kraken
 
-set THIRD_PARTY=:\dist\fabric\ThirdParty
+set THIRD_PARTY=Z:\dist\fabric\ThirdParty
 
 set KRAKEN_PATHS=%KRAKEN_PATH%\Python\OSS
 

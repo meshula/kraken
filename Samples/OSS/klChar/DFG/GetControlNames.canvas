@@ -32,7 +32,14 @@
 }
 ",
   "args" : [
-    null,
-    null
+    {
+      "type" : "KRK_klChar_guide",
+      "value" : null,
+      "ext" : "KRK_klChar_guide"
+      },
+    {
+      "type" : "String[]",
+      "value" : []
+      }
     ]
   }

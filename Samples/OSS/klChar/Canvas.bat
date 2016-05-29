@@ -1,8 +1,8 @@
-set FABRIC_LOG_LEVEL=4
+set FABRIC_LOG_LEVEL=3
 
 set FABRIC_PATH=Z:\dist\fabric\releases\FabricEngine-2.3.0-auto-2016052610-Windows-x86_64
 
-set KRAKEN_PATH=Z:\dist\fabric\Kraken
+set KRAKEN_PATH=X:\dev\dist\fabric\Kraken
 
 set THIRD_PARTY=Z:\dist\fabric\ThirdParty
 
@@ -18,7 +18,7 @@ set PYTHONPATH=%PYTHONPATH%;%FABRIC_PATH%\Python\2.7;%KRAKEN_PATH%\Python
 
 cd /d %KRAKEN_PATH%
 
-call cmd /k "python "%FABRIC_PATH%"/bin/canvas.py"
+call cmd /k "%FABRIC_PATH%/bin/canvas"
 
 
 
