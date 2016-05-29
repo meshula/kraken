@@ -10,6 +10,7 @@ require Geometry, Color;
 
 const UInt32 NURBSCurve_StandardResolution = 25;
 const UInt32 NURBSCurve_MaxDegree = 16;
+const Float32 NURBSCurve_TangentEpsilon = 0.0001;
 
 /// An implementation of a Non-uniform rational B-spline curve.
 object NURBSCurve {
@@ -40,7 +41,8 @@ object NURBSCurve {
   // per point, size numPoints
   GeometryAttributes pointAttributes;
 	  Mat44Attribute controlMat44s;
-	  Vec4Attribute controlPoints;
+    Vec4Attribute controlPoints;
+	  Vec4Attribute offsetPoints;
 	  UInt32Attribute isSegmentStart;
 	  ScalarAttribute weights;
 
@@ -65,8 +67,10 @@ object NURBSCurve {
 	ColorAttribute colors; // per curve point
 	Vec3Attribute normals; // per curve point
 
-  Scalar basises[]; // supports degrees up to NURBSCurve_MaxDegree
   UInt32 spans[];
+  Scalar basises[];
+  Scalar tangentBasisesA[];
+  Scalar tangentBasisesB[];
 };
 
 
@@ -80,6 +84,7 @@ function NURBSCurve() {
   this.pointAttributes = GeometryAttributes();
   this.controlMat44s   = this.pointAttributes.getOrCreateMat44Attribute('controlMat44s');
   this.controlPoints   = this.pointAttributes.getOrCreateVec4Attribute("controlPoints");
+  this.offsetPoints   = this.pointAttributes.getOrCreateVec4Attribute("offsetPoints");
   this.isSegmentStart  = this.pointAttributes.getOrCreateUInt32Attribute('isSegmentStart');
   this.weights         = this.pointAttributes.getOrCreateScalarAttribute('weights');
 
@@ -138,6 +143,8 @@ function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
     this.controlMat44s.values[p] = cMats[p];
     this.controlPoints.values[p] = Vec4(cMats[p].translation().x, cMats[p].translation().y, cMats[p].translation().z, this.weights.values[p]);
   }
+  this.controlMat44s.incrementVersion();
+  this.controlPoints.incrementVersion();
 	
   // INITIATE CURVES
 	//
@@ -160,6 +167,7 @@ function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
   }
 
 	this.computeUniformKnots();
+  this.updateBasisCache();
 
 	Scalar keepArcLen = 0.0;
 	Scalar keepCurveLen = 0.0;
@@ -205,6 +213,11 @@ function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
     }
 
   }
+
+  this.positions.incrementVersion();
+  this.distances.incrementVersion();
+  this.normals.incrementVersion();
+  this.colors.incrementVersion();
 }
 
 /*
@@ -263,7 +276,7 @@ operator __evalColorsTask<<<index>>>(io Color results[], io Ref<NURBSCurve> curv
 /// Sample tangents on curve at equally spaced parametric intervals
 operator __evalTangentsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen) 
 {	
-  results[index] = curve.getFakeTangent(index*curve.stepSize,true, keepArcLength, keepCurveLen);
+  results[index] = curve.getFakeTangentByIndex(index,true, keepArcLength, keepCurveLen);
 	// results[index] = curve.getTangent(index*curve.stepSize,true, keepArcLength, keepCurveLen);
 }
 
@@ -295,6 +308,7 @@ inline Scalar stepSize(UInt32 samples)
 // do a fast, binary search for the closest matching distance index
 inline Scalar NURBSCurve.getClosestDistanceIndex(Scalar param, Scalar keepCurveLen) {
   // tipLength is the approximated, curvelength at incoming param t, considering attenuated restDistance
+  
   Scalar tipLength = param*this.getCurveLength(keepCurveLen);
   Scalar low = 0,
   high = this.distances.values.size()-1;
@@ -310,6 +324,7 @@ inline Scalar NURBSCurve.getClosestDistanceIndex(Scalar param, Scalar keepCurveL
   if (this.distances.values[idx] > tipLength) {
     idx -= 1;
   }
+
   return idx;
 }
 
@@ -395,18 +410,28 @@ function NURBSCurve.computeUniformKnots!()
 
   	}
   }
+}
 
+function NURBSCurve.updateBasisCache!()
+{
   Size numSpans = this.resolutionAttributes.size();
   if(this.spans.size() != numSpans) {
-    this.basises.resize(numSpans * NURBSCurve_MaxDegree);
     this.spans.resize(numSpans);
+    this.basises.resize(numSpans * NURBSCurve_MaxDegree);
+    this.tangentBasisesA.resize(numSpans * NURBSCurve_MaxDegree);
+    this.tangentBasisesB.resize(numSpans * NURBSCurve_MaxDegree);
 
     for(UInt32 i=0;i<numSpans;i++) {
       Scalar u = Scalar(i)*this.stepSize;
       this.spans[i] = NURBSUtils_findSpan(this.degree, u, this.knots);
       Scalar basis[] = NURBSUtils_calcBasisFunctions(this.spans[i], u, this.degree, this.knots);
-      for(Size j=0;j<basis.size();j++)
+      Scalar tangentBasisA[] = NURBSUtils_calcBasisFunctions(this.spans[i], u-NURBSCurve_TangentEpsilon, this.degree, this.knots);
+      Scalar tangentBasisB[] = NURBSUtils_calcBasisFunctions(this.spans[i], u+NURBSCurve_TangentEpsilon, this.degree, this.knots);
+      for(Size j=0;j<basis.size();j++) {
         this.basises[i*NURBSCurve_MaxDegree+j] = basis[j];
+        this.tangentBasisesA[i*NURBSCurve_MaxDegree+j] = tangentBasisA[j];
+        this.tangentBasisesB[i*NURBSCurve_MaxDegree+j] = tangentBasisB[j];
+      }
     }
   }
 }
@@ -464,25 +489,30 @@ function Vec3 NURBSCurve.getOffsetPoint(Scalar param, Scalar keepArcLength, Scal
 {	
 	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
 	Quat quat;
-	Vec4 offsetPoints[];
 	Vec3 localOffset = offset;
-	offsetPoints.resize(this.numPoints);
+  Vec4Attribute offsetPoints = this.offsetPoints; // make mutable
+
 	// offset Points by Vector, consider local rotation
-	for(UInt32 p=0; p<this.numPoints; p++) {
-		// rotate local if 
-		if (local) 
-		{
-			quat = Quat(this.cmats[p].upperLeft());
-			quat = quat.unit_safe();
-			localOffset = quat.rotateVector(offset);
-		}
-		offsetPoints[p].x = this.controlPoints.values[p].x + localOffset.x;
-		offsetPoints[p].y = this.controlPoints.values[p].y + localOffset.y;
-		offsetPoints[p].z = this.controlPoints.values[p].z + localOffset.z;
-		offsetPoints[p].t = this.weights.values[p];
-	}
+  if(offsetPoints.version != this.controlPoints.version) {
+  	for(UInt32 p=0; p<this.numPoints; p++) {
+  		// rotate local if 
+  		if (local) 
+  		{
+  			quat = Quat(this.cmats[p].upperLeft());
+  			quat = quat.unit_safe();
+  			localOffset = quat.rotateVector(offset);
+  		}
+
+  		offsetPoints.values[p].x = this.controlPoints.values[p].x + localOffset.x;
+  		offsetPoints.values[p].y = this.controlPoints.values[p].y + localOffset.y;
+  		offsetPoints.values[p].z = this.controlPoints.values[p].z + localOffset.z;
+  		offsetPoints.values[p].t = this.weights.values[p];
+  	}
+    offsetPoints.version = this.controlPoints.version;
+  }
+
 	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree, this.knots, offsetPoints, u );
+	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree, this.knots, offsetPoints.values, u );
 	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
 	return hpoint.makeHomogeneousVec3();
 }	
@@ -492,13 +522,11 @@ function Vec3 NURBSCurve.getOffsetPoint(Scalar param, Scalar keepArcLength, Scal
 /// no derivative look-up, just calculates the tangent between two points
 function Vec3 NURBSCurve.getFakeTangent(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen)
 {
-	Scalar epsilon = 0.0001;
-
 	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
 
 	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpointA = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.controlPoints.values, u+epsilon);
-	Vec4 hpointB = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.controlPoints.values, u-epsilon);
+	Vec4 hpointA = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.controlPoints.values, u+NURBSCurve_TangentEpsilon);
+	Vec4 hpointB = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.controlPoints.values, u-NURBSCurve_TangentEpsilon);
 
   // project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
   Vec3 tangent =  hpointA.makeHomogeneousVec3() - hpointB.makeHomogeneousVec3(); 
@@ -507,6 +535,27 @@ function Vec3 NURBSCurve.getFakeTangent(Scalar param, Boolean normalize, Scalar 
 		return tangent.unit_safe();
 	else
 		return tangent;
+}
+
+/// ORIENTATION
+/// Return the tangent vector at a given parameter
+/// no derivative look-up, just calculates the tangent between two points
+function Vec3 NURBSCurve.getFakeTangentByIndex(Index index, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen)
+{
+  Scalar param = index * this.stepSize;
+  Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
+
+  // following results in (wx, wy, wz, w) homogeneous point
+  Vec4 hpointA = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.controlPoints.values, u-NURBSCurve_TangentEpsilon, this.spans[index], this.tangentBasisesA, index * NURBSCurve_MaxDegree );
+  Vec4 hpointB = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.controlPoints.values, u+NURBSCurve_TangentEpsilon, this.spans[index], this.tangentBasisesB, index * NURBSCurve_MaxDegree );
+
+  // project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
+  Vec3 tangent =  hpointA.makeHomogeneousVec3() - hpointB.makeHomogeneousVec3(); 
+
+  if (normalize)
+    return tangent.unit_safe();
+  else
+    return tangent;
 }
 
 /// Return the tangent vector at a given parameter

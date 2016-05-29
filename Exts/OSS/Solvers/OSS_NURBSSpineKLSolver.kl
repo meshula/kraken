@@ -89,7 +89,7 @@ function OSS_NURBSSpineKLSolver.solve!(
     this.posedCurve.initiate(controls, degree);
 
     // the rest curve does not change over time
-    //if(this.restCurve.numPoints != controlsRest.size())
+    if(this.restCurve.numPoints != controlsRest.size())
       this.restCurve.initiate(controlsRest, degree);
   }
   
