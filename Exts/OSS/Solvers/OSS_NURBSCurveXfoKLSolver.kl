@@ -2,7 +2,38 @@ require Math;
 require Curves;
 require InlineDrawing;
 
+
+
+struct OSS_NURBSCurveXfoKLSolverDefaults : KrakenSolverDefaults {
+    SInt8 degree;
+    Scalar keepArcLength;
+    Scalar followCurveTangent;
+    Scalar useLocalNormal;
+    Scalar followCurveNormal;
+    SInt8 alignX;
+    SInt8 alignY;
+    SInt8 alignZ;
+    Vec3 altTangent;
+    Scalar compressionAmt;
+};
+
+// Default Constructor
+function OSS_NURBSCurveXfoKLSolverDefaults()
+{
+    this.degree = 3;
+    this.keepArcLength = 0;
+    this.followCurveTangent = 1.0;
+    this.useLocalNormal = 1.0;
+    this.followCurveNormal = 1.0;
+    this.alignX = 1;
+    this.alignY = 2;
+    this.alignZ = 3;
+    this.altTangent = Vec3(1,0,0);
+    this.compressionAmt = 0;
+}
+
 object OSS_NURBSCurveXfoKLSolver : KrakenSolver {
+    OSS_NURBSCurveXfoKLSolverDefaults defaults;
 };
 
 // Return Arguments for Kraken
@@ -12,6 +43,8 @@ function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   args.push(KrakenSolverArg('degree', 'In', 'SInt8'));
   args.push(KrakenSolverArg('keepArcLength', 'In', 'Scalar'));
   args.push(KrakenSolverArg('followCurveTangent', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('useLocalNormal', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('followCurveNormal', 'In', 'Scalar'));
   args.push(KrakenSolverArg('alignX', 'In', 'SInt8'));
   args.push(KrakenSolverArg('alignY', 'In', 'SInt8'));
   args.push(KrakenSolverArg('alignZ', 'In', 'SInt8'));
@@ -24,9 +57,28 @@ function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   args.push(KrakenSolverArg('controls', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('outputs', 'Out', 'Mat44[]'));
   args.push(KrakenSolverArg('dummyResult', 'Out', 'Vec3'));
+  args.push(KrakenSolverArg('instance', 'Out', 'InlineInstance'));
   return args;
 }
 
+function InlineLinesShape drawLines(
+  io InlineTransform rootTransform,
+  in String name,
+  in Vec3 starts[],
+  in Vec3 ends[],
+  in Color color
+){
+  if(starts.size() != ends.size())
+    throw("Error: the end and start point need to be of equal size");
+
+  InlineLinesShape linesShape = getOrCreateLines(rootTransform, name, color);
+  Lines lines = linesShape.getLines();
+  lines.clear();
+  for (UInt32 i =0; i<starts.size(); i++) {
+    lines.addLine(starts[i], ends[i]);
+  }
+  return linesShape;
+}
 // Solve
 function OSS_NURBSCurveXfoKLSolver.solve!(
     in Boolean drawDebug,
@@ -35,6 +87,8 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     in SInt8 degree,
     in Scalar keepArcLength,
     in Scalar followCurveTangent,
+    in Scalar useLocalNormal,
+    in Scalar followCurveNormal,
     in SInt8 alignX,
     in SInt8 alignY,
     in SInt8 alignZ,
@@ -46,13 +100,16 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     in Mat44 controlsRest[],
     in Mat44 controls[],
     io Mat44 outputs[],
-    io Vec3 dummyResult
+    out Vec3 dummyResult,
+    out InlineInstance instance
     )
 {
   if(controls.size() != controlsRest.size())
     throw("Error in OSS_NURBSCurveXfoKLSolver. The number of controls must match the number of controlsRest. controls.size:" + controls.size() + "; constrainees.size:" + controlsRest.size() + "; controlAligns.size:" + controlAligns.size());
 
+
   UInt32 inCount  = controls.size();
+  
   UInt32 outCount = params.size();
   Xfo posedXfo;
   Xfo restXfo;
@@ -60,6 +117,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   Scalar keepCurveLen = 0;
   outputs.resize(outCount);
 
+  /// Align Controls according to main Curve Direction, given the controlAligns Input array
   Mat44 alignedControls[];
   alignedControls.resize(inCount);
   Mat44 alignedControlsRest[];
@@ -78,7 +136,6 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   posedCurve.initiate(alignedControls, degree);
   Ref <NURBSCurve> posedCurveRef = posedCurve;
   Ref <NURBSCurve> restCurveRef = restCurve;
-
   // positions = restCurve.positions.values;
   // colors  = restCurve.colors.values;
   // normals = restCurve.normals.values;
@@ -87,47 +144,52 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   Vec3 altTangents[];
   Xfo xfos[];
   Vec3 positions[];
+  Vec3 tangents[];
+  //Vec3 lineTangents[];
   Scalar compression[];
-
   altNormals.resize(outCount);
   altTangents.resize(outCount);
   xfos.resize(outCount);
   positions.resize(outCount);
   compression.resize(outCount);
   outputs.resize(outCount);
-
+  tangents.resize(outCount);
+  //lineTangents.resize(outCount);
   Xfo parentXfo;
   parentXfo.setFromMat44(parent);
   Quat parentRotation = parentXfo.ori;
   Vec3 localAltTangent = parentRotation.rotateVector(altTangent);
   
-  Scalar useLocalNormal = 1; 
-  Scalar followCurveNormal = 1; 
-
+  Xfo controlsXfo[];
+  Xfo alignedControlsXfo[];
+  controlsXfo.resize(inCount);
+  alignedControlsXfo.resize(inCount);
+  for (UInt32 i =0; i<inCount; i++) {
+      controlsXfo[i].setFromMat44(controls[i]);
+      alignedControlsXfo[i].setFromMat44(alignedControls[i]);
+  }
+  
   for (UInt32 i =0; i<outCount; i++) {
     positions[i]   = posedCurveRef.getPoint(params[i], keepArcLength, keepCurveLen);
-    altNormals[i]  = positions[i] - parent.translation();
-    
+    tangents[i] = posedCurveRef.getTangent(params[i], true, keepArcLength, keepCurveLen);
+    // lineTangents[i] = positions[i] + tangents[i];
     altTangents[i] = localAltTangent;
-    altNormals[i]  = positions[i] - parent.translation();
-    __evalXfosTask(i, xfos, posedCurveRef, params, keepArcLength, 1, useLocalNormal, followCurveTangent, followCurveNormal, altTangents, altNormals);
+    altNormals[i]  = parent.translation() - positions[i];
+    __evalXfosTask(i, xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, altTangents, altNormals);
     // __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
     // Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
     // xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
     xfos[i].sc = Vec3(1,1,1);
     outputs[i] = xfos[i].toMat44();
   }
+  
   // Set debugging visibility.
-  // this.setDebug(drawDebug);
-  // if(this.drawDebug) {
-  //   if(!this.handle)
-  //     report('creating new handle');
-  //     this.handle = DrawingHandle();
-  //   // this.handle.drawAxesInstances('axes', outputs, dummyResult, instance);
-  //   this.handle = DrawingHandle();
-
-  //   handle.drawAxesInstances('axes', outputs, dummyResult, instance);
-  //   drawLineStrip(this.handle.rootTransform, 'curve', positions, Color(1.0, 0.0, 0));
-  //   InlinePointsShape myShape = drawPoints(root, 'tipPositions', positions, Color(0.0, 1.0, 0), 2);
-  // }
+  this.handle =  DrawingHandle();
+  InlineTransform root = this.handle.getRootTransform();
+  if(drawDebug) {
+    if(!this.handle)
+      this.handle = DrawingHandle();
+    // drawLines(root, 'Tangents', positions, lineTangents, Color(0.5, 0.0, 0,1));
+    this.handle.drawAxesInstances('controls', xfos, dummyResult, instance);
+  }
 }
