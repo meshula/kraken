@@ -3,6 +3,8 @@ require KRK_klChar_guide;
 operator entry() {
   KRK_klChar_guide rig();
   KrakenClipContext context;
-  context.time = 1.0;
-  rig.evaluate(context);
+  for(SInt32 i=0;i<5000;i++) {
+    context.time = 1.0;
+    rig.evaluate(context);
+  };
 }

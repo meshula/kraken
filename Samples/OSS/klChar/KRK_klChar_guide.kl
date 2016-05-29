@@ -3,10 +3,12 @@ require Geometry;
 require Kraken;
 require KrakenForCanvas;
 require KrakenAnimation;
+require FabricStatistics;
 require OSS_Kraken;
 
 
 object KRK_klChar_guide : KrakenKLRig {
+  SInt32 profilingFrame;
   KrakenClip clip; // the default clip of the rig
   OSS_HierBlendSolver _OSS_HierBlendSolver[4];
   OSS_TwoBoneIKSolver _OSS_TwoBoneIKSolver[4];
@@ -1175,6 +1177,9 @@ function KRK_klChar_guide.init!() {
   this._KrakenBoolAttribute[429] = KrakenBoolAttribute("R_legend_def.ShapeVisibility", "", true, true, true);
   this._KrakenBoolAttribute[430] = KrakenBoolAttribute("R_foot_def.ShapeVisibility", "", true, true, true);
   this._KrakenBoolAttribute[431] = KrakenBoolAttribute("R_ball_def.ShapeVisibility", "", true, true, true);
+
+  this.profilingFrame = 0;
+  StartFabricProfilingFrames(5001);
 }
 
 function KRK_klChar_guide.resetPose!() {
@@ -1630,6 +1635,7 @@ function KRK_klChar_guide.resetPose!() {
 }
 
 function KRK_klChar_guide.solve!() {
+  AutoProfilingEvent methodEvent("KRK_klChar_guide.solve");
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[1].value = this._KrakenScalarAttribute_Driven[0].value;
@@ -1703,6 +1709,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenScalarAttribute_Driven[39].value = this._KrakenScalarAttribute[37].value;
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[40].value = this._KrakenScalarAttribute_Driven[0].value;
+  {  AutoProfilingEvent visitKLObjectsEvent("rig pose solve");
 
   // solving global transform klChar_guide
   this._KrakenTransform[0].global = this._KrakenTransform[0].local;
@@ -1723,13 +1730,17 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[5].global = this._KrakenTransform[4].global * this._KrakenTransform[5].local;
 
   // solving KLSolver main_M_rigScaleKLOp
+  { AutoProfilingEvent solverEvent__RigScaleSolver0("klChar_guide.main:M.rigScaleKLOp");
   this.arg_Boolean[0] = this._KrakenBoolAttribute[4].value;
   this.arg_Scalar[0] = this._KrakenScalarAttribute_Driven[0].value;
+  { AutoProfilingEvent scopedEvent("_RigScaleSolver0.solve");
   this._RigScaleSolver[0].solve(
     this.arg_Boolean[0],
     this.arg_Scalar[0],
     this.arg_Mat44[0]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[6] from solver main_M_rigScaleKLOp
   this._KrakenTransform[6].global = this.arg_Mat44[0];
@@ -1790,6 +1801,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[14].global = this._KrakenPoseConstraint[3].compute(this._KrakenTransform[14].global);
 
   // solving KLSolver spine_M_NURBSSpineKLOp
+  { AutoProfilingEvent solverEvent__OSS_NURBSSpineKLSolver0("klChar_guide.spine:M.NURBSSpineKLOp");
   this.arg_Boolean[1] = this._KrakenBoolAttribute[5].value;
   this.arg_Scalar[1] = this._KrakenScalarAttribute_Driven[1].value;
   this.arg_UInt32[0] = 6;
@@ -1835,6 +1847,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[26].global = this._KrakenControl[6].global * this._KrakenTransform[26].local;
   this.arg_Mat44Array[1][4] = this._KrakenTransform[26].global;
   this.arg_Mat44Array[2].resize(6);
+  { AutoProfilingEvent scopedEvent("_OSS_NURBSSpineKLSolver0.solve");
   this._OSS_NURBSSpineKLSolver[0].solve(
     this.arg_Boolean[1],
     this.arg_Scalar[1],
@@ -1844,6 +1857,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44Array[1],
     this.arg_Mat44Array[2]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[16] from solver spine_M_NURBSSpineKLOp
   this._KrakenTransform[16].global = this.arg_Mat44Array[2][0];
@@ -1996,6 +2011,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[52].global = this._KrakenTransform[47].global * this._KrakenTransform[52].local;
 
   // solving KLSolver foot_L_MfootFootRockerKLOp
+  { AutoProfilingEvent solverEvent__OSS_FootRockerSystem0("klChar_guide.foot:L.MfootFootRockerKLOp");
   this.arg_Boolean[2] = this._KrakenBoolAttribute[52].value;
   this.arg_Scalar[3] = this._KrakenScalarAttribute_Driven[5].value;
   this.arg_Boolean[3] = false;
@@ -2057,6 +2073,7 @@ function KRK_klChar_guide.solve!() {
   // solving parent child constraint controls_Lfoot_L_outerPivot_xfo
   this._KrakenTransform[64].global = this._KrakenControl[9].global * this._KrakenTransform[64].local;
   this.arg_Mat44[8] = this._KrakenTransform[64].global;
+  { AutoProfilingEvent scopedEvent("_OSS_FootRockerSystem0.solve");
   this._OSS_FootRockerSystem[0].solve(
     this.arg_Boolean[2],
     this.arg_Scalar[3],
@@ -2076,6 +2093,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[10],
     this.arg_Mat44[11]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[56] from solver foot_L_MfootFootRockerKLOp
   this._KrakenTransform[56].global = this.arg_Mat44[9];
@@ -2108,6 +2127,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[70].global = this._KrakenTransform[46].global * this._KrakenTransform[70].local;
 
   // solving KLSolver leg_L_LlegIKFKTwoBoneIKSolver
+  { AutoProfilingEvent solverEvent__OSS_TwoBoneIKSolver0("klChar_guide.leg:L.LlegIKFKTwoBoneIKSolver");
   this.arg_Boolean[5] = this._KrakenBoolAttribute[54].value;
   this.arg_Scalar[9] = this._KrakenScalarAttribute_Driven[4].value;
   this.arg_Scalar[10] = this._KrakenScalarAttribute_Driven[7].value;
@@ -2135,6 +2155,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_Mat44[15] = this._KrakenTransform[51].global;
 
   // solving KLSolver leg_L_LlegUpVSpace_HierBlendSolver
+  { AutoProfilingEvent solverEvent__OSS_HierBlendSolver0("klChar_guide.leg:L.LlegUpVSpace_HierBlendSolver");
   this.arg_Boolean[4] = this._KrakenBoolAttribute[54].value;
   this.arg_Scalar[7] = this._KrakenScalarAttribute_Driven[4].value;
   this.arg_Mat44Array[3].resize(1);
@@ -2159,6 +2180,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_IntegerArray[0][0] = -1;
   this.arg_Scalar[8] = this._KrakenScalarAttribute[8].value;
   this.arg_Mat44Array[5].resize(1);
+  { AutoProfilingEvent scopedEvent("_OSS_HierBlendSolver0.solve");
   this._OSS_HierBlendSolver[0].solve(
     this.arg_Boolean[4],
     this.arg_Scalar[7],
@@ -2168,6 +2190,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Scalar[8],
     this.arg_Mat44Array[5]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[75] from solver leg_L_LlegUpVSpace_HierBlendSolver
   this._KrakenTransform[75].global = this.arg_Mat44Array[5][0];
@@ -2179,6 +2203,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_UInt32[2] = 2;
   this.arg_Scalar[13] = this._KrakenScalarAttribute[9].value;
   this.arg_Scalar[14] = this._KrakenScalarAttribute[7].value;
+  { AutoProfilingEvent scopedEvent("_OSS_TwoBoneIKSolver0.solve");
   this._OSS_TwoBoneIKSolver[0].solve(
     this.arg_Boolean[5],
     this.arg_Scalar[9],
@@ -2198,6 +2223,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[18],
     this.arg_Mat44[19]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[71] from solver leg_L_LlegIKFKTwoBoneIKSolver
   this._KrakenTransform[71].global = this.arg_Mat44[17];
@@ -2219,6 +2246,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[80].global = this._KrakenTransform[54].global * this._KrakenTransform[80].local;
 
   // solving KLSolver foot_L_MfootIKFootBlendKLOp
+  { AutoProfilingEvent solverEvent__OSS_IKFootBlendSolver0("klChar_guide.foot:L.MfootIKFootBlendKLOp");
   this.arg_Boolean[6] = this._KrakenBoolAttribute[52].value;
   this.arg_Scalar[15] = this._KrakenScalarAttribute_Driven[5].value;
   this.arg_Scalar[16] = this._KrakenScalarAttribute[11].value;
@@ -2242,6 +2270,7 @@ function KRK_klChar_guide.solve!() {
   // solving parent child constraint controls_Lfoot_L_ball_fk
   this._KrakenControl[14].global = this._KrakenTransform[84].global * this._KrakenControl[14].local;
   this.arg_Mat44[23] = this._KrakenControl[14].global;
+  { AutoProfilingEvent scopedEvent("_OSS_IKFootBlendSolver0.solve");
   this._OSS_IKFootBlendSolver[0].solve(
     this.arg_Boolean[6],
     this.arg_Scalar[15],
@@ -2253,6 +2282,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[24],
     this.arg_Mat44[25]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[81] from solver foot_L_MfootIKFootBlendKLOp
   this._KrakenTransform[81].global = this.arg_Mat44[24];
@@ -2298,6 +2329,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[90].global = this._KrakenTransform[87].global * this._KrakenTransform[90].local;
 
   // solving KLSolver leg_R_RlegIKFKTwoBoneIKSolver
+  { AutoProfilingEvent solverEvent__OSS_TwoBoneIKSolver1("klChar_guide.leg:R.RlegIKFKTwoBoneIKSolver");
   this.arg_Boolean[10] = this._KrakenBoolAttribute[104].value;
   this.arg_Scalar[23] = this._KrakenScalarAttribute_Driven[20].value;
   this.arg_Scalar[24] = this._KrakenScalarAttribute_Driven[19].value;
@@ -2357,6 +2389,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[101].global = this._KrakenTransform[96].global * this._KrakenTransform[101].local;
 
   // solving KLSolver foot_R_MfootFootRockerKLOp
+  { AutoProfilingEvent solverEvent__OSS_FootRockerSystem1("klChar_guide.foot:R.MfootFootRockerKLOp");
   this.arg_Boolean[7] = this._KrakenBoolAttribute[102].value;
   this.arg_Scalar[17] = this._KrakenScalarAttribute_Driven[13].value;
   this.arg_Boolean[8] = true;
@@ -2395,6 +2428,7 @@ function KRK_klChar_guide.solve!() {
   // solving parent child constraint controls_Rfoot_R_outerPivot_xfo
   this._KrakenTransform[108].global = this._KrakenControl[15].global * this._KrakenTransform[108].local;
   this.arg_Mat44[33] = this._KrakenTransform[108].global;
+  { AutoProfilingEvent scopedEvent("_OSS_FootRockerSystem1.solve");
   this._OSS_FootRockerSystem[1].solve(
     this.arg_Boolean[7],
     this.arg_Scalar[17],
@@ -2414,6 +2448,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[35],
     this.arg_Mat44[36]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[103] from solver foot_R_MfootFootRockerKLOp
   this._KrakenTransform[103].global = this.arg_Mat44[34];
@@ -2434,6 +2470,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_Mat44[40] = this._KrakenTransform[100].global;
 
   // solving KLSolver leg_R_RlegUpVSpace_HierBlendSolver
+  { AutoProfilingEvent solverEvent__OSS_HierBlendSolver1("klChar_guide.leg:R.RlegUpVSpace_HierBlendSolver");
   this.arg_Boolean[9] = this._KrakenBoolAttribute[104].value;
   this.arg_Scalar[21] = this._KrakenScalarAttribute_Driven[20].value;
   this.arg_Mat44Array[6].resize(1);
@@ -2458,6 +2495,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_IntegerArray[1][0] = -1;
   this.arg_Scalar[22] = this._KrakenScalarAttribute[19].value;
   this.arg_Mat44Array[8].resize(1);
+  { AutoProfilingEvent scopedEvent("_OSS_HierBlendSolver1.solve");
   this._OSS_HierBlendSolver[1].solve(
     this.arg_Boolean[9],
     this.arg_Scalar[21],
@@ -2467,6 +2505,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Scalar[22],
     this.arg_Mat44Array[8]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[115] from solver leg_R_RlegUpVSpace_HierBlendSolver
   this._KrakenTransform[115].global = this.arg_Mat44Array[8][0];
@@ -2478,6 +2518,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_UInt32[4] = 5;
   this.arg_Scalar[27] = this._KrakenScalarAttribute[20].value;
   this.arg_Scalar[28] = this._KrakenScalarAttribute[16].value;
+  { AutoProfilingEvent scopedEvent("_OSS_TwoBoneIKSolver1.solve");
   this._OSS_TwoBoneIKSolver[1].solve(
     this.arg_Boolean[10],
     this.arg_Scalar[23],
@@ -2497,6 +2538,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[43],
     this.arg_Mat44[44]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[94] from solver leg_R_RlegIKFKTwoBoneIKSolver
   this._KrakenTransform[94].global = this.arg_Mat44[42];
@@ -2521,6 +2564,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[119].global = this._KrakenTransform[97].global * this._KrakenTransform[119].local;
 
   // solving KLSolver foot_R_MfootIKFootBlendKLOp
+  { AutoProfilingEvent solverEvent__OSS_IKFootBlendSolver1("klChar_guide.foot:R.MfootIKFootBlendKLOp");
   this.arg_Boolean[11] = this._KrakenBoolAttribute[102].value;
   this.arg_Scalar[29] = this._KrakenScalarAttribute_Driven[13].value;
   this.arg_Scalar[30] = this._KrakenScalarAttribute[22].value;
@@ -2544,6 +2588,7 @@ function KRK_klChar_guide.solve!() {
   // solving parent child constraint controls_Rfoot_R_ball_fk
   this._KrakenControl[20].global = this._KrakenTransform[123].global * this._KrakenControl[20].local;
   this.arg_Mat44[48] = this._KrakenControl[20].global;
+  { AutoProfilingEvent scopedEvent("_OSS_IKFootBlendSolver1.solve");
   this._OSS_IKFootBlendSolver[1].solve(
     this.arg_Boolean[11],
     this.arg_Scalar[29],
@@ -2555,6 +2600,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[49],
     this.arg_Mat44[50]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[120] from solver foot_R_MfootIKFootBlendKLOp
   this._KrakenTransform[120].global = this.arg_Mat44[49];
@@ -2651,6 +2698,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[138].global = this._KrakenTransform[125].global * this._KrakenTransform[138].local;
 
   // solving KLSolver arm_R_RarmIKFKTwoBoneIKSolver
+  { AutoProfilingEvent solverEvent__OSS_TwoBoneIKSolver2("klChar_guide.arm:R.RarmIKFKTwoBoneIKSolver");
   this.arg_Boolean[13] = this._KrakenBoolAttribute[152].value;
   this.arg_Scalar[33] = this._KrakenScalarAttribute_Driven[22].value;
   this.arg_Scalar[34] = this._KrakenScalarAttribute_Driven[24].value;
@@ -2678,6 +2726,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_Mat44[54] = this._KrakenTransform[129].global;
 
   // solving KLSolver arm_R_RarmUpVSpace_HierBlendSolver
+  { AutoProfilingEvent solverEvent__OSS_HierBlendSolver2("klChar_guide.arm:R.RarmUpVSpace_HierBlendSolver");
   this.arg_Boolean[12] = this._KrakenBoolAttribute[152].value;
   this.arg_Scalar[31] = this._KrakenScalarAttribute_Driven[22].value;
   this.arg_Mat44Array[9].resize(1);
@@ -2702,6 +2751,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_IntegerArray[2][0] = -1;
   this.arg_Scalar[32] = this._KrakenScalarAttribute[27].value;
   this.arg_Mat44Array[11].resize(1);
+  { AutoProfilingEvent scopedEvent("_OSS_HierBlendSolver2.solve");
   this._OSS_HierBlendSolver[2].solve(
     this.arg_Boolean[12],
     this.arg_Scalar[31],
@@ -2711,6 +2761,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Scalar[32],
     this.arg_Mat44Array[11]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[143] from solver arm_R_RarmUpVSpace_HierBlendSolver
   this._KrakenTransform[143].global = this.arg_Mat44Array[11][0];
@@ -2722,6 +2774,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_UInt32[6] = 5;
   this.arg_Scalar[37] = this._KrakenScalarAttribute[28].value;
   this.arg_Scalar[38] = this._KrakenScalarAttribute[26].value;
+  { AutoProfilingEvent scopedEvent("_OSS_TwoBoneIKSolver2.solve");
   this._OSS_TwoBoneIKSolver[2].solve(
     this.arg_Boolean[13],
     this.arg_Scalar[33],
@@ -2741,6 +2794,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[57],
     this.arg_Mat44[58]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[139] from solver arm_R_RarmIKFKTwoBoneIKSolver
   this._KrakenTransform[139].global = this.arg_Mat44[56];
@@ -2829,6 +2884,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[160].global = this._KrakenTransform[147].global * this._KrakenTransform[160].local;
 
   // solving KLSolver arm_L_LarmIKFKTwoBoneIKSolver
+  { AutoProfilingEvent solverEvent__OSS_TwoBoneIKSolver3("klChar_guide.arm:L.LarmIKFKTwoBoneIKSolver");
   this.arg_Boolean[15] = this._KrakenBoolAttribute[174].value;
   this.arg_Scalar[41] = this._KrakenScalarAttribute_Driven[29].value;
   this.arg_Scalar[42] = this._KrakenScalarAttribute_Driven[31].value;
@@ -2856,6 +2912,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_Mat44[62] = this._KrakenTransform[151].global;
 
   // solving KLSolver arm_L_LarmUpVSpace_HierBlendSolver
+  { AutoProfilingEvent solverEvent__OSS_HierBlendSolver3("klChar_guide.arm:L.LarmUpVSpace_HierBlendSolver");
   this.arg_Boolean[14] = this._KrakenBoolAttribute[174].value;
   this.arg_Scalar[39] = this._KrakenScalarAttribute_Driven[29].value;
   this.arg_Mat44Array[12].resize(1);
@@ -2880,6 +2937,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_IntegerArray[3][0] = -1;
   this.arg_Scalar[40] = this._KrakenScalarAttribute[33].value;
   this.arg_Mat44Array[14].resize(1);
+  { AutoProfilingEvent scopedEvent("_OSS_HierBlendSolver3.solve");
   this._OSS_HierBlendSolver[3].solve(
     this.arg_Boolean[14],
     this.arg_Scalar[39],
@@ -2889,6 +2947,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Scalar[40],
     this.arg_Mat44Array[14]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[165] from solver arm_L_LarmUpVSpace_HierBlendSolver
   this._KrakenTransform[165].global = this.arg_Mat44Array[14][0];
@@ -2900,6 +2960,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_UInt32[8] = 2;
   this.arg_Scalar[45] = this._KrakenScalarAttribute[34].value;
   this.arg_Scalar[46] = this._KrakenScalarAttribute[32].value;
+  { AutoProfilingEvent scopedEvent("_OSS_TwoBoneIKSolver3.solve");
   this._OSS_TwoBoneIKSolver[3].solve(
     this.arg_Boolean[15],
     this.arg_Scalar[41],
@@ -2919,6 +2980,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[65],
     this.arg_Mat44[66]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[161] from solver arm_L_LarmIKFKTwoBoneIKSolver
   this._KrakenTransform[161].global = this.arg_Mat44[64];
@@ -2940,6 +3003,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[170].global = this._KrakenTransform[154].global * this._KrakenTransform[170].local;
 
   // solving KLSolver hand_L_MhandIKHandBlendKLOp
+  { AutoProfilingEvent solverEvent__OSS_IKFootBlendSolver2("klChar_guide.hand:L.MhandIKHandBlendKLOp");
   this.arg_Boolean[16] = this._KrakenBoolAttribute[196].value;
   this.arg_Scalar[47] = this._KrakenScalarAttribute_Driven[36].value;
   this.arg_Scalar[48] = this._KrakenScalarAttribute[36].value;
@@ -2969,6 +3033,7 @@ function KRK_klChar_guide.solve!() {
   // solving parent child constraint controls_Lhand_L_palm_fk
   this._KrakenControl[30].global = this._KrakenTransform[175].global * this._KrakenControl[30].local;
   this.arg_Mat44[70] = this._KrakenControl[30].global;
+  { AutoProfilingEvent scopedEvent("_OSS_IKFootBlendSolver2.solve");
   this._OSS_IKFootBlendSolver[2].solve(
     this.arg_Boolean[16],
     this.arg_Scalar[47],
@@ -2980,6 +3045,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[71],
     this.arg_Mat44[72]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[171] from solver hand_L_MhandIKHandBlendKLOp
   this._KrakenTransform[171].global = this.arg_Mat44[71];
@@ -3132,6 +3199,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[201].global = this._KrakenTransform[132].global * this._KrakenTransform[201].local;
 
   // solving KLSolver hand_R_MhandIKHandBlendKLOp
+  { AutoProfilingEvent solverEvent__OSS_IKFootBlendSolver3("klChar_guide.hand:R.MhandIKHandBlendKLOp");
   this.arg_Boolean[17] = this._KrakenBoolAttribute[258].value;
   this.arg_Scalar[49] = this._KrakenScalarAttribute_Driven[38].value;
   this.arg_Scalar[50] = this._KrakenScalarAttribute[38].value;
@@ -3161,6 +3229,7 @@ function KRK_klChar_guide.solve!() {
   // solving parent child constraint controls_Rhand_R_palm_fk
   this._KrakenControl[51].global = this._KrakenTransform[206].global * this._KrakenControl[51].local;
   this.arg_Mat44[76] = this._KrakenControl[51].global;
+  { AutoProfilingEvent scopedEvent("_OSS_IKFootBlendSolver3.solve");
   this._OSS_IKFootBlendSolver[3].solve(
     this.arg_Boolean[17],
     this.arg_Scalar[49],
@@ -3172,6 +3241,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44[77],
     this.arg_Mat44[78]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[202] from solver hand_R_MhandIKHandBlendKLOp
   this._KrakenTransform[202].global = this.arg_Mat44[77];
@@ -3385,6 +3456,7 @@ function KRK_klChar_guide.solve!() {
   this._KrakenTransform[242].global = this._KrakenTransform[241].global * this._KrakenTransform[242].local;
 
   // solving KLSolver headNeck_M_NURBSNeckKLOp
+  { AutoProfilingEvent solverEvent__OSS_NURBSSpineKLSolver1("klChar_guide.headNeck:M.NURBSNeckKLOp");
   this.arg_Boolean[18] = this._KrakenBoolAttribute[319].value;
   this.arg_Scalar[51] = this._KrakenScalarAttribute_Driven[40].value;
   this.arg_UInt32[9] = 4;
@@ -3409,6 +3481,7 @@ function KRK_klChar_guide.solve!() {
   this.arg_Mat44Array[16][2] = this._KrakenTransform[249].global;
   this.arg_Mat44Array[16][3] = this._KrakenTransform[248].global;
   this.arg_Mat44Array[17].resize(4);
+  { AutoProfilingEvent scopedEvent("_OSS_NURBSSpineKLSolver1.solve");
   this._OSS_NURBSSpineKLSolver[1].solve(
     this.arg_Boolean[18],
     this.arg_Scalar[51],
@@ -3418,6 +3491,8 @@ function KRK_klChar_guide.solve!() {
     this.arg_Mat44Array[16],
     this.arg_Mat44Array[17]
   );
+  }
+  }
 
   // retrieving value for _KrakenTransform[243] from solver headNeck_M_NURBSNeckKLOp
   this._KrakenTransform[243].global = this.arg_Mat44Array[17][0];
@@ -3968,28 +4043,40 @@ function KRK_klChar_guide.solve!() {
   // solving PoseConstraint constraint deformers_rootM_pelvisM_upLegR_loLegR_legendR_footR_ballR_ball_To_ball_PoseConstraint
   this._KrakenPoseConstraint[151].constrainers[0] = this._KrakenTransform[124].global;
   this._KrakenJoint[70].global = this._KrakenPoseConstraint[151].compute(this._KrakenJoint[70].global);
+  }
 }
 
 function KRK_klChar_guide.evaluate!(KrakenClipContext context) {
+  if(this.profilingFrame >= 0)
+    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));
+  AutoProfilingEvent methodEvent("KRK_klChar_guide.evaluate");
   if(this.clip != null) {
+    AutoProfilingEvent scopedEvent("KRK_klChar_guide.clip.apply");
     KrakenKLRig rig = this;
     this.clip.apply(rig, context, 1.0);
   }
   this.solve();
+  this.processProfiling();
 }
 
 function KRK_klChar_guide.evaluate!(KrakenClipContext context, io Mat44 joints<>) {
+  if(this.profilingFrame >= 0)
+    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));
+  AutoProfilingEvent methodEvent("KRK_klChar_guide.evaluate");
   if(joints.size() != 71)
     throw("Expected number of joints does not match ("+joints.size()+" given, 71 expected).");
   if(this.clip != null) {
+    AutoProfilingEvent scopedEvent("KRK_klChar_guide.clip.apply");
     KrakenKLRig rig = this;
     this.clip.apply(rig, context, 1.0);
   }
   this.solve();
   {
+    AutoProfilingEvent scopedEvent("KRK_klChar_guide.transferingJoints");
     for(Size i=0;i<71;i++)
       joints[i] = this._KrakenJoint[i].global;
   }
+  this.processProfiling();
 }
 
 function Xfo[] KRK_klChar_guide.getJointXfos() {
@@ -4840,4 +4927,42 @@ function KRK_klChar_guide.setClip!(KrakenClip clip) {
 
 function KRK_klChar_guide.loadClipFromFile!(String filePath) {
   this.clip = KrakenClip_loadFromFile(filePath);
+}
+
+function KRK_klChar_guide.processProfiling!() {
+  if(this.profilingFrame != 5000)
+    return;
+  this.profilingFrame = -1;
+  ProfilingEvent events[] = GetProfilingEvents();
+  if(events.size() == 0)
+    return;
+  ProfilingEvent combinedEvents[](events.size() / 5000);
+  for(Size i=0;i<events.size();i++) {
+    if(i < combinedEvents.size()) {
+      combinedEvents[i] = events[i];
+    } else {
+      combinedEvents[i % combinedEvents.size()].duration += events[i].duration;
+    }
+  }
+  String profilingReport;
+  for(Size i=0;i<combinedEvents.size();i++) {
+    combinedEvents[i].duration /= 5000.0;
+    for( Size j = 0; j < combinedEvents[i].level; ++j )
+      profilingReport += '  ';
+    Float64 durationms = Scalar(combinedEvents[i].duration)*1000.0;
+    Size ms = Size(durationms);
+    durationms -= Float64(ms) / 1000.0;
+    durationms *= 9999.99;
+    Size msfract = Size(durationms);
+    String msfractStr = msfract;
+    if(durationms < 1000)
+      msfractStr = "0" + msfractStr;
+    if(durationms < 100)
+      msfractStr = "0" + msfractStr;
+    if(durationms < 10)
+      msfractStr = "0" + msfractStr;
+    profilingReport += combinedEvents[i].label + ": duration="+ms+"."+msfractStr+" ms\n";
+  }
+  report(profilingReport);
+  StopFabricProfiling();
 }
