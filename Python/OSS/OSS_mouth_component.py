@@ -767,8 +767,10 @@ class OSSMouthRig(OSSMouth):
         self.loLipRigOp.setOutput('outputs', self.loLipOutputs)
 
         for i in range(len(self.loLipControls)):
-            self.rigControlAligns.append(Vec3(1,2,3));
+            self.rigControlAligns.append(Vec3(1,2,3))
 
+        self.rigControlAligns[3] = Vec3(-1,2,-3)
+        self.rigControlAligns[4] = Vec3(1,-2,-3)
 
         # Add lowLip Guide Canvas Op
         self.blendMidMouthRigOp = CanvasOperator('blendMidMouthRigOp', 'OSS.Solvers.blendMat44Solver')

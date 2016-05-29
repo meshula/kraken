@@ -229,6 +229,17 @@ operator __evalDistancesTask<<<index>>>(io Scalar results[], Ref<NURBSCurve> cur
 }	
 
 
+/// Set the quat to represent the direction as the Z axis
+/// and the upvector pointing along the XY plane.
+inline Quat Quat.setFromTangentAndNormal!(in Vec3 tangent, in Vec3 normal) {
+  Vec3 xaxis = tangent.unit();
+  Vec3 zaxis = xaxis.cross(normal.unit()).cross(xaxis).unit();
+  Vec3 yaxis = zaxis.cross(xaxis).unit();
+  this.setFromMat33(Mat33(xaxis, yaxis, zaxis).transpose());
+  return this;
+}
+
+
 inline Scalar stepSize(UInt32 samples)
 {	
 	if (samples > 0) return  1.0 / Scalar(samples - 1.0);		
@@ -283,7 +294,7 @@ function Scalar NURBSCurve.arcLengthParam(Scalar param, Scalar keepArcLength, Sc
 inline Scalar NURBSCurve.uFromParam(Scalar param, Scalar keepArcLength, Scalar keepCurveLen)
 {	
 
-    Scalar keepArcLengthClamped = Math_clamp( keepArcLength, 0, 1 );
+    Scalar keepArcLengthClamped = Math_clamp(keepArcLength, 0, 1 );
 	Scalar arcLenT = 0;
 	// linear mapping t->u
 	if (keepArcLengthClamped > 0) {
@@ -356,34 +367,37 @@ inline Scalar NURBSCurve.getDistanceAtIndex(UInt32 index) {
 
 /// POSITION
 
+inline Vec3 NURBSCurve.getPoint(Scalar u) {
+	// following results in (wx, wy, wz, w) homogeneous point
+	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
+	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
+	return hpoint.makeHomogeneousVec3();
+}
 
 /// Return a point on the curve
 /// \param param Parameter on curve between 0-1
 function Vec3 NURBSCurve.getPoint(Scalar param, Scalar keepArcLength, Scalar keepCurveLen)
 {
 	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
-
-	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
-
-	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
-	return hpoint.makeHomogeneousVec3();
+	return this.getPoint(u);
 }
 
+
+/// Deprecating
 /// Get a point on the curve
 /// \param param Parameter on curve between 0-1
-function Vec3 NURBSCurve.getPoint(Scalar param)
-{	
-	Scalar keepArcLength =0;
-	Scalar keepCurveLen=0;
-	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
+// function Vec3 NURBSCurve.getPoint(Scalar param)
+// {	
+// 	Scalar keepArcLength =0;
+// 	Scalar keepCurveLen=0;
+// 	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
 
-	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
+// 	// following results in (wx, wy, wz, w) homogeneous point
+// 	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u );
 
-	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
-	return hpoint.makeHomogeneousVec3();
-}	
+// 	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
+// 	return hpoint.makeHomogeneousVec3();
+// }	
 
 /// Returns a point offset from the original curve by a Vec3 
 /// \param param Parameter on curve between 0-1
@@ -417,16 +431,20 @@ function Vec3 NURBSCurve.getOffsetPoint(Scalar param, Scalar keepArcLength, Scal
 
 
 /// ORIENTATION
-
 /// Return the tangent vector at a given parameter
-/// Calculated using the NURBS Derivative of that parameter on the curve.
-/// needs to be revised - doesn't exactly match the tangent we need
-function Vec3 NURBSCurve.getTangent(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen)
+/// no derivative look-up, just calculates the tangent between two points
+function Vec3 NURBSCurve.getFakeTangent(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen)
 {
+	Scalar epsilon = 0.0001;
+
 	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
 
-	Vec4 ders[] = NURBSUtils_calcNURBSDerivatives( this.degree.values[0], this.knots, this.controlPoints.values, u, 1 );
-	Vec3 tangent = ders[1].clone().xyz();
+	// following results in (wx, wy, wz, w) homogeneous point
+	Vec4 hpointA = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u+epsilon);
+	Vec4 hpointB = NURBSUtils_calcBSplinePoint( this.degree.values[0], this.knots, this.controlPoints.values, u-epsilon);
+
+	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
+	Vec3 tangent =  hpointA.makeHomogeneousVec3() - hpointB.makeHomogeneousVec3(); 
 
 	if (normalize)
 		return tangent.unit_safe();
@@ -434,25 +452,24 @@ function Vec3 NURBSCurve.getTangent(Scalar param, Boolean normalize, Scalar keep
 		return tangent;
 }
 
+/// Return the tangent vector at a given parameter
+/// Calculated using the NURBS Derivative of that parameter on the curve.
+function Vec3 NURBSCurve.getTangent(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen) {
+	Vec3 tangent = this.getFakeTangent(param,normalize,keepArcLength,keepCurveLen);
+	return tangent;
+	/// needs to be revised - doesn't exactly match the tangent we need going for approximate tangent right now
+	// Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
 
-function Vec3 NURBSCurve.getFakeTangent(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen)
-{
-	// this should be a straight deriviative look-up
-	Scalar epsilon = 0.01;
+	// Vec4 ders[] = NURBSUtils_calcNURBSDerivatives( this.degree.values[0], this.knots, this.controlPoints.values, u, 1 );
+	// Vec3 tangent = ders[1].clone().xyz();
 
-	Scalar paramA = this.uFromParam(param-epsilon,keepArcLength,keepCurveLen);
-	Scalar paramB = this.uFromParam(param+epsilon,keepArcLength,keepCurveLen);
-
-	Vec3 pa = this.getPoint(paramA);
-	Vec3 pb = this.getPoint(paramB);
-
-	Vec3 tangent = pb-pa;
-
-	if (normalize)
-		return tangent.unit();
-	else
-		return tangent;
+	// if (normalize)
+	// 	return tangent.unit_safe();
+	// else
+	// 	return tangent;
 }
+
+
 
 
 function Vec3 NURBSCurve.getNormal(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen) {
@@ -478,9 +495,10 @@ function Quat NURBSCurve.getOri(Scalar param, Scalar keepArcLength, Scalar keepC
 	Vec3 pointOnCurve = this.getPoint(param,keepArcLength, keepCurveLen);
 	Quat ori;
 	Vec3 normal, tangent;
+
 	Vec3 altNormalSafe = altNormal;
 	Vec3 altTangentSafe = altTangent;
-
+	// fallback for zero Length vectors
 	if (altTangent.length() == 0) {
     	altTangentSafe = Vec3(1,0,0);
     }
@@ -524,18 +542,18 @@ function Quat NURBSCurve.getOri(Scalar param, Scalar keepArcLength, Scalar keepC
 	Vec3 curveTangent = this.getTangent(param, true, keepArcLength, keepCurveLen);
 	tangent = altTangentSafe*(1-followCurveTangent) + curveTangent*followCurveTangent;
 
-	normal = normal.unit_safe();
-	tangent = tangent.unit_safe();
-
-	Vec3 side = normal.cross(-tangent);
-	Vec3 up = side.cross(tangent);
-
-	return ori.setFromDirectionAndUpvector(side,up);
+	return ori.setFromTangentAndNormal(tangent, normal);
 }
 
-function Quat NURBSCurve.getOri(Scalar t, Scalar keepArcLength, Scalar keepRestLength) {
-	Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepRestLength);
-	return this.getOri(arcLenT);
+function Quat NURBSCurve.getOri(Scalar t, Scalar keepArcLength, Scalar keepCurveLen) {
+	// Scalar arcLenT =  this.arcLengthParam(t, keepArcLength, keepRestLength);
+	Scalar uselocalNormal = 1.0;
+	Scalar followCurveTangent = 1;
+	Scalar followCurveNormal = 1;
+	Vec3 altTangent = Vec3(1,0,0);
+	Vec3 altNormal = Vec3(0,0,1);
+
+	return this.getOri(t, keepArcLength, keepCurveLen,  uselocalNormal, followCurveTangent, followCurveNormal, altTangent, altNormal);
 }
 
 function Quat NURBSCurve.getOri(Scalar t) {
@@ -623,7 +641,7 @@ function NURBSCurve.parallelFrames(out Xfo xfos[],
   		pt = this.getPoint(step*i, keepArcLength, keepCurveLen);
 
 		Quat quat;
-		quat.setFromDirectionAndUpvector(tangent, normal);
+		quat.setFromTangentAndNormal(tangent, normal);
 
 		xfos[i] = Xfo(pt, quat);
   	}
@@ -668,9 +686,6 @@ function Scalar NURBSCurve.getClosestParam(in Vec3 p) {
 		UInt32 i1 = _g1++;
 		Scalar u0  = Scalar(i1)/Scalar(_g);
 		Scalar u11 = Scalar(i1+1)/Scalar(_g);
-		// report(_g1);
-		// report(u0);
-		// report(u11);
 		Vec3 p0 = this.positions.values[i1];
 		Vec3 p1 = this.positions.values[i1 + 1];
 		Scalar ratio = closestPointToLineRatio(p,p0,p1);
