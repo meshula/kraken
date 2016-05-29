@@ -3978,7 +3978,7 @@ function KRK_klChar_guide.evaluate!(KrakenClipContext context) {
   this.solve();
 }
 
-function KRK_klChar_guide.evaluate!(KrakenClipContext context, io Xfo joints<>) {
+function KRK_klChar_guide.evaluate!(KrakenClipContext context, io Mat44 joints<>) {
   if(joints.size() != 71)
     throw("Expected number of joints does not match ("+joints.size()+" given, 71 expected).");
   if(this.clip != null) {
