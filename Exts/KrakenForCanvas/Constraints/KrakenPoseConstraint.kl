@@ -24,7 +24,7 @@ function Mat44 KrakenPoseConstraint.compute?(
 ) {
   Xfo result = m;
   result.tr = Vec3();
-  result.ori = Quat(Vec3(0.0, 0.0, 0.0), 0.0);
+  result.ori = Quat(0.0, 0.0, 0.0, 0.0);
 
   for(Size i=0;i<this.constrainers.size();i++) {
     Xfo constrainer(this.constrainers[i]);
