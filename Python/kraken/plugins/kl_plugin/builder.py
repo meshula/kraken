@@ -215,7 +215,7 @@ class Builder(Builder):
         sources = item['sceneItem'].getSources()
         if not sources:
             kl += ["", "  // solving global transform %s" % name]
-            kl += ["  this.%s.globalXfo = this.%s.xfo;" % (member, member)]
+            kl += ["  this.%s.global = this.%s.local;" % (member, member)]
             self.__krkVisitedObjects.append(item);
             return kl
 
@@ -240,7 +240,7 @@ class Builder(Builder):
             kl += ["", "  // solving parent child constraint %s" % name]
             if self.__debugMode:
                 kl += ["  report(\"solving parent child constraint %s\");" % name]
-            kl += ["  this.%s.globalXfo = this.%s.globalXfo * this.%s.xfo;" % (member, parent['member'], member)]
+            kl += ["  this.%s.global = this.%s.global * this.%s.local;" % (member, parent['member'], member)]
 
         constraints = [self.findKLConstraint(constraint) for constraint in sources if self.findKLConstraint(constraint)]
         for sourceConstraint in constraints:
@@ -260,12 +260,12 @@ class Builder(Builder):
                 for i in range(len(constraint.getConstrainers())):
                     constrainer = constraint.getConstrainers()[i]
                     constrainerObj = self.findKLObjectForSI(constrainer)
-                    kl += ['  this.%s.constrainers[%d] = this.%s.globalXfo;' % (sourceMember, i, constrainerObj['member'])]
+                    kl += ['  this.%s.constrainers[%d] = this.%s.global;' % (sourceMember, i, constrainerObj['member'])]
 
                 constrainee = constraint.getConstrainee()
                 constraineeObj = self.findKLObjectForSI(constrainee)
 
-                kl += ['  this.%s.globalXfo = this.%s.compute(this.%s.globalXfo);' % (constraineeObj['member'], sourceMember, constraineeObj['member'])]
+                kl += ['  this.%s.global = this.%s.compute(this.%s.global);' % (constraineeObj['member'], sourceMember, constraineeObj['member'])]
                 self.__krkVisitedObjects.append(sourceConstraint);
 
 
@@ -318,10 +318,7 @@ class Builder(Builder):
                                 elif isinstance(connected, SceneItem):
                                     connectedObj = self.findKLObjectForSI(connected)
                                     kl += self.__visitKLObject(connectedObj)
-                                    if argDataType == "Mat44[]":
-                                        kl += ["  this.%s[%d] = this.%s.globalXfo.toMat44();" % (argMember, j, connectedObj['member'])]
-                                    else:
-                                        kl += ["  this.%s[%d] = this.%s.globalXfo;" % (argMember, j, connectedObj['member'])]
+                                    kl += ["  this.%s[%d] = this.%s.global;" % (argMember, j, connectedObj['member'])]
                                 elif isinstance(connected, Xfo):
                                     if argDataType == "Mat44[]":
                                         kl += ["  this.%s[%d] = %s.toMat44();" % (argMember, j, self.__getXfoAsStr(connected))]
@@ -346,11 +343,7 @@ class Builder(Builder):
                         if isinstance(connected, SceneItem):
                             connectedObj = self.findKLObjectForSI(connected)
                             kl += self.__visitKLObject(connectedObj)
-
-                            if argDataType == "Mat44":
-                                kl += ["  this.%s = this.%s.globalXfo.toMat44();" % (argMember, connectedObj['member'])]
-                            else:
-                                kl += ["  this.%s = this.%s.globalXfo;" % (argMember, connectedObj['member'])]
+                            kl += ["  this.%s = this.%s.global;" % (argMember, connectedObj['member'])]
 
                         elif isinstance(connected, Xfo):
                             if argDataType == "Mat44":
@@ -418,9 +411,15 @@ class Builder(Builder):
                         if connected.getDecoratedPath() == item['sceneItem'].getDecoratedPath():
                             kl += ["", "  // retrieving value for %s from solver %s" % (member, sourceName)]
                             if argDataType.endswith('[]'):
-                                kl += ["  this.%s.globalXfo = this.%s[%d];" % (member, argMember, j)]
+                                if argDataType == 'Mat44[]':
+                                    kl += ["  this.%s.global = this.%s[%d];" % (member, argMember, j)]
+                                else:
+                                    kl += ["  this.%s.global = this.%s[%d].toMat44();" % (member, argMember, j)]
                             else:
-                                kl += ["  this.%s.globalXfo = this.%s;" % (member, argMember)]
+                                if argDataType == 'Mat44':
+                                    kl += ["  this.%s.global = this.%s;" % (member, argMember)]
+                                else:
+                                    kl += ["  this.%s.global = this.%s.toMat44();" % (member, argMember)]
                         else:
                             connectedObj = self.findKLObjectForSI(connected)
                             kl += self.__visitKLObject(connectedObj)
@@ -536,7 +535,7 @@ class Builder(Builder):
         for constraint in self.__klConstraints:
             memberName = constraint['member']
             if constraint['sceneItem'].getMaintainOffset():
-                kl += ["  this.%s.offset = %s;" % (memberName, self.__getXfoAsStr(constraint['sceneItem'].computeOffset()))]
+                kl += ["  this.%s.offset = %s.toMat44();" % (memberName, self.__getXfoAsStr(constraint['sceneItem'].computeOffset()))]
             kl += ["  this.%s.constrainers.resize(%d);" % (memberName, len(constraint['constrainers']))]
 
         kl += ["", "  // build kl solvers"]
@@ -628,7 +627,7 @@ class Builder(Builder):
         kl += ["function %s.resetPose!() {" % self.getKLExtensionName()]
         kl += ["  // reset objects"]
         for obj in self.__klObjects:
-            kl += ["  this.%s.xfo = %s;" % (obj['member'], self.__getXfoAsStr(obj['sceneItem'].localXfo))]
+            kl += ["  this.%s.local = %s.toMat44();" % (obj['member'], self.__getXfoAsStr(obj['sceneItem'].localXfo))]
         kl += ["  // reset attributes"]
         for attr in scalarAttributes:
             kl += ["  this.%s.value = %f;" % (attr['member'], attr['value'])]
@@ -696,7 +695,7 @@ class Builder(Builder):
           if self.__profilingFrames > 0:
               kl += ["    AutoProfilingEvent scopedEvent(\"%s.transferingJoints\");" % self.getKLExtensionName()]
           kl += ["    for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
-          kl += ["      joints[i] = this._KrakenJoint[i].globalXfo;"]
+          kl += ["      joints[i] = this._KrakenJoint[i].global;"]
           kl += ["  }"]
         if self.__profilingFrames > 0:
             kl += ["  this.processProfiling();"]
@@ -706,7 +705,7 @@ class Builder(Builder):
         kl += ["  Xfo result[](%d);" % len(self.__krkDeformers)]
         if len(self.__krkDeformers) > 0:
             kl += ["  for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
-            kl += ["    result[i] = this._KrakenJoint[i].globalXfo;"]
+            kl += ["    result[i] = this._KrakenJoint[i].global;"]
         kl += ["  return result;"]
         kl += ["}", ""]
 
@@ -721,7 +720,7 @@ class Builder(Builder):
         kl += ["function Xfo[] %s.getAllXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(self.__klObjects)]
         for i in range(len(self.__klObjects)):
-            kl += ["  result[%d] = this.%s.globalXfo;" % (i, self.__klObjects[i]['member'])]
+            kl += ["  result[%d] = this.%s.global;" % (i, self.__klObjects[i]['member'])]
         kl += ["  return result;"]
         kl += ["}", ""]
 

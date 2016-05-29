@@ -19,15 +19,11 @@ function KrakenCtrlSpace(
   this.path = path;
   this.layer = layer;
   this.component = component;
-  this.xfo = xfo;
+  this.local = xfo.toMat44();
   this.visibility = visibility;
   this.color = color;
 }
 
-/// \dfgPresetFolder Objects
-function Xfo KrakenCtrlSpace.getXfo() {
-  return this.xfo;
-}
 
 /// \dfgPresetFolder DebugDrawing
 function KrakenCtrlSpace.drawIntoLinesObject(Xfo xfo, io Lines lines) {

@@ -21,15 +21,10 @@ function KrakenCurve(
   this.path = path;
   this.layer = layer;
   this.component = component;
-  this.xfo = xfo;
+  this.local = xfo.toMat44();
   this.visibility = visibility;
   this.color = color;
   this.shapeHash = shapeHash;
-}
-
-/// \dfgPresetFolder Objects
-function Xfo KrakenCurve.getXfo() {
-  return this.xfo;
 }
 
 /// \dfgPresetFolder DebugDrawing
