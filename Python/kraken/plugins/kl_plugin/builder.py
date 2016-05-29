@@ -20,10 +20,12 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.components.component_input import ComponentInput
 from kraken.core.objects.components.component_output import ComponentOutput
 from kraken.core.objects.attributes.attribute import Attribute
+from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.operators.kl_operator import KLOperator
 from kraken.core.objects.operators.canvas_operator import CanvasOperator
 from kraken.core.objects.constraints.constraint import Constraint
+from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.maths.vec3 import Vec3
@@ -162,14 +164,19 @@ class Builder(Builder):
             return self.__klMembers['lookup'][name]
 
         if argType is None:
-          return None
+            return None
+
+        if isinstance(item, ScalarAttribute) and isinstance(item.getCurrentSource(), Attribute):
+          argType = argType+'_Driven'
 
         typedArgs = self.__klMembers['members'].get(argType, [])
         index = len(typedArgs)
         typedArgs.append(name)
 
-        constantName = '%s_%s' % (self.getKLExtensionName(), name)
-        self.__klConstants[constantName] = index
+        constantName = str(index)
+        if self.__useRigConstants:
+            constantName = '%s_%s' % (self.getKLExtensionName(), name)
+            self.__klConstants[constantName] = index
 
         member = '_%s[%s]' % (argType, constantName)
         self.__klMembers['lookup'][name] = member
@@ -215,7 +222,19 @@ class Builder(Builder):
         objects = [self.findKLObjectForSI(obj) for obj in sources if self.findKLObjectForSI(obj)]
         if len(objects) > 1:
             print ("WARNING: object %s has more than one object source: %s (Parenting to last)." % (item['sceneItem'], [o["member"] for o in objects]))
-        if len(objects):
+
+        # let's check if this objects has a source pose constraint or not
+        needParentConstraint = True
+        constraints = [self.findKLConstraint(constraint) for constraint in sources if self.findKLConstraint(constraint)]
+        for sourceConstraint in constraints:
+            if isinstance(sourceConstraint, PoseConstraint):
+              needParentConstraint = False
+        solvers = [self.findKLSolver(solver) for solver in sources if self.findKLSolver(solver)]
+        for sourceSolver in solvers:
+            if sourceSolver:
+              needParentConstraint = False
+
+        if len(objects) and needParentConstraint:
             parent = objects[-1]
             kl += self.__visitKLObject(parent)
             kl += ["", "  // solving parent child constraint %s" % name]
@@ -254,9 +273,11 @@ class Builder(Builder):
         for sourceSolver in solvers:
 
             if sourceSolver:
+
                 kOperator = sourceSolver['sceneItem']
                 sourceMember = sourceSolver['member']
                 sourceName = self.getUniqueName(kOperator)
+                eventSolverName = sourceMember.replace('[', '').replace(']', '')
                 args = kOperator.getSolverArgs()
 
                 if not sourceSolver.get('visited', False):
@@ -265,6 +286,8 @@ class Builder(Builder):
                     kl += ["", "  // solving KLSolver %s" % (sourceName)]
                     if self.__debugMode:
                         kl += ["  report(\"solving KLSolver %s\");" % (sourceName)]
+                    if self.__profilingFrames > 0:
+                        kl += ["  { AutoProfilingEvent solverEvent_%s(\"%s\");" % (eventSolverName, kOperator.getDecoratedPath())]
 
                     # first let's find all args which are arrays and prepare storage
                     for i in xrange(len(args)):
@@ -313,7 +336,7 @@ class Builder(Builder):
 
                         if argConnectionType == 'Out':
                             continue
-
+                            
                         connected = connectedObjects
                         if isinstance(connected, Attribute):
                             connectedObj = self.findKLAttribute(connected)
@@ -352,6 +375,9 @@ class Builder(Builder):
                                 continue
                             kl += ["  report(\"arg %s \" + this.%s);" % (argName, argMember)]
 
+                    if self.__profilingFrames > 0:
+                        kl += ["  { AutoProfilingEvent scopedEvent(\"%s.solve\");" % (eventSolverName)]
+
                     kl += ["  this.%s.solve(" % sourceMember]
                     for i in xrange(len(args)):
                         arg = args[i]
@@ -364,7 +390,14 @@ class Builder(Builder):
                         kl += ["    this.%s%s" % (argMember, comma)]
 
                     kl += ["  );"]
+
+                    if self.__profilingFrames > 0:
+                        kl += ["  }"]
+
                     self.__krkVisitedObjects.append(sourceSolver);
+
+                    if self.__profilingFrames > 0:
+                        kl += ["  }"]
 
                 # output to the results!
                 for i in xrange(len(args)):
@@ -449,6 +482,10 @@ class Builder(Builder):
         kl += ["require Kraken;"]
         kl += ["require KrakenForCanvas;"]
         kl += ["require KrakenAnimation;"]
+        if self.__profilingFrames > 0:
+            kl += ["require FabricStatistics;"]
+            if self.__profilingLogFile:
+                kl += ["require FileIO;"]
         for extension in self.__klExtensions:
             kl += ["require %s;" % extension]
         kl += [""]
@@ -456,10 +493,11 @@ class Builder(Builder):
             kl += ["const UInt32 %s = %d;" % (constant, self.__klConstants[constant])]
         kl += [""]
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
-        kl += ["  Float64 solveTimeMs;"]
+        if self.__profilingFrames > 0:
+            kl += ["  SInt32 profilingFrame;"]
         kl += ["  KrakenClip clip; // the default clip of the rig"]
         for argType in self.__klMembers['members']:
-            kl += ["  %s _%s[%d];" % (argType, argType, len(self.__klMembers['members'][argType]))]
+            kl += ["  %s _%s[%d];" % (argType.replace('_Driven', ''), argType, len(self.__klMembers['members'][argType]))]
 
         for argType in self.__klArgs['members']:
             prefix = argType
@@ -484,8 +522,8 @@ class Builder(Builder):
             kl += ["  // build 3D objects"]
         for obj in self.__klObjects:
             memberName = obj['member']
+            kl += ["  this.%s.name = \"%s\";" % (memberName, obj['sceneItem'].getBuildName())]
             if self.__debugMode:
-                kl += ["  this.%s.name = \"%s\";" % (memberName, obj['name'])]
                 kl += ["  this.%s.buildName = \"%s\";" % (memberName, obj['buildName'])]
                 kl += ["  this.%s.path = \"%s\";" % (memberName, obj['path'])]
                 kl += ["  this.%s.layer = \"%s\";" % (memberName, obj.get('layer', ''))]
@@ -514,10 +552,11 @@ class Builder(Builder):
 
         kl += ["", "  // build attributes"]
         for attr in self.__klAttributes:
-            name = attr['name']
+            ownerName = attr['sceneItem'].getParent().getParent().getBuildName()
+            name = "%s.%s" % (ownerName, attr['name'])
+
             path = attr['path']
             if not self.__debugMode:
-              name = ""
               path = ""
 
             if attr['cls'] == "BoolAttribute":
@@ -580,6 +619,10 @@ class Builder(Builder):
                     attr['value']
                 )]
 
+        if self.__profilingFrames > 0:
+            kl += ["", "  this.profilingFrame = 0;"]
+            kl += ["  StartFabricProfilingFrames(%d);" % (self.__profilingFrames+1)]
+
         kl += ["}", ""]
 
         kl += ["function %s.resetPose!() {" % self.getKLExtensionName()]
@@ -592,7 +635,8 @@ class Builder(Builder):
         kl += ["}", ""]
 
         kl += ["function %s.solve!() {" % self.getKLExtensionName()]
-        kl += ["  UInt64 timerStart = getCurrentTicks();"]
+        if self.__profilingFrames > 0:
+            kl += ["  AutoProfilingEvent methodEvent(\"%s.solve\");" % self.getKLExtensionName()]
         kl += self.__klPreCode
 
         for obj in self.__klObjects:
@@ -607,68 +651,70 @@ class Builder(Builder):
         for attr in self.__klAttributes:
             kl += self.__visitKLAttribute(attr)
 
+        if self.__profilingFrames > 0:
+            kl += ["  {  AutoProfilingEvent visitKLObjectsEvent(\"rig pose solve\");"]
         self.__krkVisitedObjects = []
         for obj in self.__klObjects:
             kl += self.__visitKLObject(obj)
+        if self.__profilingFrames > 0:
+            kl += ["  }"]
 
-        kl += ["  UInt64 timerEnd = getCurrentTicks();"]
-        kl += ["  this.solveTimeMs = 1000.0 * getSecondsBetweenTicks(timerStart, timerEnd);"]
         kl += ["}", ""]
 
         kl += ["function %s.evaluate!(KrakenClipContext context) {" % self.getKLExtensionName()]
+        if self.__profilingFrames > 0:
+            kl += ["  if(this.profilingFrame >= 0)"]
+            kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
+            kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
         kl += ["  if(this.clip != null) {"]
+        if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.clip.apply\");" % self.getKLExtensionName()]
         kl += ["    KrakenKLRig rig = this;"]
         kl += ["    this.clip.apply(rig, context, 1.0);"]
         kl += ["  }"]
         kl += ["  this.solve();"]
+        if self.__profilingFrames > 0:
+            kl += ["  this.processProfiling();"]
         kl += ["}", ""]
 
-        kl += ["function %s.evaluate!(KrakenClipContext context, Boolean inGlobalSpace, io Xfo joints<>) {" % self.getKLExtensionName()]
+        kl += ["function %s.evaluate!(KrakenClipContext context, io Xfo joints<>) {" % self.getKLExtensionName()]
+        if self.__profilingFrames > 0:
+            kl += ["  if(this.profilingFrame >= 0)"]
+            kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
+            kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
         kl += ["  if(joints.size() != %d)" % len(self.__krkDeformers)]
         kl += ["    throw(\"Expected number of joints does not match (\"+joints.size()+\" given, %d expected).\");" % len(self.__krkDeformers)]
         kl += ["  if(this.clip != null) {"]
+        if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.clip.apply\");" % self.getKLExtensionName()]
         kl += ["    KrakenKLRig rig = this;"]
         kl += ["    this.clip.apply(rig, context, 1.0);"]
         kl += ["  }"]
         kl += ["  this.solve();"]
-        kl += ["  if(inGlobalSpace) {"]
-        for i in range(len(self.__krkDeformers)):
-            kl += ["    joints[%d] = this.%s.globalXfo;" % (i, self.__krkDeformers[i]['member'])]
-        kl += ["  } else {", ]
-        for i in range(len(self.__krkDeformers)):
-            parentObj = self.findKLObjectForSI(self.__krkDeformers[i]['sceneItem'].getParent())
-            if parentObj:
-                kl += ["    joints[%d] = this.%s.globalXfo.inverse() * this.%s.globalXfo;" % (i, parentObj['member'], self.__krkDeformers[i]['member'])]
-            else:
-                kl += ["    joints[%d] = this.%s.globalXfo;" % (i, self.__krkDeformers[i]['member'])]
-        kl += ["  }"]
-        kl += ["}", ""]
-
-        kl += ["function Xfo[] %s.getControlXfos() {" % self.getKLExtensionName()]
-        kl += ["  Xfo result[](%d);" % len(controls)]
-        for i in range(len(controls)):
-            kl += ["  result[%d] = this.%s.xfo;" % (i, controls[i]['member'])]
-        kl += ["  return result;"]
-        kl += ["}", ""]
-
-        kl += ["function String[] %s.getControlNames() {" % self.getKLExtensionName()]
-        kl += ["  String result[](%d);" % len(controls)]
-        for i in range(len(controls)):
-            kl += ["  result[%d] = \"%s\";" % (i, controls[i]['sceneItem'].getBuildName())]
-        kl += ["  return result;"]
+        if len(self.__krkDeformers) > 0:
+          kl += ["  {"]
+          if self.__profilingFrames > 0:
+              kl += ["    AutoProfilingEvent scopedEvent(\"%s.transferingJoints\");" % self.getKLExtensionName()]
+          kl += ["    for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
+          kl += ["      joints[i] = this._KrakenJoint[i].globalXfo;"]
+          kl += ["  }"]
+        if self.__profilingFrames > 0:
+            kl += ["  this.processProfiling();"]
         kl += ["}", ""]
 
         kl += ["function Xfo[] %s.getJointXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(self.__krkDeformers)]
-        for i in range(len(self.__krkDeformers)):
-            kl += ["  result[%d] = this.%s.globalXfo;" % (i, self.__krkDeformers[i]['member'])]
+        if len(self.__krkDeformers) > 0:
+            kl += ["  for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
+            kl += ["    result[i] = this._KrakenJoint[i].globalXfo;"]
         kl += ["  return result;"]
         kl += ["}", ""]
 
         kl += ["function String[] %s.getJointNames() {" % self.getKLExtensionName()]
         kl += ["  String result[](%d);" % len(self.__krkDeformers)]
-        for i in range(len(self.__krkDeformers)):
-            kl += ["  result[%d] = \"%s\";" % (i, self.__krkDeformers[i]['sceneItem'].getBuildName())]
+        if len(self.__krkDeformers) > 0:
+            kl += ["  for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
+            kl += ["    result[i] = this._KrakenJoint[i].name;"]
         kl += ["  return result;"]
         kl += ["}", ""]
 
@@ -686,33 +732,20 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function Float32[] %s.getScalarAttributeValues() {" % self.getKLExtensionName()]
-        kl += ["  Float32 result[](%d);" % len(scalarAttributes)]
-        for i in range(len(scalarAttributes)):
-            kl += ["  result[%d] = this.%s.value;" % (i, scalarAttributes[i]['member'])]
+        kl += ["function KrakenScalarAttribute<> %s.getScalarAttributes() {" % self.getKLExtensionName()]
+        if len(scalarAttributes) == 0:
+          kl += ["  KrakenScalarAttribute result<>;"]
+        else:
+          kl += ["  KrakenScalarAttribute result<>(this._KrakenScalarAttribute);"]
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function String[] %s.getScalarAttributeNames() {" % self.getKLExtensionName()]
-        kl += ["  String result[](%d);" % len(scalarAttributes)]
-        for i in range(len(scalarAttributes)):
-            ownerName = scalarAttributes[i]['sceneItem'].getParent().getParent().getBuildName()
-            kl += ["  result[%d] = \"%s.%s\";" % (i, ownerName, scalarAttributes[i]['name'])]
+        kl += ["function KrakenControl<> %s.getControls() {" % self.getKLExtensionName()]
+        if len(controls) == 0:
+          kl += ["  KrakenControl result<>;"]
+        else:
+          kl += ["  KrakenControl result<>(this._KrakenControl);"]
         kl += ["  return result;"]
-        kl += ["}", ""]
-
-        kl += ["function %s.setControlXfos!(Xfo values<>) {" % self.getKLExtensionName()]
-        kl += ["  if(values.size() != %d)" % len(controls)]
-        kl += ["    throw(\"Expected number of values does not match (\"+values.size()+\" given, %d expected).\");" % len(controls)]
-        for i in range(len(controls)):
-            kl += ["  this.%s.xfo = values[%d];" % (controls[i]['member'], i)]
-        kl += ["}", ""]
-
-        kl += ["function %s.setScalarAttributeValues!(Float32 values<>) {" % self.getKLExtensionName()]
-        kl += ["  if(values.size() != %d)" % len(scalarAttributes)]
-        kl += ["    throw(\"Expected number of values does not match (\"+values.size()+\" given, %d expected).\");" % len(scalarAttributes)]
-        for i in range(len(scalarAttributes)):
-            kl += ["  this.%s.value = values[%d];" % (scalarAttributes[i]['member'], i)]
         kl += ["}", ""]
 
         kl += ["function %s.setClip!(KrakenClip clip) {" % self.getKLExtensionName()]
@@ -778,6 +811,53 @@ class Builder(Builder):
         # kl += ["  }"]
         # kl += ["}", ""]
 
+        if self.__profilingFrames > 0:
+            kl += ["function %s.processProfiling!() {" % self.getKLExtensionName()]
+            kl += ["  if(this.profilingFrame != %s)" % self.__profilingFrames]
+            kl += ["    return;"]
+            kl += ["  this.profilingFrame = -1;"]
+            kl += ["  ProfilingEvent events[] = GetProfilingEvents();"]
+            kl += ["  if(events.size() == 0)"]
+            kl += ["    return;"]
+            kl += ["  ProfilingEvent combinedEvents[](events.size() / %d);" % self.__profilingFrames]
+            kl += ["  for(Size i=0;i<events.size();i++) {"]
+            kl += ["    if(i < combinedEvents.size()) {"]
+            kl += ["      combinedEvents[i] = events[i];"]
+            kl += ["    } else {"]
+            kl += ["      combinedEvents[i % combinedEvents.size()].duration += events[i].duration;"]
+            kl += ["    }"]
+            kl += ["  }"]
+            kl += ["  String profilingReport;"]
+            kl += ["  for(Size i=0;i<combinedEvents.size();i++) {"]
+            kl += ["    combinedEvents[i].duration /= %d.0;" % self.__profilingFrames]
+            kl += ["    for( Size j = 0; j < combinedEvents[i].level; ++j )"]
+            kl += ["      profilingReport += '  ';"]
+            kl += ["    Float64 durationms = Scalar(combinedEvents[i].duration)*1000.0;"]
+            kl += ["    Size ms = Size(durationms);"]
+            kl += ["    durationms -= Float64(ms) / 1000.0;"]
+            kl += ["    durationms *= 9999.99;"]
+            kl += ["    Size msfract = Size(durationms);"]
+            kl += ["    String msfractStr = msfract;"]
+            kl += ["    if(durationms < 1000)"]
+            kl += ["      msfractStr = \"0\" + msfractStr;"]
+            kl += ["    if(durationms < 100)"]
+            kl += ["      msfractStr = \"0\" + msfractStr;"]
+            kl += ["    if(durationms < 10)"]
+            kl += ["      msfractStr = \"0\" + msfractStr;"]
+            kl += ["    profilingReport += combinedEvents[i].label + \": duration=\"+ms+\".\"+msfractStr+\" ms\\n\";"]
+            kl += ["  }"]
+
+            if self.__profilingLogFile:
+                kl += ["  TextWriter writer(\"%s\");" % self.__profilingLogFile.replace('\\', '/')]
+                kl += ["  writer.write(profilingReport);"]
+                kl += ["  writer.close();"]
+                kl += ["  report(\"Profiling log saved to '%s'\");" % self.__profilingLogFile.replace('\\', '/')]
+            else:
+                kl += ["  report(profilingReport);"]
+
+            kl += ["  StopFabricProfiling();"]
+            kl += ["}"]
+
         return "\n".join(kl)
 
     def getKLTestCode(self):
@@ -786,8 +866,15 @@ class Builder(Builder):
         kl += [""]
         kl += ["operator entry() {"]
         kl += ["  %s rig();" % self.getKLExtensionName()]
-        kl += ["  rig.solve();"]
-        kl += ["  report(rig.getJointXfos());"]
+        kl += ["  KrakenClipContext context;"]
+        if self.__profilingFrames > 0:
+            kl += ["  for(SInt32 i=0;i<%d;i++) {" % self.__profilingFrames]
+            kl += ["    context.time = 1.0;"]
+            kl += ["    rig.evaluate(context);"]
+            kl += ["  };"]
+        else:
+            kl += ["  context.time = 1.0;"]
+            kl += ["  rig.evaluate(context);"]
         kl += ["}"]
         return "\n".join(kl)
 
@@ -1025,40 +1112,34 @@ class Builder(Builder):
         cls = kSceneItem.__class__.__name__
 
         if kSceneItem.isTypeOf('ComponentGroup'):
-            cls = 'ComponentGroup'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('ComponentInput'):
-            cls = 'ComponentInput'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('ComponentOutput'):
-            cls = 'ComponentOutput'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Rig'):
-            cls = 'Rig'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Layer'):
-            cls = 'Layer'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('CtrlSpace'):
-            cls = 'CtrlSpace'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Curve'):
-            cls = 'Curve'
+            cls = 'Control'
         elif kSceneItem.isTypeOf('Control'):
             cls = 'Control'
         elif kSceneItem.isTypeOf('Joint'):
             cls = 'Joint'
         elif kSceneItem.isTypeOf('Locator'):
-            cls = 'Locator'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('HierarchyGroup'):
-            cls = 'HierarchyGroup'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Container'):
-            cls = 'Container'
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Transform'):
             cls = 'Transform'
         else:
             self.reportError("buildKLSceneItem: Unexpected class " + cls)
             return False
-
-        if kSceneItem.isTypeOf('ComponentInput') or \
-            kSceneItem.isTypeOf('ComponentOutput') or \
-            kSceneItem.isTypeOf('Layer') or \
-            kSceneItem.isTypeOf('Rig'):
-            cls = 'Transform'
 
         obj = {
             'sceneItem': kSceneItem,
@@ -1626,6 +1707,9 @@ class Builder(Builder):
         """
 
         self.__rigTitle = self.getConfig().getMetaData('RigTitle', 'Rig')
+        self.__useRigConstants = self.getConfig().getMetaData('UseRigConstants', False)
+        self.__profilingFrames = self.getConfig().getMetaData('ProfilingFrames', 0)
+        self.__profilingLogFile = self.getConfig().getMetaData('ProfilingLogFile', None)
         self.__canvasGraph = GraphManager()
         self.__debugMode = False
         self.__names = {}

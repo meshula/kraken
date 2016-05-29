@@ -1,4 +1,5 @@
 require Math;
+require KrakenForCanvas;
 
 interface KrakenKLRig {
 
@@ -8,18 +9,13 @@ interface KrakenKLRig {
   setClip!(KrakenClip clip);
   loadClipFromFile!(String filePath);
   evaluate!(KrakenClipContext context);
-  evaluate!(KrakenClipContext context, Boolean inGlobalSpace, io Xfo joints<>);
+  evaluate!(KrakenClipContext context, io Xfo joints<>);
 
-  Xfo[] getControlXfos();
-  String[] getControlNames();
   Xfo[] getJointXfos();
   String[] getJointNames();
   Xfo[] getAllXfos();
   String[] getAllNames();
 
-  Float32[] getScalarAttributeValues();
-  String[] getScalarAttributeNames();
-
-  setControlXfos!(Xfo values<>);
-  setScalarAttributeValues!(Float32 values<>);
+  KrakenControl<> getControls();
+  KrakenScalarAttribute<> getScalarAttributes();
 };

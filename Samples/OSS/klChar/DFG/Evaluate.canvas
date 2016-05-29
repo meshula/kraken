@@ -32,17 +32,7 @@
 }
 ",
   "args" : [
-    {
-      "type" : "KRK_klChar_guide",
-      "value" : null,
-      "ext" : "KRK_klChar_guide"
-      },
-    {
-      "type" : "KrakenClipContext",
-      "value" : {
-        "time" : 0
-        },
-      "ext" : "KrakenAnimation"
-      }
+    null,
+    null
     ]
   }

@@ -86,10 +86,6 @@
       ]
     },
   "args" : [
-    {
-      "type" : "KRK_klChar_guide",
-      "value" : null,
-      "ext" : "KRK_klChar_guide"
-      }
+    null
     ]
   }
