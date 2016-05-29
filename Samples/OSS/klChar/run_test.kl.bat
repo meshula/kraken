@@ -18,4 +18,4 @@ set PYTHONPATH=%PYTHONPATH%;%FABRIC_PATH%\Python\2.7;%KRAKEN_PATH%\Python
 
 cd /d %KRAKEN_PATH%
 
-call cmd /k "python DCCIntegrations\kl\presetGen.py "%KRAKEN_PATH%"\Samples\OSS\klChar\klChar_rig.krg "%KRAKEN_PATH%"\Samples\OSS\klChar -c "%KRAKEN_PATH%"\Python\OSS\OSS_kraken_config.py --profiling 5000"
+start /WAIT  kl.exe "%KRAKEN_PATH%"/Samples/OSS/klChar/test.kl"
