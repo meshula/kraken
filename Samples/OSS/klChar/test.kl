@@ -2,6 +2,7 @@ require KRK_klChar_guide;
 
 operator entry() {
   KRK_klChar_guide rig();
-  rig.solve();
-  report(rig.getJointXfos());
+  KrakenClipContext context;
+  context.time = 1.0;
+  rig.evaluate(context);
 }

@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "1000",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.972856342792511,\n    \"y\" : -0.08593996614217758,\n    \"z\" : 0.2147745043039322,\n    \"t\" : 305.8386840820313\n    },\n  \"row1\" : {\n    \"x\" : -1.873786118267162e-06,\n    \"y\" : 0.9283424019813538,\n    \"z\" : 0.3715350329875946,\n    \"t\" : 117.7456359863281\n    },\n  \"row2\" : {\n    \"x\" : -0.2313292175531387,\n    \"y\" : -0.3614285886287689,\n    \"z\" : 0.9032323360443115,\n    \"t\" : 237.0614318847656\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9721494913101196,\n    \"y\" : 0.06716948002576828,\n    \"z\" : -0.2245455682277679,\n    \"t\" : -34.07157897949219\n    },\n  \"row1\" : {\n    \"x\" : -8.009401994968357e-07,\n    \"y\" : 0.9579499363899231,\n    \"z\" : 0.286619246006012,\n    \"t\" : 120.7657470703125\n    },\n  \"row2\" : {\n    \"x\" : 0.2343761920928955,\n    \"y\" : -0.2786034345626831,\n    \"z\" : 0.9313749074935913,\n    \"t\" : 216.7993469238281\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "101",
-    "uiGraphZoom" : "{\n  \"value\" : 0.8242183923721314\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.9288807511329651\n  }",
     "timeline_loopMode" : "1",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "204.3941955566406",
-    "timeline_current" : "282",
-    "timeline_end" : "562",
-    "uiGraphPan" : "{\n  \"x\" : -452.8299560546875,\n  \"y\" : 130.186279296875\n  }"
+    "camera_focalDistance" : "240.9815063476563",
+    "timeline_current" : "292",
+    "timeline_end" : "461",
+    "uiGraphPan" : "{\n  \"x\" : 1070.161254882813,\n  \"y\" : 3.369110107421875\n  }"
     },
   "title" : "",
   "ports" : [
@@ -71,7 +71,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-366.1152648925781,\"y\":206.4619445800781}"
+        "uiGraphPos" : "{\"x\":-383.4956578016281,\"y\":177.5376609563828}"
         },
       "name" : "FbxCharacter",
       "ports" : [
@@ -84,7 +84,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "V:\\fabric\\kraken\\Samples\\OSS\\klChar\\klChar.fbx"
+            "String" : "${KRAKEN_PATH}/Samples/OSS/klChar/klChar.fbx"
             },
           "name" : "filePath"
           },
@@ -100,7 +100,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":18.30514526367188,\"y\":207.5327758789063}"
+        "uiGraphPos" : "{\"x\":22.86151802539825,\"y\":184.7507957220078}"
         },
       "name" : "ToCharacter",
       "ports" : [
@@ -126,7 +126,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-150.3147277832031,\"y\":216.2656860351563}"
+        "uiGraphPos" : "{\"x\":-145.7583378553391,\"y\":193.4837058782578}"
         },
       "name" : "Cache",
       "ports" : [
@@ -147,7 +147,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":981.5914306640625,\"y\":-170.1076965332031}"
+        "uiGraphPos" : "{\"x\":964.1966171264648,\"y\":-159.2358236312866}"
         },
       "name" : "EmptyDrawingHandle",
       "ports" : [
@@ -168,90 +168,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1635.0458984375,\"y\":-378.3674926757813}",
-        "uiCollapsedState" : "0"
-        },
-      "name" : "DrawPolygonMesh",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "this"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "name"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0.7058823704719544,
-              "g" : 0.7058823704719544,
-              "b" : 0.7058823704719544,
-              "a" : 1
-              }
-            },
-          "name" : "color"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "specular"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Float32" : 16
-            },
-          "name" : "specFactor"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "transform"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "mesh"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "wireFrame"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "doubleSided"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "dummyResult"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "instance"
-          }
-        ],
-      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawPolygonMesh",
-      "presetGUID" : "88D132945A91B3FEB731B90CE41878AF"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":1051.078369140625,\"y\":37.13632202148438}",
+        "uiGraphPos" : "{\"x\":1033.683494567871,\"y\":48.00819110870361}",
         "uiCollapsedState" : "0"
         },
       "name" : "GetDeformedMesh",
@@ -335,51 +252,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1349.580810546875,\"y\":-50.98140335083008}",
-        "uiCollapsedState" : "2"
-        },
-      "name" : "ComposeXfo",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "ori"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 0,
-              "y" : 0,
-              "z" : 0
-              }
-            },
-          "name" : "tr"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "sc"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
-          }
-        ],
-      "executable" : "Fabric.Exts.Math.Xfo.ComposeXfo",
-      "presetGUID" : "C61287D19D84D9733903DDC14FABD4AF"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":1337.148071289063,\"y\":60.702392578125}"
+        "uiGraphPos" : "{\"x\":1320.840354919434,\"y\":71.57427310943604}"
         },
       "name" : "Cache_2",
       "ports" : [
@@ -420,7 +293,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-75.15367126464844,\"y\":-45.98427581787109}"
+        "uiGraphPos" : "{\"x\":-77.78608500957489,\"y\":-49.49414682388306}"
         },
       "name" : "SetClip_1",
       "ports" : [
@@ -445,7 +318,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":282.1376647949219,\"y\":386.599853515625}"
+        "uiGraphPos" : "{\"x\":271.3719745874405,\"y\":340.3074035644531}"
         },
       "name" : "KrakenClipContext_1",
       "ports" : [
@@ -471,7 +344,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":125.6657562255859,\"y\":378.6405639648438}"
+        "uiGraphPos" : "{\"x\":-49.81424367427826,\"y\":398.018798828125}"
         },
       "name" : "FrameToTime_1",
       "ports" : [
@@ -598,7 +471,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1948.644287109375,\"y\":-5.16851806640625}"
+        "uiGraphPos" : "{\"x\":1931.249412536621,\"y\":5.703352451324463}"
         },
       "name" : "DrawAxesInstances_1",
       "ports" : [
@@ -642,7 +515,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1094.353759765625,\"y\":-59.00790023803711}"
+        "uiGraphPos" : "{\"x\":1067.174420833588,\"y\":-61.18227958679199}"
         },
       "name" : "GetJointXfos_1",
       "ports" : [
@@ -688,7 +561,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-650.2616577148438,\"y\":-98.86751556396484}"
+        "uiGraphPos" : "{\"x\":-211.8562550544739,\"y\":487.5203721523285}"
         },
       "name" : "Convert_2",
       "ports" : [
@@ -714,7 +587,8 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1201.393432617188,\"y\":-206.5442810058594}"
+        "uiGraphPos" : "{\"x\":-787.5553975105286,\"y\":438.5115830898285}",
+        "uiCollapsedState" : "0"
         },
       "name" : "KrakenClipStack_1",
       "ports" : [
@@ -735,7 +609,8 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1003.224853515625,\"y\":-158.3917541503906}"
+        "uiGraphPos" : "{\"x\":-558.6761250495911,\"y\":435.0163743495941}",
+        "uiCollapsedState" : "1"
         },
       "name" : "AddClip_1",
       "ports" : [
@@ -769,7 +644,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-822.6561889648438,\"y\":-115.7950744628906}",
+        "uiGraphPos" : "{\"x\":-379.8631367683411,\"y\":471.4706284999847}",
         "uiCollapsedState" : "0"
         },
       "name" : "AddClip_2",
@@ -792,6 +667,9 @@ dfgEntry {
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "Float32" : 1
+            },
           "name" : "weight"
           }
         ],
@@ -801,7 +679,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1166.251342773438,\"y\":149.2170715332031}"
+        "uiGraphPos" : "{\"x\":1230.395164489746,\"y\":159.0017557144165}"
         },
       "name" : "GetAllXfos_1",
       "ports" : [
@@ -827,7 +705,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1014.702209472656,\"y\":-24.80195999145508}"
+        "uiGraphPos" : "{\"x\":-571.9084248542786,\"y\":550.1793687343597}"
         },
       "name" : "OffsetAnim",
       "ports" : [
@@ -847,7 +725,7 @@ dfgEntry {
           "defaultValues" : {
             "Vec3" : {
               "x" : 0,
-              "y" : -11.69999980926514,
+              "y" : 0,
               "z" : 0
               }
             },
@@ -859,7 +737,7 @@ dfgEntry {
           "defaultValues" : {
             "Vec3" : {
               "x" : 0,
-              "y" : -0.5,
+              "y" : -0.1000000014901161,
               "z" : 0
               }
             },
@@ -878,9 +756,9 @@ dfgEntry {
           "nodePortType" : "In",
           "defaultValues" : {
             "Vec3" : {
-              "x" : 156.6999969482422,
-              "y" : -23.5,
-              "z" : 101.5999984741211
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
               }
             },
           "name" : "l_hand"
@@ -890,9 +768,9 @@ dfgEntry {
           "nodePortType" : "In",
           "defaultValues" : {
             "Vec3" : {
-              "x" : -251.8999938964844,
-              "y" : -18.89999961853027,
-              "z" : -80.69999694824219
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
               }
             },
           "name" : "r_hand"
@@ -1571,7 +1449,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1205.057373046875,\"y\":-95.74658203125}"
+        "uiGraphPos" : "{\"x\":-1115.02894949913,\"y\":550.3858644962311}"
         },
       "name" : "AlembicAnim",
       "ports" : [
@@ -1584,6 +1462,14 @@ dfgEntry {
           "objectType" : "InstPort",
           "nodePortType" : "Out",
           "name" : "value"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "${KRAKEN_PATH}/Samples/OSS/klChar/klChar_walk.abc"
+            },
+          "name" : "filePath"
           }
         ],
       "definition" : {
@@ -1606,6 +1492,16 @@ dfgEntry {
             "nodePortType" : "In",
             "name" : "value",
             "execPortType" : "Out"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "String" : "${KRAKEN_PATH}/Samples/OSS/klChar/klChar.abc"
+              },
+            "name" : "filePath",
+            "execPortType" : "In",
+            "typeSpec" : "String"
             }
           ],
         "extDeps" : {},
@@ -1613,7 +1509,7 @@ dfgEntry {
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":-1528.806762695313,\"y\":-161.1000061035156}",
+              "uiGraphPos" : "{\"x\":-1528.806762695313,\"y\":-160.1000061035156}",
               "uiCollapsedState" : "0"
               },
             "name" : "KrakenAbcClip_1",
@@ -1627,7 +1523,7 @@ dfgEntry {
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "defaultValues" : {
-                  "String" : "V:\\fabric\\kraken\\Samples\\OSS\\klChar\\klChar.abc"
+                  "String" : "${KRAKEN_PATH}/Samples/OSS/klChar/klChar.abc"
                   },
                 "name" : "filePath"
                 },
@@ -1643,7 +1539,7 @@ dfgEntry {
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":-1336.122314453125,\"y\":-146.1358947753906}",
+              "uiGraphPos" : "{\"x\":-1308.122314453125,\"y\":-127.1358947753906}",
               "uiCollapsedState" : "0"
               },
             "name" : "Cache_1",
@@ -1664,6 +1560,9 @@ dfgEntry {
             }
           ],
         "connections" : {
+          "filePath" : [
+            "KrakenAbcClip_1.filePath"
+            ],
           "KrakenAbcClip_1.result" : [
             "Cache_1.value"
             ],
@@ -1677,7 +1576,7 @@ dfgEntry {
       "objectType" : "User",
       "metadata" : {
         "uiTitle" : "Animation Graph",
-        "uiGraphPos" : "{\"x\":-1274.784912109375,\"y\":-268.0840454101563}",
+        "uiGraphPos" : "{\"x\":-836.3779072761536,\"y\":318.3043992519379}",
         "uiNodeColor" : "{\n  \"r\" : 52,\n  \"g\" : 143,\n  \"b\" : 47\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiGraphSize" : "{\"w\":768.33544921875,\"h\":431.5584106445313}"
@@ -1701,7 +1600,7 @@ dfgEntry {
       "objectType" : "User",
       "metadata" : {
         "uiTitle" : "FBX Skeleton",
-        "uiGraphPos" : "{\"x\":-451.4851379394531,\"y\":127.760986328125}",
+        "uiGraphPos" : "{\"x\":-446.9287327528,\"y\":104.9791206121445}",
         "uiNodeColor" : "{\n  \"r\" : 110,\n  \"g\" : 128,\n  \"b\" : 143\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiGraphSize" : "{\"w\":679.80078125,\"h\":197.3699035644531}"
@@ -1713,7 +1612,7 @@ dfgEntry {
       "objectType" : "User",
       "metadata" : {
         "uiTitle" : "Debug Drawing",
-        "uiGraphPos" : "{\"x\":912.41162109375,\"y\":-227.1707916259766}",
+        "uiGraphPos" : "{\"x\":895.0168075561523,\"y\":-216.298903465271}",
         "uiNodeColor" : "{\n  \"r\" : 143,\n  \"g\" : 133,\n  \"b\" : 119\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiGraphSize" : "{\"w\":1284.623168945313,\"h\":579.204833984375}"
@@ -1837,7 +1736,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1949.922485351563,\"y\":451.0276184082031}"
+        "uiGraphPos" : "{\"x\":1948.779520750046,\"y\":452.1705830097199}"
         },
       "name" : "If_2",
       "ports" : [
@@ -1873,7 +1772,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1953.668823242188,\"y\":-382.9020080566406}",
+        "uiGraphPos" : "{\"x\":1951.860575079918,\"y\":-382.9020080566406}",
         "uiCollapsedState" : "0"
         },
       "name" : "DrawPolygonMeshArray_1",
@@ -1901,8 +1800,8 @@ dfgEntry {
           "nodePortType" : "In",
           "defaultValues" : {
             "Color" : {
-              "r" : 0.4000000059604645,
-              "g" : 0.5607843399047852,
+              "r" : 1,
+              "g" : 1,
               "b" : 1,
               "a" : 1
               }
@@ -1983,7 +1882,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1162.889282226563,\"y\":313.9810485839844}"
+        "uiGraphPos" : "{\"x\":1163.793406307697,\"y\":314.8851726651192}"
         },
       "name" : "GetDeformedMeshes",
       "ports" : [
@@ -2090,7 +1989,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1403.222290039063,\"y\":246.0939025878906}"
+        "uiGraphPos" : "{\"x\":1385.827415466309,\"y\":256.9657602310181}"
         },
       "name" : "Cache_1",
       "ports" : [
@@ -2107,11 +2006,134 @@ dfgEntry {
         ],
       "executable" : "Fabric.Core.Data.Cache",
       "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-794.1948018074036,\"y\":563.5643174648285}"
+        },
+      "name" : "KrakenClip_saveToFile_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "clipRef"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "filePath"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenClip.KrakenClip_saveToFile",
+      "presetGUID" : "B262B649A6706BC23CD71DC2372D6317"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-272.7118530273438,\"y\":336.6391254663467}"
+        },
+      "name" : "loop",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 101
+            },
+          "name" : "rangeIn"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 136
+            },
+          "name" : "rangeOut"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 136
+            },
+          "name" : "frame"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "loop",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "rangeIn",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "rangeOut",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "frame",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "Scalar"
+            }
+          ],
+        "extDeps" : {
+          "Math" : "*"
+          },
+        "code" : "dfgEntry {
+  Scalar range = rangeOut-rangeIn;
+  result = frame + ceil((rangeIn-frame)/range)*range;
+}
+"
+        }
       }
     ],
   "connections" : {
     "timeline" : [
-      "FrameToTime_1.frame"
+      "loop.frame"
       ],
     "drawSkel" : [
       "If_1.cond"
@@ -2129,19 +2151,10 @@ dfgEntry {
       "ToCharacter.this"
       ],
     "EmptyDrawingHandle.handle" : [
-      "DrawPolygonMesh.this"
-      ],
-    "DrawPolygonMesh.this" : [
       "DrawPolygonMeshArray_1.this"
       ],
     "GetDeformedMesh.result" : [
       "Cache_2.value"
-      ],
-    "ComposeXfo.result" : [
-      "DrawPolygonMesh.transform"
-      ],
-    "Cache_2.value" : [
-      "DrawPolygonMesh.mesh"
       ],
     "Create_1.result" : [
       "ResetPose_1.rig"
@@ -2194,7 +2207,8 @@ dfgEntry {
       "AddClip_2.clip"
       ],
     "AlembicAnim.value" : [
-      "AddClip_1.clip"
+      "AddClip_1.clip",
+      "KrakenClip_saveToFile_1.clipRef"
       ],
     "If_1.result" : [
       "this"
@@ -2224,6 +2238,9 @@ dfgEntry {
       ],
     "Cache_1.value" : [
       "DrawPolygonMeshArray_1.masters"
+      ],
+    "loop.result" : [
+      "FrameToTime_1.frame"
       ]
     },
   "requiredPresets" : {
@@ -2492,238 +2509,6 @@ dfgEntry {
 
 dfgEntry {
   this.clear();
-}
-"
-      },
-    "Fabric.Exts.InlineDrawing.DrawingHandle.DrawPolygonMesh" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
-        "uiTooltip" : "helper function to draw a mesh given a color + a single transform\n\n Supported by DrawingHandle"
-        },
-      "title" : "DrawPolygonMesh",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "exec",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "this",
-          "execPortType" : "IO",
-          "typeSpec" : "DrawingHandle"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "name",
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0,
-              "g" : 1,
-              "b" : 0,
-              "a" : 1
-              }
-            },
-          "name" : "color",
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0.2000000029802322,
-              "g" : 0.2000000029802322,
-              "b" : 0.2000000029802322,
-              "a" : 1
-              }
-            },
-          "name" : "specular",
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Float32" : 16
-            },
-          "name" : "specFactor",
-          "execPortType" : "In",
-          "typeSpec" : "Float32"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "nodePortType" : "Out",
-          "name" : "transform",
-          "execPortType" : "In",
-          "typeSpec" : "Xfo"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
-            },
-          "nodePortType" : "Out",
-          "name" : "mesh",
-          "execPortType" : "In",
-          "typeSpec" : "PolygonMesh"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "wireFrame",
-          "execPortType" : "In",
-          "typeSpec" : "Boolean"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "doubleSided",
-          "execPortType" : "In",
-          "typeSpec" : "Boolean"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "nodePortType" : "In",
-          "name" : "dummyResult",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "instance",
-          "execPortType" : "Out",
-          "typeSpec" : "InlineInstance"
-          }
-        ],
-      "extDeps" : {
-        "InlineDrawing" : "*",
-        "FabricInterfaces" : "*"
-        },
-      "presetGUID" : "88D132945A91B3FEB731B90CE41878AF",
-      "code" : "require InlineDrawing;
-
-dfgEntry {
-  this.drawPolygonMesh(name, color, specular, specFactor, transform, mesh, wireFrame, doubleSided, dummyResult, instance);
-}
-"
-      },
-    "Fabric.Exts.Math.Xfo.ComposeXfo" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Math/Xfo.html"
-        },
-      "title" : "-> Xfo",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "exec",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
-            },
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Quat" : {
-              "v" : {
-                "x" : 0,
-                "y" : 0,
-                "z" : 0
-                },
-              "w" : 1
-              }
-            },
-          "name" : "ori",
-          "execPortType" : "In",
-          "typeSpec" : "Quat"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 0,
-              "y" : 0,
-              "z" : 0
-              }
-            },
-          "name" : "tr",
-          "execPortType" : "In",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 1,
-              "y" : 1,
-              "z" : 1
-              }
-            },
-          "name" : "sc",
-          "execPortType" : "In",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "Xfo"
-          }
-        ],
-      "extDeps" : {
-        "Math" : "*"
-        },
-      "presetGUID" : "C61287D19D84D9733903DDC14FABD4AF",
-      "code" : "require Math;
-
-dfgEntry {
-  result.ori = ori;
-  result.tr = tr;
-  result.sc = sc;
 }
 "
       },
@@ -3949,6 +3734,54 @@ dfgEntry {
   this.drawPolygonMeshArray(name, color, specular, specFactor, masters, transforms, indices, wireFrame, doubleSided, dummyResult, instance);
 }
 "
+      },
+    "Kraken.KrakenAnimation.KrakenClip.KrakenClip_saveToFile" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  clipRef: Ref<KrakenClip>\n  filePath: String\n  result: Boolean\n"
+        },
+      "title" : "KrakenClip_saveToFile",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "clipRef",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenClip"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "filePath",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Boolean"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "B262B649A6706BC23CD71DC2372D6317",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  Ref<KrakenClip> clipRef_ref = clipRef;
+  result = KrakenClip_saveToFile(clipRef_ref, filePath);
+}
+"
       }
     },
   "args" : [
@@ -3959,11 +3792,11 @@ dfgEntry {
       },
     {
       "type" : "Float32",
-      "value" : 282
+      "value" : 292
       },
     {
       "type" : "Boolean",
-      "value" : true
+      "value" : false
       },
     {
       "type" : "DrawingHandle",

@@ -7,7 +7,6 @@ require OSS_Kraken;
 
 
 object KRK_klChar_guide : KrakenKLRig {
-  Float64 solveTimeMs;
   KrakenClip clip; // the default clip of the rig
   OSS_HierBlendSolver _OSS_HierBlendSolver[4];
   OSS_TwoBoneIKSolver _OSS_TwoBoneIKSolver[4];
@@ -454,12 +453,12 @@ function KRK_klChar_guide.init!() {
   this._KrakenPoseConstraint[4].constrainers.resize(1);
   this._KrakenPoseConstraint[5].constrainers.resize(1);
   this._KrakenPoseConstraint[6].constrainers.resize(1);
-  this._KrakenPoseConstraint[7].offset = Xfo(Vec3(-1.6134, -0.3563, 0.2526), Quat(0.5531, -0.4408, 0.5533, 0.4401), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenPoseConstraint[7].offset = Xfo(Vec3(-1.6133, -0.2526, -0.3569), Quat(-0.7022, 0.7029, -0.0796, 0.0800), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPoseConstraint[7].constrainers.resize(1);
   this._KrakenPoseConstraint[8].constrainers.resize(1);
   this._KrakenPoseConstraint[9].constrainers.resize(1);
   this._KrakenPoseConstraint[10].constrainers.resize(1);
-  this._KrakenPoseConstraint[11].offset = Xfo(Vec3(-1.6134, -0.3563, -0.2526), Quat(-0.4362, -0.5567, -0.4354, 0.5569), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenPoseConstraint[11].offset = Xfo(Vec3(-1.6133, 0.2526, -0.3569), Quat(0.0855, -0.0859, -0.7015, 0.7022), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPoseConstraint[11].constrainers.resize(1);
   this._KrakenPoseConstraint[12].constrainers.resize(1);
   this._KrakenPoseConstraint[13].constrainers.resize(1);
@@ -474,7 +473,7 @@ function KRK_klChar_guide.init!() {
   this._KrakenPoseConstraint[20].offset = Xfo(Vec3(0.0259, 3.5091, 1.9246), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPoseConstraint[20].constrainers.resize(1);
   this._KrakenPoseConstraint[21].constrainers.resize(1);
-  this._KrakenPoseConstraint[22].offset = Xfo(Vec3(0.0000, 0.0000, 4.3470), Quat(-0.0014, 0.7203, 0.6937, -0.0014), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenPoseConstraint[22].offset = Xfo(Vec3(0.0000, -4.3470, 0.0000), Quat(-0.0019, 0.0188, 0.9998, 0.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPoseConstraint[22].constrainers.resize(1);
   this._KrakenPoseConstraint[23].offset = Xfo(Vec3(1.9908, 34.4546, 62.3636), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPoseConstraint[23].constrainers.resize(1);
@@ -495,7 +494,7 @@ function KRK_klChar_guide.init!() {
   this._KrakenPoseConstraint[34].offset = Xfo(Vec3(0.0004, 3.5091, 1.9293), Quat(0.0000, 1.0000, 0.0000, 0.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPoseConstraint[34].constrainers.resize(1);
   this._KrakenPoseConstraint[35].constrainers.resize(1);
-  this._KrakenPoseConstraint[36].offset = Xfo(Vec3(0.0000, 0.0000, -4.3470), Quat(0.7071, 0.0014, 0.0014, 0.7071), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenPoseConstraint[36].offset = Xfo(Vec3(0.0000, 4.3470, 0.0000), Quat(1.0000, -0.0000, 0.0019, 0.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPoseConstraint[36].constrainers.resize(1);
   this._KrakenPoseConstraint[37].offset = Xfo(Vec3(-4.3470, 34.4645, 62.4082), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPoseConstraint[37].constrainers.resize(1);
@@ -552,7 +551,7 @@ function KRK_klChar_guide.init!() {
   this._KrakenPoseConstraint[72].constrainers.resize(1);
   this._KrakenPoseConstraint[73].constrainers.resize(1);
   this._KrakenPoseConstraint[74].constrainers.resize(1);
-  this._KrakenPoseConstraint[75].offset = Xfo(Vec3(2.2768, 0.5331, 0.0000), Quat(-0.4364, -0.5564, -0.4364, 0.5564), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenPoseConstraint[75].offset = Xfo(Vec3(2.2766, -0.0000, 0.5339), Quat(0.0849, -0.0849, -0.7020, 0.7020), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPoseConstraint[75].constrainers.resize(1);
   this._KrakenPositionConstraint[0].offset = Xfo(Vec3(0.0000, -119.2143, -2.3427), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenPositionConstraint[0].constrainers.resize(1);
@@ -1200,12 +1199,12 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenTransform[14].xfo = Xfo(Vec3(0.0000, 75.0694, -0.0319), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[15].xfo = Xfo(Vec3(0.0000, 75.0694, -0.0319), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenControl[3].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[16].xfo = Xfo(Vec3(0.0000, 67.3301, -0.0319), Quat(0.5000, 0.5000, 0.5000, 0.5000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[17].xfo = Xfo(Vec3(-0.0000, 75.3644, -0.0257), Quat(0.5003, 0.4997, 0.5003, 0.4997), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[18].xfo = Xfo(Vec3(-0.0000, 81.7917, -0.0135), Quat(0.5005, 0.4995, 0.5005, 0.4995), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[19].xfo = Xfo(Vec3(-0.0000, 87.9343, -0.0163), Quat(0.4982, 0.5018, 0.4982, 0.5018), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[20].xfo = Xfo(Vec3(-0.0000, 94.5157, -0.3298), Quat(0.4780, 0.5211, 0.4780, 0.5211), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[21].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(0.4364, 0.5564, 0.4364, 0.5564), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[16].xfo = Xfo(Vec3(0.0000, 67.3301, -0.0319), Quat(0.0000, 0.0000, 0.7071, 0.7071), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[17].xfo = Xfo(Vec3(-0.0000, 75.3644, -0.0257), Quat(0.0005, -0.0005, 0.7071, 0.7071), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[18].xfo = Xfo(Vec3(-0.0000, 81.7917, -0.0135), Quat(0.0007, -0.0007, 0.7071, 0.7071), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[19].xfo = Xfo(Vec3(-0.0000, 87.9343, -0.0163), Quat(-0.0038, 0.0038, 0.7071, 0.7071), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[20].xfo = Xfo(Vec3(-0.0000, 94.5157, -0.3298), Quat(-0.0337, 0.0337, 0.7063, 0.7063), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[21].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(-0.0849, 0.0849, 0.7020, 0.7020), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[22].xfo = Xfo(Vec3(0.0000, -7.7393, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[23].xfo = Xfo(Vec3(0.0000, 75.0694, -0.0319), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenControl[4].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
@@ -1214,10 +1213,10 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenTransform[25].xfo = Xfo(Vec3(0.0000, 11.0526, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenControl[6].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[26].xfo = Xfo(Vec3(0.0000, 6.2169, -1.5247), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[27].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(0.4364, 0.5564, 0.4364, 0.5564), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[27].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(-0.0849, 0.0849, 0.7020, 0.7020), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[28].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[29].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[30].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(0.4364, 0.5564, 0.4364, 0.5564), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[30].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(-0.0849, 0.0849, 0.7020, 0.7020), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[31].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[32].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[33].xfo = Xfo(Vec3(0.2526, 100.0091, -1.4864), Quat(1.0000, -0.0005, -0.0002, 0.0073), Vec3(1.0000, 1.0000, 1.0000));
@@ -1227,7 +1226,7 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenTransform[36].xfo = Xfo(Vec3(8.0433, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[37].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[38].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[39].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(0.4364, 0.5564, 0.4364, 0.5564), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[39].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(-0.0849, 0.0849, 0.7020, 0.7020), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[40].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[41].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[42].xfo = Xfo(Vec3(-0.2526, 100.0091, -1.4864), Quat(0.0010, -0.0002, 0.0005, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
@@ -1259,7 +1258,7 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenTransform[66].xfo = Xfo(Vec3(0.0000, 1.1225, 9.9869), Quat(-0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[67].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[68].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(-0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[69].xfo = Xfo(Vec3(0.0000, 67.3301, -0.0319), Quat(0.5000, 0.5000, 0.5000, 0.5000), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[69].xfo = Xfo(Vec3(0.0000, 67.3301, -0.0319), Quat(0.0000, 0.0000, 0.7071, 0.7071), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[70].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[71].xfo = Xfo(Vec3(4.3470, 67.3301, -0.0319), Quat(0.0147, -0.0119, -0.7070, 0.7070), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[72].xfo = Xfo(Vec3(4.3732, 3.5091, -0.9774), Quat(0.0223, -0.0044, -0.7068, 0.7070), Vec3(1.0000, 1.0000, 1.0000));
@@ -1310,7 +1309,7 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenTransform[111].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[112].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(-0.0000, -0.0000, -0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[113].xfo = Xfo(Vec3(-4.3470, 67.3301, -0.0319), Quat(0.7071, 0.7071, 0.0014, -0.0014), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[114].xfo = Xfo(Vec3(0.0000, 67.3301, -0.0319), Quat(0.5000, 0.5000, 0.5000, 0.5000), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[114].xfo = Xfo(Vec3(0.0000, 67.3301, -0.0319), Quat(0.0000, 0.0000, 0.7071, 0.7071), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[115].xfo = Xfo(Vec3(-4.3470, 34.4645, 62.4082), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[116].xfo = Xfo(Vec3(-4.3470, 34.4645, 62.4082), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[117].xfo = Xfo(Vec3(-4.3470, 34.4645, 62.4082), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
@@ -1484,7 +1483,7 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenTransform[230].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[231].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[232].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[233].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(0.4364, 0.5564, 0.4364, 0.5564), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[233].xfo = Xfo(Vec3(0.0000, 101.6610, -1.5247), Quat(-0.0849, 0.0849, 0.7020, 0.7020), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[234].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[235].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[236].xfo = Xfo(Vec3(0.0000, 119.2143, 32.3427), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
@@ -1498,15 +1497,15 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenTransform[240].xfo = Xfo(Vec3(0.0000, 119.2143, 2.3427), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenControl[75].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[241].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[242].xfo = Xfo(Vec3(0.0000, 103.9993, -1.5492), Quat(0.5815, 0.4022, 0.5815, 0.4022), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[243].xfo = Xfo(Vec3(0.0000, 103.9993, -1.5492), Quat(0.5815, 0.4022, 0.5815, 0.4022), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[244].xfo = Xfo(Vec3(0.0000, 108.1888, -0.2648), Quat(0.5634, 0.4272, 0.5634, 0.4272), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[245].xfo = Xfo(Vec3(0.0000, 113.7607, 1.1308), Quat(0.5555, 0.4375, 0.5555, 0.4375), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[246].xfo = Xfo(Vec3(0.0000, 119.2143, 2.3427), Quat(0.5487, 0.4460, 0.5487, 0.4460), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[242].xfo = Xfo(Vec3(0.0000, 103.9993, -1.5492), Quat(0.1266, -0.1266, 0.6957, 0.6957), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[243].xfo = Xfo(Vec3(0.0000, 103.9993, -1.5492), Quat(0.1266, -0.1266, 0.6957, 0.6957), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[244].xfo = Xfo(Vec3(0.0000, 108.1888, -0.2648), Quat(0.0931, -0.0931, 0.7010, 0.7010), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[245].xfo = Xfo(Vec3(0.0000, 113.7607, 1.1308), Quat(0.0816, -0.0816, 0.7024, 0.7024), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[246].xfo = Xfo(Vec3(0.0000, 119.2143, 2.3427), Quat(0.0728, -0.0728, 0.7034, 0.7034), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[247].xfo = Xfo(Vec3(0.0000, 2.9981, 1.1304), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[248].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[249].xfo = Xfo(Vec3(0.0000, -4.8943, -1.0217), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenTransform[250].xfo = Xfo(Vec3(0.0000, 119.2143, 2.3427), Quat(0.5487, 0.4460, 0.5487, 0.4460), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenTransform[250].xfo = Xfo(Vec3(0.0000, 119.2143, 2.3427), Quat(0.0728, -0.0728, 0.7034, 0.7034), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[251].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[252].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[253].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
@@ -1514,13 +1513,13 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenControl[76].xfo = Xfo(Vec3(0.0000, 0.0000, 22.3214), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenTransform[255].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[0].xfo = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[1].xfo = Xfo(Vec3(0.0000, 67.3301, -0.0319), Quat(0.5000, 0.5000, 0.5000, 0.5000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[2].xfo = Xfo(Vec3(8.0343, 0.0061, 0.0000), Quat(0.0000, 0.0000, 0.0006, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[3].xfo = Xfo(Vec3(6.4273, 0.0040, 0.0000), Quat(-0.0000, -0.0000, 0.0003, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[4].xfo = Xfo(Vec3(6.1425, -0.0147, 0.0000), Quat(0.0000, 0.0000, -0.0046, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[5].xfo = Xfo(Vec3(6.5835, -0.2656, 0.0000), Quat(0.0000, 0.0000, -0.0394, 0.9992), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[6].xfo = Xfo(Vec3(7.2216, -0.5761, 0.0000), Quat(0.0000, -0.0000, -0.0771, 0.9970), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[7].xfo = Xfo(Vec3(-1.6134, -0.3563, 0.2526), Quat(0.5531, -0.4408, 0.5533, 0.4401), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[1].xfo = Xfo(Vec3(0.0000, 67.3301, -0.0319), Quat(0.0000, 0.0000, 0.7071, 0.7071), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[2].xfo = Xfo(Vec3(8.0343, -0.0000, 0.0061), Quat(-0.0000, -0.0008, -0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[3].xfo = Xfo(Vec3(6.4273, 0.0000, 0.0024), Quat(0.0000, -0.0002, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[4].xfo = Xfo(Vec3(6.1425, -0.0000, -0.0152), Quat(0.0000, 0.0063, -0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[5].xfo = Xfo(Vec3(6.5844, 0.0000, -0.2437), Quat(-0.0000, 0.0424, 0.0000, 0.9991), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[6].xfo = Xfo(Vec3(7.2267, 0.0000, -0.5086), Quat(-0.0000, 0.0726, 0.0000, 0.9974), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[7].xfo = Xfo(Vec3(-1.6133, -0.2526, -0.3569), Quat(0.7022, -0.7029, 0.0796, -0.0800), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[8].xfo = Xfo(Vec3(8.0433, 0.0000, 0.0000), Quat(0.0073, 0.0107, -0.0004, 0.9999), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[9].xfo = Xfo(Vec3(21.6288, 0.0000, -0.0000), Quat(0.0000, 0.0005, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[10].xfo = Xfo(Vec3(20.4468, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
@@ -1545,7 +1544,7 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenJoint[29].xfo = Xfo(Vec3(1.8428, -1.4159, -0.9318), Quat(0.0766, 0.1801, -0.3839, 0.9024), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[30].xfo = Xfo(Vec3(2.3875, 0.0000, 0.0000), Quat(-0.0018, 0.0199, 0.0041, 0.9998), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[31].xfo = Xfo(Vec3(3.2506, -0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[32].xfo = Xfo(Vec3(-1.6134, -0.3563, -0.2526), Quat(-0.4362, -0.5567, -0.4354, 0.5569), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[32].xfo = Xfo(Vec3(-1.6133, 0.2526, -0.3569), Quat(0.0855, -0.0859, -0.7015, 0.7022), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[33].xfo = Xfo(Vec3(-8.0433, -0.0000, 0.0000), Quat(-0.0010, 0.0107, -0.0005, 0.9999), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[34].xfo = Xfo(Vec3(-21.6288, 0.0000, 0.0000), Quat(0.0000, 0.0005, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[35].xfo = Xfo(Vec3(-20.4468, 0.0000, -0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
@@ -1570,16 +1569,16 @@ function KRK_klChar_guide.resetPose!() {
   this._KrakenJoint[54].xfo = Xfo(Vec3(-1.8429, 1.4159, 0.9318), Quat(0.0766, 0.1801, -0.3839, 0.9024), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[55].xfo = Xfo(Vec3(-2.3875, -0.0000, 0.0000), Quat(-0.0018, 0.0199, 0.0041, 0.9998), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[56].xfo = Xfo(Vec3(-3.2506, -0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[57].xfo = Xfo(Vec3(2.2768, 0.5331, 0.0000), Quat(-0.0000, -0.0000, 0.2960, 0.9552), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[58].xfo = Xfo(Vec3(4.3733, -0.2762, 0.0000), Quat(-0.0000, 0.0000, -0.0436, 0.9990), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[59].xfo = Xfo(Vec3(5.7418, -0.1599, 0.0000), Quat(0.0000, 0.0000, -0.0184, 0.9998), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[60].xfo = Xfo(Vec3(5.5858, -0.1000, -0.0000), Quat(0.0000, -0.0000, -0.0154, 0.9999), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[61].xfo = Xfo(Vec3(0.0000, 0.0000, 4.3470), Quat(0.0014, -0.7203, -0.6937, 0.0014), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[57].xfo = Xfo(Vec3(2.2766, 0.0000, 0.5339), Quat(-0.0000, -0.2960, 0.0000, 0.9552), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[58].xfo = Xfo(Vec3(4.3734, 0.0000, -0.2745), Quat(0.0000, 0.0480, 0.0000, 0.9988), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[59].xfo = Xfo(Vec3(5.7430, 0.0000, -0.1070), Quat(-0.0000, 0.0164, -0.0000, 0.9999), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[60].xfo = Xfo(Vec3(5.5862, 0.0000, -0.0702), Quat(0.0000, 0.0125, 0.0000, 0.9999), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[61].xfo = Xfo(Vec3(0.0000, -4.3470, 0.0000), Quat(0.0019, -0.0188, -0.9998, -0.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[62].xfo = Xfo(Vec3(31.2909, 0.0000, -0.0000), Quat(0.0000, 0.0107, -0.0000, 0.9999), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[63].xfo = Xfo(Vec3(32.5408, 0.0000, -0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[64].xfo = Xfo(Vec3(-0.0001, -0.0257, 0.0057), Quat(-0.0152, -0.6083, 0.0111, 0.7935), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[65].xfo = Xfo(Vec3(8.4037, 0.0000, -0.0000), Quat(0.0000, -0.1435, 0.0000, 0.9897), Vec3(1.0000, 1.0000, 1.0000));
-  this._KrakenJoint[66].xfo = Xfo(Vec3(0.0000, 0.0000, -4.3470), Quat(0.7071, 0.0014, 0.0014, 0.7071), Vec3(1.0000, 1.0000, 1.0000));
+  this._KrakenJoint[66].xfo = Xfo(Vec3(0.0000, 4.3470, 0.0000), Quat(1.0000, -0.0000, 0.0019, -0.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[67].xfo = Xfo(Vec3(-31.2909, 0.0000, -0.0000), Quat(0.0000, 0.0106, 0.0000, 0.9999), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[68].xfo = Xfo(Vec3(-32.5406, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000));
   this._KrakenJoint[69].xfo = Xfo(Vec3(-0.0000, -0.0004, -0.0004), Quat(-0.0000, -0.6084, -0.0000, 0.7937), Vec3(1.0000, 1.0000, 1.0000));
@@ -1631,7 +1630,6 @@ function KRK_klChar_guide.resetPose!() {
 }
 
 function KRK_klChar_guide.solve!() {
-  UInt64 timerStart = getCurrentTicks();
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[1].value = this._KrakenScalarAttribute_Driven[0].value;
@@ -3970,8 +3968,6 @@ function KRK_klChar_guide.solve!() {
   // solving PoseConstraint constraint deformers_rootM_pelvisM_upLegR_loLegR_legendR_footR_ballR_ball_To_ball_PoseConstraint
   this._KrakenPoseConstraint[151].constrainers[0] = this._KrakenTransform[124].globalXfo;
   this._KrakenJoint[70].globalXfo = this._KrakenPoseConstraint[151].compute(this._KrakenJoint[70].globalXfo);
-  UInt64 timerEnd = getCurrentTicks();
-  this.solveTimeMs = 1000.0 * getSecondsBetweenTicks(timerStart, timerEnd);
 }
 
 function KRK_klChar_guide.evaluate!(KrakenClipContext context) {
@@ -3990,8 +3986,10 @@ function KRK_klChar_guide.evaluate!(KrakenClipContext context, io Xfo joints<>) 
     this.clip.apply(rig, context, 1.0);
   }
   this.solve();
-  for(Size i=0;i<71;i++)
-    joints[i] = this._KrakenJoint[i].globalXfo;
+  {
+    for(Size i=0;i<71;i++)
+      joints[i] = this._KrakenJoint[i].globalXfo;
+  }
 }
 
 function Xfo[] KRK_klChar_guide.getJointXfos() {
