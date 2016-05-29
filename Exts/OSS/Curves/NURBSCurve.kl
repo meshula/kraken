@@ -84,7 +84,7 @@ function NURBSCurve() {
   this.pointAttributes = GeometryAttributes();
   this.controlMat44s   = this.pointAttributes.getOrCreateMat44Attribute('controlMat44s');
   this.controlPoints   = this.pointAttributes.getOrCreateVec4Attribute("controlPoints");
-  this.offsetPoints   = this.pointAttributes.getOrCreateVec4Attribute("offsetPoints");
+  this.offsetPoints    = this.pointAttributes.getOrCreateVec4Attribute("offsetPoints");
   this.isSegmentStart  = this.pointAttributes.getOrCreateUInt32Attribute('isSegmentStart');
   this.weights         = this.pointAttributes.getOrCreateScalarAttribute('weights');
 
@@ -142,9 +142,20 @@ function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
   for(UInt32 p=0; p<this.numPoints; p++){
     this.controlMat44s.values[p] = cMats[p];
     this.controlPoints.values[p] = Vec4(cMats[p].translation().x, cMats[p].translation().y, cMats[p].translation().z, this.weights.values[p]);
+
+    Quat quat(cMats[p].upperLeft());
+    quat = quat.unit_safe();
+    Vec3 offset = quat.rotateVector(Vec3(0, 0, 1));
+
+    this.offsetPoints.values[p].x = this.controlPoints.values[p].x + offset.x;
+    this.offsetPoints.values[p].y = this.controlPoints.values[p].y + offset.y;
+    this.offsetPoints.values[p].z = this.controlPoints.values[p].z + offset.z;
+    this.offsetPoints.values[p].t = this.weights.values[p];
   }
+
   this.controlMat44s.incrementVersion();
   this.controlPoints.incrementVersion();
+  this.offsetPoints.incrementVersion();
 	
   // INITIATE CURVES
 	//
@@ -250,9 +261,9 @@ operator __evalPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve
 	results[index] = curve.getPointByIndex(index, keepArcLength, keepCurveLen);
 }
 
-operator __evalOffsetPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen, Vec3 offset, Boolean local)
+operator __evalOffsetPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar keepArcLength, Scalar keepCurveLen)
 {	
-	results[index] = curve.getOffsetPoint(index*curve.stepSize, keepArcLength, keepCurveLen, offset, local);
+	results[index] = curve.getOffsetPoint(index*curve.stepSize, keepArcLength, keepCurveLen);
 }
 
 operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[]) 
@@ -485,34 +496,13 @@ function Vec3 NURBSCurve.getPointByIndex(Index index, Scalar keepArcLength, Scal
 
 /// Returns a point offset from the original curve by a Vec3 
 /// \param param Parameter on curve between 0-1
-function Vec3 NURBSCurve.getOffsetPoint(Scalar param, Scalar keepArcLength, Scalar keepCurveLen, Vec3 offset, Boolean local)
+function Vec3 NURBSCurve.getOffsetPoint(Scalar param, Scalar keepArcLength, Scalar keepCurveLen)
 {	
 	Scalar u = this.uFromParam(param,keepArcLength,keepCurveLen);
-	Quat quat;
-	Vec3 localOffset = offset;
-  Vec4Attribute offsetPoints = this.offsetPoints; // make mutable
-
-	// offset Points by Vector, consider local rotation
-  if(offsetPoints.version != this.controlPoints.version) {
-  	for(UInt32 p=0; p<this.numPoints; p++) {
-  		// rotate local if 
-  		if (local) 
-  		{
-  			quat = Quat(this.cmats[p].upperLeft());
-  			quat = quat.unit_safe();
-  			localOffset = quat.rotateVector(offset);
-  		}
-
-  		offsetPoints.values[p].x = this.controlPoints.values[p].x + localOffset.x;
-  		offsetPoints.values[p].y = this.controlPoints.values[p].y + localOffset.y;
-  		offsetPoints.values[p].z = this.controlPoints.values[p].z + localOffset.z;
-  		offsetPoints.values[p].t = this.weights.values[p];
-  	}
-    offsetPoints.version = this.controlPoints.version;
-  }
 
 	// following results in (wx, wy, wz, w) homogeneous point
-	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree, this.knots, offsetPoints.values, u );
+	Vec4 hpoint = NURBSUtils_calcBSplinePoint( this.degree, this.knots, this.offsetPoints.values, u );
+
 	// project to 3D space: (wx, wy, wz, w) -> (x, y, z, 1)
 	return hpoint.makeHomogeneousVec3();
 }	
@@ -579,8 +569,7 @@ function Vec3 NURBSCurve.getTangent(Scalar param, Boolean normalize, Scalar keep
 
 
 function Vec3 NURBSCurve.getNormal(Scalar param, Boolean normalize, Scalar keepArcLength, Scalar keepCurveLen) {
-	Vec3 normalDir = Vec3(0,0,1);
-	Vec3 normal = this.getOffsetPoint(param, keepArcLength, keepCurveLen, normalDir, true) - this.getPoint(param, keepArcLength, keepCurveLen);
+	Vec3 normal = this.getOffsetPoint(param, keepArcLength, keepCurveLen) - this.getPoint(param, keepArcLength, keepCurveLen);
 
 	if (normalize)
 		return normal.unit();
@@ -618,7 +607,7 @@ function Quat NURBSCurve.getOri(Scalar param, Scalar keepArcLength, Scalar keepC
     	Vec3 localNormal;
 		// need localNormal if smaller than 1
 		// if (uselocalNormal < 1) {
-			Vec3 pointOnOffset = this.getOffsetPoint(param, keepArcLength, keepCurveLen, Vec3(0,0,1), true);
+			Vec3 pointOnOffset = this.getOffsetPoint(param, keepArcLength, keepCurveLen);
 			localNormal = pointOnOffset - pointOnCurve;
 		// }
 		// need nonLocalNormal if larger than 0
