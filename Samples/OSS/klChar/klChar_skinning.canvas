@@ -84,7 +84,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "V:\\fabric\\kraken\\Samples\\OSS\\klChar\\klChar.fbx"
+            "String" : "${KRAKEN_PATH}/Samples/OSS/klChar/klChar.fbx"
             },
           "name" : "filePath"
           },
@@ -1627,7 +1627,7 @@ dfgEntry {
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "defaultValues" : {
-                  "String" : "V:\\fabric\\kraken\\Samples\\OSS\\klChar\\klChar.abc"
+                  "String" : "${KRAKEN_PATH}/Samples/OSS/klChar/klChar.abc"
                   },
                 "name" : "filePath"
                 },
