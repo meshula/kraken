@@ -34,9 +34,9 @@ set PYTHONPATH=%PYTHONPATH%;%FABRIC_PATH%\Python\2.7;%KRAKEN_PATH%\Python
 cd /d %KRAKEN_PATH%
 
 if "%USER%" == "bhx" (
-    call cmd /k "%FABRIC_PATH%/bin/canvas"
+    %FABRIC_PATH%/bin/canvas
 )
 else (
-    call cmd /k "python "%FABRIC_PATH%"/bin/canvas.py"
+    python "%FABRIC_PATH%"/bin/canvas.py
 )
 

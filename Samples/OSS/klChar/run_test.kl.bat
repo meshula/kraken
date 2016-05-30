@@ -33,4 +33,5 @@ set PYTHONPATH=%PYTHONPATH%;%FABRIC_PATH%\Python\2.7;%KRAKEN_PATH%\Python
 
 cd /d %KRAKEN_PATH%
 
-start /WAIT  kl.exe "%KRAKEN_PATH%"/Samples/OSS/klChar/test.kl"
+cmd /k kl.exe "%KRAKEN_PATH%"/Samples/OSS/klChar/test.kl"
+
