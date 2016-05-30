@@ -15,7 +15,7 @@ def argOpts():
     parser = optparse.OptionParser(usage, version="%prog 1.0")
 
     parser.add_option("-c", "--config", dest="config",
-            help="Create the directory structure of a new asset locally.")
+            help="Use this kraken config file for the build.")
 
     parser.add_option("-p", "--profiling", dest="numframes", type="int",
             help="Embeds profiling inside the generated rig for the provided number of frames")
