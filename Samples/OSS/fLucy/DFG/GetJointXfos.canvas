@@ -1,0 +1,46 @@
+{
+  "objectType" : "Func",
+  "title" : "GetJointXfos",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "rig",
+      "execPortType" : "In",
+      "typeSpec" : "KRK_fLucy_guide"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      }
+    ],
+  "extDeps" : {
+    "KRK_fLucy_guide" : "*"
+    },
+  "code" : "dfgEntry {
+  result = rig.getJointXfos();
+}
+",
+  "args" : [
+    {
+      "type" : "KRK_fLucy_guide",
+      "value" : null,
+      "ext" : "KRK_fLucy_guide"
+      },
+    {
+      "type" : "Xfo[]",
+      "value" : [],
+      "ext" : "Math"
+      }
+    ]
+  }

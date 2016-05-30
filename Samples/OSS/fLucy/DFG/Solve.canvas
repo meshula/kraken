@@ -1,0 +1,34 @@
+{
+  "objectType" : "Func",
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "rig",
+      "execPortType" : "IO",
+      "typeSpec" : "KRK_fLucy_guide"
+      }
+    ],
+  "extDeps" : {
+    "KRK_fLucy_guide" : "*"
+    },
+  "code" : "dfgEntry {
+  rig.solve();
+}
+",
+  "args" : [
+    {
+      "type" : "KRK_fLucy_guide",
+      "value" : null,
+      "ext" : "KRK_fLucy_guide"
+      }
+    ]
+  }
