@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "1000",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9721630215644836,\n    \"y\" : 0.05587422475218773,\n    \"z\" : -0.2276589572429657,\n    \"t\" : -26.24517440795898\n    },\n  \"row1\" : {\n    \"x\" : 3.215007609469467e-06,\n    \"y\" : 0.9710696935653687,\n    \"z\" : 0.2384087890386581,\n    \"t\" : 104.5219116210938\n    },\n  \"row2\" : {\n    \"x\" : 0.2344142198562622,\n    \"y\" : -0.2317350059747696,\n    \"z\" : 0.9441442489624023,\n    \"t\" : 178.7611694335938\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.779701292514801,\n    \"y\" : 0.1492629647254944,\n    \"z\" : -0.6081345081329346,\n    \"t\" : -86.86296844482422\n    },\n  \"row1\" : {\n    \"x\" : 4.746105787489796e-06,\n    \"y\" : 0.9710659980773926,\n    \"z\" : 0.2384126633405685,\n    \"t\" : 104.7022857666016\n    },\n  \"row2\" : {\n    \"x\" : 0.6261806488037109,\n    \"y\" : -0.185865119099617,\n    \"z\" : 0.7572289705276489,\n    \"t\" : 159.2828521728516\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "101",
-    "uiGraphZoom" : "{\n  \"value\" : 0.8207590579986572\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.4402721524238586\n  }",
     "timeline_loopMode" : "1",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "199.5680236816406",
-    "timeline_current" : "399",
+    "camera_focalDistance" : "137.5457153320313",
+    "timeline_current" : "455",
     "timeline_end" : "461",
-    "uiGraphPan" : "{\n  \"x\" : 1518.119873046875,\n  \"y\" : -143.2894592285156\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 843.0525591069145,\n  \"y\" : 119.1553384756982\n  }"
     },
   "title" : "",
   "ports" : [
@@ -2474,7 +2474,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":3.98286938667,\"y\":714.99554503}",
+        "uiGraphPos" : "{\"x\":3.98286938667,\"y\":717.266866922}",
         "uiCollapsedState" : "1"
         },
       "name" : "XfoFromSRT_1",
@@ -2487,16 +2487,25 @@ dfgEntry {
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 5
+            },
           "name" : "scX"
           },
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 5
+            },
           "name" : "scY"
           },
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 5
+            },
           "name" : "scZ"
           },
         {
@@ -2572,6 +2581,50 @@ dfgEntry {
         ],
       "executable" : "Fabric.Exts.Math.Xfo.ToMat44",
       "presetGUID" : "3EB232DB6FF4BEE162E1D62ABFBE8C3A"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":2420.78367286,\"y\":-159.255678628}"
+        },
+      "name" : "DrawAxes_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "target"
+            },
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "transform"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "dummyResult"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "instance"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxes",
+      "presetGUID" : "7830EDE4D404DB2AE6B73F5DBA42EFED"
       }
     ],
   "connections" : {
@@ -2646,7 +2699,7 @@ dfgEntry {
       "KrakenLookAtClip_1.childClip"
       ],
     "If_1.result" : [
-      "this"
+      "DrawAxes_1.this"
       ],
     "DrawAxesInstances_2.this" : [
       "If_2.if_true"
@@ -2705,10 +2758,14 @@ dfgEntry {
       "UpdateFromRig_1.context"
       ],
     "XfoFromSRT_1.result" : [
-      "ToMat44_1.this"
+      "ToMat44_1.this",
+      "DrawAxes_1.transform"
       ],
     "ToMat44_1.result" : [
       "SetMat_1.m"
+      ],
+    "DrawAxes_1.this" : [
+      "this"
       ]
     },
   "requiredPresets" : {
@@ -4593,6 +4650,75 @@ dfgEntry {
   result = this.toMat44();
 }
 "
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxes" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiTooltip" : "helper function to draw a single axes\n\n Supported by DrawingHandle"
+        },
+      "title" : "DrawAxes",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "DrawingHandle"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "name",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "transform",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "dummyResult",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "instance",
+          "execPortType" : "Out",
+          "typeSpec" : "InlineInstance"
+          }
+        ],
+      "extDeps" : {
+        "InlineDrawing" : "*",
+        "FabricInterfaces" : "*"
+        },
+      "presetGUID" : "7830EDE4D404DB2AE6B73F5DBA42EFED",
+      "code" : "require InlineDrawing;
+
+dfgEntry {
+  this.drawAxes(name, transform, dummyResult, instance);
+}
+"
       }
     },
   "args" : [
@@ -4603,7 +4729,7 @@ dfgEntry {
       },
     {
       "type" : "Float32",
-      "value" : 399
+      "value" : 455
       },
     {
       "type" : "Boolean",
