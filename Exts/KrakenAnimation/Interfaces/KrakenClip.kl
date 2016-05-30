@@ -3,8 +3,6 @@ require Math;
 const UInt32 KrakenClipChannel_Float32 = 0;
 const UInt32 KrakenClipChannel_Xfo = 1;
 
-interface KrakenKLRig;
-
 interface KrakenClip {
   UInt32 getChannelCount();
   String getChannelName(UInt32 id);

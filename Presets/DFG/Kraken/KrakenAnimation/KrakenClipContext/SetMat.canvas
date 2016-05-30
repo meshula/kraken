@@ -1,0 +1,51 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: KrakenClipContext\n  index: Index\n  m: Mat44\n"
+    },
+  "title" : "SetMat",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "KrakenClipContext"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "index",
+      "execPortType" : "In",
+      "typeSpec" : "Index"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "m",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      }
+    ],
+  "extDeps" : {
+    "KrakenAnimation" : "*"
+    },
+  "presetGUID" : "CA9CBDAE54A3FA656D7F7EF635DFECC0",
+  "code" : "require KrakenAnimation;
+
+dfgEntry {
+  this.setMat(index, m);
+}
+"
+  }

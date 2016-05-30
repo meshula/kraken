@@ -1,0 +1,48 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  matrixIndex: Index\n  childClip: KrakenClip\n  result: KrakenLookAtClip\n"
+    },
+  "title" : "KrakenLookAtClip",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "matrixIndex",
+      "execPortType" : "In",
+      "typeSpec" : "Index"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "childClip",
+      "execPortType" : "In",
+      "typeSpec" : "KrakenClip"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "KrakenLookAtClip"
+      }
+    ],
+  "extDeps" : {
+    "KrakenAnimation" : "*"
+    },
+  "presetGUID" : "1A2CAD33C1E30D79159CCCD91D5913F1",
+  "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = KrakenLookAtClip(matrixIndex, childClip);
+}
+"
+  }
