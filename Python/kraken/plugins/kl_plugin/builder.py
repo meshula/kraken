@@ -997,18 +997,6 @@ class Builder(Builder):
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
-        # GetControlXfos preset
-        filePath = os.path.join(presetFolder, 'GetControlXfos.canvas')
-        dfgBinding = dfgHost.createBindingToNewFunc()
-        dfgExec = dfgBinding.getExec()
-        dfgExec.setTitle("GetControlXfos")
-        dfgExec.addExtDep(rigType)
-        funcInput = dfgExec.addExecPort('rig', client.DFG.PortTypes.In, rigType)
-        funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
-        dfgExec.setCode("dfgEntry {\n  %s = %s.getControlXfos();\n}\n" % (funcResult, funcInput))
-        content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)
-
         # GetJointXfos preset
         filePath = os.path.join(presetFolder, 'GetJointXfos.canvas')
         dfgBinding = dfgHost.createBindingToNewFunc()
@@ -1030,18 +1018,6 @@ class Builder(Builder):
         funcInput = dfgExec.addExecPort('rig', client.DFG.PortTypes.In, rigType)
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
         dfgExec.setCode("dfgEntry {\n  %s = %s.getAllXfos();\n}\n" % (funcResult, funcInput))
-        content = dfgBinding.exportJSON()
-        open(filePath, "w").write(content)
-
-        # GetControlNames preset
-        filePath = os.path.join(presetFolder, 'GetControlNames.canvas')
-        dfgBinding = dfgHost.createBindingToNewFunc()
-        dfgExec = dfgBinding.getExec()
-        dfgExec.setTitle("GetControlNames")
-        dfgExec.addExtDep(rigType)
-        funcInput = dfgExec.addExecPort('rig', client.DFG.PortTypes.In, rigType)
-        funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'String[]')
-        dfgExec.setCode("dfgEntry {\n  %s = %s.getControlNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
