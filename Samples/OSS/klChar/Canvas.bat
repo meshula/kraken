@@ -1,6 +1,8 @@
-set FABRIC_LOG_LEVEL=3
+set FABRIC_LOG_LEVEL=4
 
-set FABRIC_PATH=Z:\dist\fabric\releases\FabricEngine-2.3.0-auto-2016052610-Windows-x86_64
+set FABRIC_DIR=Z:\dist\fabric\releases\FabricEngine-2.3.0-auto-2016052610-Windows-x86_64
+
+set PATH=%FABRIC_DIR%\bin;%PATH%
 
 set KRAKEN_PATH=Z:\dist\fabric\Kraken
 :: Set the kraken path based on where this script lives
@@ -14,29 +16,28 @@ call set tempstring=!cwd:%delim%=%splitsub%!
 for /f "tokens=1* delims=%splitsub%" %%A in ("%tempstring%") do set part1=%%A& set part2=%%B
 set LOCAL_KRAKEN_PATH=%part1%fabric\kraken
 if not x%cwd:fabric\kraken=%==x%cwd% (
+    echo *** setting KRAKEN_PATH = %KRAKEN_PATH%
     set KRAKEN_PATH=%LOCAL_KRAKEN_PATH%
 )
-echo KRAKEN_PATH = %KRAKEN_PATH%
 echo on
 
 set THIRD_PARTY=Z:\dist\fabric\ThirdParty
 
 set KRAKEN_PATHS=%KRAKEN_PATH%\Python\OSS
 
-set PATH=%FABRIC_PATH%\bin;%PATH%
+set FABRIC_EXTS_PATH=%KRAKEN_PATH%\Samples\OSS;%KRAKEN_PATH%\Exts;%THIRD_PARTY%;%FABRIC_DIR%\Exts;%FABRIC_EXTS_PATH%
 
-set FABRIC_EXTS_PATH=%FABRIC_PATH%\Exts;%FABRIC_EXTS_PATH%;%KRAKEN_PATH%\Exts;%KRAKEN_PATH%\Samples\OSS\klChar;%THIRD_PARTY%
+set FABRIC_DFG_PATH=%KRAKEN_PATH%\Presets\DFG;%KRAKEN_PATH%\Presets;%FABRIC_DIR%\Presets\DFG;%FABRIC_DFG_PATH%
 
-set FABRIC_DFG_PATH=%KRAKEN_PATH%\Presets\DFG;%KRAKEN_PATH%\Presets;%FABRIC_PATH%\Presets\DFG;
-
-set PYTHONPATH=%PYTHONPATH%;%FABRIC_PATH%\Python\2.7;%KRAKEN_PATH%\Python
+set PYTHONPATH=%FABRIC_DIR%\Python\2.7;%KRAKEN_PATH%\Python;%PYTHONPATH%;
 
 cd /d %KRAKEN_PATH%
 
+:: Until Bernhard can figure out why his python canvas does not work
 if "%USER%" == "bhx" (
-    %FABRIC_PATH%/bin/canvas
+    %FABRIC_DIR%/bin/canvas
 )
 else (
-    python "%FABRIC_PATH%"/bin/canvas.py
+    python %FABRIC_DIR%/bin/canvas.py
 )
 
