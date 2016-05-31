@@ -1,0 +1,53 @@
+
+require Kraken;
+
+operator entry(){
+	DynamicChainSolver solver();
+
+  Boolean debug     = true;
+  Scalar rigScale   = 1.0;
+  Scalar length     = 8.0;
+  Mat44 base        = Xfo(Vec3(0, 1, 0)).toMat44();
+  Mat44 baseHandle  = Xfo(Vec3(0, 4, 0)).toMat44();
+  Mat44 tipHandle   = Xfo(Vec3(4, 6, 0)).toMat44();
+  Mat44 tip         = Xfo(Vec3(4, 10, 0)).toMat44();
+
+  Mat44 fkPose[];
+  fkPose.resize(6);
+
+  // TODO: Finish implementing test.
+  // Test should have 2 FK poses that are used to switch between
+  // over a few frames. Then the dynamics should kick in and print results.
+
+  // for (Integer i=0; i < 6; i++) {
+  //   if (i == 0) {
+  //     fkPose[i].setTranslation(Vec3(i, 0, 0);
+  //   }
+  //   else {
+  //     fkPose[i].setTranslation(fkPose[i - 1].translation() + Vec3(1, 0, 0));
+  //   }
+
+  //   fkPose
+  // }
+
+  // Mat44 animPose[];
+  // animPose.resize(6);
+
+  // for (Integer i=0; i < 48; i++) {
+  //   solver.solve(
+  //     debug,
+  //     true,
+  //     0,
+  //     1,
+  //     0,
+  //     1,
+  //     0.05,
+  //     -9.8,
+  //     0.1,
+  //     0.8,
+  //     fkPose[],
+  //     animPose[]);
+  // }
+
+  report(animPose);
+}

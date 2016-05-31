@@ -24,26 +24,26 @@ from kraken.core.profiler import Profiler
 class StretchyLimbComponent(BaseExampleComponent):
     """StretchyLimb Component"""
 
-    def __init__(self, name='limbBase', parent=None):
+    def __init__(self, name='limbBase', parent=None, *args, **kwargs):
 
-        super(StretchyLimbComponent, self).__init__(name, parent)
+        super(StretchyLimbComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
         # ===========
         # Declare Inputs Xfos
         self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-        self.limbParentInputTgt = self.createInput('pelvisInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.limbParentInputTgt = self.createInput('limbParent', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.limbUpperOutputTgt = self.createOutput('limbUpperXfo', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.limbLowerOutputTgt = self.createOutput('limbLowerXfo', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.limbEndOutputTgt = self.createOutput('limbEndXfo', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        
+
         # Declare Input Attrs
         self.drawDebugInputAttr = self.createInput('drawDebug', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
         self.rigScaleInputAttr = self.createInput('rigScale', value=1.0, dataType='Float', parent=self.cmpInputAttrGrp).getTarget()
-        self.rightSideInputAttr = self.createInput('rightSide', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
+        # self.rightSideInputAttr = self.createInput('rightSide', dataType='Boolean', value=False, parent=self.cmpInputAttrGrp).getTarget()
 
         # Declare Output Attrs
         self.drawDebugOutputAttr = self.createOutput('drawDebug', dataType='Boolean', value=False, parent=self.cmpOutputAttrGrp).getTarget()
@@ -52,16 +52,15 @@ class StretchyLimbComponent(BaseExampleComponent):
 class StretchyLimbComponentGuide(StretchyLimbComponent):
     """StretchyLimb Component Guide"""
 
-    def __init__(self, name='limb', parent=None):
+    def __init__(self, name='limb', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct StretchyLimb Guide Component:" + name)
-        super(StretchyLimbComponentGuide, self).__init__(name, parent)
+        super(StretchyLimbComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
 
         # =========
         # Controls
         # ========
-
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
 
         # Guide Controls
@@ -69,15 +68,15 @@ class StretchyLimbComponentGuide(StretchyLimbComponent):
         self.lowerCtl = Control('lower', parent=self.ctrlCmpGrp, shape="sphere")
         self.endCtl = Control('end', parent=self.ctrlCmpGrp, shape="sphere")
 
-        data = {
+        self.default_data = {
                 "name": name,
                 "location": "L",
                 "upperXfo": Xfo(Vec3(0.9811, 9.769, -0.4572)),
                 "lowerXfo": Xfo(Vec3(1.4488, 5.4418, -0.5348)),
-                "endXfo": Xfo(Vec3(1.841, 1.1516, -1.237)),
+                "endXfo": Xfo(Vec3(1.841, 1.1516, -1.237))
                }
 
-        self.loadData(data)
+        self.loadData(self.default_data)
 
         Profiler.getInstance().pop()
 
@@ -112,11 +111,11 @@ class StretchyLimbComponentGuide(StretchyLimbComponent):
 
         """
 
-        super(StretchyLimbComponentGuide, self).loadData( data )
+        super(StretchyLimbComponentGuide, self).loadData(data)
 
-        self.upperCtl.xfo = data['upperXfo']
-        self.lowerCtl.xfo = data['lowerXfo']
-        self.endCtl.xfo = data['endXfo']
+        self.upperCtl.xfo = data.get('upperXfo', self.default_data['upperXfo'])
+        self.lowerCtl.xfo = data.get('lowerXfo', self.default_data['lowerXfo'])
+        self.endCtl.xfo = data.get('endXfo', self.default_data['endXfo'])
 
         return True
 
@@ -242,6 +241,7 @@ class StretchyLimbComponentRig(StretchyLimbComponent):
         limbStretchBlendInputAttr = ScalarAttribute('stretchBlend', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
         limbSlideInputAttr = ScalarAttribute('slide', value=0.0, minValue=-1.0, maxValue=1.0, parent=limbSettingsAttrGrp)
         limbPinInputAttr = ScalarAttribute('pin', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+        self.rightSideInputAttr = BoolAttribute('rightSide', value=False, parent=limbSettingsAttrGrp)
 
         self.drawDebugInputAttr.connect(limbDrawDebugInputAttr)
 
@@ -255,6 +255,7 @@ class StretchyLimbComponentRig(StretchyLimbComponent):
         # ==========
         deformersLayer = self.getOrCreateLayer('deformers')
         self.defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
+        self.addItem('defCmpGrp', self.defCmpGrp)
 
         upperDef = Joint('upper', parent=self.defCmpGrp)
         upperDef.setComponent(self)
@@ -352,21 +353,28 @@ class StretchyLimbComponentRig(StretchyLimbComponent):
 
         """
 
-        super(StretchyLimbComponentRig, self).loadData( data )
+        super(StretchyLimbComponentRig, self).loadData(data)
 
-        self.upperFKCtrlSpace.xfo = data['upperXfo']
-        self.upperFKCtrl.xfo = data['upperXfo']
-        self.upperFKCtrl.scalePoints(Vec3(data['upperLen'], 1.75, 1.75))
+        upperXfo = data.get('upperXfo')
+        upperLen = data.get('upperLen')
+        lowerXfo = data.get('lowerXfo')
+        lowerLen = data.get('lowerLen')
+        endXfo = data.get('endXfo')
+        upVXfo = data.get('upVXfo')
 
-        self.limbUpperOutputTgt.xfo = data['upperXfo']
-        self.limbLowerOutputTgt.xfo = data['lowerXfo']
+        self.upperFKCtrlSpace.xfo = upperXfo
+        self.upperFKCtrl.xfo = upperXfo
+        self.upperFKCtrl.scalePoints(Vec3(upperLen, 1.75, 1.75))
 
-        self.lowerFKCtrlSpace.xfo = data['lowerXfo']
-        self.lowerFKCtrl.xfo = data['lowerXfo']
-        self.lowerFKCtrl.scalePoints(Vec3(data['lowerLen'], 1.5, 1.5))
+        self.limbUpperOutputTgt.xfo = upperXfo
+        self.limbLowerOutputTgt.xfo = lowerXfo
 
-        self.limbIKCtrlSpace.xfo.tr = data['endXfo'].tr
-        self.limbIKCtrl.xfo.tr = data['endXfo'].tr
+        self.lowerFKCtrlSpace.xfo = lowerXfo
+        self.lowerFKCtrl.xfo = lowerXfo
+        self.lowerFKCtrl.scalePoints(Vec3(lowerLen, 1.5, 1.5))
+
+        self.limbIKCtrlSpace.xfo.tr = endXfo.tr
+        self.limbIKCtrl.xfo.tr = endXfo.tr
 
         if self.getLocation() == "R":
             self.limbIKCtrl.rotatePoints(0, 90, 0)
@@ -375,18 +383,20 @@ class StretchyLimbComponentRig(StretchyLimbComponent):
             self.limbIKCtrl.rotatePoints(0, -90, 0)
             self.limbIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
 
-        self.limbUpVCtrlSpace.xfo = data['upVXfo']
-        self.limbUpVCtrl.xfo = data['upVXfo']
+        self.limbUpVCtrlSpace.xfo = upVXfo
+        self.limbUpVCtrl.xfo = upVXfo
 
-        self.rightSideInputAttr.setValue(self.getLocation() is 'R')
         self.limbBone0LenInputAttr.setMin(0.0)
-        self.limbBone0LenInputAttr.setMax(data['upperLen'] * 3.0)
-        self.limbBone0LenInputAttr.setValue(data['upperLen'])
+        self.limbBone0LenInputAttr.setMax(upperLen * 3.0)
+        self.limbBone0LenInputAttr.setValue(upperLen)
         self.limbBone1LenInputAttr.setMin(0.0)
-        self.limbBone1LenInputAttr.setMax(data['lowerLen'] * 3.0)
-        self.limbBone1LenInputAttr.setValue(data['lowerLen'])
+        self.limbBone1LenInputAttr.setMax(lowerLen * 3.0)
+        self.limbBone1LenInputAttr.setValue(lowerLen)
 
-        self.limbParentInputTgt.xfo = data['upperXfo']
+        self.limbParentInputTgt.xfo = upperXfo
+
+        # Set Attrs
+        self.rightSideInputAttr.setValue(self.getLocation() is 'R')
 
         # Eval Constraints
         self.limbIKCtrlSpaceInputConstraint.evaluate()

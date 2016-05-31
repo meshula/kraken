@@ -1,0 +1,15 @@
+
+require Kraken;
+
+operator entry(){
+	RigScaleSolver solver();
+
+    Boolean debug = true;
+    Scalar rigScale = 3.5;
+
+    Mat44 target();
+
+    solver.solve(debug, rigScale, target);
+
+    report(Xfo(target).sc);
+}

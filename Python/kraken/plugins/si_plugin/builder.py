@@ -72,6 +72,10 @@ class Builder(Builder):
         dccSceneItem = parentDCCSceneItem.AddModel(None, buildName)
         dccSceneItem.Name = buildName
 
+        # Add custom param set to indicate that this object is the top level
+        # Kraken Rig object
+        dccSceneItem.AddProperty("CustomParameterSet", False, 'krakenRig')
+
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
         return dccSceneItem
@@ -1126,9 +1130,13 @@ class Builder(Builder):
 
                 if portDataType == 'EvalContext':
                     return
+                elif portDataType == 'DrawingHandle':
+                    return
+                elif portDataType == 'InlineDebugShape':
+                    return
 
                 # Append the suffix based on the argument type, Softimage Only
-                if portDataType == 'Mat44':
+                if portDataType in ('Xfo', 'Mat44'):
                     portmapDefinition = portName + "|XSI Port"
 
                     canvasOpPath2 = str(canvasOpPath) + ":"

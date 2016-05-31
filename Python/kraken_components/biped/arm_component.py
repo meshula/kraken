@@ -24,8 +24,8 @@ from kraken.core.profiler import Profiler
 class ArmComponent(BaseExampleComponent):
     """Arm Component Base"""
 
-    def __init__(self, name='arm', parent=None):
-        super(ArmComponent, self).__init__(name, parent)
+    def __init__(self, name='arm', parent=None, *args, **kwargs):
+        super(ArmComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -36,6 +36,7 @@ class ArmComponent(BaseExampleComponent):
 
         # Declare Output Xfos
         self.bicepOutputTgt = self.createOutput('bicep', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.elbowOutputTgt = self.createOutput('elbow', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.forearmOutputTgt = self.createOutput('forearm', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.wristOutputTgt = self.createOutput('wrist', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
@@ -49,13 +50,12 @@ class ArmComponent(BaseExampleComponent):
         self.ikBlendOutputAttr = self.createOutput('ikBlend', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
 
 
-
 class ArmComponentGuide(ArmComponent):
     """Arm Component Guide"""
 
-    def __init__(self, name='arm', parent=None):
+    def __init__(self, name='arm', parent=None, *args, **kwargs):
         Profiler.getInstance().push("Construct Arm Guide Component:" + name)
-        super(ArmComponentGuide, self).__init__(name, parent)
+        super(ArmComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Attributes
@@ -77,13 +77,33 @@ class ArmComponentGuide(ArmComponent):
         self.wristCtrl = Control('wrist', parent=self.ctrlCmpGrp, shape="sphere")
         self.wristCtrl.setColor('blue')
 
+        armGuideSettingsAttrGrp = AttributeGroup("DisplayInfo_ArmSettings", parent=self.bicepCtrl)
+        self.armGuideDebugAttr = BoolAttribute('drawDebug', value=True, parent=armGuideSettingsAttrGrp)
+
+        self.guideOpHost = Transform('guideOpHost', self.ctrlCmpGrp)
+
+        # Guide Operator
+        self.armGuideKLOp = KLOperator(name + self.getLocation() + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
+        self.addOperator(self.armGuideKLOp)
+
+        # Add Att Inputs
+        self.armGuideKLOp.setInput('drawDebug', self.armGuideDebugAttr)
+        self.armGuideKLOp.setInput('rigScale', self.rigScaleInputAttr)
+
+        # Add Source Inputs
+        self.armGuideKLOp.setInput('root', self.bicepCtrl)
+        self.armGuideKLOp.setInput('mid', self.forearmCtrl)
+        self.armGuideKLOp.setInput('end', self.wristCtrl)
+
+        # Add Target Outputs
+        self.armGuideKLOp.setOutput('guideOpHost', self.guideOpHost)
 
         self.default_data = {
             "name": name,
             "location": "L",
-            "bicepXfo": Xfo(Vec3(2.27, 15.295, -0.753)),
-            "forearmXfo": Xfo(Vec3(5.039, 13.56, -0.859)),
-            "wristXfo": Xfo(Vec3(7.1886, 12.2819, 0.4906)),
+            "bicepXfo": Xfo(Vec3(2.275, 15.3, -0.75)),
+            "forearmXfo": Xfo(Vec3(5.0, 13.5, -0.75)),
+            "wristXfo": Xfo(Vec3(7.2, 12.25, 0.5)),
             "bicepFKCtrlSize": self.bicepFKCtrlSizeInputAttr.getValue(),
             "forearmFKCtrlSize": self.forearmFKCtrlSizeInputAttr.getValue()
         }
@@ -130,6 +150,9 @@ class ArmComponentGuide(ArmComponent):
         self.bicepCtrl.xfo = data['bicepXfo']
         self.forearmCtrl.xfo = data['forearmXfo']
         self.wristCtrl.xfo = data['wristXfo']
+
+        guideOpName = ''.join([self.getName().split('GuideKLOp')[0], self.getLocation(), 'GuideKLOp'])
+        self.armGuideKLOp.setName(guideOpName)
 
         return True
 
@@ -249,10 +272,6 @@ class ArmComponentRig(ArmComponent):
         self.armBone0LenInputAttr = ScalarAttribute('bone1Len', value=0.0, parent=armSettingsAttrGrp)
         self.armBone1LenInputAttr = ScalarAttribute('bone2Len', value=0.0, parent=armSettingsAttrGrp)
         self.armIKBlendInputAttr = ScalarAttribute('fkik', value=0.0, minValue=0.0, maxValue=1.0, parent=armSettingsAttrGrp)
-        self.armSoftIKInputAttr = BoolAttribute('softIK', value=True, parent=armSettingsAttrGrp)
-        self.armSoftDistInputAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=armSettingsAttrGrp)
-        self.armStretchInputAttr = BoolAttribute('stretch', value=True, parent=armSettingsAttrGrp)
-        self.armStretchBlendInputAttr = ScalarAttribute('stretchBlend', value=0.0, minValue=0.0, maxValue=1.0, parent=armSettingsAttrGrp)
 
         # Util Objects
         self.ikRootPosition = Transform("ikPosition", parent=self.ctrlCmpGrp)
@@ -280,6 +299,9 @@ class ArmComponentRig(ArmComponent):
 
         self.bicepDef = Joint('bicep', parent=self.defCmpGrp)
         self.bicepDef.setComponent(self)
+
+        self.elbowDef = Joint('elbow', parent=self.defCmpGrp)
+        self.elbowDef.setComponent(self)
 
         self.forearmDef = Joint('forearm', parent=self.defCmpGrp)
         self.forearmDef.setComponent(self)
@@ -329,10 +351,6 @@ class ArmComponentRig(ArmComponent):
         self.armSolverKLOperator.setInput('bone0Len', self.armBone0LenInputAttr)
         self.armSolverKLOperator.setInput('bone1Len', self.armBone1LenInputAttr)
         self.armSolverKLOperator.setInput('ikblend', self.armIKBlendInputAttr)
-        self.armSolverKLOperator.setInput('softIK', self.armSoftIKInputAttr)
-        self.armSolverKLOperator.setInput('softDist', self.armSoftDistInputAttr)
-        self.armSolverKLOperator.setInput('stretch', self.armStretchInputAttr)
-        self.armSolverKLOperator.setInput('stretchBlend', self.armStretchBlendInputAttr)
         self.armSolverKLOperator.setInput('rightSide', self.rightSideInputAttr)
 
         # Add Xfo Inputs
@@ -346,6 +364,7 @@ class ArmComponentRig(ArmComponent):
         self.armSolverKLOperator.setOutput('bone0Out', self.bicepOutputTgt)
         self.armSolverKLOperator.setOutput('bone1Out', self.forearmOutputTgt)
         self.armSolverKLOperator.setOutput('bone2Out', self.wristOutputTgt)
+        self.armSolverKLOperator.setOutput('midJointOut', self.elbowOutputTgt)
 
 
         # Add Deformer Splice Op
@@ -357,10 +376,10 @@ class ArmComponentRig(ArmComponent):
         self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
-        self.outputsToDeformersKLOp.setInput('constrainers', [self.bicepOutputTgt, self.forearmOutputTgt, self.wristOutputTgt])
+        self.outputsToDeformersKLOp.setInput('constrainers', [self.bicepOutputTgt, self.elbowOutputTgt, self.forearmOutputTgt, self.wristOutputTgt])
 
         # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [self.bicepDef, self.forearmDef, self.wristDef])
+        self.outputsToDeformersKLOp.setOutput('constrainees', [self.bicepDef, self.elbowDef, self.forearmDef, self.wristDef])
 
         Profiler.getInstance().pop()
 

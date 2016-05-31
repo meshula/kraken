@@ -67,6 +67,14 @@ class Builder(Builder):
         pm.parent(dccSceneItem, parentNode)
         pm.rename(dccSceneItem, buildName)
 
+        krakenRigAttr = dccSceneItem.addAttr('krakenRig',
+                                             niceName='krakenRig',
+                                             attributeType="bool",
+                                             defaultValue=True,
+                                             keyable=False)
+
+        dccSceneItem.attr('krakenRig').setLocked(True)
+
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
         return dccSceneItem
@@ -1080,6 +1088,11 @@ class Builder(Builder):
 
                 if portDataType == 'EvalContext':
                     continue
+                elif portDataType == 'DrawingHandle':
+                    continue
+                elif portDataType == 'InlineDebugShape':
+                    continue
+
                 if portName == 'time':
                     pm.expression(o=canvasNode + '.time', s=canvasNode + '.time = time;')
                     continue

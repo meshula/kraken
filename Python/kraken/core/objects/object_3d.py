@@ -819,8 +819,8 @@ class Object3D(SceneItem):
         elif constraintType == "Scale":
             constraint = ScaleConstraint(constraintName)
         else:
-            raise ValueError("'" + constraintType + "' is not a valid constraint \
-                type. Valid types are Orientation, Pose, Position, or Scale")
+            raise ValueError("'" + constraintType +
+                "' is not a valid constraint type. Valid types are Orientation, Pose, Position, or Scale")
 
         # Accept a single object or a list of objects
         if hasattr(constrainers, '__iter__'):

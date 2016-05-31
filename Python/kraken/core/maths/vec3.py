@@ -537,7 +537,7 @@ class Vec3(MathObject):
 
         """
 
-        return Vec3(self._rtval.linearInterpolate('Vec3', ks.rtVal('Scalar', t)))
+        return Vec3(self._rtval.linearInterpolate('Vec3', other._rtval, ks.rtVal('Scalar', t)))
 
 
     def distanceToLine(self, lineP0, lineP1):
