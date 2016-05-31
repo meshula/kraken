@@ -9,6 +9,15 @@ class DCCHandler(logging.Handler):
     """Logging Handler for Softimage."""
 
     def emit(self, record):
+        """Maps the logger calls to call the specific Maya logging calls so the
+        messages appear in the DCC as well.
+
+        .. note::
+
+            Calls to these Softimage specific methods are executed:
+                - Application.LogMessage
+
+        """
 
         msg = self.format(record)
 

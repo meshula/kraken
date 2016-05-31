@@ -5,6 +5,14 @@ from kraken.plugins.maya_plugin.utils import *
 
 
 def getClient():
+    """Gets the Fabric client from the DCC. This ensures that the same client
+    is used, instead of a new one being created each time one is requiredself.
+
+    Returns:
+        Fabric Client.
+
+    """
+
     contextID = cmds.fabricSplice('getClientContextID')
     if contextID == '':
         cmds.fabricSplice('constructClient')
