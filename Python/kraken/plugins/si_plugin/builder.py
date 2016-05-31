@@ -151,6 +151,7 @@ class Builder(Builder):
 
         dccSceneItem = parentDCCSceneItem.AddNull()
         dccSceneItem.Name = buildName
+        dccSceneItem.Parameters('primary_icon').Value = 0
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
         return dccSceneItem
@@ -1012,10 +1013,22 @@ class Builder(Builder):
                         # OutArrays must be resized by the splice op.
                         arraySizes[argName] = len(connectedObjects)
 
-                    for j in range(len(connectedObjects)):
+                    for j in xrange(len(connectedObjects)):
                         dccSceneItem = self.getDCCSceneItem(connectedObjects[j])
                         if dccSceneItem is None:
-                            raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
+                            if hasattr(opObject, "getName"):
+                                # Handle output connections to visibility attributes.
+                                if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+                                    dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+                                    dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
+                                elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+                                    dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+                                    dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
+                                else:
+                                    raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
+
+                            else:
+                                raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
 
                         addCanvasPorts(canvasOpPath,
                                        argName + str(j),
@@ -1035,7 +1048,19 @@ class Builder(Builder):
 
                     dccSceneItem = self.getDCCSceneItem(connectedObject)
                     if dccSceneItem is None:
-                        raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObject.getPath())
+                        if hasattr(opObject, "getName"):
+                            # Handle output connections to visibility attributes.
+                            if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+                                dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+                                dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
+                            elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+                                dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+                                dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
+                            else:
+                                raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
+
+                        else:
+                            raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
 
                     addCanvasPorts(canvasOpPath,
                                    argName,
@@ -1151,26 +1176,30 @@ class Builder(Builder):
 
                 elif portDataType in ['Scalar', 'Boolean', 'Integer']:
 
-                    portmapDefinition = portName + "|XSI Parameter"
+                    if argConnectionType == 'Out':
+                        logger.warn("Operator:'" + kOperator.getName() +
+                                    "' port:'" + portName + "' cannot be set as an output connection. Mat44 only!")
 
-                    canvasOpPath2 = str(canvasOpPath) + ":"
-                    si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
-                    canvasOpPath = str(canvasOpPath2)[:-1]
-                    canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+                    else:
 
-                    parameter = canvasOp.Parameters(portName)
-                    if parameter is not None:
-                        if portName == 'time':
-                            parameter.AddExpression("T")
-                            return
-                        if portName == 'frame':
-                            parameter.AddExpression("Fc")
-                            return
-                        else:
-                            parameter.AddExpression(dccSceneItem.FullName)
+                        portmapDefinition = portName + "|XSI Parameter"
 
+                        canvasOpPath2 = str(canvasOpPath) + ":"
+                        si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
+                        canvasOpPath = str(canvasOpPath2)[:-1]
+                        canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
 
-            # arraySizes = {}
+                        parameter = canvasOp.Parameters(portName)
+                        if parameter is not None:
+                            if portName == 'time':
+                                parameter.AddExpression("T")
+                                return
+                            if portName == 'frame':
+                                parameter.AddExpression("Fc")
+                                return
+                            else:
+                                parameter.AddExpression(dccSceneItem.FullName)
+
             # connect the operator to the objects in the DCC
             for i in xrange(node.getExecPortCount()):
                 portName = node.getExecPortName(i)
@@ -1273,7 +1302,19 @@ class Builder(Builder):
                     for j in xrange(len(connectedObjects)):
                         dccSceneItem = self.getDCCSceneItem(connectedObjects[j])
                         if dccSceneItem is None:
-                            raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + kOperator.getPresetPath() + "' port:'" + portName + "' dcc item not found for item:" + connectedObjects[j].getPath())
+                            if hasattr(connectedObjects[j], "getName"):
+                                # Handle output connections to visibility attributes.
+                                if connectedObjects[j].getName() == 'visibility' and connectedObjects[j].getParent().getName() == 'implicitAttrGrp':
+                                    dccItem = self.getDCCSceneItem(connectedObjects[j].getParent().getParent())
+                                    dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
+                                elif connectedObjects[j].getName() == 'shapeVisibility' and connectedObjects[j].getParent().getName() == 'implicitAttrGrp':
+                                    dccItem = self.getDCCSceneItem(connectedObjects[j].getParent().getParent())
+                                    dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
+                                else:
+                                    raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
+
+                            else:
+                                raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
 
                         # Note: Need to find the operator each time as the
                         # operator is destroyed and recreated each time you add
@@ -1299,7 +1340,19 @@ class Builder(Builder):
 
                     dccSceneItem = self.getDCCSceneItem(connectedObject)
                     if dccSceneItem is None:
-                        log("Operator:'" + kOperator.getName() + "' of type:'" + kOperator.getPresetPath() + "' port:'" + portName + "' dcc item not found for item:" + connectedObject.getPath(), 4)
+                        if hasattr(connectedObject, "getName"):
+                            # Handle output connections to visibility attributes.
+                            if connectedObject.getName() == 'visibility' and connectedObject.getParent().getName() == 'implicitAttrGrp':
+                                dccItem = self.getDCCSceneItem(connectedObject.getParent().getParent())
+                                dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
+                            elif connectedObject.getName() == 'shapeVisibility' and connectedObject.getParent().getName() == 'implicitAttrGrp':
+                                dccItem = self.getDCCSceneItem(connectedObject.getParent().getParent())
+                                dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
+                            else:
+                                raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
+
+                        else:
+                            raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
 
                     addCanvasPorts(canvasOpPath, portName, uniqueNodeName + "." + portName, portDataType, portConnectionType, dccSceneItem)
 
