@@ -4,9 +4,8 @@ import optparse
 
 from kraken import plugins
 from kraken.core.kraken_system import KrakenSystem
-from kraken.core.objects.locator import Locator
 from kraken.core.objects.rig import Rig
-from kraken.core.configs.config import Config
+
 
 def argOpts():
 
@@ -15,16 +14,16 @@ def argOpts():
     parser = optparse.OptionParser(usage, version="%prog 1.0")
 
     parser.add_option("-c", "--config", dest="config",
-            help="Create the directory structure of a new asset locally.")
+                      help="Create the directory structure of a new asset locally.")
 
     parser.add_option("-p", "--profiling", dest="numframes", type="int",
-            help="Embeds profiling inside the generated rig for the provided number of frames")
+                      help="Embeds profiling inside the generated rig for the provided number of frames")
 
     parser.add_option("-f", "--logfile", dest="logfile",
-            help="Stores the profiling results in a file instead of reporting them")
+                      help="Stores the profiling results in a file instead of reporting them")
 
     parser.add_option("-C", "--constants", dest="constants", action="store_true",
-            help="Enables the use of constants for the array indices - thus easier to read code")
+                      help="Enables the use of constants for the array indices - thus easier to read code")
 
     description = optparse.OptionGroup(parser, "Description", "Generate a kl character from krg input")
 
@@ -49,7 +48,7 @@ def main():
 
     os.environ['KRAKEN_DCC'] = 'KL'
 
-    options, args  = argOpts()
+    options, args = argOpts()
 
     ks = KrakenSystem.getInstance()
     numConfigs = len(ks.registeredConfigs)
@@ -57,8 +56,8 @@ def main():
     if options.config:
         directory, file = os.path.split(options.config)
         filebase, ext = os.path.splitext(file)
-        sys.path = [directory] + sys.path # prepend
-        exec("import "+filebase)
+        sys.path = [directory] + sys.path  # prepend
+        exec("import " + filebase)
 
         if len(ks.registeredConfigs) > numConfigs:
             configName = next(reversed(ks.registeredConfigs))
@@ -82,11 +81,11 @@ def main():
 
     config.setMetaData('RigTitle', os.path.split(args[0])[1].partition('.')[0])
     if options.constants:
-      config.setMetaData('UseRigConstants', True)
+        config.setMetaData('UseRigConstants', True)
     if options.numframes:
-      config.setMetaData('ProfilingFrames', options.numframes)
+        config.setMetaData('ProfilingFrames', options.numframes)
     if options.logfile:
-      config.setMetaData('ProfilingLogFile', options.logfile)
+        config.setMetaData('ProfilingLogFile', options.logfile)
 
     builder.build(rig)
 
