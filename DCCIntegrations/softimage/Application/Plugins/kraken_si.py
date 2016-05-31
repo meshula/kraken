@@ -72,7 +72,9 @@ def Kraken_Init(in_ctxt):
     menu.AddCommandItem("Build Biped Guide", "KrakenBuildBipedGuide")
     menu.AddCommandItem("Build Biped Rig", "KrakenBuildBipedRig")
     menu.AddSeparatorItem()
-    menu.AddCallbackItem("Help", "OpenKrakenHelp")
+    menu.AddCallbackItem("Kraken Web Site", "KrakenWebSite")
+    menu.AddCallbackItem("Kraken Documentation", "KrakenDocumentation")
+    menu.AddCallbackItem("Fabric Forums", "FabricForums")
 
 
 # =========
@@ -252,3 +254,12 @@ def OpenKrakenHelp(in_ctxt):
     menuItem = in_ctxt.source
 
     webbrowser.open_new_tab('http://fabric-engine.github.io/Kraken')
+
+def KrakenWebSite(in_ctxt):
+    webbrowser.open_new_tab('http://fabric-engine.github.io/Kraken')
+
+def KrakenDocumentation(in_ctxt):
+    webbrowser.open_new_tab('http://kraken-rigging-framework.readthedocs.io')
+
+def FabricForums(in_ctxt):
+    webbrowser.open_new_tab('http://forums.fabricengine.com/categories/kraken')
