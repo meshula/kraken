@@ -53,11 +53,11 @@ UInt32 KrakenStaticClip.getChannelType(UInt32 id) {
   return this.types[id];
 }
 
-Float32 KrakenStaticClip.evaluateFloat32!(UInt32 id, KrakenClipContext context) {
+Float32 KrakenStaticClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
   return this.values[id].tr.x;
 }
 
-Xfo KrakenStaticClip.evaluateXfo!(UInt32 id, KrakenClipContext context) {
+Xfo KrakenStaticClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
   return this.values[id];
 }
 

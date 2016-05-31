@@ -77,28 +77,28 @@ UInt32 KrakenLookAtClip.getChannelType(UInt32 id) {
   return KrakenClipChannel_Xfo;
 }
 
-Float32 KrakenLookAtClip.evaluateFloat32!(UInt32 id, KrakenClipContext context) {
+Float32 KrakenLookAtClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
   if(this.childClip) {
     if(id < this.childClip.getChannelCount())
-      return this.childClip.evaluateFloat32(id, context);
+      return this.childClip.evaluateFloat32(id, rig, context);
   }
   return Float32();
 }
 
-Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, KrakenClipContext context) {
+Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
   UInt32 idx = id;
   if(this.childClip) {
     if(id < this.childClip.getChannelCount())
-      return this.childClip.evaluateXfo(id, context);
+      return this.childClip.evaluateXfo(id, rig, context);
     idx -= this.childClip.getChannelCount();
   }
 
-  if(context.rig == null)
+  if(rig == null)
     return Xfo();
   if(this.targets[idx].almostEqual(Vec3()))
     return Xfo();
 
-  KrakenControl controls<> = context.rig.getControls();
+  KrakenControl controls<> = rig.getControls();
   if(this.controlId[idx] == -1) {
     for(Size i=0;i<controls.size();i++) {
       if(controls[i].name == this.names[idx]) {

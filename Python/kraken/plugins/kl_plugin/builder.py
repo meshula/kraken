@@ -579,9 +579,7 @@ class Builder(Builder):
         if self.__profilingFrames > 0:
             kl += ["    AutoProfilingEvent scopedEvent(\"%s.clip.apply\");" % self.getKLExtensionName()]
         kl += ["    KrakenKLRig rig = this;"]
-        kl += ["    KrakenClipContext ctxt = context;"]
-        kl += ["    ctxt.rig = rig;"]
-        kl += ["    this.clip.apply(rig, ctxt, 1.0);"]
+        kl += ["    this.clip.apply(rig, context, 1.0);"]
         kl += ["  }"]
         kl += ["  this.solve(context);"]
         kl += ["  this.evalVersion++;"]
@@ -600,9 +598,7 @@ class Builder(Builder):
         if self.__profilingFrames > 0:
             kl += ["    AutoProfilingEvent scopedEvent(\"%s.clip.apply\");" % self.getKLExtensionName()]
         kl += ["    KrakenKLRig rig = this;"]
-        kl += ["    KrakenClipContext ctxt = context;"]
-        kl += ["    ctxt.rig = rig;"]
-        kl += ["    this.clip.apply(rig, ctxt, 1.0);"]
+        kl += ["    this.clip.apply(rig, context, 1.0);"]
         kl += ["  }"]
         kl += ["  this.solve(context);"]
         if len(self.__krkDeformers) > 0:

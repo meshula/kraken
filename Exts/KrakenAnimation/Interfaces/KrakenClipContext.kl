@@ -7,8 +7,6 @@ struct KrakenClipContext {
   SInt32 maxEvalID;
   Mat44 matrices[16];
   Float32 channels[16];
-
-  Ref<KrakenKLRig> rig;
 };
 
 function KrakenClipContext() {
