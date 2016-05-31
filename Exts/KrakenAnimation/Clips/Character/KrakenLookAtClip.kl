@@ -53,75 +53,52 @@ function KrakenLookAtClip.defineLookAt!(
 }
 
 UInt32 KrakenLookAtClip.getChannelCount() {
-  UInt32 result = this.names.size();
-  if(this.childClip)
-    result += this.childClip.getChannelCount();
-  return result;
+  return this.names.size();
 }
 
 String KrakenLookAtClip.getChannelName(UInt32 id) {
-  UInt32 idx = id;
-  if(this.childClip) {
-    if(id < this.childClip.getChannelCount())
-      return this.childClip.getChannelName(id);
-    idx -= this.childClip.getChannelCount();
-  }
-  return this.names[idx];
+  return this.names[id];
 }
 
 UInt32 KrakenLookAtClip.getChannelType(UInt32 id) {
-  if(this.childClip) {
-    if(id < this.childClip.getChannelCount())
-      return this.childClip.getChannelType(id);
-  }
   return KrakenClipChannel_Xfo;
 }
 
 Float32 KrakenLookAtClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
-  if(this.childClip) {
-    if(id < this.childClip.getChannelCount())
-      return this.childClip.evaluateFloat32(id, rig, context);
-  }
   return Float32();
 }
 
 Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
-  UInt32 idx = id;
-  if(this.childClip) {
-    if(id < this.childClip.getChannelCount())
-      return this.childClip.evaluateXfo(id, rig, context);
-    idx -= this.childClip.getChannelCount();
-  }
 
   if(rig == null)
     return Xfo();
-  if(this.targets[idx].almostEqual(Vec3()))
+  if(this.targets[id].almostEqual(Vec3()))
     return Xfo();
 
   KrakenControl controls<> = rig.getControls();
-  if(this.controlId[idx] == -1) {
+  if(this.controlId[id] == -1) {
     for(Size i=0;i<controls.size();i++) {
-      if(controls[i].name == this.names[idx]) {
-        this.controlId[idx] = i;
+      if(controls[i].name == this.names[id]) {
+        this.controlId[id] = i;
         break;
       }
     }
-    if(this.controlId[idx] == -1)
+    if(this.controlId[id] == -1)
       return Xfo(); // not found
   }
 
-  Xfo global = controls[this.controlId[idx]].global;
-  Xfo parentSpace = controls[this.controlId[idx]].global * controls[this.controlId[idx]].local.inverse();
+  Xfo global = controls[this.controlId[id]].global;
+  Xfo parentSpace = controls[this.controlId[id]].global * controls[this.controlId[id]].local.inverse();
 
-  Vec3 srcDir = parentSpace.ori.rotateVector(this.targets[idx]).unit();
+  Vec3 srcDir = parentSpace.ori.rotateVector(this.targets[id]).unit();
   Vec3 newDir = (context.matrices[this.matrixIndex].translation() - parentSpace.tr).unit();
   if(newDir.almostEqual(Vec3()))
     return Xfo();
 
   Quat result;
-  if(this.locked[idx] && !this.axes[idx].almostEqual(Vec3())) {
+  if(this.locked[id] && !this.axes[id].almostEqual(Vec3())) {
 
-    Vec3 axis = parentSpace.ori.rotateVector(this.axes[idx]);
+    Vec3 axis = parentSpace.ori.rotateVector(this.axes[id]);
     srcDir = (srcDir - (axis.dot(srcDir) * axis)).unit();
     newDir = (newDir - (axis.dot(newDir) * axis)).unit();
 
@@ -131,12 +108,15 @@ Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipConte
   offsetOri.setFrom2Vectors(srcDir, newDir);
   result = parentSpace.ori * offsetOri;
 
-  global.ori = parentSpace.ori.sphericalLinearInterpolate(result, Float32(Math_clamp(this.amounts[idx], 0.0, 1.0)));
+  global.ori = parentSpace.ori.sphericalLinearInterpolate(result, Float32(Math_clamp(this.amounts[id], 0.0, 1.0)));
 
   return parentSpace.inverse() * global;
 }
 
 function KrakenLookAtClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
+  if(this.childClip)
+    this.childClip.apply(rig, context, factor);
+
   KrakenLookAtClip clip = this;
   if(clip.lookup == null)
     clip.lookup = KrakenClipLookup(rig, clip);
@@ -172,12 +152,12 @@ function KrakenLookAtClip.loadFromJson!(JSONDictValue json) {
   this.rigVersion = 0;
 
   this.matrixIndex = json.getInteger('matrixIndex');
-  String childClipType = json.getString('childClipType');
-  if(childClipType == "")
-    this.childClip = null;
-  else {
+  if(json.has('childClipType')) {
+    String childClipType = json.getString('childClipType');
     this.childClip = KrakenClip_getFromTypeName(childClipType);
     this.childClip.loadFromJson(json.get('childClip'));
+  } else {
+    this.childClip = null;
   }
 
   JSONArrayValue lookats = json.get('lookats');
