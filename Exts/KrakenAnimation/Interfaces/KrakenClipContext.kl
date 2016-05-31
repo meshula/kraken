@@ -4,6 +4,7 @@ interface KrakenKLRig;
 
 struct KrakenClipContext {
   Float64 time;
+  Float64 delta;
   SInt32 maxEvalID;
   Mat44 matrices[16];
   Float32 channels[16];
@@ -11,11 +12,13 @@ struct KrakenClipContext {
 
 function KrakenClipContext() {
   this.time = 0.0;
+  this.delta = 1.0 / 60.0;
   this.maxEvalID = -1;
 }
 
 function KrakenClipContext(Float64 time) {
   this.time = time;
+  this.delta = 1.0 / 60.0;
   this.maxEvalID = -1;
 }
 

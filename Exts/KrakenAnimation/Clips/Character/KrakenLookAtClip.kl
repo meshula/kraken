@@ -3,6 +3,7 @@ require Math;
 object KrakenLookAtClip : KrakenClip {
   Index matrixIndex;
   KrakenClip childClip;
+  Float32 speed;
   String names[];
   SInt32 controlId[];
   UInt32 nameToId[String];
@@ -13,13 +14,16 @@ object KrakenLookAtClip : KrakenClip {
 
   UInt64 rigVersion;
   KrakenClipLookup lookup;
+  Vec3 simTarget;
 };
 
 function KrakenLookAtClip(Index matrixIndex, KrakenClip childClip) {
   this.matrixIndex = matrixIndex;
   this.childClip = childClip;
+  this.speed = 1.0;
   this.lookup = null;
   this.rigVersion = 0;
+  this.simTarget.x = SCALAR_INFINITE;
 }
 
 /// \dfgPresetDefault target {"x": 1.0, "y": 0.0, "z": 0.0}
@@ -90,8 +94,15 @@ Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipConte
   Xfo global = controls[this.controlId[id]].global;
   Xfo parentSpace = controls[this.controlId[id]].global * controls[this.controlId[id]].local.inverse();
 
+  Scalar t = Float32(context.delta) * this.speed;
+
+  Vec3 target = context.matrices[this.matrixIndex].translation();
+  if(this.simTarget.x != SCALAR_INFINITE)
+    target = this.simTarget.linearInterpolate(target, t);
+  this.simTarget = target;
+
   Vec3 srcDir = parentSpace.ori.rotateVector(this.targets[id]).unit();
-  Vec3 newDir = (context.matrices[this.matrixIndex].translation() - parentSpace.tr).unit();
+  Vec3 newDir = (target - parentSpace.tr).unit();
   if(newDir.almostEqual(Vec3()))
     return Xfo();
 
@@ -150,6 +161,8 @@ function KrakenLookAtClip.loadFromJson!(JSONDictValue json) {
   this.targets.resize(0);
   this.amounts.resize(0);
   this.rigVersion = 0;
+  this.speed = 1.0;
+  this.simTarget.x = SCALAR_INFINITE;
 
   this.matrixIndex = json.getInteger('matrixIndex');
   if(json.has('childClipType')) {
