@@ -1,74 +1,139 @@
 require Math;
 
 object KrakenLookAtClip : KrakenClip {
+  Index matrixIndex;
+  KrakenClip childClip;
   String names[];
+  SInt32 controlId[];
   UInt32 nameToId[String];
+  Vec3 targets[];
   Vec3 axes[];
-  Float32 amplitudes[];
-  Float32 shifts[];
-  Float32 speeds[];
-  Float32 offsets[];
+  Boolean locked[];
+  Float32 amounts[];
 
+  UInt64 rigVersion;
   KrakenClipLookup lookup;
 };
 
-function KrakenLookAtClip() {
+function KrakenLookAtClip(Index matrixIndex, KrakenClip childClip) {
+  this.matrixIndex = matrixIndex;
+  this.childClip = childClip;
   this.lookup = null;
+  this.rigVersion = 0;
 }
 
-/// \dfgPresetDefault axis {"x": 1.0, "y": 0.0, "z": 0.0}
-/// \dfgPresetDefault amplitude 1.0
-/// \dfgPresetDefault shift 0.0
-/// \dfgPresetDefault speed 3.0
-/// \dfgPresetDefault offset 0.0
-function KrakenLookAtClip.defineWave!(
+/// \dfgPresetDefault target {"x": 1.0, "y": 0.0, "z": 0.0}
+/// \dfgPresetDefault axis {"x": 0.0, "y": 1.0, "z": 0.0}
+/// \dfgPresetDefault locked true
+/// \dfgPresetDefault amount 1.0
+/// \dfgPresetRange amount (0.0, 1.0)
+function KrakenLookAtClip.defineLookAt!(
   String name, 
+  Vec3 target,
   Vec3 axis,
-  Float32 amplitude,
-  Float32 shift,
-  Float32 speed,
-  Float32 offset
+  Boolean locked,
+  Float32 amount
 ) {
   UInt32 id = this.nameToId.get(name, this.names.size());
   if(id == this.names.size()) {
     this.nameToId[name] = this.names.size();
     this.names.push(name);
+    this.controlId.push(-1);
+    this.targets.push(target);
     this.axes.push(axis);
-    this.amplitudes.push(amplitude);
-    this.shifts.push(shift);
-    this.speeds.push(speed);
-    this.offsets.push(offset);
+    this.locked.push(locked);
+    this.amounts.push(amount);
   } else {
+    this.targets[id] = target;
     this.axes[id] = axis;
-    this.amplitudes[id] = amplitude;
-    this.shifts[id] = shift;
-    this.speeds[id] = speed;
-    this.offsets[id] = offset;
+    this.locked[id] = locked;
+    this.amounts[id] = amount;
   }
   this.lookup = null;
 }
 
 UInt32 KrakenLookAtClip.getChannelCount() {
-  return this.names.size();
+  UInt32 result = this.names.size();
+  if(this.childClip)
+    result += this.childClip.getChannelCount();
+  return result;
 }
 
 String KrakenLookAtClip.getChannelName(UInt32 id) {
-  return this.names[id];
+  UInt32 idx = id;
+  if(this.childClip) {
+    if(id < this.childClip.getChannelCount())
+      return this.childClip.getChannelName(id);
+    idx -= this.childClip.getChannelCount();
+  }
+  return this.names[idx];
 }
 
 UInt32 KrakenLookAtClip.getChannelType(UInt32 id) {
+  if(this.childClip) {
+    if(id < this.childClip.getChannelCount())
+      return this.childClip.getChannelType(id);
+  }
   return KrakenClipChannel_Xfo;
 }
 
 Float32 KrakenLookAtClip.evaluateFloat32!(UInt32 id, KrakenClipContext context) {
+  if(this.childClip) {
+    if(id < this.childClip.getChannelCount())
+      return this.childClip.evaluateFloat32(id, context);
+  }
   return Float32();
 }
 
 Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, KrakenClipContext context) {
-  Xfo xfo;
-  Float32 angle = this.shifts[id] + this.amplitudes[id] * sin(this.offsets[id] + Float32(context.time) * this.speeds[id]);
-  xfo.ori.setFromAxisAndAngle(this.axes[id], angle);
-  return xfo;
+  UInt32 idx = id;
+  if(this.childClip) {
+    if(id < this.childClip.getChannelCount())
+      return this.childClip.evaluateXfo(id, context);
+    idx -= this.childClip.getChannelCount();
+  }
+
+  if(context.rig == null)
+    return Xfo();
+  if(this.targets[idx].almostEqual(Vec3()))
+    return Xfo();
+
+  KrakenControl controls<> = context.rig.getControls();
+  if(this.controlId[idx] == -1) {
+    for(Size i=0;i<controls.size();i++) {
+      if(controls[i].name == this.names[idx]) {
+        this.controlId[idx] = i;
+        break;
+      }
+    }
+    if(this.controlId[idx] == -1)
+      return Xfo(); // not found
+  }
+
+  Xfo global = controls[this.controlId[idx]].global;
+  Xfo parentSpace = controls[this.controlId[idx]].global * controls[this.controlId[idx]].local.inverse();
+
+  Vec3 srcDir = parentSpace.ori.rotateVector(this.targets[idx]).unit();
+  Vec3 newDir = (context.matrices[this.matrixIndex].translation() - parentSpace.tr).unit();
+  if(newDir.almostEqual(Vec3()))
+    return Xfo();
+
+  Quat result;
+  if(this.locked[idx] && !this.axes[idx].almostEqual(Vec3())) {
+
+    Vec3 axis = parentSpace.ori.rotateVector(this.axes[idx]);
+    srcDir = (srcDir - (axis.dot(srcDir) * axis)).unit();
+    newDir = (newDir - (axis.dot(newDir) * axis)).unit();
+
+  }
+
+  Quat offsetOri;
+  offsetOri.setFrom2Vectors(srcDir, newDir);
+  result = parentSpace.ori * offsetOri;
+
+  global.ori = parentSpace.ori.sphericalLinearInterpolate(result, Float32(Math_clamp(this.amounts[idx], 0.0, 1.0)));
+
+  return parentSpace.inverse() * global;
 }
 
 function KrakenLookAtClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
@@ -79,40 +144,50 @@ function KrakenLookAtClip.apply(io KrakenKLRig rig, KrakenClipContext context, F
 }
 
 function JSONDictValue KrakenLookAtClip.saveToJson!() {
-  JSONArrayValue waves();
+  JSONArrayValue lookats();
   for(Size i=0;i<this.names.size();i++) {
-    JSONDictValue wave();
-    wave.setString('name', this.names[i]);
-    wave.setVec3('axis', this.axes[i]);
-    wave.setScalar('amplitude', this.amplitudes[i]);
-    wave.setScalar('shift', this.shifts[i]);
-    wave.setScalar('speed', this.speeds[i]);
-    wave.setScalar('offset', this.offsets[i]);
-    waves.add(wave);
+    JSONDictValue lookat();
+    lookat.setString('name', this.names[i]);
+    lookat.setVec3('target', this.targets[i]);
+    lookat.setVec3('axis', this.axes[i]);
+    lookat.setBoolean('locked', this.locked[i]);
+    lookat.setScalar('amount', this.amounts[i]);
+    lookats.add(lookat);
   }
   JSONDictValue content();
-  content.set('waves', waves);
+  content.setInteger('matrixIndex', this.matrixIndex);
+  if(this.childClip) {
+    content.setString('childClipType', this.childClip.type());
+    content.set('childClip', this.childClip.saveToJson());
+  }
+  content.set('lookats', lookats);
   return content;
 }
 
 function KrakenLookAtClip.loadFromJson!(JSONDictValue json) {
   this.names.resize(0);
   this.nameToId.clear();
-  this.axes.resize(0);
-  this.amplitudes.resize(0);
-  this.shifts.resize(0);
-  this.speeds.resize(0);
-  this.offsets.resize(0);
+  this.targets.resize(0);
+  this.amounts.resize(0);
+  this.rigVersion = 0;
 
-  JSONArrayValue waves = json.get('waves');
-  for(Size i=0;i<waves.size();i++) {
-    JSONDictValue wave = waves.get(i);
-    String name = wave.getString('name');
-    Vec3 axis = wave.getVec3('axis');
-    Float32 amplitude = wave.getScalar('amplitude');
-    Float32 shift = wave.getScalar('shift');
-    Float32 speed = wave.getScalar('speed');
-    Float32 offset = wave.getScalar('offset');
-    this.defineWave(name, axis, amplitude, shift, speed, offset);
+  this.matrixIndex = json.getInteger('matrixIndex');
+  String childClipType = json.getString('childClipType');
+  if(childClipType == "")
+    this.childClip = null;
+  else {
+    this.childClip = KrakenClip_getFromTypeName(childClipType);
+    this.childClip.loadFromJson(json.get('childClip'));
+  }
+
+  JSONArrayValue lookats = json.get('lookats');
+  for(Size i=0;i<lookats.size();i++) {
+    JSONDictValue lookat = lookats.get(i);
+    String name = lookat.getString('name');
+    Vec3 target = lookat.getVec3('target');
+    Vec3 axis = lookat.getVec3('axis');
+    Boolean locked = lookat.getBoolean('locked');
+    Float32 amount = lookat.getScalar('amount');
+    this.defineLookAt(name, target, axis, locked, amount);
   }
 }

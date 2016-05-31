@@ -9,6 +9,13 @@
     {
       "objectType" : "Port",
       "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
       "name" : "this",
       "execPortType" : "IO",
       "typeSpec" : "KrakenKLRig"

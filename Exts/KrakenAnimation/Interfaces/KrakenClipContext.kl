@@ -1,9 +1,30 @@
 require Math;
 
+interface KrakenKLRig;
+
 struct KrakenClipContext {
   Float64 time;
+  SInt32 maxEvalID;
+  Mat44 matrices[16];
+  Float32 channels[16];
+
+  Ref<KrakenKLRig> rig;
 };
+
+function KrakenClipContext() {
+  this.time = 0.0;
+  this.maxEvalID = -1;
+}
 
 function KrakenClipContext(Float64 time) {
   this.time = time;
+  this.maxEvalID = -1;
+}
+
+function KrakenClipContext.setMat!(Index index, Mat44 m) {
+  this.matrices[index] = m;
+}
+
+function KrakenClipContext.setChannel!(Index index, Float32 s) {
+  this.channels[index] = s;
 }

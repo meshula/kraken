@@ -5,4 +5,5 @@ cp /c/temp/KrakenAnimation/KrakenStaticClip/* ../../Presets/DFG/Kraken/KrakenAni
 cp /c/temp/KrakenAnimation/KrakenAbcClip/* ../../Presets/DFG/Kraken/KrakenAnimation/KrakenAbcClip/
 cp /c/temp/KrakenAnimation/KrakenClipStack/* ../../Presets/DFG/Kraken/KrakenAnimation/KrakenClipStack/
 cp /c/temp/KrakenAnimation/KrakenRotationWaveClip/* ../../Presets/DFG/Kraken/KrakenAnimation/KrakenRotationWaveClip/
+cp /c/temp/KrakenAnimation/KrakenLookAtClip/* ../../Presets/DFG/Kraken/KrakenAnimation/KrakenLookAtClip/
 cp /c/temp/KrakenAnimation/KrakenKLRigPoseAdaptor/* ../../Presets/DFG/Kraken/KrakenAnimation/KrakenKLRigPoseAdaptor/
