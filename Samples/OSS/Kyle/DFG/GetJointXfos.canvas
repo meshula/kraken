@@ -1,6 +1,6 @@
 {
   "objectType" : "Func",
-  "title" : "GetAllXfos",
+  "title" : "GetJointXfos",
   "ports" : [
     {
       "objectType" : "Port",
@@ -14,7 +14,7 @@
       "nodePortType" : "Out",
       "name" : "rig",
       "execPortType" : "In",
-      "typeSpec" : "KRK_fLucy_guide"
+      "typeSpec" : "KRK_Kyle_guide"
       },
     {
       "objectType" : "Port",
@@ -25,17 +25,17 @@
       }
     ],
   "extDeps" : {
-    "KRK_fLucy_guide" : "*"
+    "KRK_Kyle_guide" : "*"
     },
   "code" : "dfgEntry {
-  result = rig.getAllXfos();
+  result = rig.getJointXfos();
 }
 ",
   "args" : [
     {
-      "type" : "KRK_fLucy_guide",
+      "type" : "KRK_Kyle_guide",
       "value" : null,
-      "ext" : "KRK_fLucy_guide"
+      "ext" : "KRK_Kyle_guide"
       },
     {
       "type" : "Xfo[]",

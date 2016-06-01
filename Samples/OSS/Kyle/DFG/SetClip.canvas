@@ -1,6 +1,6 @@
 {
   "objectType" : "Func",
-  "title" : "Evaluate",
+  "title" : "SetClip",
   "ports" : [
     {
       "objectType" : "Port",
@@ -14,34 +14,32 @@
       "nodePortType" : "IO",
       "name" : "rig",
       "execPortType" : "IO",
-      "typeSpec" : "KRK_fLucy_guide"
+      "typeSpec" : "KRK_Kyle_guide"
       },
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
-      "name" : "context",
+      "name" : "clip",
       "execPortType" : "In",
-      "typeSpec" : "KrakenClipContext"
+      "typeSpec" : "KrakenClip"
       }
     ],
   "extDeps" : {
-    "KRK_fLucy_guide" : "*"
+    "KRK_Kyle_guide" : "*"
     },
   "code" : "dfgEntry {
-  rig.evaluate(context);
+  rig.setClip(clip);
 }
 ",
   "args" : [
     {
-      "type" : "KRK_fLucy_guide",
+      "type" : "KRK_Kyle_guide",
       "value" : null,
-      "ext" : "KRK_fLucy_guide"
+      "ext" : "KRK_Kyle_guide"
       },
     {
-      "type" : "KrakenClipContext",
-      "value" : {
-        "time" : 0
-        },
+      "type" : "KrakenClip",
+      "value" : null,
       "ext" : "KrakenAnimation"
       }
     ]

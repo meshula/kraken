@@ -1,0 +1,8 @@
+require KRK_Kyle_guide;
+
+operator entry() {
+  KRK_Kyle_guide rig();
+  KrakenClipContext context;
+  context.time = 1.0;
+  rig.evaluate(context);
+}
