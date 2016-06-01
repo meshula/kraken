@@ -155,6 +155,7 @@ class KrakenBipedBuildRigCmd(OpenMayaMPx.MPxCommand):
             OpenMaya.MGlobal.displayWarning('Kraken: Selected object is not the top node of a Kraken Rig!')
             return False
 
+        guideName = firstObjDepNode.name()
         guideRig = BipedGuideRig(guideName)
 
         synchronizer = plugins.getSynchronizer()
