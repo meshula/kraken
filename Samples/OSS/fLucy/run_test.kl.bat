@@ -1,4 +1,4 @@
-set FABRIC_LOG_LEVEL=0
+set FABRIC_LOG_LEVEL=4
 
 set FABRIC_DIR=Z:\dist\fabric\releases\FabricEngine-2.3.0-auto-2016052610-Windows-x86_64
 
