@@ -196,6 +196,22 @@ class BipedGuideRig(Rig):
         clavicleRightEndOutput = clavicleRightComponentGuide.getOutputByName('clavicleEnd')
         spinePelvisOutput = spineComponentGuide.getOutputByName('pelvis')
 
+        # Leg Left
+        legLeftIkHandleOutput = legLeftComponentGuide.getOutputByName('ikHandle')
+        legLeftLegEndOutput = legLeftComponentGuide.getOutputByName('legEnd')
+        legLeftLegEndFKOutput = legLeftComponentGuide.getOutputByName('legEndFK')
+
+        # Leg Right
+        legRightIkHandleOutput = legRightComponentGuide.getOutputByName('ikHandle')
+        legRightLegEndOutput = legRightComponentGuide.getOutputByName('legEnd')
+        legRightLegEndFKOutput = legRightComponentGuide.getOutputByName('legEndFK')
+
+        # Foot Left
+        footLeftIkTargetOutput = footLeftComponentGuide.getOutputByName('ikTarget')
+
+        # Foot Right
+        footRightIkTargetOutput = footRightComponentGuide.getOutputByName('ikTarget')
+
 
         # Spine
         spineGlobalSrtInput = spineComponentGuide.getInputByName('globalSRT')
@@ -273,6 +289,9 @@ class BipedGuideRig(Rig):
         legLeftPelvisInput = legLeftComponentGuide.getInputByName('pelvisInput')
         legLeftPelvisInput.setConnection(spinePelvisOutput)
 
+        legLeftPelvisInput = legLeftComponentGuide.getInputByName('ikTarget')
+        legLeftPelvisInput.setConnection(footLeftIkTargetOutput)
+
         # Leg Right
         legRightGlobalSrtInput = legRightComponentGuide.getInputByName('globalSRT')
         legRightGlobalSrtInput.setConnection(mainSrtOffsetOutput)
@@ -283,13 +302,35 @@ class BipedGuideRig(Rig):
         legRightPelvisInput = legRightComponentGuide.getInputByName('pelvisInput')
         legRightPelvisInput.setConnection(spinePelvisOutput)
 
+        legRightPelvisInput = legRightComponentGuide.getInputByName('ikTarget')
+        legRightPelvisInput.setConnection(footRightIkTargetOutput)
+
         # Foot Left
         footLeftGlobalSrtInput = footLeftComponentGuide.getInputByName('globalSRT')
         footLeftGlobalSrtInput.setConnection(mainSrtOffsetOutput)
 
+        footLeftIkHandleInput = footLeftComponentGuide.getInputByName('ikHandle')
+        footLeftIkHandleInput.setConnection(legLeftIkHandleOutput)
+
+        footLeftLegEndInput = footLeftComponentGuide.getInputByName('legEnd')
+        footLeftLegEndInput.setConnection(legLeftLegEndOutput)
+
+        footLeftLegEndFKInput = footLeftComponentGuide.getInputByName('legEndFK')
+        footLeftLegEndFKInput.setConnection(legLeftLegEndFKOutput)
+
+
         # Foot Right
         footRightGlobalSrtInput = footRightComponentGuide.getInputByName('globalSRT')
         footRightGlobalSrtInput.setConnection(mainSrtOffsetOutput)
+
+        footRightIkHandleInput = footRightComponentGuide.getInputByName('ikHandle')
+        footRightIkHandleInput.setConnection(legRightIkHandleOutput)
+
+        footRightLegEndInput = footRightComponentGuide.getInputByName('legEnd')
+        footRightLegEndInput.setConnection(legRightLegEndOutput)
+
+        footRightLegEndFKInput = footRightComponentGuide.getInputByName('legEndFK')
+        footRightLegEndFKInput.setConnection(legRightLegEndFKOutput)
 
         Profiler.getInstance().pop()
 
