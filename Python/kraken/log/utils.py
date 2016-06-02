@@ -4,14 +4,17 @@ from kraken.log import getLogger
 
 logger = getLogger('kraken')
 
-def fabricCallback(source, level, line):
-    """
 
-    Report levels:
-        Error = 0
-        Warning = 1
-        Info = 2
-        Debug = 3
+def fabricCallback(source, level, line):
+    """Callback method passed to the Fabric client to ensure that Fabric Core
+    messages are logged through the Kraken logger.
+
+    Fabric Report levels:
+
+    * Error = 0
+    * Warning = 1
+    * Info = 2
+    * Debug = 3
 
     """
 
