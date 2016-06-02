@@ -1,4 +1,4 @@
-"""Kraken - traverser.traverser module.
+"""Kraken - traverser module.
 
 Classes:
 Traverser - Base Traverser.
