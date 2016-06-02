@@ -81,7 +81,6 @@ class Config(object):
 
         return colors
 
-
     def getColors(self):
         """Gets the colors defined in the config.
 
@@ -114,7 +113,6 @@ class Config(object):
         }
 
         return colorMap
-
 
     def getColorMap(self):
         """Gets the color map defined in the config.
@@ -171,7 +169,6 @@ class Config(object):
         }
 
         return nameTemplate
-
 
     def getNameTemplate(self):
         """Returns the naming template for this configuration.
@@ -937,7 +934,6 @@ class Config(object):
 
         return controlShapes
 
-
     def getControlShapes(self):
         """Returns the control shapes for this configuration.
 
@@ -961,7 +957,6 @@ class Config(object):
         """
 
         return self._explicitNaming
-
 
     def setExplicitNaming(self, value):
         """Set the config to use explicit naming.
@@ -990,7 +985,6 @@ class Config(object):
 
         """
         return self._metaData.get(key, value)
-
 
     def setMetaData(self, key, value):
         """Set the config to contain a metaData flag.
