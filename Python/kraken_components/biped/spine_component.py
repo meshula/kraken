@@ -202,27 +202,32 @@ class SpineComponentRig(SpineComponent):
         self.cogCtrl = Control('cog', parent=self.cogCtrlSpace, shape="circle")
         self.cogCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))
         self.cogCtrl.setColor("orange")
+        self.cogCtrl.lockScale(True, True, True)
 
         # Spine01
         self.spine01CtrlSpace = CtrlSpace('spine01', parent=self.cogCtrl)
         self.spine01Ctrl = Control('spine01', parent=self.spine01CtrlSpace, shape="circle")
         self.spine01Ctrl.scalePoints(Vec3(4.0, 4.0, 4.0))
+        self.spine01Ctrl.lockScale(True, True, True)
 
         # Spine02
         self.spine02CtrlSpace = CtrlSpace('spine02', parent=self.spine01Ctrl)
         self.spine02Ctrl = Control('spine02', parent=self.spine02CtrlSpace, shape="circle")
         self.spine02Ctrl.scalePoints(Vec3(4.5, 4.5, 4.5))
+        self.spine02Ctrl.lockScale(True, True, True)
 
 
         # Spine04
         self.spine04CtrlSpace = CtrlSpace('spine04', parent=self.cogCtrl)
         self.spine04Ctrl = Control('spine04', parent=self.spine04CtrlSpace, shape="circle")
         self.spine04Ctrl.scalePoints(Vec3(6.0, 6.0, 6.0))
+        self.spine04Ctrl.lockScale(True, True, True)
 
         # Spine03
         self.spine03CtrlSpace = CtrlSpace('spine03', parent=self.spine04Ctrl)
         self.spine03Ctrl = Control('spine03', parent=self.spine03CtrlSpace, shape="circle")
         self.spine03Ctrl.scalePoints(Vec3(4.5, 4.5, 4.5))
+        self.spine03Ctrl.lockScale(True, True, True)
         self.spine03Ctrl.setColor("blue")
 
         # Pelvis
@@ -230,6 +235,8 @@ class SpineComponentRig(SpineComponent):
         self.pelvisCtrl = Control('pelvis', parent=self.pelvisCtrlSpace, shape="cube")
         self.pelvisCtrl.alignOnYAxis(negative=True)
         self.pelvisCtrl.scalePoints(Vec3(2.0, 1.5, 1.5))
+        self.pelvisCtrl.lockTranslation(True, True, True)
+        self.pelvisCtrl.lockScale(True, True, True)
 
 
         # ==========
