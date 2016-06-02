@@ -214,16 +214,16 @@ class SpineComponentRig(SpineComponent):
         self.spine02Ctrl.scalePoints(Vec3(4.5, 4.5, 4.5))
 
 
-        # Spine03
-        self.spine03CtrlSpace = CtrlSpace('spine03', parent=self.spine02Ctrl)
-        self.spine03Ctrl = Control('spine03', parent=self.spine03CtrlSpace, shape="circle")
-        self.spine03Ctrl.scalePoints(Vec3(4.5, 4.5, 4.5))
-        self.spine03Ctrl.setColor("blue")
-
         # Spine04
         self.spine04CtrlSpace = CtrlSpace('spine04', parent=self.cogCtrl)
         self.spine04Ctrl = Control('spine04', parent=self.spine04CtrlSpace, shape="circle")
         self.spine04Ctrl.scalePoints(Vec3(6.0, 6.0, 6.0))
+
+        # Spine03
+        self.spine03CtrlSpace = CtrlSpace('spine03', parent=self.spine04Ctrl)
+        self.spine03Ctrl = Control('spine03', parent=self.spine03CtrlSpace, shape="circle")
+        self.spine03Ctrl.scalePoints(Vec3(4.5, 4.5, 4.5))
+        self.spine03Ctrl.setColor("blue")
 
         # Pelvis
         self.pelvisCtrlSpace = CtrlSpace('pelvis', parent=self.cogCtrl)
