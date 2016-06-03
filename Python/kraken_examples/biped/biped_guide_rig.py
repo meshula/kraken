@@ -186,7 +186,9 @@ class BipedGuideRig(Rig):
         # Connections
         # ============
 
+        # =======
         # Outputs
+        # =======
         mainSrtRigScaleOutput = mainSrtComponentGuide.getOutputByName('rigScale')
         mainSrtOffsetOutput = mainSrtComponentGuide.getOutputByName('offset')
         spineEndOutput = spineComponentGuide.getOutputByName('spineEnd')
@@ -195,6 +197,12 @@ class BipedGuideRig(Rig):
         clavicleLeftEndOutput = clavicleLeftComponentGuide.getOutputByName('clavicleEnd')
         clavicleRightEndOutput = clavicleRightComponentGuide.getOutputByName('clavicleEnd')
         spinePelvisOutput = spineComponentGuide.getOutputByName('pelvis')
+
+        # Arm Left
+        armLeftWristOutput = armLeftComponentGuide.getOutputByName('wrist')
+
+        # Arm Right
+        armRightWristOutput = armRightComponentGuide.getOutputByName('wrist')
 
         # Leg Left
         legLeftIkHandleOutput = legLeftComponentGuide.getOutputByName('ikHandle')
@@ -212,7 +220,9 @@ class BipedGuideRig(Rig):
         # Foot Right
         footRightIkTargetOutput = footRightComponentGuide.getOutputByName('ikTarget')
 
-
+        # =========================
+        # Inputs & Set Connections
+        # =========================
         # Spine
         spineGlobalSrtInput = spineComponentGuide.getInputByName('globalSRT')
         spineGlobalSrtInput.setConnection(mainSrtOffsetOutput)
@@ -275,9 +285,15 @@ class BipedGuideRig(Rig):
         handLeftGlobalSrtInput = handLeftComponentGuide.getInputByName('globalSRT')
         handLeftGlobalSrtInput.setConnection(mainSrtOffsetOutput)
 
+        handLeftArmEndInput = handLeftComponentGuide.getInputByName('armEnd')
+        handLeftArmEndInput.setConnection(armLeftWristOutput)
+
         # Hand Right
         handRightGlobalSrtInput = handRightComponentGuide.getInputByName('globalSRT')
         handRightGlobalSrtInput.setConnection(mainSrtOffsetOutput)
+
+        handRightArmEndInput = handRightComponentGuide.getInputByName('armEnd')
+        handRightArmEndInput.setConnection(armRightWristOutput)
 
         # Leg Left
         legLeftGlobalSrtInput = legLeftComponentGuide.getInputByName('globalSRT')
