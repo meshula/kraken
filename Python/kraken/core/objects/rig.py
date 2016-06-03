@@ -182,6 +182,9 @@ class Rig(Container):
             for k, v in jsonData['metaData'].iteritems():
                 self.setMetaData(k, v)
 
+        if 'guideData' in jsonData:
+            self.setMetaData('guideData', jsonData['guideData'])
+
         Profiler.getInstance().pop()
 
     def writeGuideDefinitionFile(self, filepath):
@@ -251,8 +254,12 @@ class Rig(Container):
 
         """
 
-        guideData = {
-            'name': self.getName()
+        guideData = self.getData()
+        guideJSONData = prepareToSave(guideData)
+
+        rigBuildData = {
+            'name': self.getName(),
+            'guideData': guideJSONData
         }
 
         componentsJson = []
@@ -260,7 +267,7 @@ class Rig(Container):
         for component in guideComponents:
             componentsJson.append(component.getRigBuildData())
 
-        guideData['components'] = componentsJson
+        rigBuildData['components'] = componentsJson
 
         connectionsJson = []
         for component in guideComponents:
@@ -275,9 +282,9 @@ class Rig(Container):
                     }
                     connectionsJson.append(connectionJson)
 
-        guideData['connections'] = connectionsJson
+        rigBuildData['connections'] = connectionsJson
 
-        return guideData
+        return rigBuildData
 
     # ==========
     # Meta Data

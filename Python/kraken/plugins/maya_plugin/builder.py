@@ -5,6 +5,7 @@ Builder -- Component representation.
 
 """
 
+import json
 import logging
 
 from kraken.log import getLogger
@@ -17,6 +18,8 @@ from kraken.core.builder import Builder
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.plugins.maya_plugin.utils import *
+
+from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 
 import maya.cmds as cmds
 
@@ -67,13 +70,27 @@ class Builder(Builder):
         pm.parent(dccSceneItem, parentNode)
         pm.rename(dccSceneItem, buildName)
 
-        krakenRigAttr = dccSceneItem.addAttr('krakenRig',
-                                             niceName='krakenRig',
-                                             attributeType="bool",
-                                             defaultValue=True,
-                                             keyable=False)
+        if kSceneItem.isTypeOf('Rig'):
+            krakenRigAttr = dccSceneItem.addAttr('krakenRig',
+                                                 niceName='krakenRig',
+                                                 attributeType="bool",
+                                                 defaultValue=True,
+                                                 keyable=False)
 
-        dccSceneItem.attr('krakenRig').setLocked(True)
+            dccSceneItem.attr('krakenRig').setLocked(True)
+
+            # Put Rig Data on DCC Item
+            metaData = kSceneItem.getMetaData()
+            if 'guideData' in metaData:
+                pureJSON = metaData['guideData']
+
+                krakenRigDataAttr = dccSceneItem.addAttr('krakenRigData',
+                                                     niceName='krakenRigData',
+                                                     dataType="string",
+                                                     keyable=False)
+
+                dccSceneItem.attr('krakenRigData').set(json.dumps(pureJSON, indent=2))
+                dccSceneItem.attr('krakenRigData').setLocked(True)
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 

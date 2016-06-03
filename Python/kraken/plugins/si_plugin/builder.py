@@ -5,6 +5,7 @@ Builder -- Component representation.
 
 """
 
+import json
 import logging
 
 from kraken.log import getLogger
@@ -12,6 +13,8 @@ from kraken.log import getLogger
 from kraken.core.maths import Math_radToDeg, RotationOrder
 from kraken.core.kraken_system import ks
 from kraken.core.builder import Builder
+
+from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 
 from kraken.plugins.si_plugin.utils import *
 
@@ -74,7 +77,17 @@ class Builder(Builder):
 
         # Add custom param set to indicate that this object is the top level
         # Kraken Rig object
-        dccSceneItem.AddProperty("CustomParameterSet", False, 'krakenRig')
+
+        if kSceneItem.isTypeOf('Rig'):
+            dccSceneItem.AddProperty("CustomParameterSet", False, 'krakenRig')
+
+            # Put Rig Data on DCC Item
+            metaData = kSceneItem.getMetaData()
+            if 'guideData' in metaData:
+                pureJSON = metaData['guideData']
+
+                rigData = dccSceneItem.AddProperty("UserDataBlob", False, 'krakenRigData')
+                rigData.Value = json.dumps(pureJSON, indent=2)
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 

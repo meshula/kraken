@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 from PySide import QtGui
 
@@ -25,6 +26,9 @@ from kraken import plugins
 from kraken.core.objects.rig import Rig
 from kraken.ui.kraken_window import KrakenWindow
 from kraken.ui.kraken_splash import KrakenSplash
+
+from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
+
 from kraken_examples.biped.biped_guide_rig import BipedGuideRig
 
 os.environ['KRAKEN_DCC'] = 'Maya'
@@ -199,6 +203,65 @@ class KrakenBipedBuildRigCmd(OpenMayaMPx.MPxCommand):
         return OpenMayaMPx.asMPxPtr(KrakenBipedBuildRigCmd())
 
 
+class krakenBuildGuideFromRigCmd(OpenMayaMPx.MPxCommand):
+    def __init__(self):
+        OpenMayaMPx.MPxCommand.__init__(self)
+
+    def isUndoable(self):
+        return True
+
+    def doIt(self, argList):
+
+        selObjects = self.parseArgs(argList)
+        if selObjects.length() < 1:
+            OpenMaya.MGlobal.displayWarning('Kraken: No objects selected, Build Guide From Rig cancelled.')
+            return False
+
+        firstObj = OpenMaya.MObject()
+        selObjects.getDependNode(0, firstObj)
+
+        firstObjDepNode = maya.OpenMaya.MFnDependencyNode(firstObj)
+        if firstObjDepNode.hasAttribute('krakenRig') is False:
+            OpenMaya.MGlobal.displayWarning('Kraken: Selected object is not the top node of a Kraken Rig!')
+            return False
+
+        guideData = firstObjDepNode.findPlug("krakenRigData").asString()
+
+        rig = Rig()
+        jsonData = json.loads(guideData)
+        jsonData = prepareToLoad(jsonData)
+        rig.loadRigDefinition(jsonData)
+        rig.setName(rig.getName())
+
+        builder = plugins.getBuilder()
+        builtRig = builder.build(rig)
+
+        # return builtRig
+        return None
+
+    def parseArgs(self, args):
+        argData = OpenMaya.MArgDatabase(self.syntax(), args)
+
+        selObjects = OpenMaya.MSelectionList()
+        argData.getObjects(selObjects)
+
+        return selObjects
+
+    @staticmethod
+    def syntaxCreator():
+        syntax = OpenMaya.MSyntax()
+
+        syntax.useSelectionAsDefault(True)
+        syntax.setObjectType(syntax.kSelectionList, 0, 1)
+
+        return syntax
+
+    # Creator
+    @staticmethod
+    def creator():
+        return OpenMayaMPx.asMPxPtr(krakenBuildGuideFromRigCmd())
+
+
 def setupKrakenMenu():
     mainWindow = maya.mel.eval('$tmpVar=$gMainWindow')
 
@@ -213,6 +276,8 @@ def setupKrakenMenu():
     pm.menuItem(parent=krakenMenu, divider=True, dividerLabel='Biped')
     pm.menuItem(parent=krakenMenu, label="Build Biped Guide", c="from maya import cmds; cmds.krakenBipedBuildGuide()")
     pm.menuItem(parent=krakenMenu, label="Build Biped Rig", c="from maya import cmds; cmds.krakenBipedBuildRig()")
+    pm.menuItem(parent=krakenMenu, divider=True, dividerLabel='Utils')
+    pm.menuItem(parent=krakenMenu, label="Build Guide From Rig", c="from maya import cmds; cmds.krakenBuildGuideFromRig()")
     pm.menuItem(parent=krakenMenu, divider=True, dividerLabel='Resources')
     pm.menuItem(parent=krakenMenu, label="Kraken Web Site", c="import webbrowser; webbrowser.open_new_tab('http://fabric-engine.github.io/Kraken')")
     pm.menuItem(parent=krakenMenu, label="Kraken Documentation", c="import webbrowser; webbrowser.open_new_tab('http://kraken-rigging-framework.readthedocs.io')")
@@ -255,6 +320,11 @@ def initializePlugin(mobject):
     except:
         sys.stderr.write('Failed to register commands: krakenBipedBuildRig')
         raise
+    try:
+        mplugin.registerCommand('krakenBuildGuideFromRig', krakenBuildGuideFromRigCmd.creator, krakenBuildGuideFromRigCmd.syntaxCreator)
+    except:
+        sys.stderr.write('Failed to register commands: krakenBuildGuideFromRig')
+        raise
 
 
     krakenLoadMenu = os.getenv('KRAKEN_LOAD_MENU', 'True')
@@ -282,3 +352,7 @@ def uninitializePlugin(mobject):
         mplugin.deregisterCommand('krakenBipedBuildRig')
     except:
         sys.stderr.write('Failed to unregister command: krakenBipedBuildRig')
+    try:
+        mplugin.deregisterCommand('krakenBuildGuideFromRig')
+    except:
+        sys.stderr.write('Failed to unregister command: krakenBuildGuideFromRig')
