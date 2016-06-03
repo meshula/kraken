@@ -3,7 +3,7 @@
     "Objects/KrakenObject3D.kl",
     "Objects/KrakenCtrlSpace.kl",
     "Objects/KrakenComponentGroup.kl",
-    "Objects/KrakenContainer.kl"
+    "Objects/KrakenContainer.kl",
     "Objects/KrakenJoint.kl",
     "Objects/KrakenLayer.kl",
     "Objects/KrakenLocator.kl",
@@ -12,7 +12,7 @@
     "Objects/KrakenControl.kl",
     "Objects/KrakenHierarchyGroup.kl",
     "Objects/KrakenRig.kl",
-    
+
     "Attributes/KrakenAttribute.kl",
     "Attributes/KrakenBoolAttribute.kl",
     "Attributes/KrakenColorAttribute.kl",

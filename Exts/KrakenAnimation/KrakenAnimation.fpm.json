@@ -6,10 +6,10 @@
     "Interfaces/KrakenClipLookup.kl",
     "Interfaces/KrakenKLRigPoseAdaptor.kl",
     "Serialization/KrakenClipIO.kl",
-    
+
     "Clips/Static/KrakenStaticClip.kl",
-    "Clips/Alembic/KrakenAbcClip.kl"
-    "Clips/Containers/KrakenClipStack.kl"
+    "Clips/Alembic/KrakenAbcClip.kl",
+    "Clips/Containers/KrakenClipStack.kl",
     "Clips/Procedural/KrakenRotationWaveClip.kl"
   ]
 }
