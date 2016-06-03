@@ -33,11 +33,4 @@ set PYTHONPATH=%FABRIC_DIR%\Python\2.7;%KRAKEN_PATH%\Python;%PYTHONPATH%;
 
 cd /d %KRAKEN_PATH%
 
-:: Until Bernhard can figure out why his python canvas does not work
-if "%USER%" == "bhx" (
-    %FABRIC_DIR%/bin/canvas
-)
-else (
-    python %FABRIC_DIR%/bin/canvas.py
-)
-
+python %FABRIC_DIR%/bin/canvas.py
