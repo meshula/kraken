@@ -993,7 +993,7 @@ class Builder(Builder):
         dfgExec.setTitle("Solve")
         dfgExec.addExtDep(rigType)
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
-        dfgExec.setCode("dfgEntry {\n  %s.solve();\n}\n" % (funcResult))
+        dfgExec.setCode("dfgEntry {\n  %s.solve(KrakenClipContext());\n}\n" % (funcResult))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 

@@ -1,4 +1,4 @@
-set FABRIC_LOG_LEVEL=4
+set FABRIC_LOG_LEVEL=0
 
 set FABRIC_DIR=Z:\dist\fabric\releases\FabricEngine-2.3.0-auto-2016052610-Windows-x86_64
 
@@ -33,11 +33,4 @@ set PYTHONPATH=%FABRIC_DIR%\Python\2.7;%KRAKEN_PATH%\Python;%PYTHONPATH%;
 
 cd /d %KRAKEN_PATH%
 
-:: Until Bernhard can figure out why his python canvas does not work
-if "%USER%" == "bhx" (
-    %FABRIC_DIR%/bin/canvas
-)
-else (
-    python %FABRIC_DIR%/bin/canvas.py
-)
-
+python %FABRIC_DIR%/bin/canvas.py

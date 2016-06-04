@@ -271,6 +271,13 @@ class OSSMainComponentRig(OSSMainComponent):
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
         self.offsetCtrlSpace = self.offsetCtrl.insertCtrlSpace()
 
+        self.rootCtrl = FKControl('root', shape='sphere', parent=self.mainCtrl)
+        self.rootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.rootCtrl.setColor("purpleLight")
+        self.rootCtrl.lockScale(x=True, y=True, z=True)
+        self.rootCtrl.scalePoints(Vec3(3.0, 3.0, 3.0))
+        self.rootCtrlSpace = self.rootCtrl.insertCtrlSpace()
+
         # COG
         self.cogCtrl = FKControl('cog', parent=self.offsetCtrl, shape="circle")
         self.cogCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
@@ -353,6 +360,7 @@ class OSSMainComponentRig(OSSMainComponent):
         # ================
         self.mainCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
         self.offsetCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
+        self.rootCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
         self.cogCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
 
         # =======================
@@ -362,6 +370,7 @@ class OSSMainComponentRig(OSSMainComponent):
         self.mainCtrl.xfo = data["mainXfo"]
         self.offsetCtrlSpace.xfo = data["mainXfo"]
         self.offsetCtrl.xfo = data["mainXfo"]
+        self.rootCtrl.xfo = data["mainXfo"]
 
         self.cogCtrlSpace.xfo.tr = data["cogPosition"]
         self.cogCtrl.xfo.tr = data["cogPosition"]
@@ -421,8 +430,8 @@ class OSSMainComponentRig(OSSMainComponent):
 
         self.rootDef = Joint('root', parent=self.deformersParent)
         self.rootDef.setComponent(self) # Need an elegant automatic way to do this
-        self.rootDef.constrainTo(self.cogCtrl, maintainOffset=True)
-        self.rootOutputTargetConstraint = self.rootOutputTgt.constrainTo(self.cogCtrl, maintainOffset=True)
+        self.rootDef.constrainTo(self.rootCtrl)
+        self.rootOutputTargetConstraint = self.rootOutputTgt.constrainTo(self.rootCtrl)
 
         #Set all parents to rootDef since that is the only joint option
         self.rootOutputTgt.parentJoint = self.rootDef
