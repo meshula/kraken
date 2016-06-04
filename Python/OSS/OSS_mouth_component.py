@@ -73,6 +73,10 @@ class OSSMouthGuide(OSSMouth):
         self.lipCtrlNames = StringAttribute('lipCtrlNames', value="1 Sneer", parent=self.guideSettingsAttrGrp)
         self.numSpansAttr = IntegerAttribute('numSpans', value=13, minValue=0, maxValue=20,  parent=self.guideSettingsAttrGrp)
 
+        self.alignXAttr = IntegerAttribute('alignX', value=2, minValue=-3, maxValue=3,  parent=self.guideSettingsAttrGrp)
+        self.alignYAttr = IntegerAttribute('alignY', value=-1, minValue=-3, maxValue=3,  parent=self.guideSettingsAttrGrp)
+        self.alignZAttr = IntegerAttribute('alignZ', value=3, minValue=-3, maxValue=3,  parent=self.guideSettingsAttrGrp)
+
         # midLip
         self.midLipCtrl = Control('midLip', parent=self.ctrlCmpGrp)
         self.midLipCtrl.lockTranslation(x=True, y=False, z=False)
@@ -101,8 +105,6 @@ class OSSMouthGuide(OSSMouth):
         self.loDummy = Control('loDummy', parent=self.ctrlCmpGrp)
 
 
-        self.lipCtrlNames.setValueChangeCallback(self.updatelipCtrls)
-        self.numSpansAttr.setValueChangeCallback(self.updateDefNames)
 
         for ctrl in [self.L_midLipHandleCtrl,
                      self.R_midLipHandleCtrl,
@@ -151,7 +153,10 @@ class OSSMouthGuide(OSSMouth):
                 "R_MouthXfo": Xfo(Vec3(-3, 15, 3)),
                 "L_MouthOutXfo": Xfo(Vec3(4, 15, 2)),
                 "R_MouthOutXfo": Xfo(Vec3(-4, 15, 2)),
-                "mouthEndXfo": Xfo(Vec3(0, 15, 4))
+                "mouthEndXfo": Xfo(Vec3(0, 15, 4)),
+                "alignX": 2,
+                "alignY": -1,
+                "alignZ": 3
                }
 
 
@@ -679,6 +684,10 @@ class OSSMouthRig(OSSMouth):
         # ===============
         # Add NURBSCurveXfoSolver Canvas Op
         # Add lowLip Guide Canvas Op
+        self.alignX = data["alignX"]
+        self.alignY = data["alignY"]
+        self.alignZ = data["alignZ"]
+
         self.upLipRigOp = KLOperator('upLipRigOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
 
         self.addOperator(self.upLipRigOp)
@@ -711,9 +720,9 @@ class OSSMouthRig(OSSMouth):
 
         self.upLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.upLipRigOp.setInput('rigScale', 1.0)
-        self.upLipRigOp.setInput('alignX', 2)
-        self.upLipRigOp.setInput('alignY', 3)
-        self.upLipRigOp.setInput('alignZ', 1)
+        self.upLipRigOp.setInput('alignX', self.alignX )
+        self.upLipRigOp.setInput('alignY', self.alignY )
+        self.upLipRigOp.setInput('alignZ', self.alignZ )
         self.upLipRigOp.setInput('degree', 4)
         self.upLipRigOp.setInput('keepArcLength', 0.0)
         self.upLipRigOp.setInput('compressionAmt', 0.0)
@@ -748,9 +757,9 @@ class OSSMouthRig(OSSMouth):
 
         self.loLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.loLipRigOp.setInput('rigScale', 1.0)
-        self.loLipRigOp.setInput('alignX', 2)
-        self.loLipRigOp.setInput('alignY', 3)
-        self.loLipRigOp.setInput('alignZ', 1)
+        self.loLipRigOp.setInput('alignX', self.alignX )
+        self.loLipRigOp.setInput('alignY', self.alignY )
+        self.loLipRigOp.setInput('alignZ', self.alignZ )
         self.loLipRigOp.setInput('degree', 4)
         self.loLipRigOp.setInput('keepArcLength', 0.0)
         self.loLipRigOp.setInput('compressionAmt', 0.0)
@@ -863,9 +872,9 @@ class OSSMouthRig(OSSMouth):
         self.upLipDefOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.upLipDefOp.setInput('rigScale', 1.0)
         self.upLipDefOp.setInput('degree', 3)
-        self.upLipDefOp.setInput('alignX', -1)
-        self.upLipDefOp.setInput('alignY', 3)
-        self.upLipDefOp.setInput('alignZ', 2)
+        self.upLipDefOp.setInput('alignX', self.alignX )
+        self.upLipDefOp.setInput('alignY', self.alignY )
+        self.upLipDefOp.setInput('alignZ', self.alignZ )
         self.upLipDefOp.setInput('keepArcLength', 0.0)
         self.upLipDefOp.setInput('compressionAmt', 0.0)
         self.upLipDefOp.setInput('followCurveTangent', 0.5)
@@ -918,9 +927,9 @@ class OSSMouthRig(OSSMouth):
         self.loLipDefOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.loLipDefOp.setInput('rigScale', 1.0)
         self.loLipDefOp.setInput('degree', 3)
-        self.loLipDefOp.setInput('alignX', -1)
-        self.loLipDefOp.setInput('alignY', 3)
-        self.loLipDefOp.setInput('alignZ', 2)
+        self.loLipDefOp.setInput('alignX', self.alignX )
+        self.loLipDefOp.setInput('alignY', self.alignY )
+        self.loLipDefOp.setInput('alignZ', self.alignZ )
         self.loLipDefOp.setInput('keepArcLength', 0.0)
         self.loLipDefOp.setInput('compressionAmt', 0.0)
         self.loLipDefOp.setInput('followCurveTangent', 0.5)

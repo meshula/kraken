@@ -176,10 +176,10 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     altTangents[i] = localAltTangent;
     altNormals[i]  = parent.translation() - positions[i];
     __evalXfosTask(i, xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, altTangents, altNormals);
-    // __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
-    // Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
-    // xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
-    xfos[i].sc = Vec3(1,1,1);
+    __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
+    Scalar localCompression = Math_linearInterpolate(1, compression[i], compressionAmt);
+    xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
+    xfos[i].align(alignX,alignY,alignZ);
     outputs[i] = xfos[i].toMat44();
   }
   
