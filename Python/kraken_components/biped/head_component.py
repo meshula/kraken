@@ -110,7 +110,7 @@ class HeadComponentGuide(HeadComponent):
             "eyeRightCrvData": self.eyeRightCtrl.getCurveData(),
             "jawXfo": Xfo(Vec3(0.0, 17.875, -0.275)),
             "jawCrvData": self.jawCtrl.getCurveData()
-       }
+        }
 
         self.loadData(self.default_data)
 

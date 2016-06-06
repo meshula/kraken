@@ -12,7 +12,6 @@ import os
 from container import Container
 from kraken.core.kraken_system import KrakenSystem
 from kraken.core.profiler import Profiler
-from kraken.core.objects.layer import Layer
 from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 
 

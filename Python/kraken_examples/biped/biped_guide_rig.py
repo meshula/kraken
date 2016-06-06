@@ -193,7 +193,6 @@ class BipedGuideRig(Rig):
         mainSrtOffsetOutput = mainSrtComponentGuide.getOutputByName('offset')
         spineEndOutput = spineComponentGuide.getOutputByName('spineEnd')
         neckEndOutput = neckComponentGuide.getOutputByName('neckEnd')
-        spineEndOutput = spineComponentGuide.getOutputByName('spineEnd')
         clavicleLeftEndOutput = clavicleLeftComponentGuide.getOutputByName('clavicleEnd')
         clavicleRightEndOutput = clavicleRightComponentGuide.getOutputByName('clavicleEnd')
         spinePelvisOutput = spineComponentGuide.getOutputByName('pelvis')
@@ -355,9 +354,9 @@ if __name__ == "__main__":
     from kraken import plugins
 
     try:
-        Profiler.getInstance().push('bob_guide_build')
+        Profiler.getInstance().push('biped_guide_build')
 
-        bipedGuide = BipedGuideRig('char_biped_guide')
+        bipedGuide = BipedGuideRig('Biped_guide')
 
         builder = plugins.getBuilder()
         builder.build(bipedGuide)
