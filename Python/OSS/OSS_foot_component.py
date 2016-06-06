@@ -260,8 +260,9 @@ class OSSFootComponentGuide(OSSFootComponent):
         handleXfo = self.handleCtrl.xfo
         # Not great.  This assumes that guide ctrl has been mirrored from left side
         # Another case where the guide system should feed in correct values
-        if self.getLocation() == 'R':
-            handleXfo.ori = handleXfo.ori.mirror(0)
+        # Fix how Kraken mirrors guides!!!
+        #if self.getLocation() == 'R':
+        #    handleXfo.ori = handleXfo.ori.mirror(0)
 
         data['footXfo'] = footXfo
         data['ballXfo'] = ballXfo

@@ -323,8 +323,8 @@ class OSSHandComponentGuide(OSSHandComponent):
         handleXfo = self.handleCtrl.xfo
         # Not great.  This assumes that guide ctrl has been mirrored from left side
         # Another case where the guide system should feed in correct values
-        if self.getLocation() == 'R':
-            handleXfo.ori = handleXfo.ori.mirror(0)
+        #if self.getLocation() == 'R':
+        #    handleXfo.ori = handleXfo.ori.mirror(0)
 
         data['handXfo'] = handXfo
         data['palmXfo'] = palmXfo
