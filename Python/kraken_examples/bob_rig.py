@@ -1,6 +1,6 @@
 from kraken.core.maths import Vec3, Quat, Xfo
 
-from kraken.core.objects.container import Container
+from kraken.core.objects.rig import Rig
 
 from kraken_components.generic.mainSrt_component import MainSrtComponentRig
 from kraken_components.biped.head_component import HeadComponentRig
@@ -13,7 +13,7 @@ from kraken_components.biped.neck_component import NeckComponentGuide, NeckCompo
 from kraken.core.profiler import Profiler
 
 
-class BobRig(Container):
+class BobRig(Rig):
     """Simple biped test rig.
 
     This example shows how to create a simple scripted biped rig that loads data
@@ -43,8 +43,9 @@ class BobRig(Container):
         neckComponentGuide = NeckComponentGuide("neck")
         neckComponentGuide.loadData({
             "location": "M",
-            "neckPosition": Vec3(0.0, 16.5572, -0.6915),
-            "neckEndPosition": Vec3(0.0, 17.4756, -0.421)
+            "neckXfo": Xfo(ori=Quat(Vec3(-0.371748030186, -0.601501047611, 0.371748059988), 0.601500988007), tr=Vec3(0.0, 16.0, -0.75), sc=Vec3(1.00000011921, 1.0, 1.00000011921)),
+            "neckMidXfo": Xfo(ori=Quat(Vec3(-0.371748030186, -0.601501047611, 0.371748059988), 0.601500988007), tr=Vec3(0.0, 16.5, -0.5), sc=Vec3(1.00000011921, 1.0, 1.00000011921)),
+            "neckEndXfo": Xfo(ori=Quat(Vec3(-0.371748030186, -0.601501047611, 0.371748059988), 0.601500988007), tr=Vec3(0.0, 17.0, -0.25), sc=Vec3(1.0, 1.0, 1.0))
         })
 
         neckComponent = NeckComponentRig("neck", self)
@@ -52,11 +53,10 @@ class BobRig(Container):
 
         headComponent = HeadComponentRig("head", self)
         headComponent.loadData(data={
-            "headPosition": Vec3(0.0, 17.4756, -0.421),
-            "headEndPosition": Vec3(0.0, 19.5, -0.421),
-            "eyeLeftPosition": Vec3(0.3497, 18.0878, 0.6088),
-            "eyeRightPosition": Vec3(-0.3497, 18.0878, 0.6088),
-            "jawPosition": Vec3(0.0, 17.613, -0.2731)
+            "headXfo": Xfo(Vec3(0.0, 17.5, -0.5)),
+            "eyeLeftXfo": Xfo(tr=Vec3(0.375, 18.5, 0.5), ori=Quat(Vec3(-0.0, -0.707106769085, -0.0), 0.707106769085)),
+            "eyeRightXfo": Xfo(tr=Vec3(-0.375, 18.5, 0.5), ori=Quat(Vec3(-0.0, -0.707106769085, -0.0), 0.707106769085)),
+            "jawXfo": Xfo(Vec3(0.0, 17.875, -0.275))
         })
 
         clavicleLeftComponentGuide = ClavicleComponentGuide("clavicle")
@@ -83,7 +83,7 @@ class BobRig(Container):
 
         armLeftComponentGuide = ArmComponentGuide("arm")
         armLeftComponentGuide.loadData({
-            "location":"L",
+            "location": "L",
             "bicepXfo": Xfo(Vec3(2.27, 15.295, -0.753)),
             "forearmXfo": Xfo(Vec3(5.039, 13.56, -0.859)),
             "wristXfo": Xfo(Vec3(7.1886, 12.2819, 0.4906)),
@@ -98,7 +98,7 @@ class BobRig(Container):
 
         armRightComponentGuide = ArmComponentGuide("arm")
         armRightComponentGuide.loadData({
-            "location":"R",
+            "location": "R",
             "bicepXfo": Xfo(Vec3(-2.27, 15.295, -0.753)),
             "forearmXfo": Xfo(Vec3(-5.039, 13.56, -0.859)),
             "wristXfo": Xfo(Vec3(-7.1886, 12.2819, 0.4906)),
@@ -109,11 +109,11 @@ class BobRig(Container):
         })
 
         armRightComponent = ArmComponentRig("arm", self)
-        armRightComponent.loadData(data=armRightComponentGuide.getRigBuildData() )
+        armRightComponent.loadData(data=armRightComponentGuide.getRigBuildData())
 
         legLeftComponentGuide = LegComponentGuide("leg")
         legLeftComponentGuide.loadData({
-            "name":"Leg",
+            "name": "Leg",
             "location": "L",
             "femurXfo": Xfo(Vec3(0.9811, 9.769, -0.4572)),
             "kneeXfo": Xfo(Vec3(1.4488, 5.4418, -0.5348)),
@@ -127,7 +127,7 @@ class BobRig(Container):
 
         legRightComponentGuide = LegComponentGuide("leg")
         legRightComponentGuide.loadData({
-            "name":"Leg",
+            "name": "Leg",
             "location": "R",
             "femurXfo": Xfo(Vec3(-0.9811, 9.769, -0.4572)),
             "kneeXfo": Xfo(Vec3(-1.4488, 5.4418, -0.5348)),
@@ -137,7 +137,7 @@ class BobRig(Container):
         })
 
         legRightComponent = LegComponentRig("leg", self)
-        legRightComponent.loadData(data=legRightComponentGuide.getRigBuildData() )
+        legRightComponent.loadData(data=legRightComponentGuide.getRigBuildData())
 
         # ============
         # Connections
@@ -145,21 +145,36 @@ class BobRig(Container):
         # Spine to Main SRT
         mainSrtRigScaleOutput = mainSrtComponent.getOutputByName('rigScale')
         mainSrtOffsetOutput = mainSrtComponent.getOutputByName('offset')
-        spineInput = spineComponent.getInputByName('mainSrt')
-        spineInput.setConnection(mainSrtOffsetOutput)
+
+        spineGlobalSrtInput = spineComponent.getInputByName('globalSRT')
+        spineGlobalSrtInput.setConnection(mainSrtOffsetOutput)
 
         spineRigScaleInput = spineComponent.getInputByName('rigScale')
         spineRigScaleInput.setConnection(mainSrtRigScaleOutput)
 
+        # Neck to Main SRT
+        neckGlobalSrtInput = neckComponent.getInputByName('globalSRT')
+        neckGlobalSrtInput.setConnection(mainSrtOffsetOutput)
+
         # Neck to Spine
         spineEndOutput = spineComponent.getOutputByName('spineEnd')
+
         neckSpineEndInput = neckComponent.getInputByName('neckBase')
         neckSpineEndInput.setConnection(spineEndOutput)
 
+        # Head to Main SRT
+        headGlobalSrtInput = headComponent.getInputByName('globalSRT')
+        headGlobalSrtInput.setConnection(mainSrtOffsetOutput)
+
+        headBaseInput = headComponent.getInputByName('worldRef')
+        headBaseInput.setConnection(mainSrtOffsetOutput)
+
         # Head to Neck
         neckEndOutput = neckComponent.getOutputByName('neckEnd')
-        headBaseInput = headComponent.getInputByName('headBase')
+
+        headBaseInput = headComponent.getInputByName('neckRef')
         headBaseInput.setConnection(neckEndOutput)
+
 
         # Clavicle to Spine
         spineEndOutput = spineComponent.getOutputByName('spineEnd')
