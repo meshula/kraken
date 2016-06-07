@@ -5,7 +5,6 @@
     "OSS_IKFootBlendSolver.kl",
     "OSS_TwoBoneIKSolver.kl",
     "OSS_HierBlendSolver.kl",
-    "OSS_NURBSSpineKLSolver.kl",
     "OSS_NURBSCurveXfoKLSolver.kl",
     "OSS_RemapScalarValueSolver.kl"
   ]

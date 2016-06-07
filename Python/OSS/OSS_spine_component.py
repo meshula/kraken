@@ -280,7 +280,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.controlRestInputs = []
 
         self.spineOutputs = []
-
+        self.params = []
+        self.rigControlAligns = []
         #self.setNumDeformers(1)
 
         # =====================
@@ -302,17 +303,32 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Add Fabric Ops
         # ===============
         # Add Spine Canvas Op
-        self.NURBSSpineKLOp = KLOperator('NURBSSpineKLOp', 'OSS_NURBSSpineKLSolver', 'OSS_Kraken')
+
+        self.NURBSSpineKLOp = KLOperator('NURBSSpineKLOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(self.NURBSSpineKLOp)
 
-        # Add Att Inputs
-        self.NURBSSpineKLOp.setInput('rigScale', self.rigScaleInputAttr)
         self.NURBSSpineKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.NURBSSpineKLOp.setInput('numDeformers',  1)
+        self.NURBSSpineKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.NURBSSpineKLOp.setInput('alignX', 1 )
+        self.NURBSSpineKLOp.setInput('alignY', 2 )
+        self.NURBSSpineKLOp.setInput('alignZ', 3 )
+        self.NURBSSpineKLOp.setInput('degree', 3)
+        self.NURBSSpineKLOp.setInput('keepArcLength', 0.0)
         self.NURBSSpineKLOp.setInput('compressionAmt', 0.4)
-        self.NURBSSpineKLOp.setInput('controlsRest', self.controlRestInputs)
+        self.NURBSSpineKLOp.setInput('followCurveTangent', 0.0)
+        self.NURBSSpineKLOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
+        self.NURBSSpineKLOp.setInput('parent', self.ctrlCmpGrp)
+        # atVec should be optional
+        self.NURBSSpineKLOp.setInput('atVec', self.ctrlCmpGrp)
+        self.NURBSSpineKLOp.setInput('controlAligns', self.rigControlAligns)
         self.NURBSSpineKLOp.setInput('controls', self.controlInputs)
+        self.NURBSSpineKLOp.setInput('controlsRest', self.controlRestInputs)
+
+        self.NURBSSpineKLOp.setInput('params', self.params )
+
         self.NURBSSpineKLOp.setOutput('outputs', self.spineOutputs)
+
+        # establish params between 0 and 1 (for now)
 
         Profiler.getInstance().pop()
 
@@ -351,8 +367,20 @@ class OSSSpineComponentRig(OSSSpineComponent):
             if name == "pelvis":
                 self.parentSpaceInputTgt.childJoints = [spineDef]
 
+
+        # Determine params for number of Deformers
+        a = 0.0
+        b = 1.0
+        print numDeformers
+        for i in range(numDeformers):
+            print i
+            print numDeformers
+            ratio = float(i) / float(numDeformers-1)
+            self.params.append((1.0-ratio)*a + ratio*b)
+            self.rigControlAligns.append(Vec3(1,2,3))
+        print self.params
         if hasattr(self, 'NURBSSpineKLOp'):  # Check in case this is ever called from Guide callback
-            self.NURBSSpineKLOp.setInput('numDeformers',  numDeformers)
+            self.NURBSSpineKLOp.setInput('params',  self.params)
 
         return True
 

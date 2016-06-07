@@ -1,3 +1,4 @@
+import re
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 from kraken.core.objects.component_group import ComponentGroup
 
@@ -48,3 +49,47 @@ class OSS_Component(BaseExampleComponent):
                 self.addItem("defCmpGrp", self.defCmpGrp)
                 self.deformersParent = self.defCmpGrp
 
+
+    def convertToStringList(self, inputString):
+        """ tokenizes string argument, returns a list"""
+        stringList = re.split(r'[ ,:;]+', inputString)
+
+        # These checks should actually prevent the component_inspector from closing maybe?
+        for name in stringList:
+            if name and not re.match(r'^[\w_]+$', name):
+                # Eventaully specific exception just for component class that display component name, etc.
+                raise ValueError("inputString \""+name+"\" contains non-alphanumeric characters in component \""+self.getName()+"\"")
+
+        stringList = [x for x in stringList if x != ""]
+
+        if not stringList:
+            return []
+
+        if len(stringList) > len(set(stringList)):
+            raise ValueError("Duplicate names in inputString in component \""+self.getName()+"\"")
+
+        return stringList
+
+
+    def convertToScalarList(self, inputString):
+        """ tokenizes string argument, returns a list"""
+        stringList = re.split(r'[ ,:;]+', inputString)
+        scalarList = []
+        # These checks should actually prevent the component_inspector from closing maybe?
+        for name in stringList:
+            if name:
+                try:
+                    scalarList.append(float(name))
+                except ValueError:
+                    raise ValueError("inputString \""+name+"\" cannot be converted to float: \""+self.getName()+"\"")
+
+
+        # scalarList = [x for x in scalarList if x != ""]
+
+        if not scalarList:
+            return []
+
+        if len(scalarList) > len(set(scalarList)):
+            raise ValueError("Duplicate names in inputString in component \""+self.getName()+"\"")
+
+        return scalarList
