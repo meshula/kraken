@@ -105,12 +105,12 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     )
 {
   if(controls.size() != controlsRest.size())
-    throw("Error in OSS_NURBSCurveXfoKLSolver. The number of controls must match the number of controlsRest. controls.size:" + controls.size() + "; constrainees.size:" + controlsRest.size() + "; controlAligns.size:" + controlAligns.size());
+    throw("Error in OSS_NURBSCurveXfoKLSolver. The number of controls must match the number of controlsRest.\n\tcontrols.size:" + controls.size() + "\n\tcontrolsRest.size:" + controlsRest.size() + "\n\n\tcontrolAligns.size:" + controlAligns.size() + "\n\tparams.size:" + params.size());
 
 
   UInt32 inCount  = controls.size();
-  
   UInt32 outCount = params.size();
+
   Xfo posedXfo;
   Xfo restXfo;
 

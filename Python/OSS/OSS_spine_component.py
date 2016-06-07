@@ -368,7 +368,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
                 self.parentSpaceInputTgt.childJoints = [spineDef]
 
 
-        # Determine params for number of params
+        # Determine params for number of Deformers
         a = 0.0
         b = 1.0
         print numDeformers
