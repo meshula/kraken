@@ -177,16 +177,16 @@ class OSSSocketRig(OSSSocket):
         # =========
         # Socket
 
-        self.socket_offsetCtrl = Control(self.getName() + '_offset', parent=self.ctrlCmpGrp, shape="circle")
-        self.socket_offsetCtrl.xfo = data['socketXfo']
-        self.socket_offsetCtrl.setColor("pink")
-        self.socket_offsetCtrl.alignOnYAxis()
-        self.socket_offsetCtrlSpace = self.socket_offsetCtrl.insertCtrlSpace()
-
-        self.socketCtrl = Control(self.getName(), parent=self.socket_offsetCtrl, shape="null")
+        self.socketCtrl = Control(self.getName(), parent=self.ctrlCmpGrp, shape="circle")
         self.socketCtrl.xfo = data['socketXfo']
-        #self.socketCtrl.setCurveData(data['socketCtrlCrvData'])
         self.socketCtrl.setColor("pink")
+        self.socketCtrl.alignOnYAxis()
+        self.socketCtrlSpace = self.socketCtrl.insertCtrlSpace()
+
+        self.socket_offsetCtrl = Control(self.getName() + '_offset', parent=self.socketCtrl, shape="null")
+        self.socket_offsetCtrl.xfo = data['socketXfo']
+        #self.socket_offsetCtrl.setCurveData(data['socket_offsetCtrlCrvData'])
+        self.socket_offsetCtrl.setColor("pink")
 
         # ==========
         # Deformers
@@ -205,11 +205,11 @@ class OSSSocketRig(OSSSocket):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.socketInputConstraint = self.socket_offsetCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.socketInputConstraint = self.socketCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # Constraint outputs
-        self.socketOutputTgtConstraint = self.socketOutputTgt.constrainTo(self.socketCtrl)
-        self.socketDefConstraint = self.socketDef.constrainTo(self.socketCtrl)
+        self.socketOutputTgtConstraint = self.socketOutputTgt.constrainTo(self.socket_offsetCtrl)
+        self.socketDefConstraint = self.socketDef.constrainTo(self.socket_offsetCtrl)
         self.socketOutputTgtConstraint.evaluate()
 
         self.socketOutputTgt.parentJoint =  self.socketDef
@@ -233,8 +233,8 @@ class OSSSocketRig(OSSSocket):
         self.createControls(data)
 
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
-        self.socketCtrl.scalePoints(globalScale)
         self.socket_offsetCtrl.scalePoints(globalScale)
+        self.socketCtrl.scalePoints(globalScale)
 
 
 from kraken.core.kraken_system import KrakenSystem
