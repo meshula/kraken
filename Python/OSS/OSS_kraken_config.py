@@ -73,6 +73,7 @@ class OSSConfig(Config):
                                    "Container"       : ["name"],
                                    "Layer"           : ["container", "sep", "name"],
                                    "Control"         : ["location", "sep", "name", "sep", "type"],
+                                   "CtrlSpace"       : ["location", "sep", "name", "sep", "type"],
                                    "FKControl"       : ["location", "sep", "name", "sep", "type"],
                                    "IKControl"       : ["location", "sep", "name", "sep", "type"],
                                    "MCControl"       : ["location", "sep", "name", "sep", "type"],
