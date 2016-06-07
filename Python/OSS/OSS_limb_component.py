@@ -453,7 +453,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbUpVSpaceHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'UpVSpace_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
         self.addOperator(self.limbUpVSpaceHierBlendSolver)
         self.limbUpVSpaceHierBlendSolver.setInput('blend', upVSpaceBlendInputAttr)
-        upVSpaceBlendInputAttr.setValue(0.5)
+        upVSpaceBlendInputAttr.setValue(0.0)
         self.limbUpVSpaceHierBlendSolver.setInput('parentIndexes', [-1])
         # Add Att Inputs
         self.limbUpVSpaceHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
