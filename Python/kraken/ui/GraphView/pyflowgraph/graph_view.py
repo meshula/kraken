@@ -373,7 +373,7 @@ class GraphView(QtGui.QGraphicsView):
             raise Exception("Invalid srcNode:" + str(srcNode))
 
 
-        sourcePort = sourceNode.getPort(outputName)
+        sourcePort = sourceNode.getOutputPort(outputName)
         if not sourcePort:
             raise Exception("Node '" + sourceNode.getName() + "' does not have output:" + outputName)
 
@@ -387,7 +387,7 @@ class GraphView(QtGui.QGraphicsView):
         else:
             raise Exception("Invalid tgtNode:" + str(tgtNode))
 
-        targetPort = targetNode.getPort(inputName)
+        targetPort = targetNode.getInputPort(inputName)
         if not targetPort:
             raise Exception("Node '" + targetNode.getName() + "' does not have input:" + inputName)
 

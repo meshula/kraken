@@ -257,6 +257,7 @@ class Node(QtGui.QGraphicsWidget):
         else:
             self.__ioPortsHolder.addPort(port, QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
         self.__ports.append(port)
+
         self.adjustSize()
         return port
 
@@ -264,6 +265,18 @@ class Node(QtGui.QGraphicsWidget):
     def getPort(self, name):
         for port in self.__ports:
             if port.getName() == name:
+                return port
+        return None
+
+    def getInputPort(self, name):
+        for port in self.__ports:
+            if port.getName() == name and isinstance(port, InputPort):
+                return port
+        return None
+
+    def getOutputPort(self, name):
+        for port in self.__ports:
+            if port.getName() == name and isinstance(port, OutputPort):
                 return port
         return None
 

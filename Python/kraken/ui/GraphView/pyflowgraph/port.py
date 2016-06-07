@@ -439,9 +439,14 @@ class InputPort(BasePort):
 
     def __init__(self, parent, graph, name, color, dataType):
         super(InputPort, self).__init__(parent, graph, name, color, dataType, 'In')
+        self.setCircle()
+        self.setLabel()
 
-        self.setInCircle(PortCircle(self, graph, -2, color, 'In'))
-        self.setLabelItem(PortLabel(self, name, -10, self._labelColor, self._labelHighlightColor))
+    def setCircle(self):
+        self.setInCircle(PortCircle(self, self.getGraph(), -2, self.getColor(), 'In'))
+
+    def setLabel(self):
+        self.setLabelItem(PortLabel(self, self.getName(), -10, self._labelColor, self._labelHighlightColor))
 
 
 
@@ -449,9 +454,14 @@ class OutputPort(BasePort):
 
     def __init__(self, parent, graph, name, color, dataType):
         super(OutputPort, self).__init__(parent, graph, name, color, dataType, 'Out')
+        self.setCircle()
+        self.setLabel()
 
-        self.setLabelItem(PortLabel(self, self._name, 10, self._labelColor, self._labelHighlightColor))
-        self.setOutCircle(PortCircle(self, graph, 2, color, 'Out'))
+    def setCircle(self):
+        self.setOutCircle(PortCircle(self, self.getGraph(), 2, self.getColor(), 'Out'))
+
+    def setLabel(self):
+        self.setLabelItem(PortLabel(self, self.getName(), 10, self._labelColor, self._labelHighlightColor))
 
 
 
@@ -463,5 +473,3 @@ class IOPort(BasePort):
         self.setInCircle(PortCircle(self, graph, -2, color, 'In'))
         self.setLabelItem(PortLabel(self, self._name, 0, self._labelColor, self._labelHighlightColor))
         self.setOutCircle(PortCircle(self, graph, 2, color, 'Out'))
-
-

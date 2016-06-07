@@ -8,7 +8,7 @@ import json
 from PySide import QtGui, QtCore
 
 from pyflowgraph.node import Node
-from pyflowgraph.port import PortCircle, BasePort, PortLabel
+from pyflowgraph.port import PortCircle, BasePort, InputPort, OutputPort, PortLabel
 
 from kraken.core.maths import Vec2
 
@@ -73,7 +73,7 @@ class KNodePortCircle(PortCircle):
         return True
 
 
-class KNodeInputPort(BasePort):
+class KNodeInputPort(InputPort):
 
     def __init__(self, parent, graph, componentInput):
 
@@ -81,18 +81,21 @@ class KNodeInputPort(BasePort):
         dataType = componentInput.getDataType()
         color = getPortColor(dataType)
 
-        super(KNodeInputPort, self).__init__(parent, graph, name, color, dataType, 'In')
-
-        self.setInCircle(KNodePortCircle(self, graph, -2, color, 'In'))
-        self.setLabelItem(PortLabel(self, name, -10, self._labelColor, self._labelHighlightColor))
+        super(KNodeInputPort, self).__init__(parent, graph, name, color, dataType)
 
         self.componentInput = componentInput
+
+    def setCircle(self):
+        self.setInCircle(KNodePortCircle(self, self.getGraph(), -2, self.getColor(), 'In'))
+
+    def setLabel(self):
+        self.setLabelItem(PortLabel(self, self.getName(), -10, self._labelColor, self._labelHighlightColor))
 
     def getComponentInput(self):
         return self.componentInput
 
 
-class KNodeOutputPort(BasePort):
+class KNodeOutputPort(OutputPort):
 
     def __init__(self, parent, graph, componentOutput):
 
@@ -100,10 +103,13 @@ class KNodeOutputPort(BasePort):
         dataType = componentOutput.getDataType()
         color = getPortColor(dataType)
 
-        super(KNodeOutputPort, self).__init__(parent, graph, name, color, dataType, 'Out')
+        super(KNodeOutputPort, self).__init__(parent, graph, name, color, dataType)
 
-        self.setLabelItem(PortLabel(self, self._name, 10, self._labelColor, self._labelHighlightColor))
-        self.setOutCircle(KNodePortCircle(self, graph, 2, color, 'Out'))
+        def setCircle(self):
+            self.setOutCircle(KNodePortCircle(self, self.getGraph(), 2, self.getColor(), 'Out'))
+
+        def setLabel(self):
+            self.setLabelItem(PortLabel(self, self.getName(), 10, self._labelColor, self._labelHighlightColor))
 
 
 class KNode(Node):
