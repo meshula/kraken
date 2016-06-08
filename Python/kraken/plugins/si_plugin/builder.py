@@ -901,23 +901,47 @@ class Builder(Builder):
 
                 elif portDataType in ['Scalar', 'Boolean', 'Integer']:
 
-                    portmapDefinition = portName + "|XSI Parameter"
+                    if argConnectionType == 'In':
+                        portmapDefinition = portName + "|XSI Parameter"
 
-                    canvasOpPath2 = str(canvasOpPath) + ":"
-                    si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
-                    canvasOpPath = str(canvasOpPath2)[:-1]
-                    canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+                        canvasOpPath2 = str(canvasOpPath) + ":"
+                        si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
+                        canvasOpPath = str(canvasOpPath2)[:-1]
+                        canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
 
-                    parameter = canvasOp.Parameters(portName)
-                    if parameter is not None:
-                        if portName == 'time':
-                            parameter.AddExpression("T")
-                            return
-                        if portName == 'frame':
-                            parameter.AddExpression("Fc")
-                            return
-                        else:
-                            parameter.AddExpression(dccSceneItem.FullName)
+                        parameter = canvasOp.Parameters(portName)
+                        if parameter is not None:
+                            if portName == 'time':
+                                parameter.AddExpression("T")
+                                return
+                            if portName == 'frame':
+                                parameter.AddExpression("Fc")
+                                return
+                            else:
+                                parameter.AddExpression(dccSceneItem.FullName)
+
+                    elif argConnectionType in ('Out', 'IO'):
+                        portmapDefinition = portName + "|XSI Port"
+
+                        canvasOpPath2 = str(canvasOpPath) + ":"
+                        si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
+                        canvasOpPath = str(canvasOpPath2)[:-1]
+                        canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+
+                        outParamProp = canvasOp.Parent.Properties("_CanvasOp_" + portName)
+                        parameter = outParamProp.Parameters('value')
+                        if parameter is not None:
+                            if portName == 'time':
+                                parameter.AddExpression("T")
+                                return
+                            if portName == 'frame':
+                                parameter.AddExpression("Fc")
+                                return
+                            else:
+                                parameter.AddExpression(dccSceneItem.FullName)
+
+                    else:
+                        raise NotImplementedError("'argConnectionType': " + argConnectionType + " is not supported!")
 
             arraySizes = {}
             # connect the operator to the objects in the DCC
@@ -993,7 +1017,7 @@ class Builder(Builder):
 
                         si.FabricCanvasAddPort(canvasOpPath, arrayNode, "array", "In", argDataType, "")
                         arrayNodeCode = "dfgEntry { \n"
-                        for j in range(len(connectedObjects)):
+                        for j in xrange(len(connectedObjects)):
                             si.FabricCanvasAddPort(
                                 canvasOpPath,
                                 arrayNode,

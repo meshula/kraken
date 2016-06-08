@@ -16,7 +16,6 @@ Qt.initialize()
 from Qt.QtGui import QMainWindow
 from Qt.QtGui import QWidget
 
-from PySide import QtWebKit
 from PySide import QtGui, QtCore
 
 si = Application
