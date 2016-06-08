@@ -233,6 +233,8 @@ class HeadComponentRig(HeadComponent):
         # =========
         # Head
         self.headCtrl = Control('head', parent=self.ctrlCmpGrp, shape='circle')
+        self.headCtrl.lockScale(x=True, y=True, z=True)
+        self.headCtrl.lockTranslation(x=True, y=True, z=True)
         self.headCtrlSpace = self.headCtrl.insertCtrlSpace()
         self.headCtrl.rotatePoints(0, 0, 90)
         self.headCtrl.scalePoints(Vec3(3, 3, 3))
@@ -240,6 +242,8 @@ class HeadComponentRig(HeadComponent):
 
         # Eye Left
         self.eyeLeftCtrl = Control('eyeLeft', parent=self.headCtrl, shape='sphere')
+        self.eyeLeftCtrl.lockScale(x=True, y=True, z=True)
+        self.eyeLeftCtrl.lockTranslation(x=True, y=True, z=True)
         self.eyeLeftCtrlSpace = self.eyeLeftCtrl.insertCtrlSpace()
         self.eyeLeftCtrl.rotatePoints(0, 90, 0)
         self.eyeLeftCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
@@ -247,6 +251,8 @@ class HeadComponentRig(HeadComponent):
 
         # Eye Right
         self.eyeRightCtrl = Control('eyeRight', parent=self.headCtrl, shape='sphere')
+        self.eyeRightCtrl.lockScale(x=True, y=True, z=True)
+        self.eyeRightCtrl.lockTranslation(x=True, y=True, z=True)
         self.eyeRightCtrlSpace = self.eyeRightCtrl.insertCtrlSpace()
         self.eyeRightCtrl.rotatePoints(0, 90, 0)
         self.eyeRightCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
@@ -254,6 +260,8 @@ class HeadComponentRig(HeadComponent):
 
         # LookAt Control
         self.lookAtCtrl = Control('lookAt', parent=self.ctrlCmpGrp, shape='square')
+        self.lookAtCtrl.lockScale(x=True, y=True, z=True)
+        self.lookAtCtrl.lockTranslation(x=True, y=True, z=True)
         self.lookAtCtrl.rotatePoints(90, 0, 0)
         self.lookAtCtrlSpace = self.lookAtCtrl.insertCtrlSpace()
 
@@ -265,8 +273,10 @@ class HeadComponentRig(HeadComponent):
         self.eyeRightAtV = Transform('eyeRightAtV', parent=self.lookAtCtrl)
 
         # Jaw
-        self.jawCtrlSpace = CtrlSpace('jawCtrlSpace', parent=self.headCtrl)
-        self.jawCtrl = Control('jaw', parent=self.jawCtrlSpace, shape='cube')
+        self.jawCtrl = Control('jaw', parent=self.headCtrl, shape='cube')
+        self.jawCtrlSpace = self.jawCtrl.insertCtrlSpace()
+        self.jawCtrl.lockScale(x=True, y=True, z=True)
+        self.jawCtrl.lockTranslation(x=True, y=True, z=True)
         self.jawCtrl.alignOnYAxis(negative=True)
         self.jawCtrl.alignOnZAxis()
         self.jawCtrl.scalePoints(Vec3(1.45, 0.65, 1.25))

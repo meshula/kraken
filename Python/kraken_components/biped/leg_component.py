@@ -67,7 +67,7 @@ class LegComponentGuide(LegComponent):
 
         # =========
         # Controls
-        # ========
+        # =========
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
 
         # Guide Controls
@@ -269,7 +269,7 @@ class LegComponentRig(LegComponent):
         legIKBlendInputAttr = ScalarAttribute('ikblend', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
 
         # Util Objects
-        self.ikRootPosition = Locator("ikRootPosition", parent=self.ctrlCmpGrp)
+        self.ikRootPosition = Transform("ikRootPosition", parent=self.ctrlCmpGrp)
 
         # Connect Input Attrs
         self.drawDebugInputAttr.connect(legDrawDebugInputAttr)

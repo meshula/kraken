@@ -1,18 +1,13 @@
-from kraken.core.maths import Vec3
-from kraken.core.maths.xfo import Xfo
+from kraken.core.maths import *
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
-from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
-from kraken.core.objects.attributes.string_attribute import StringAttribute
 
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
 from kraken.core.objects.component_group import ComponentGroup
-from kraken.core.objects.hierarchy_group import HierarchyGroup
-from kraken.core.objects.locator import Locator
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
@@ -20,8 +15,6 @@ from kraken.core.objects.control import Control
 from kraken.core.objects.operators.kl_operator import KLOperator
 
 from kraken.core.profiler import Profiler
-from kraken.helpers.utility_methods import logHierarchy
-
 
 
 class ClavicleComponent(BaseExampleComponent):
@@ -153,13 +146,16 @@ class ClavicleComponentGuide(ClavicleComponent):
         clavicleEndPosition = self.clavicleEndCtrl.xfo.tr
 
         # Calculate Clavicle Xfo
-        rootToEnd = clavicleEndPosition.subtract(claviclePosition).unit()
-        rootToUpV = clavicleUpV.subtract(claviclePosition).unit()
-        bone1ZAxis = rootToUpV.cross(rootToEnd).unit()
-        bone1Normal = bone1ZAxis.cross(rootToEnd).unit()
-
         clavicleXfo = Xfo()
-        clavicleXfo.setFromVectors(rootToEnd, bone1Normal, bone1ZAxis, claviclePosition)
+        clavicleOri = Quat()
+        clavicleOri.setFromDirectionAndUpvector((clavicleEndPosition - claviclePosition).unit(),
+                                                (clavicleUpV - claviclePosition).unit())
+
+        xAlignOffset = Quat()
+        xAlignOffset.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-90))
+
+        clavicleXfo.ori = clavicleOri * xAlignOffset
+        clavicleXfo.tr = claviclePosition
 
         clavicleLen = claviclePosition.subtract(clavicleEndPosition).length()
 

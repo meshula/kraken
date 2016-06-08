@@ -215,6 +215,7 @@ class SpineComponentRig(SpineComponent):
         self.spine02Ctrl = Control('spine02', parent=self.spine02CtrlSpace, shape="circle")
         self.spine02Ctrl.scalePoints(Vec3(4.5, 4.5, 4.5))
         self.spine02Ctrl.lockScale(True, True, True)
+        self.spine02Ctrl.setColor("blue")
 
 
         # Spine04
