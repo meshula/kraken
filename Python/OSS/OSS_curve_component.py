@@ -1,6 +1,6 @@
 
 import math, re
-from kraken.core.maths import Vec3
+from kraken.core.maths import Xfo, Vec3
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
@@ -83,7 +83,7 @@ class OSSCurveComponentGuide(OSSCurveComponent):
 
 
     def createGuideControls(self, ctrlType, controlsList, defNames):
-        
+
         controls = []
         # Delete current controls
         for ctrl in reversed(controlsList):
@@ -106,9 +106,8 @@ class OSSCurveComponentGuide(OSSCurveComponent):
             for i, defName in enumerate(defControlNameList):
                 newCtrl = Control(defName, parent=parent, shape="circle")
                 newCtrl.setColor("brownMuted")
-                newCtrl.xfo = parent.xfo
-                # newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0, 0, 8)))
-                # newCtrl.scalePoints(Vec3(.5,.5,.5))
+                newCtrl.xfo = parent.xfo.multiply(Xfo(tr=Vec3(0, 1, 0)))
+                parent = newCtrl
                 controlsList.append(newCtrl)
         return True
 
@@ -423,7 +422,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         for i in xrange(len(self.CurveOutputs)):
             constraint = self.deformerJoints[i].constrainTo(self.CurveOutputs[i])
             constraint.evaluate()
-            
+
         # Constrain Outputs
         # self.CurveEndOutputConstraint = self.CurveEndOutputTgt.constrainTo(self.CurveOutputs[-1])
 
