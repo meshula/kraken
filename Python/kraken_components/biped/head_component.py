@@ -456,8 +456,8 @@ class HeadComponentRig(HeadComponent):
         self.outputsToDeformersKLOp.evaluate()
 
         # Have to set the eye control xfos to match the evaluated xfos from
-        self.eyeLeftCtrl.xfo = self.eyeLeftCtrlSpace.xfo
-        self.eyeRightCtrl.xfo = self.eyeRightCtrlSpace.xfo
+        self.eyeLeftCtrl.xfo = self.headCtrl.xfo * self.eyeLeftCtrlSpace.xfo
+        self.eyeRightCtrl.xfo = self.headCtrl.xfo * self.eyeRightCtrlSpace.xfo
 
 
 from kraken.core.kraken_system import KrakenSystem
