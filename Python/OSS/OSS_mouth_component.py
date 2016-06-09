@@ -748,6 +748,7 @@ class OSSMouthRig(OSSMouth):
         self.addOperator(self.loLipRigOp)
 
         self.loLipControls = []
+        self.loLipControlsRest = []
         self.loLipOutputs = []
         self.loLipControls.append(self.lMouthCtrl)
         self.loLipControls.append(self.L_loLipHandleCtrl)
@@ -755,6 +756,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipControls.append(self.R_loLipHandleCtrl)
         self.loLipControls.append(self.rMouthCtrl)
 
+            
         self.loLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.loLipRigOp.setInput('rigScale', 1.0)
         self.loLipRigOp.setInput('alignX', self.alignX )
@@ -831,8 +833,8 @@ class OSSMouthRig(OSSMouth):
         self.lUpLipCorner = Transform('L_upLipCorner', parent=self.ctrlCmpGrp)
         self.rUpLipCorner = Transform('R_upLipCorner', parent=self.ctrlCmpGrp)
 
-        lipCtrlY = .05;
-        lipCtrlZ = .45;
+        lipCtrlY = .05
+        lipCtrlZ = .45
         if self.upLipCtrls:
             # build control hierarchy
             numCtrls = len(self.upLipCtrls)
@@ -855,15 +857,16 @@ class OSSMouthRig(OSSMouth):
 
         self.upLipCtrls = [self.lMouthCtrl] + self.upLipCtrls + [self.rMouthCtrl]
 
+
         self.upLipRigOp.setOutput('outputs', self.upLipOutputs)
 
         # Add lowLip Debug Canvas Op
         self.upLipDefOp = KLOperator('upLipDefOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(self.upLipDefOp)
 
-        self.upLipControls = []
-        self.upLipOutputs = []
         self.defControlAligns = []
+        self.upLipCtrlsRest = []
+
         # numDefs plus two for the corners, this should be determined per closest point on curve
         self.paramsOut = [1, .96, .9, .81, .74, .66, .58, 0.5, 0.42, 0.34, 0.26, 0.19, 0.1, 0.04, 0]
 
@@ -876,7 +879,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipDefOp.setInput('alignY', self.alignY )
         self.upLipDefOp.setInput('alignZ', self.alignZ )
         self.upLipDefOp.setInput('keepArcLength', 0.0)
-        self.upLipDefOp.setInput('compressionAmt', 0.0)
+        self.upLipDefOp.setInput('compressionAmt', 0.5)
         self.upLipDefOp.setInput('followCurveTangent', 0.5)
         self.upLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.upLipDefOp.setInput('parent', self.mouthCtrlSpace)
@@ -884,15 +887,18 @@ class OSSMouthRig(OSSMouth):
         self.upLipDefOp.setInput('atVec', self.mouthCtrl)
         self.upLipDefOp.setInput('controlAligns', self.defControlAligns)
         self.upLipDefOp.setInput('controls', self.upLipCtrls)
-        self.upLipDefOp.setInput('controlsRest', self.upLipCtrls)
+        self.upLipDefOp.setInput('controlsRest', self.upLipCtrlsRest)
         self.upLipDefOp.setInput('params', self.paramsOut)
 
         self.upLipDefOp.setOutput('outputs', self.upLipDefs)
 
+
+        #loLip
         self.loLipDefs = []
         self.loLipCtrls = []
         self.loLipCtrls = self.createGuideControls("lipControls", self.loLipCtrls, data["lipCtrlNames"])
         self.loLipDefs  = self.createGuideControls("loLipDef", self.loLipDefs, data["numSpans"])
+
 
         if self.loLipCtrls:
             # build control hierarchy
@@ -914,13 +920,16 @@ class OSSMouthRig(OSSMouth):
 
         self.loLipCtrls = [self.lMouthCtrl] + self.loLipCtrls + [self.rMouthCtrl]
 
+        self.loLipCtrlsRest = []
+        for i in range(len(self.loLipCtrls)):
+            self.defControlAligns.append(Vec3(1,2,3))
+
 
         self.loLipRigOp.setOutput('outputs', self.loLipOutputs)
         # Add lowLip Debug Canvas Op
         self.loLipDefOp = KLOperator('loLipDefOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(self.loLipDefOp)
 
-        self.c = []
         self.loLipOutputs = []
         self.loLipDefs =  [self.rLoLipCorner] + self.loLipDefs + [self.lLoLipCorner]
 
@@ -931,7 +940,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipDefOp.setInput('alignY', self.alignY )
         self.loLipDefOp.setInput('alignZ', self.alignZ )
         self.loLipDefOp.setInput('keepArcLength', 0.0)
-        self.loLipDefOp.setInput('compressionAmt', 0.0)
+        self.loLipDefOp.setInput('compressionAmt', 0.5)
         self.loLipDefOp.setInput('followCurveTangent', 0.5)
         self.loLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.loLipDefOp.setInput('parent', self.mouthCtrlSpace)
@@ -939,14 +948,11 @@ class OSSMouthRig(OSSMouth):
         self.loLipDefOp.setInput('atVec', self.mouthCtrl)
         self.loLipDefOp.setInput('controlAligns', self.defControlAligns)
         self.loLipDefOp.setInput('controls', self.loLipCtrls)
-        self.loLipDefOp.setInput('controlsRest', self.loLipCtrls)
+        self.loLipDefOp.setInput('controlsRest', self.loLipCtrlsRest)
         self.loLipDefOp.setInput('params', self.paramsOut )
 
         self.loLipDefOp.setOutput('outputs', self.loLipDefs)
 
-
-        for i in range(len(self.loLipCtrls)):
-            self.defControlAligns.append(Vec3(1,2,3));
 
 
 
@@ -1087,6 +1093,10 @@ class OSSMouthRig(OSSMouth):
                 ctrl.xfo = Xfo(uber.xfo)
 
 
+        for i in range(len(self.loLipCtrls)):
+            self.loLipCtrlsRest.append(self.loLipCtrls[i].xfo)
+        for i in range(len(self.upLipCtrls)):
+            self.upLipCtrlsRest.append(self.upLipCtrls[i].xfo)
         # ============
         # Set IO Xfos
         # ============
