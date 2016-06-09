@@ -1,7 +1,7 @@
 {
   "code": [
     "OSS_FootRockerSystem.kl",
-    "OSS_BlendPoseConstraintSolver.kl",
+    "OSS_BlendTRSConstraintSolver.kl",
     "OSS_IKFootBlendSolver.kl",
     "OSS_TwoBoneIKSolver.kl",
     "OSS_HierBlendSolver.kl",

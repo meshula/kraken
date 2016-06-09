@@ -1,0 +1,102 @@
+require InlineDrawing;
+require Geometry;
+require Kraken;
+
+
+// At the moment we cannot connect individual TRS values on transforms
+// This is easiest for now
+object OSS_BlendTRSConstraintSolver : KrakenSolver {
+};
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_BlendTRSConstraintSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('blendTranslate', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('blendRotate', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('blendScale', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('constrainerTranslateA', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('constrainerTranslateB', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('constrainerRotateA', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('constrainerRotateB', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('constrainerScaleA', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('constrainerScaleB', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('constrainee', 'Out', 'Mat44'));
+  return args;
+}
+
+
+// Solve
+function OSS_BlendTRSConstraintSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Scalar blendTranslate,
+  in Scalar blendRotate,
+  in Scalar blendScale,
+  in Mat44 constrainerTranslateA,
+  in Mat44 constrainerTranslateB,
+  in Mat44 constrainerRotateA,
+  in Mat44 constrainerRotateB,
+  in Mat44 constrainerScaleA,
+  in Mat44 constrainerScaleB,
+  io Mat44 constrainee
+  )
+{
+  // Rotate
+  if (blendRotate >= 0)
+  {
+    if (blendRotate == 0.0)
+    {
+      constrainee.setRotation(Xfo(constrainerRotateA).ori);
+    }
+    else if (blendRotate >= 1.0)
+    {
+      constrainee.setRotation(Xfo(constrainerRotateB).ori);
+    }
+    else
+    {
+      constrainee.setRotation(Xfo(constrainerRotateA).ori.sphericalLinearInterpolate(Xfo(constrainerRotateB).ori, blendRotate));
+    }
+  }
+
+  // Translate
+  if (blendTranslate >= 0)
+  {
+    if (blendTranslate <= 0.0)
+    {
+      constrainee.setTranslation(constrainerTranslateA.translation());
+    }
+    else if (blendTranslate >= 1.0)
+    {
+      constrainee.setTranslation(constrainerTranslateB.translation());
+    }
+    else
+    {
+      constrainee.setTranslation(constrainerTranslateA.translation().linearInterpolate(constrainerTranslateB.translation(), blendTranslate));
+    }
+  }
+
+  // Scale
+  if (blendScale >= 0)
+  {
+    if (blendScale <= 0.0)
+    {
+      constrainee.setScaling(Xfo(constrainerScaleA).sc);
+    }
+    else if (blendScale >= 1.0)
+    {
+      constrainee.setScaling(Xfo(constrainerScaleB).sc);
+    }
+    else
+    {
+      constrainee.setScaling(Xfo(constrainerScaleA).sc.linearInterpolate(Xfo(constrainerScaleB).sc, blendScale));
+    }
+  }
+
+  // Set debugging visibility.
+  this.setDebug(this.drawDebug);
+  if(this.drawDebug){
+
+  }
+}
