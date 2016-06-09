@@ -371,14 +371,10 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Determine params for number of Deformers
         a = 0.0
         b = 1.0
-        print numDeformers
         for i in range(numDeformers):
-            print i
-            print numDeformers
             ratio = float(i) / float(numDeformers-1)
             self.params.append((1.0-ratio)*a + ratio*b)
             self.rigControlAligns.append(Vec3(1,2,3))
-        print self.params
         if hasattr(self, 'NURBSSpineKLOp'):  # Check in case this is ever called from Guide callback
             self.NURBSSpineKLOp.setInput('params',  self.params)
 

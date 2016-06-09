@@ -381,7 +381,6 @@ class OSSCurveComponentRig(OSSCurveComponent):
         numDeformers = data['numDeformers']
 
         self.curveDeformers = []
-        print data
         self.curveCtrls = self.createControls("curveControls", self.curveCtrls, data["curveCtrlNames"], data)
 
         # self.curveDeformers = self.createGuideControls("curveDeformers", self.curveDeformers, data["numDeformers"])
@@ -394,9 +393,9 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # ==============
         # Constraint inputs
         self.firstCurveCtrl = self.curveCtrls[0].getParent()
+        print "First Control: %s"%(self.firstCurveCtrl.getDecoratedName())
         # self.firstCtrlSpaceConstraint  = self.firstCurveCtrl.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
-        print "curveCtrls: %s "%(len(self.curveCtrls))
         for i in range(len(self.curveCtrls)):
             self.controlRestInputs.append(self.curveCtrls[i].xfo)
 
@@ -411,12 +410,20 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
 
 
+
+        # ==============
+        # Constrain I/O
+        # ==============
+        # Constraint inputs
+
+
         # ====================
         # Evaluate Fabric Ops
         # ====================
         # Eval Operators # Order is important
         self.evalOperators()
         self.NURBSCurveKLOp.evaluate()
+        self.firstCtrlSpaceConstraint.evaluate()
 
         # evaluate the constraint op so that all the joint transforms are updated.
         for i in xrange(len(self.CurveOutputs)):
