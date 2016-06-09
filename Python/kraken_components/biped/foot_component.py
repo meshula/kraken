@@ -66,8 +66,12 @@ class FootComponentGuide(FootComponent):
 
         # Guide Controls
         self.ankleCtrl = Control('ankle', parent=self.ctrlCmpGrp, shape="pin")
+
         self.toeCtrl = Control('toe', parent=self.ctrlCmpGrp, shape="pin")
+        self.toeCtrl.rotatePoints(-90.0, 0.0, 0.0)
+
         self.toeTipCtrl = Control('toeTip', parent=self.ctrlCmpGrp, shape="pin")
+        self.toeTipCtrl.rotatePoints(-90.0, 0.0, 0.0)
 
         self.backPivotCtrl = Control('backPivot', parent=self.ctrlCmpGrp, shape="axesHalfTarget")
         self.backPivotCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
