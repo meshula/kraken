@@ -322,6 +322,8 @@ class Builder(Builder):
                                 continue
                             for j in xrange(len(connectedObjects)):
                                 connected = connectedObjects[j]
+                                if connected is None:
+                                  continue
 
                                 if isinstance(connected, Attribute):
                                     connectedObj = self.findKLAttribute(connected)
@@ -347,12 +349,14 @@ class Builder(Builder):
                             continue
                             
                         connected = connectedObjects
-                        if isinstance(connected, Attribute):
+                        if connected is None:
+                          continue
+
+                        elif isinstance(connected, Attribute):
                             connectedObj = self.findKLAttribute(connected)
                             kl += ["  this.%s = this.%s.value;" % (argMember, connectedObj['member'])]
-                            continue
 
-                        if isinstance(connected, SceneItem):
+                        elif isinstance(connected, SceneItem):
                             connectedObj = self.findKLObjectForSI(connected)
                             kl += self.__visitKLObject(connectedObj)
                             kl += ["  this.%s = this.%s.global;" % (argMember, connectedObj['member'])]
@@ -419,6 +423,8 @@ class Builder(Builder):
 
                     for j in xrange(len(connectedObjects)):
                         connected = connectedObjects[j]
+                        if connected is None:
+                          continue
 
                         if connected.getDecoratedPath() == item['sceneItem'].getDecoratedPath():
                             kl += ["", "  // retrieving value for %s from solver %s" % (member, sourceName)]
