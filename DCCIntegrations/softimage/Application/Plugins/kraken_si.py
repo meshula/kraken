@@ -34,22 +34,38 @@ def XSILoadPlugin(in_reg):
     os.environ['KRAKEN_DCC'] = 'Softimage'
 
     # Add the path to the module search paths so we can import the module.
-    sys.path.append(os.path.join(krakenDir, 'Python' ))
+    sys.path.append(os.path.join(krakenDir, 'Python'))
 
     krakenExtsDir = os.path.join(krakenDir, 'Exts')
-    if 'FABRIC_EXTS_PATH' not in os.environ:
-        LogMessage('Unable to Load Kraken becase Fabric Engine has not be loaded.')
-        return
-    if krakenExtsDir not in os.environ['FABRIC_EXTS_PATH']:
-        os.environ['FABRIC_EXTS_PATH'] = krakenExtsDir + os.pathsep + os.environ['FABRIC_EXTS_PATH']
+    krakenPresetsDir = os.path.join(krakenDir, 'Presets', 'DFG')
 
-    canvasPresetsDir = os.path.join(krakenDir, 'Presets', 'DFG')
-    if 'FABRIC_DFG_PATH' in os.environ and canvasPresetsDir not in os.environ['FABRIC_DFG_PATH']:
-        os.environ['FABRIC_DFG_PATH'] = canvasPresetsDir + os.pathsep + os.environ['FABRIC_DFG_PATH']
+    # Set Fabric Exts Path var with Kraken Exts paths added.
+    fabricPlugin = si.Plugins("Fabric Engine Plugin")
+    fabricExtsPath = XSIUtils.BuildPath(
+        fabricPlugin.OriginPath,
+        "..", "..", "..", "..",
+        "Exts")
+
+    fabricExtsPathVar = os.environ.get('FABRIC_EXTS_PATH', None)
+    if fabricExtsPathVar is None:
+        os.environ['FABRIC_EXTS_PATH'] = krakenExtsDir + os.pathsep + os.path.realpath(fabricExtsPath)
     else:
-        os.environ['FABRIC_DFG_PATH'] = canvasPresetsDir
+        os.environ['FABRIC_EXTS_PATH'] = os.environ.get('FABRIC_EXTS_PATH') + krakenExtsDir + os.pathsep + os.path.realpath(fabricExtsPath)
 
-    krakenLoadMenu = os.getenv('KRAKEN_LOAD_MENU', 'True')
+    # Set Fabric DFG Path var with Kraken DFG path added.
+    fabricDFGPath = XSIUtils.BuildPath(
+        fabricPlugin.OriginPath,
+        "..", "..", "..", "..",
+        "Presets", "DFG")
+
+    fabricDFGPathVar = os.environ.get('FABRIC_DFG_PATH', None)
+    if fabricDFGPathVar is None:
+        os.environ['FABRIC_DFG_PATH'] = krakenPresetsDir + os.pathsep + os.path.realpath(fabricDFGPath)
+    else:
+        os.environ['FABRIC_DFG_PATH'] = os.environ.get('FABRIC_DFG_PATH') + krakenPresetsDir + os.pathsep + os.path.realpath(fabricDFGPath)
+
+    # Load Menu if the Kraken Load Menu env var is set to true.
+    krakenLoadMenu = os.environ.get('KRAKEN_LOAD_MENU', 'True')
     if krakenLoadMenu == 'True':
         in_reg.RegisterMenu(constants.siMenuMainTopLevelID, "Kraken", False, False)
 
