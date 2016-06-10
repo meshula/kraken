@@ -326,7 +326,6 @@ def initializePlugin(mobject):
         sys.stderr.write('Failed to register commands: krakenBuildGuideFromRig')
         raise
 
-
     krakenLoadMenu = os.getenv('KRAKEN_LOAD_MENU', 'True')
     if krakenLoadMenu == 'True':
         setupKrakenMenu()

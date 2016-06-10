@@ -29,15 +29,15 @@ def XSILoadPlugin(in_reg):
 
 
     pluginPath = in_reg.OriginPath
-    krakenDir = os.path.normpath(XSIUtils.BuildPath(pluginPath, "..", "..", "..", ".."))
-    os.environ['KRAKEN_PATH'] = krakenDir
+    krakenPath = os.path.normpath(XSIUtils.BuildPath(pluginPath, "..", "..", "..", ".."))
+    os.environ['KRAKEN_PATH'] = krakenPath
     os.environ['KRAKEN_DCC'] = 'Softimage'
 
     # Add the path to the module search paths so we can import the module.
-    sys.path.append(os.path.join(krakenDir, 'Python'))
+    sys.path.append(os.path.join(krakenPath, 'Python'))
 
-    krakenExtsDir = os.path.join(krakenDir, 'Exts')
-    krakenPresetsDir = os.path.join(krakenDir, 'Presets', 'DFG')
+    krakenExtsPath = os.path.join(krakenPath, 'Exts')
+    krakenPresetsPath = os.path.join(krakenPath, 'Presets', 'DFG')
 
     # Set Fabric Exts Path var with Kraken Exts paths added.
     fabricPlugin = si.Plugins("Fabric Engine Plugin")
@@ -48,9 +48,9 @@ def XSILoadPlugin(in_reg):
 
     fabricExtsPathVar = os.environ.get('FABRIC_EXTS_PATH', None)
     if fabricExtsPathVar is None:
-        os.environ['FABRIC_EXTS_PATH'] = krakenExtsDir + os.pathsep + os.path.realpath(fabricExtsPath)
+        os.environ['FABRIC_EXTS_PATH'] = krakenExtsPath + os.pathsep + os.path.realpath(fabricExtsPath)
     else:
-        os.environ['FABRIC_EXTS_PATH'] = os.environ.get('FABRIC_EXTS_PATH') + krakenExtsDir + os.pathsep + os.path.realpath(fabricExtsPath)
+        os.environ['FABRIC_EXTS_PATH'] = os.environ.get('FABRIC_EXTS_PATH') + krakenExtsPath + os.pathsep + os.path.realpath(fabricExtsPath)
 
     # Set Fabric DFG Path var with Kraken DFG path added.
     fabricDFGPath = XSIUtils.BuildPath(
@@ -60,9 +60,9 @@ def XSILoadPlugin(in_reg):
 
     fabricDFGPathVar = os.environ.get('FABRIC_DFG_PATH', None)
     if fabricDFGPathVar is None:
-        os.environ['FABRIC_DFG_PATH'] = krakenPresetsDir + os.pathsep + os.path.realpath(fabricDFGPath)
+        os.environ['FABRIC_DFG_PATH'] = krakenPresetsPath + os.pathsep + os.path.realpath(fabricDFGPath)
     else:
-        os.environ['FABRIC_DFG_PATH'] = os.environ.get('FABRIC_DFG_PATH') + krakenPresetsDir + os.pathsep + os.path.realpath(fabricDFGPath)
+        os.environ['FABRIC_DFG_PATH'] = os.environ.get('FABRIC_DFG_PATH') + krakenPresetsPath + os.pathsep + os.path.realpath(fabricDFGPath)
 
     # Load Menu if the Kraken Load Menu env var is set to true.
     krakenLoadMenu = os.environ.get('KRAKEN_LOAD_MENU', 'True')
