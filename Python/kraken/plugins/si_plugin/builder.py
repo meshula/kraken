@@ -884,6 +884,10 @@ class Builder(Builder):
 
                 if portDataType == 'EvalContext':
                     return
+                elif portDataType == 'DrawingHandle':
+                    si.FabricCanvasAddPort(canvasOpPath, "", portName, "Out", portDataType, canvasGraphPort, "", "")
+                elif portDataType == 'InlineDebugShape':
+                    return
 
                 # Append the suffix based on the argument type, Softimage Only
                 if portDataType in ('Xfo', 'Mat44'):
@@ -1055,7 +1059,8 @@ class Builder(Builder):
                                     dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
                                 else:
                                     raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
-
+                            elif portDataType in ('DrawingHandle'):
+                                pass
                             else:
                                 raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
 
@@ -1185,7 +1190,7 @@ class Builder(Builder):
                 if portDataType == 'EvalContext':
                     return
                 elif portDataType == 'DrawingHandle':
-                    return
+                    si.FabricCanvasAddPort(canvasOpPath, "", portName, "Out", portDataType, canvasGraphPort, "", "")
                 elif portDataType == 'InlineDebugShape':
                     return
 
@@ -1368,14 +1373,13 @@ class Builder(Builder):
                                        portConnectionType,
                                        dccSceneItem)
 
-
                 else:
                     if portConnectionType == 'In':
                         connectedObject = kOperator.getInput(portName)
                     elif portConnectionType in ['IO', 'Out']:
                         connectedObject = kOperator.getOutput(portName)
 
-                    if connectedObject is None:
+                    if connectedObject is None and portDataType not in ('DrawingHandle'):
                         continue
 
                     dccSceneItem = self.getDCCSceneItem(connectedObject)
@@ -1389,10 +1393,11 @@ class Builder(Builder):
                                 dccItem = self.getDCCSceneItem(connectedObject.getParent().getParent())
                                 dccSceneItem = dccItem.Properties('Visibility').Parameters('viewvis')
                             else:
-                                raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
-
+                                raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + kOperator.getPresetPath() + "' port:'" + portName + "' dcc item not found.")
+                        elif portDataType in ('DrawingHandle'):
+                            pass
                         else:
-                            raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + solverTypeName + "' arg:'" + argName + "' dcc item not found for item:" + connectedObjects[j].getPath())
+                            raise Exception("Operator:'" + kOperator.getName() + "' of type:'" + kOperator.getPresetPath() + "' port:'" + portName + "' dcc item not found.")
 
                     addCanvasPorts(canvasOpPath, portName, uniqueNodeName + "." + portName, portDataType, portConnectionType, dccSceneItem)
 
