@@ -3,9 +3,10 @@ require KrakenForCanvas;
 
 interface KrakenKLRig {
 
+  UInt64 getEvalVersion();
   init!();
   resetPose!();
-  solve!();
+  solve!(KrakenClipContext context);
   setClip!(KrakenClip clip);
   loadClipFromFile!(String filePath);
   evaluate!(KrakenClipContext context);
@@ -15,6 +16,9 @@ interface KrakenKLRig {
   String[] getJointNames();
   Xfo[] getAllXfos();
   String[] getAllNames();
+
+  String[] getShapeNames();
+  getShapeWeights(io Float32 weights<>);
 
   KrakenControl<> getControls();
   KrakenScalarAttribute<> getScalarAttributes();
