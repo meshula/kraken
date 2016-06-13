@@ -765,13 +765,15 @@ class Builder(Builder):
         kl += ["function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
         kl += ["  String result[](%d);" % len(self.__krkShapes)]
         kl += ["  // todo"]
+        kl += ["  result[0] = \"%s\";" % self.__krkShapes[0]] # toodoooo
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function %s.getShapeWeights(Float32 weights<>) {" % self.getKLExtensionName()]
+        kl += ["function %s.getShapeWeights(io Float32 weights<>) {" % self.getKLExtensionName()]
         kl += ["  if(weights.size() != %d)" % len(self.__krkShapes)]
         kl += ["    return;"]
         kl += ["  // todo"]
+        kl += ["  weights[0] = 1.0;"]
         kl += ["}", ""]
 
         kl += ["function KrakenScalarAttribute<> %s.getScalarAttributes() {" % self.getKLExtensionName()]
@@ -1749,6 +1751,9 @@ class Builder(Builder):
         self.__krkDeformers = []
         self.__krkVisitedObjects = []
         self.__krkShapes = []
+
+        # todo
+        self.__krkShapes.append("R_loLid_up_inn_bsShape")
 
         return True
 

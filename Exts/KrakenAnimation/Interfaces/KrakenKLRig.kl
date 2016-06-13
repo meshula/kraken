@@ -18,7 +18,7 @@ interface KrakenKLRig {
   String[] getAllNames();
 
   String[] getShapeNames();
-  getShapeWeights(Float32 weights<>);
+  getShapeWeights(io Float32 weights<>);
 
   KrakenControl<> getControls();
   KrakenScalarAttribute<> getScalarAttributes();
