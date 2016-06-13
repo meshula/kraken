@@ -886,7 +886,7 @@ class Builder(Builder):
                     return
 
                 # Append the suffix based on the argument type, Softimage Only
-                if portDataType == 'Mat44':
+                if portDataType in ('Xfo', 'Mat44'):
                     portmapDefinition = portName + "|XSI Port"
 
                     canvasOpPath2 = str(canvasOpPath) + ":"
@@ -928,17 +928,9 @@ class Builder(Builder):
                         canvasOpPath = str(canvasOpPath2)[:-1]
                         canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
 
-                        outParamProp = canvasOp.Parent.Properties("_CanvasOp_" + portName)
+                        outParamProp = canvasOp.Parent3DObject.Properties("_CanvasOut_" + portName)
                         parameter = outParamProp.Parameters('value')
-                        if parameter is not None:
-                            if portName == 'time':
-                                parameter.AddExpression("T")
-                                return
-                            if portName == 'frame':
-                                parameter.AddExpression("Fc")
-                                return
-                            else:
-                                parameter.AddExpression(dccSceneItem.FullName)
+                        dccSceneItem.AddExpression(parameter.FullName)
 
                     else:
                         raise NotImplementedError("'argConnectionType': " + argConnectionType + " is not supported!")
@@ -1204,8 +1196,8 @@ class Builder(Builder):
                     canvasOpPath2 = str(canvasOpPath) + ":"
                     si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
                     canvasOpPath = str(canvasOpPath2)[:-1]
-
                     canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+
                     si.FabricCanvasOpConnectPort(
                         canvasOpPath,
                         portName,
@@ -1213,12 +1205,7 @@ class Builder(Builder):
 
                 elif portDataType in ['Scalar', 'Boolean', 'Integer']:
 
-                    if argConnectionType == 'Out':
-                        logger.warn("Operator:'" + kOperator.getName() +
-                                    "' port:'" + portName + "' cannot be set as an output connection. Mat44 only!")
-
-                    else:
-
+                    if argConnectionType == 'In':
                         portmapDefinition = portName + "|XSI Parameter"
 
                         canvasOpPath2 = str(canvasOpPath) + ":"
@@ -1236,6 +1223,22 @@ class Builder(Builder):
                                 return
                             else:
                                 parameter.AddExpression(dccSceneItem.FullName)
+
+                    elif argConnectionType in ('Out', 'IO'):
+                        portmapDefinition = portName + "|XSI Port"
+
+                        canvasOpPath2 = str(canvasOpPath) + ":"
+                        si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
+                        canvasOpPath = str(canvasOpPath2)[:-1]
+                        canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+
+                        outParamProp = canvasOp.Parent3DObject.Properties("_CanvasOut_" + portName)
+                        parameter = outParamProp.Parameters('value')
+                        dccSceneItem.AddExpression(parameter.FullName)
+
+                    else:
+                        raise NotImplementedError("Argument '" + portName + "' connection type: '" + argConnectionType + " not supported!")
+
 
             # connect the operator to the objects in the DCC
             for i in xrange(node.getExecPortCount()):
@@ -1394,6 +1397,10 @@ class Builder(Builder):
                     addCanvasPorts(canvasOpPath, portName, uniqueNodeName + "." + portName, portDataType, portConnectionType, dccSceneItem)
 
                 canvasOpPath = canvasOpPath2[:-1]
+
+            canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+            canvasOp.Parameters("graphExecMode").Value = 1
+            canvasOp.Parameters("graphExecMode").Value = 0
 
         finally:
             pass
