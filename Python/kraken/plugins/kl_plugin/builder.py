@@ -63,6 +63,7 @@ class Builder(Builder):
     __krkAttributes = None
     __krkDeformers = None
     __krkVisitedObjects = None
+    __krkShapes = None
 
     def __init__(self):
         super(Builder, self).__init__()
@@ -759,6 +760,18 @@ class Builder(Builder):
         for i in range(len(self.__klObjects)):
             kl += ["  result[%d] = \"%s\";" % (i, self.__klObjects[i]['sceneItem'].getBuildName())]
         kl += ["  return result;"]
+        kl += ["}", ""]
+
+        kl += ["function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
+        kl += ["  String result[](%d);" % len(self.__krkShapes)]
+        kl += ["  // todo"]
+        kl += ["  return result;"]
+        kl += ["}", ""]
+
+        kl += ["function %s.getShapeWeights(Float32 weights<>) {" % self.getKLExtensionName()]
+        kl += ["  if(weights.size() != %d)" % len(self.__krkShapes)]
+        kl += ["    return;"]
+        kl += ["  // todo"]
         kl += ["}", ""]
 
         kl += ["function KrakenScalarAttribute<> %s.getScalarAttributes() {" % self.getKLExtensionName()]
@@ -1735,6 +1748,7 @@ class Builder(Builder):
         self.__krkAttributes = {}
         self.__krkDeformers = []
         self.__krkVisitedObjects = []
+        self.__krkShapes = []
 
         return True
 
