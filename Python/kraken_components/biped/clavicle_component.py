@@ -206,6 +206,8 @@ class ClavicleComponentRig(ClavicleComponent):
         self.clavicleCtrlSpace = CtrlSpace('clavicle', parent=self.ctrlCmpGrp)
         self.clavicleCtrl = Control('clavicle', parent=self.clavicleCtrlSpace, shape="cube")
         self.clavicleCtrl.alignOnXAxis()
+        self.clavicleCtrl.lockTranslation(True, True, True)
+        self.clavicleCtrl.lockScale(True, True, True)
 
 
         # ==========

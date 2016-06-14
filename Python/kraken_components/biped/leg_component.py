@@ -250,15 +250,20 @@ class LegComponentRig(LegComponent):
         self.femurFKCtrlSpace = CtrlSpace('femurFK', parent=self.ctrlCmpGrp)
         self.femurFKCtrl = Control('femurFK', parent=self.femurFKCtrlSpace, shape="cube")
         self.femurFKCtrl.alignOnXAxis()
+        self.femurFKCtrl.lockTranslation(True, True, True)
+        self.femurFKCtrl.lockScale(True, True, True)
 
         # Shin
         self.shinFKCtrlSpace = CtrlSpace('shinFK', parent=self.femurFKCtrl)
         self.shinFKCtrl = Control('shinFK', parent=self.shinFKCtrlSpace, shape="cube")
         self.shinFKCtrl.alignOnXAxis()
+        self.shinFKCtrl.lockTranslation(True, True, True)
+        self.shinFKCtrl.lockScale(True, True, True)
 
         # IK Handle
         self.legIKCtrlSpace = CtrlSpace('IK', parent=self.ctrlCmpGrp)
         self.legIKCtrl = Control('IK', parent=self.legIKCtrlSpace, shape="pin")
+        self.legIKCtrl.lockScale(True, True, True)
 
         # Add Component Params to IK control
         legSettingsAttrGrp = AttributeGroup("DisplayInfo_LegSettings", parent=self.legIKCtrl)
@@ -282,6 +287,8 @@ class LegComponentRig(LegComponent):
         self.legUpVCtrlSpace = CtrlSpace('UpV', parent=self.ctrlCmpGrp)
         self.legUpVCtrl = Control('UpV', parent=self.legUpVCtrlSpace, shape="triangle")
         self.legUpVCtrl.alignOnZAxis()
+        self.legUpVCtrl.lockTranslation(True, True, True)
+        self.legUpVCtrl.lockScale(True, True, True)
 
 
         # ==========

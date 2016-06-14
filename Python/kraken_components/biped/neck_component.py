@@ -272,7 +272,7 @@ class NeckComponentRig(NeckComponent):
         self.neckInputCnstr = self.neck01CtrlSpace.constrainTo(
             self.neckBaseInputTgt,
             'Pose',
-            maintainOffset=False,
+            maintainOffset=True,
             name=neckInputConstraintName)
 
 
