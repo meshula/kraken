@@ -21,6 +21,11 @@
       "targetIndex": 0
     }, 
     {
+      "source": "mainSrt:M.rigScale", 
+      "target": "neck:M.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
       "source": "mainSrt:M.offset", 
       "target": "head:M.globalSRT", 
       "targetIndex": 0
@@ -36,6 +41,11 @@
       "targetIndex": 0
     }, 
     {
+      "source": "mainSrt:M.rigScale", 
+      "target": "head:M.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
       "source": "mainSrt:M.offset", 
       "target": "clavicle:L.globalSRT", 
       "targetIndex": 0
@@ -46,6 +56,11 @@
       "targetIndex": 0
     }, 
     {
+      "source": "mainSrt:M.rigScale", 
+      "target": "clavicle:L.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
       "source": "mainSrt:M.offset", 
       "target": "clavicle:R.globalSRT", 
       "targetIndex": 0
@@ -53,6 +68,11 @@
     {
       "source": "spine:M.spineEnd", 
       "target": "clavicle:R.spineEnd", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "clavicle:R.rigScale", 
       "targetIndex": 0
     }, 
     {
@@ -96,6 +116,11 @@
       "targetIndex": 0
     }, 
     {
+      "source": "mainSrt:M.rigScale", 
+      "target": "hand:L.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
       "source": "mainSrt:M.offset", 
       "target": "hand:R.globalSRT", 
       "targetIndex": 0
@@ -103,6 +128,11 @@
     {
       "source": "arm:R.wrist", 
       "target": "hand:R.armEnd", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "hand:R.rigScale", 
       "targetIndex": 0
     }, 
     {
@@ -166,6 +196,16 @@
       "targetIndex": 0
     }, 
     {
+      "source": "mainSrt:M.rigScale", 
+      "target": "foot:L.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:L.ikBlend", 
+      "target": "foot:L.ikBlend", 
+      "targetIndex": 0
+    }, 
+    {
       "source": "mainSrt:M.offset", 
       "target": "foot:R.globalSRT", 
       "targetIndex": 0
@@ -184,14 +224,24 @@
       "source": "leg:R.legEndFK", 
       "target": "foot:R.legEndFK", 
       "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "foot:R.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:R.ikBlend", 
+      "target": "foot:R.ikBlend", 
+      "targetIndex": 0
     }
   ], 
   "name": "char_bob_guide", 
   "components": [
     {
       "graphPos": {
-        "y": 0.0, 
-        "x": -1170.0, 
+        "y": -7.676380157470703, 
+        "x": -1206.8466796875, 
         "__mathObjectClass__": "Vec2"
       }, 
       "mainSrtXfo": {
@@ -331,8 +381,8 @@
               -0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }
       ], 
       "neckXfo": {
@@ -415,8 +465,8 @@
               -0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }
       ], 
       "neckMidXfo": {
@@ -533,8 +583,8 @@
               0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }
       ], 
       "eyeRightXfo": {
@@ -624,8 +674,8 @@
               0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }, 
         {
           "points": [
@@ -675,8 +725,8 @@
               0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }, 
         {
           "points": [
@@ -726,8 +776,8 @@
               -0.188
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }, 
         {
           "points": [
@@ -777,8 +827,8 @@
               0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }
       ], 
       "eyeRightCrvData": [
@@ -815,8 +865,8 @@
               0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }, 
         {
           "points": [
@@ -866,8 +916,8 @@
               0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }, 
         {
           "points": [
@@ -917,8 +967,8 @@
               -0.188
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }, 
         {
           "points": [
@@ -968,8 +1018,8 @@
               0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }
       ], 
       "jawCrvData": [
@@ -1001,8 +1051,8 @@
               0.0
             ]
           ], 
-          "closed": false, 
-          "degree": 1
+          "degree": 1, 
+          "closed": false
         }
       ], 
       "class": "kraken_components.biped.head_component.HeadComponentGuide", 
@@ -2039,8 +2089,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2092,8 +2142,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2145,8 +2195,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2198,8 +2248,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ], 
@@ -2233,8 +2283,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2286,8 +2336,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2339,8 +2389,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2392,8 +2442,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ], 
@@ -2427,8 +2477,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2480,8 +2530,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2533,8 +2583,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2586,8 +2636,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ], 
@@ -2621,8 +2671,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2674,8 +2724,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2727,8 +2777,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ], 
@@ -2762,8 +2812,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2815,8 +2865,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2868,8 +2918,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -2921,8 +2971,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ]
@@ -3609,8 +3659,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -3662,8 +3712,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -3715,8 +3765,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -3768,8 +3818,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ], 
@@ -3803,8 +3853,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -3856,8 +3906,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -3909,8 +3959,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -3962,8 +4012,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ], 
@@ -3997,8 +4047,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -4050,8 +4100,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -4103,8 +4153,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -4156,8 +4206,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ], 
@@ -4191,8 +4241,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -4244,8 +4294,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -4297,8 +4347,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ], 
@@ -4332,8 +4382,8 @@
                   -0.087
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -4385,8 +4435,8 @@
                   -0.061
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -4438,8 +4488,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ], 
           [
@@ -4491,8 +4541,8 @@
                   -0.12
                 ]
               ], 
-              "closed": false, 
-              "degree": 1
+              "degree": 1, 
+              "closed": false
             }
           ]
         ]
