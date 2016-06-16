@@ -287,7 +287,7 @@ class LegComponentRig(LegComponent):
         self.legUpVCtrlSpace = CtrlSpace('UpV', parent=self.ctrlCmpGrp)
         self.legUpVCtrl = Control('UpV', parent=self.legUpVCtrlSpace, shape="triangle")
         self.legUpVCtrl.alignOnZAxis()
-        self.legUpVCtrl.lockTranslation(True, True, True)
+        self.legUpVCtrl.lockRotation(True, True, True)
         self.legUpVCtrl.lockScale(True, True, True)
 
 
@@ -441,8 +441,8 @@ class LegComponentRig(LegComponent):
             self.legIKCtrl.rotatePoints(0, -90, 0)
             self.legIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
 
-        self.legUpVCtrlSpace.xfo = upVXfo
-        self.legUpVCtrl.xfo = upVXfo
+        self.legUpVCtrlSpace.xfo.tr = upVXfo.tr
+        self.legUpVCtrl.xfo.tr = upVXfo.tr
 
         self.legRightSideInputAttr.setValue(self.getLocation() is 'R')
         self.legBone0LenInputAttr.setMin(0.0)

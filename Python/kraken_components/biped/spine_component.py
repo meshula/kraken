@@ -232,12 +232,14 @@ class SpineComponentRig(SpineComponent):
         self.spine03Ctrl.setColor("blue")
 
         # Pelvis
-        self.pelvisCtrlSpace = CtrlSpace('pelvis', parent=self.cogCtrl)
+        self.pelvisCtrlSpace = CtrlSpace('pelvis', parent=self.spine01Ctrl)
         self.pelvisCtrl = Control('pelvis', parent=self.pelvisCtrlSpace, shape="cube")
         self.pelvisCtrl.alignOnYAxis(negative=True)
-        self.pelvisCtrl.scalePoints(Vec3(2.0, 1.5, 1.5))
+        self.pelvisCtrl.scalePoints(Vec3(4.0, 0.375, 3.75))
+        self.pelvisCtrl.translatePoints(Vec3(0.0, -0.5, -0.25))
         self.pelvisCtrl.lockTranslation(True, True, True)
         self.pelvisCtrl.lockScale(True, True, True)
+        self.pelvisCtrl.setColor("blueLightMuted")
 
 
         # ==========

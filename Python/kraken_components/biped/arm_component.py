@@ -268,7 +268,8 @@ class ArmComponentRig(ArmComponent):
 
         # Arm IK
         self.armIKCtrlSpace = CtrlSpace('IK', parent=self.ctrlCmpGrp)
-        self.armIKCtrl = Control('IK', parent=self.armIKCtrlSpace, shape="pin")
+        self.armIKCtrl = Control('IK', parent=self.armIKCtrlSpace, shape="jack")
+        self.armIKCtrl.scalePoints(Vec3(2.0, 2.0, 2.0))
         self.armIKCtrl.lockScale(True, True, True)
 
         # Add Params to IK control

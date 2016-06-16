@@ -261,7 +261,6 @@ class HeadComponentRig(HeadComponent):
         # LookAt Control
         self.lookAtCtrl = Control('lookAt', parent=self.ctrlCmpGrp, shape='square')
         self.lookAtCtrl.lockScale(x=True, y=True, z=True)
-        self.lookAtCtrl.lockTranslation(x=True, y=True, z=True)
         self.lookAtCtrl.rotatePoints(90, 0, 0)
         self.lookAtCtrlSpace = self.lookAtCtrl.insertCtrlSpace()
 
