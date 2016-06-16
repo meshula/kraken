@@ -241,7 +241,7 @@ class HeadComponentRig(HeadComponent):
         self.headCtrl.translatePoints(Vec3(0, 1, 0.25))
 
         # Eye Left
-        self.eyeLeftCtrl = Control('eyeLeft', parent=self.headCtrl, shape='sphere')
+        self.eyeLeftCtrl = Control('eyeLeft', parent=self.ctrlCmpGrp, shape='sphere')
         self.eyeLeftCtrl.lockScale(x=True, y=True, z=True)
         self.eyeLeftCtrl.lockTranslation(x=True, y=True, z=True)
         self.eyeLeftCtrlSpace = self.eyeLeftCtrl.insertCtrlSpace()
@@ -250,7 +250,7 @@ class HeadComponentRig(HeadComponent):
         self.eyeLeftCtrl.setColor('blueMedium')
 
         # Eye Right
-        self.eyeRightCtrl = Control('eyeRight', parent=self.headCtrl, shape='sphere')
+        self.eyeRightCtrl = Control('eyeRight', parent=self.ctrlCmpGrp, shape='sphere')
         self.eyeRightCtrl.lockScale(x=True, y=True, z=True)
         self.eyeRightCtrl.lockTranslation(x=True, y=True, z=True)
         self.eyeRightCtrlSpace = self.eyeRightCtrl.insertCtrlSpace()
@@ -338,7 +338,6 @@ class HeadComponentRig(HeadComponent):
         self.eyeLeftDirKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
-        self.eyeLeftDirKLOp.setInput('parentMatrix', self.headCtrl)
         self.eyeLeftDirKLOp.setInput('position', self.eyeLeftBase)
         self.eyeLeftDirKLOp.setInput('upVector', self.eyeLeftUpV)
         self.eyeLeftDirKLOp.setInput('atVector', self.eyeLeftAtV)
@@ -355,7 +354,6 @@ class HeadComponentRig(HeadComponent):
         self.eyeRightDirKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
-        self.eyeRightDirKLOp.setInput('parentMatrix', self.headCtrl)
         self.eyeRightDirKLOp.setInput('position', self.eyeRightBase)
         self.eyeRightDirKLOp.setInput('upVector', self.eyeRightUpV)
         self.eyeRightDirKLOp.setInput('atVector', self.eyeRightAtV)
@@ -376,7 +374,7 @@ class HeadComponentRig(HeadComponent):
         self.outputsToDeformersKLOp.setInput('constrainers', [self.headOutputTgt, self.jawOutputTgt, self.eyeROutputTgt, self.eyeLOutputTgt])
 
         # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [headDef, jawDef, eyeLeftDef, eyeRightDef])
+        self.outputsToDeformersKLOp.setOutput('constrainees', [headDef, jawDef, eyeRightDef, eyeLeftDef])
 
         Profiler.getInstance().pop()
 
@@ -465,8 +463,8 @@ class HeadComponentRig(HeadComponent):
         self.outputsToDeformersKLOp.evaluate()
 
         # Have to set the eye control xfos to match the evaluated xfos from
-        self.eyeLeftCtrl.xfo = self.headCtrl.xfo * self.eyeLeftCtrlSpace.xfo
-        self.eyeRightCtrl.xfo = self.headCtrl.xfo * self.eyeRightCtrlSpace.xfo
+        self.eyeLeftCtrl.xfo = self.eyeLeftCtrlSpace.xfo
+        self.eyeRightCtrl.xfo = self.eyeRightCtrlSpace.xfo
 
 
 from kraken.core.kraken_system import KrakenSystem
