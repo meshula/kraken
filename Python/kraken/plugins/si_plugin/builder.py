@@ -1111,7 +1111,8 @@ class Builder(Builder):
 
 
         finally:
-            pass
+            canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+            canvasOp.Parameters('graphExecMode').Value = 0
 
         return True
 
@@ -1408,7 +1409,8 @@ class Builder(Builder):
             canvasOp.Parameters("graphExecMode").Value = 0
 
         finally:
-            pass
+            canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+            canvasOp.Parameters('graphExecMode').Value = 0
 
         return True
 
@@ -1629,5 +1631,10 @@ class Builder(Builder):
             bool: True if successful.
 
         """
+
+        # Find all Canvas Ops and set to only execute if necessary
+        canvasOps = si.FindObjects2(constants.siCustomOperatorID).Filter('CanvasOp')
+        for op in canvasOps:
+            op.Parameters('graphExecMode').Value = 1
 
         return True
