@@ -14,13 +14,18 @@ from kraken.core.profiler import Profiler
 class NeckComponent(BaseExampleComponent):
     """Neck Component"""
 
-    def __init__(self, name="neckBase", parent=None):
-        super(NeckComponent, self).__init__(name, parent)
+    def __init__(self, name="neckBase", parent=None, *args, **kwargs):
+        super(NeckComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
         # ===========
         # Declare Inputs Xfos
+        self.globalSRTInputTgt = self.createInput(
+            'globalSRT',
+            dataType='Xfo',
+            parent=self.inputHrcGrp).getTarget()
+
         self.neckBaseInputTgt = self.createInput(
             'neckBase', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
@@ -47,10 +52,10 @@ class NeckComponent(BaseExampleComponent):
 class NeckComponentGuide(NeckComponent):
     """Neck Component Guide"""
 
-    def __init__(self, name='neck', parent=None):
+    def __init__(self, name='neck', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push('Construct Neck Component:' + name)
-        super(NeckComponentGuide, self).__init__(name, parent)
+        super(NeckComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
         # =========
         # Controls
@@ -233,11 +238,15 @@ class NeckComponentRig(NeckComponent):
         # Neck
         self.neck01Ctrl = Control('neck01', parent=self.ctrlCmpGrp, shape="pin")
         self.neck01Ctrl.setColor("orange")
+        self.neck01Ctrl.lockTranslation(True, True, True)
+        self.neck01Ctrl.lockScale(True, True, True)
 
         self.neck01CtrlSpace = self.neck01Ctrl.insertCtrlSpace(name='neck01')
 
-        self.neck02Ctrl = Control('neck02', parent=self.ctrlCmpGrp, shape="pin")
+        self.neck02Ctrl = Control('neck02', parent=self.neck01Ctrl, shape="pin")
         self.neck02Ctrl.setColor("orange")
+        self.neck02Ctrl.lockTranslation(True, True, True)
+        self.neck02Ctrl.lockScale(True, True, True)
 
         self.neck02CtrlSpace = self.neck02Ctrl.insertCtrlSpace(name='neck02')
 
@@ -267,7 +276,7 @@ class NeckComponentRig(NeckComponent):
         self.neckInputCnstr = self.neck01CtrlSpace.constrainTo(
             self.neckBaseInputTgt,
             'Pose',
-            maintainOffset=False,
+            maintainOffset=True,
             name=neckInputConstraintName)
 
 
@@ -297,7 +306,7 @@ class NeckComponentRig(NeckComponent):
                                      self.neck02Ctrl.getName()])
 
         self.neckEndCnstr = self.neckEndOutputTgt.constrainTo(
-            self.neck01Ctrl,
+            self.neck02Ctrl,
             'Pose',
             maintainOffset=True,
             name=neckEndCnstrName)

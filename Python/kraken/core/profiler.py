@@ -69,9 +69,8 @@ class Profiler(object):
         """Deactivates the current item in the tree and returns the profiler to
         the parent item"""
 
-        end = time.time()
         if len(self.__stack) == 0:
-            raise Exception("""Unable to close bracket. Pop has been called more """+
+            raise Exception("""Unable to close bracket. Pop has been called more """ +
                             """times than push.""")
 
         self.__stack[-1].endProfiling()
@@ -91,15 +90,16 @@ class Profiler(object):
         """
 
         if len(self.__stack) != 0:
-            raise Exception("""Profiler brackets not closed properly. """+
-                            """Pop must be called for every call to push. Pop """+
+            raise Exception("""Profiler brackets not closed properly. """ +
+                            """Pop must be called for every call to push. Pop """ +
                             """needs to be called another """ +
-                             str(len(self.__stack)) + """ times""")
+                            str(len(self.__stack)) + """ times""")
 
         report = []
         report.append("--callstack--")
 
         functions = {}
+
         def reportItem(item, indent):
             duration = item.end - item.start
             report.append(indent + item.label + ' duration: ' + str(duration))
@@ -124,7 +124,7 @@ class Profiler(object):
                                 cmp=reverse_numeric)
 
             for fn_tuple in sorted_fns:
-                report.append(str(fn_tuple[1]) +': ' + fn_tuple[0])
+                report.append(str(fn_tuple[1]) + ': ' + fn_tuple[0])
 
         return '\n'.join(report)
 

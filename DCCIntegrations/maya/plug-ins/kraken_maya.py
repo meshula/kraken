@@ -2,14 +2,9 @@ import os
 import sys
 import json
 
-from PySide import QtGui, QtCore
+from PySide import QtGui
 
 import types
-
-import kraken
-import kraken.ui.kraken_window
-from kraken.ui.kraken_window import KrakenWindow
-from kraken.ui.kraken_splash import KrakenSplash
 
 import maya
 from maya import cmds
@@ -26,6 +21,16 @@ except:
     # Maya 2014 and higher
     import shiboken
 
+import kraken
+from kraken import plugins
+from kraken.core.objects.rig import Rig
+from kraken.ui.kraken_window import KrakenWindow
+from kraken.ui.kraken_splash import KrakenSplash
+
+from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
+
+from kraken_examples.biped.biped_guide_rig import BipedGuideRig
+
 os.environ['KRAKEN_DCC'] = 'Maya'
 
 
@@ -34,13 +39,15 @@ def getMayaWindow():
     return shiboken.wrapInstance(long(ptr), QtGui.QWidget)
 
 
-# Command
-class OpenKrakenEditorCommand(OpenMayaMPx.MPxCommand):
+# =========
+# Commands
+# =========
+class OpenKrakenEditorCmd(OpenMayaMPx.MPxCommand):
     def __init__(self):
         OpenMayaMPx.MPxCommand.__init__(self)
 
     # Invoked when the command is run.
-    def doIt(self,argList):
+    def doIt(self, args):
 
         app = QtGui.QApplication.instance()
         if not app:
@@ -63,31 +70,196 @@ class OpenKrakenEditorCommand(OpenMayaMPx.MPxCommand):
     # Creator
     @staticmethod
     def creator():
-        return OpenMayaMPx.asMPxPtr( OpenKrakenEditorCommand() )
+        return OpenMayaMPx.asMPxPtr(OpenKrakenEditorCmd())
 
 
-class KrakenUndoableCmd(OpenMayaMPx.MPxCommand):
+class KrakenBipedBuildGuideCmd(OpenMayaMPx.MPxCommand):
 
-  def __init__(self):
+    def __init__(self):
         OpenMayaMPx.MPxCommand.__init__(self)
 
-  def isUndoable(self):
+    def isUndoable(self):
         return True
 
-  def doIt(self, argList):
-        return 0
+    def doIt(self, args):
 
-  def redoIt(self):
-        print "TODO: provide undoable command here."
-        return 0
+        result = pm.promptDialog(title='Kraken: Build Biped',
+                                 message='Rig Name',
+                                 button=['OK', 'Cancel'],
+                                 defaultButton='OK',
+                                 cancelButton='Cancel',
+                                 text='Biped')
 
-  def undoIt(self):
-        print "TODO: provide undoable command here."
-        return 0
+        if result == 'OK':
+            guideName = pm.promptDialog(query=True, text=True)
+            guideName.replace(' ', '')
+            guideName += '_guide'
 
-  @staticmethod
-  def creator():
-        return OpenMayaMPx.asMPxPtr( KrakenUndoableCmd() )
+            guideRig = BipedGuideRig(guideName)
+
+            builder = plugins.getBuilder()
+
+            OpenMaya.MGlobal.displayInfo('Kraken: Building Guide Rig: ' + guideName)
+
+            try:
+                main_window = pm.ui.Window(pm.MelGlobals.get('gMainWindow'))
+                main_win_width = pm.window(main_window, query=True, width=True)
+
+                buildMsgWin = pm.window("KrakenBuildBipedWin",
+                                        title="Kraken: Build Biped",
+                                        width=200,
+                                        height=100,
+                                        sizeable=False,
+                                        titleBar=False,
+                                        leftEdge=(main_win_width / 2) - 100)
+
+                buildMsglayout = pm.verticalLayout(spacing=10)
+                buildMsgText = pm.text('Kraken: Building Biped')
+                buildMsglayout.redistribute()
+                buildMsgWin.show()
+
+                pm.refresh()
+
+                builtRig = builder.build(guideRig)
+
+                return builtRig
+
+            finally:
+                if pm.window("KrakenBuildBipedWin", exists=True) is True:
+                    pm.deleteUI(buildMsgWin)
+
+        else:
+            OpenMaya.MGlobal.displayWarning('Kraken: Build Guide Rig Cancelled!')
+
+    # Creator
+    @staticmethod
+    def creator():
+        return OpenMayaMPx.asMPxPtr(KrakenBipedBuildGuideCmd())
+
+
+class KrakenBipedBuildRigCmd(OpenMayaMPx.MPxCommand):
+    def __init__(self):
+        OpenMayaMPx.MPxCommand.__init__(self)
+
+    def isUndoable(self):
+        return True
+
+    def doIt(self, argList):
+
+        selObjects = self.parseArgs(argList)
+        if selObjects.length() < 1:
+            OpenMaya.MGlobal.displayWarning('Kraken: No objects selected, Build Rig cancelled.')
+            return False
+
+        firstObj = OpenMaya.MObject()
+        selObjects.getDependNode(0, firstObj)
+
+        firstObjDepNode = maya.OpenMaya.MFnDependencyNode(firstObj)
+        if firstObjDepNode.hasAttribute('krakenRig') is False:
+            OpenMaya.MGlobal.displayWarning('Kraken: Selected object is not the top node of a Kraken Rig!')
+            return False
+
+        guideName = firstObjDepNode.name()
+        guideRig = BipedGuideRig(guideName)
+
+        synchronizer = plugins.getSynchronizer()
+
+        if guideRig.getName().endswith('_guide') is False:
+            guideRig.setName(guideRig.getName() + '_guide')
+
+        synchronizer.setTarget(guideRig)
+        synchronizer.sync()
+
+        rigBuildData = guideRig.getRigBuildData()
+        rig = Rig()
+        rig.loadRigDefinition(rigBuildData)
+        rig.setName(rig.getName().replace('_guide', '_rig'))
+
+        builder = plugins.getBuilder()
+        builtRig = builder.build(rig)
+
+        return builtRig
+
+    def parseArgs(self, args):
+        argData = OpenMaya.MArgDatabase(self.syntax(), args)
+
+        selObjects = OpenMaya.MSelectionList()
+        argData.getObjects(selObjects)
+
+        return selObjects
+
+    @staticmethod
+    def syntaxCreator():
+        syntax = OpenMaya.MSyntax()
+
+        syntax.useSelectionAsDefault(True)
+        syntax.setObjectType(syntax.kSelectionList, 0, 1)
+
+        return syntax
+
+    # Creator
+    @staticmethod
+    def creator():
+        return OpenMayaMPx.asMPxPtr(KrakenBipedBuildRigCmd())
+
+
+class krakenBuildGuideFromRigCmd(OpenMayaMPx.MPxCommand):
+    def __init__(self):
+        OpenMayaMPx.MPxCommand.__init__(self)
+
+    def isUndoable(self):
+        return True
+
+    def doIt(self, argList):
+
+        selObjects = self.parseArgs(argList)
+        if selObjects.length() < 1:
+            OpenMaya.MGlobal.displayWarning('Kraken: No objects selected, Build Guide From Rig cancelled.')
+            return False
+
+        firstObj = OpenMaya.MObject()
+        selObjects.getDependNode(0, firstObj)
+
+        firstObjDepNode = maya.OpenMaya.MFnDependencyNode(firstObj)
+        if firstObjDepNode.hasAttribute('krakenRig') is False:
+            OpenMaya.MGlobal.displayWarning('Kraken: Selected object is not the top node of a Kraken Rig!')
+            return False
+
+        guideData = firstObjDepNode.findPlug("krakenRigData").asString()
+
+        rig = Rig()
+        jsonData = json.loads(guideData)
+        jsonData = prepareToLoad(jsonData)
+        rig.loadRigDefinition(jsonData)
+        rig.setName(rig.getName())
+
+        builder = plugins.getBuilder()
+        builtRig = builder.build(rig)
+
+        # return builtRig
+        return None
+
+    def parseArgs(self, args):
+        argData = OpenMaya.MArgDatabase(self.syntax(), args)
+
+        selObjects = OpenMaya.MSelectionList()
+        argData.getObjects(selObjects)
+
+        return selObjects
+
+    @staticmethod
+    def syntaxCreator():
+        syntax = OpenMaya.MSyntax()
+
+        syntax.useSelectionAsDefault(True)
+        syntax.setObjectType(syntax.kSelectionList, 0, 1)
+
+        return syntax
+
+    # Creator
+    @staticmethod
+    def creator():
+        return OpenMayaMPx.asMPxPtr(krakenBuildGuideFromRigCmd())
 
 
 def setupKrakenMenu():
@@ -101,8 +273,15 @@ def setupKrakenMenu():
     krakenMenu = pm.menu(menuName, parent=mainWindow, label=menuName, to=True)
 
     pm.menuItem(parent=krakenMenu, label="Open Kraken Editor", c="from maya import cmds; cmds.openKrakenEditor()")
-    pm.menuItem(parent=krakenMenu, divider=True)
-    pm.menuItem(parent=krakenMenu, label="Help", c="import webbrowser; webbrowser.open_new_tab('http://fabric-engine.github.io/Kraken')")
+    pm.menuItem(parent=krakenMenu, divider=True, dividerLabel='Biped')
+    pm.menuItem(parent=krakenMenu, label="Build Biped Guide", c="from maya import cmds; cmds.krakenBipedBuildGuide()")
+    pm.menuItem(parent=krakenMenu, label="Build Biped Rig", c="from maya import cmds; cmds.krakenBipedBuildRig()")
+    pm.menuItem(parent=krakenMenu, divider=True, dividerLabel='Utils')
+    pm.menuItem(parent=krakenMenu, label="Build Guide From Rig", c="from maya import cmds; cmds.krakenBuildGuideFromRig()")
+    pm.menuItem(parent=krakenMenu, divider=True, dividerLabel='Resources')
+    pm.menuItem(parent=krakenMenu, label="Kraken Web Site", c="import webbrowser; webbrowser.open_new_tab('http://fabric-engine.github.io/Kraken')")
+    pm.menuItem(parent=krakenMenu, label="Kraken Documentation", c="import webbrowser; webbrowser.open_new_tab('http://kraken-rigging-framework.readthedocs.io')")
+    pm.menuItem(parent=krakenMenu, label="Fabric Forums", c="import webbrowser; webbrowser.open_new_tab('http://forums.fabricengine.com/categories/kraken')")
 
 
 def removeKrakenMenu():
@@ -113,7 +292,7 @@ def removeKrakenMenu():
         menuParent = pm.menu('Kraken', query=True, parent=True)
         pm.deleteUI('|'.join([menuParent, 'Kraken']))
 
-# Initialize the script plug-in
+
 def initializePlugin(mobject):
 
     pm.loadPlugin("FabricMaya", quiet=True)
@@ -125,22 +304,33 @@ def initializePlugin(mobject):
     mplugin = OpenMayaMPx.MFnPlugin(mobject)
 
     try:
-        mplugin.registerCommand('openKrakenEditor', OpenKrakenEditorCommand.creator)
+        mplugin.registerCommand('openKrakenEditor', OpenKrakenEditorCmd.creator)
     except:
         sys.stderr.write('Failed to register commands: openKrakenEditor')
         raise
 
     try:
-        mplugin.registerCommand('krakenUndoableCmd', KrakenUndoableCmd.creator)
+        mplugin.registerCommand('krakenBipedBuildGuide', KrakenBipedBuildGuideCmd.creator)
     except:
-        sys.stderr.write('Failed to register commands:krakenUndoableCmd')
+        sys.stderr.write('Failed to register commands: krakenBipedBuildGuide')
+        raise
+
+    try:
+        mplugin.registerCommand('krakenBipedBuildRig', KrakenBipedBuildRigCmd.creator, KrakenBipedBuildRigCmd.syntaxCreator)
+    except:
+        sys.stderr.write('Failed to register commands: krakenBipedBuildRig')
+        raise
+    try:
+        mplugin.registerCommand('krakenBuildGuideFromRig', krakenBuildGuideFromRigCmd.creator, krakenBuildGuideFromRigCmd.syntaxCreator)
+    except:
+        sys.stderr.write('Failed to register commands: krakenBuildGuideFromRig')
         raise
 
     krakenLoadMenu = os.getenv('KRAKEN_LOAD_MENU', 'True')
     if krakenLoadMenu == 'True':
         setupKrakenMenu()
 
-# Uninitialize the script plug-in
+
 def uninitializePlugin(mobject):
 
     mplugin = OpenMayaMPx.MFnPlugin(mobject)
@@ -153,6 +343,15 @@ def uninitializePlugin(mobject):
         sys.stderr.write('Failed to unregister command: openKrakenEditor')
 
     try:
-        mplugin.deregisterCommand('krakenUndoableCmd')
+        mplugin.deregisterCommand('krakenBipedBuildGuide')
     except:
-        sys.stderr.write('Failed to unregister command: krakenUndoableCmd')
+        sys.stderr.write('Failed to unregister command: krakenBipedBuildGuide')
+
+    try:
+        mplugin.deregisterCommand('krakenBipedBuildRig')
+    except:
+        sys.stderr.write('Failed to unregister command: krakenBipedBuildRig')
+    try:
+        mplugin.deregisterCommand('krakenBuildGuideFromRig')
+    except:
+        sys.stderr.write('Failed to unregister command: krakenBuildGuideFromRig')

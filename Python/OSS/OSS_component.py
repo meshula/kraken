@@ -15,9 +15,9 @@ from kraken.core.maths.xfo import Xfo
 class OSS_Component(BaseExampleComponent):
     """OSS Component object."""
 
-    def __init__(self, name='', parent=None, data=None):
+    def __init__(self, name='', parent=None):
 
-        super(OSS_Component, self).__init__(name, parent=parent, data=data)
+        super(OSS_Component, self).__init__(name, parent=parent)
 
         self._color = (155, 155, 200, 255)
 

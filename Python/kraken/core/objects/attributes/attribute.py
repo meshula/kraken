@@ -28,7 +28,6 @@ class Attribute(SceneItem):
             parent.addAttribute(self)
 
 
-
     # ==============
     # Value Methods
     # ==============
@@ -40,7 +39,6 @@ class Attribute(SceneItem):
         """
 
         return self._value
-
 
     def setValue(self, value):
         """Sets attribute value.
@@ -59,7 +57,6 @@ class Attribute(SceneItem):
             self._callback(value)
 
         return True
-
 
     def setValueChangeCallback(self, callback):
         """Sets the value of the attribute.
@@ -91,7 +88,6 @@ class Attribute(SceneItem):
 
         return self._keyable
 
-
     def setKeyable(self, value):
         """Sets the keyable state of the attribute.
 
@@ -120,7 +116,6 @@ class Attribute(SceneItem):
         """
 
         return self._lock
-
 
     def setLock(self, value):
         """Sets the lock state of the attribute..
@@ -158,7 +153,6 @@ class Attribute(SceneItem):
         self._animatable = value
 
         return True
-
 
     def getAnimatable(self):
         """Returns the animatable state of the attribute..
@@ -224,7 +218,6 @@ class Attribute(SceneItem):
 
         return True
 
-
     def getConnection(self):
         """Returns the connected attribute..
 
@@ -234,7 +227,6 @@ class Attribute(SceneItem):
         """
 
         return self._connection
-
 
     def connect(self, attribute):
         """Connects this attribute with another..
@@ -247,11 +239,11 @@ class Attribute(SceneItem):
 
         """
 
+        self.removeSource(self._connection)
         self._connection = attribute
         self.addSource(attribute)
 
         return True
-
 
     def disconnect(self):
         """Clears the connection of this attribute..
@@ -297,7 +289,6 @@ class Attribute(SceneItem):
 
         return jsonData
 
-
     def jsonDecode(self, loader, jsonData):
         """Returns the color of the object..
 
@@ -310,7 +301,7 @@ class Attribute(SceneItem):
 
         """
 
-        self.name =  jsonData['name']
-        self._value =  loader.decodeValue(jsonData['value'])
+        self.name = jsonData['name']
+        self._value = loader.decodeValue(jsonData['value'])
 
         return True

@@ -20,7 +20,7 @@ Developers wishing to contribute to Kraken should read the guidelines located
 
 License
 =======
-Copyright (c) 2014-2016, Eric Thivierge, Phil Taylor, Hybride Technologies Inc., Fabric Software Inc. All rights reserved.
+Copyright (c) 2014-2016, Eric Thivierge, Phil Taylor, Hybride Technologies, a division of Ubisoft., Fabric Software Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

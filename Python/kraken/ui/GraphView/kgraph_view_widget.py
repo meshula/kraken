@@ -221,6 +221,11 @@ class KGraphViewWidget(GraphViewWidget):
             self.window().setCursor(QtCore.Qt.ArrowCursor)
 
     def loadRigPreset(self, filePath):
+
+        if not os.path.exists(filePath):
+            logger.warn("File '" + filePath + "' does not exist!")
+            return
+
         self.guideRig = Rig()
         self.guideRig.loadRigDefinitionFile(filePath)
         self.setGuideRigName(self.guideRig.getName())  # Remove "_guide" from end of name

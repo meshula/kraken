@@ -28,14 +28,14 @@ from kraken.helpers.utility_methods import logHierarchy
 class SpineComponent(BaseExampleComponent):
     """Spine Component"""
 
-    def __init__(self, name="spineBase", parent=None):
-        super(SpineComponent, self).__init__(name, parent)
+    def __init__(self, name="spineBase", parent=None, *args, **kwargs):
+        super(SpineComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.spineMainSrtInputTgt = self.createInput('mainSrt', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.spineCogOutputTgt = self.createOutput('cog', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -56,10 +56,10 @@ class SpineComponent(BaseExampleComponent):
 class SpineComponentGuide(SpineComponent):
     """Spine Component Guide"""
 
-    def __init__(self, name='spine', parent=None):
+    def __init__(self, name='spine', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Spine Guide Component:" + name)
-        super(SpineComponentGuide, self).__init__(name, parent)
+        super(SpineComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
         # =========
         # Controls
@@ -202,34 +202,44 @@ class SpineComponentRig(SpineComponent):
         self.cogCtrl = Control('cog', parent=self.cogCtrlSpace, shape="circle")
         self.cogCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))
         self.cogCtrl.setColor("orange")
+        self.cogCtrl.lockScale(True, True, True)
 
         # Spine01
         self.spine01CtrlSpace = CtrlSpace('spine01', parent=self.cogCtrl)
         self.spine01Ctrl = Control('spine01', parent=self.spine01CtrlSpace, shape="circle")
         self.spine01Ctrl.scalePoints(Vec3(4.0, 4.0, 4.0))
+        self.spine01Ctrl.lockScale(True, True, True)
 
         # Spine02
         self.spine02CtrlSpace = CtrlSpace('spine02', parent=self.spine01Ctrl)
         self.spine02Ctrl = Control('spine02', parent=self.spine02CtrlSpace, shape="circle")
         self.spine02Ctrl.scalePoints(Vec3(4.5, 4.5, 4.5))
+        self.spine02Ctrl.lockScale(True, True, True)
+        self.spine02Ctrl.setColor("blue")
 
-
-        # Spine03
-        self.spine03CtrlSpace = CtrlSpace('spine03', parent=self.spine02Ctrl)
-        self.spine03Ctrl = Control('spine03', parent=self.spine03CtrlSpace, shape="circle")
-        self.spine03Ctrl.scalePoints(Vec3(4.5, 4.5, 4.5))
-        self.spine03Ctrl.setColor("blue")
 
         # Spine04
         self.spine04CtrlSpace = CtrlSpace('spine04', parent=self.cogCtrl)
         self.spine04Ctrl = Control('spine04', parent=self.spine04CtrlSpace, shape="circle")
         self.spine04Ctrl.scalePoints(Vec3(6.0, 6.0, 6.0))
+        self.spine04Ctrl.lockScale(True, True, True)
+
+        # Spine03
+        self.spine03CtrlSpace = CtrlSpace('spine03', parent=self.spine04Ctrl)
+        self.spine03Ctrl = Control('spine03', parent=self.spine03CtrlSpace, shape="circle")
+        self.spine03Ctrl.scalePoints(Vec3(4.5, 4.5, 4.5))
+        self.spine03Ctrl.lockScale(True, True, True)
+        self.spine03Ctrl.setColor("blue")
 
         # Pelvis
-        self.pelvisCtrlSpace = CtrlSpace('pelvis', parent=self.cogCtrl)
+        self.pelvisCtrlSpace = CtrlSpace('pelvis', parent=self.spine01Ctrl)
         self.pelvisCtrl = Control('pelvis', parent=self.pelvisCtrlSpace, shape="cube")
         self.pelvisCtrl.alignOnYAxis(negative=True)
-        self.pelvisCtrl.scalePoints(Vec3(2.0, 1.5, 1.5))
+        self.pelvisCtrl.scalePoints(Vec3(4.0, 0.375, 3.75))
+        self.pelvisCtrl.translatePoints(Vec3(0.0, -0.5, -0.25))
+        self.pelvisCtrl.lockTranslation(True, True, True)
+        self.pelvisCtrl.lockScale(True, True, True)
+        self.pelvisCtrl.setColor("blueLightMuted")
 
 
         # ==========
@@ -256,8 +266,8 @@ class SpineComponentRig(SpineComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.spineSrtInputConstraint = PoseConstraint('_'.join([self.cogCtrlSpace.getName(), 'To', self.spineMainSrtInputTgt.getName()]))
-        self.spineSrtInputConstraint.addConstrainer(self.spineMainSrtInputTgt)
+        self.spineSrtInputConstraint = PoseConstraint('_'.join([self.cogCtrlSpace.getName(), 'To', self.globalSRTInputTgt.getName()]))
+        self.spineSrtInputConstraint.addConstrainer(self.globalSRTInputTgt)
         self.spineSrtInputConstraint.setMaintainOffset(True)
         self.cogCtrlSpace.addConstraint(self.spineSrtInputConstraint)
 

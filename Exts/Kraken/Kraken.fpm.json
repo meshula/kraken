@@ -1,4 +1,5 @@
 {
+  "version": "1.2.0",
   "code": [
     "Drawing/DrawingUtils.kl",
     "Solvers/Math.kl",
@@ -7,10 +8,10 @@
     "Solvers/RigScaleSolver.kl",
     "Solvers/DirectionConstraintSolver.kl",
     "Solvers/PoseConstraintSolver.kl",
-    "Solvers/MultiPoseConstraintSolver.kl"
+    "Solvers/MultiPoseConstraintSolver.kl",
     "Solvers/BezierSpineSolver.kl",
     "Solvers/TwoBoneIKSolver.kl",
-    "Solvers/TwoBoneStretchyIKSolver.kl"
+    "Solvers/TwoBoneStretchyIKSolver.kl",
     "Solvers/NBoneIKSolver.kl",
     "Solvers/TentacleSolver.kl",
     "Solvers/DynamicChainSolver.kl",

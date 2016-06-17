@@ -30,13 +30,14 @@ from kraken.core.profiler import Profiler
 class HandComponent(BaseExampleComponent):
     """Hand Component Base"""
 
-    def __init__(self, name='hand', parent=None):
-        super(HandComponent, self).__init__(name, parent)
+    def __init__(self, name='hand', parent=None, *args, **kwargs):
+        super(HandComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
         # ===========
         # Declare Inputs Xfos
+        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.armEndInputTgt = self.createInput('armEnd', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
@@ -52,10 +53,10 @@ class HandComponent(BaseExampleComponent):
 class HandComponentGuide(HandComponent):
     """Hand Component Guide"""
 
-    def __init__(self, name='hand', parent=None):
+    def __init__(self, name='hand', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Hand Guide Component:" + name)
-        super(HandComponentGuide, self).__init__(name, parent)
+        super(HandComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
 
         # =========
@@ -153,13 +154,17 @@ class HandComponentGuide(HandComponent):
         if fingersGuideXfos is not None:
 
             for finger in self.fingers.keys():
-                for i in xrange(len(self.fingers[finger]) - 1):
+                for i in xrange(len(self.fingers[finger])):
                     self.fingers[finger][i].xfo = fingersGuideXfos[finger][i]
 
                     if hasattr(self.fingers[finger][i], 'shapeCtrl'):
                         if fingerShapeCtrlData is not None:
                             if finger in fingerShapeCtrlData:
                                 self.fingers[finger][i].shapeCtrl.setCurveData(fingerShapeCtrlData[finger][i])
+
+        for op in self.getOperators():
+            guideOpName = ''.join([op.getName().split('FingerGuideOp')[0], self.getLocation(), 'FingerGuideOp'])
+            op.setName(guideOpName)
 
         return True
 
@@ -428,6 +433,9 @@ class HandComponentRig(HandComponent):
         # Hand
         self.handCtrlSpace = CtrlSpace('hand', parent=self.ctrlCmpGrp)
         self.handCtrl = Control('hand', parent=self.handCtrlSpace, shape="square")
+        self.handCtrl.rotatePoints(0, 0, 90.0)
+        self.handCtrl.lockScale(True, True, True)
+        self.handCtrl.lockTranslation(True, True, True)
 
 
         # ==========
@@ -481,6 +489,8 @@ class HandComponentRig(HandComponent):
             # Create Controls
             newJointCtrlSpace = CtrlSpace(jointName, parent=parentCtrl)
             newJointCtrl = Control(jointName, parent=newJointCtrlSpace, shape='square')
+            newJointCtrl.lockScale(True, True, True)
+            newJointCtrl.lockTranslation(True, True, True)
 
             if jointCrvData is not None:
                 newJointCtrl.setCurveData(jointCrvData)
@@ -539,7 +549,6 @@ class HandComponentRig(HandComponent):
 
         self.handCtrlSpace.xfo = handXfo
         self.handCtrl.xfo = handXfo
-        # self.handCtrl.scalePoints(Vec3(data['clavicleLen'], 0.75, 0.75))
 
         fingerOps = []
         for finger in fingerData.keys():

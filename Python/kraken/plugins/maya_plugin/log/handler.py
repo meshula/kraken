@@ -9,17 +9,28 @@ class DCCHandler(logging.Handler):
     """Logging Handler for Maya."""
 
     def emit(self, record):
+        """Maps the logger calls to call the specific Maya logging calls so the
+        messages appear in the DCC as well.
+
+        .. note::
+
+            Calls to these Maya specific methods are executed:
+                - om.MGlobal.displayError
+                - om.MGlobal.displayWarning
+                - om.MGlobal.displayInfo
+
+        """
 
         msg = self.format(record)
 
         if record.levelno == logging.CRITICAL:
-            om.MGlobal.displayWarning(msg)
+            om.MGlobal.displayError(msg)
 
         elif record.levelno == logging.ERROR:
-            om.MGlobal.displayWarning(msg)
+            om.MGlobal.displayError(msg)
 
         elif record.levelno == logging.WARNING:
-            om.MGlobal.displayError(msg)
+            om.MGlobal.displayWarning(msg)
 
         elif record.levelno == logging.INFORM:
             om.MGlobal.displayInfo(msg)

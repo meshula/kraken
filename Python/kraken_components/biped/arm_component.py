@@ -24,8 +24,8 @@ from kraken.core.profiler import Profiler
 class ArmComponent(BaseExampleComponent):
     """Arm Component Base"""
 
-    def __init__(self, name='arm', parent=None):
-        super(ArmComponent, self).__init__(name, parent)
+    def __init__(self, name='arm', parent=None, *args, **kwargs):
+        super(ArmComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
@@ -50,13 +50,12 @@ class ArmComponent(BaseExampleComponent):
         self.ikBlendOutputAttr = self.createOutput('ikBlend', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
 
 
-
 class ArmComponentGuide(ArmComponent):
     """Arm Component Guide"""
 
-    def __init__(self, name='arm', parent=None):
+    def __init__(self, name='arm', parent=None, *args, **kwargs):
         Profiler.getInstance().push("Construct Arm Guide Component:" + name)
-        super(ArmComponentGuide, self).__init__(name, parent)
+        super(ArmComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Attributes
@@ -84,27 +83,27 @@ class ArmComponentGuide(ArmComponent):
         self.guideOpHost = Transform('guideOpHost', self.ctrlCmpGrp)
 
         # Guide Operator
-        self.neckGuideKLOp = KLOperator(name + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
-        self.addOperator(self.neckGuideKLOp)
+        self.armGuideKLOp = KLOperator(name + self.getLocation() + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
+        self.addOperator(self.armGuideKLOp)
 
         # Add Att Inputs
-        self.neckGuideKLOp.setInput('drawDebug', self.armGuideDebugAttr)
-        self.neckGuideKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.armGuideKLOp.setInput('drawDebug', self.armGuideDebugAttr)
+        self.armGuideKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Source Inputs
-        self.neckGuideKLOp.setInput('root', self.bicepCtrl)
-        self.neckGuideKLOp.setInput('mid', self.forearmCtrl)
-        self.neckGuideKLOp.setInput('end', self.wristCtrl)
+        self.armGuideKLOp.setInput('root', self.bicepCtrl)
+        self.armGuideKLOp.setInput('mid', self.forearmCtrl)
+        self.armGuideKLOp.setInput('end', self.wristCtrl)
 
         # Add Target Outputs
-        self.neckGuideKLOp.setOutput('guideOpHost', self.guideOpHost)
+        self.armGuideKLOp.setOutput('guideOpHost', self.guideOpHost)
 
         self.default_data = {
             "name": name,
             "location": "L",
-            "bicepXfo": Xfo(Vec3(2.27, 15.295, -0.753)),
-            "forearmXfo": Xfo(Vec3(5.039, 13.56, -0.859)),
-            "wristXfo": Xfo(Vec3(7.1886, 12.2819, 0.4906)),
+            "bicepXfo": Xfo(Vec3(2.275, 15.3, -0.75)),
+            "forearmXfo": Xfo(Vec3(5.0, 13.5, -0.75)),
+            "wristXfo": Xfo(Vec3(7.2, 12.25, 0.5)),
             "bicepFKCtrlSize": self.bicepFKCtrlSizeInputAttr.getValue(),
             "forearmFKCtrlSize": self.forearmFKCtrlSizeInputAttr.getValue()
         }
@@ -151,6 +150,9 @@ class ArmComponentGuide(ArmComponent):
         self.bicepCtrl.xfo = data['bicepXfo']
         self.forearmCtrl.xfo = data['forearmXfo']
         self.wristCtrl.xfo = data['wristXfo']
+
+        guideOpName = ''.join([self.getName().split('GuideKLOp')[0], self.getLocation(), 'GuideKLOp'])
+        self.armGuideKLOp.setName(guideOpName)
 
         return True
 
@@ -253,16 +255,22 @@ class ArmComponentRig(ArmComponent):
 
         self.bicepFKCtrl = Control('bicepFK', parent=self.bicepFKCtrlSpace, shape="cube")
         self.bicepFKCtrl.alignOnXAxis()
+        self.bicepFKCtrl.lockScale(True, True, True)
+        self.bicepFKCtrl.lockTranslation(True, True, True)
 
         # Forearm
         self.forearmFKCtrlSpace = CtrlSpace('forearmFK', parent=self.bicepFKCtrl)
 
         self.forearmFKCtrl = Control('forearmFK', parent=self.forearmFKCtrlSpace, shape="cube")
         self.forearmFKCtrl.alignOnXAxis()
+        self.forearmFKCtrl.lockScale(True, True, True)
+        self.forearmFKCtrl.lockTranslation(True, True, True)
 
         # Arm IK
         self.armIKCtrlSpace = CtrlSpace('IK', parent=self.ctrlCmpGrp)
-        self.armIKCtrl = Control('IK', parent=self.armIKCtrlSpace, shape="pin")
+        self.armIKCtrl = Control('IK', parent=self.armIKCtrlSpace, shape="jack")
+        self.armIKCtrl.scalePoints(Vec3(2.0, 2.0, 2.0))
+        self.armIKCtrl.lockScale(True, True, True)
 
         # Add Params to IK control
         armSettingsAttrGrp = AttributeGroup("DisplayInfo_ArmSettings", parent=self.armIKCtrl)
@@ -286,6 +294,8 @@ class ArmComponentRig(ArmComponent):
         self.armUpVCtrl = Control('UpV', parent=self.armUpVCtrlSpace, shape="triangle")
         self.armUpVCtrl.alignOnZAxis()
         self.armUpVCtrl.rotatePoints(180, 0, 0)
+        self.armIKCtrl.lockScale(True, True, True)
+        self.armIKCtrl.lockRotation(True, True, True)
 
 
         # ==========

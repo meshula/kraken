@@ -32,13 +32,14 @@ logger = getLogger('kraken')
 class HeadComponent(BaseExampleComponent):
     """Head Component Base"""
 
-    def __init__(self, name='headBase', parent=None):
-        super(HeadComponent, self).__init__(name, parent)
+    def __init__(self, name='headBase', parent=None, *args, **kwargs):
+        super(HeadComponent, self).__init__(name, parent, *args, **kwargs)
 
         # ===========
         # Declare IO
         # ===========
         # Declare Inputs Xfos
+        self.globalSRTInputTgt = self.createInput('globalSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.neckRefInputTgt = self.createInput('neckRef', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         self.worldRefInputTgt = self.createInput('worldRef', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
@@ -58,10 +59,10 @@ class HeadComponent(BaseExampleComponent):
 class HeadComponentGuide(HeadComponent):
     """Head Component Guide"""
 
-    def __init__(self, name='head', parent=None):
+    def __init__(self, name='head', parent=None, *args, **kwargs):
 
         Profiler.getInstance().push("Construct Head Guide Component:" + name)
-        super(HeadComponentGuide, self).__init__(name, parent)
+        super(HeadComponentGuide, self).__init__(name, parent, *args, **kwargs)
 
 
         # =========
@@ -109,7 +110,7 @@ class HeadComponentGuide(HeadComponent):
             "eyeRightCrvData": self.eyeRightCtrl.getCurveData(),
             "jawXfo": Xfo(Vec3(0.0, 17.875, -0.275)),
             "jawCrvData": self.jawCtrl.getCurveData()
-       }
+        }
 
         self.loadData(self.default_data)
 
@@ -232,20 +233,26 @@ class HeadComponentRig(HeadComponent):
         # =========
         # Head
         self.headCtrl = Control('head', parent=self.ctrlCmpGrp, shape='circle')
+        self.headCtrl.lockScale(x=True, y=True, z=True)
+        self.headCtrl.lockTranslation(x=True, y=True, z=True)
         self.headCtrlSpace = self.headCtrl.insertCtrlSpace()
         self.headCtrl.rotatePoints(0, 0, 90)
         self.headCtrl.scalePoints(Vec3(3, 3, 3))
         self.headCtrl.translatePoints(Vec3(0, 1, 0.25))
 
         # Eye Left
-        self.eyeLeftCtrl = Control('eyeLeft', parent=self.headCtrl, shape='sphere')
+        self.eyeLeftCtrl = Control('eyeLeft', parent=self.ctrlCmpGrp, shape='sphere')
+        self.eyeLeftCtrl.lockScale(x=True, y=True, z=True)
+        self.eyeLeftCtrl.lockTranslation(x=True, y=True, z=True)
         self.eyeLeftCtrlSpace = self.eyeLeftCtrl.insertCtrlSpace()
         self.eyeLeftCtrl.rotatePoints(0, 90, 0)
         self.eyeLeftCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
         self.eyeLeftCtrl.setColor('blueMedium')
 
         # Eye Right
-        self.eyeRightCtrl = Control('eyeRight', parent=self.headCtrl, shape='sphere')
+        self.eyeRightCtrl = Control('eyeRight', parent=self.ctrlCmpGrp, shape='sphere')
+        self.eyeRightCtrl.lockScale(x=True, y=True, z=True)
+        self.eyeRightCtrl.lockTranslation(x=True, y=True, z=True)
         self.eyeRightCtrlSpace = self.eyeRightCtrl.insertCtrlSpace()
         self.eyeRightCtrl.rotatePoints(0, 90, 0)
         self.eyeRightCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
@@ -253,6 +260,7 @@ class HeadComponentRig(HeadComponent):
 
         # LookAt Control
         self.lookAtCtrl = Control('lookAt', parent=self.ctrlCmpGrp, shape='square')
+        self.lookAtCtrl.lockScale(x=True, y=True, z=True)
         self.lookAtCtrl.rotatePoints(90, 0, 0)
         self.lookAtCtrlSpace = self.lookAtCtrl.insertCtrlSpace()
 
@@ -264,8 +272,10 @@ class HeadComponentRig(HeadComponent):
         self.eyeRightAtV = Transform('eyeRightAtV', parent=self.lookAtCtrl)
 
         # Jaw
-        self.jawCtrlSpace = CtrlSpace('jawCtrlSpace', parent=self.headCtrl)
-        self.jawCtrl = Control('jaw', parent=self.jawCtrlSpace, shape='cube')
+        self.jawCtrl = Control('jaw', parent=self.headCtrl, shape='cube')
+        self.jawCtrlSpace = self.jawCtrl.insertCtrlSpace()
+        self.jawCtrl.lockScale(x=True, y=True, z=True)
+        self.jawCtrl.lockTranslation(x=True, y=True, z=True)
         self.jawCtrl.alignOnYAxis(negative=True)
         self.jawCtrl.alignOnZAxis()
         self.jawCtrl.scalePoints(Vec3(1.45, 0.65, 1.25))
@@ -302,7 +312,7 @@ class HeadComponentRig(HeadComponent):
         self.headInputConstraint.addConstrainer(self.neckRefInputTgt)
         self.headCtrlSpace.addConstraint(self.headInputConstraint)
 
-        # # Constraint outputs
+        # Constraint outputs
         self.headOutputConstraint = PoseConstraint('_'.join([self.headOutputTgt.getName(), 'To', self.headCtrl.getName()]))
         self.headOutputConstraint.addConstrainer(self.headCtrl)
         self.headOutputTgt.addConstraint(self.headOutputConstraint)
@@ -328,7 +338,6 @@ class HeadComponentRig(HeadComponent):
         self.eyeLeftDirKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
-        self.eyeLeftDirKLOp.setInput('parentMatrix', self.headCtrl)
         self.eyeLeftDirKLOp.setInput('position', self.eyeLeftBase)
         self.eyeLeftDirKLOp.setInput('upVector', self.eyeLeftUpV)
         self.eyeLeftDirKLOp.setInput('atVector', self.eyeLeftAtV)
@@ -345,7 +354,6 @@ class HeadComponentRig(HeadComponent):
         self.eyeRightDirKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
-        self.eyeRightDirKLOp.setInput('parentMatrix', self.headCtrl)
         self.eyeRightDirKLOp.setInput('position', self.eyeRightBase)
         self.eyeRightDirKLOp.setInput('upVector', self.eyeRightUpV)
         self.eyeRightDirKLOp.setInput('atVector', self.eyeRightAtV)
@@ -366,7 +374,7 @@ class HeadComponentRig(HeadComponent):
         self.outputsToDeformersKLOp.setInput('constrainers', [self.headOutputTgt, self.jawOutputTgt, self.eyeROutputTgt, self.eyeLOutputTgt])
 
         # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [headDef, jawDef, eyeLeftDef, eyeRightDef])
+        self.outputsToDeformersKLOp.setOutput('constrainees', [headDef, jawDef, eyeRightDef, eyeLeftDef])
 
         Profiler.getInstance().pop()
 
