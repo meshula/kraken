@@ -176,6 +176,16 @@ class Traverser(object):
         self._visited[item.getId()] = True
 
         if hasattr(item, 'getParent') and item.getParent():
+            # If this is an attribute and we have not traversed its parent AttributeGroup then skip this
+            # and visit the parent so we get this attribute and all others from there (for the sake of attr order)
+            if item.isTypeOf("Attribute") and not self._visited.get(item.getParent().getId(), False):
+                self._visited[item.getId()] = False
+                self.__visitItem(item.getParent(),
+                             itemCallback,
+                             discoverCallback,
+                             discoveredItemsFirst)
+                return False
+
             self.__visitItem(item.getParent(),
                              itemCallback,
                              discoverCallback,
@@ -192,7 +202,11 @@ class Traverser(object):
             self.__collectVisitedItem(item, itemCallback)
 
         if discoverCallback:
-            discoveredItems = discoverCallback(item)
+            if isinstance(item, AttributeGroup):
+                discoveredItems = self.discoverChildren(item)
+            else:
+                discoveredItems = discoverCallback(item)
+
             if discoveredItems:
                 for discoveredItem in discoveredItems:
                     self.__visitItem(discoveredItem,
