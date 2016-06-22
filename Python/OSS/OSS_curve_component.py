@@ -106,8 +106,7 @@ class OSSCurveComponentGuide(OSSCurveComponent):
             for i, defName in enumerate(defControlNameList):
                 newCtrl = Control(defName, parent=parent, shape="circle")
                 newCtrl.setColor("brownMuted")
-                newCtrl.xfo = parent.xfo.multiply(Xfo(tr=Vec3(0, 1, 0)))
-                parent = newCtrl
+                newCtrl.xfo = parent.xfo.multiply(Xfo(tr=Vec3(0, i, 0)))
                 controlsList.append(newCtrl)
         return True
 
@@ -261,7 +260,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.NURBSCurveKLOp.setInput('degree', 3)
         self.NURBSCurveKLOp.setInput('keepArcLength', 0.0)
         self.NURBSCurveKLOp.setInput('compressionAmt', 0.4)
-        self.NURBSCurveKLOp.setInput('followCurveTangent', 1.0)
+        self.NURBSCurveKLOp.setInput('followCurveTangent', 0.0)
         self.NURBSCurveKLOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         self.NURBSCurveKLOp.setInput('parent', self.ctrlCmpGrp)
         self.NURBSCurveKLOp.setInput('atVec', self.ctrlCmpGrp) # atVec should be optional, but is not currently in the Solver
@@ -393,8 +392,8 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # ==============
         # Constraint inputs
         self.firstCurveCtrl = self.curveCtrls[0].getParent()
-        print "First Control: %s"%(self.firstCurveCtrl.getDecoratedName())
-        # self.firstCtrlSpaceConstraint  = self.firstCurveCtrl.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        #print "First Control: %s"%(self.firstCurveCtrl.getDecoratedName())
+        #self.firstCtrlSpaceConstraint  = self.firstCurveCtrl.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         for i in range(len(self.curveCtrls)):
             self.controlRestInputs.append(self.curveCtrls[i].xfo)
@@ -423,7 +422,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # Eval Operators # Order is important
         self.evalOperators()
         self.NURBSCurveKLOp.evaluate()
-        # self.firstCtrlSpaceConstraint.evaluate()
+        #self.firstCtrlSpaceConstraint.evaluate()
 
         # evaluate the constraint op so that all the joint transforms are updated.
         for i in xrange(len(self.CurveOutputs)):
