@@ -8,7 +8,7 @@ from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.locator import Locator
-from kraken.core.maths.xfo import Xfo
+from kraken.core.maths import *
 
 
 
@@ -97,8 +97,8 @@ class OSS_Component(BaseExampleComponent):
         return scalarList
 
 
-    def createPartialJointKLOp(self, joint, targetTranslate=None, targetRotate=None, targetScale=None, blendTranslate=0.5, blendRotate=0.5, blendScale=0.5, name=None, parent=None):
-        #Creates a joint as a sibling to the input joint which has a blended interpolation between joint and target
+    def createPartialJoint(self, joint, baseTranslate=None, baseRotate=None, baseScale=None, blendTranslate=0.5, blendRotate=0.5, blendScale=0.5, name=None, parent=None):
+        #Creates a joint as a sibling to the input joint which has a blended interpolation between joint and base
 
 
         if not name:
@@ -110,16 +110,16 @@ class OSS_Component(BaseExampleComponent):
         if not parent:
             parent = self.deformersParent
 
-        if not targetTranslate:
-            targetTranslate = joint
+        if not baseTranslate:
+            baseTranslate = joint
             blendTranslate = -1
 
-        if not targetRotate:
-            targetRotate = joint
+        if not baseRotate:
+            baseRotate = joint
             blendRotate = -1
 
-        if not targetScale:
-            targetScale = joint
+        if not baseScale:
+            baseScale = joint
             blendScale = -1
 
 
@@ -142,15 +142,112 @@ class OSS_Component(BaseExampleComponent):
         partialBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
         # Add Xfo Inputs
         partialBlendSolver.setInput('constrainerTranslateA', joint)
-        partialBlendSolver.setInput('constrainerTranslateB', targetTranslate)
+        partialBlendSolver.setInput('constrainerTranslateB', baseTranslate)
         partialBlendSolver.setInput('constrainerRotateA', joint)
-        partialBlendSolver.setInput('constrainerRotateB', targetRotate)
+        partialBlendSolver.setInput('constrainerRotateB', baseRotate)
         partialBlendSolver.setInput('constrainerScaleA', joint)
-        partialBlendSolver.setInput('constrainerScaleB', targetScale)
+        partialBlendSolver.setInput('constrainerScaleB', baseScale)
         # Add Xfo Outputs
         partialBlendSolver.setOutput('constrainee', null)
 
         partialJointDef.constrainTo(null).evaluate()
 
 
-        return partialBlendSolver
+        return partialJointDef
+
+
+    def invertAxisStr(self, string):
+
+            if "NEG" in string:
+                return string.replace("NEG", "POS")
+            if "POS" in string:
+                return string.replace("POS", "NEG")
+
+
+    def get_align_from_aim_and_side(self, aimAxisStr="POSX", sideAxisStr="POSY"):
+
+        align = Vec3()
+
+        aim_axis = AXIS_NAME_TO_TUPLE_MAP[aimAxisStr]
+        side_axis = AXIS_NAME_TO_TUPLE_MAP[sideAxisStr]
+        nv = AXIS_NAME_TO_VEC3_MAP[aimAxisStr].cross(AXIS_NAME_TO_VEC3_MAP[sideAxisStr])
+        norm_axis = [nv.x, nv.y, nv.z]
+
+        for i in [1, -1]:
+            if i in aim_axis:
+                align.x = i * (aim_axis.index(i)+1)
+            if i in side_axis:
+                align.y = i * (side_axis.index(i)+1)
+            if i in norm_axis:
+                align.z = i * (norm_axis.index(i)+1)
+
+        return align
+
+
+    def createTwistJoints(self, basename, parentDef, curveCtrls, numDeformers=3, inparams=None, skipStart=False, skipEnd=False, aimAxisStr="POSX", sideAxisStr="POSY", ctrlAimAxisStr="POSX", ctrlNormalAxisStr="POSY"):
+        # joint aligns are relative to ctrlAligns,
+
+        jointAlign = self.get_align_from_aim_and_side(aimAxisStr=aimAxisStr, sideAxisStr=sideAxisStr)
+        ctrlAlign = self.get_align_from_aim_and_side(aimAxisStr=ctrlAimAxisStr, sideAxisStr=ctrlNormalAxisStr)
+
+        controlRestInputs = [ctrl.xfo for ctrl in curveCtrls]
+
+        rigControlAligns = [ctrlAlign for ctrl in curveCtrls]
+
+        params = inparams or []
+
+        curveOutputs = []
+        deformerJoints = []
+
+        defomerSpacing = numDeformers + skipStart + skipEnd -1
+
+        parentDef
+        for i in range(numDeformers):
+
+            name = basename + str(i+int(skipStart)).zfill(2)
+
+            if not inparams:
+                if skipStart:
+                    params.append(float(i+1)/float(defomerSpacing))
+                else:
+                    params.append(float(i)/float(defomerSpacing))
+
+            #Need dynamic ports branch to be able to see this updated in Graph
+            curveOutput = self.createOutput(name, dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+            curveOutputs.append(curveOutput)
+
+            if deformerJoints:
+                parentDef = deformerJoints[-1]
+
+            curveDef = Joint(name, parent=parentDef)
+            curveDef.setComponent(self)
+            deformerJoints.append(curveDef)
+
+            curveDef.constrainTo(curveOutput)
+
+
+        NURBSCurveKLOp = KLOperator(basename+'TwistNURBSCurveKLOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
+        self.addOperator(NURBSCurveKLOp)
+
+        NURBSCurveKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        NURBSCurveKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        NURBSCurveKLOp.setInput('alignX', jointAlign.x)
+        NURBSCurveKLOp.setInput('alignY', jointAlign.y)
+        NURBSCurveKLOp.setInput('alignZ', jointAlign.z)
+        NURBSCurveKLOp.setInput('degree', 3)
+        NURBSCurveKLOp.setInput('keepArcLength', 0.0)
+        NURBSCurveKLOp.setInput('compressionAmt', 0.4)
+        NURBSCurveKLOp.setInput('followCurveTangent', 1.0)
+        #NURBSCurveKLOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
+        NURBSCurveKLOp.setInput('parent', self.ctrlCmpGrp)
+        NURBSCurveKLOp.setInput('atVec', self.ctrlCmpGrp) # atVec should be optional, but is not currently in the Solver
+        NURBSCurveKLOp.setInput('controlAligns', rigControlAligns)
+        NURBSCurveKLOp.setInput('controls', curveCtrls)
+        NURBSCurveKLOp.setInput('controlsRest', controlRestInputs)
+        NURBSCurveKLOp.setInput('params', params )
+
+        NURBSCurveKLOp.setOutput('outputs', curveOutputs)
+
+        NURBSCurveKLOp.evaluate()
+
+        return NURBSCurveKLOp
