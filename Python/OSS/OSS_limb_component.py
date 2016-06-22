@@ -1,4 +1,4 @@
-from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP, AXIS_NAME_TO_INT_MAP
+from kraken.core.maths import *
 from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
@@ -51,6 +51,8 @@ class OSSLimbComponent(OSS_Component):
         self.lolimb_cmpOut = self.createOutput('lolimb', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.endlimb_cmpOut = self.createOutput('endlimb', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
+        self.endTwistParent_cmpIn = self.createInput('endTwistParent', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+
         # Declare Input Attrs
         # Declare Output Attrs
         self.drawDebugOutputAttr = self.createOutput('drawDebug', dataType='Boolean', value=False, parent=self.cmpOutputAttrGrp).getTarget()
@@ -70,10 +72,13 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         # ========
 
         # Guide Settings
+        self.addPartialJoints = BoolAttribute('addPartialJoints', value=True, parent=self.guideSettingsAttrGrp)
+        self.addTwistJoints = BoolAttribute('addTwistJoints', value=True, parent=self.guideSettingsAttrGrp)
         self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=self.guideSettingsAttrGrp)
         self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=self.guideSettingsAttrGrp)
         self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=self.guideSettingsAttrGrp)
         self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=self.guideSettingsAttrGrp)
+
 
         # Guide Controls
         self.uplimbCtrl = Control('uplimb', parent=self.ctrlCmpGrp, shape="sphere")
@@ -302,24 +307,27 @@ class OSSLimbComponentRig(OSSLimbComponent):
     def createControls(self, data):
 
         name = data["name"]
-        uplimbName = data['uplimbName']
-        lolimbName = data['lolimbName']
-        ikHandleName = data['ikHandleName']
+        self.uplimbName = data['uplimbName']
+        self.lolimbName = data['lolimbName']
+        self.ikHandleName = data['ikHandleName']
 
         self.useOtherIKGoal = bool(data['useOtherIKGoal'])
         self.mocap = bool(data["mocap"])
+
+        self.addPartialJoints = bool(data['addPartialJoints'])  #This should be a simple method instead
+        self.addTwistJoints = bool(data['addTwistJoints'])  #This should be a simple method instead
 
         # =========
         # Controls
         # =========
         # uplimb
-        self.uplimbFKCtrl = FKControl(uplimbName, parent=self.ctrlCmpGrp, shape="cube")
+        self.uplimbFKCtrl = FKControl(self.uplimbName, parent=self.ctrlCmpGrp, shape="cube")
         self.uplimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
         self.uplimbFKCtrl.xfo = data['uplimbXfo']
         self.uplimbFKCtrlSpace = self.uplimbFKCtrl.insertCtrlSpace()
 
         # lolimb
-        self.lolimbFKCtrl = FKControl(lolimbName, parent=self.uplimbFKCtrl)
+        self.lolimbFKCtrl = FKControl(self.lolimbName, parent=self.uplimbFKCtrl)
         self.lolimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
         self.lolimbFKCtrlSpace = self.lolimbFKCtrl.insertCtrlSpace()
@@ -340,13 +348,13 @@ class OSSLimbComponentRig(OSSLimbComponent):
                 ctrl.rotatePoints(-90,0,90)
 
 
-        self.limbIKCtrlSpace = CtrlSpace(ikHandleName, parent=self.ctrlCmpGrp)
+        self.limbIKCtrlSpace = CtrlSpace(self.ikHandleName, parent=self.ctrlCmpGrp)
         self.limbIKCtrlSpace.xfo = data['handleXfo']
         # hand
         if self.useOtherIKGoal: #Do not use this as a control, hide it
-            self.limbIKCtrl = Transform(ikHandleName, parent=self.limbIKCtrlSpace)
+            self.limbIKCtrl = Transform(self.ikHandleName, parent=self.limbIKCtrlSpace)
         else:
-            self.limbIKCtrl = IKControl(ikHandleName, parent=self.limbIKCtrlSpace, shape="jack")
+            self.limbIKCtrl = IKControl(self.ikHandleName, parent=self.limbIKCtrlSpace, shape="jack")
         self.limbIKCtrl.xfo = data['handleXfo']
 
 
@@ -382,7 +390,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # =========
         if self.mocap:
             # Mocap uplimb
-            self.uplimb_mocap = MCControl(uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
+            self.uplimb_mocap = MCControl(self.uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
             #rotation order should stay consistent no matter what ro the controls have
             self.uplimb_mocap.xfo = data['uplimbXfo']
             self.uplimb_mocap.alignOnXAxis()
@@ -390,7 +398,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
 
             # Mocap lolimb
-            self.lolimb_mocap = MCControl(lolimbName, parent=self.uplimb_mocap, shape="cube")
+            self.lolimb_mocap = MCControl(self.lolimbName, parent=self.uplimb_mocap, shape="cube")
             self.lolimb_mocap.xfo = data['lolimbXfo']
             self.lolimb_mocap.alignOnXAxis()
             self.lolimb_mocap.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
@@ -422,7 +430,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbUpVCtrlMasterSpaceConstraint = self.limbUpVCtrlMasterSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
 
         upVAttrGrp = AttributeGroup("UpVAttrs", parent=self.limbUpVCtrl)
-        upVSpaceBlendInputAttr = ScalarAttribute(ikHandleName+'Space', value=0.0, minValue=0.0, maxValue=1.0, parent=upVAttrGrp)
+        upVSpaceBlendInputAttr = ScalarAttribute(self.ikHandleName+'Space', value=0.0, minValue=0.0, maxValue=1.0, parent=upVAttrGrp)
 
 
 
@@ -430,18 +438,16 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # Deformers
         # ==========
 
-        self.uplimbDef = Joint(uplimbName, parent=self.deformersParent)
+        self.uplimbDef = Joint(self.uplimbName, parent=self.deformersParent)
         self.uplimbDef.setComponent(self)
 
-        self.lolimbDef = Joint(lolimbName, parent=self.uplimbDef)
+        self.lolimbDef = Joint(self.lolimbName, parent=self.uplimbDef)
         self.lolimbDef.setComponent(self)
 
         self.limbendDef = Joint(name+'end', parent=self.lolimbDef)
         self.limbendDef.setComponent(self)
 
         self.parentSpaceInputTgt.childJoints = [self.uplimbDef]
-
-        #self.uplimbPartialDef = self.uplimbPartialKLOp.getOutput('hierOut')[0]
 
 
         # ==============
@@ -569,10 +575,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.createControls(data)
 
 
-
-
-
-
         if self.getLocation() == "R":
             pass
             #self.limbIKCtrl.rotatePoints(0, 90, 0)
@@ -581,7 +583,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
             pass
             #self.limbIKCtrl.rotatePoints(0, -90, 0)
             #self.limbIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
-
 
 
         self.limbBone0LenInputAttr.setMin(0.0)
@@ -607,16 +608,75 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # None
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 
+        if self.addTwistJoints:
 
-        # Create partial rotation joints
-        self.uplimbPartialKLOp = self.createPartialJointKLOp(self.uplimbDef, targetTranslate=self.uplimbDef, targetRotate=self.uplimbFKCtrlSpace, parent=self.uplimbDef.getParent())
+            boneAxisVec = AXIS_NAME_TO_VEC3_MAP[self.boneAxisStr]
+            upAxisVec = AXIS_NAME_TO_VEC3_MAP[self.upAxisStr]
+            sideAxisVec = boneAxisVec.cross(upAxisVec)
+            sideAxisStr = TUPLE_TO_AXIS_NAME_MAP[sideAxisVec.x, sideAxisVec.y, sideAxisVec.z]
 
-        loleg_ik_base = Locator(self.lolimbDef.getName()+"_ik_base_null" , parent=self.ctrlCmpGrp)
-        loleg_ik_base.setShapeVisibility(False)
-        loleg_ik_base.xfo = Xfo(self.lolimb_cmpOut.xfo) #should be up to date by now, keep orientation of loleg in relation to upleg
-        loleg_ik_base.constrainTo(self.uplimb_cmpOut, maintainOffset=True)
-        self.lolimbPartialKLOp = self.createPartialJointKLOp(self.lolimbDef, targetTranslate=self.lolimbDef, targetRotate=loleg_ik_base, parent=self.lolimbDef.getParent())
 
+            uplimbStartTwistXfo = self.createOutput(self.uplimbName+"StartTwist", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+            uplimbStartTwistXfo.xfo = Xfo(self.uplimb_cmpOut.xfo)
+            uplimbStartTwistXfo.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+
+
+            lolimbEndTwistXfo = self.createOutput(self.lolimbName+"EndTwist", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+            lolimbEndTwistXfo.xfo = Xfo(self.endlimb_cmpOut.xfo)
+            lolimbEndTwistXfo.constrainTo(self.endTwistParent_cmpIn, maintainOffset=True)
+
+            self.uplegTwistKLOp = self.createTwistJoints(
+                self.uplimbName+"_twist",
+                self.uplimbDef,[uplimbStartTwistXfo,
+                self.lolimb_cmpOut],
+                numDeformers=5,
+                #skipStart=True,
+                aimAxisStr=self.boneAxisStr,  #This would be an offset to the ctrlAxis
+                sideAxisStr=self.upAxisStr.replace("POS", "NEG"),
+                #ctrlAimAxisStr=self.boneAxisStr,  # Don't invert the Xaxis of the control - remember this is relative to existing ctrls
+                ctrlNormalAxisStr=self.upAxisStr)  #We want the normal to the curve to be in Y so MAP this (Z default to Y)
+
+
+            self.lolegTwistKLOp = self.createTwistJoints(
+                self.lolimbName+"_twist", self.lolimbDef,
+                [self.lolimb_cmpOut, lolimbEndTwistXfo],
+                numDeformers=5,
+                #skipStart=True,
+                aimAxisStr=self.boneAxisStr,  #This would be an offset to the ctrlAxis
+                sideAxisStr=self.upAxisStr.replace("POS", "NEG"),
+                #ctrlAimAxisStr=self.boneAxisStr, # Don't invert the Xaxis of the control - remember this is relative to existing ctrls
+                ctrlNormalAxisStr=self.upAxisStr)
+
+            self.uplegTwistKLOp.evaluate
+            self.lolegTwistKLOp.evaluate
+
+        if self.addPartialJoints:
+
+            uplimbBaseRotate = self.uplimbFKCtrlSpace
+            uplimbPartialDef = self.createPartialJoint(self.uplimbDef, baseTranslate=self.uplimbDef, baseRotate=uplimbBaseRotate, parent=self.uplimbDef.getParent())
+
+            lolimbPartialConstrainer = self.uplimb_cmpOut
+            if self.addTwistJoints:
+                lolimbPartialConstrainer = self.uplegTwistKLOp.getOutput("outputs")[-1]  #Use the last twist joint to blend ori from
+
+            #Re-write the PartialJointBlend solver and python function to better accommodate random inputs.
+            # We actually want to blend between the end of the upleg twist and the start of the loleg twist - because of scale interp
+            lolimbTargetDef = self.lolimbDef
+            if self.addTwistJoints:
+               lolimbTargetDef = self.lolegTwistKLOp.getOutput("outputs")[0]  #Use the last twist joint to blend ori from
+
+            loleg_ik_base = Locator(self.lolimbDef.getName()+"_ik_base_null" , parent=self.ctrlCmpGrp)
+            loleg_ik_base.setShapeVisibility(False)
+            loleg_ik_base.xfo = Xfo(self.lolimb_cmpOut.xfo) #should be up to date by now, keep orientation of loleg in relation to upleg
+            loleg_ik_base.constrainTo(lolimbPartialConstrainer, maintainOffset=True)
+            lolimbPartialDef = self.createPartialJoint(lolimbTargetDef,
+                name=self.lolimbDef.getName()+"_part",
+                baseTranslate=lolimbTargetDef,
+                baseRotate=loleg_ik_base,
+                baseScale=loleg_ik_base,
+                parent=self.lolimbDef.getParent())
+
+            self.parentSpaceInputTgt.childJoints.append(uplimbPartialDef)
 
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
@@ -629,6 +689,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if not self.useOtherIKGoal:
             self.limbIKCtrl.scalePoints(globalScale)
         self.limbUpVCtrl.scalePoints(globalScale)
+
+
 
 
 
