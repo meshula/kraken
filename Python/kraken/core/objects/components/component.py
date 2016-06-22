@@ -21,6 +21,9 @@ from kraken.core.objects.components.component_input import ComponentInput
 from kraken.core.objects.components.component_output_port import ComponentOutputPort
 from kraken.core.objects.components.component_output import ComponentOutput
 
+from kraken.log import getLogger
+
+logger = getLogger('kraken')
 
 # Note: does a Component need to inherit off 'Object3D'?
 # These items exist only to structure a rig as a graph.
@@ -265,7 +268,7 @@ class Component(Object3D):
 
         """
 
-        raise Exception("We should not be here. This mehtod is to be deprecated")
+        raise Exception("We should not be here. This method is to be deprecated")
 
         super(Component, self).addChild(child)
 
@@ -275,7 +278,7 @@ class Component(Object3D):
         return True
 
 
-    def getHierarchyNodes(self, classType=None, inheritedClass=False):
+    def getHierarchyNodes(self, classType='', inheritedClass=False):
         """Returns a nodeList with all children in component hierarchy that
         matches classType.
 
@@ -287,6 +290,9 @@ class Component(Object3D):
             list: Nodes that match the class type.
 
         """
+        if not isinstance(classType,str):
+            logger.warning("Warning in Component %s: getHierarchyNodes needs classType to be passed as string" % self._name)
+
 
         nodeList = []
 
@@ -385,7 +391,7 @@ class Component(Object3D):
                 else:
                     v.addAttribute(newInputTgt)
             else:
-                print "Keyword '" + k + "' is not supported with createInput method!"
+                logger.warning("Keyword '%s' is not supported with createInput method!" % k)
 
         componentInputPort.setTarget(newInputTgt)
 
@@ -586,7 +592,7 @@ class Component(Object3D):
                 else:
                     v.addAttribute(newOutputTgt)
             else:
-                print "Keyword '" + k + "' is not supported with createOutput method!"
+                logger.warning("Keyword '%s' is not supported with createOutput method!" % k)
 
         componentOutputPort.setTarget(newOutputTgt)
 
