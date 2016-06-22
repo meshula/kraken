@@ -353,11 +353,13 @@ class OSSFootComponentRig(OSSFootComponent):
         self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.stretch_cmpOutAttr.connect(self.stretchAttr)
 
+        self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
+
         drawDebugAttr = BoolAttribute('drawDebug', value=False, parent=self.handleCtrlAttrGrp)
         self.drawDebugInputAttr.connect(drawDebugAttr)
 
-        self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
-        self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
+
 
         self.ikGoalRefTransform = Transform('ikGoalRef', parent=self.handleCtrl)
 
@@ -457,9 +459,6 @@ class OSSFootComponentRig(OSSFootComponent):
         self.IKFootBlendKLOpBall_out = Transform('IKFootBlendKLOpBall_out', parent=self.outputHrcGrp)
         self.IKFootBlendKLOp.setOutput('foot', self.IKFootBlendKLOpFoot_out)
         self.IKFootBlendKLOp.setOutput('ball', self.IKFootBlendKLOpBall_out)
-
-
-
 
         # Add Deformer Joint Constrain
 
@@ -634,6 +633,8 @@ class OSSFootComponentRig(OSSFootComponent):
         #footPlane.scalePointsOnAxis(self.handleCtrl.xfo.tr.subtract(self.ballTipPivotTransform.xfo.tr).length(), "POSZ")
         self.handleCtrl.appendCurveData(footPlane.getCurveData())
         """
+
+        attrs = [attr.getName() for attr in self.handleCtrlAttrGrp._attributes]
 
 
 from kraken.core.kraken_system import KrakenSystem
