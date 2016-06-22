@@ -1,6 +1,11 @@
 # Kraken Development Guidelines
 Contributing to the Kraken project is generally straight forward but there are some guidelines that should be followed.
 
+## Git
+When working on Kraken, developers should use the Gitflow workflow. More information can be found a the following links:
+[Vincent Driessen Gitflow page](http://nvie.com/posts/a-successful-git-branching-model "Vincent Driessen Gitflow page")
+[Atlassian Gitflow Doc](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow "Atlassian Gitflow Doc")
+
 ## Issues
 When posting issues users should use the following table to set labels on issues that are submitted. In addition to these labels, other labels are included to mark what component of Kraken the issue relates to.
 
