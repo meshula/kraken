@@ -8,7 +8,6 @@ object DirectionConstraintSolver : KrakenSolver {
 // Return Arguments for Kraken
 function KrakenSolverArg[] DirectionConstraintSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
-  args.push(KrakenSolverArg('parentMatrix', 'In', 'Mat44'));
   args.push(KrakenSolverArg('position', 'In', 'Mat44'));
   args.push(KrakenSolverArg('upVector', 'In', 'Mat44'));
   args.push(KrakenSolverArg('atVector', 'In', 'Mat44'));
@@ -22,7 +21,6 @@ function DirectionConstraintSolver.solve!
 (
   in Boolean drawDebug,
   in Scalar rigScale,
-  in Mat44 parentMatrix,
   in Mat44 position,
   in Mat44 upVector,
   in Mat44 atVector,
@@ -31,16 +29,8 @@ function DirectionConstraintSolver.solve!
 {
   Vec3 toAtVector = atVector.translation().subtract(position.translation()).unit();
   Vec3 toUpVector = upVector.translation().subtract(position.translation()).unit();
-  Vec3 normal = toAtVector.cross(toUpVector).unit();
-  Vec3 yAxis = normal.cross(toAtVector).unit();
-
-  Mat33 outAlignment;
-  outAlignment.setColumns(toAtVector, yAxis, normal);
-
-  Quat rotation;
-  rotation.setFromMat33(outAlignment);
-
-  Xfo parentInverseXfo = parentMatrix.inverse();
+  // Vec3 normal = toAtVector.cross(toUpVector).unit();
+  // Vec3 yAxis = normal.cross(toAtVector).unit();
 
   Quat xAlignOri;
   xAlignOri.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-90));
@@ -49,7 +39,6 @@ function DirectionConstraintSolver.solve!
   outXfo = position.translation();
   outXfo.ori.setFromDirectionAndUpvector(toAtVector, toUpVector);
 
-  outXfo = parentInverseXfo * outXfo;
   outXfo.ori *= xAlignOri;
 
   constrainee = outXfo.toMat44();

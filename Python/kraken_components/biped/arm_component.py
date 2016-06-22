@@ -255,16 +255,22 @@ class ArmComponentRig(ArmComponent):
 
         self.bicepFKCtrl = Control('bicepFK', parent=self.bicepFKCtrlSpace, shape="cube")
         self.bicepFKCtrl.alignOnXAxis()
+        self.bicepFKCtrl.lockScale(True, True, True)
+        self.bicepFKCtrl.lockTranslation(True, True, True)
 
         # Forearm
         self.forearmFKCtrlSpace = CtrlSpace('forearmFK', parent=self.bicepFKCtrl)
 
         self.forearmFKCtrl = Control('forearmFK', parent=self.forearmFKCtrlSpace, shape="cube")
         self.forearmFKCtrl.alignOnXAxis()
+        self.forearmFKCtrl.lockScale(True, True, True)
+        self.forearmFKCtrl.lockTranslation(True, True, True)
 
         # Arm IK
         self.armIKCtrlSpace = CtrlSpace('IK', parent=self.ctrlCmpGrp)
-        self.armIKCtrl = Control('IK', parent=self.armIKCtrlSpace, shape="pin")
+        self.armIKCtrl = Control('IK', parent=self.armIKCtrlSpace, shape="jack")
+        self.armIKCtrl.scalePoints(Vec3(2.0, 2.0, 2.0))
+        self.armIKCtrl.lockScale(True, True, True)
 
         # Add Params to IK control
         armSettingsAttrGrp = AttributeGroup("DisplayInfo_ArmSettings", parent=self.armIKCtrl)
@@ -288,6 +294,8 @@ class ArmComponentRig(ArmComponent):
         self.armUpVCtrl = Control('UpV', parent=self.armUpVCtrlSpace, shape="triangle")
         self.armUpVCtrl.alignOnZAxis()
         self.armUpVCtrl.rotatePoints(180, 0, 0)
+        self.armIKCtrl.lockScale(True, True, True)
+        self.armIKCtrl.lockRotation(True, True, True)
 
 
         # ==========

@@ -66,8 +66,12 @@ class FootComponentGuide(FootComponent):
 
         # Guide Controls
         self.ankleCtrl = Control('ankle', parent=self.ctrlCmpGrp, shape="pin")
+
         self.toeCtrl = Control('toe', parent=self.ctrlCmpGrp, shape="pin")
+        self.toeCtrl.rotatePoints(-90.0, 0.0, 0.0)
+
         self.toeTipCtrl = Control('toeTip', parent=self.ctrlCmpGrp, shape="pin")
+        self.toeTipCtrl.rotatePoints(-90.0, 0.0, 0.0)
 
         self.backPivotCtrl = Control('backPivot', parent=self.ctrlCmpGrp, shape="axesHalfTarget")
         self.backPivotCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
@@ -302,14 +306,25 @@ class FootComponentRig(FootComponent):
 
         self.backPivotCtrl = Control('backPivot', parent=self.pivotAll, shape="axesHalfTarget")
         self.backPivotCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
+        self.backPivotCtrl.lockScale(True, True, True)
+        self.backPivotCtrlSpace = self.backPivotCtrl.insertCtrlSpace()
+
         self.frontPivotCtrl = Control('frontPivot', parent=self.pivotAll, shape="axesHalfTarget")
         self.frontPivotCtrl.rotatePoints(0.0, 180.0, 0.0)
+        self.frontPivotCtrl.lockScale(True, True, True)
+        self.frontPivotCtrlSpace = self.frontPivotCtrl.insertCtrlSpace()
         self.frontPivotCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
+
         self.outerPivotCtrl = Control('outerPivot', parent=self.pivotAll, shape="axesHalfTarget")
         self.outerPivotCtrl.rotatePoints(0.0, -90.0, 0.0)
+        self.outerPivotCtrl.lockScale(True, True, True)
+        self.outerPivotCtrlSpace = self.outerPivotCtrl.insertCtrlSpace()
         self.outerPivotCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
+
         self.innerPivotCtrl = Control('innerPivot', parent=self.pivotAll, shape="axesHalfTarget")
         self.innerPivotCtrl.rotatePoints(0.0, 90.0, 0.0)
+        self.innerPivotCtrl.lockScale(True, True, True)
+        self.innerPivotCtrlSpace = self.innerPivotCtrl.insertCtrlSpace()
         self.innerPivotCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
 
 
@@ -461,9 +476,13 @@ class FootComponentRig(FootComponent):
         self.toeFKCtrl.xfo = toeFKXfo
 
         self.pivotAll.xfo = footXfo
+        self.backPivotCtrlSpace.xfo = backPivotXfo
         self.backPivotCtrl.xfo = backPivotXfo
+        self.frontPivotCtrlSpace.xfo = frontPivotXfo
         self.frontPivotCtrl.xfo = frontPivotXfo
+        self.outerPivotCtrlSpace.xfo = outerPivotXfo
         self.outerPivotCtrl.xfo = outerPivotXfo
+        self.innerPivotCtrlSpace.xfo = innerPivotXfo
         self.innerPivotCtrl.xfo = innerPivotXfo
 
         if self.getLocation() == 'R':

@@ -8,7 +8,8 @@ GraphManager -- Node management.
 import json
 
 from kraken.core.kraken_system import ks
-import FabricEngine.Core as core
+# import FabricEngine.Core as core
+
 
 class GraphManager(object):
     """Manager object for taking care of all low level Canvas tasks"""
@@ -64,17 +65,17 @@ class GraphManager(object):
 
     def hasNode(self, path, title=None):
         lookup = path
-        if not title is None:
+        if title is not None:
             lookup = "%s|%s" % (path, title)
 
-        return self.__dfgNodes.has_key(lookup)
+        return lookup in self.__dfgNodes
 
     def hasNodeSI(self, kSceneItem, title=None):
         return self.hasNode(kSceneItem.getPath(), title=title)
 
     def getNode(self, path, title=None):
         lookup = path
-        if not title is None:
+        if title is not None:
             lookup = "%s|%s" % (path, title)
 
         return self.__dfgNodes.get(lookup, None)
@@ -83,7 +84,7 @@ class GraphManager(object):
         return self.getNode(kSceneItem.getPath(), title=title)
 
     def getNodeAndPort(self, path, asInput=True):
-        if not self.__dfgNodeAndPortMap.has_key(path):
+        if path not in self.__dfgNodeAndPortMap:
             return None
 
         nodeAndPort = self.__dfgNodeAndPortMap[path]
@@ -135,7 +136,7 @@ class GraphManager(object):
         return self.__dfgArgs[name]
 
     def removeArgument(self, name):
-        if not self.__dfgArgs.has_key(name):
+        if name not in self.__dfgArgs:
             return False
         self.__dfgExec.removeExecPort(self.__dfgArgs[name])
         del self.__dfgArgs[name]
@@ -144,10 +145,10 @@ class GraphManager(object):
 
     def createNodeFromPreset(self, path, preset, title=None, **metaData):
         lookup = path
-        if not title is None:
+        if title is not None:
             lookup = "%s|%s" % (path, title)
 
-        if self.__dfgNodes.has_key(lookup):
+        if lookup in self.__dfgNodes:
             raise Exception("Node for %s already exists." % lookup)
 
         node = self.__dfgExec.addInstFromPreset(preset)
@@ -165,10 +166,10 @@ class GraphManager(object):
 
     def createFunctionNode(self, path, title, **metaData):
         lookup = path
-        if not title is None:
+        if title is not None:
             lookup = "%s|%s" % (path, title)
 
-        if self.__dfgNodes.has_key(lookup):
+        if lookup in self.__dfgNodes:
             raise Exception("Node for %s already exists." % lookup)
 
         node = self.__dfgExec.addInstWithNewFunc(title)
@@ -183,10 +184,10 @@ class GraphManager(object):
 
     def createVariableNode(self, path, title, dataType, extension="", **metaData):
         lookup = path
-        if not title is None:
+        if title is not None:
             lookup = "%s|%s" % (path, title)
 
-        if self.__dfgNodes.has_key(lookup):
+        if lookup in self.__dfgNodes:
             raise Exception("Node for %s already exists." % lookup)
 
         node = self.__dfgExec.addVar(title, dataType, extension)
@@ -201,10 +202,10 @@ class GraphManager(object):
 
     def removeNode(self, path, title=None):
         lookup = path
-        if not title is None:
+        if title is not None:
             lookup = "%s|%s" % (path, title)
 
-        if not self.__dfgNodes.has_key(lookup):
+        if lookup not in self.__dfgNodes:
             raise Exception("Node for %s does not exist." % lookup)
 
         node = self.__dfgNodes[lookup]
@@ -219,7 +220,7 @@ class GraphManager(object):
                     break
 
         # clean up connections
-        if self.__dfgConnections.has_key(node):
+        if node in self.__dfgConnections:
             del self.__dfgConnections[node]
         for nodeName in self.__dfgConnections:
             ports = self.__dfgConnections[nodeName]
@@ -228,7 +229,8 @@ class GraphManager(object):
                 newConnections = []
                 for c in connections:
                     if c[0] == node:
-                      continue
+                        continue
+
                     newConnections += [c]
                 self.__dfgConnections[nodeName][portName] = newConnections
 

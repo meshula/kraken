@@ -16,7 +16,13 @@ class ColorAttribute(Attribute):
         super(ColorAttribute, self).__init__(name, value=value, parent=parent)
 
         if value is None:
-            value = { 'r':0.5, 'g':0.5, 'b':0.5, 'a':1.0}
+            value = {
+                'r': 0.5,
+                'g': 0.5,
+                'b': 0.5,
+                'a': 1.0
+            }
+
         self.setValue(value)
 
 
@@ -24,16 +30,16 @@ class ColorAttribute(Attribute):
         """Sets the value of the attribute..
 
         Args:
-            value: Value to set the attribute to.
+            value (dict): Color values to set the attribute to.
 
         Returns:
             bool: True if successful.
 
         """
 
-        assert isinstance(r, Color), "r Value is not of type Color."
+        assert isinstance(color, dict), "color Value is not of type dict."
 
-        super(ColorAttribute, self).setValue(value)
+        super(ColorAttribute, self).setValue(color)
 
         return True
 

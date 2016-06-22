@@ -433,6 +433,9 @@ class HandComponentRig(HandComponent):
         # Hand
         self.handCtrlSpace = CtrlSpace('hand', parent=self.ctrlCmpGrp)
         self.handCtrl = Control('hand', parent=self.handCtrlSpace, shape="square")
+        self.handCtrl.rotatePoints(0, 0, 90.0)
+        self.handCtrl.lockScale(True, True, True)
+        self.handCtrl.lockTranslation(True, True, True)
 
 
         # ==========
@@ -486,6 +489,8 @@ class HandComponentRig(HandComponent):
             # Create Controls
             newJointCtrlSpace = CtrlSpace(jointName, parent=parentCtrl)
             newJointCtrl = Control(jointName, parent=newJointCtrlSpace, shape='square')
+            newJointCtrl.lockScale(True, True, True)
+            newJointCtrl.lockTranslation(True, True, True)
 
             if jointCrvData is not None:
                 newJointCtrl.setCurveData(jointCrvData)
@@ -544,7 +549,6 @@ class HandComponentRig(HandComponent):
 
         self.handCtrlSpace.xfo = handXfo
         self.handCtrl.xfo = handXfo
-        # self.handCtrl.scalePoints(Vec3(data['clavicleLen'], 0.75, 0.75))
 
         fingerOps = []
         for finger in fingerData.keys():

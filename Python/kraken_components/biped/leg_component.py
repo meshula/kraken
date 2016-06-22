@@ -67,7 +67,7 @@ class LegComponentGuide(LegComponent):
 
         # =========
         # Controls
-        # ========
+        # =========
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
 
         # Guide Controls
@@ -250,15 +250,20 @@ class LegComponentRig(LegComponent):
         self.femurFKCtrlSpace = CtrlSpace('femurFK', parent=self.ctrlCmpGrp)
         self.femurFKCtrl = Control('femurFK', parent=self.femurFKCtrlSpace, shape="cube")
         self.femurFKCtrl.alignOnXAxis()
+        self.femurFKCtrl.lockTranslation(True, True, True)
+        self.femurFKCtrl.lockScale(True, True, True)
 
         # Shin
         self.shinFKCtrlSpace = CtrlSpace('shinFK', parent=self.femurFKCtrl)
         self.shinFKCtrl = Control('shinFK', parent=self.shinFKCtrlSpace, shape="cube")
         self.shinFKCtrl.alignOnXAxis()
+        self.shinFKCtrl.lockTranslation(True, True, True)
+        self.shinFKCtrl.lockScale(True, True, True)
 
         # IK Handle
         self.legIKCtrlSpace = CtrlSpace('IK', parent=self.ctrlCmpGrp)
         self.legIKCtrl = Control('IK', parent=self.legIKCtrlSpace, shape="pin")
+        self.legIKCtrl.lockScale(True, True, True)
 
         # Add Component Params to IK control
         legSettingsAttrGrp = AttributeGroup("DisplayInfo_LegSettings", parent=self.legIKCtrl)
@@ -269,7 +274,7 @@ class LegComponentRig(LegComponent):
         legIKBlendInputAttr = ScalarAttribute('ikblend', value=1.0, minValue=0.0, maxValue=1.0, parent=legSettingsAttrGrp)
 
         # Util Objects
-        self.ikRootPosition = Locator("ikRootPosition", parent=self.ctrlCmpGrp)
+        self.ikRootPosition = Transform("ikRootPosition", parent=self.ctrlCmpGrp)
 
         # Connect Input Attrs
         self.drawDebugInputAttr.connect(legDrawDebugInputAttr)
@@ -282,6 +287,8 @@ class LegComponentRig(LegComponent):
         self.legUpVCtrlSpace = CtrlSpace('UpV', parent=self.ctrlCmpGrp)
         self.legUpVCtrl = Control('UpV', parent=self.legUpVCtrlSpace, shape="triangle")
         self.legUpVCtrl.alignOnZAxis()
+        self.legUpVCtrl.lockRotation(True, True, True)
+        self.legUpVCtrl.lockScale(True, True, True)
 
 
         # ==========
@@ -434,8 +441,8 @@ class LegComponentRig(LegComponent):
             self.legIKCtrl.rotatePoints(0, -90, 0)
             self.legIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
 
-        self.legUpVCtrlSpace.xfo = upVXfo
-        self.legUpVCtrl.xfo = upVXfo
+        self.legUpVCtrlSpace.xfo.tr = upVXfo.tr
+        self.legUpVCtrl.xfo.tr = upVXfo.tr
 
         self.legRightSideInputAttr.setValue(self.getLocation() is 'R')
         self.legBone0LenInputAttr.setMin(0.0)

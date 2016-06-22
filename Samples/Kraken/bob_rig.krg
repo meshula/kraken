@@ -1,0 +1,5220 @@
+{
+  "connections": [
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "spine:M.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "spine:M.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "neck:M.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "spine:M.spineEnd", 
+      "target": "neck:M.neckBase", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "neck:M.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "head:M.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "neck:M.neckEnd", 
+      "target": "head:M.neckRef", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "head:M.worldRef", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "head:M.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "clavicle:L.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "spine:M.spineEnd", 
+      "target": "clavicle:L.spineEnd", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "clavicle:L.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "clavicle:R.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "spine:M.spineEnd", 
+      "target": "clavicle:R.spineEnd", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "clavicle:R.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "arm:L.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "clavicle:L.clavicleEnd", 
+      "target": "arm:L.root", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "arm:L.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "arm:R.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "clavicle:R.clavicleEnd", 
+      "target": "arm:R.root", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "arm:R.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "hand:L.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "arm:L.wrist", 
+      "target": "hand:L.armEnd", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "hand:L.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "hand:R.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "arm:R.wrist", 
+      "target": "hand:R.armEnd", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "hand:R.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "leg:L.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "spine:M.pelvis", 
+      "target": "leg:L.pelvisInput", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "foot:L.ikTarget", 
+      "target": "leg:L.ikTarget", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "leg:L.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "leg:R.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "spine:M.pelvis", 
+      "target": "leg:R.pelvisInput", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "foot:R.ikTarget", 
+      "target": "leg:R.ikTarget", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "leg:R.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "foot:L.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:L.ikHandle", 
+      "target": "foot:L.ikHandle", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:L.legEnd", 
+      "target": "foot:L.legEnd", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:L.legEndFK", 
+      "target": "foot:L.legEndFK", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "foot:L.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:L.ikBlend", 
+      "target": "foot:L.ikBlend", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.offset", 
+      "target": "foot:R.globalSRT", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:R.ikHandle", 
+      "target": "foot:R.ikHandle", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:R.legEnd", 
+      "target": "foot:R.legEnd", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:R.legEndFK", 
+      "target": "foot:R.legEndFK", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "mainSrt:M.rigScale", 
+      "target": "foot:R.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "leg:R.ikBlend", 
+      "target": "foot:R.ikBlend", 
+      "targetIndex": 0
+    }
+  ], 
+  "name": "char_bob_guide", 
+  "components": [
+    {
+      "graphPos": {
+        "y": -7.676380157470703, 
+        "x": -1206.8466796875, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "mainSrtXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.0, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.0
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "mainSrtSize": 8.0, 
+      "name": "mainSrt", 
+      "ShapeVisibility": false, 
+      "visibility": true, 
+      "location": "M", 
+      "class": "kraken_components.generic.mainSrt_component.MainSrtComponentGuide"
+    }, 
+    {
+      "spine03Position": {
+        "y": 12.449600219726562, 
+        "x": 0.0, 
+        "__mathObjectClass__": "Vec3", 
+        "z": -0.36489999294281006
+      }, 
+      "graphPos": {
+        "y": 0.0, 
+        "x": -990.0, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "spine", 
+      "ShapeVisibility": false, 
+      "spine01Position": {
+        "y": 11.135100364685059, 
+        "x": 0.0, 
+        "__mathObjectClass__": "Vec3", 
+        "z": -0.13819999992847443
+      }, 
+      "numDeformers": 6, 
+      "visibility": true, 
+      "cogPosition": {
+        "y": 11.135100364685059, 
+        "x": 0.0, 
+        "__mathObjectClass__": "Vec3", 
+        "z": -0.13819999992847443
+      }, 
+      "spine02Position": {
+        "y": 11.801300048828125, 
+        "x": 0.0, 
+        "__mathObjectClass__": "Vec3", 
+        "z": -0.19949999451637268
+      }, 
+      "location": "M", 
+      "class": "kraken_components.biped.spine_component.SpineComponentGuide", 
+      "spine04Position": {
+        "y": 13.10509967803955, 
+        "x": 0.0, 
+        "__mathObjectClass__": "Vec3", 
+        "z": -0.4821000099182129
+      }
+    }, 
+    {
+      "graphPos": {
+        "y": 0.0, 
+        "x": -810.0, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "neck", 
+      "ShapeVisibility": false, 
+      "neckMidCrvData": [
+        {
+          "points": [
+            [
+              0.0, 
+              0.921, 
+              0.0
+            ], 
+            [
+              0.0, 
+              0.991, 
+              0.17
+            ], 
+            [
+              0.0, 
+              1.171, 
+              0.25
+            ], 
+            [
+              0.0, 
+              1.351, 
+              0.17
+            ], 
+            [
+              0.0, 
+              1.421, 
+              0.0
+            ], 
+            [
+              0.0, 
+              1.351, 
+              -0.17
+            ], 
+            [
+              0.0, 
+              1.171, 
+              -0.25
+            ], 
+            [
+              0.0, 
+              0.991, 
+              -0.17
+            ], 
+            [
+              0.0, 
+              0.921, 
+              0.0
+            ], 
+            [
+              0.0, 
+              0.421, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }
+      ], 
+      "neckXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 16.040903091430664, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.9727420806884766
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 0.8506507873535156, 
+          "v": {
+            "y": 0.0, 
+            "x": -0.5257311463356018, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "visibility": true, 
+      "neckCrvData": [
+        {
+          "points": [
+            [
+              0.0, 
+              1.034, 
+              0.0
+            ], 
+            [
+              0.0, 
+              1.104, 
+              0.17
+            ], 
+            [
+              0.0, 
+              1.284, 
+              0.25
+            ], 
+            [
+              0.0, 
+              1.464, 
+              0.17
+            ], 
+            [
+              0.0, 
+              1.534, 
+              0.0
+            ], 
+            [
+              0.0, 
+              1.464, 
+              -0.17
+            ], 
+            [
+              0.0, 
+              1.284, 
+              -0.25
+            ], 
+            [
+              0.0, 
+              1.104, 
+              -0.17
+            ], 
+            [
+              0.0, 
+              1.034, 
+              0.0
+            ], 
+            [
+              0.0, 
+              0.534, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }
+      ], 
+      "neckMidXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 16.802574157714844, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.6836938858032227
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 0.8506507873535156, 
+          "v": {
+            "y": 0.0, 
+            "x": -0.5257311463356018, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "location": "M", 
+      "class": "kraken_components.biped.neck_component.NeckComponentGuide", 
+      "neckEndXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 17.47559928894043, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.42100000381469727
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 0.8506507873535156, 
+          "v": {
+            "y": 0.0, 
+            "x": -0.5257311463356018, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }
+    }, 
+    {
+      "headXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 17.47559928894043, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.42100000381469727
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "graphPos": {
+        "y": 0.0, 
+        "x": -660.0, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "head", 
+      "headCrvData": [
+        {
+          "points": [
+            [
+              1.236, 
+              2.184, 
+              0.0
+            ], 
+            [
+              1.236, 
+              -0.512, 
+              0.0
+            ], 
+            [
+              -1.236, 
+              -0.512, 
+              0.0
+            ], 
+            [
+              -1.236, 
+              2.184, 
+              0.0
+            ], 
+            [
+              1.236, 
+              2.184, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }
+      ], 
+      "eyeRightXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 18.0875244140625, 
+          "x": -0.34973201155662537, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.6035923957824707
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 0.6686356663703918, 
+          "v": {
+            "y": -0.7435610294342041, 
+            "x": -0.002925613895058632, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.005896286573261023
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "visibility": true, 
+      "eyeLeftXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 18.08738136291504, 
+          "x": 0.34989821910858154, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.6035202145576477
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 0.743561327457428, 
+          "v": {
+            "y": -0.6686353087425232, 
+            "x": -0.005897332448512316, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.002929636975750327
+          }
+        }
+      }, 
+      "location": "M", 
+      "eyeLeftCrvData": [
+        {
+          "points": [
+            [
+              0.0, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.75, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.75, 
+              0.0, 
+              0.15
+            ], 
+            [
+              1.0, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.75, 
+              0.0, 
+              -0.15
+            ], 
+            [
+              0.75, 
+              0.0, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }, 
+        {
+          "points": [
+            [
+              0.0, 
+              0.188, 
+              0.0
+            ], 
+            [
+              0.0, 
+              0.131, 
+              -0.131
+            ], 
+            [
+              0.0, 
+              0.0, 
+              -0.188
+            ], 
+            [
+              0.0, 
+              -0.131, 
+              -0.131
+            ], 
+            [
+              0.0, 
+              -0.188, 
+              0.0
+            ], 
+            [
+              0.0, 
+              -0.131, 
+              0.131
+            ], 
+            [
+              0.0, 
+              0.0, 
+              0.188
+            ], 
+            [
+              0.0, 
+              0.131, 
+              0.131
+            ], 
+            [
+              0.0, 
+              0.188, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }, 
+        {
+          "points": [
+            [
+              0.0, 
+              0.0, 
+              -0.188
+            ], 
+            [
+              0.131, 
+              0.0, 
+              -0.131
+            ], 
+            [
+              0.188, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.131, 
+              0.0, 
+              0.131
+            ], 
+            [
+              0.0, 
+              0.0, 
+              0.188
+            ], 
+            [
+              -0.131, 
+              0.0, 
+              0.131
+            ], 
+            [
+              -0.188, 
+              0.0, 
+              0.0
+            ], 
+            [
+              -0.131, 
+              0.0, 
+              -0.131
+            ], 
+            [
+              0.0, 
+              0.0, 
+              -0.188
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }, 
+        {
+          "points": [
+            [
+              0.0, 
+              0.188, 
+              0.0
+            ], 
+            [
+              0.131, 
+              0.131, 
+              0.0
+            ], 
+            [
+              0.188, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.131, 
+              -0.131, 
+              0.0
+            ], 
+            [
+              0.0, 
+              -0.188, 
+              0.0
+            ], 
+            [
+              -0.131, 
+              -0.131, 
+              0.0
+            ], 
+            [
+              -0.188, 
+              0.0, 
+              0.0
+            ], 
+            [
+              -0.131, 
+              0.131, 
+              0.0
+            ], 
+            [
+              0.0, 
+              0.188, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }
+      ], 
+      "eyeRightCrvData": [
+        {
+          "points": [
+            [
+              0.0, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.75, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.75, 
+              0.0, 
+              0.15
+            ], 
+            [
+              1.0, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.75, 
+              0.0, 
+              -0.15
+            ], 
+            [
+              0.75, 
+              0.0, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }, 
+        {
+          "points": [
+            [
+              0.0, 
+              0.188, 
+              0.0
+            ], 
+            [
+              0.0, 
+              0.131, 
+              -0.131
+            ], 
+            [
+              0.0, 
+              0.0, 
+              -0.188
+            ], 
+            [
+              0.0, 
+              -0.131, 
+              -0.131
+            ], 
+            [
+              0.0, 
+              -0.188, 
+              0.0
+            ], 
+            [
+              0.0, 
+              -0.131, 
+              0.131
+            ], 
+            [
+              0.0, 
+              0.0, 
+              0.188
+            ], 
+            [
+              0.0, 
+              0.131, 
+              0.131
+            ], 
+            [
+              0.0, 
+              0.188, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }, 
+        {
+          "points": [
+            [
+              0.0, 
+              0.0, 
+              -0.188
+            ], 
+            [
+              0.131, 
+              0.0, 
+              -0.131
+            ], 
+            [
+              0.188, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.131, 
+              0.0, 
+              0.131
+            ], 
+            [
+              0.0, 
+              0.0, 
+              0.188
+            ], 
+            [
+              -0.131, 
+              0.0, 
+              0.131
+            ], 
+            [
+              -0.188, 
+              0.0, 
+              0.0
+            ], 
+            [
+              -0.131, 
+              0.0, 
+              -0.131
+            ], 
+            [
+              0.0, 
+              0.0, 
+              -0.188
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }, 
+        {
+          "points": [
+            [
+              0.0, 
+              0.188, 
+              0.0
+            ], 
+            [
+              0.131, 
+              0.131, 
+              0.0
+            ], 
+            [
+              0.188, 
+              0.0, 
+              0.0
+            ], 
+            [
+              0.131, 
+              -0.131, 
+              0.0
+            ], 
+            [
+              0.0, 
+              -0.188, 
+              0.0
+            ], 
+            [
+              -0.131, 
+              -0.131, 
+              0.0
+            ], 
+            [
+              -0.188, 
+              0.0, 
+              0.0
+            ], 
+            [
+              -0.131, 
+              0.131, 
+              0.0
+            ], 
+            [
+              0.0, 
+              0.188, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }
+      ], 
+      "jawCrvData": [
+        {
+          "points": [
+            [
+              0.0, 
+              -0.394, 
+              0.0
+            ], 
+            [
+              0.0, 
+              -1.04, 
+              0.217
+            ], 
+            [
+              0.0, 
+              -1.04, 
+              1.115
+            ], 
+            [
+              0.0, 
+              -0.394, 
+              1.384
+            ], 
+            [
+              0.0, 
+              -0.394, 
+              0.0
+            ]
+          ], 
+          "closed": false, 
+          "degree": 1
+        }
+      ], 
+      "class": "kraken_components.biped.head_component.HeadComponentGuide", 
+      "jawXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 17.613000869750977, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.27309998869895935
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }
+    }, 
+    {
+      "graphPos": {
+        "y": -420.9550476074219, 
+        "x": -675.1329345703125, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "clavicle", 
+      "clavicleUpVXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 16.402999877929688, 
+          "x": 0.2136654555797577, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.6662428975105286
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "class": "kraken_components.biped.clavicle_component.ClavicleComponentGuide", 
+      "visibility": true, 
+      "clavicleEndXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 15.295000076293945, 
+          "x": 2.2699999809265137, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.753000020980835
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "location": "L", 
+      "clavicleXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 15.402999877929688, 
+          "x": 0.2136654555797577, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.5723000168800354
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }
+    }, 
+    {
+      "graphPos": {
+        "y": 413.5989074707031, 
+        "x": -663.4406127929688, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "clavicle", 
+      "clavicleUpVXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 16.402999877929688, 
+          "x": -0.21400000154972076, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.6662428975105286
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "class": "kraken_components.biped.clavicle_component.ClavicleComponentGuide", 
+      "visibility": true, 
+      "clavicleEndXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 15.295000076293945, 
+          "x": -2.2699999809265137, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.753000020980835
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "location": "R", 
+      "clavicleXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 15.402999877929688, 
+          "x": -0.21400000154972076, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.5723000168800354
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }
+    }, 
+    {
+      "forearmFKCtrlSize": 1.5, 
+      "graphPos": {
+        "y": -390.0, 
+        "x": -420.0, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "arm", 
+      "bicepXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 15.295000076293945, 
+          "x": 2.2699999809265137, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.753000020980835
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "visibility": true, 
+      "forearmXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 13.5600004196167, 
+          "x": 5.039000034332275, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.859000027179718
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "wristXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 12.281900405883789, 
+          "x": 7.188600063323975, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.49059998989105225
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "location": "L", 
+      "class": "kraken_components.biped.arm_component.ArmComponentGuide", 
+      "bicepFKCtrlSize": 1.75
+    }, 
+    {
+      "forearmFKCtrlSize": 1.5, 
+      "graphPos": {
+        "y": 450.0, 
+        "x": -420.0, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "arm", 
+      "bicepXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 15.295000076293945, 
+          "x": -2.2699999809265137, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.753000020980835
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "visibility": true, 
+      "forearmXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 13.5600004196167, 
+          "x": -5.039000034332275, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.859000027179718
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "wristXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 12.281900405883789, 
+          "x": -7.188600063323975, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.49059998989105225
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "location": "R", 
+      "class": "kraken_components.biped.arm_component.ArmComponentGuide", 
+      "bicepFKCtrlSize": 1.75
+    }, 
+    {
+      "graphPos": {
+        "y": -443.521484375, 
+        "x": -154.4601287841797, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "hand", 
+      "ShapeVisibility": false, 
+      "fingersGuideXfos": {
+        "pinky": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.04607105255127, 
+              "x": 7.5920820236206055, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.36385592818260193
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9170652627944946, 
+              "v": {
+                "y": -0.28072264790534973, 
+                "x": -0.0709240660071373, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.27414563298225403
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.500475883483887, 
+              "x": 8.296019554138184, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.6661055088043213
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9185301661491394, 
+              "v": {
+                "y": -0.2873687148094177, 
+                "x": -0.04838734120130539, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.26717084646224976
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.239631652832031, 
+              "x": 8.589447021484375, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.8113983273506165
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9394373893737793, 
+              "v": {
+                "y": -0.20227839052677155, 
+                "x": -0.04039516672492027, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2736952304840088
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.021438598632812, 
+              "x": 8.875725746154785, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.9534479379653931
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9399714469909668, 
+              "v": {
+                "y": -0.20671740174293518, 
+                "x": -0.02506079524755478, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2703581750392914
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 10.842490196228027, 
+              "x": 9.156643867492676, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0927249193191528
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9399714469909668, 
+              "v": {
+                "y": -0.20671740174293518, 
+                "x": -0.02506079524755478, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2703581750392914
+              }
+            }
+          }
+        ], 
+        "index": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.162644386291504, 
+              "x": 7.296606063842773, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0036026239395142
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.919756293296814, 
+              "v": {
+                "y": -0.29845285415649414, 
+                "x": -0.009345690719783306, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.25472912192344666
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.682861328125, 
+              "x": 8.027725219726562, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.553037166595459
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9189647436141968, 
+              "v": {
+                "y": -0.2900036573410034, 
+                "x": -0.03927746042609215, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.264308363199234
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.474370002746582, 
+              "x": 8.381070137023926, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.7845001220703125
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9193452596664429, 
+              "v": {
+                "y": -0.2929295301437378, 
+                "x": -0.02903960458934307, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2610619068145752
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.307662010192871, 
+              "x": 8.6493501663208, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.9835436344146729
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9197148680686951, 
+              "v": {
+                "y": -0.2974976599216461, 
+                "x": -0.012786990962922573, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.25584402680397034
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.119145393371582, 
+              "x": 8.936381340026855, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 2.182269811630249
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9185301661491394, 
+              "v": {
+                "y": -0.2873687148094177, 
+                "x": -0.04838734120130539, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.26717084646224976
+              }
+            }
+          }
+        ], 
+        "ring": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.07209300994873, 
+              "x": 7.51917839050293, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.5979628562927246
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9463634490966797, 
+              "v": {
+                "y": -0.15522080659866333, 
+                "x": -0.033913444727659225, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.28134065866470337
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.56705379486084, 
+              "x": 8.249258995056152, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.9534994959831238
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9414102435112, 
+              "v": {
+                "y": -0.20006276667118073, 
+                "x": -0.023147625848650932, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2705287039279938
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.243938446044922, 
+              "x": 8.646321296691895, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.171299695968628
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9388555288314819, 
+              "v": {
+                "y": -0.18542516231536865, 
+                "x": -0.07307135313749313, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2807639539241791
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.029852867126465, 
+              "x": 8.989532470703125, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.342093586921692
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9394792318344116, 
+              "v": {
+                "y": -0.18796232342720032, 
+                "x": -0.06455883383750916, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.27907177805900574
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 10.837201118469238, 
+              "x": 9.259695053100586, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.4824403524398804
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9394792318344116, 
+              "v": {
+                "y": -0.18796232342720032, 
+                "x": -0.06455883383750916, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.27907177805900574
+              }
+            }
+          }
+        ], 
+        "thumb": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.051837921142578, 
+              "x": 7.165947914123535, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.9959327578544617
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.7564216256141663, 
+              "v": {
+                "y": -0.6184877753257751, 
+                "x": 0.20444399118423462, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.059176571667194366
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.929863929748535, 
+              "x": 7.201938629150391, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.5944266319274902
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.7323623895645142, 
+              "v": {
+                "y": -0.6496289372444153, 
+                "x": 0.19026581943035126, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.07366462051868439
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.759206771850586, 
+              "x": 7.265909194946289, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.9706281423568726
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.7258036136627197, 
+              "v": {
+                "y": -0.637879490852356, 
+                "x": 0.24544429779052734, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.077948659658432
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.567789077758789, 
+              "x": 7.344073295593262, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 2.3692386150360107
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.7258036136627197, 
+              "v": {
+                "y": -0.637879490852356, 
+                "x": 0.24544429779052734, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.077948659658432
+              }
+            }
+          }
+        ], 
+        "middle": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.115365028381348, 
+              "x": 7.456239700317383, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.8084645867347717
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9183297157287598, 
+              "v": {
+                "y": -0.28630006313323975, 
+                "x": -0.05205304175615311, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2683156728744507
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.613448143005371, 
+              "x": 8.18968391418457, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.275723934173584
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9334901571273804, 
+              "v": {
+                "y": -0.23510509729385376, 
+                "x": -0.031071379780769348, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.26899123191833496
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.338452339172363, 
+              "x": 8.607885360717773, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.5464574098587036
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9334213137626648, 
+              "v": {
+                "y": -0.23452726006507874, 
+                "x": -0.03307472914457321, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2694951891899109
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.126639366149902, 
+              "x": 8.931406021118164, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.7443963289260864
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9334213137626648, 
+              "v": {
+                "y": -0.23452726006507874, 
+                "x": -0.03307472914457321, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2694951891899109
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 10.899760246276855, 
+              "x": 9.245243072509766, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.9409476518630981
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.9334213137626648, 
+              "v": {
+                "y": -0.23452726006507874, 
+                "x": -0.03307472914457321, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.2694951891899109
+              }
+            }
+          }
+        ]
+      }, 
+      "visibility": true, 
+      "digitNames": "thumb,index,middle,ring,pinky", 
+      "location": "L", 
+      "numJoints": 4, 
+      "fingerShapeCtrlData": {
+        "pinky": [
+          [
+            {
+              "points": [
+                [
+                  0.748, 
+                  0.286, 
+                  -0.087
+                ], 
+                [
+                  0.748, 
+                  0.286, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.286, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.286, 
+                  -0.087
+                ], 
+                [
+                  0.748, 
+                  0.286, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ], 
+        "index": [
+          [
+            {
+              "points": [
+                [
+                  0.879, 
+                  0.25, 
+                  -0.087
+                ], 
+                [
+                  0.879, 
+                  0.25, 
+                  0.087
+                ], 
+                [
+                  -0.071, 
+                  0.302, 
+                  0.087
+                ], 
+                [
+                  -0.071, 
+                  0.302, 
+                  -0.087
+                ], 
+                [
+                  0.879, 
+                  0.25, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ], 
+        "ring": [
+          [
+            {
+              "points": [
+                [
+                  0.792, 
+                  0.33, 
+                  -0.087
+                ], 
+                [
+                  0.792, 
+                  0.33, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.33, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.33, 
+                  -0.087
+                ], 
+                [
+                  0.792, 
+                  0.33, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ], 
+        "thumb": [
+          [
+            {
+              "points": [
+                [
+                  0.489, 
+                  0.323, 
+                  -0.087
+                ], 
+                [
+                  0.489, 
+                  0.323, 
+                  0.087
+                ], 
+                [
+                  -0.086, 
+                  0.382, 
+                  0.087
+                ], 
+                [
+                  -0.086, 
+                  0.382, 
+                  -0.087
+                ], 
+                [
+                  0.489, 
+                  0.323, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ], 
+        "middle": [
+          [
+            {
+              "points": [
+                [
+                  0.83, 
+                  0.33, 
+                  -0.087
+                ], 
+                [
+                  0.83, 
+                  0.33, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.33, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.33, 
+                  -0.087
+                ], 
+                [
+                  0.83, 
+                  0.33, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ]
+      }, 
+      "handXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 12.281900405883789, 
+          "x": 7.188600063323975, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.49059998989105225
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 0.9185301661491394, 
+          "v": {
+            "y": -0.2873687148094177, 
+            "x": -0.04838734120130539, 
+            "__mathObjectClass__": "Vec3", 
+            "z": -0.26717084646224976
+          }
+        }
+      }, 
+      "class": "kraken_components.biped.hand_component.HandComponentGuide"
+    }, 
+    {
+      "graphPos": {
+        "y": 392.550048828125, 
+        "x": -155.94683837890625, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "hand", 
+      "ShapeVisibility": false, 
+      "fingersGuideXfos": {
+        "pinky": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.04607105255127, 
+              "x": -7.5920820236206055, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.36385592818260193
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.28072264790534973, 
+              "v": {
+                "y": -0.9170652627944946, 
+                "x": 0.27414563298225403, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.0709240660071373
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.500475883483887, 
+              "x": -8.296019554138184, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.6661055088043213
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.2873687148094177, 
+              "v": {
+                "y": -0.9185301661491394, 
+                "x": 0.26717084646224976, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.04838734120130539
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.239631652832031, 
+              "x": -8.589447021484375, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.8113983273506165
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.20227839052677155, 
+              "v": {
+                "y": -0.9394373893737793, 
+                "x": 0.2736952304840088, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.04039516672492027
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.021438598632812, 
+              "x": -8.875725746154785, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.9534479379653931
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.20671740174293518, 
+              "v": {
+                "y": -0.9399714469909668, 
+                "x": 0.2703581750392914, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.02506079524755478
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 10.842490196228027, 
+              "x": -9.156643867492676, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0927249193191528
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.20671740174293518, 
+              "v": {
+                "y": -0.9399714469909668, 
+                "x": 0.2703581750392914, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.02506079524755478
+              }
+            }
+          }
+        ], 
+        "index": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.162644386291504, 
+              "x": -7.296606063842773, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0036026239395142
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.29845285415649414, 
+              "v": {
+                "y": -0.919756293296814, 
+                "x": 0.25472912192344666, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.009345690719783306
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.682861328125, 
+              "x": -8.027725219726562, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.553037166595459
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.2900036573410034, 
+              "v": {
+                "y": -0.9189647436141968, 
+                "x": 0.264308363199234, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.03927746042609215
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.474370002746582, 
+              "x": -8.381070137023926, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.7845001220703125
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.2929295301437378, 
+              "v": {
+                "y": -0.9193452596664429, 
+                "x": 0.2610619068145752, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.02903960458934307
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.307662010192871, 
+              "x": -8.6493501663208, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.9835436344146729
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.2974976599216461, 
+              "v": {
+                "y": -0.9197148680686951, 
+                "x": 0.25584402680397034, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.012786990962922573
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.119145393371582, 
+              "x": -8.936381340026855, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 2.182269811630249
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.2873687148094177, 
+              "v": {
+                "y": -0.9185301661491394, 
+                "x": 0.26717084646224976, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.04838734120130539
+              }
+            }
+          }
+        ], 
+        "ring": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.07209300994873, 
+              "x": -7.51917839050293, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.5979628562927246
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.15522080659866333, 
+              "v": {
+                "y": -0.9463634490966797, 
+                "x": 0.28134065866470337, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.033913444727659225
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.56705379486084, 
+              "x": -8.249258995056152, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.9534994959831238
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.20006276667118073, 
+              "v": {
+                "y": -0.9414102435112, 
+                "x": 0.2705287039279938, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.023147625848650932
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.243938446044922, 
+              "x": -8.646321296691895, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.171299695968628
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.18542516231536865, 
+              "v": {
+                "y": -0.9388555288314819, 
+                "x": 0.2807639539241791, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.07307135313749313
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.029852867126465, 
+              "x": -8.989532470703125, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.342093586921692
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.18796232342720032, 
+              "v": {
+                "y": -0.9394792318344116, 
+                "x": 0.27907177805900574, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.06455883383750916
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 10.837201118469238, 
+              "x": -9.259695053100586, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.4824403524398804
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.18796232342720032, 
+              "v": {
+                "y": -0.9394792318344116, 
+                "x": 0.27907177805900574, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.06455883383750916
+              }
+            }
+          }
+        ], 
+        "thumb": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.051837921142578, 
+              "x": -7.165947914123535, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.9959327578544617
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.6184877753257751, 
+              "v": {
+                "y": -0.7564216256141663, 
+                "x": 0.059176571667194366, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.20444399118423462
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.929863929748535, 
+              "x": -7.201938629150391, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.5944266319274902
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.6496289372444153, 
+              "v": {
+                "y": -0.7323623895645142, 
+                "x": 0.07366462051868439, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.19026581943035126
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.759206771850586, 
+              "x": -7.265909194946289, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.9706281423568726
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.637879490852356, 
+              "v": {
+                "y": -0.7258036136627197, 
+                "x": 0.077948659658432, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.24544429779052734
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.567789077758789, 
+              "x": -7.344073295593262, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 2.3692386150360107
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.637879490852356, 
+              "v": {
+                "y": -0.7258036136627197, 
+                "x": 0.077948659658432, 
+                "__mathObjectClass__": "Vec3", 
+                "z": -0.24544429779052734
+              }
+            }
+          }
+        ], 
+        "middle": [
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 12.115365028381348, 
+              "x": -7.456239700317383, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.8084645867347717
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.28630006313323975, 
+              "v": {
+                "y": -0.9183297157287598, 
+                "x": 0.2683156728744507, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.05205304175615311
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.613448143005371, 
+              "x": -8.18968391418457, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.275723934173584
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.23510509729385376, 
+              "v": {
+                "y": -0.9334901571273804, 
+                "x": 0.26899123191833496, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.031071379780769348
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.338452339172363, 
+              "x": -8.607885360717773, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.5464574098587036
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.23452726006507874, 
+              "v": {
+                "y": -0.9334213137626648, 
+                "x": 0.2694951891899109, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.03307472914457321
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 11.126639366149902, 
+              "x": -8.931406021118164, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.7443963289260864
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.23452726006507874, 
+              "v": {
+                "y": -0.9334213137626648, 
+                "x": 0.2694951891899109, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.03307472914457321
+              }
+            }
+          }, 
+          {
+            "sc": {
+              "y": 1.0, 
+              "x": 1.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.0
+            }, 
+            "__mathObjectClass__": "Xfo", 
+            "tr": {
+              "y": 10.899760246276855, 
+              "x": -9.245243072509766, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 1.9409476518630981
+            }, 
+            "ori": {
+              "__mathObjectClass__": "Quat", 
+              "w": 0.23452726006507874, 
+              "v": {
+                "y": -0.9334213137626648, 
+                "x": 0.2694951891899109, 
+                "__mathObjectClass__": "Vec3", 
+                "z": 0.03307472914457321
+              }
+            }
+          }
+        ]
+      }, 
+      "visibility": true, 
+      "digitNames": "thumb,index,middle,ring,pinky", 
+      "location": "R", 
+      "numJoints": 4, 
+      "fingerShapeCtrlData": {
+        "pinky": [
+          [
+            {
+              "points": [
+                [
+                  0.748, 
+                  0.286, 
+                  -0.087
+                ], 
+                [
+                  0.748, 
+                  0.286, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.286, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.286, 
+                  -0.087
+                ], 
+                [
+                  0.748, 
+                  0.286, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ], 
+        "index": [
+          [
+            {
+              "points": [
+                [
+                  0.879, 
+                  0.25, 
+                  -0.087
+                ], 
+                [
+                  0.879, 
+                  0.25, 
+                  0.087
+                ], 
+                [
+                  -0.071, 
+                  0.302, 
+                  0.087
+                ], 
+                [
+                  -0.071, 
+                  0.302, 
+                  -0.087
+                ], 
+                [
+                  0.879, 
+                  0.25, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ], 
+        "ring": [
+          [
+            {
+              "points": [
+                [
+                  0.792, 
+                  0.33, 
+                  -0.087
+                ], 
+                [
+                  0.792, 
+                  0.33, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.33, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.33, 
+                  -0.087
+                ], 
+                [
+                  0.792, 
+                  0.33, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ], 
+        "thumb": [
+          [
+            {
+              "points": [
+                [
+                  0.489, 
+                  0.323, 
+                  -0.087
+                ], 
+                [
+                  0.489, 
+                  0.323, 
+                  0.087
+                ], 
+                [
+                  -0.086, 
+                  0.382, 
+                  0.087
+                ], 
+                [
+                  -0.086, 
+                  0.382, 
+                  -0.087
+                ], 
+                [
+                  0.489, 
+                  0.323, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ], 
+        "middle": [
+          [
+            {
+              "points": [
+                [
+                  0.83, 
+                  0.33, 
+                  -0.087
+                ], 
+                [
+                  0.83, 
+                  0.33, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.33, 
+                  0.087
+                ], 
+                [
+                  -0.087, 
+                  0.33, 
+                  -0.087
+                ], 
+                [
+                  0.83, 
+                  0.33, 
+                  -0.087
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  0.087
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  0.061
+                ], 
+                [
+                  -0.087, 
+                  0.274, 
+                  0.0
+                ], 
+                [
+                  -0.061, 
+                  0.274, 
+                  -0.061
+                ], 
+                [
+                  0.0, 
+                  0.274, 
+                  -0.087
+                ], 
+                [
+                  0.061, 
+                  0.274, 
+                  -0.061
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ], 
+          [
+            {
+              "points": [
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  0.171
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  0.12
+                ], 
+                [
+                  0.0, 
+                  -0.171, 
+                  0.0
+                ], 
+                [
+                  0.0, 
+                  -0.12, 
+                  -0.12
+                ], 
+                [
+                  0.0, 
+                  0.0, 
+                  -0.171
+                ], 
+                [
+                  0.0, 
+                  0.12, 
+                  -0.12
+                ]
+              ], 
+              "closed": false, 
+              "degree": 1
+            }
+          ]
+        ]
+      }, 
+      "handXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 12.281900405883789, 
+          "x": -7.188600063323975, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.49059998989105225
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 0.2873687148094177, 
+          "v": {
+            "y": -0.9185301661491394, 
+            "x": 0.26717084646224976, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.04838734120130539
+          }
+        }
+      }, 
+      "class": "kraken_components.biped.hand_component.HandComponentGuide"
+    }, 
+    {
+      "graphPos": {
+        "y": -210.0, 
+        "x": 60.0, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "leg", 
+      "ankleXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 1.1516000032424927, 
+          "x": 1.840999960899353, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.2369999885559082
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "kneeXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 5.441800117492676, 
+          "x": 1.448799967765808, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.5347999930381775
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "visibility": true, 
+      "location": "L", 
+      "class": "kraken_components.biped.leg_component.LegComponentGuide", 
+      "femurXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 9.769000053405762, 
+          "x": 0.9811000227928162, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.45719999074935913
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }
+    }, 
+    {
+      "graphPos": {
+        "y": 330.0, 
+        "x": 60.0, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "leg", 
+      "ankleXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 1.1516000032424927, 
+          "x": -1.840999960899353, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.2369999885559082
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "kneeXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 5.441800117492676, 
+          "x": -1.448799967765808, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.5347999930381775
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "visibility": true, 
+      "location": "R", 
+      "class": "kraken_components.biped.leg_component.LegComponentGuide", 
+      "femurXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 9.769000053405762, 
+          "x": -0.9811000227928162, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -0.45719999074935913
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }
+    }, 
+    {
+      "toeTipXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.17209801077842712, 
+          "x": 1.75, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.2605046033859253
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "graphPos": {
+        "y": -210.0, 
+        "x": 210.0, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "foot", 
+      "ankleXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 1.1516000032424927, 
+          "x": 1.840999960899353, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.2369999885559082
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "frontPivotXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.0, 
+          "x": 1.75, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.2605046033859253
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "class": "kraken_components.biped.foot_component.FootComponentGuide", 
+      "visibility": true, 
+      "toeXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.18523675203323364, 
+          "x": 1.75, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.42588990926742554
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "innerPivotXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.0, 
+          "x": 1.25, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.25
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "location": "L", 
+      "backPivotXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.0, 
+          "x": 1.75, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.9734289646148682
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "outerPivotXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.0, 
+          "x": 2.5, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.25
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }
+    }, 
+    {
+      "toeTipXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.1720000058412552, 
+          "x": -1.75, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.2610000371932983
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "graphPos": {
+        "y": 330.0, 
+        "x": 210.0, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "name": "foot", 
+      "ankleXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 1.1516000032424927, 
+          "x": -1.840999960899353, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.2369999885559082
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "frontPivotXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.0, 
+          "x": -1.75, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.2605046033859253
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "class": "kraken_components.biped.foot_component.FootComponentGuide", 
+      "visibility": true, 
+      "toeXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.18523675203323364, 
+          "x": -1.75, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.42588990926742554
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "innerPivotXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.0, 
+          "x": -1.25, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.25
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "location": "R", 
+      "backPivotXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.0, 
+          "x": -1.75, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.9734289646148682
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "outerPivotXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 0.0, 
+          "x": -2.5, 
+          "__mathObjectClass__": "Vec3", 
+          "z": -1.25
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }
+    }
+  ], 
+  "metaData": {
+    "backdrops": [
+      {
+        "comment": "Leg R", 
+        "color": [
+          170, 
+          0, 
+          0, 
+          255
+        ], 
+        "graphPos": [
+          134.13193471673168, 
+          319.5011554138831
+        ], 
+        "name": "Backdrop04", 
+        "size": [
+          306.9182845438941, 
+          347.6074892260583
+        ]
+      }, 
+      {
+        "comment": "Spine, Neck, Head", 
+        "color": [
+          255, 
+          85, 
+          0, 
+          255
+        ], 
+        "graphPos": [
+          -833.6979841880908, 
+          -8.53236442025809
+        ], 
+        "name": "Backdrop", 
+        "size": [
+          493.3836378688409, 
+          269.10565804278923
+        ]
+      }, 
+      {
+        "comment": "Arm L", 
+        "color": [
+          0, 
+          170, 
+          0, 
+          255
+        ], 
+        "graphPos": [
+          -411.6618958401856, 
+          -405.4222878675758
+        ], 
+        "name": "Backdrop01", 
+        "size": [
+          681.6458184444712, 
+          304.14993104199914
+        ]
+      }, 
+      {
+        "comment": "Leg L", 
+        "color": [
+          0, 
+          170, 
+          0, 
+          255
+        ], 
+        "graphPos": [
+          134.9415198364133, 
+          -220.38469433074357
+        ], 
+        "name": "Backdrop02", 
+        "size": [
+          303.58979622049566, 
+          351.33939020873584
+        ]
+      }, 
+      {
+        "comment": "Arm R", 
+        "color": [
+          170, 
+          0, 
+          0, 
+          255
+        ], 
+        "graphPos": [
+          -407.9767099232099, 
+          438.4378172921312
+        ], 
+        "name": "Backdrop03", 
+        "size": [
+          667.7814370847259, 
+          308.9530741156276
+        ]
+      }
+    ]
+  }
+}

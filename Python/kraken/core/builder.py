@@ -15,7 +15,7 @@ from kraken.core.profiler import Profiler
 
 from kraken.core.objects.scene_item import SceneItem
 from kraken.core.objects.object_3d import Object3D
-from kraken.core.traverser.traverser import Traverser
+from kraken.core.traverser import Traverser
 
 logger = getLogger('kraken')
 logger.setLevel(logging.INFO)

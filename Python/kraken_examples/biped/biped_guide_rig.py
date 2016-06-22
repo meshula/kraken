@@ -186,17 +186,42 @@ class BipedGuideRig(Rig):
         # Connections
         # ============
 
+        # =======
         # Outputs
+        # =======
         mainSrtRigScaleOutput = mainSrtComponentGuide.getOutputByName('rigScale')
         mainSrtOffsetOutput = mainSrtComponentGuide.getOutputByName('offset')
         spineEndOutput = spineComponentGuide.getOutputByName('spineEnd')
         neckEndOutput = neckComponentGuide.getOutputByName('neckEnd')
-        spineEndOutput = spineComponentGuide.getOutputByName('spineEnd')
         clavicleLeftEndOutput = clavicleLeftComponentGuide.getOutputByName('clavicleEnd')
         clavicleRightEndOutput = clavicleRightComponentGuide.getOutputByName('clavicleEnd')
         spinePelvisOutput = spineComponentGuide.getOutputByName('pelvis')
 
+        # Arm Left
+        armLeftWristOutput = armLeftComponentGuide.getOutputByName('wrist')
 
+        # Arm Right
+        armRightWristOutput = armRightComponentGuide.getOutputByName('wrist')
+
+        # Leg Left
+        legLeftIkHandleOutput = legLeftComponentGuide.getOutputByName('ikHandle')
+        legLeftLegEndOutput = legLeftComponentGuide.getOutputByName('legEnd')
+        legLeftLegEndFKOutput = legLeftComponentGuide.getOutputByName('legEndFK')
+
+        # Leg Right
+        legRightIkHandleOutput = legRightComponentGuide.getOutputByName('ikHandle')
+        legRightLegEndOutput = legRightComponentGuide.getOutputByName('legEnd')
+        legRightLegEndFKOutput = legRightComponentGuide.getOutputByName('legEndFK')
+
+        # Foot Left
+        footLeftIkTargetOutput = footLeftComponentGuide.getOutputByName('ikTarget')
+
+        # Foot Right
+        footRightIkTargetOutput = footRightComponentGuide.getOutputByName('ikTarget')
+
+        # =========================
+        # Inputs & Set Connections
+        # =========================
         # Spine
         spineGlobalSrtInput = spineComponentGuide.getInputByName('globalSRT')
         spineGlobalSrtInput.setConnection(mainSrtOffsetOutput)
@@ -259,9 +284,15 @@ class BipedGuideRig(Rig):
         handLeftGlobalSrtInput = handLeftComponentGuide.getInputByName('globalSRT')
         handLeftGlobalSrtInput.setConnection(mainSrtOffsetOutput)
 
+        handLeftArmEndInput = handLeftComponentGuide.getInputByName('armEnd')
+        handLeftArmEndInput.setConnection(armLeftWristOutput)
+
         # Hand Right
         handRightGlobalSrtInput = handRightComponentGuide.getInputByName('globalSRT')
         handRightGlobalSrtInput.setConnection(mainSrtOffsetOutput)
+
+        handRightArmEndInput = handRightComponentGuide.getInputByName('armEnd')
+        handRightArmEndInput.setConnection(armRightWristOutput)
 
         # Leg Left
         legLeftGlobalSrtInput = legLeftComponentGuide.getInputByName('globalSRT')
@@ -273,6 +304,9 @@ class BipedGuideRig(Rig):
         legLeftPelvisInput = legLeftComponentGuide.getInputByName('pelvisInput')
         legLeftPelvisInput.setConnection(spinePelvisOutput)
 
+        legLeftPelvisInput = legLeftComponentGuide.getInputByName('ikTarget')
+        legLeftPelvisInput.setConnection(footLeftIkTargetOutput)
+
         # Leg Right
         legRightGlobalSrtInput = legRightComponentGuide.getInputByName('globalSRT')
         legRightGlobalSrtInput.setConnection(mainSrtOffsetOutput)
@@ -283,13 +317,35 @@ class BipedGuideRig(Rig):
         legRightPelvisInput = legRightComponentGuide.getInputByName('pelvisInput')
         legRightPelvisInput.setConnection(spinePelvisOutput)
 
+        legRightPelvisInput = legRightComponentGuide.getInputByName('ikTarget')
+        legRightPelvisInput.setConnection(footRightIkTargetOutput)
+
         # Foot Left
         footLeftGlobalSrtInput = footLeftComponentGuide.getInputByName('globalSRT')
         footLeftGlobalSrtInput.setConnection(mainSrtOffsetOutput)
 
+        footLeftIkHandleInput = footLeftComponentGuide.getInputByName('ikHandle')
+        footLeftIkHandleInput.setConnection(legLeftIkHandleOutput)
+
+        footLeftLegEndInput = footLeftComponentGuide.getInputByName('legEnd')
+        footLeftLegEndInput.setConnection(legLeftLegEndOutput)
+
+        footLeftLegEndFKInput = footLeftComponentGuide.getInputByName('legEndFK')
+        footLeftLegEndFKInput.setConnection(legLeftLegEndFKOutput)
+
+
         # Foot Right
         footRightGlobalSrtInput = footRightComponentGuide.getInputByName('globalSRT')
         footRightGlobalSrtInput.setConnection(mainSrtOffsetOutput)
+
+        footRightIkHandleInput = footRightComponentGuide.getInputByName('ikHandle')
+        footRightIkHandleInput.setConnection(legRightIkHandleOutput)
+
+        footRightLegEndInput = footRightComponentGuide.getInputByName('legEnd')
+        footRightLegEndInput.setConnection(legRightLegEndOutput)
+
+        footRightLegEndFKInput = footRightComponentGuide.getInputByName('legEndFK')
+        footRightLegEndFKInput.setConnection(legRightLegEndFKOutput)
 
         Profiler.getInstance().pop()
 
@@ -298,9 +354,9 @@ if __name__ == "__main__":
     from kraken import plugins
 
     try:
-        Profiler.getInstance().push('bob_guide_build')
+        Profiler.getInstance().push('biped_guide_build')
 
-        bipedGuide = BipedGuideRig('char_biped_guide')
+        bipedGuide = BipedGuideRig('Biped_guide')
 
         builder = plugins.getBuilder()
         builder.build(bipedGuide)
