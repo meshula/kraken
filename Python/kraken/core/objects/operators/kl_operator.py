@@ -8,7 +8,7 @@ KLOperator - Splice operator object.
 import pprint
 import json
 
-from kraken.core.maths import MathObject, Mat44, Xfo
+from kraken.core.maths import MathObject, Mat44, Xfo, Vec2,  Vec3
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.attributes.attribute import Attribute
