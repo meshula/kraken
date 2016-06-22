@@ -76,6 +76,7 @@ class OSSHandComponentGuide(OSSHandComponent):
         # ========
 
         # Guide Settings
+        self.addPartialJoints = BoolAttribute('addPartialJoints', value=True, parent=self.guideSettingsAttrGrp)
         self.ikHandleSizeInputAttr = ScalarAttribute('ikHandleSize', value=1, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
         #self.numDigits = IntegerAttribute('numDigits', value=5, minValue=1, maxValue=20, parent=self.guideSettingsAttrGrp)
         self.digit3SegmentNames = StringAttribute('Digit3SegmentNames', value="index middle ring pinky", parent=self.guideSettingsAttrGrp)
@@ -230,9 +231,6 @@ class OSSHandComponentGuide(OSSHandComponent):
         True if successful.
 
         """
-        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
-        for ctrl in self.getHierarchyNodes(classType="Control"):
-            ctrl.setShape(ctrl.getShape())
 
         #Grab the guide settings in case we want to use them here (and are not stored in data arg)
         existing_data = self.saveData()
@@ -240,6 +238,11 @@ class OSSHandComponentGuide(OSSHandComponent):
         data = existing_data
 
         super(OSSHandComponentGuide, self).loadData( data )
+
+
+        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
+        for ctrl in self.getHierarchyNodes(classType="Control"):
+            ctrl.setShape(ctrl.getShape())
 
         # TODO: make this a property of the component
         self.boneAxisStr = "POSX"
@@ -517,29 +520,27 @@ class OSSHandComponentRig(OSSHandComponent):
         for i, digitName in enumerate(digitNameList):
             parent = self.palm_cmpOut
             defParent = self.handDef
-            newCtrls = []
-            newDefs = []
+            digiSegCtrls = []
+            digiSegDefs = []
             for j, segment in enumerate(segments):
                 #Eventually, we need outputs and ports for this component for each digit segment
                 #spineOutput = ComponentOutput(digitName+"_"+segment, parent=self.outputHrcGrp)
 
                 if segment == "end":
                     continue  # don't create control for end (but we need it to loop through control positions correctly)
-                newCtrl = FKControl(digitName+"_"+segment, parent=parent, shape="square")
-                newCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
-                newCtrl.rotatePoints(0,0,90)
-                newCtrl.scalePoints(globalScale)
-                newCtrls.append(newCtrl)
+                digiSegCtrl = FKControl(digitName+"_"+segment, parent=parent, shape="square")
+                digiSegCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
+                digiSegCtrl.rotatePoints(0,0,90)
+                digiSegCtrl.scalePoints(globalScale)
+                digiSegCtrls.append(digiSegCtrl)
 
-                newDef = Joint(digitName+"_"+segment, parent=defParent)
-                newDef.setComponent(self)
-                newDefs.append(newDef)
+                digiSegDef = Joint(digitName+"_"+segment, parent=defParent)
+                digiSegDef.setComponent(self)
+                digiSegDefs.append(digiSegDef)
 
-                newDef.constrainTo(newCtrl)
+                defParent = digiSegDef
 
-                defParent = newDef
-
-                parent = newCtrl
+                parent = digiSegCtrl
                 ctrlListName = "digit"+str(numSegments)+"SegmentCtrls"
 
                 if (ctrlListName+"Xfos") in data.keys():
@@ -547,15 +548,25 @@ class OSSHandComponentRig(OSSHandComponent):
                     index = i*len(segments) + j
 
                     if (i*numSegments + j) < len(data[ctrlListName+"Xfos"]):
-                        newCtrl.xfo = data[ctrlListName+"Xfos"][index]
+                        digiSegCtrl.xfo = data[ctrlListName+"Xfos"][index]
 
-                        #Aim Control at child
-                        if j > 0:
-                            aimAt(newCtrls[-2].xfo, aimPos=newCtrl.xfo.tr, upVector=upVector, aimAxis=self.boneAxis, upAxis=self.upAxis)
-                            newCtrls[-2].insertCtrlSpace()
-                            if j == len(segments)-2:
-                                newCtrl.xfo.ori = newCtrls[-2].xfo.ori
-                                newCtrl.insertCtrlSpace()
+            #Aim Control at child
+            for j in range(len(digiSegCtrls)):
+
+                if j == len(digiSegCtrls) - 1:
+                    digiSegCtrls[j].xfo.ori = digiSegCtrls[j-1].xfo.ori
+                else:
+                    aimAt(digiSegCtrls[j].xfo, aimPos=digiSegCtrls[j+1].xfo.tr, upVector=upVector, aimAxis=self.boneAxis, upAxis=self.upAxis)
+
+                digiSegCtrls[j].insertCtrlSpace()
+                digiSegDefs[j].constrainTo(digiSegCtrls[j]).evaluate()
+
+                if self.addPartialJoints:
+                    twistXfo = self.createOutput(digiSegDefs[j].getName()+"_partial", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+                    twistXfo.xfo = digiSegDefs[j].xfo
+                    twistXfo.constrainTo(digiSegDefs[j].getParent(), maintainOffset=True)
+                    self.createPartialJoint(digiSegDefs[j], baseTranslate=twistXfo, baseRotate=twistXfo, parent=digiSegDefs[j].getParent())
+
 
 
         return True
@@ -581,6 +592,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.mocap = bool(data["mocap"])
 
+        self.addPartialJoints = bool(data['addPartialJoints'])  #This should be a simple method instead
 
         # TODO: make this a property of the component
         self.boneAxisStr = "POSX"
@@ -703,8 +715,6 @@ class OSSHandComponentRig(OSSHandComponent):
         self.ikgoal_cmpOutConstraint.evaluate()
         self.hand_cmpOutConstraint.evaluate()
         self.palm_cmpOutConstraint.evaluate()
-
-
 
 
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
