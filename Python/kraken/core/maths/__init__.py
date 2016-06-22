@@ -25,6 +25,17 @@ AXIS_NAME_TO_TUPLE_MAP = {
     'NEGY': (0, -1, 0),
     'NEGZ': (0, 0, -1)
 }
+TUPLE_TO_AXIS_NAME_MAP = dict((reversed(item) for item in AXIS_NAME_TO_TUPLE_MAP.items()))
+
+AXIS_NAME_TO_VEC3_MAP = {
+    'POSX': Vec3(1, 0, 0),
+    'POSY': Vec3(0, 1, 0),
+    'POSZ': Vec3(0, 0, 1),
+    'NEGX': Vec3(-1, 0, 0),
+    'NEGY': Vec3(0, -1, 0),
+    'NEGZ': Vec3(0, 0, -1)
+}
+#VEC3_TO_AXIS_NAME_MAP = dict((reversed(item) for item in AXIS_NAME_TO_VEC3_MAP.items()))
 
 AXIS_NAME_TO_INT_MAP = {
     'POSX': 0,
@@ -34,6 +45,7 @@ AXIS_NAME_TO_INT_MAP = {
     'NEGY': 4,
     'NEGZ': 5
 }
+INT_TO_AXIS_NAME_MAP = dict((reversed(item) for item in AXIS_NAME_TO_INT_MAP.items()))
 
 
 def Math_radToDeg(val):
