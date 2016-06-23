@@ -72,8 +72,8 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         # ========
 
         # Guide Settings
-        self.addPartialJoints = BoolAttribute('addPartialJoints', value=True, parent=self.guideSettingsAttrGrp)
-        self.addTwistJoints = BoolAttribute('addTwistJoints', value=True, parent=self.guideSettingsAttrGrp)
+        self.addPartialJoints = BoolAttribute('addPartialJoints', value=False, parent=self.guideSettingsAttrGrp)
+        self.addTwistJoints = BoolAttribute('addTwistJoints', value=False, parent=self.guideSettingsAttrGrp)
         self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=self.guideSettingsAttrGrp)
         self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=self.guideSettingsAttrGrp)
         self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=self.guideSettingsAttrGrp)

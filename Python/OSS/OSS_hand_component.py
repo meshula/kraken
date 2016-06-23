@@ -76,7 +76,7 @@ class OSSHandComponentGuide(OSSHandComponent):
         # ========
 
         # Guide Settings
-        self.addPartialJoints = BoolAttribute('addPartialJoints', value=True, parent=self.guideSettingsAttrGrp)
+        self.addPartialJoints = BoolAttribute('addPartialJoints', value=False, parent=self.guideSettingsAttrGrp)
         self.ikHandleSizeInputAttr = ScalarAttribute('ikHandleSize', value=1, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
         #self.numDigits = IntegerAttribute('numDigits', value=5, minValue=1, maxValue=20, parent=self.guideSettingsAttrGrp)
         self.digit3SegmentNames = StringAttribute('Digit3SegmentNames', value="index middle ring pinky", parent=self.guideSettingsAttrGrp)
@@ -616,7 +616,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.palmCtrlSpace.xfo = data['palmXfo']
         self.palmCtrl.xfo = data['palmXfo']
-        self.palmCtrl.scalePointsOnAxis(data['palmLen'], self.boneAxisStr)
+        self.palmCtrl.scalePointsOnAxis(data['palmLen'] / 5.0, self.boneAxisStr)
 
         self.handleIKCtrlSpace.xfo = Xfo(self.handCtrl.xfo)
         self.palmCtrlSpace.xfo = Xfo(self.palmCtrl.xfo)
