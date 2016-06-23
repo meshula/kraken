@@ -836,11 +836,13 @@ class Builder(Builder):
             canvasNode = pm.createNode('canvasNode', name=kOperator.getName())
             self._registerSceneItemPair(kOperator, pm.PyNode(canvasNode))
 
-            pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
+
+            if isKLBased is True:
+
+                pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
                                       execPath="",
                                       extDep=kOperator.getExtension())
 
-            if isKLBased is True:
                 solverTypeName = kOperator.getSolverTypeName()
 
                 pm.FabricCanvasAddFunc(mayaNode=canvasNode,
@@ -1032,8 +1034,12 @@ class Builder(Builder):
                             })
                 else:
                     if connectedObjects is None:
+                        if isKLBased:
+                            opType = kOperator.getExtension()+":"+kOperator.getSolverTypeName()
+                        else:
+                            opType = kOperator.getPresetPath()
                         logger.warning("Operator '" + kOperator.getName() +
-                                       "' of type '" + kOperator.getPresetPath() +
+                                       "' of type '" + opType +
                                        "' port '" + portName + "' not connected.")
                         continue
 
