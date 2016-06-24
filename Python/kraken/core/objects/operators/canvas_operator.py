@@ -1,7 +1,7 @@
-"""Kraken - objects.operators.kl_operator module.
+"""Kraken - objects.operators.canvas_operator module.
 
 Classes:
-CanvasOperator - Splice operator object.
+CanvasOperator - Canvas operator object.
 
 """
 
@@ -15,7 +15,7 @@ from kraken.core.kraken_system import ks
 
 
 class CanvasOperator(Operator):
-    """Splice Operator representation."""
+    """Canvas Operator representation."""
 
     def __init__(self, name, canvasPresetPath):
         super(CanvasOperator, self).__init__(name)
@@ -31,12 +31,6 @@ class CanvasOperator(Operator):
             1: 'IO',
             2: 'Out'
         }
-
-        # ownerOutPortData = {
-        #     'name': None,
-        #     'typeSpec': None,
-        #     'execPortType': None
-        # }
 
         # Initialize the inputs and outputs based on the given args.
         for i in xrange(self.node.getExecPortCount()):

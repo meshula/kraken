@@ -1172,7 +1172,7 @@ class Builder(Builder):
 
 
             # Create Splice Operator
-            canvasOpPath = si.FabricCanvasOpApply(operatorOwner.FullName, "", True, "", "")
+            canvasOpPath = str(si.FabricCanvasOpApply(operatorOwner.FullName, "", True, "", ""))
             canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
             self._registerSceneItemPair(kOperator, canvasOp)
 
@@ -1199,9 +1199,7 @@ class Builder(Builder):
                 if portDataType in ('Xfo', 'Mat44'):
                     portmapDefinition = portName + "|XSI Port"
 
-                    canvasOpPath2 = str(canvasOpPath) + ":"
                     si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
-                    canvasOpPath = str(canvasOpPath2)[:-1]
                     canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
 
                     si.FabricCanvasOpConnectPort(
@@ -1214,9 +1212,7 @@ class Builder(Builder):
                     if argConnectionType == 'In':
                         portmapDefinition = portName + "|XSI Parameter"
 
-                        canvasOpPath2 = str(canvasOpPath) + ":"
                         si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
-                        canvasOpPath = str(canvasOpPath2)[:-1]
                         canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
 
                         parameter = canvasOp.Parameters(portName)
@@ -1233,9 +1229,7 @@ class Builder(Builder):
                     elif argConnectionType in ('Out', 'IO'):
                         portmapDefinition = portName + "|XSI Port"
 
-                        canvasOpPath2 = str(canvasOpPath) + ":"
                         si.FabricCanvasOpPortMapDefine(canvasOpPath, portmapDefinition)
-                        canvasOpPath = str(canvasOpPath2)[:-1]
                         canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
 
                         outParamProp = canvasOp.Parent3DObject.Properties("_CanvasOut_" + portName)
@@ -1259,46 +1253,48 @@ class Builder(Builder):
                 canvasOpPath2 = str(canvasOpPath) + ":"
 
                 if portDataType.endswith('[]'):
+                    arrayNode = None
+                    connectedObjects = None
                     elementDataType = portDataType[:-2]
                     if portConnectionType == 'In':
                         connectedObjects = kOperator.getInput(portName)
                         if connectedObjects is None:
                             continue
 
-                        arrayNode = si.FabricCanvasAddFunc(
-                            canvasOpPath,
-                            "",
-                            portName + "_ComposeArray",
-                            "dfgEntry {}",
-                            "40",
-                            str(i * 100))
+                        # arrayNode = si.FabricCanvasAddFunc(
+                        #     canvasOpPath,
+                        #     "",
+                        #     portName + "_ComposeArray",
+                        #     "dfgEntry {}",
+                        #     "40",
+                        #     str(i * 100))
 
-                        si.FabricCanvasAddPort(canvasOpPath,
-                                               arrayNode,
-                                               "array",
-                                               "Out",
-                                               portDataType,
-                                               "")
+                        # si.FabricCanvasAddPort(canvasOpPath,
+                        #                        arrayNode,
+                        #                        "array",
+                        #                        "Out",
+                        #                        portDataType,
+                        #                        "")
 
-                        arrayNodeCode = "dfgEntry { \n  array.resize(" + str(len(connectedObjects)) + ");\n"
-                        for j in xrange(len(connectedObjects)):
-                            si.FabricCanvasAddPort(canvasOpPath,
-                                                   arrayNode,
-                                                   "value" + str(j),
-                                                   "In",
-                                                   elementDataType,
-                                                   "",
-                                                   "")
+                        # arrayNodeCode = "dfgEntry { \n  array.resize(" + str(len(connectedObjects)) + ");\n"
+                        # for j in xrange(len(connectedObjects)):
+                        #     si.FabricCanvasAddPort(canvasOpPath,
+                        #                            arrayNode,
+                        #                            "value" + str(j),
+                        #                            "In",
+                        #                            elementDataType,
+                        #                            "",
+                        #                            "")
 
-                            arrayNodeCode += "  array[" + str(j) + "] = value" + str(j) + ";\n"
+                        #     arrayNodeCode += "  array[" + str(j) + "] = value" + str(j) + ";\n"
 
-                        arrayNodeCode += "}"
-                        si.FabricCanvasSetCode(canvasOpPath, arrayNode, arrayNodeCode)
+                        # arrayNodeCode += "}"
+                        # si.FabricCanvasSetCode(canvasOpPath, arrayNode, arrayNodeCode)
 
-                        si.FabricCanvasConnect(canvasOpPath,
-                                               "",
-                                               arrayNode + ".array",
-                                               uniqueNodeName + "." + portName)
+                        # si.FabricCanvasConnect(canvasOpPath,
+                        #                        "",
+                        #                        arrayNode + ".array",
+                        #                        uniqueNodeName + "." + portName)
 
                     elif portConnectionType in ['IO', 'Out']:
                         connectedObjects = kOperator.getOutput(portName)
@@ -1367,12 +1363,15 @@ class Builder(Builder):
                         # a new port.
                         canvasOp = si.Dictionary.GetObject(operatorOwner.Fullname + ".kine.global.CanvasOp", False)
 
-                        addCanvasPorts(canvasOp,
-                                       portName + str(j),
-                                       arrayNode + ".value" + str(j),
-                                       elementDataType,
-                                       portConnectionType,
-                                       dccSceneItem)
+                        if arrayNode is not None:
+
+                        else:
+                            addCanvasPorts(canvasOp,
+                                           portName + str(j),
+                                           arrayNode + ".value" + str(j),
+                                           elementDataType,
+                                           portConnectionType,
+                                           dccSceneItem)
 
                 else:
                     if portConnectionType == 'In':
