@@ -5,14 +5,20 @@ interface IKrakenSolver {
 };
 
 object KrakenSolver : IKrakenSolver {
+
+    RTVal defaultValues[String];
+
     Boolean drawDebug;
     DrawingHandle handle;
 };
 
 // Default Constructor
 inline KrakenSolver() {
-  this.drawDebug = false;
-  this.handle = null;
+
+  this.defaultValues["drawDebug"] = false;
+  this.defaultValues["rigScale"] = 1.0;
+
+  this.drawDebug = this.defaultValues["drawDebug"];
 }
 
 // Return Arguments for Kraken

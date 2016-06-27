@@ -9,12 +9,21 @@ object TwoBoneIKSolver : KrakenSolver {
 // Default Constructor
 function TwoBoneIKSolver()
 {
-
+  this.defaultValues["rightSide"] = false;
+  this.defaultValues["ikblend"] = 0.123;
+  this.defaultValues["root"] = Mat44();
+  this.defaultValues["bone0FK"] = Mat44();
+  this.defaultValues["bone1FK"] = Mat44();
+  this.defaultValues["ikHandle"] = Mat44();
+  this.defaultValues["upV"] = Mat44();
+  this.defaultValues["bone0Len"] = 654.321;
+  this.defaultValues["bone1Len"] = 1.0;
 }
 
 function TwoBoneIKSolver(
   Xfo initPose[])
 {
+  TwoBoneIKSolver();
   this.initPose = initPose;
 }
 

@@ -5,6 +5,12 @@ require Geometry;
 object RigScaleSolver : KrakenSolver {
 };
 
+// Default Constructor
+function RigScaleSolver()
+{
+  this.defaultValues["target"] = Mat44();
+}
+
 
 // Return Arguments for Kraken
 function KrakenSolverArg[] RigScaleSolver.getArguments(){
