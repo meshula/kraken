@@ -5,6 +5,19 @@ require Kraken;
 object OSS_HierBlendSolver : KrakenSolver {
 };
 
+// Default Constructor
+function OSS_HierBlendSolver()
+{
+  Mat44 hierA[];
+  Mat44 hierB[];
+  Integer parentIndexes[1];
+  parentIndexes[0] = -3;
+  this.defaultValues["hierA"] = hierA;
+  this.defaultValues["hierB"] = hierB;
+  this.defaultValues["parentIndexes"] = parentIndexes;
+  this.defaultValues["blend"] = 1;
+}
+
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_HierBlendSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
@@ -15,7 +28,6 @@ function KrakenSolverArg[] OSS_HierBlendSolver.getArguments(){
   args.push(KrakenSolverArg('hierOut', 'Out', 'Mat44[]'));
   return args;
 }
-
 
 // Solve
 function OSS_HierBlendSolver.solve!

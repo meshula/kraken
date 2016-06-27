@@ -3,48 +3,25 @@ require Geometry;
 require Kraken;
 
 
-struct OSS_TwoBoneIKSolverDefaults : KrakenSolverDefaults {
-  Scalar ikBlend;
-  Scalar softDist;
-  Scalar stretch;
-  Mat44 root;
-  Mat44 bone0FK;
-  Mat44 bone1FK;
-  Mat44 ikHandle;
-  Mat44 upV;
-  UInt32 boneAxis;
-  UInt32 upAxis;
-  UInt32 upV;
-  Scalar bone0Len;
-  Scalar bone1Len;
-};
-// Default Constructor
-function OSS_TwoBoneIKSolverDefaults()
-{
-  //Default parent constructor automatically to get parent attr vals, I think
-  this.ikBlend = 0.5;
-  this.softDist = 0.0;
-  this.stretch = 0.0;
-  this.root = Mat44();
-  this.bone0FK = Mat44();
-  this.bone1FK = Mat44();
-  this.ikHandle = Mat44();
-  this.upV = Mat44();
-  this.boneAxis = 0;
-  this.upAxis = 1;
-  this.upV =  Mat44();
-  this.bone0Len = 1.0;
-  this.bone1Len = 1.0;
-}
-
 object OSS_TwoBoneIKSolver : KrakenSolver {
-  OSS_TwoBoneIKSolverDefaults defaults;
 };
 
 // Default Constructor
 function OSS_TwoBoneIKSolver()
 {
-  //this.defaults = OSS_TwoBoneIKSolverDefaults();
+  this.defaultValues["ikBlend"] = 0.5;
+  this.defaultValues["softDist"] = 0.0;
+  this.defaultValues["stretch"] = 0.0;
+  this.defaultValues["root"] = Mat44();
+  this.defaultValues["bone0FK"] = Mat44();
+  this.defaultValues["bone1FK"] = Mat44();
+  this.defaultValues["ikHandle"] = Mat44();
+  this.defaultValues["upV"] = Mat44();
+  this.defaultValues["boneAxis"] = 0;
+  this.defaultValues["upAxis"] = 1;
+  this.defaultValues["upV"] =  Mat44();
+  this.defaultValues["bone0Len"] = 1.0;
+  this.defaultValues["bone1Len"] = 1.0;
 }
 
 

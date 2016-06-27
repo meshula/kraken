@@ -2,27 +2,7 @@ require InlineDrawing;
 require Animation;
 
 
-struct TentacleSolverDefaults : KrakenSolverDefaults {
-  Scalar time;
-  Scalar ikblend;
-  Scalar waveLength_Y;
-  Scalar waveAmplitude_Y;
-  Scalar waveFrequency_Y;
-  Scalar waveLength_Z;
-  Scalar waveAmplitude_Z;
-  Scalar waveFrequency_Z;
-  Scalar tipBias;
-  Scalar springStrength;
-  Scalar dampening;
-  Scalar simulationWeight;
-  Scalar softLimitBounds;
-  Mat44 chainBase;
-  Mat44 ikgoal;
-  Mat44 fkcontrols[];
-  Scalar tipBoneLen;
-  Mat44 pose[];
-  Mat44 tentacleEnd;
-};
+/*
 // Default Constructor
 function TentacleSolverDefaults()
 {
@@ -46,10 +26,10 @@ function TentacleSolverDefaults()
   //this.pose = ;
   this.tentacleEnd = Mat44();
 }
-
+*/
 
 object TentacleSolver : KrakenSolver {
-    TentacleSolverDefaults defaults;
+    //TentacleSolverDefaults defaults;
     Vec3 trCurr;
     Vec3 trPrev;
 };
@@ -57,6 +37,28 @@ object TentacleSolver : KrakenSolver {
 // Default Constructor
 function TentacleSolver()
 {
+  Mat44 fkcontrols[];
+  Mat44 pose[];
+  this.defaultValues["time"] = 0.0;
+  this.defaultValues["ikblend"] = 0.123;
+  this.defaultValues["waveLength_Y"] = 1.0;
+  this.defaultValues["waveAmplitude_Y"] = 0.0;
+  this.defaultValues["waveFrequency_Y"] = 2.0;
+  this.defaultValues["waveLength_Z"] = 2.329;
+  this.defaultValues["waveAmplitude_Z"] = 0.0;
+  this.defaultValues["waveFrequency_Z"] = 3.354;
+  this.defaultValues["tipBias"] = 1.0;
+  this.defaultValues["springStrength"] = 0.3;
+  this.defaultValues["dampening"] = 0.03;
+  this.defaultValues["simulationWeight"] = 1.0;
+  this.defaultValues["softLimitBounds"] = 5.0;
+  this.defaultValues["chainBase"] = Mat44();
+  this.defaultValues["ikgoal"] = Mat44();
+  //this.defaultValues["ikgoal"].tr.y = 1.0
+  this.defaultValues["fkcontrols"] = fkcontrols;
+  this.defaultValues["tipBoneLen"] = 1.0;
+  this.defaultValues["pose"] = pose;
+  this.defaultValues["tentacleEnd"] = Mat44();
 }
 
 

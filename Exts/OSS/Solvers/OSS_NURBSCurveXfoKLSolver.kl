@@ -3,7 +3,7 @@ require Curves;
 require InlineDrawing;
 
 
-
+/*
 struct OSS_NURBSCurveXfoKLSolverDefaults : KrakenSolverDefaults {
     SInt8 degree;
     Scalar keepArcLength;
@@ -31,9 +31,10 @@ function OSS_NURBSCurveXfoKLSolverDefaults()
     this.altTangent = Vec3(1,0,0);
     this.compressionAmt = 0;
 }
+*/
 
 object OSS_NURBSCurveXfoKLSolver : KrakenSolver {
-    OSS_NURBSCurveXfoKLSolverDefaults defaults;
+    //OSS_NURBSCurveXfoKLSolverDefaults defaults;
 };
 
 // Return Arguments for Kraken
@@ -139,7 +140,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   // positions = restCurve.positions.values;
   // colors  = restCurve.colors.values;
   // normals = restCurve.normals.values;
-  
+
   Vec3 altNormals[];
   Vec3 altTangents[];
   Xfo xfos[];
@@ -159,7 +160,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   parentXfo.setFromMat44(parent);
   Quat parentRotation = parentXfo.ori;
   Vec3 localAltTangent = parentRotation.rotateVector(altTangent);
-  
+
   Xfo controlsXfo[];
   Xfo alignedControlsXfo[];
   controlsXfo.resize(inCount);
@@ -168,7 +169,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
       controlsXfo[i].setFromMat44(controls[i]);
       alignedControlsXfo[i].setFromMat44(alignedControls[i]);
   }
-  
+
   for (UInt32 i =0; i<outCount; i++) {
     positions[i]   = posedCurveRef.getPoint(params[i], keepArcLength, keepCurveLen);
     tangents[i] = posedCurveRef.getTangent(params[i], true, keepArcLength, keepCurveLen);
@@ -182,7 +183,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     xfos[i].align(alignX,alignY,alignZ);
     outputs[i] = xfos[i].toMat44();
   }
-  
+
   // Set debugging visibility.
   this.handle =  DrawingHandle();
   InlineTransform root = this.handle.getRootTransform();
