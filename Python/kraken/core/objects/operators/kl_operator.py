@@ -7,11 +7,14 @@ KLOperator - Splice operator object.
 
 import pprint
 
-from kraken.core.maths import MathObject, Mat44, Xfo
+from kraken.core.maths import MathObject, Mat44, Xfo, Vec2, Vec3
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.kraken_system import ks
+from kraken.log import getLogger
+
+logger = getLogger('kraken')
 
 
 class KLOperator(Operator):
@@ -35,6 +38,7 @@ class KLOperator(Operator):
         if self.extension != 'Kraken':
             ks.loadExtension(self.extension)
         self.solverRTVal = ks.constructRTVal(self.solverTypeName)
+        logger.debug("Creating kl operator object [%s] of type [%s] from extension [%s]:" % (self.getName(), self.solverTypeName, self.extension))
         self.args = self.solverRTVal.getArguments('KrakenSolverArg[]')
 
         # Initialize the inputs and outputs based on the given args.
@@ -44,16 +48,13 @@ class KLOperator(Operator):
             argDataType = arg.dataType.getSimpleType()
             argConnectionType = arg.connectionType.getSimpleType()
 
+            # Note, do not create empty arrays here as we need to know later whether or not
+            # to create default values if input/output is None
             if argConnectionType == 'In':
-                if argDataType.endswith('[]'):
-                    self.inputs[argName] = []
-                else:
-                    self.inputs[argName] = None
+                self.inputs[argName] = None
             else:
-                if argDataType.endswith('[]'):
-                    self.outputs[argName] = []
-                else:
-                    self.outputs[argName] = None
+                self.outputs[argName] = None
+
 
     def getSolverTypeName(self):
         """Returns the solver type name for this operator.
@@ -84,6 +85,121 @@ class KLOperator(Operator):
         """
 
         return self.args
+
+
+    def getInputType(self, name):
+        """Returns the type of input with the specified name."""
+        for arg in self.args:
+            if arg.connectionType.getSimpleType() == "In" and arg.name.getSimpleType() == name:
+                return arg.dataType.getSimpleType()
+
+        raise Exception("Could not find input argument %s in kl operator %s" % (name, self.getName()))
+
+
+    def getOutputType(self, name):
+        """Returns the type of output with the specified name."""
+        for arg in self.args:
+            if arg.connectionType.getSimpleType() == "Out" and arg.name.getSimpleType() == name:
+                return arg.dataType.getSimpleType()
+
+        raise Exception("Could not find output argument %s in kl operator %s" % (name, self.getName()))
+
+
+    def getDefaultValue(self, name, RTValDataType, mode="inputs"):
+        """Returns the default RTVal value for this argument
+        Only print debug if setting default inputs.  Don't care about outputs, really
+
+        Args:
+            name (str): Name of the input to get.
+            mode (str): "inputs" or "outputs"
+
+        Returns:
+            RTVal
+
+        """
+
+        def isFixedArrayType(string):
+            return bool(re.search(r'\[\d', string))
+
+        # If attribute has a default value
+        if self.solverRTVal.defaultValues.has("Boolean", name).getSimpleType():
+
+            RTVal = ks.convertFromRTVal(self.solverRTVal.defaultValues[name])
+
+            if RTVal.isArray():
+                # If RTValDataType is variable array, but default value is fixed array, convert it
+                if isFixedArrayType(RTVal.getTypeName().getSimpleType()) and not isFixedArrayType(RTValDataType):
+                    RTValArray = ks.rtVal(RTValDataType)
+                    if len(RTVal):
+                        RTValArray.resize(len(RTVal))
+
+                    for i in range(len(RTVal)):
+                        RTValArray[i] = RTVal[i]
+
+                    RTVal = RTValArray
+            else:
+                # Not totally sure why we need to do this, but we get None from getSimpleType from the RTVal
+                # when we run it on it's own and use the type that we query.  Gotta investigate this further...
+                RTVal = ks.convertFromRTVal(self.solverRTVal.defaultValues[name], RTTypeName=RTValDataType)
+
+            logger.debug("Using default value for %s.%s.%s[%s] --> %s" % (self.solverTypeName, self.getName(), mode, name, RTVal))
+            return RTVal
+
+        else:
+            if True: #mode == "inputs":  #Only report a warning if default value is not provided for inputs
+                logger.warn("No default value for %s.%s.%s[%s]." % (self.solverTypeName, self.getName(), mode, name))
+
+        defaultValue = ks.rtVal(RTValDataType)
+        if True: #mode == "inputs":
+            logger.warn("  !!Creating default value by generating new RTVal object of type: %s.  You should set default values for %s.%s[%s] in your kl operator." %
+                (RTValDataType, self.solverTypeName, mode, name,))
+
+        return defaultValue
+
+
+
+    def getInput(self, name):
+        """Returns the input with the specified name.
+        If there is no input value, it get the default RTVal and converts to python data
+
+        Args:
+            name (str): Name of the input to get.
+
+        Returns:
+            object: Input object.
+
+        """
+        if name in self.inputs and self.inputs[name] is not None:
+            return self.inputs[name]
+
+        def rt2Py(rtVal, rtType):
+
+            if "[" in rtType:
+                return []
+            if rtType == "Mat44":
+                return Mat44(rtVal)
+            if rtType == "Vec2":
+                return Vec2(rtVal)
+            if rtType == "Vec3":
+                return Vec3(rtVal)
+            else:
+                return rtVal.getSimpleType()
+
+            #raise ValueError("Cannot convert rtval %s from %s" (rtVal, rtType))
+
+
+        argDataType = None
+        for arg in self.args:
+            if arg.name.getSimpleType() == name:
+                argDataType = arg.dataType.getSimpleType()
+                break
+        if argDataType is None:
+            raise Exception("Cannot find arg %s for object %s" (arg, self.getName()))
+
+        defaultVal = self.getDefaultValue(name, argDataType, mode="inputs")
+        pyVal = rt2Py(defaultVal, argDataType)
+        return pyVal
+
 
     def generateSourceCode(self, arraySizes={}):
         """Returns the source code for a stub operator that will invoke the KL operator
@@ -125,7 +241,7 @@ class KLOperator(Operator):
             bool: True if successful.
 
         """
-
+        logger.debug("\nEvaluating kl operator [%s] of type [%s] from extension [%s]..." % (self.getName(), self.solverTypeName, self.extension))
         super(KLOperator, self).evaluate()
 
         def getRTVal(obj, asInput=True):
@@ -140,8 +256,18 @@ class KLOperator(Operator):
                 return obj.getRTVal()
             elif isinstance(obj, Attribute):
                 return obj.getRTVal()
-            elif type(obj) in (int, float, bool, str):
-                return obj
+            elif type(obj) is bool:
+                return ks.rtVal('Boolean', obj)
+            elif type(obj) is int:
+                return ks.rtVal('Integer', obj)
+            elif type(obj) is float:
+                return ks.rtVal('Scalar', obj)
+            elif type(obj) is str:
+                return ks.rtVal('String', obj)
+            else:
+                return obj #
+
+
 
         def validateArg(rtVal, argName, argDataType):
             """Validate argument types when passing built in Python types.
@@ -167,7 +293,6 @@ class KLOperator(Operator):
                     if type(rtVal) != str:
                         raise TypeError(self.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + argName + " (" + argDataType + ")")
 
-
         argVals = []
         debug = []
         for i in xrange(len(self.args)):
@@ -188,38 +313,51 @@ class KLOperator(Operator):
 
             if argConnectionType == 'In':
                 if str(argDataType).endswith('[]'):
-                    rtValArray = ks.rtVal(argDataType)
-                    rtValArray.resize(len(self.inputs[argName]))
-                    for j in xrange(len(self.inputs[argName])):
-                        rtVal = getRTVal(self.inputs[argName][j])
+                    if argName in self.inputs and self.inputs[argName] is not None:
+                        rtValArray = ks.rtVal(argDataType)
+                        rtValArray.resize(len(self.inputs[argName]))
+                        for j in xrange(len(self.inputs[argName])):
+                            if self.inputs[argName][j] is None:
+                                continue
+                            rtVal = getRTVal(self.inputs[argName][j])
 
-                        validateArg(rtVal, argName, argDataType[:-2])
+                            validateArg(rtVal, argName, argDataType[:-2])
 
-                        rtValArray[j] = rtVal
+                            rtValArray[j] = rtVal
+                    else:
+                        rtValArray = self.getDefaultValue(argName, argDataType, mode="inputs")
 
                     argVals.append(rtValArray)
                 else:
-                    rtVal = getRTVal(self.inputs[argName])
+                    if argName in self.inputs and self.inputs[argName] is not None:
+                        rtVal = getRTVal(self.inputs[argName])
+                    else:
+                        rtVal = self.getDefaultValue(argName, argDataType, mode="inputs")
 
                     validateArg(rtVal, argName, argDataType)
-
                     argVals.append(rtVal)
-            else:
+            else:  # argConnectionType == 'Out':
                 if str(argDataType).endswith('[]'):
-                    rtValArray = ks.rtVal(argDataType)
-                    rtValArray.resize(len(self.outputs[argName]))
-                    for j in xrange(len(self.outputs[argName])):
-                        rtVal = getRTVal(self.outputs[argName][j],
-                                         asInput=False)
+                    if argName in self.outputs and self.outputs[argName] is not None:
+                        rtValArray = ks.rtVal(argDataType)
+                        rtValArray.resize(len(self.outputs[argName]))
+                        for j in xrange(len(self.outputs[argName])):
+                            if self.outputs[argName][j] is None:
+                                continue
+                            rtVal = getRTVal(self.outputs[argName][j], asInput=False)
 
-                        validateArg(rtVal, argName, argDataType[:-2])
+                            validateArg(rtVal, argName, argDataType[:-2])
 
-                        rtValArray[j] = rtVal
+                            rtValArray[j] = rtVal
+                    else:
+                        rtValArray = self.getDefaultValue(argName, argDataType, mode="outputs")
 
                     argVals.append(rtValArray)
                 else:
-                    rtVal = getRTVal(self.outputs[argName],
-                                     asInput=False)
+                    if argName in self.outputs and self.outputs[argName] is not None:
+                        rtVal = getRTVal(self.outputs[argName], asInput=False)
+                    else:
+                        rtVal = self.getDefaultValue(argName, argDataType, mode="outputs")
 
                     validateArg(rtVal, argName, argDataType)
 
@@ -237,18 +375,19 @@ class KLOperator(Operator):
                 })
 
         try:
+            argstr = [str(arg) for arg in argVals]
+            logger.debug("%s.solve('', %s)" % (self.solverTypeName, ", ".join(argstr)))
             self.solverRTVal.solve('', *argVals)
-        except:
-            errorMsg = "Possible problem with KL operator '" + \
-                self.getName() + "' arguments:"
+        except Exception as e:
 
-            print errorMsg
-            pprint.pprint(debug, width=800)
-
-            raise Exception(errorMsg)
+            errorMsg = "\nPossible problem with KL operator [%s]. Arguments:\n" % self.getName()
+            errorMsg += pprint.pformat(debug, indent=4, width=800)
+            logger.error(errorMsg)
+            raise e
 
         # Now put the computed values out to the connected output objects.
         def setRTVal(obj, rtval):
+
             if isinstance(obj, Object3D):
                 obj.xfo.setFromMat44(Mat44(rtval))
             elif isinstance(obj, Xfo):
@@ -259,12 +398,10 @@ class KLOperator(Operator):
                 obj.setValue(rtval)
             else:
                 if hasattr(obj, '__iter__'):
-                    print "Warning: Trying to set a KL port with an " + \
-                        "array directly."
+                    logger.warning("Warning: Trying to set a KL port with an array directly.")
 
-                print "Warning: Not setting rtval: %s\n\tfor output object: \
-                    %s\n\ton port: %s\n\tof KL object: %s\n." % \
-                    (rtval, obj, self.getName())
+                logger.warning("Not setting rtval: %s\n\tfor output object: %s\n\tof KL object: %s\n." % \
+                    (rtval, obj.getName(), self.getName()))
 
         for i in xrange(len(argVals)):
             arg = self.args[i]
@@ -276,7 +413,7 @@ class KLOperator(Operator):
                 if str(argDataType).endswith('[]'):
                     for j in xrange(len(argVals[i])):
                         setRTVal(self.outputs[argName][j], argVals[i][j])
-                else:
-                    setRTVal(self.outputs[argName], argVals[i])
+                elif argName in self.outputs and self.outputs[argName] is not None:
+                        setRTVal(self.outputs[argName], argVals[i])
 
         return True
