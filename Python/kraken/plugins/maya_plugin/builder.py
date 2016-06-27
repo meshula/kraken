@@ -918,16 +918,16 @@ class Builder(Builder):
                                            connectToPortPath="")
 
                         pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                                               execPath=kOperator.getName(),
-                                               desiredPortName=portName,
-                                               portType="In",
-                                               typeSpec=portDataType,
-                                               connectToPortPath="")
+                                            execPath=kOperator.getName(),
+                                            desiredPortName=portName,
+                                            portType="In",
+                                            typeSpec=portDataType,
+                                            connectToPortPath="")
 
                         pm.FabricCanvasConnect(mayaNode=canvasNode,
-                                               execPath="",
-                                               srcPortPath=portName,
-                                               dstPortPath=kOperator.getName() + "." + portName)
+                                            execPath="",
+                                            srcPortPath=portName,
+                                            dstPortPath=kOperator.getName() + "." + portName)
 
                     else:
                         pm.FabricCanvasAddPort(
@@ -1009,6 +1009,9 @@ class Builder(Builder):
                     # In CanvasMaya, output arrays are not resized by the system
                     # prior to calling into Canvas, so we explicily resize the
                     # arrays in the generated operator stub code.
+                    if connectedObjects is None:
+                        connectedObjects = []
+
                     if portConnectionType in ['IO', 'Out']:
                         arraySizes[portName] = len(connectedObjects)
 
@@ -1041,7 +1044,6 @@ class Builder(Builder):
                         logger.warning("Operator '" + kOperator.getName() +
                                        "' of type '" + opType +
                                        "' port '" + portName + "' not connected.")
-                        continue
 
                     opObject = connectedObjects
                     dccSceneItem = self.getDCCSceneItem(opObject)
@@ -1121,10 +1123,11 @@ class Builder(Builder):
                                 connectionTargets[i]['opObject'],
                                 connectionTargets[i]['dccSceneItem'])
                     else:
-                        connectOutput(
-                            str(canvasNode + "." + portName),
-                            connectionTargets['opObject'],
-                            connectionTargets['dccSceneItem'])
+                        if connectionTargets['opObject'] is not None:
+                            connectOutput(
+                                str(canvasNode + "." + portName),
+                                connectionTargets['opObject'],
+                                connectionTargets['dccSceneItem'])
 
             if isKLBased is True:
                 opSourceCode = kOperator.generateSourceCode(arraySizes=arraySizes)

@@ -6,9 +6,9 @@ KLOperator - Splice operator object.
 """
 
 import pprint
-import json
+import re
 
-from kraken.core.maths import MathObject, Mat44, Xfo, Vec2,  Vec3
+from kraken.core.maths import MathObject, Mat44, Xfo, Vec2, Vec3
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.attributes.attribute import Attribute
@@ -39,13 +39,7 @@ class KLOperator(Operator):
         if self.extension != 'Kraken':
             ks.loadExtension(self.extension)
         self.solverRTVal = ks.constructRTVal(self.solverTypeName)
-        try:
-          self.json = json.loads(self.solverRTVal.getJSON().getSimpleType())
-        except:
-          self.json = None
         logger.debug("Creating kl operator object [%s] of type [%s] from extension [%s]:" % (self.getName(), self.solverTypeName, self.extension))
-        #logger.debug(pprint.pformat(self.json))  Too much for standard debug.  Hopefully we can get more granular. Uncomment if you want to see object properties
-
         self.args = self.solverRTVal.getArguments('KrakenSolverArg[]')
 
         # Initialize the inputs and outputs based on the given args.
@@ -55,16 +49,13 @@ class KLOperator(Operator):
             argDataType = arg.dataType.getSimpleType()
             argConnectionType = arg.connectionType.getSimpleType()
 
+            # Note, do not create empty arrays here as we need to know later whether or not
+            # to create default values if input/output is None
             if argConnectionType == 'In':
-                if argDataType.endswith('[]'):
-                    self.inputs[argName] = []
-                else:
-                    self.inputs[argName] = None
-            else:  # argConnectionType == 'Out':
-                if argDataType.endswith('[]'):
-                    self.outputs[argName] = []
-                else:
-                    self.outputs[argName] = None
+                self.inputs[argName] = None
+            else:
+                self.outputs[argName] = None
+
 
     def getSolverTypeName(self):
         """Returns the solver type name for this operator.
@@ -97,9 +88,26 @@ class KLOperator(Operator):
         return self.args
 
 
+    def getInputType(self, name):
+        """Returns the type of input with the specified name."""
+        for arg in self.args:
+            if arg.connectionType.getSimpleType() == "In" and arg.name.getSimpleType() == name:
+                return arg.dataType.getSimpleType()
+
+        raise Exception("Could not find input argument %s in kl operator %s" % (name, self.getName()))
 
 
-    def getDefaultValue(self, name, mode="inputs", fallback=None):
+    def getOutputType(self, name):
+        """Returns the type of output with the specified name."""
+        for arg in self.args:
+            if arg.connectionType.getSimpleType() == "Out" and arg.name.getSimpleType() == name:
+                return arg.dataType.getSimpleType()
+
+        raise Exception("Could not find output argument %s in kl operator %s" % (name, self.getName()))
+
+
+
+    def getDefaultValue(self, name, RTValDataType, mode="inputs"):
         """Returns the default RTVal value for this argument
         Only print debug if setting default inputs.  Don't care about outputs, really
 
@@ -111,25 +119,44 @@ class KLOperator(Operator):
             RTVal
 
         """
-        if fallback is None:
-            fallback = ks.rtVal("null")
 
-        if self.json is not None:
-            if "defaults" in self.json and name in self.json["defaults"]:
-                defaultValue = getattr(self.solverRTVal.defaults, name)
-                if mode == "inputs":
-                    logger.warn("Using default value for %s.%s.%s[%s] --> %s." % (self.solverTypeName, self.getName(), name, mode, defaultValue))
-                return defaultValue
+        def isFixedArrayType(string):
+            return bool(re.search(r'\[\d', string))
+
+        # If attribute has a default value
+        if self.solverRTVal.defaultValues.has("Boolean", name).getSimpleType():
+
+            RTVal = ks.convertFromRTVal(self.solverRTVal.defaultValues[name])
+
+            if RTVal.isArray():
+                # If RTValDataType is variable array, but default value is fixed array, convert it
+                if isFixedArrayType(RTVal.getTypeName().getSimpleType()) and not isFixedArrayType(RTValDataType):
+                    RTValArray = ks.rtVal(RTValDataType)
+                    if len(RTVal):
+                        RTValArray.resize(len(RTVal))
+
+                    for i in range(len(RTVal)):
+                        RTValArray[i] = RTVal[i]
+
+                    RTVal = RTValArray
             else:
-                if mode == "inputs":  #Only report a warning if default value is not provided for inputs
-                    logger.warn("No default value for %s.%s.%s[%s]." % (self.solverTypeName, self.getName(), mode, name))
-        else:
-            if mode == "inputs":
-                logger.warn("No default value struct named \"defauts\" found for solver %s.%s.inputs[]." % (self.solverTypeName, self.getName()))
+                # Not totally sure why we need to do this, but we get None from getSimpleType from the RTVal
+                # when we run it on it's own and use the type that we query.  Gotta investigate this further...
+                RTVal = ks.convertFromRTVal(self.solverRTVal.defaultValues[name], RTTypeName=RTValDataType)
 
-        if mode == "inputs":
-            logger.warn("Using fallback default value: %s" % fallback)
-        return fallback
+            logger.debug("Using default value for %s.%s.%s[%s] --> %s" % (self.solverTypeName, self.getName(), mode, name, RTVal))
+            return RTVal
+
+        else:
+            if True: #mode == "inputs":  #Only report a warning if default value is not provided for inputs
+                logger.warn("No default value for %s.%s.%s[%s]." % (self.solverTypeName, self.getName(), mode, name))
+
+        defaultValue = ks.rtVal(RTValDataType)
+        if True: #mode == "inputs":
+            logger.warn("  !!Creating default value by generating new RTVal object of type: %s.  You should set default values for %s.%s[%s] in your kl operator." %
+                (RTValDataType, self.solverTypeName, mode, name,))
+
+        return defaultValue
 
 
     def getInput(self, name):
@@ -148,6 +175,8 @@ class KLOperator(Operator):
 
         def rt2Py(rtVal, rtType):
 
+            if "[" in rtType:
+                return []
             if rtType == "Mat44":
                 return Mat44(rtVal)
             if rtType == "Vec2":
@@ -168,7 +197,7 @@ class KLOperator(Operator):
         if argDataType is None:
             raise Exception("Cannot find arg %s for object %s" (arg, self.getName()))
 
-        defaultVal = self.getDefaultValue(name, mode="inputs", fallback=ks.rtVal(argDataType))
+        defaultVal = self.getDefaultValue(name, argDataType, mode="inputs")
         pyVal = rt2Py(defaultVal, argDataType)
         return pyVal
 
@@ -213,7 +242,7 @@ class KLOperator(Operator):
             bool: True if successful.
 
         """
-        logger.debug("Evaluating kl operator [%s] of type [%s] from extension [%s]..." % (self.getName(), self.solverTypeName, self.extension))
+        logger.debug("\nEvaluating kl operator [%s] of type [%s] from extension [%s]..." % (self.getName(), self.solverTypeName, self.extension))
         super(KLOperator, self).evaluate()
 
         def getRTVal(obj, asInput=True):
@@ -297,14 +326,14 @@ class KLOperator(Operator):
 
                             rtValArray[j] = rtVal
                     else:
-                        rtValArray = self.getDefaultValue(argName, mode="inputs", fallback=ks.rtVal(argDataType))
+                        rtValArray = self.getDefaultValue(argName, argDataType, mode="inputs")
 
                     argVals.append(rtValArray)
                 else:
                     if argName in self.inputs and self.inputs[argName] is not None:
                         rtVal = getRTVal(self.inputs[argName])
                     else:
-                        rtVal = self.getDefaultValue(argName, mode="inputs", fallback=ks.rtVal(argDataType))
+                        rtVal = self.getDefaultValue(argName, argDataType, mode="inputs")
 
                     validateArg(rtVal, argName, argDataType)
                     argVals.append(rtVal)
@@ -322,14 +351,14 @@ class KLOperator(Operator):
 
                             rtValArray[j] = rtVal
                     else:
-                        rtValArray = self.getDefaultValue(argName, mode="outputs", fallback=ks.rtVal(argDataType))
+                        rtValArray = self.getDefaultValue(argName, argDataType, mode="outputs")
 
                     argVals.append(rtValArray)
                 else:
                     if argName in self.outputs and self.outputs[argName] is not None:
                         rtVal = getRTVal(self.outputs[argName], asInput=False)
                     else:
-                        rtVal = self.getDefaultValue(argName, mode="outputs", fallback=ks.rtVal(argDataType))
+                        rtVal = self.getDefaultValue(argName, argDataType, mode="outputs")
 
                     validateArg(rtVal, argName, argDataType)
 

@@ -26,7 +26,7 @@ class CanvasOperator(Operator):
         self.binding = host.createBindingToPreset(self.canvasPresetPath)
         self.node = self.binding.getExec()
 
-        portTypeMap = {
+        self.portTypeMap = {
             0: 'In',
             1: 'IO',
             2: 'Out'
@@ -35,7 +35,7 @@ class CanvasOperator(Operator):
         # Initialize the inputs and outputs based on the given args.
         for i in xrange(self.node.getExecPortCount()):
             portName = self.node.getExecPortName(i)
-            portConnectionType = portTypeMap[self.node.getExecPortType(i)]
+            portConnectionType = self.portTypeMap[self.node.getExecPortType(i)]
             rtVal = self.binding.getArgValue(portName)
             portDataType = rtVal.getTypeName().getSimpleType()
 
@@ -70,6 +70,35 @@ class CanvasOperator(Operator):
         """
 
         return self.graphDesc
+
+
+    def getInputType(self, name):
+        """Returns the type of input with the specified name."""
+        for i in xrange(self.node.getExecPortCount()):
+            portName = self.node.getExecPortName(i)
+            portConnectionType = self.portTypeMap[self.node.getExecPortType(i)]
+            rtVal = self.binding.getArgValue(portName)
+            portDataType = rtVal.getTypeName().getSimpleType()
+
+            if portConnectionType == 'In' and portName == name:
+                return portDataType
+
+        raise Exception("Could not find input port %s in canvas operator %s" % (name, self.getName()))
+
+
+    def getOutputType(self, name):
+        """Returns the type of output with the specified name."""
+        for i in xrange(self.node.getExecPortCount()):
+            portName = self.node.getExecPortName(i)
+            portConnectionType = self.portTypeMap[self.node.getExecPortType(i)]
+            rtVal = self.binding.getArgValue(portName)
+            portDataType = rtVal.getTypeName().getSimpleType()
+
+            if portConnectionType == 'Out' and portName == name:
+                return portDataType
+
+        raise Exception("Could not find output port %s in canvas operator %s" % (name, self.getName()))
+
 
     def evaluate(self):
         """Invokes the Canvas node causing the output values to be computed.
@@ -120,17 +149,10 @@ class CanvasOperator(Operator):
                     if type(rtVal) != str:
                         raise TypeError(self.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
 
-
-        portTypeMap = {
-            0: 'In',
-            1: 'IO',
-            2: 'Out'
-        }
-
         debug = []
         for i in xrange(self.node.getExecPortCount()):
             portName = self.node.getExecPortName(i)
-            portConnectionType = portTypeMap[self.node.getExecPortType(i)]
+            portConnectionType = self.portTypeMap[self.node.getExecPortType(i)]
             rtVal = self.binding.getArgValue(portName)
             portDataType = rtVal.getTypeName().getSimpleType()
 
@@ -243,7 +265,7 @@ class CanvasOperator(Operator):
 
         for i in xrange(self.node.getExecPortCount()):
             portName = self.node.getExecPortName(i)
-            portConnectionType = portTypeMap[self.node.getExecPortType(i)]
+            portConnectionType = self.portTypeMap[self.node.getExecPortType(i)]
             rtVal = self.binding.getArgValue(portName)
             portDataType = rtVal.getTypeName().getSimpleType()
 

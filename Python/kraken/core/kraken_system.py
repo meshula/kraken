@@ -9,6 +9,7 @@ import logging
 import os
 import sys
 import json
+import re
 import importlib
 from collections import OrderedDict
 
@@ -103,6 +104,29 @@ class KrakenSystem(object):
     # ==============
     # RTVal Methods
     # ==============
+
+    def convertFromRTVal(self, target, RTTypeName=None):
+        """Generates an RTVal object based on the simple type of target
+        and passes target to constructor. Converts a property of an RTVal object
+        to its own pytholn RTVal object
+
+
+        Args:
+            target (RTVal): The RTVal object or property to cast
+            RTTypeName (str): The type of RTVal to convert to
+
+        Returns:
+            RTVal: The RTVal object
+
+        """
+        self.loadCoreClient()
+        if RTTypeName is None:
+            RTTypeName = target.type('String').getSimpleType()
+        rtValType = getattr(self.client.RT.types, RTTypeName)
+        pythonRTVal = rtValType(target)
+
+        return pythonRTVal
+
 
     def constructRTVal(self, dataType, defaultValue=None):
         """Constructs a new RTVal using the given name and optional devault value.
