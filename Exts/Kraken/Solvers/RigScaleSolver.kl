@@ -1,17 +1,6 @@
 require InlineDrawing;
 require Geometry;
 
-/*
-struct RigScaleSolverDefaults : KrakenSolverDefaults {
-  Mat44 target;
-};
-// Default Constructor
-function RigScaleSolverDefaults()
-{
-  this.target = Mat44();
-}
-*/
-
 object RigScaleSolver : KrakenSolver {
 };
 
