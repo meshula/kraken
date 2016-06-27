@@ -187,7 +187,7 @@ class Synchronizer(object):
         # Iterate over attributes
         if kObject.isTypeOf('AttributeGroup'):
 
-            if kObject.getName() != 'implicitAttrGrp':
+            if kObject.getName() != 'implicitAttrGrp' and kObject.getParent().isTypeOf("Component") is False:
                 for i in xrange(kObject.getNumAttributes()):
                     attr = kObject.getAttributeByIndex(i)
                     self.synchronize(attr)
