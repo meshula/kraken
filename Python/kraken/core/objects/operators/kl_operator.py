@@ -201,7 +201,7 @@ class KLOperator(Operator):
         return pyVal
 
 
-    def generateSourceCode(self, arraySizes={}):
+    def generateSourceCode(self):
         """Returns the source code for a stub operator that will invoke the KL operator
 
         Returns:
@@ -215,9 +215,16 @@ class KLOperator(Operator):
         # In SpliceMaya, output arrays are not resized by the system prior to
         # calling into Splice, so we explicily resize the arrays in the
         # generated operator stub code.
-        for argName, arraySize in arraySizes.iteritems():
-            opSourceCode += "  " + argName + ".resize(" + str(arraySize) + \
-                ");\n"
+        for i in xrange(len(self.args)):
+            arg = self.args[i]
+            argName = arg.name.getSimpleType()
+            argDataType = arg.dataType.getSimpleType()
+            argConnectionType = arg.connectionType.getSimpleType()
+
+            if argDataType.endswith('[]') and argConnectionType == 'Out':
+                arraySize = len(self.getOutput(argName))
+                opSourceCode += "  " + argName + ".resize(" + str(arraySize) + \
+                    ");\n"
 
         opSourceCode += "  if(solver == null)\n"
         opSourceCode += "    solver = " + self.solverTypeName + "();\n"
