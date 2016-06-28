@@ -320,6 +320,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.NURBSNeckKLOp.setInput('keepArcLength', 0.0)
         self.NURBSNeckKLOp.setInput('compressionAmt', 0)
         self.NURBSNeckKLOp.setInput('followCurveTangent', 1.0)
+        self.NURBSNeckKLOp.setInput('followCurveNormal', 1.0)
+        self.NURBSNeckKLOp.setInput('useLocalNormal', 0.0)
         self.NURBSNeckKLOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         self.NURBSNeckKLOp.setInput('parent', self.ctrlCmpGrp)
         # atVec should be optional

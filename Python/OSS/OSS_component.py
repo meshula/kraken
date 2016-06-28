@@ -238,6 +238,8 @@ class OSS_Component(BaseExampleComponent):
         NURBSCurveKLOp.setInput('keepArcLength', 0.0)
         NURBSCurveKLOp.setInput('compressionAmt', 0.4)
         NURBSCurveKLOp.setInput('followCurveTangent', 1.0)
+        NURBSCurveKLOp.setInput('followCurveNormal', 1.0)
+        NURBSCurveKLOp.setInput('useLocalNormal', 0.0)
         #NURBSCurveKLOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         NURBSCurveKLOp.setInput('parent', self.ctrlCmpGrp)
         NURBSCurveKLOp.setInput('atVec', self.ctrlCmpGrp) # atVec should be optional, but is not currently in the Solver

@@ -316,6 +316,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.NURBSSpineKLOp.setInput('keepArcLength', 0.0)
         self.NURBSSpineKLOp.setInput('compressionAmt', 0.4)
         self.NURBSSpineKLOp.setInput('followCurveTangent', 1.0)
+        self.NURBSSpineKLOp.setInput('followCurveNormal', 1.0)
+        self.NURBSSpineKLOp.setInput('useLocalNormal', 0.0)
         self.NURBSSpineKLOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         self.NURBSSpineKLOp.setInput('parent', self.ctrlCmpGrp)
         # atVec should be optional
