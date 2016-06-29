@@ -102,10 +102,10 @@ class OSSHandComponentGuide(OSSHandComponent):
         data = {
                 "name": name,
                 "location": "L",
-                "handXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
-                "palmXfo": Xfo(Vec3(1.85, 0.4, 0.25)),
-                "palmTipXfo": Xfo(Vec3(1.85, 0.4, 1.5)),
-                "handleXfo" : Xfo(Vec3(1.85, 0.0, -1.6)),
+                "handXfo": Xfo(Vec3(0.0, 0.0, 0.0)),
+                "palmXfo": Xfo(Vec3(2.0, 0.0, 0.0)),
+                "palmTipXfo": Xfo(Vec3(4, 0.0, 0.0)),
+                "handleXfo" : Xfo(Vec3(0.0, 0.0, 0.0)),
                }
 
         self.loadData(data)
@@ -405,13 +405,6 @@ class OSSHandComponentRig(OSSHandComponent):
 
 
 
-        # IK palm
-        self.palmCtrlSpace = CtrlSpace('palmIK', parent=self.handleIKCtrlSpace)
-
-
-
-
-
         # Rig Ref objects
 
         # Add Component Params to IK control
@@ -619,7 +612,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.palmCtrl.scalePointsOnAxis(data['palmLen'] / 5.0, self.boneAxisStr)
 
         self.handleIKCtrlSpace.xfo = Xfo(self.handCtrl.xfo)
-        self.palmCtrlSpace.xfo = Xfo(self.palmCtrl.xfo)
+        #self.palmCtrlSpace.xfo = Xfo(self.palmCtrl.xfo)
 
         self.ikHandTransform = data['handXfo']
         self.ikPalmTransform = data['palmXfo']
