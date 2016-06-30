@@ -142,7 +142,7 @@ class KLOperator(Operator):
                 # when we run it on it's own and use the type that we query.  Gotta investigate this further...
                 RTVal = ks.convertFromRTVal(self.solverRTVal.defaultValues[name], RTTypeName=RTValDataType)
 
-            logger.debug("Using default value for %s.%s.%s[%s] --> %s" % (self.solverTypeName, self.getName(), mode, name, RTVal))
+            logger.debug("Using default value for %s.%s.%s(%s) --> %s" % (self.solverTypeName, self.getName(), mode, name, RTVal))
             return RTVal
 
         else:
@@ -151,12 +151,10 @@ class KLOperator(Operator):
 
         defaultValue = ks.rtVal(RTValDataType)
         if True: #mode == "inputs":
-            logger.warn("  !!Creating default value by generating new RTVal object of type: %s.  You should set default values for %s.%s[%s] in your kl operator." %
+            logger.warn("  !!Creating default value by generating new RTVal object of type: %s.  You should set default values for %s.%s(%s) in your kl operator." %
                 (RTValDataType, self.solverTypeName, mode, name,))
 
         return defaultValue
-
-
 
     def getInput(self, name):
         """Returns the input with the specified name.
@@ -199,7 +197,6 @@ class KLOperator(Operator):
         defaultVal = self.getDefaultValue(name, argDataType, mode="inputs")
         pyVal = rt2Py(defaultVal, argDataType)
         return pyVal
-
 
     def generateSourceCode(self):
         """Returns the source code for a stub operator that will invoke the KL operator
@@ -248,7 +245,9 @@ class KLOperator(Operator):
             bool: True if successful.
 
         """
+
         logger.debug("\nEvaluating kl operator [%s] of type [%s] from extension [%s]..." % (self.getName(), self.solverTypeName, self.extension))
+
         super(KLOperator, self).evaluate()
 
         def getRTVal(obj, asInput=True):
@@ -339,11 +338,12 @@ class KLOperator(Operator):
                     if argName in self.inputs and self.inputs[argName] is not None:
                         rtVal = getRTVal(self.inputs[argName])
                     else:
-                        rtVal = self.getDefaultValue(argName, argDataType, mode="inputs")
+                        rtVal = self.getDefaultValue(argName, argDataType, mode="args")
 
                     validateArg(rtVal, argName, argDataType)
                     argVals.append(rtVal)
-            else:  # argConnectionType == 'Out':
+
+            elif argConnectionType in ('IO', 'Out'):
                 if str(argDataType).endswith('[]'):
                     if argName in self.outputs and self.outputs[argName] is not None:
                         rtValArray = ks.rtVal(argDataType)
@@ -369,6 +369,8 @@ class KLOperator(Operator):
                     validateArg(rtVal, argName, argDataType)
 
                     argVals.append(rtVal)
+            else:
+                raise Exception("Operator:'" + self.getName() + " has an invalid 'argConnectionType': " + argConnectionType)
 
             debug.append(
                 {
