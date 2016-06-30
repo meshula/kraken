@@ -72,6 +72,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         # ========
 
         # Guide Settings
+        self.untwistUplimb = BoolAttribute('untwistUplimb', value=False, parent=self.guideSettingsAttrGrp)
         self.addPartialJoints = BoolAttribute('addPartialJoints', value=False, parent=self.guideSettingsAttrGrp)
         self.addTwistJoints = BoolAttribute('addTwistJoints', value=False, parent=self.guideSettingsAttrGrp)
         self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=self.guideSettingsAttrGrp)
@@ -314,6 +315,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.useOtherIKGoal = bool(data['useOtherIKGoal'])
         self.mocap = bool(data["mocap"])
 
+        self.untwistUplimb = bool(data['untwistUplimb'])  #This should be a simple method instead
         self.addPartialJoints = bool(data['addPartialJoints'])  #This should be a simple method instead
         self.addTwistJoints = bool(data['addTwistJoints'])  #This should be a simple method instead
 
@@ -433,7 +435,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
         upVSpaceBlendInputAttr = ScalarAttribute(self.ikHandleName+'Space', value=0.0, minValue=0.0, maxValue=1.0, parent=upVAttrGrp)
 
 
-
         # ==========
         # Deformers
         # ==========
@@ -530,6 +531,18 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.limbIKKLOp.setOutput('bone1Out', self.lolimb_cmpOut)
             self.limbIKKLOp.setOutput('bone2Out', self.endlimb_cmpOut)
 
+        if self.untwistUplimb:
+            uplimbSolverOut = self.createOutput(self.uplimbName+"uplimbSolverOut", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+            self.limbIKKLOp.setOutput('bone0Out', uplimbSolverOut)
+
+            self.untwistKLOp = KLOperator(self.getLocation()+self.getName()+'OSS_UntwistSolver', 'OSS_UntwistSolver', 'OSS_Kraken')
+            self.addOperator(self.untwistKLOp)
+            self.untwistKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+            self.untwistKLOp.setInput('rigScale', self.rigScaleInputAttr)
+            self.untwistKLOp.setInput('inMatrix', uplimbSolverOut)
+            self.untwistKLOp.setInput('inBaseMatrix', self.uplimbFKCtrlSpace)
+            self.untwistKLOp.setInput('axis', AXIS_NAME_TO_INT_MAP[self.boneAxisStr])
+            self.untwistKLOp.setOutput('untwistedMatrix', self.uplimb_cmpOut)
 
         # Add Deformer Joint Constrain
         self.uplimbDef.constrainTo(self.uplimb_cmpOut).evaluate()
@@ -571,6 +584,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if self.getLocation() == 'R':
             self.upAxisStr = "NEGZ"
         self.upAxis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
+
 
         self.createControls(data)
 
@@ -623,12 +637,15 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
             lolimbEndTwistXfo = self.createOutput(self.lolimbName+"EndTwist", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
             lolimbEndTwistXfo.xfo = Xfo(self.endlimb_cmpOut.xfo)
-            lolimbEndTwistXfo.constrainTo(self.endTwistParent_cmpIn, maintainOffset=True)
+            if self.useOtherIKGoal:
+                lolimbEndTwistXfo.constrainTo(self.endTwistParent_cmpIn, maintainOffset=True)
+            else:
+                lolimbEndTwistXfo.constrainTo(self.endlimb_cmpOut, maintainOffset=True)
 
             self.uplegTwistKLOp = self.createTwistJoints(
                 self.uplimbName+"_twist",
-                self.uplimbDef,[uplimbStartTwistXfo,
-                self.lolimb_cmpOut],
+                self.uplimbDef,
+                [self.uplimb_cmpOut, self.lolimb_cmpOut],
                 numDeformers=5,
                 #skipStart=True,
                 aimAxisStr=self.boneAxisStr,  #This would be an offset to the ctrlAxis

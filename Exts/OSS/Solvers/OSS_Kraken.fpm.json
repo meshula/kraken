@@ -1,5 +1,7 @@
 {
   "code": [
+    "OSS_Math.kl",
+    "OSS_UntwistSolver.kl"
     "OSS_FootRockerSystem.kl",
     "OSS_BlendTRSConstraintSolver.kl",
     "OSS_IKFootBlendSolver.kl",

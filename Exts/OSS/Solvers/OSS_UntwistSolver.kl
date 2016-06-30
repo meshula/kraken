@@ -1,0 +1,44 @@
+require InlineDrawing;
+require Kraken;
+
+object OSS_UntwistSolver : KrakenSolver {
+};
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_UntwistSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+
+  args.push(KrakenSolverArg('inMatrix', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('inBaseMatrix', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('axis', 'In', 'UInt32', '0'));
+  args.push(KrakenSolverArg('untwistedMatrix', 'Out', 'Mat44'));
+  return args;
+}
+
+
+// Solve
+function OSS_UntwistSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Mat44 inMatrix,
+  in Mat44 inBaseMatrix,
+  in UInt32 axis,
+  out Mat44 untwistedMatrix,
+)
+{
+  Mat44 localMatrix = inBaseMatrix.inverse() * inMatrix;
+
+  Vec3 axisVec = getAxisAsVector(axis);
+  Vec3 localAxisVec = localMatrix.multiplyVector3(axisVec);
+
+  Quat untwistedLocalQuat = Quat();
+  untwistedLocalQuat.setFrom2Vectors(axisVec, localAxisVec);
+
+  Mat44 localUntwistedMatrix = Mat44();
+  localUntwistedMatrix.setRotation(untwistedLocalQuat);
+
+  untwistedMatrix = inBaseMatrix * localUntwistedMatrix;
+}
+

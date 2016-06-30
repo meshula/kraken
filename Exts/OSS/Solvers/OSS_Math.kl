@@ -1,0 +1,61 @@
+// Gotta be a better way
+function Vec3 getAxisAsVector(in UInt32 axisIndex)
+{
+  Vec3 vec;
+  switch (axisIndex)
+  {
+    case 0:
+      return Vec3(1.0, 0.0, 0.0);
+    case 1:
+      return Vec3(0.0, 1.0, 0.0);
+    case 2:
+      return Vec3(0.0, 0.0, 1.0);
+    case 3:
+      return Vec3(-1.0, 0.0, 0.0);
+    case 4:
+      return Vec3(0.0, -1.0, 0.0);
+    case 5:
+      return Vec3(0.0, 0.0, -1.0);
+  }
+  report("OSS_TwoBoneIKSolver:getAxisAsVector() invalid axisIndex");
+  return Vec3(1.0, 0.0, 0.0);
+}
+
+function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return ori.getXaxis();
+    case 1:
+      return ori.getYaxis();
+    case 2:
+      return ori.getZaxis();
+    case 3:
+      return ori.getXaxis().negate();
+    case 4:
+      return ori.getYaxis().negate();
+    case 5:
+      return ori.getZaxis().negate();
+  }
+  report("OSS_TwoBoneIKSolver:getAxis() invalid axisIndex");
+  return ori.getXaxis();
+
+}
+
+// Make this take in a specific aim and upvector later
+// Hard-coded to aim pos +X and use +Z as normal
+function setCorrectAxes(
+  in Xfo inXfo,
+  in UInt32 boneAxis,
+  in UInt32 upAxis,
+  io Xfo outXfo
+  ) {
+
+    Vec3 aimAxisVec = getAxis(inXfo.ori, boneAxis).unit();
+    Vec3 upAxisVec = getAxis(inXfo.ori, upAxis).unit();
+    Vec3 normalAxisVec = upAxisVec.cross(aimAxisVec).unit();
+    Mat33 mat(aimAxisVec, normalAxisVec, upAxisVec);
+
+    outXfo.ori.setFromMat33(mat.transpose());
+}
