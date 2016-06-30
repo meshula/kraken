@@ -189,7 +189,7 @@ class Builder(Builder):
 
         dccSceneItem = parentDCCSceneItem.AddNull()
         dccSceneItem.Parameters('primary_icon').Value = 2
-        dccSceneItem.Parameters('size').Value = 0.125
+        dccSceneItem.Parameters('size').Value = kSceneItem.getRadius()
         dccSceneItem.Name = buildName
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 

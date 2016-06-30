@@ -184,6 +184,8 @@ class Builder(Builder):
         dccSceneItem = pm.joint(name="joint")
         pm.rename(dccSceneItem, buildName)
 
+        radius = dccSceneItem.attr('radius').set(kSceneItem.getRadius())
+
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
         return dccSceneItem
