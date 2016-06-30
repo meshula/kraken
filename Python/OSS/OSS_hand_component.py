@@ -102,10 +102,10 @@ class OSSHandComponentGuide(OSSHandComponent):
         data = {
                 "name": name,
                 "location": "L",
-                "handXfo": Xfo(Vec3(0.0, 0.0, 0.0)),
-                "palmXfo": Xfo(Vec3(2.0, 0.0, 0.0)),
-                "palmTipXfo": Xfo(Vec3(4, 0.0, 0.0)),
-                "handleXfo" : Xfo(Vec3(0.0, 0.0, 0.0)),
+                "handXfo": Xfo(Vec3(1.85, 1.2, -1.2)),
+                "palmXfo": Xfo(Vec3(1.85, 0.4, 0.25)),
+                "palmTipXfo": Xfo(Vec3(1.85, 0.4, 1.5)),
+                "handleXfo" : Xfo(Vec3(1.85, 0.0, -1.6)),
                }
 
         self.loadData(data)
@@ -403,6 +403,8 @@ class OSSHandComponentRig(OSSHandComponent):
         self.palmCtrl.alignOnXAxis()
         self.palmCtrlSpace = self.palmCtrl.insertCtrlSpace()
 
+        # IK palm
+        self.palmIKCtrlSpace = CtrlSpace('palmIK', parent=self.handleIKCtrlSpace)
 
 
         # Rig Ref objects
@@ -476,7 +478,7 @@ class OSSHandComponentRig(OSSHandComponent):
         # Add Xfo Inputs)
         self.IKHandBlendKLOp.setInput('ikFoot', self.handleIKCtrlSpace)
         self.IKHandBlendKLOp.setInput('fkFoot', self.handCtrl)
-        self.IKHandBlendKLOp.setInput('ikBall', self.palmCtrlSpace)
+        self.IKHandBlendKLOp.setInput('ikBall', self.palmIKCtrlSpace)
         self.IKHandBlendKLOp.setInput('fkBall', self.palmCtrl)
         # Add Xfo Outputs
         self.IKHandBlendKLOpHand_out = Transform('IKHandBlendKLOpHand_out', parent=self.outputHrcGrp)
@@ -612,7 +614,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.palmCtrl.scalePointsOnAxis(data['palmLen'] / 5.0, self.boneAxisStr)
 
         self.handleIKCtrlSpace.xfo = Xfo(self.handCtrl.xfo)
-        #self.palmCtrlSpace.xfo = Xfo(self.palmCtrl.xfo)
+        self.palmIKCtrlSpace.xfo = Xfo(self.palmCtrl.xfo)
 
         self.ikHandTransform = data['handXfo']
         self.ikPalmTransform = data['palmXfo']
