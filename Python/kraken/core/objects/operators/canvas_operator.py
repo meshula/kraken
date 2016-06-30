@@ -7,11 +7,14 @@ CanvasOperator - Canvas operator object.
 
 import pprint
 
-from kraken.core.maths import MathObject, Mat44, Xfo
+from kraken.core.maths import MathObject, Mat44, Vec2, Vec3, Xfo
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.kraken_system import ks
+from kraken.log import getLogger
+
+logger = getLogger('kraken')
 
 
 class CanvasOperator(Operator):
@@ -50,6 +53,25 @@ class CanvasOperator(Operator):
                 else:
                     self.outputs[portName] = None
 
+    def getDefaultValue(self, name, RTValDataType, mode="port"):
+        """Returns the default RTVal value for this argument
+        Only print debug if setting default inputs.  Don't care about outputs, really
+
+        Args:
+            name (str): Name of the input to get.
+            mode (str): "inputs" or "outputs"
+
+        Returns:
+            RTVal
+
+        """
+
+        rtVal = self.node.getPortDefaultValue(name, RTValDataType)
+
+        logger.info("Using default value for %s.%s.%s(%s) --> %s" % (self.canvasPresetPath, self.getName(), mode, name, rtVal))
+
+        return rtVal
+
     def getPresetPath(self):
         """Returns the preset path within the Canvas library for the node used
         by this operator.
@@ -71,6 +93,49 @@ class CanvasOperator(Operator):
 
         return self.graphDesc
 
+    def getInput(self, name):
+        """Returns the input with the specified name.
+
+        Args:
+            name (str): Name of the input to get.
+
+        Returns:
+            object: Input object.
+
+        """
+
+        if name in self.inputs and self.inputs[name] is not None:
+            return self.inputs[name]
+
+        def rt2Py(rtVal, rtType):
+
+            if "[" in rtType:
+                return []
+            elif rtType == "Xfo":
+                return Xfo(rtVal)
+            elif rtType == "Mat44":
+                return Mat44(rtVal)
+            elif rtType == "Vec2":
+                return Vec2(rtVal)
+            elif rtType == "Vec3":
+                return Vec3(rtVal)
+            elif type(rtVal) in (bool, str, int, float):
+                return rtVal
+            else:
+                return rtVal.getSimpleType()
+
+        if name not in self.inputs:
+            raise Exception("Input with name '" + name +
+                            "' was not found in operator: " +
+                            self.getName() + ".")
+
+        rtVal = self.binding.getArgValue(name)
+        portDataType = rtVal.getTypeName().getSimpleType()
+
+        defaultValue = self.getDefaultValue(name, portDataType, mode='port')
+        pyVal = rt2Py(defaultValue, portDataType)
+
+        return pyVal
 
     def getInputType(self, name):
         """Returns the type of input with the specified name."""
@@ -85,7 +150,6 @@ class CanvasOperator(Operator):
 
         raise Exception("Could not find input port %s in canvas operator %s" % (name, self.getName()))
 
-
     def getOutputType(self, name):
         """Returns the type of output with the specified name."""
         for i in xrange(self.node.getExecPortCount()):
@@ -98,7 +162,6 @@ class CanvasOperator(Operator):
                 return portDataType
 
         raise Exception("Could not find output port %s in canvas operator %s" % (name, self.getName()))
-
 
     def evaluate(self):
         """Invokes the Canvas node causing the output values to be computed.
@@ -167,9 +230,6 @@ class CanvasOperator(Operator):
 
 
             if portConnectionType == 'In':
-                if self.inputs[portName] is None:
-                    continue
-
                 if str(portDataType).endswith('[]'):
                     if not len(self.outputs[portName]):
                         continue
@@ -187,15 +247,17 @@ class CanvasOperator(Operator):
                     portVal = rtValArray
                     self.binding.setArgValue(portName, portVal, False)
                 else:
-                    rtVal = getRTVal(self.inputs[portName])
+                    if self.inputs[portName] is None and portName == 'exec':
+                        continue
+                    elif self.inputs[portName] is None:
+                        rtVal = self.getDefaultValue(portName, portDataType, mode="port")
+                    else:
+                        rtVal = getRTVal(self.inputs[portName])
 
                     validateArg(rtVal, portName, portDataType)
 
                     self.binding.setArgValue(portName, rtVal, False)
             else:
-                if self.outputs[portName] is None:
-                    continue
-
                 if str(portDataType).endswith('[]'):
                     if not len(self.outputs[portName]):
                         continue
@@ -213,7 +275,12 @@ class CanvasOperator(Operator):
                     portVal = rtValArray
                     self.binding.setArgValue(portName, portVal, False)
                 else:
-                    rtVal = getRTVal(self.outputs[portName], asInput=False)
+                    if self.outputs[portName] is None and portName == 'exec':
+                        continue
+                    elif self.outputs[portName] is None:
+                        rtVal = self.getDefaultValue(portName, portDataType, mode="port")
+                    else:
+                        rtVal = getRTVal(self.outputs[portName], asInput=False)
 
                     validateArg(rtVal, portName, portDataType)
 
@@ -254,11 +321,9 @@ class CanvasOperator(Operator):
                 obj.setValue(rtval)
             else:
                 if hasattr(obj, '__iter__'):
-                    print "Warning: Trying to set a canvas port item with an \
-                        array directly."
+                    print "Warning: Trying to set a canvas port item with an array directly."
 
-                print "Warning: Not setting rtval: %s\n\tfor output object: \
-                    %s\n\ton port: %s\n\tof canvas object: %s\n." % \
+                print "Warning: Not setting rtval: %s\n\tfor output object: %s\n\ton port: %s\n\tof canvas object: %s\n." % \
                     (rtval, obj, portName, self.getName())
 
 
@@ -269,6 +334,9 @@ class CanvasOperator(Operator):
             portDataType = rtVal.getTypeName().getSimpleType()
 
             if portConnectionType != 'In':
+                if portName == 'exec':  # Skip the exec port on each solver
+                    continue
+
                 outVal = self.binding.getArgValue(portName)
                 if str(portDataType).endswith('[]' or
                                               hasattr(outVal.getSimpleType(),

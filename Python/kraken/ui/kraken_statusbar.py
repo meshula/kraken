@@ -31,27 +31,33 @@ class KrakenStatusBar(QtGui.QStatusBar):
 
         messageConfig = {
             'DEBUG': {
-                'color': '#B4EEB4',
+                'color': '#000000',
+                'background-color': '#EEE97B',
                 'timeout': 3500
             },
             'INFO': {
-                'color': '#FFFFFF',
+                'color': '#000000',
+                'background-color': '#FFFFFF',
                 'timeout': 3500
             },
             'INFORM': {
-                'color': '#009900',
+                'color': '#FFFFFF',
+                'background-color': '#009900',
                 'timeout': 3500
             },
             'WARNING': {
-                'color': '#D89614',
+                'color': '#FFFFFF',
+                'background-color': '#D89614',
                 'timeout': 3500
             },
             'ERROR': {
-                'color': '#CC0000',
+                'color': '#FFFFFF',
+                'background-color': '#CC0000',
                 'timeout': 0
             },
             'CRITICAL': {
-                'color': '#CC0000',
+                'color': '#FFFFFF',
+                'background-color': '#CC0000',
                 'timeout': 0
             }
         }
@@ -73,7 +79,7 @@ class KrakenStatusBar(QtGui.QStatusBar):
                 msg = msg[:120]
 
             messageLabel = QtGui.QLabel(' ' + msg)
-            messageLabel.setStyleSheet("QLabel { border-radius: 3px; background-color: " + messageConfig[level]['color'] + "}")
+            messageLabel.setStyleSheet("QLabel { border-radius: 3px; background-color: " + messageConfig[level]['background-color'] + "; color: " + messageConfig[level]['color'] + "}")
 
             def addMessage():
                 self.clearMessage()

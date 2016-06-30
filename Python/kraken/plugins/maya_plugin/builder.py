@@ -840,8 +840,8 @@ class Builder(Builder):
             if isKLBased is True:
 
                 pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
-                                      execPath="",
-                                      extDep=kOperator.getExtension())
+                                          execPath="",
+                                          extDep=kOperator.getExtension())
 
                 solverTypeName = kOperator.getSolverTypeName()
 
@@ -893,7 +893,6 @@ class Builder(Builder):
             else:
                 portCount = node.getExecPortCount()
 
-            arraySizes = {}
             for i in xrange(portCount):
 
                 if isKLBased is True:
@@ -911,11 +910,11 @@ class Builder(Builder):
                 if portConnectionType == 'In':
                     if isKLBased is True:
                         pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                                           execPath="",
-                                           desiredPortName=portName,
-                                           portType="In",
-                                           typeSpec=portDataType,
-                                           connectToPortPath="")
+                                               execPath="",
+                                               desiredPortName=portName,
+                                               portType="In",
+                                               typeSpec=portDataType,
+                                               connectToPortPath="")
 
                         pm.FabricCanvasAddPort(mayaNode=canvasNode,
                                                execPath=kOperator.getName(),
@@ -990,6 +989,8 @@ class Builder(Builder):
                     continue
                 elif portDataType == 'InlineDebugShape':
                     continue
+                elif portDataType == 'Execute' and portName == 'exec':
+                    continue
 
                 if portName == 'time':
                     pm.expression(o=canvasNode + '.time', s=canvasNode + '.time = time;')
@@ -1011,9 +1012,6 @@ class Builder(Builder):
                     # arrays in the generated operator stub code.
                     if connectedObjects is None:
                         connectedObjects = []
-
-                    if portConnectionType in ['IO', 'Out']:
-                        arraySizes[portName] = len(connectedObjects)
 
                     connectionTargets = []
                     for i in xrange(len(connectedObjects)):
@@ -1038,9 +1036,10 @@ class Builder(Builder):
                 else:
                     if connectedObjects is None:
                         if isKLBased:
-                            opType = kOperator.getExtension()+":"+kOperator.getSolverTypeName()
+                            opType = kOperator.getExtension() + ":" + kOperator.getSolverTypeName()
                         else:
                             opType = kOperator.getPresetPath()
+
                         logger.warning("Operator '" + kOperator.getName() +
                                        "' of type '" + opType +
                                        "' port '" + portName + "' not connected.")
@@ -1130,7 +1129,7 @@ class Builder(Builder):
                                 connectionTargets['dccSceneItem'])
 
             if isKLBased is True:
-                opSourceCode = kOperator.generateSourceCode(arraySizes=arraySizes)
+                opSourceCode = kOperator.generateSourceCode()
                 pm.FabricCanvasSetCode(mayaNode=canvasNode,
                                        execPath=kOperator.getName(),
                                        code=opSourceCode)
