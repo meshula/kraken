@@ -789,24 +789,27 @@ class Builder(Builder):
     # =========================
     # Operator Builder Methods
     # =========================
-    def buildKLOperator(self, kOperator):
+    def buildKLOperator(self, kOperator, buildName):
         """Builds KL Operators on the components.
 
         Args:
             kOperator (object): kraken operator that represents a KL operator.
+            buildName (str): The name to use on the built object.
 
         Returns:
             bool: True if successful.
 
         """
 
-        return self.buildCanvasOperator(kOperator, isKLBased=True)
+        return self.buildCanvasOperator(kOperator, buildName, isKLBased=True)
 
-    def buildCanvasOperator(self, kOperator, isKLBased=False):
+    def buildCanvasOperator(self, kOperator, buildName, isKLBased=False):
         """Builds Canvas Operators on the components.
 
         Args:
             kOperator (object): kraken operator that represents a Splice operator.
+            buildName (str): The name to use on the built object.
+            isKLBased (bool): Whether the solver is based on a KL object.
 
         Returns:
             bool: True if successful.
@@ -1003,6 +1006,7 @@ class Builder(Builder):
                 # Create Canvas Operator
                 canvasOpPath = str(si.FabricCanvasOpApply(operatorOwner.FullName, "", True, "", ""))
                 canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+                canvasOp.Name = buildName
                 self._registerSceneItemPair(kOperator, canvasOp)
 
                 si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken")
@@ -1091,6 +1095,7 @@ class Builder(Builder):
                 # Create Splice Operator
                 canvasOpPath = str(si.FabricCanvasOpApply(operatorOwner.FullName, "", True, "", ""))
                 canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
+                canvasOp.Name = buildName
                 self._registerSceneItemPair(kOperator, canvasOp)
 
                 si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken")

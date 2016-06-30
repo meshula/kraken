@@ -766,12 +766,13 @@ class Builder(Builder):
     # =========================
     # Operator Builder Methods
     # =========================
-    def buildKLOperator(self, kOperator):
+    def buildKLOperator(self, kOperator, buildName):
         """Builds KL Operators on the components.
 
         Args:
             kOperator (Object): Kraken operator that represents a KL
                 operator.
+            buildName (str): The name to use on the built object.
 
         Return:
             bool: True if successful.
@@ -781,16 +782,17 @@ class Builder(Builder):
         # Code to build KL and Canvas based Operators has been merged.
         # It's important to note here that the 'isKLBased' argument is set
         # to true.
-        self.buildCanvasOperator(kOperator, isKLBased=True)
+        self.buildCanvasOperator(kOperator, buildName, isKLBased=True)
 
         return True
 
-    def buildCanvasOperator(self, kOperator, isKLBased=False):
+    def buildCanvasOperator(self, kOperator, buildName, isKLBased=False):
         """Builds Canvas Operators on the components.
 
         Args:
             kOperator (object): Kraken operator that represents a Canvas
                 operator.
+            buildName (str): The name to use on the built object.
             isKLBased (bool): Whether the solver is based on a KL object.
 
         Return:
@@ -835,7 +837,7 @@ class Builder(Builder):
                 }
 
             # Create Canvas Operator
-            canvasNode = pm.createNode('canvasNode', name=kOperator.getName())
+            canvasNode = pm.createNode('canvasNode', name=buildName)
             self._registerSceneItemPair(kOperator, pm.PyNode(canvasNode))
 
 

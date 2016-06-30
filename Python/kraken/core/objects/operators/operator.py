@@ -5,6 +5,7 @@ Operator - Base operator object.
 
 """
 
+from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
 
 
@@ -16,6 +17,136 @@ class Operator(SceneItem):
 
         self.inputs = {}
         self.outputs = {}
+        self._flags = {}
+
+    # =============
+    # Name Methods
+    # =============
+    def getBuildName(self):
+        """Returns the build name for the object.
+
+        Returns:
+            str: Name to be used in the DCC.
+
+        """
+
+        typeNameHierarchy = self.getTypeHierarchyNames()
+
+        config = Config.getInstance()
+
+        # If flag is set on object to use explicit name, return it.
+        if config.getExplicitNaming() is True or \
+                self.testFlag('EXPLICIT_NAME'):
+                return self.getName()
+
+        nameTemplate = config.getNameTemplate()
+
+        # Get the token list for this type of object
+        format = None
+        for typeName in nameTemplate['formats'].keys():
+            if typeName in typeNameHierarchy:
+                format = nameTemplate['formats'][typeName]
+                break
+
+        if format is None:
+            format = nameTemplate['formats']['default']
+
+        objectType = None
+        for eachType in typeNameHierarchy:
+            if eachType in nameTemplate['types'].keys():
+                objectType = eachType
+                break
+
+        if objectType is None:
+            objectType = 'default'
+
+        # Generate a name by concatenating the resolved tokens together.
+        builtName = ""
+        skipSep = False
+        for token in format:
+
+            if token is 'sep':
+                if not skipSep:
+                    builtName += nameTemplate['separator']
+
+            elif token is 'location':
+                location = self.getParent().getLocation()
+
+                if location not in nameTemplate['locations']:
+                    raise ValueError("Invalid location on: " + self.getPath())
+
+                builtName += location
+
+            elif token is 'type':
+                builtName += nameTemplate['types'][objectType]
+
+            elif token is 'name':
+                builtName += self.getName()
+
+            elif token is 'component':
+                if self.getParent() is None:
+                    skipSep = True
+                    continue
+
+                builtName += self.getParent().getName()
+
+            elif token is 'container':
+                if self.getContainer() is None:
+                    skipSep = True
+                    continue
+
+                builtName += self.getContainer().getName()
+
+            else:
+                raise ValueError("Unresolvabled token '" + token +
+                    "' used on: " + self.getPath())
+
+        return builtName
+
+    # =============
+    # Flag Methods
+    # =============
+    def setFlag(self, name):
+        """Sets the flag of the specified name.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._flags[name] = True
+
+        return True
+
+    def testFlag(self, name):
+        """Tests if the specified flag is set.
+
+        Args:
+            name (str): Name of the flag to test.
+
+        Returns:
+            bool: True if flag is set.
+
+        """
+
+        return name in self._flags
+
+    def clearFlag(self, name):
+        """Clears the flag of the specified name.
+
+        Args:
+            name (str): Name of the flag to clear.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if name in self._flags:
+            del self._flags[name]
+            return True
+
+        return False
 
     # ===============
     # Source Methods

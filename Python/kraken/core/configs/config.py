@@ -189,7 +189,9 @@ class Config(object):
                 "Joint": "def",
                 "Layer": "",
                 "Locator": "loc",
-                "CtrlSpace": "ctrlSpace"
+                "CtrlSpace": "ctrlSpace",
+                "KLOperator": "klOp",
+                "CanvasOperator": "canvasOp"
             },
             "formats":
                 {
