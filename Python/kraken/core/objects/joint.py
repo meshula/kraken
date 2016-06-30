@@ -12,18 +12,23 @@ from kraken.core.objects.object_3d import Object3D
 class Joint(Object3D):
     """Joint object."""
 
-    def __init__(self, name, parent=None):
+    def __init__(self, name, parent=None, **kwargs):
         super(Joint, self).__init__(name, parent=parent)
+        self._radius = 1.0
 
-        config = Config.getInstance()
-        objSettings = config.getObjectSettings()
-        jointSettings = objSettings.get('joint', None)
-        if jointSettings is None:
-            jointSize = 1.0
+        if 'radius' in kwargs:
+            jointRadius = kwargs['radius']
         else:
-            jointSize = jointSettings.get('size', 1.0)
+            config = Config.getInstance()
+            objSettings = config.getObjectSettings()
+            jointSettings = objSettings.get('joint', None)
+            if jointSettings is None:
+                jointRadius = 1.0
+            else:
+                jointRadius = jointSettings.get('size', 1.0)
 
-        self.radius = jointSize
+        self.setRadius(jointRadius)
+
 
     def getRadius(self):
         """Gets the radius of the joint.
@@ -33,7 +38,7 @@ class Joint(Object3D):
 
         """
 
-        return self.radius
+        return self._radius
 
     def setRadius(self, radius):
         """Sets the radius of the joint.
@@ -52,4 +57,4 @@ class Joint(Object3D):
         if type(radius) is int:
             radius = float(radius)
 
-        self.radius = radius
+        self._radius = radius
