@@ -1438,8 +1438,25 @@ class Builder(Builder):
         """
 
         # Find all Canvas Ops and set to only execute if necessary
-        canvasOps = si.FindObjects2(constants.siCustomOperatorID).Filter('CanvasOp')
-        for op in canvasOps:
-            op.Parameters('graphExecMode').Value = 1
+        nameTemplate = self.config.getNameTemplate()
+        sep = nameTemplate['separator']
+        klOpToken = nameTemplate['types'].get('KLOperator', None)
+        canvasOpToken = nameTemplate['types'].get('CanvasOperator', None)
+
+        if klOpToken is None or canvasOpToken is None:
+            logger.warn("'KLOperator' or 'CanvasOperator' tokens not found in Config!")
+        else:
+            klOpName = klOpToken
+            canvasOpName = canvasOpToken
+
+            # Find all Canvas Ops and set to only execute if necessary
+            klOps = si.FindObjects2(constants.siCustomOperatorID).Filter('', '', '*' + klOpName + '*')
+            canvasOps = si.FindObjects2(constants.siCustomOperatorID).Filter('', '', '*' + canvasOpName + '*')
+
+            fabricOps = getCollection()
+            fabricOps.AddItems(klOps)
+            fabricOps.AddItems(canvasOps)
+            for op in fabricOps:
+                op.Parameters('graphExecMode').Value = 1
 
         return True
