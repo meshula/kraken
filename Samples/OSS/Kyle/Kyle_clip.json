@@ -1,4 +1,4 @@
 {
   "clipType": "KrakenAbcClip",
-  "content": {"filePath": "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle_locomotion.abc"}
+  "content": {"filePath": "${KRAKEN_PATH}/Samples/OSS/kyle/kyle_locomotion.abc"}
 }

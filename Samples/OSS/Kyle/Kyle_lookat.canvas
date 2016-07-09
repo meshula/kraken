@@ -84,7 +84,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle.fbx"
+            "String" : "${KRAKEN_PATH}/Samples/OSS/kyle/kyle.fbx"
             },
           "name" : "filePath"
           },
@@ -288,7 +288,7 @@ dfgEntry {
           "name" : "result"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_Kyle_guide.Create"
+      "executable" : "Kraken.KLRigs.KRK_kyle_guide.Create"
       },
     {
       "objectType" : "Inst",
@@ -313,7 +313,7 @@ dfgEntry {
           "name" : "clip"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_Kyle_guide.SetClip"
+      "executable" : "Kraken.KLRigs.KRK_kyle_guide.SetClip"
       },
     {
       "objectType" : "Inst",
@@ -1421,7 +1421,7 @@ dfgEntry {
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle_walk.abc"
+            "String" : "${KRAKEN_PATH}/Samples/OSS/kyle/kyle_walk.abc"
             },
           "name" : "filePath"
           }
@@ -1451,7 +1451,7 @@ dfgEntry {
             "objectType" : "Port",
             "nodePortType" : "Out",
             "defaultValues" : {
-              "String" : "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle.abc"
+              "String" : "${KRAKEN_PATH}/Samples/OSS/kyle/kyle.abc"
               },
             "name" : "filePath",
             "execPortType" : "In",
@@ -1477,7 +1477,7 @@ dfgEntry {
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "defaultValues" : {
-                  "String" : "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle.abc"
+                  "String" : "${KRAKEN_PATH}/Samples/OSS/kyle/kyle.abc"
                   },
                 "name" : "filePath"
                 },
@@ -3037,7 +3037,7 @@ dfgEntry {
 }
 "
       },
-    "Kraken.KLRigs.KRK_Kyle_guide.Create" : {
+    "Kraken.KLRigs.KRK_kyle_guide.Create" : {
       "objectType" : "Graph",
       "title" : "Create",
       "ports" : [
@@ -3056,7 +3056,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_Kyle_guide" : "*"
+        "KRK_kyle_guide" : "*"
         },
       "nodes" : [
         {
@@ -3069,8 +3069,8 @@ dfgEntry {
               "name" : "value"
               }
             ],
-          "dataType" : "KRK_Kyle_guide",
-          "extDep" : "KRK_Kyle_guide:*"
+          "dataType" : "KRK_kyle_guide",
+          "extDep" : "KRK_kyle_guide:*"
           },
         {
           "objectType" : "Inst",
@@ -3103,14 +3103,14 @@ dfgEntry {
                 "nodePortType" : "In",
                 "name" : "result",
                 "execPortType" : "Out",
-                "typeSpec" : "KRK_Kyle_guide"
+                "typeSpec" : "KRK_kyle_guide"
                 }
               ],
             "extDeps" : {
-              "KRK_Kyle_guide" : "*"
+              "KRK_kyle_guide" : "*"
               },
             "code" : "dfgEntry {
-  result = KRK_Kyle_guide();
+  result = KRK_kyle_guide();
 }
 "
             }
@@ -3125,7 +3125,7 @@ dfgEntry {
           ]
         }
       },
-    "Kraken.KLRigs.KRK_Kyle_guide.SetClip" : {
+    "Kraken.KLRigs.KRK_kyle_guide.SetClip" : {
       "objectType" : "Func",
       "title" : "SetClip",
       "ports" : [
@@ -3141,7 +3141,7 @@ dfgEntry {
           "nodePortType" : "IO",
           "name" : "rig",
           "execPortType" : "IO",
-          "typeSpec" : "KRK_Kyle_guide"
+          "typeSpec" : "KRK_kyle_guide"
           },
         {
           "objectType" : "Port",
@@ -3152,7 +3152,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_Kyle_guide" : "*"
+        "KRK_kyle_guide" : "*"
         },
       "code" : "dfgEntry {
   rig.setClip(clip);

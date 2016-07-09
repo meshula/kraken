@@ -1,9 +1,9 @@
-require KRK_Kyle_guide;
+require KRK_kyle;
 
 operator entry() {
-  KRK_Kyle_guide rig();
+  KRK_kyle rig();
   KrakenClipContext context;
-  for(SInt32 i=0;i<5000;i++) {
+  for(SInt32 i=0;i<500;i++) {
     context.time = 1.0;
     rig.evaluate(context);
   };

@@ -46,6 +46,11 @@
       "targetIndex": 0
     }, 
     {
+      "source": "foot:L.foot", 
+      "target": "leg:L.endTwistParent", 
+      "targetIndex": 0
+    }, 
+    {
       "source": "foot:L.ikgoal", 
       "target": "leg:L.ikGoalInput", 
       "targetIndex": 0
@@ -111,6 +116,11 @@
       "targetIndex": 0
     }, 
     {
+      "source": "foot:R.foot", 
+      "target": "leg:R.endTwistParent", 
+      "targetIndex": 0
+    }, 
+    {
       "source": "foot:R.ikgoal", 
       "target": "leg:R.ikGoalInput", 
       "targetIndex": 0
@@ -146,6 +156,11 @@
       "targetIndex": 0
     }, 
     {
+      "source": "hand:R.hand", 
+      "target": "arm:R.endTwistParent", 
+      "targetIndex": 0
+    }, 
+    {
       "source": "hand:R.ikgoal", 
       "target": "arm:R.ikGoalInput", 
       "targetIndex": 0
@@ -178,6 +193,11 @@
     {
       "source": "main:M.rigScale", 
       "target": "arm:L.rigScale", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "hand:L.hand", 
+      "target": "arm:L.endTwistParent", 
       "targetIndex": 0
     }, 
     {
@@ -246,7 +266,7 @@
       "targetIndex": 0
     }
   ], 
-  "name": "Kyle_guide", 
+  "name": "kyle_guide", 
   "components": [
     {
       "graphPos": {
@@ -406,10 +426,10 @@
         }, 
         "__mathObjectClass__": "Xfo", 
         "tr": {
-          "y": 10743.685546875, 
-          "x": 37.75316619873047, 
+          "y": 10843.6943359375, 
+          "x": 38.00579833984375, 
           "__mathObjectClass__": "Vec3", 
-          "z": -156.33663940429688
+          "z": -157.8230743408203
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
@@ -496,16 +516,16 @@
         }, 
         "__mathObjectClass__": "Xfo", 
         "tr": {
-          "y": 10843.6943359375, 
-          "x": -15.268905639648438, 
+          "y": 10943.703125, 
+          "x": 15.016273498535156, 
           "__mathObjectClass__": "Vec3", 
-          "z": -24.044452667236328
+          "z": 22.558025360107422
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
-          "w": 6.123234262925839e-17, 
+          "w": -1.0, 
           "v": {
-            "y": 1.0, 
+            "y": 1.2246468525851679e-16, 
             "x": 0.0, 
             "__mathObjectClass__": "Vec3", 
             "z": 0.0
@@ -576,6 +596,7 @@
         "x": -661.5694580078125, 
         "__mathObjectClass__": "Vec2"
       }, 
+      "addTwistJoints": true, 
       "uplimbName": "upLeg", 
       "name": "leg", 
       "ShapeVisibility": false, 
@@ -583,6 +604,7 @@
       "useOtherIKGoal": true, 
       "visibility": true, 
       "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
+      "untwistUplimb": true, 
       "uplimbXfo": {
         "sc": {
           "y": 1.0, 
@@ -661,6 +683,7 @@
       }, 
       "mocap": false, 
       "globalComponentCtrlSize": 7.0, 
+      "addPartialJoints": true, 
       "SingleDeformerGroup": true, 
       "location": "L"
     }, 
@@ -1102,6 +1125,7 @@
         "x": -1296.4605712890625, 
         "__mathObjectClass__": "Vec2"
       }, 
+      "addTwistJoints": true, 
       "uplimbName": "upLeg", 
       "name": "leg", 
       "ShapeVisibility": false, 
@@ -1109,6 +1133,7 @@
       "useOtherIKGoal": true, 
       "visibility": true, 
       "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
+      "untwistUplimb": true, 
       "uplimbXfo": {
         "sc": {
           "y": 1.0, 
@@ -1187,6 +1212,7 @@
       }, 
       "mocap": false, 
       "globalComponentCtrlSize": 7.0, 
+      "addPartialJoints": true, 
       "SingleDeformerGroup": true, 
       "location": "R"
     }, 
@@ -1196,6 +1222,7 @@
         "x": -1578.213134765625, 
         "__mathObjectClass__": "Vec2"
       }, 
+      "addTwistJoints": true, 
       "uplimbName": "upArm", 
       "name": "arm", 
       "ShapeVisibility": false, 
@@ -1203,6 +1230,7 @@
       "useOtherIKGoal": true, 
       "visibility": true, 
       "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
+      "untwistUplimb": true, 
       "uplimbXfo": {
         "sc": {
           "y": 1.0, 
@@ -1281,6 +1309,7 @@
       }, 
       "mocap": false, 
       "globalComponentCtrlSize": 8.0, 
+      "addPartialJoints": true, 
       "SingleDeformerGroup": true, 
       "location": "R"
     }, 
@@ -1290,6 +1319,7 @@
         "x": -461.42449951171875, 
         "__mathObjectClass__": "Vec2"
       }, 
+      "addTwistJoints": true, 
       "uplimbName": "upArm", 
       "name": "arm", 
       "ShapeVisibility": false, 
@@ -1297,6 +1327,7 @@
       "useOtherIKGoal": true, 
       "visibility": true, 
       "class": "OSS.OSS_limb_component.OSSLimbComponentGuide", 
+      "untwistUplimb": true, 
       "uplimbXfo": {
         "sc": {
           "y": 1.0, 
@@ -1375,6 +1406,7 @@
       }, 
       "mocap": false, 
       "globalComponentCtrlSize": 8.0, 
+      "addPartialJoints": true, 
       "SingleDeformerGroup": true, 
       "location": "L"
     }, 
@@ -1972,6 +2004,7 @@
       "location": "L", 
       "globalComponentCtrlSize": 2.5, 
       "Digit3SegmentNames": "index middle ring pinky", 
+      "addPartialJoints": true, 
       "digit2SegmentCtrlsXfos": [
         {
           "sc": {
@@ -2105,7 +2138,7 @@
     {
       "mocap": false, 
       "graphPos": {
-        "y": 106.11720275878906, 
+        "y": 104.59974670410156, 
         "x": -1802.9833984375, 
         "__mathObjectClass__": "Vec2"
       }, 
@@ -2696,6 +2729,7 @@
       "location": "R", 
       "globalComponentCtrlSize": 2.5, 
       "Digit3SegmentNames": "index middle ring pinky", 
+      "addPartialJoints": true, 
       "digit2SegmentCtrlsXfos": [
         {
           "sc": {

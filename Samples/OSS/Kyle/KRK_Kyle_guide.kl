@@ -6,7 +6,7 @@ require KrakenAnimation;
 require OSS_Kraken;
 
 
-object KRK_Kyle_guide : KrakenKLRig {
+object KRK_kyle_guide : KrakenKLRig {
   UInt64 evalVersion;
   KrakenClip clip; // the default clip of the rig
   OSS_HierBlendSolver _OSS_HierBlendSolver[4];
@@ -37,16 +37,16 @@ object KRK_Kyle_guide : KrakenKLRig {
   UInt32 arg_UInt32[8];
 };
 
-function KRK_Kyle_guide() {
+function KRK_kyle_guide() {
   this.init();
 }
 
 
-function UInt64 KRK_Kyle_guide.getEvalVersion() {
+function UInt64 KRK_kyle_guide.getEvalVersion() {
   return this.evalVersion;
 }
 
-function KRK_Kyle_guide.resetPose!() {
+function KRK_kyle_guide.resetPose!() {
   // reset objects
   this._KrakenTransform[0].local = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000)).toMat44();
   this._KrakenTransform[1].local = Xfo(Vec3(0.0000, 0.0000, 0.0000), Quat(0.0000, 0.0000, 0.0000, 1.0000), Vec3(1.0000, 1.0000, 1.0000)).toMat44();
@@ -520,7 +520,7 @@ function KRK_Kyle_guide.resetPose!() {
   this._KrakenScalarAttribute[42].value = 1.000000;
 }
 
-function KRK_Kyle_guide.solve!(KrakenClipContext context) {
+function KRK_kyle_guide.solve!(KrakenClipContext context) {
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[1].value = this._KrakenScalarAttribute_Driven[0].value;
@@ -595,11 +595,11 @@ function KRK_Kyle_guide.solve!(KrakenClipContext context) {
   this._KrakenScalarAttribute_Driven[0].value = this._KrakenScalarAttribute[0].value;
   this._KrakenScalarAttribute_Driven[40].value = this._KrakenScalarAttribute_Driven[0].value;
 
-  // solving global transform Kyle_guide
+  // solving global transform kyle_guide
   this._KrakenTransform[0].global = this._KrakenTransform[0].local;
   if(context.maxEvalID == 0) return;
 
-  // solving parent child constraint Kyleguide_Kyle_guide_controls
+  // solving parent child constraint kyleguide_kyle_guide_controls
   this._KrakenTransform[1].global = this._KrakenTransform[0].global * this._KrakenTransform[1].local;
   if(context.maxEvalID == 1) return;
 
@@ -1236,7 +1236,7 @@ function KRK_Kyle_guide.solve!(KrakenClipContext context) {
   this.arg_Scalar[21] = 0.5;
   this.arg_Scalar[22] = -1;
 
-  // solving parent child constraint Kyleguide_Kyle_guide_deformers
+  // solving parent child constraint kyleguide_kyle_guide_deformers
   this._KrakenTransform[80].global = this._KrakenTransform[0].global * this._KrakenTransform[80].local;
   if(context.maxEvalID == 92) return;
 
@@ -3689,7 +3689,7 @@ function KRK_Kyle_guide.solve!(KrakenClipContext context) {
   if(context.maxEvalID == 425) return;
 }
 
-function KRK_Kyle_guide.evaluate!(KrakenClipContext context) {
+function KRK_kyle_guide.evaluate!(KrakenClipContext context) {
   if(this.clip != null) {
     KrakenKLRig rig = this;
     this.clip.apply(rig, context, 1.0);
@@ -3698,7 +3698,7 @@ function KRK_Kyle_guide.evaluate!(KrakenClipContext context) {
   this.evalVersion++;
 }
 
-function KRK_Kyle_guide.evaluate!(KrakenClipContext context, io Mat44 joints<>) {
+function KRK_kyle_guide.evaluate!(KrakenClipContext context, io Mat44 joints<>) {
   if(joints.size() != 79)
     throw("Expected number of joints does not match ("+joints.size()+" given, 79 expected).");
   if(this.clip != null) {
@@ -3713,12 +3713,12 @@ function KRK_Kyle_guide.evaluate!(KrakenClipContext context, io Mat44 joints<>) 
   this.evalVersion++;
 }
 
-function KRK_Kyle_guide.init!() {
+function KRK_kyle_guide.init!() {
   Float32 floatAnimation[String];
 
-  this._KrakenTransform[0].name = "Kyle_guide";
+  this._KrakenTransform[0].name = "kyle_guide";
   this._KrakenTransform[0].evalID = 0;
-  this._KrakenTransform[1].name = "Kyle_guide_controls";
+  this._KrakenTransform[1].name = "kyle_guide_controls";
   this._KrakenTransform[1].evalID = 1;
   this._KrakenTransform[2].name = "spine_M_spine_cmp";
   this._KrakenTransform[2].evalID = 2;
@@ -3902,7 +3902,7 @@ function KRK_Kyle_guide.init!() {
   this._KrakenControl[12].evalID = 84;
   this._KrakenTransform[79].name = "leg_L_upLeg_part_null_loc";
   this._KrakenTransform[79].evalID = 98;
-  this._KrakenTransform[80].name = "Kyle_guide_deformers";
+  this._KrakenTransform[80].name = "kyle_guide_deformers";
   this._KrakenTransform[80].evalID = 92;
   this._KrakenJoint[0].name = "M_root_def";
   this._KrakenJoint[0].evalID = 95;
@@ -4808,8 +4808,8 @@ function KRK_Kyle_guide.init!() {
   // build kl canvas ops
 
   // build attributes
-  this._KrakenBoolAttribute[0] = KrakenBoolAttribute("Kyle_guide.ShapeVisibility", "", true, true, false);
-  this._KrakenBoolAttribute[1] = KrakenBoolAttribute("Kyle_guide_controls.ShapeVisibility", "", true, true, false);
+  this._KrakenBoolAttribute[0] = KrakenBoolAttribute("kyle_guide.ShapeVisibility", "", true, true, false);
+  this._KrakenBoolAttribute[1] = KrakenBoolAttribute("kyle_guide_controls.ShapeVisibility", "", true, true, false);
   this._KrakenBoolAttribute[2] = KrakenBoolAttribute("spine_M_spine_cmp.ShapeVisibility", "", true, true, false);
   this._KrakenBoolAttribute[3] = KrakenBoolAttribute("spine_M_inputs_hrc.ShapeVisibility", "", true, true, false);
   this._KrakenBoolAttribute[4] = KrakenBoolAttribute("main_M_inputs_hrc.drawDebug", "", true, true, false);
@@ -5265,7 +5265,7 @@ function KRK_Kyle_guide.init!() {
   this._KrakenBoolAttribute[370] = KrakenBoolAttribute("M_root_space.ShapeVisibility", "", true, true, false);
   this._KrakenBoolAttribute[371] = KrakenBoolAttribute("M_root_fk.ShapeVisibility", "", true, true, true);
   this._KrakenBoolAttribute[372] = KrakenBoolAttribute("M_vis_an.ShapeVisibility", "", true, true, true);
-  this._KrakenBoolAttribute[373] = KrakenBoolAttribute("Kyle_guide_deformers.ShapeVisibility", "", true, true, false);
+  this._KrakenBoolAttribute[373] = KrakenBoolAttribute("kyle_guide_deformers.ShapeVisibility", "", true, true, false);
   this._KrakenBoolAttribute[374] = KrakenBoolAttribute("M_root_def.ShapeVisibility", "", true, true, true);
   this._KrakenBoolAttribute[375] = KrakenBoolAttribute("M_pelvis_def.ShapeVisibility", "", true, true, true);
   this._KrakenBoolAttribute[376] = KrakenBoolAttribute("M_spine01_def.ShapeVisibility", "", true, true, true);
@@ -5347,21 +5347,21 @@ function KRK_Kyle_guide.init!() {
   this._KrakenBoolAttribute[452] = KrakenBoolAttribute("L_upArm_part_def.ShapeVisibility", "", true, true, true);
 }
 
-function Xfo[] KRK_Kyle_guide.getJointXfos() {
+function Xfo[] KRK_kyle_guide.getJointXfos() {
   Xfo result[](79);
   for(Size i=0;i<79;i++)
     result[i] = this._KrakenJoint[i].global;
   return result;
 }
 
-function String[] KRK_Kyle_guide.getJointNames() {
+function String[] KRK_kyle_guide.getJointNames() {
   String result[](79);
   for(Size i=0;i<79;i++)
     result[i] = this._KrakenJoint[i].name;
   return result;
 }
 
-function Xfo[] KRK_Kyle_guide.getAllXfos() {
+function Xfo[] KRK_kyle_guide.getAllXfos() {
   Xfo result[](426);
   result[0] = this._KrakenTransform[0].global;
   result[1] = this._KrakenTransform[1].global;
@@ -5792,10 +5792,10 @@ function Xfo[] KRK_Kyle_guide.getAllXfos() {
   return result;
 }
 
-function String[] KRK_Kyle_guide.getAllNames() {
+function String[] KRK_kyle_guide.getAllNames() {
   String result[](426);
-  result[0] = "Kyle_guide";
-  result[1] = "Kyle_guide_controls";
+  result[0] = "kyle_guide";
+  result[1] = "kyle_guide_controls";
   result[2] = "spine_M_spine_cmp";
   result[3] = "spine_M_inputs_hrc";
   result[4] = "main_M_main_cmp";
@@ -5887,7 +5887,7 @@ function String[] KRK_Kyle_guide.getAllNames() {
   result[90] = "L_loLeg_space";
   result[91] = "L_loLeg_fk";
   result[92] = "leg_L_upLeg_part_null_loc";
-  result[93] = "Kyle_guide_deformers";
+  result[93] = "kyle_guide_deformers";
   result[94] = "M_root_def";
   result[95] = "M_root_space";
   result[96] = "M_root_fk";
@@ -6223,34 +6223,34 @@ function String[] KRK_Kyle_guide.getAllNames() {
   return result;
 }
 
-function String[] KRK_Kyle_guide.getShapeNames() {
+function String[] KRK_kyle_guide.getShapeNames() {
   String result[](1);
   // todo
   result[0] = "R_loLid_up_inn_bsShape";
   return result;
 }
 
-function KRK_Kyle_guide.getShapeWeights(io Float32 weights<>) {
+function KRK_kyle_guide.getShapeWeights(io Float32 weights<>) {
   if(weights.size() != 1)
     return;
   // todo
   weights[0] = 1.0;
 }
 
-function KrakenScalarAttribute<> KRK_Kyle_guide.getScalarAttributes() {
+function KrakenScalarAttribute<> KRK_kyle_guide.getScalarAttributes() {
   KrakenScalarAttribute result<>(this._KrakenScalarAttribute);
   return result;
 }
 
-function KrakenControl<> KRK_Kyle_guide.getControls() {
+function KrakenControl<> KRK_kyle_guide.getControls() {
   KrakenControl result<>(this._KrakenControl);
   return result;
 }
 
-function KRK_Kyle_guide.setClip!(KrakenClip clip) {
+function KRK_kyle_guide.setClip!(KrakenClip clip) {
   this.clip = clip;
 }
 
-function KRK_Kyle_guide.loadClipFromFile!(String filePath) {
+function KRK_kyle_guide.loadClipFromFile!(String filePath) {
   this.clip = KrakenClip_loadFromFile(filePath);
 }

@@ -237,7 +237,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle.abc"
+            "String" : "${KRAKEN_PATH}/Samples/OSS/kyle/kyle.abc"
             },
           "name" : "filePath"
           },

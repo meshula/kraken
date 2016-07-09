@@ -33,4 +33,4 @@ set PYTHONPATH=%FABRIC_DIR%\Python\2.7;%KRAKEN_PATH%\Python;%PYTHONPATH%;
 
 cd /d %KRAKEN_PATH%
 
-cmd /k python DCCIntegrations\kl\presetGen.py %KRAKEN_PATH%\Samples\OSS\Kyle\Kyle_rig.krg %KRAKEN_PATH%\Samples\OSS\Kyle -c %KRAKEN_PATH%\Python\OSS\OSS_kraken_config.py --profiling 5000
+cmd /k python DCCIntegrations\kl\presetGen.py %KRAKEN_PATH%\Samples\OSS\kyle\kyle_rig.krg %KRAKEN_PATH%\Samples\OSS\kyle -c %KRAKEN_PATH%\Python\OSS\OSS_kraken_config.py --profiling 5000

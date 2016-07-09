@@ -3,7 +3,7 @@
   "content": {
     "matrixIndex": 0, 
     "childClipType": "KrakenAbcClip", 
-    "childClip": {"filePath": "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle_locomotion.abc"}, 
+    "childClip": {"filePath": "${KRAKEN_PATH}/Samples/OSS/kyle/kyle_locomotion.abc"}, 
     "lookats": [
       {
         "name": "M_upChest_fk", 

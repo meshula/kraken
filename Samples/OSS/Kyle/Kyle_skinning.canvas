@@ -84,7 +84,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle.fbx"
+            "String" : "Z:/shows/wolvesProto01/source/assets/kyle/_staged/ue/kyle.fbx"
             },
           "name" : "filePath"
           },
@@ -288,7 +288,7 @@ dfgEntry {
           "name" : "result"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_Kyle_guide.Create"
+      "executable" : "Kraken.KLRigs.KRK_kyle.Create"
       },
     {
       "objectType" : "Inst",
@@ -313,7 +313,7 @@ dfgEntry {
           "name" : "clip"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_Kyle_guide.SetClip"
+      "executable" : "Kraken.KLRigs.KRK_kyle.SetClip"
       },
     {
       "objectType" : "Inst",
@@ -556,7 +556,7 @@ dfgEntry {
           "name" : "rig"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_Kyle_guide.ResetPose"
+      "executable" : "Kraken.KLRigs.KRK_kyle.ResetPose"
       },
     {
       "objectType" : "Inst",
@@ -1497,7 +1497,7 @@ dfgEntry {
             "objectType" : "Port",
             "nodePortType" : "Out",
             "defaultValues" : {
-              "String" : "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle.abc"
+              "String" : "Z:/shows/wolvesProto01/source/assets/kyle/_staged/mari/kyle.abc"
               },
             "name" : "filePath",
             "execPortType" : "In",
@@ -1523,7 +1523,7 @@ dfgEntry {
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "defaultValues" : {
-                  "String" : "${KRAKEN_PATH}/Samples/OSS/Kyle/Kyle.abc"
+                  "String" : "Z:/shows/wolvesProto01/source/assets/kyle/_staged/mari/kyle.abc"
                   },
                 "name" : "filePath"
                 },
@@ -2512,7 +2512,7 @@ dfgEntry {
 }
 "
       },
-    "Kraken.KLRigs.KRK_Kyle_guide.Create" : {
+    "Kraken.KLRigs.KRK_kyle.Create" : {
       "objectType" : "Graph",
       "title" : "Create",
       "ports" : [
@@ -2531,7 +2531,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_Kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "nodes" : [
         {
@@ -2544,8 +2544,8 @@ dfgEntry {
               "name" : "value"
               }
             ],
-          "dataType" : "KRK_Kyle_guide",
-          "extDep" : "KRK_Kyle_guide:*"
+          "dataType" : "KRK_kyle",
+          "extDep" : "KRK_kyle:*"
           },
         {
           "objectType" : "Inst",
@@ -2578,14 +2578,14 @@ dfgEntry {
                 "nodePortType" : "In",
                 "name" : "result",
                 "execPortType" : "Out",
-                "typeSpec" : "KRK_Kyle_guide"
+                "typeSpec" : "KRK_kyle"
                 }
               ],
             "extDeps" : {
-              "KRK_Kyle_guide" : "*"
+              "KRK_kyle" : "*"
               },
             "code" : "dfgEntry {
-  result = KRK_Kyle_guide();
+  result = KRK_kyle();
 }
 "
             }
@@ -2600,7 +2600,7 @@ dfgEntry {
           ]
         }
       },
-    "Kraken.KLRigs.KRK_Kyle_guide.SetClip" : {
+    "Kraken.KLRigs.KRK_kyle.SetClip" : {
       "objectType" : "Func",
       "title" : "SetClip",
       "ports" : [
@@ -2616,7 +2616,7 @@ dfgEntry {
           "nodePortType" : "IO",
           "name" : "rig",
           "execPortType" : "IO",
-          "typeSpec" : "KRK_Kyle_guide"
+          "typeSpec" : "KRK_kyle"
           },
         {
           "objectType" : "Port",
@@ -2627,7 +2627,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_Kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "code" : "dfgEntry {
   rig.setClip(clip);
@@ -3144,7 +3144,7 @@ dfgEntry {
 }
 "
       },
-    "Kraken.KLRigs.KRK_Kyle_guide.ResetPose" : {
+    "Kraken.KLRigs.KRK_kyle.ResetPose" : {
       "objectType" : "Func",
       "title" : "ResetPose",
       "ports" : [
@@ -3160,11 +3160,11 @@ dfgEntry {
           "nodePortType" : "IO",
           "name" : "rig",
           "execPortType" : "IO",
-          "typeSpec" : "KRK_Kyle_guide"
+          "typeSpec" : "KRK_kyle"
           }
         ],
       "extDeps" : {
-        "KRK_Kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "code" : "dfgEntry {
   rig.resetPose();
