@@ -1,0 +1,29 @@
+{
+  "clipType": "KrakenLookAtClip", 
+  "content": {
+    "matrixIndex": 0, 
+    "lookats": [
+      {
+        "name": "M_upChest_fk", 
+        "target": {"x": 0.0, "y": 0.0, "z": 1.0}, 
+        "axis": {"x": 0.0, "y": 1.0, "z": 0.0}, 
+        "locked": false, 
+        "amount": 0.38
+}, 
+      {
+        "name": "M_neck_fk", 
+        "target": {"x": 0.0, "y": 0.0, "z": 1.0}, 
+        "axis": {"x": 0.0, "y": 1.0, "z": 0.0}, 
+        "locked": false, 
+        "amount": 0.38
+}, 
+      {
+        "name": "M_head_fk", 
+        "target": {"x": 0.0, "y": 0.0, "z": 1.0}, 
+        "axis": {"x": 0.0, "y": 1.0, "z": 0.0}, 
+        "locked": false, 
+        "amount": 0.56
+}
+    ]
+}
+}

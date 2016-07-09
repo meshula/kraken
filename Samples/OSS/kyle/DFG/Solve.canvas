@@ -1,0 +1,30 @@
+{
+  "objectType" : "Func",
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "rig",
+      "execPortType" : "IO",
+      "typeSpec" : "KRK_kyle"
+      }
+    ],
+  "extDeps" : {
+    "KRK_kyle" : "*"
+    },
+  "code" : "dfgEntry {
+  rig.solve(KrakenClipContext());
+}
+",
+  "args" : [
+    null
+    ]
+  }
