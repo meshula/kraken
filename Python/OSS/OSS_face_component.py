@@ -411,7 +411,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
                         newCtrl.lockTranslation(x=True, y=False, z=True)
 
                     elif anCtrlType==2: # Field
-                        newCtrl.setShape("circle")
+                        newCtrl.setShape("square")
                         newCtrl.scalePoints(Vec3(.5,.5,.5))
                         newCtrl.lockTranslation(x=False, y=False, z=True)
 
@@ -425,7 +425,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
                 # newCtrl.lockTranslation(x=True, y=True, z=True)
                 newCtrl.lockScale(x=True, y=True, z=True)
-                newCtrl.lockRotation(x=True, y=True, z=True)
+                newCtrl.lockRotation(x=True, y=True, z=False)
 
                 newCtrls.append(newCtrl)
 
