@@ -1,0 +1,38 @@
+{
+  "objectType" : "Func",
+  "title" : "GetAllXfos",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "rig",
+      "execPortType" : "In",
+      "typeSpec" : "KRK_kyle"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      }
+    ],
+  "extDeps" : {
+    "KRK_kyle" : "*"
+    },
+  "code" : "dfgEntry {
+  result = rig.getAllXfos();
+}
+",
+  "args" : [
+    null,
+    null
+    ]
+  }

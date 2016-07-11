@@ -1,0 +1,10 @@
+require KRK_kyle;
+
+operator entry() {
+  KRK_kyle rig();
+  KrakenClipContext context;
+  for(SInt32 i=0;i<500;i++) {
+    context.time = 1.0;
+    rig.evaluate(context);
+  };
+}
