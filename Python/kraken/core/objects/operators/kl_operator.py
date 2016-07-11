@@ -144,17 +144,20 @@ class KLOperator(Operator):
                 # when we run it on it's own and use the type that we query.  Gotta investigate this further...
                 RTVal = ks.convertFromRTVal(self.solverRTVal.defaultValues[name], RTTypeName=RTValDataType)
 
-            logger.debug("Using default value for %s.%s.%s[%s] --> %s" % (self.solverTypeName, self.getName(), mode, name, RTVal))
+            # BHX removing the default val logging for digipro debug purpoes
+            # logger.debug("Using default value for %s.%s.%s[%s] --> %s" % (self.solverTypeName, self.getName(), mode, name, RTVal))
             return RTVal
 
-        else:
-            if True: #mode == "inputs":  #Only report a warning if default value is not provided for inputs
-                logger.warn("No default value for %s.%s.%s[%s]." % (self.solverTypeName, self.getName(), mode, name))
+        # BHX removing the default val logging for digipro debug purpoes
+        # else:
+        #     if True: #mode == "inputs":  #Only report a warning if default value is not provided for inputs
+        #         logger.warn("No default value for %s.%s.%s[%s]." % (self.solverTypeName, self.getName(), mode, name))
 
         defaultValue = ks.rtVal(RTValDataType)
-        if True: #mode == "inputs":
-            logger.warn("  !!Creating default value by generating new RTVal object of type: %s.  You should set default values for %s.%s[%s] in your kl operator." %
-                (RTValDataType, self.solverTypeName, mode, name,))
+        # BHX removing the default val logging for digipro debug purpoes
+        # if True: #mode == "inputs":
+        #     logger.warn("  !!Creating default value by generating new RTVal object of type: %s.  You should set default values for %s.%s[%s] in your kl operator." %
+        #         (RTValDataType, self.solverTypeName, mode, name,))
 
         return defaultValue
 
