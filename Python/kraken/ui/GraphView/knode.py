@@ -105,12 +105,16 @@ class KNodeOutputPort(OutputPort):
 
         super(KNodeOutputPort, self).__init__(parent, graph, name, color, dataType)
 
-        def setCircle(self):
-            self.setOutCircle(KNodePortCircle(self, self.getGraph(), 2, self.getColor(), 'Out'))
+        self.componentOutput = componentOutput
 
-        def setLabel(self):
-            self.setLabelItem(PortLabel(self, self.getName(), 10, self._labelColor, self._labelHighlightColor))
+    def setCircle(self):
+        self.setOutCircle(KNodePortCircle(self, self.getGraph(), 2, self.getColor(), 'Out'))
 
+    def setLabel(self):
+        self.setLabelItem(PortLabel(self, self.getName(), 10, self._labelColor, self._labelHighlightColor))
+
+    def getComponentOutput(self):
+        return self.componentOutput
 
 class KNode(Node):
 

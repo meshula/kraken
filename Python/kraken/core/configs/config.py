@@ -21,11 +21,43 @@ class Config(object):
         Config.__instance = self
 
         self._explicitNaming = False
+        self._objectSettings = self.initObjectSettings()
         self._colors = self.initColors()
         self._colorMap = self.initColorMap()
         self._nameTemplate = self.initNameTemplate()
         self._controlShapes = self.initControlShapes()
         self._metaData = {}
+
+    # ================
+    # Object Settings
+    # ================
+    def initObjectSettings(self):
+        """Initializes default object settings to be applied when certain
+        objects are created.
+
+        Returns:
+            dict: object settings.
+
+        """
+
+        settings = {
+            "joint": {
+                "size": 1.0
+            }
+        }
+
+        return settings
+
+
+    def getObjectSettings(self):
+        """Gets the colors defined in the config.
+
+        Returns:
+            dict: colors.
+
+        """
+
+        return self._objectSettings
 
 
     # ==============
