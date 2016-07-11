@@ -45,7 +45,7 @@ class OutputLogDialog(QtGui.QDialog):
     def write(self, msg, level):
 
         if level == 'DEBUG':
-            messageColor = QtGui.QColor("#CCCCFF")
+            messageColor = QtGui.QColor("#EEE97B")
         elif level == 'INFO':
             messageColor = QtGui.QColor(QtCore.Qt.white)
         elif level == 'INFORM':
@@ -63,7 +63,7 @@ class OutputLogDialog(QtGui.QDialog):
         charFormat = self.textWidget.currentCharFormat()
         textCursor = self.textWidget.textCursor()
         textCursor.movePosition(QtGui.QTextCursor.End)
-        textCursor.insertText(msg, charFormat)
+        textCursor.insertText('[ ' + level + ' ] ' + msg, charFormat)
 
         self.textWidget.setTextCursor(textCursor)
         self.textWidget.ensureCursorVisible()
