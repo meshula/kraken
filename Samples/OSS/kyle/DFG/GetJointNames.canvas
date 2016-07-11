@@ -14,7 +14,7 @@
       "nodePortType" : "Out",
       "name" : "rig",
       "execPortType" : "In",
-      "typeSpec" : "KRK_kyle"
+      "typeSpec" : "KRK_kyle_guide"
       },
     {
       "objectType" : "Port",
@@ -25,7 +25,7 @@
       }
     ],
   "extDeps" : {
-    "KRK_kyle" : "*"
+    "KRK_kyle_guide" : "*"
     },
   "code" : "dfgEntry {
   result = rig.getJointNames();

@@ -14,11 +14,11 @@
       "nodePortType" : "IO",
       "name" : "rig",
       "execPortType" : "IO",
-      "typeSpec" : "KRK_kyle"
+      "typeSpec" : "KRK_kyle_guide"
       }
     ],
   "extDeps" : {
-    "KRK_kyle" : "*"
+    "KRK_kyle_guide" : "*"
     },
   "code" : "dfgEntry {
   rig.solve(KrakenClipContext());
