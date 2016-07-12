@@ -16,7 +16,7 @@ call set tempstring=!cwd:%delim%=%splitsub%!
 for /f "tokens=1* delims=%splitsub%" %%A in ("%tempstring%") do set part1=%%A& set part2=%%B
 set LOCAL_KRAKEN_PATH=%part1%fabric\kraken
 if not x%cwd:fabric\kraken=%==x%cwd% (
-    echo *** setting KRAKEN_PATH = %KRAKEN_PATH%
+    echo *** setting KRAKEN_PATH = %LOCAL_KRAKEN_PATH%
     set KRAKEN_PATH=%LOCAL_KRAKEN_PATH%
 )
 echo on
@@ -33,4 +33,4 @@ set PYTHONPATH=%FABRIC_DIR%\Python\2.7;%KRAKEN_PATH%\Python;%PYTHONPATH%;
 
 cd /d %KRAKEN_PATH%
 
-cmd /k kl.exe %KRAKEN_PATH%/Samples/OSS/kyle/test.kl
+cmd /k kl.exe %KRAKEN_PATH%/Samples/OSS/kyle/test.kl --opt --unguarded
