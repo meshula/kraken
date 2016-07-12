@@ -17,7 +17,7 @@
       }
     ],
   "extDeps" : {
-    "KRK_kyle_guide" : "*"
+    "KRK_kyle" : "*"
     },
   "nodes" : [
     {
@@ -30,8 +30,8 @@
           "name" : "value"
           }
         ],
-      "dataType" : "KRK_kyle_guide",
-      "extDep" : "KRK_kyle_guide:*"
+      "dataType" : "KRK_kyle",
+      "extDep" : "KRK_kyle:*"
       },
     {
       "objectType" : "Inst",
@@ -64,14 +64,14 @@
             "nodePortType" : "In",
             "name" : "result",
             "execPortType" : "Out",
-            "typeSpec" : "KRK_kyle_guide"
+            "typeSpec" : "KRK_kyle"
             }
           ],
         "extDeps" : {
-          "KRK_kyle_guide" : "*"
+          "KRK_kyle" : "*"
           },
         "code" : "dfgEntry {
-  result = KRK_kyle_guide();
+  result = KRK_kyle();
 }
 "
         }
@@ -86,6 +86,10 @@
       ]
     },
   "args" : [
-    null
+    {
+      "type" : "KRK_kyle",
+      "value" : null,
+      "ext" : "KRK_kyle"
+      }
     ]
   }

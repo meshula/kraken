@@ -14,7 +14,7 @@
       "nodePortType" : "IO",
       "name" : "rig",
       "execPortType" : "IO",
-      "typeSpec" : "KRK_kyle_guide"
+      "typeSpec" : "KRK_kyle"
       },
     {
       "objectType" : "Port",
@@ -25,14 +25,22 @@
       }
     ],
   "extDeps" : {
-    "KRK_kyle_guide" : "*"
+    "KRK_kyle" : "*"
     },
   "code" : "dfgEntry {
   rig.setClip(clip);
 }
 ",
   "args" : [
-    null,
-    null
+    {
+      "type" : "KRK_kyle",
+      "value" : null,
+      "ext" : "KRK_kyle"
+      },
+    {
+      "type" : "KrakenClip",
+      "value" : null,
+      "ext" : "KrakenAnimation"
+      }
     ]
   }

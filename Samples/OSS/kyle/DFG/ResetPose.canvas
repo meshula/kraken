@@ -14,17 +14,21 @@
       "nodePortType" : "IO",
       "name" : "rig",
       "execPortType" : "IO",
-      "typeSpec" : "KRK_kyle_guide"
+      "typeSpec" : "KRK_kyle"
       }
     ],
   "extDeps" : {
-    "KRK_kyle_guide" : "*"
+    "KRK_kyle" : "*"
     },
   "code" : "dfgEntry {
   rig.resetPose();
 }
 ",
   "args" : [
-    null
+    {
+      "type" : "KRK_kyle",
+      "value" : null,
+      "ext" : "KRK_kyle"
+      }
     ]
   }

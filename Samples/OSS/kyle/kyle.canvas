@@ -73,7 +73,7 @@
           "name" : "result"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_kyle_guide.Create"
+      "executable" : "Kraken.KLRigs.KRK_kyle.Create"
       },
     {
       "objectType" : "Inst",
@@ -94,7 +94,7 @@
           "name" : "context"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_kyle_guide.Evaluate"
+      "executable" : "Kraken.KLRigs.KRK_kyle.Evaluate"
       },
     {
       "objectType" : "Inst",
@@ -114,7 +114,7 @@
           "name" : "result"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_kyle_guide.GetAllXfos"
+      "executable" : "Kraken.KLRigs.KRK_kyle.GetAllXfos"
       },
     {
       "objectType" : "Inst",
@@ -238,7 +238,7 @@
           "name" : "result"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_kyle_guide.GetAllNames"
+      "executable" : "Kraken.KLRigs.KRK_kyle.GetAllNames"
       },
     {
       "objectType" : "Inst",
@@ -258,7 +258,7 @@
           "name" : "clip"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_kyle_guide.SetClip"
+      "executable" : "Kraken.KLRigs.KRK_kyle.SetClip"
       },
     {
       "objectType" : "Inst",
@@ -661,7 +661,7 @@ dfgEntry {
       ]
     },
   "requiredPresets" : {
-    "Kraken.KLRigs.KRK_kyle_guide.Create" : {
+    "Kraken.KLRigs.KRK_kyle.Create" : {
       "objectType" : "Graph",
       "title" : "Create",
       "ports" : [
@@ -673,7 +673,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "nodes" : [
         {
@@ -689,8 +689,8 @@ dfgEntry {
               "name" : "value"
               }
             ],
-          "dataType" : "KRK_kyle_guide",
-          "extDep" : "KRK_kyle_guide:*"
+          "dataType" : "KRK_kyle",
+          "extDep" : "KRK_kyle:*"
           },
         {
           "objectType" : "Inst",
@@ -714,14 +714,14 @@ dfgEntry {
                 "nodePortType" : "In",
                 "name" : "result",
                 "execPortType" : "Out",
-                "typeSpec" : "KRK_kyle_guide"
+                "typeSpec" : "KRK_kyle"
                 }
               ],
             "extDeps" : {
-              "KRK_kyle_guide" : "*"
+              "KRK_kyle" : "*"
               },
             "code" : "dfgEntry {
-  result = KRK_kyle_guide();
+  result = KRK_kyle();
 }
 "
             }
@@ -736,7 +736,7 @@ dfgEntry {
           ]
         }
       },
-    "Kraken.KLRigs.KRK_kyle_guide.Evaluate" : {
+    "Kraken.KLRigs.KRK_kyle.Evaluate" : {
       "objectType" : "Func",
       "title" : "Evaluate",
       "ports" : [
@@ -745,7 +745,7 @@ dfgEntry {
           "nodePortType" : "IO",
           "name" : "rig",
           "execPortType" : "IO",
-          "typeSpec" : "KRK_kyle_guide"
+          "typeSpec" : "KRK_kyle"
           },
         {
           "objectType" : "Port",
@@ -756,14 +756,14 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "code" : "dfgEntry {
   rig.evaluate(context);
 }
 "
       },
-    "Kraken.KLRigs.KRK_kyle_guide.GetAllXfos" : {
+    "Kraken.KLRigs.KRK_kyle.GetAllXfos" : {
       "objectType" : "Func",
       "title" : "GetAllXfos",
       "ports" : [
@@ -772,7 +772,7 @@ dfgEntry {
           "nodePortType" : "Out",
           "name" : "rig",
           "execPortType" : "In",
-          "typeSpec" : "KRK_kyle_guide"
+          "typeSpec" : "KRK_kyle"
           },
         {
           "objectType" : "Port",
@@ -783,7 +783,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "code" : "dfgEntry {
   result = rig.getAllXfos();
@@ -1140,7 +1140,7 @@ dfgEntry {
 }
 "
       },
-    "Kraken.KLRigs.KRK_kyle_guide.GetAllNames" : {
+    "Kraken.KLRigs.KRK_kyle.GetAllNames" : {
       "objectType" : "Func",
       "title" : "GetAllNames",
       "ports" : [
@@ -1149,7 +1149,7 @@ dfgEntry {
           "nodePortType" : "Out",
           "name" : "rig",
           "execPortType" : "In",
-          "typeSpec" : "KRK_kyle_guide"
+          "typeSpec" : "KRK_kyle"
           },
         {
           "objectType" : "Port",
@@ -1160,14 +1160,14 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "code" : "dfgEntry {
   result = rig.getAllNames();
 }
 "
       },
-    "Kraken.KLRigs.KRK_kyle_guide.SetClip" : {
+    "Kraken.KLRigs.KRK_kyle.SetClip" : {
       "objectType" : "Func",
       "title" : "SetClip",
       "ports" : [
@@ -1176,7 +1176,7 @@ dfgEntry {
           "nodePortType" : "IO",
           "name" : "rig",
           "execPortType" : "IO",
-          "typeSpec" : "KRK_kyle_guide"
+          "typeSpec" : "KRK_kyle"
           },
         {
           "objectType" : "Port",
@@ -1187,7 +1187,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "code" : "dfgEntry {
   rig.setClip(clip);

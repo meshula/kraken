@@ -14,7 +14,7 @@
       "nodePortType" : "Out",
       "name" : "rig",
       "execPortType" : "In",
-      "typeSpec" : "KRK_kyle_guide"
+      "typeSpec" : "KRK_kyle"
       },
     {
       "objectType" : "Port",
@@ -25,14 +25,22 @@
       }
     ],
   "extDeps" : {
-    "KRK_kyle_guide" : "*"
+    "KRK_kyle" : "*"
     },
   "code" : "dfgEntry {
   result = rig.getJointXfos();
 }
 ",
   "args" : [
-    null,
-    null
+    {
+      "type" : "KRK_kyle",
+      "value" : null,
+      "ext" : "KRK_kyle"
+      },
+    {
+      "type" : "Xfo[]",
+      "value" : [],
+      "ext" : "Math"
+      }
     ]
   }

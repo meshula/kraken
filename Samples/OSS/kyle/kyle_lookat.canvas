@@ -288,7 +288,7 @@ dfgEntry {
           "name" : "result"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_kyle_guide.Create"
+      "executable" : "Kraken.KLRigs.KRK_kyle.Create"
       },
     {
       "objectType" : "Inst",
@@ -313,7 +313,7 @@ dfgEntry {
           "name" : "clip"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_kyle_guide.SetClip"
+      "executable" : "Kraken.KLRigs.KRK_kyle.SetClip"
       },
     {
       "objectType" : "Inst",
@@ -3037,7 +3037,7 @@ dfgEntry {
 }
 "
       },
-    "Kraken.KLRigs.KRK_kyle_guide.Create" : {
+    "Kraken.KLRigs.KRK_kyle.Create" : {
       "objectType" : "Graph",
       "title" : "Create",
       "ports" : [
@@ -3056,7 +3056,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "nodes" : [
         {
@@ -3069,8 +3069,8 @@ dfgEntry {
               "name" : "value"
               }
             ],
-          "dataType" : "KRK_kyle_guide",
-          "extDep" : "KRK_kyle_guide:*"
+          "dataType" : "KRK_kyle",
+          "extDep" : "KRK_kyle:*"
           },
         {
           "objectType" : "Inst",
@@ -3103,14 +3103,14 @@ dfgEntry {
                 "nodePortType" : "In",
                 "name" : "result",
                 "execPortType" : "Out",
-                "typeSpec" : "KRK_kyle_guide"
+                "typeSpec" : "KRK_kyle"
                 }
               ],
             "extDeps" : {
-              "KRK_kyle_guide" : "*"
+              "KRK_kyle" : "*"
               },
             "code" : "dfgEntry {
-  result = KRK_kyle_guide();
+  result = KRK_kyle();
 }
 "
             }
@@ -3125,7 +3125,7 @@ dfgEntry {
           ]
         }
       },
-    "Kraken.KLRigs.KRK_kyle_guide.SetClip" : {
+    "Kraken.KLRigs.KRK_kyle.SetClip" : {
       "objectType" : "Func",
       "title" : "SetClip",
       "ports" : [
@@ -3141,7 +3141,7 @@ dfgEntry {
           "nodePortType" : "IO",
           "name" : "rig",
           "execPortType" : "IO",
-          "typeSpec" : "KRK_kyle_guide"
+          "typeSpec" : "KRK_kyle"
           },
         {
           "objectType" : "Port",
@@ -3152,7 +3152,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {
-        "KRK_kyle_guide" : "*"
+        "KRK_kyle" : "*"
         },
       "code" : "dfgEntry {
   rig.setClip(clip);
