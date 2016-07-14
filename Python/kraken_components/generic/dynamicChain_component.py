@@ -30,12 +30,12 @@ from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 
-class FKChainComponent(BaseExampleComponent):
+class DynamicChainComponent(BaseExampleComponent):
     """FK Chain Base"""
 
-    def __init__(self, name='FKChainBase', parent=None):
+    def __init__(self, name='DynamicChainBase', parent=None):
 
-        super(FKChainComponent, self).__init__(name, parent)
+        super(DynamicChainComponent, self).__init__(name, parent)
 
         # ===========
         # Declare IO
@@ -56,13 +56,13 @@ class FKChainComponent(BaseExampleComponent):
         # Declare Output Attrs
 
 
-class FKChainComponentGuide(FKChainComponent):
+class DyanmicChainComponentGuide(DynamicChainComponent):
     """FKChain Component Guide"""
 
-    def __init__(self, name='FKChain', parent=None):
+    def __init__(self, name='DynamicChain', parent=None):
 
         Profiler.getInstance().push("Construct FKCHain Guide Component:" + name)
-        super(FKChainComponentGuide, self).__init__(name, parent)
+        super(DyanmicChainComponentGuide, self).__init__(name, parent)
 
         # =========
         # Controls
@@ -76,15 +76,8 @@ class FKChainComponentGuide(FKChainComponent):
         numJoints = self.numJoints.getValue()
         jointPositions = self.generateGuidePositions(numJoints)
 
-        for i in xrange(numJoints + 1):
-            if i == 0:
-                ctrlParent = self.ctrlCmpGrp
-            else:
-                ctrlParent = self.jointCtrls[i - 1]
-
-            newCtrl = Control('chain' + str(i + 1).zfill(2), parent=ctrlParent, shape="sphere")
-            newCtrl.scalePoints(Vec3(0.25, 0.25, 0.25))
-            self.jointCtrls.append(newCtrl)
+        for i in xrange(numJoints):
+            self.jointCtrls.append(Control('leg' + str(i + 1).zfill(2), parent=self.ctrlCmpGrp, shape="sphere"))
 
         data = {
            "location": "L",
@@ -108,7 +101,7 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
-        data = super(FKChainComponentGuide, self).saveData()
+        data = super(DyanmicChainComponentGuide, self).saveData()
 
         jointPositions = []
         for i in xrange(len(self.jointCtrls)):
@@ -130,7 +123,7 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
-        super(FKChainComponentGuide, self).loadData(data)
+        super(DyanmicChainComponentGuide, self).loadData(data)
 
         for i in xrange(len(data['jointPositions'])):
             self.jointCtrls[i].xfo.tr = data['jointPositions'][i]
@@ -146,15 +139,18 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
-        data = super(FKChainComponentGuide, self).getRigBuildData()
+        data = super(DyanmicChainComponentGuide, self).getRigBuildData()
 
         numJoints = self.numJoints.getValue()
 
+        # Calculate FW
+        toFirst = self.jointCtrls[0].xfo.tr.subtract(self.jointCtrls[1].xfo.tr).unit()
+        toTip = self.jointCtrls[0].xfo.tr.subtract(self.jointCtrls[-1].xfo.tr).unit()
+        fw = toTip.cross(toFirst).unit()
+
         # Calculate Xfos
-        fw = Vec3(0, 0, 1)
         boneXfos = []
         boneLengths = []
-
         for i in xrange(numJoints):
             boneVec = self.jointCtrls[i + 1].xfo.tr.subtract(self.jointCtrls[i].xfo.tr)
             boneLengths.append(boneVec.length())
@@ -192,22 +188,14 @@ class FKChainComponentGuide(FKChainComponent):
 
         if numJoints + 1 > len(self.jointCtrls):
             for i in xrange(len(self.jointCtrls), numJoints + 1):
-                if i == 0:
-                    ctrlParent = self.ctrlCmpGrp
-                else:
-                    ctrlParent = self.jointCtrls[i - 1]
-
-                newCtrl = Control('chain' + str(i + 1).zfill(2), parent=ctrlParent, shape="sphere")
-                newCtrl.scalePoints(Vec3(0.25, 0.25, 0.25))
-                # Generate thew new ctrl off the end of the existing one.
-                newCtrl.xfo = self.jointCtrls[i-1].xfo.multiply(Xfo(Vec3(10.0, 0.0, 0.0)))
+                newCtrl = Control('leg' + str(i + 1).zfill(2), parent=self.ctrlCmpGrp, shape="sphere")
                 self.jointCtrls.append(newCtrl)
 
         elif numJoints + 1 < len(self.jointCtrls):
             numExtraCtrls = len(self.jointCtrls) - (numJoints + 1)
             for i in xrange(numExtraCtrls):
                 extraCtrl = self.jointCtrls.pop()
-                extraCtrl.getParent().removeChild(extraCtrl)
+                self.ctrlCmpGrp.removeChild(extraCtrl)
 
         # Reset the control positions based on new number of joints
         jointPositions = self.generateGuidePositions(numJoints)
@@ -215,7 +203,6 @@ class FKChainComponentGuide(FKChainComponent):
             self.jointCtrls[i].xfo.tr = jointPositions[i]
 
         return True
-
 
     def generateGuidePositions(self, numJoints):
         """Generates the positions for the guide controls based on the number
@@ -229,9 +216,18 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
+        halfPi = math.pi / 2.0
+        step = halfPi / numJoints
+
+        xValues = []
+        yValues = []
+        for i in xrange(numJoints + 1):
+            xValues.append(math.cos((i * step) + halfPi) * -10)
+            yValues.append(math.sin((i * step) + halfPi) * 10)
+
         guidePositions = []
         for i in xrange(numJoints + 1):
-            guidePositions.append(Vec3(0, 0, i))
+            guidePositions.append(Vec3(xValues[i], yValues[i], 0.0))
 
         return guidePositions
 
@@ -259,16 +255,16 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
-        return FKChainComponentRig
+        return DyanmicChainComponentRig
 
 
-class FKChainComponentRig(FKChainComponent):
+class DyanmicChainComponentRig(DynamicChainComponent):
     """FK Chain Leg Rig"""
 
     def __init__(self, name='FKChain', parent=None):
 
         Profiler.getInstance().push("Construct FK Chain Rig Component:" + name)
-        super(FKChainComponentRig, self).__init__(name, parent)
+        super(DyanmicChainComponentRig, self).__init__(name, parent)
 
 
         # =========
@@ -282,6 +278,15 @@ class FKChainComponentRig(FKChainComponent):
         # Add Component Params to FK control
         chainSettingsAttrGrp = AttributeGroup("DisplayInfo_ChainSettings", parent=self.fkCtrls[0])
         chainDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=chainSettingsAttrGrp)
+        self.simulateInputAttr = BoolAttribute('simulate', value=False, parent=chainSettingsAttrGrp)
+        self.resetframeInputAttr = ScalarAttribute('resetframe', value=1, parent=chainSettingsAttrGrp)
+        self.frameInputAttr = ScalarAttribute('frame', value=0, parent=chainSettingsAttrGrp)
+        self.simBlendStartInputAttr = ScalarAttribute('simBlendStart', value=0.7, minValue=0.0, maxValue=1.0, parent=chainSettingsAttrGrp)
+        self.simBlendEndInputAttr = ScalarAttribute('simBlendEnd', value=1.0, minValue=0.0, maxValue=1.0, parent=chainSettingsAttrGrp)
+        self.dampeningInputAttr = ScalarAttribute('dampening', value=0.3, minValue=0.0, maxValue=1.0, parent=chainSettingsAttrGrp)
+        self.gravityInputAttr = ScalarAttribute('gravity', value=-9.8, parent=chainSettingsAttrGrp)
+        self.massStartInputAttr = ScalarAttribute('massStart', value=0.35, minValue=0.0, maxValue=10.0, parent=chainSettingsAttrGrp)
+        self.massEndInputAttr = ScalarAttribute('massEnd', value=1.0, minValue=0.0, maxValue=10.0, parent=chainSettingsAttrGrp)
 
         # Connect IO to controls
         self.drawDebugInputAttr.connect(chainDrawDebugInputAttr)
@@ -318,18 +323,28 @@ class FKChainComponentRig(FKChainComponent):
         # Add Splice Ops
         # ===============
         # Add Output Splice Op
-        self.outputsToControlsKLOp = KLOperator('fkChainOutputKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-        self.addOperator(self.outputsToControlsKLOp)
+        self.dynamicChainKLOp = KLOperator('dynamicChainKLOp', 'DynamicChainSolver', 'Kraken')
+        self.addOperator(self.dynamicChainKLOp)
 
         # Add Att Inputs
-        self.outputsToControlsKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.outputsToControlsKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.dynamicChainKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.dynamicChainKLOp.setInput('rigScale', self.rigScaleInputAttr)
+
+        self.dynamicChainKLOp.setInput('simulate', self.simulateInputAttr)
+        self.dynamicChainKLOp.setInput('resetframe', self.resetframeInputAttr)
+        self.dynamicChainKLOp.setInput('frame', self.frameInputAttr)
+        self.dynamicChainKLOp.setInput('simBlendStart', self.simBlendStartInputAttr)
+        self.dynamicChainKLOp.setInput('simBlendEnd', self.simBlendEndInputAttr)
+        self.dynamicChainKLOp.setInput('dampening', self.dampeningInputAttr)
+        self.dynamicChainKLOp.setInput('gravity', self.gravityInputAttr)
+        self.dynamicChainKLOp.setInput('massStart', self.massStartInputAttr)
+        self.dynamicChainKLOp.setInput('massEnd', self.massEndInputAttr)
 
         # Add Xfo Inputs
-        self.outputsToControlsKLOp.setInput('constrainers', self.fkCtrls)
+        self.dynamicChainKLOp.setInput('fkPose', self.fkCtrls)
 
         # Add Xfo Outputs
-        self.outputsToControlsKLOp.setOutput('constrainees', self.boneOutputsTgt)
+        self.dynamicChainKLOp.setOutput('animPose', self.boneOutputsTgt)
 
         # Add Deformer Splice Op
         self.deformersToOutputsKLOp = KLOperator('fkChainDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
@@ -419,7 +434,7 @@ class FKChainComponentRig(FKChainComponent):
 
         """
 
-        super(FKChainComponentRig, self).loadData( data )
+        super(DyanmicChainComponentRig, self).loadData( data )
 
         boneXfos = data['boneXfos']
         boneLengths = data['boneLengths']
@@ -470,7 +485,7 @@ class FKChainComponentRig(FKChainComponent):
         # Evaluate Splice Ops
         # ====================
         # Eval Outputs to Controls Op to evaulate with new outputs and controls
-        self.outputsToControlsKLOp.evaluate()
+        # self.dynamicChainKLOp.evaluate()
 
         # evaluate the output splice op to evaluate with new outputs and deformers
         self.deformersToOutputsKLOp.evaluate()
@@ -482,5 +497,5 @@ class FKChainComponentRig(FKChainComponent):
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
-ks.registerComponent(FKChainComponentGuide)
-ks.registerComponent(FKChainComponentRig)
+ks.registerComponent(DyanmicChainComponentGuide)
+ks.registerComponent(DyanmicChainComponentRig)
