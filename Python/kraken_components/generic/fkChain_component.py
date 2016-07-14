@@ -279,12 +279,12 @@ class FKChainComponentRig(FKChainComponent):
         self.fkCtrls = []
         self.setNumControls(4)
 
-        # Add Component Params to IK control
-        legSettingsAttrGrp = AttributeGroup("DisplayInfo_ChainSettings", parent=self.fkCtrls[0])
-        legdrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=legSettingsAttrGrp)
+        # Add Component Params to FK control
+        chainSettingsAttrGrp = AttributeGroup("DisplayInfo_ChainSettings", parent=self.fkCtrls[0])
+        chainDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=chainSettingsAttrGrp)
 
         # Connect IO to controls
-        self.drawDebugInputAttr.connect(legdrawDebugInputAttr)
+        self.drawDebugInputAttr.connect(chainDrawDebugInputAttr)
 
         # ==========
         # Deformers
