@@ -2,8 +2,42 @@ require Math;
 require Curves;
 require InlineDrawing;
 
+object OSS_NURBSCurveXfoKLSolver_WorkData {
+  Mat44 alignedControls[];
+  Xfo controlsXfo[];
+  Xfo alignedControlsXfo[];
+  Vec3 altNormals[];
+  Vec3 altTangents[];
+  Xfo xfos[];
+  Vec3 positions[];
+  Vec3 tangents[];
+  Scalar compression[];
+  NURBSCurve restCurve;
+  NURBSCurve posedCurve;
+};
+
+function OSS_NURBSCurveXfoKLSolver_WorkData() {
+  this.restCurve = NURBSCurve();
+  this.posedCurve = NURBSCurve();
+
+  this.restCurve.computeColors = false;
+  this.posedCurve.computeColors = false;
+}
+
+function OSS_NURBSCurveXfoKLSolver_WorkData.resize!(UInt32 inCount, UInt32 outCount) {
+  this.alignedControls.resize(inCount);
+  this.controlsXfo.resize(inCount);
+  this.alignedControlsXfo.resize(inCount);
+  this.altNormals.resize(outCount);
+  this.altTangents.resize(outCount);
+  this.xfos.resize(outCount);
+  this.positions.resize(outCount);
+  this.tangents.resize(outCount);
+  this.compression.resize(outCount);
+}
 
 object OSS_NURBSCurveXfoKLSolver : KrakenSolver {
+  Object workData;
 };
 
 function OSS_NURBSCurveXfoKLSolver()
@@ -19,6 +53,8 @@ function OSS_NURBSCurveXfoKLSolver()
   this.defaultValues["alignY"] = 2;
   this.defaultValues["alignZ"] = 3;
   this.defaultValues["altTangent"] = Vec3(1,0,0);
+
+  this.workData = OSS_NURBSCurveXfoKLSolver_WorkData();
 }
 
 // Return Arguments for Kraken
@@ -92,9 +128,11 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   if(controls.size() != controlsRest.size())
     throw("Error in OSS_NURBSCurveXfoKLSolver. The number of controls must match the number of controlsRest.\n\tcontrols.size:" + controls.size() + "\n\tcontrolsRest.size:" + controlsRest.size() + "\n\n\tcontrolAligns.size:" + controlAligns.size() + "\n\tparams.size:" + params.size());
 
-
   UInt32 inCount  = controls.size();
   UInt32 outCount = params.size();
+
+  OSS_NURBSCurveXfoKLSolver_WorkData wd = this.workData;
+  wd.resize(inCount, outCount);
 
   Xfo posedXfo;
   Xfo restXfo;
@@ -102,79 +140,61 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   Scalar keepCurveLen = 0;
   outputs.resize(outCount);
 
-  /// Align Controls according to main Curve Direction, given the controlAligns Input array
-  Mat44 alignedControls[];
-  alignedControls.resize(inCount);
-  Mat44 alignedControlsRest[];
-  alignedControlsRest.resize(inCount);
-  for (UInt32 i =0; i<inCount; i++) {
-    alignedControls[i] = controls[i];
-    alignedControls[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
-    alignedControlsRest[i] = controlsRest[i];
-    alignedControlsRest[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
+  NURBSCurve restCurve = wd.restCurve;
+  NURBSCurve posedCurve = wd.posedCurve;
+
+  // only recompute the rest curve if the input control 
+  // count change. this assumes that the rest curve is static
+  if(restCurve.cmats.size() != inCount) {
+    Mat44 alignedControlsRest[](inCount);
+    for (UInt32 i =0; i<inCount; i++) {
+      alignedControlsRest[i] = controlsRest[i];
+      alignedControlsRest[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
+    }
+    restCurve.initiate(alignedControlsRest, degree);
   }
 
-  NURBSCurve restCurve = NURBSCurve();
-  NURBSCurve posedCurve = NURBSCurve();
+  /// Align Controls according to main Curve Direction, given the controlAligns Input array
+  for (UInt32 i =0; i<inCount; i++) {
+    wd.alignedControls[i] = controls[i];
+    wd.alignedControls[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
+  }
 
-  restCurve.initiate(alignedControlsRest, degree);
-  posedCurve.initiate(alignedControls, degree);
+  posedCurve.initiate(wd.alignedControls, degree);
+
   Ref <NURBSCurve> posedCurveRef = posedCurve;
   Ref <NURBSCurve> restCurveRef = restCurve;
-  // positions = restCurve.positions.values;
-  // colors  = restCurve.colors.values;
-  // normals = restCurve.normals.values;
 
-  Vec3 altNormals[];
-  Vec3 altTangents[];
-  Xfo xfos[];
-  Vec3 positions[];
-  Vec3 tangents[];
-  //Vec3 lineTangents[];
-  Scalar compression[];
-  altNormals.resize(outCount);
-  altTangents.resize(outCount);
-  xfos.resize(outCount);
-  positions.resize(outCount);
-  compression.resize(outCount);
-  outputs.resize(outCount);
-  tangents.resize(outCount);
   //lineTangents.resize(outCount);
   Xfo parentXfo;
   parentXfo.setFromMat44(parent);
   Quat parentRotation = parentXfo.ori;
   Vec3 localAltTangent = parentRotation.rotateVector(altTangent);
 
-  Xfo controlsXfo[];
-  Xfo alignedControlsXfo[];
-  controlsXfo.resize(inCount);
-  alignedControlsXfo.resize(inCount);
   for (UInt32 i =0; i<inCount; i++) {
-      controlsXfo[i].setFromMat44(controls[i]);
-      alignedControlsXfo[i].setFromMat44(alignedControls[i]);
+    wd.controlsXfo[i].setFromMat44(controls[i]);
+    wd.alignedControlsXfo[i].setFromMat44(wd.alignedControls[i]);
   }
 
   for (UInt32 i =0; i<outCount; i++) {
-    positions[i]   = posedCurveRef.getPoint(params[i], keepArcLength, keepCurveLen);
-    tangents[i] = posedCurveRef.getTangent(params[i], true, keepArcLength, keepCurveLen);
+    wd.positions[i]   = posedCurveRef.getPoint(params[i], keepArcLength, keepCurveLen);
+    wd.tangents[i] = posedCurveRef.getTangent(params[i], true, keepArcLength, keepCurveLen);
     // lineTangents[i] = positions[i] + tangents[i];
-    altTangents[i] = localAltTangent;
-    altNormals[i]  = parent.translation() - positions[i];
-    __evalXfosTask(i, xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, altTangents, altNormals);
-    __evalCompressionTask(i, compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
-    Scalar localCompression = Scalar(Math_linearInterpolate(1, compression[i], compressionAmt));
-    xfos[i].sc = xfos[i].sc*Vec3(1,localCompression,localCompression);
-    xfos[i].align(alignX,alignY,alignZ);
-    outputs[i] = xfos[i].toMat44();
+    wd.altTangents[i] = localAltTangent;
+    wd.altNormals[i]  = parent.translation() - wd.positions[i];
+    __evalXfosTask(i, wd.xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, wd.altTangents, wd.altNormals);
+    __evalCompressionTask(i, wd.compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
+    Scalar localCompression = Scalar(Math_linearInterpolate(1, wd.compression[i], compressionAmt));
+    wd.xfos[i].sc = wd.xfos[i].sc * Vec3(1,localCompression,localCompression);
+    wd.xfos[i].align(alignX,alignY,alignZ);
+    outputs[i] = wd.xfos[i].toMat44();
   }
 
   // Set debugging visibility.
-  this.handle =  DrawingHandle();
-  InlineTransform root = this.handle.getRootTransform();
   if(drawDebug) {
     if(!this.handle)
       this.handle = DrawingHandle();
     // drawLines(root, 'Tangents', positions, lineTangents, Color(0.5, 0.0, 0,1));
-    this.handle.drawAxesInstances('controls', xfos, dummyResult, instance);
+    this.handle.drawAxesInstances('controls', wd.xfos, dummyResult, instance);
   }
 }
