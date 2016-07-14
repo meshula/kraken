@@ -1,0 +1,18 @@
+{
+    "bodySkin"        : "tx_kyleBody_D.png",
+    "headSkin"        : "tx_kyleHead_D.png",
+    "clothesPants"    : "tx_kylePants_D.png",
+    "clothesSlippers" : "tx_kyleSlippers_D.png",
+    "clothesShirt"    : "tx_kyleShirt_D.png",
+    "browsHair"       : "",
+    "hairScalp"       : "tx_kyleHair_D.png",
+    "L_eyeSclera"     : "tx_kyleLeye_D.png",
+    "L_eyePupil"      : "tx_kyleLeye_D.png",
+    "R_eyeSclera"     : "tx_kyleReye_D.png",
+    "R_eyePupil"      : "tx_kyleReye_D.png",
+    "M_hat"           : "tx_kyleHat_D.png",
+    "lashesHair"      : "",
+    "nails"           : "",
+    "tongue"          : "tx_kyleTongue_D.png",
+    "teeth"           : "tx_kyleLoteeth_D.png"
+}
