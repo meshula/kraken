@@ -1,0 +1,51 @@
+require Math;
+require Kraken;
+
+object OSS_AimKLSolver : KrakenSolver {
+};
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_AimKLSolver.getArguments() {
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('ik', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('fk', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('up', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('position', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('blend', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('upAxis', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('atAxis', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('result', 'Out', 'Mat44'));
+  return args;
+}
+
+// Solve
+function OSS_AimKLSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Mat44 ik,
+  in Mat44 fk,
+  in Mat44 up,
+  in Mat44 position,
+  in Scalar blend,
+  in UInt32 upAxis,
+  in UInt32 atAxis,
+  out Mat44 result,
+)
+{
+  Quat aimOri, restOri;
+  Vec3 restSc, restTr;
+  Mat33 restOriMat33;
+  position.decompose(restSc, restOriMat33, restTr);
+  restOri = restOri.setFromMat33(restOriMat33);
+  
+  Vec3 direction = ik.translation()- position.translation();
+  Vec3 upvector  = up.translation()- position.translation();
+  aimOri.setFromDirectionAndUpvector(direction, upvector);
+
+  Xfo resultXfo;
+  resultXfo.tr = position.translation();
+  resultXfo.ori = aimOri.sphericalLinearInterpolate(restOri, blend);
+  result = resultXfo.toMat44();
+}
+

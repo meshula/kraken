@@ -8,6 +8,7 @@
     "OSS_TwoBoneIKSolver.kl",
     "OSS_HierBlendSolver.kl",
     "OSS_NURBSCurveXfoKLSolver.kl",
-    "OSS_RemapScalarValueSolver.kl"
+    "OSS_RemapScalarValueSolver.kl",
+    "OSS_AimKLSolver.kl"
   ]
 }

@@ -20,9 +20,7 @@ from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
 from kraken.core.objects.locator import Locator
 
-
 from kraken.core.objects.operators.kl_operator import KLOperator
-from kraken.core.objects.operators.canvas_operator import CanvasOperator
 
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
@@ -344,22 +342,22 @@ class OSSEyesComponentRig(OSSEyesComponent):
         # Add Fabric Ops
         # ===============
         # Add Spine Canvas Op
-        self.EyeAutoAimCanvasOp = CanvasOperator('EyeAutoAimCanvasOp', 'OSS.Solvers.EyeSolver')
-        self.addOperator(self.EyeAutoAimCanvasOp)
+        self.EyeAutoAimKLOp = KLOperator('EyeAutoAimKLOp', 'OSS_AimKLSolver', 'OSS_Kraken')
+        self.addOperator(self.EyeAutoAimKLOp)
 
         # Add Att Inputs
-        self.EyeAutoAimCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.EyeAutoAimCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.EyeAutoAimCanvasOp.setInput('blend',  0)
-        self.EyeAutoAimCanvasOp.setInput('atAxis',  0)
-        self.EyeAutoAimCanvasOp.setInput('upAxis',  5)
+        self.EyeAutoAimKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.EyeAutoAimKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.EyeAutoAimKLOp.setInput('blend',  0)
+        self.EyeAutoAimKLOp.setInput('atAxis',  0)
+        self.EyeAutoAimKLOp.setInput('upAxis',  5)
 
-        self.EyeAutoAimCanvasOp.setOutput('result', self.eyeTrackerIKSpace)
-        self.EyeAutoAimCanvasOp.setInput('position', self.eyeTracker)
-        self.EyeAutoAimCanvasOp.setInput('ik', self.eyesCtrlSpace)
-        self.EyeAutoAimCanvasOp.setInput('fk', self.eyeTracker)
+        self.EyeAutoAimKLOp.setOutput('result', self.eyeTrackerIKSpace)
+        self.EyeAutoAimKLOp.setInput('position', self.eyeTracker)
+        self.EyeAutoAimKLOp.setInput('ik', self.eyesCtrlSpace)
+        self.EyeAutoAimKLOp.setInput('fk', self.eyeTracker)
         # Add Xfo Inputs
-        self.EyeAutoAimCanvasOp.setInput('up', self.eyeTrackerUpSpace)
+        self.EyeAutoAimKLOp.setInput('up', self.eyeTrackerUpSpace)
         # temp now until handles are swapped
 
         Profiler.getInstance().pop()
@@ -451,22 +449,20 @@ class OSSEyesComponentRig(OSSEyesComponent):
             # Add Fabric Ops
             # ===============
             # Add Spine Canvas Op
-            self.EyeIkFkBlendCanvasOp = CanvasOperator(handleName + 'EyeIkFkBlendCanvasOp', 'OSS.Solvers.EyeSolver')
-            self.addOperator(self.EyeIkFkBlendCanvasOp)
+            self.EyeIkFkBlendKLOp = KLOperator('EyeIkFkBlendKLOp'+"_"+handleName, 'OSS_AimKLSolver', 'OSS_Kraken')
+            self.addOperator(self.EyeIkFkBlendKLOp)
 
             # Add Att Inputs
-            self.EyeIkFkBlendCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
-            self.EyeIkFkBlendCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-            self.EyeIkFkBlendCanvasOp.setInput('blend',  upVSpaceBlendInputAttr)
-            self.EyeIkFkBlendCanvasOp.setInput('position', fkCtrl)
-            self.EyeIkFkBlendCanvasOp.setInput('atAxis',  0)
-            self.EyeIkFkBlendCanvasOp.setInput('upAxis',  2)
+            self.EyeIkFkBlendKLOp.setInput('blend',  upVSpaceBlendInputAttr)
+            self.EyeIkFkBlendKLOp.setInput('position', fkCtrl)
+            self.EyeIkFkBlendKLOp.setInput('atAxis',  0)
+            self.EyeIkFkBlendKLOp.setInput('upAxis',  2)
 
-            self.EyeIkFkBlendCanvasOp.setOutput('result', newLoc)
-            self.EyeIkFkBlendCanvasOp.setInput('ik', ikCtrl)
-            self.EyeIkFkBlendCanvasOp.setInput('fk', fkCtrl)
+            self.EyeIkFkBlendKLOp.setOutput('result', newLoc)
+            self.EyeIkFkBlendKLOp.setInput('ik', ikCtrl)
+            self.EyeIkFkBlendKLOp.setInput('fk', fkCtrl)
             # Add Xfo Inputs
-            self.EyeIkFkBlendCanvasOp.setInput('up', upCtrlSpace)
+            self.EyeIkFkBlendKLOp.setInput('up', upCtrlSpace)
             # temp now until handles are swapped
 
 

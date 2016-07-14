@@ -264,6 +264,11 @@
       "source": "main:M.rigScale", 
       "target": "headNeck:M.rigScale", 
       "targetIndex": 0
+    }, 
+    {
+      "source": "headNeck:M.head", 
+      "target": "eyes:M.parentSpace", 
+      "targetIndex": 0
     }
   ], 
   "name": "kyle", 
@@ -426,10 +431,10 @@
         }, 
         "__mathObjectClass__": "Xfo", 
         "tr": {
-          "y": 10843.6943359375, 
-          "x": 38.00579833984375, 
+          "y": 11343.73828125, 
+          "x": 39.268959045410156, 
           "__mathObjectClass__": "Vec3", 
-          "z": -157.8230743408203
+          "z": -165.2552490234375
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
@@ -458,7 +463,7 @@
           "y": 100.0007095336914, 
           "x": 8.295974731445312, 
           "__mathObjectClass__": "Vec3", 
-          "z": -1.4900331497192383
+          "z": -1.190612554550171
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
@@ -516,16 +521,16 @@
         }, 
         "__mathObjectClass__": "Xfo", 
         "tr": {
-          "y": 10943.703125, 
-          "x": 15.016273498535156, 
+          "y": 11443.7470703125, 
+          "x": -15.268905639648438, 
           "__mathObjectClass__": "Vec3", 
-          "z": 22.558025360107422
+          "z": -24.044452667236328
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
-          "w": -1.0, 
+          "w": 6.123234262925839e-17, 
           "v": {
-            "y": 1.2246468525851679e-16, 
+            "y": 1.0, 
             "x": 0.0, 
             "__mathObjectClass__": "Vec3", 
             "z": 0.0
@@ -548,7 +553,7 @@
           "y": 100.0007095336914, 
           "x": -8.295974731445312, 
           "__mathObjectClass__": "Vec3", 
-          "z": -1.4900331497192383
+          "z": -1.190612554550171
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
@@ -665,7 +670,7 @@
         }, 
         "__mathObjectClass__": "Xfo", 
         "tr": {
-          "y": 36.039485931396484, 
+          "y": 35.765899658203125, 
           "x": 4.3470001220703125, 
           "__mathObjectClass__": "Vec3", 
           "z": -0.15367013216018677
@@ -1194,7 +1199,7 @@
         }, 
         "__mathObjectClass__": "Xfo", 
         "tr": {
-          "y": 36.039485931396484, 
+          "y": 35.765899658203125, 
           "x": -4.3470001220703125, 
           "__mathObjectClass__": "Vec3", 
           "z": -0.15367013216018677
@@ -1243,7 +1248,7 @@
           "y": 100.0007095336914, 
           "x": -8.295974731445312, 
           "__mathObjectClass__": "Vec3", 
-          "z": -1.4900331497192383
+          "z": -1.190612554550171
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
@@ -1292,9 +1297,9 @@
         "__mathObjectClass__": "Xfo", 
         "tr": {
           "y": 100.0007095336914, 
-          "x": -29.92010498046875, 
+          "x": -28.986919403076172, 
           "__mathObjectClass__": "Vec3", 
-          "z": -1.038962721824646
+          "z": -1.3793729543685913
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
@@ -1340,7 +1345,7 @@
           "y": 100.0007095336914, 
           "x": 8.295974731445312, 
           "__mathObjectClass__": "Vec3", 
-          "z": -1.4900331497192383
+          "z": -1.190612554550171
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
@@ -1389,9 +1394,9 @@
         "__mathObjectClass__": "Xfo", 
         "tr": {
           "y": 100.0007095336914, 
-          "x": 29.92010498046875, 
+          "x": 28.985593795776367, 
           "__mathObjectClass__": "Vec3", 
-          "z": -1.038962721824646
+          "z": -1.3793729543685913
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
@@ -2868,10 +2873,10 @@
       }, 
       "name": "headNeck", 
       "headHandlePosition": {
-        "y": 114.32001495361328, 
+        "y": 115.87589263916016, 
         "x": 0.0, 
         "__mathObjectClass__": "Vec3", 
-        "z": 1.3210500478744507
+        "z": 2.3429999351501465
       }, 
       "ShapeVisibility": false, 
       "neckHandlePosition": {
@@ -2898,6 +2903,175 @@
       "location": "M", 
       "globalComponentCtrlSize": 5.0, 
       "class": "OSS.OSS_headNeck_component.OSSHeadNeckComponentGuide", 
+      "mocap": false
+    }, 
+    {
+      "eyesXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 122.14315795898438, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 9.233293533325195
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "graphPos": {
+        "y": -372.4679260253906, 
+        "x": -728.17138671875, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "EyesNames": "L_Eye R_Eye", 
+      "name": "eyes", 
+      "ShapeVisibility": false, 
+      "eyesEndXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 122.14315795898438, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 29.357900619506836
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "visibility": true, 
+      "SingleDeformerGroup": true, 
+      "location": "M", 
+      "globalComponentCtrlSize": 3.0, 
+      "EyeRadius": 5.0, 
+      "eyesCtrlsXfos": [
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 122.13600158691406, 
+            "x": 5.000560760498047, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 9.13752555847168
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 122.13600158691406, 
+            "x": 5.000560760498047, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 9.13752555847168
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 122.13600158691406, 
+            "x": -5.002478122711182, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 9.13752555847168
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 122.13600158691406, 
+            "x": -5.002478122711182, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 9.13752555847168
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }
+      ], 
+      "class": "OSS.OSS_eyes_component.OSSEyesComponentGuide", 
       "mocap": false
     }
   ], 

@@ -197,10 +197,8 @@ function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
     // special case: if we have the standard resolution we can use const loops
     // which means the compiler is going to unroll them and remove the counter compute
 
-    for (UInt32 i=0;i<NURBSCurve_StandardResolution;i++)
-      __evalPositionsTask(i, this.positions.values, this, keepArcLen, keepCurveLen);
-
     for (UInt32 i=0;i<NURBSCurve_StandardResolution;i++) {
+      __evalPositionsTask(i, this.positions.values, this, keepArcLen, keepCurveLen);
       __evalDistancesTask(i, this.distances.values, this);
       __evalTangentsTask(i, this.normals.values, this, keepArcLen, keepCurveLen);
     }
@@ -211,10 +209,8 @@ function NURBSCurve.initiate!(Mat44 cMats[], UInt32 degree) {
     }
 
   } else {
-
-    for (UInt32 i=0;i<this.positions.size();i++)
-      __evalPositionsTask(i, this.positions.values, this, keepArcLen, keepCurveLen);
     for (UInt32 i=0;i<this.positions.size();i++) {
+      __evalPositionsTask(i, this.positions.values, this, keepArcLen, keepCurveLen);
       __evalDistancesTask(i, this.distances.values, this);
       __evalTangentsTask(i, this.normals.values, this, keepArcLen, keepCurveLen);
     }

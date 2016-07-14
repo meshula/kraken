@@ -33,4 +33,4 @@ set PYTHONPATH=%FABRIC_DIR%\Python\2.7;%KRAKEN_PATH%\Python;%PYTHONPATH%;
 
 cd /d %KRAKEN_PATH%
 
-cmd /k kl.exe %KRAKEN_PATH%/Samples/OSS/kyle/test.kl
+cmd /k kl.exe %KRAKEN_PATH%/Samples/OSS/kyle/test.kl --opt --unguarded
