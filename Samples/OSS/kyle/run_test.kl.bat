@@ -1,3 +1,5 @@
+set FABRIC_kyle_DIR=%~dp0
+
 set FABRIC_LOG_LEVEL=0
 
 set FABRIC_DIR=Z:\dist\fabric\releases\FabricEngine-2.3.0-auto-2016052610-Windows-x86_64
@@ -33,4 +35,4 @@ set PYTHONPATH=%FABRIC_DIR%\Python\2.7;%KRAKEN_PATH%\Python;%PYTHONPATH%;
 
 cd /d %KRAKEN_PATH%
 
-cmd /k kl.exe %KRAKEN_PATH%/Samples/OSS/kyle/test.kl --opt --unguarded
+cmd /k kl.exe %FABRIC_kyle_DIR%/test.kl --opt --unguarded
