@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "1000",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9503083825111389,\n    \"y\" : 0.06205688789486885,\n    \"z\" : -0.3050728142261505,\n    \"t\" : -63.64676666259766\n    },\n  \"row1\" : {\n    \"x\" : -7.301588311747764e-07,\n    \"y\" : 0.9798259139060974,\n    \"z\" : 0.199357271194458,\n    \"t\" : 109.9114074707031\n    },\n  \"row2\" : {\n    \"x\" : 0.3113186061382294,\n    \"y\" : -0.1894280016422272,\n    \"z\" : 0.9312432408332825,\n    \"t\" : 170.1830444335938\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9184805750846863,\n    \"y\" : 0.1246525794267654,\n    \"z\" : -0.3753134608268738,\n    \"t\" : -69.51256561279297\n    },\n  \"row1\" : {\n    \"x\" : -8.046646939874336e-07,\n    \"y\" : 0.9489158987998962,\n    \"z\" : 0.315235435962677,\n    \"t\" : 153.7477264404297\n    },\n  \"row2\" : {\n    \"x\" : 0.395472526550293,\n    \"y\" : -0.2895022928714752,\n    \"z\" : 0.8716619610786438,\n    \"t\" : 200.8385314941406\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "101",
-    "uiGraphZoom" : "{\n  \"value\" : 0.6815608143806458\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.9519861340522766\n  }",
     "timeline_loopMode" : "1",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "228.1782836914063",
-    "timeline_current" : "312",
+    "camera_focalDistance" : "234.3107452392578",
+    "timeline_current" : "333",
     "timeline_end" : "461",
-    "uiGraphPan" : "{\n  \"x\" : 1410.942504882813,\n  \"y\" : 456.246826171875\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 103.2223205566406,\n  \"y\" : 193.5945587158203\n  }"
     },
   "title" : "",
   "ports" : [
@@ -218,7 +218,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":942.027391434,\"y\":-161.824316025}"
+        "uiGraphPos" : "{\"x\":965.242675781,\"y\":-184.792749882}"
         },
       "name" : "EmptyDrawingHandle",
       "ports" : [
@@ -239,7 +239,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":926.199323654,\"y\":62.9262418747}",
+        "uiGraphPos" : "{\"x\":949.414550781,\"y\":39.957757473}",
         "uiCollapsedState" : "2"
         },
       "name" : "GetDeformedMesh",
@@ -323,7 +323,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1127.0911665,\"y\":63.4432678223}",
+        "uiGraphPos" : "{\"x\":1150.30615234,\"y\":40.4747862816}",
         "uiCollapsedState" : "2"
         },
       "name" : "Cache_2",
@@ -543,7 +543,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1561.00881672,\"y\":45.7622718811}",
+        "uiGraphPos" : "{\"x\":1584.22375488,\"y\":22.7937960625}",
         "uiCollapsedState" : "1"
         },
       "name" : "DrawAxesInstances_1",
@@ -588,7 +588,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":947.009279251,\"y\":-96.37037658689999}"
+        "uiGraphPos" : "{\"x\":970.224487305,\"y\":-119.338846684}"
         },
       "name" : "GetJointXfos_1",
       "ports" : [
@@ -753,7 +753,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":950.750372887,\"y\":-18.5763711929}"
+        "uiGraphPos" : "{\"x\":973.9655761720001,\"y\":-41.5448517799}"
         },
       "name" : "GetAllXfos_1",
       "ports" : [
@@ -1687,7 +1687,7 @@ dfgEntry {
       "objectType" : "User",
       "metadata" : {
         "uiTitle" : "Debug Drawing",
-        "uiGraphPos" : "{\"x\":881.663754463,\"y\":-194.448575974}",
+        "uiGraphPos" : "{\"x\":904.87902832,\"y\":-217.41701746}",
         "uiNodeColor" : "{\n  \"r\" : 143,\n  \"g\" : 133,\n  \"b\" : 119\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiGraphSize" : "{\"w\":1284.623168945313,\"h\":579.204833984375}"
@@ -1710,7 +1710,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1786.68742847,\"y\":17.3126068115}",
+        "uiGraphPos" : "{\"x\":1809.90234375,\"y\":-5.65587091446}",
         "uiCollapsedState" : "1"
         },
       "name" : "If_1",
@@ -1747,7 +1747,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1294.25438976,\"y\":242.14688015}",
+        "uiGraphPos" : "{\"x\":1317.46936035,\"y\":219.178441525}",
         "uiCollapsedState" : "1"
         },
       "name" : "DrawAxesInstances_2",
@@ -1792,7 +1792,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":931.196359634,\"y\":305.780511856}"
+        "uiGraphPos" : "{\"x\":954.411621094,\"y\":282.81194067}"
         },
       "name" : "EmptyDrawingHandle_2",
       "ports" : [
@@ -1813,7 +1813,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1595.99451351,\"y\":195.195158958}"
+        "uiGraphPos" : "{\"x\":1619.20947266,\"y\":172.226689816}"
         },
       "name" : "If_2",
       "ports" : [
@@ -1849,117 +1849,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1288.70799065,\"y\":64.12931919099999}",
-        "uiCollapsedState" : "1"
-        },
-      "name" : "DrawPolygonMeshArray_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "this"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "String" : "Meshes"
-            },
-          "name" : "name"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 1,
-              "g" : 1,
-              "b" : 1,
-              "a" : 1
-              }
-            },
-          "name" : "color"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "specular"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "specFactor"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "masters"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "transforms"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Index[]" : [
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-              ]
-            },
-          "name" : "indices"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Boolean" : false
-            },
-          "name" : "wireFrame"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Boolean" : false
-            },
-          "name" : "doubleSided"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "dummyResult"
-          },
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "instance"
-          }
-        ],
-      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawPolygonMeshArray",
-      "presetGUID" : "C5D3967A103CAE41AF99EA35D2D636A8"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":923.827035904,\"y\":103.249763489}"
+        "uiGraphPos" : "{\"x\":947.0422363279999,\"y\":80.2812933922}"
         },
       "name" : "GetDeformedMeshes",
       "ports" : [
@@ -2066,7 +1956,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1124.42257786,\"y\":116.912227631}",
+        "uiGraphPos" : "{\"x\":1160.03930664,\"y\":82.3685736656}",
         "uiCollapsedState" : "2"
         },
       "name" : "Cache_1",
@@ -2622,7 +2512,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1932.45554352,\"y\":88.0847730637}",
+        "uiGraphPos" : "{\"x\":1955.67016602,\"y\":65.11629629140001}",
         "uiCollapsedState" : "1"
         },
       "name" : "DrawAxes_1",
@@ -2734,10 +2624,10 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1517.02222395,\"y\":-421.45462203}",
+        "uiGraphPos" : "{\"x\":1394.38989258,\"y\":-63.2249016762}",
         "uiCollapsedState" : "0"
         },
-      "name" : "GetTimeRange_1",
+      "name" : "DrawTexturedKyle",
       "ports" : [
         {
           "objectType" : "InstPort",
@@ -2746,43 +2636,330 @@ dfgEntry {
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
+          "nodePortType" : "IO",
           "name" : "this"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
-          }
-        ],
-      "executable" : "Fabric.Exts.AlembicWrapper.AlembicArchiveReader.GetTimeRange",
-      "presetGUID" : "2EDED56E6014E9959C7916554898C57A"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":-1728.30170751,\"y\":-453.73350811}"
-        },
-      "name" : "AlembicArchiveReader_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "nodePortType" : "In",
+          "name" : "character"
           },
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
-          "name" : "fileName"
+          "defaultValues" : {
+            "String" : "Meshes"
+            },
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "${FABRIC_kyle_DIR}/tx/textures.json"
+            },
+          "name" : "texturePath"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "specular"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "specFactor"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "masters"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "transforms"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Index[]" : [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+              ]
+            },
+          "name" : "indices"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "name" : "wireFrame"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "name" : "doubleSided"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Color" : {
+              "r" : 0.6235294342041016,
+              "g" : 0.6235294342041016,
+              "b" : 0.6235294342041016,
+              "a" : 1
+              }
+            },
+          "name" : "ambient"
           },
         {
           "objectType" : "InstPort",
           "nodePortType" : "Out",
-          "name" : "result"
+          "name" : "dummyResult"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "instance"
           }
         ],
-      "executable" : "Fabric.Exts.AlembicWrapper.AlembicArchiveReader.AlembicArchiveReader",
-      "presetGUID" : "C8DDFC3A209DF3011F4CF84D2103E928"
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+          "uiTooltip" : "Helper function for the InlineDrawing DrawingHandle data type\nto draw a list of objects given an index table and a list of\ntransforms.\n\nSupported types:\n  this: DrawingHandle\n  name: String\n  color: Color\n  specular: Color\n  specFactor: Float32\n  masters: PolygonMesh[]\n  transforms: Xfo[]\n  indices: Index[]\n  wireFrame: Boolean\n  doubleSided: Boolean\n  dummyResult: Vec3\n  instance: InlineInstance\n"
+          },
+        "title" : "DrawPolygonMeshArray",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "DrawingHandle"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "character",
+            "execPortType" : "In",
+            "typeSpec" : "FbxCharacter"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "name",
+            "execPortType" : "In",
+            "typeSpec" : "String"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "texturePath",
+            "execPortType" : "In",
+            "typeSpec" : "String"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
+              },
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Color" : {
+                "r" : 0.2000000029802322,
+                "g" : 0.2000000029802322,
+                "b" : 0.2000000029802322,
+                "a" : 1
+                }
+              },
+            "name" : "specular",
+            "execPortType" : "In",
+            "typeSpec" : "Color"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Float32" : 16
+              },
+            "name" : "specFactor",
+            "execPortType" : "In",
+            "typeSpec" : "Float32"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+              },
+            "nodePortType" : "Out",
+            "name" : "masters",
+            "execPortType" : "In",
+            "typeSpec" : "PolygonMesh[]"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+              },
+            "nodePortType" : "Out",
+            "name" : "transforms",
+            "execPortType" : "In",
+            "typeSpec" : "Xfo[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "indices",
+            "execPortType" : "In",
+            "typeSpec" : "Index[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "wireFrame",
+            "execPortType" : "In",
+            "typeSpec" : "Boolean"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "doubleSided",
+            "execPortType" : "In",
+            "typeSpec" : "Boolean"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "ambient",
+            "execPortType" : "In",
+            "typeSpec" : "Color"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+              },
+            "nodePortType" : "In",
+            "name" : "dummyResult",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "instance",
+            "execPortType" : "Out",
+            "typeSpec" : "InlineInstance"
+            }
+          ],
+        "extDeps" : {
+          "InlineDrawing" : "*",
+          "FabricInterfaces" : "*",
+          "JSON" : "*",
+          "FileIO" : "*",
+          "FbxHelpers" : "*"
+          },
+        "origPresetGUID" : "C5D3967A103CAE41AF99EA35D2D636A8",
+        "code" : "require InlineDrawing;
+require JSON;
+require FileIO;
+require FbxHelpers;
+
+dfgEntry {
+
+  FilePath path = texturePath;
+  path = path.expandEnvVars();
+  String finalPath = path.string();
+  
+  TextReader reader(finalPath);
+  String json = reader.readAll();
+  
+  JSONDoc doc();
+  doc.parse(json);
+
+  Xfo transformsPerIndex[Index][];
+  if(indices.size() == 0) {
+    for(Size i=0;i<masters.size();i++) {
+      Xfo xfos[](1);
+      if(i < transforms.size())
+        xfos[0] = transforms[i];
+      transformsPerIndex[i] = xfos;
+    }
+   } else {
+    for(Size i=0;i<indices.size();i++) {
+      Index idx = indices[i];
+      if(i >= transforms.size())
+        break;
+      Xfo xfos[];
+      xfos = transformsPerIndex.get(idx, xfos);
+      xfos.push(transforms[i]);
+      transformsPerIndex[idx] = xfos;
+    }
+  }
+
+  /// draw each one of the groups
+  for(idx in transformsPerIndex) {
+
+    if(idx >= masters.size())
+      continue;
+
+    Xfo xfos[] = transformsPerIndex[idx];
+    String uniqueName = name;
+    PolygonMesh master = masters[idx];
+    if(master.getDebugName())
+      uniqueName += '_' + master.getDebugName();
+      
+    String meshName = character.skinMeshIdentifiers[idx].name;
+      
+    String texPath = '';
+    if(doc.root.has(meshName))
+      texPath = 
+      doc.root.getString(meshName);
+    if(texPath) {
+      path = '${FABRIC_kyle_DIR}/tx/'+texPath;
+      path = path.expandEnvVars();
+      texPath = path.string();
+    }
+    
+    // FE-6278
+    // Be sure we add the uid in the name so uniqueName is really unique.
+    uniqueName += '_' + master.uid();
+    
+    if(texPath)
+      this.drawTexturedPolygonMeshInstances(uniqueName, texPath, specular, specFactor, ambient, xfos, master, wireFrame, doubleSided, dummyResult, instance);
+    else
+      this.drawPolygonMeshInstances(uniqueName, Color(0.8, 0.8, 0.8), specular, specFactor, xfos, master, wireFrame, doubleSided, dummyResult, instance);
+  }
+}
+"
+        }
       }
     ],
   "connections" : {
@@ -2796,8 +2973,7 @@ dfgEntry {
       "If_2.cond"
       ],
     "AlembicPath" : [
-      "AlembicAnim.filePath",
-      "AlembicArchiveReader_1.fileName"
+      "AlembicAnim.filePath"
       ],
     "Walk_Blend" : [
       "AddClip_1.weight"
@@ -2821,10 +2997,11 @@ dfgEntry {
       "KrakenKLRigPoseAdaptor_1.character"
       ],
     "Cache.value" : [
-      "ToCharacter.this"
+      "ToCharacter.this",
+      "DrawTexturedKyle.character"
       ],
     "EmptyDrawingHandle.handle" : [
-      "DrawPolygonMeshArray_1.this"
+      "DrawTexturedKyle.this"
       ],
     "GetDeformedMesh.result" : [
       "Cache_2.value"
@@ -2896,21 +3073,17 @@ dfgEntry {
     "If_2.result" : [
       "result"
       ],
-    "DrawPolygonMeshArray_1.this" : [
-      "If_1.if_false",
-      "DrawAxesInstances_1.this"
-      ],
     "GetDeformedMeshes.meshes" : [
       "Cache_1.value"
       ],
     "GetDeformedMeshes.indices" : [
-      "DrawPolygonMeshArray_1.indices"
+      "DrawTexturedKyle.indices"
       ],
     "GetDeformedMeshes.xfos" : [
-      "DrawPolygonMeshArray_1.transforms"
+      "DrawTexturedKyle.transforms"
       ],
     "Cache_1.value" : [
-      "DrawPolygonMeshArray_1.masters"
+      "DrawTexturedKyle.masters"
       ],
     "loop.result" : [
       "FrameToTime_1.frame"
@@ -2943,11 +3116,8 @@ dfgEntry {
     "AddClip_3.this" : [
       "Convert_2.val"
       ],
-    "GetTimeRange_1.result" : [
-      "result_2"
-      ],
-    "AlembicArchiveReader_1.result" : [
-      "GetTimeRange_1.this"
+    "DrawTexturedKyle.this" : [
+      "If_1.if_false"
       ]
     },
   "requiredPresets" : {
@@ -4297,151 +4467,6 @@ dfgEntry {
 }
 "
       },
-    "Fabric.Exts.InlineDrawing.DrawingHandle.DrawPolygonMeshArray" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTooltip" : "Helper function for the InlineDrawing DrawingHandle data type\nto draw a list of objects given an index table and a list of\ntransforms.\n\nSupported types:\n  this: DrawingHandle\n  name: String\n  color: Color\n  specular: Color\n  specFactor: Float32\n  masters: PolygonMesh[]\n  transforms: Xfo[]\n  indices: Index[]\n  wireFrame: Boolean\n  doubleSided: Boolean\n  dummyResult: Vec3\n  instance: InlineInstance\n"
-        },
-      "title" : "DrawPolygonMeshArray",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "exec",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "this",
-          "execPortType" : "IO",
-          "typeSpec" : "DrawingHandle"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "name",
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0,
-              "g" : 1,
-              "b" : 0,
-              "a" : 1
-              }
-            },
-          "name" : "color",
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0.2000000029802322,
-              "g" : 0.2000000029802322,
-              "b" : 0.2000000029802322,
-              "a" : 1
-              }
-            },
-          "name" : "specular",
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Float32" : 16
-            },
-          "name" : "specFactor",
-          "execPortType" : "In",
-          "typeSpec" : "Float32"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
-            },
-          "nodePortType" : "Out",
-          "name" : "masters",
-          "execPortType" : "In",
-          "typeSpec" : "PolygonMesh[]"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "nodePortType" : "Out",
-          "name" : "transforms",
-          "execPortType" : "In",
-          "typeSpec" : "Xfo[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "indices",
-          "execPortType" : "In",
-          "typeSpec" : "Index[]"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "wireFrame",
-          "execPortType" : "In",
-          "typeSpec" : "Boolean"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "doubleSided",
-          "execPortType" : "In",
-          "typeSpec" : "Boolean"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "nodePortType" : "In",
-          "name" : "dummyResult",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "instance",
-          "execPortType" : "Out",
-          "typeSpec" : "InlineInstance"
-          }
-        ],
-      "extDeps" : {
-        "InlineDrawing" : "*",
-        "FabricInterfaces" : "*"
-        },
-      "presetGUID" : "C5D3967A103CAE41AF99EA35D2D636A8",
-      "code" : "require InlineDrawing;
-
-dfgEntry {
-  this.drawPolygonMeshArray(name, color, specular, specFactor, masters, transforms, indices, wireFrame, doubleSided, dummyResult, instance);
-}
-"
-      },
     "Kraken.KrakenAnimation.KrakenClip.KrakenClip_saveToFile" : {
       "objectType" : "Func",
       "metadata" : {
@@ -4968,91 +4993,6 @@ dfgEntry {
   this.drawAxes(name, transform, dummyResult, instance);
 }
 "
-      },
-    "Fabric.Exts.AlembicWrapper.AlembicArchiveReader.GetTimeRange" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/AlembicWrapper/AlembicArchiveReader.html",
-        "uiTooltip" : "returns the time range of this file as a Vec2\n\n Supported by AlembicArchiveReader"
-        },
-      "title" : "GetTimeRange",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "exec",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "this",
-          "execPortType" : "In",
-          "typeSpec" : "AlembicArchiveReader"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec2"
-          }
-        ],
-      "extDeps" : {
-        "AlembicWrapper" : "*"
-        },
-      "presetGUID" : "2EDED56E6014E9959C7916554898C57A",
-      "code" : "require AlembicWrapper;
-
-dfgEntry {
-  result = this.getTimeRange();
-}
-"
-      },
-    "Fabric.Exts.AlembicWrapper.AlembicArchiveReader.AlembicArchiveReader" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/AlembicWrapper/AlembicArchiveReader.html",
-        "uiTooltip" : "default constructor provided a fileName to a abc file.\n\n Supported by AlembicArchiveReader"
-        },
-      "title" : "AlembicArchiveReader",
-      "ports" : [
-        {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
-          "name" : "exec",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
-          "name" : "fileName",
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "Port",
-          "nodePortType" : "In",
-          "name" : "result",
-          "execPortType" : "Out",
-          "typeSpec" : "AlembicArchiveReader"
-          }
-        ],
-      "extDeps" : {
-        "AlembicWrapper" : "*"
-        },
-      "presetGUID" : "C8DDFC3A209DF3011F4CF84D2103E928",
-      "code" : "require AlembicWrapper;
-
-dfgEntry {
-  result = AlembicArchiveReader(fileName);
-}
-"
       }
     },
   "args" : [
@@ -5063,7 +5003,7 @@ dfgEntry {
       },
     {
       "type" : "Float32",
-      "value" : 312
+      "value" : 333
       },
     {
       "type" : "Boolean",
