@@ -1,3 +1,5 @@
+set FABRIC_kyle_DIR=%~dp0
+
 set FABRIC_LOG_LEVEL=0
 
 set FABRIC_DIR=Z:\dist\fabric\releases\FabricEngine-2.3.0-auto-2016052610-Windows-x86_64
@@ -19,22 +21,16 @@ if not x%cwd:fabric\kraken=%==x%cwd% (
     echo *** setting KRAKEN_PATH = %LOCAL_KRAKEN_PATH%
     set KRAKEN_PATH=%LOCAL_KRAKEN_PATH%
 )
+@endlocal
 echo on
-
-set FABRIC_KYLE_DIR=%~dp0
 
 set THIRD_PARTY=Z:\dist\fabric\ThirdParty
 
 set KRAKEN_PATHS=%KRAKEN_PATH%\Python\OSS
 
-set FABRIC_EXTS_PATH=%cwd%;%KRAKEN_PATH%\Samples\OSS;%KRAKEN_PATH%\Exts;%THIRD_PARTY%;%FABRIC_DIR%\Exts;%FABRIC_EXTS_PATH%
+set FABRIC_EXTS_PATH=%FABRIC_kyle_DIR%;%KRAKEN_PATH%\Samples\OSS;%KRAKEN_PATH%\Exts;%THIRD_PARTY%;%FABRIC_DIR%\Exts;%FABRIC_EXTS_PATH%
 
-set FABRIC_DFG_PATH=%cwd%;%KRAKEN_PATH%\Presets\DFG;%KRAKEN_PATH%\Presets;%FABRIC_DIR%\Presets\DFG;%FABRIC_DFG_PATH%
+set FABRIC_DFG_PATH=%FABRIC_kyle_DIR%;%KRAKEN_PATH%\Presets\DFG;%KRAKEN_PATH%\Presets;%FABRIC_DIR%\Presets\DFG;%FABRIC_DFG_PATH%
 
 set PYTHONPATH=%FABRIC_DIR%\Python\2.7;%KRAKEN_PATH%\Python;%PYTHONPATH%;
 
-cd /d %KRAKEN_PATH%
-
-python %FABRIC_DIR%/bin/canvas.py "%FABRIC_KYLE_DIR%/kyle_deformations.canvas"
-
-PAUSE
