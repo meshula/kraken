@@ -1,50 +1,50 @@
 {
   "objectType" : "Graph",
   "metadata" : {
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.980752170085907,\n    \"y\" : 0.06150459125638008,\n    \"z\" : -0.1852937489748001,\n    \"t\" : -1.515101790428162\n    },\n  \"row1\" : {\n    \"x\" : 5.867307777407405e-07,\n    \"y\" : 0.9490198493003845,\n    \"z\" : 0.3150476813316345,\n    \"t\" : 2.576020479202271\n    },\n  \"row2\" : {\n    \"x\" : 0.1952352523803711,\n    \"y\" : -0.3089673519134522,\n    \"z\" : 0.9308106899261475,\n    \"t\" : 7.610972404479981\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.55161052942276,\n    \"y\" : 0.1824282109737396,\n    \"z\" : -0.8139024972915649,\n    \"t\" : -3.358758926391602\n    },\n  \"row1\" : {\n    \"x\" : 6.034939588062116e-07,\n    \"y\" : 0.9757283329963684,\n    \"z\" : 0.2187258005142212,\n    \"t\" : 2.087502002716065\n    },\n  \"row2\" : {\n    \"x\" : 0.8340956568717957,\n    \"y\" : -0.1206455230712891,\n    \"z\" : 0.538256049156189,\n    \"t\" : 2.006179094314575\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "uiGraphZoom" : "{\n  \"value\" : 0.8015053272247315\n  }",
     "timeline_loopMode" : "1",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "8.176685333251953",
-    "timeline_current" : "544",
+    "camera_focalDistance" : "4.366913795471191",
+    "timeline_current" : "1",
     "timeline_end" : "750",
-    "uiGraphPan" : "{\n  \"x\" : -0.578826904296875,\n  \"y\" : 371.8837585449219\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 1002.421142578125,\n  \"y\" : 353.8837585449219\n  }"
     },
   "title" : "",
   "ports" : [
     {
-      "objectType" : "Port",
-      "nodePortType" : "IO",
+      "objectType" : "ExecPort",
       "name" : "exec",
+      "nodePortType" : "IO",
       "execPortType" : "IO",
       "typeSpec" : "Execute"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
+      "objectType" : "ExecPort",
       "name" : "timeline",
+      "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "Float32"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "In",
+      "objectType" : "ExecPort",
       "name" : "this",
+      "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "DrawingHandle"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "In",
+      "objectType" : "ExecPort",
       "name" : "dummyResult",
+      "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "Vec3"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "In",
+      "objectType" : "ExecPort",
       "name" : "instance",
+      "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "InlineInstance"
       }
@@ -54,30 +54,30 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":112.857790232,\"y\":-128.307952881}",
+        "uiGraphPos" : "{\"x\":69.18998074530001,\"y\":-142.032102108}",
         "uiCollapsedState" : "0"
         },
       "name" : "ragdoll",
       "ports" : [
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "name" : "exec",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "time"
+          "name" : "time",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "sim"
+          "name" : "sim",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "controlXfos"
+          "name" : "controlXfos",
+          "nodePortType" : "In"
           }
         ],
       "definition" : {
@@ -85,30 +85,30 @@
         "title" : "ragdoll",
         "ports" : [
           {
-            "objectType" : "Port",
-            "nodePortType" : "IO",
+            "objectType" : "ExecPort",
             "name" : "exec",
+            "nodePortType" : "IO",
             "execPortType" : "IO",
             "typeSpec" : "Execute"
             },
           {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
+            "objectType" : "ExecPort",
             "name" : "time",
+            "nodePortType" : "Out",
             "execPortType" : "In",
             "typeSpec" : "Scalar"
             },
           {
-            "objectType" : "Port",
-            "nodePortType" : "IO",
+            "objectType" : "ExecPort",
             "name" : "sim",
-            "execPortType" : "IO",
+            "nodePortType" : "Out",
+            "execPortType" : "In",
             "typeSpec" : "RigidBodySimulation"
             },
           {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
+            "objectType" : "ExecPort",
             "name" : "controlXfos",
+            "nodePortType" : "Out",
             "execPortType" : "In",
             "typeSpec" : "Xfo[]"
             }
@@ -207,18 +207,18 @@ dfgEntry {
       "ports" : [
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "name" : "exec",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "this"
+          "name" : "this",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
+          "name" : "result",
+          "nodePortType" : "Out"
           }
         ],
       "definition" : {
@@ -230,26 +230,26 @@ dfgEntry {
         "title" : "GetAllRigidBodyXfos",
         "ports" : [
           {
-            "objectType" : "Port",
-            "nodePortType" : "IO",
+            "objectType" : "ExecPort",
             "name" : "exec",
+            "nodePortType" : "IO",
             "execPortType" : "IO",
             "typeSpec" : "Execute"
             },
           {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
+            "objectType" : "ExecPort",
             "name" : "this",
+            "nodePortType" : "Out",
             "execPortType" : "In",
             "typeSpec" : "RigidBodySimulation"
             },
           {
-            "objectType" : "Port",
+            "objectType" : "ExecPort",
             "metadata" : {
               "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
               },
-            "nodePortType" : "In",
             "name" : "result",
+            "nodePortType" : "In",
             "execPortType" : "Out",
             "typeSpec" : "Xfo[]"
             }
@@ -276,13 +276,13 @@ report(this.getAllRigidBodyXfos());
       "ports" : [
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "name" : "exec",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "handle"
+          "name" : "handle",
+          "nodePortType" : "Out"
           }
         ],
       "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle",
@@ -297,21 +297,22 @@ report(this.getAllRigidBodyXfos());
       "ports" : [
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "name" : "exec",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "this"
+          "name" : "this",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "name"
+          "name" : "name",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
+          "name" : "color",
           "nodePortType" : "In",
           "defaultValues" : {
             "Color" : {
@@ -320,54 +321,53 @@ report(this.getAllRigidBodyXfos());
               "b" : 1,
               "a" : 1
               }
-            },
-          "name" : "color"
+            }
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "specular"
+          "name" : "specular",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "specFactor"
+          "name" : "specFactor",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "transforms"
+          "name" : "transforms",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "mesh"
+          "name" : "mesh",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Boolean" : false
-            },
-          "name" : "wireFrame"
-          },
-        {
-          "objectType" : "InstPort",
+          "name" : "wireFrame",
           "nodePortType" : "In",
           "defaultValues" : {
             "Boolean" : false
-            },
-          "name" : "doubleSided"
+            }
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "dummyResult"
+          "name" : "doubleSided",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Boolean" : false
+            }
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "instance"
+          "name" : "dummyResult",
+          "nodePortType" : "Out"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "instance",
+          "nodePortType" : "Out"
           }
         ],
       "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawPolygonMeshInstances",
@@ -382,21 +382,21 @@ report(this.getAllRigidBodyXfos());
       "ports" : [
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "name" : "exec",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
+          "name" : "size",
           "nodePortType" : "In",
           "defaultValues" : {
             "Float32" : 0.1800000071525574
-            },
-          "name" : "size"
+            }
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "mesh"
+          "name" : "mesh",
+          "nodePortType" : "Out"
           }
         ],
       "executable" : "Fabric.Compounds.PolygonMesh.Create.GetCube",
@@ -411,23 +411,23 @@ report(this.getAllRigidBodyXfos());
       "ports" : [
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "name" : "exec",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "mesh"
+          "name" : "mesh",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "xfo"
+          "name" : "xfo",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
+          "name" : "result",
+          "nodePortType" : "Out"
           }
         ],
       "executable" : "Fabric.Compounds.PolygonMesh.Modify.Transform",
@@ -442,21 +442,22 @@ report(this.getAllRigidBodyXfos());
       "ports" : [
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "name" : "exec",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "ori"
+          "name" : "ori",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "tr"
+          "name" : "tr",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
+          "name" : "sc",
           "nodePortType" : "In",
           "defaultValues" : {
             "Vec3" : {
@@ -464,17 +465,16 @@ report(this.getAllRigidBodyXfos());
               "y" : 1,
               "z" : 1
               }
-            },
-          "name" : "sc"
+            }
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
+          "name" : "result",
+          "nodePortType" : "Out"
           }
         ],
       "executable" : "Fabric.Exts.Math.Xfo.ComposeXfo",
-      "presetGUID" : "C61287D19D84D9733903DDC14FABD4AF"
+      "presetGUID" : "C0E51330BF816566F031E94807D29ED1"
       },
     {
       "objectType" : "User",
@@ -490,33 +490,34 @@ report(this.getAllRigidBodyXfos());
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-211.552439213,\"y\":-60.5161578655}"
+        "uiGraphPos" : "{\"x\":-610.801155329,\"y\":71.734975338}"
         },
       "name" : "RigidBodySimulation",
       "ports" : [
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "name" : "exec",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
+          "name" : "fps",
           "nodePortType" : "In",
           "defaultValues" : {
             "Scalar" : 30
-            },
-          "name" : "fps"
+            }
           },
         {
           "objectType" : "InstPort",
+          "name" : "subSteps",
           "nodePortType" : "In",
           "defaultValues" : {
             "UInt32" : 3
-            },
-          "name" : "subSteps"
+            }
           },
         {
           "objectType" : "InstPort",
+          "name" : "gravity",
           "nodePortType" : "In",
           "defaultValues" : {
             "Vec3" : {
@@ -524,13 +525,12 @@ report(this.getAllRigidBodyXfos());
               "y" : -10,
               "z" : 0
               }
-            },
-          "name" : "gravity"
+            }
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "Out",
-          "name" : "result"
+          "name" : "result",
+          "nodePortType" : "Out"
           }
         ],
       "definition" : {
@@ -542,37 +542,38 @@ report(this.getAllRigidBodyXfos());
         "title" : "RigidBodySimulation",
         "ports" : [
           {
-            "objectType" : "Port",
-            "nodePortType" : "IO",
+            "objectType" : "ExecPort",
             "name" : "exec",
+            "nodePortType" : "IO",
             "execPortType" : "IO",
             "typeSpec" : "Execute"
             },
           {
-            "objectType" : "Port",
+            "objectType" : "ExecPort",
+            "name" : "fps",
             "nodePortType" : "Out",
             "defaultValues" : {
               "Scalar" : 24
               },
-            "name" : "fps",
             "execPortType" : "In",
             "typeSpec" : "Scalar"
             },
           {
-            "objectType" : "Port",
+            "objectType" : "ExecPort",
+            "name" : "subSteps",
             "nodePortType" : "Out",
             "defaultValues" : {
               "UInt32" : 2
               },
-            "name" : "subSteps",
             "execPortType" : "In",
             "typeSpec" : "UInt32"
             },
           {
-            "objectType" : "Port",
+            "objectType" : "ExecPort",
             "metadata" : {
               "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
               },
+            "name" : "gravity",
             "nodePortType" : "Out",
             "defaultValues" : {
               "Vec3" : {
@@ -581,14 +582,13 @@ report(this.getAllRigidBodyXfos());
                 "z" : 0
                 }
               },
-            "name" : "gravity",
             "execPortType" : "In",
             "typeSpec" : "Vec3"
             },
           {
-            "objectType" : "Port",
-            "nodePortType" : "In",
+            "objectType" : "ExecPort",
             "name" : "result",
+            "nodePortType" : "In",
             "execPortType" : "Out",
             "typeSpec" : "RigidBodySimulation"
             }
@@ -601,6 +601,7 @@ report(this.getAllRigidBodyXfos());
 
 dfgEntry {
   result = RigidBodySimulation(fps, subSteps, gravity);
+  result.initialized = false;
 }
 "
         }
@@ -608,25 +609,25 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":106.868000507,\"y\":45.3479576111}",
+        "uiGraphPos" : "{\"x\":63.2001779079,\"y\":15.4043064117}",
         "uiCollapsedState" : "0"
         },
       "name" : "ragdoll_2",
       "ports" : [
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "exec"
+          "name" : "exec",
+          "nodePortType" : "IO"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "In",
-          "name" : "time"
+          "name" : "time",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "nodePortType" : "IO",
-          "name" : "sim"
+          "name" : "sim",
+          "nodePortType" : "IO"
           }
         ],
       "definition" : {
@@ -634,23 +635,23 @@ dfgEntry {
         "title" : "ragdoll",
         "ports" : [
           {
-            "objectType" : "Port",
-            "nodePortType" : "IO",
+            "objectType" : "ExecPort",
             "name" : "exec",
+            "nodePortType" : "IO",
             "execPortType" : "IO",
             "typeSpec" : "Execute"
             },
           {
-            "objectType" : "Port",
-            "nodePortType" : "Out",
+            "objectType" : "ExecPort",
             "name" : "time",
+            "nodePortType" : "Out",
             "execPortType" : "In",
             "typeSpec" : "Scalar"
             },
           {
-            "objectType" : "Port",
-            "nodePortType" : "IO",
+            "objectType" : "ExecPort",
             "name" : "sim",
+            "nodePortType" : "IO",
             "execPortType" : "IO",
             "typeSpec" : "RigidBodySimulation"
             }
@@ -868,7 +869,6 @@ function BulletRagdoll.create!(io RigidBodySimulation sim, Xfo offset, Color col
 
 
 dfgEntry {
-  sim.initialized = false;
   if(!sim.initialized){
     sim.initPhysics();
     sim.createGround();
@@ -888,6 +888,53 @@ dfgEntry {
 
 "
         }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-352.987112045,\"y\":94.34279632569999}"
+        },
+      "name" : "Cache_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "value",
+          "nodePortType" : "In"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-198.27828598,\"y\":86.85688781739999}"
+        },
+      "name" : "Copy_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "value",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "Fabric.Core.Func.Copy",
+      "presetGUID" : "C3E84342DB046C048BABD41DF1B5E3ED"
       }
     ],
   "connections" : {
@@ -920,11 +967,16 @@ dfgEntry {
       "Transform.xfo"
       ],
     "RigidBodySimulation.result" : [
-      "ragdoll.sim",
-      "ragdoll_2.sim"
+      "Cache_2.value"
       ],
     "ragdoll_2.sim" : [
       "GetAllRigidBodyXfos_2.this"
+      ],
+    "Cache_2.value" : [
+      "Copy_2.value"
+      ],
+    "Copy_2.result" : [
+      "ragdoll_2.sim"
       ]
     },
   "requiredPresets" : {
@@ -934,16 +986,16 @@ dfgEntry {
       "cacheRule" : "never",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "In",
+          "objectType" : "ExecPort",
           "name" : "handle",
+          "nodePortType" : "In",
           "execPortType" : "Out",
           "typeSpec" : "DrawingHandle"
           }
@@ -960,18 +1012,18 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "this"
+              "name" : "this",
+              "nodePortType" : "IO"
               }
             ],
+          "cacheRule" : "never",
           "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.Clear",
-          "presetGUID" : "39E8D81FA7C7C4A825877F16EFE3564F",
-          "cacheRule" : "never"
+          "presetGUID" : "39E8D81FA7C7C4A825877F16EFE3564F"
           },
         {
           "objectType" : "Var",
@@ -983,8 +1035,8 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "VarPort",
-              "nodePortType" : "IO",
-              "name" : "value"
+              "name" : "value",
+              "nodePortType" : "IO"
               }
             ],
           "dataType" : "DrawingHandle",
@@ -999,13 +1051,13 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "handle"
+              "name" : "handle",
+              "nodePortType" : "Out"
               }
             ],
           "definition" : {
@@ -1013,16 +1065,16 @@ dfgEntry {
             "title" : "Create DrawingHandle",
             "ports" : [
               {
-                "objectType" : "Port",
-                "nodePortType" : "IO",
+                "objectType" : "ExecPort",
                 "name" : "exec",
+                "nodePortType" : "IO",
                 "execPortType" : "IO",
                 "typeSpec" : "Execute"
                 },
               {
-                "objectType" : "Port",
-                "nodePortType" : "In",
+                "objectType" : "ExecPort",
                 "name" : "handle",
+                "nodePortType" : "In",
                 "execPortType" : "Out",
                 "typeSpec" : "DrawingHandle"
                 }
@@ -1052,22 +1104,22 @@ dfgEntry {
     "Fabric.Exts.InlineDrawing.DrawingHandle.Clear" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
         "uiTooltip" : "removes all contents from the DrawingHandle\n\n Supported by DrawingHandle"
         },
       "title" : "Clear",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "this",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "DrawingHandle"
           }
@@ -1086,37 +1138,38 @@ dfgEntry {
     "Fabric.Exts.InlineDrawing.DrawingHandle.DrawPolygonMeshInstances" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
         "uiTooltip" : "helper function to draw a mesh given a color + an array of transforms\n\n Supported by DrawingHandle"
         },
       "title" : "DrawPolygonMeshInstances",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "this",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "DrawingHandle"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "name",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "String"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
             },
+          "name" : "color",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Color" : {
@@ -1126,15 +1179,15 @@ dfgEntry {
               "a" : 1
               }
             },
-          "name" : "color",
           "execPortType" : "In",
           "typeSpec" : "Color"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
             },
+          "name" : "specular",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Color" : {
@@ -1144,68 +1197,67 @@ dfgEntry {
               "a" : 1
               }
             },
-          "name" : "specular",
           "execPortType" : "In",
           "typeSpec" : "Color"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
+          "name" : "specFactor",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Float32" : 16
             },
-          "name" : "specFactor",
           "execPortType" : "In",
           "typeSpec" : "Float32"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
             },
-          "nodePortType" : "Out",
           "name" : "transforms",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "Xfo[]"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
             },
-          "nodePortType" : "Out",
           "name" : "mesh",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "PolygonMesh"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "wireFrame",
-          "execPortType" : "In",
-          "typeSpec" : "Boolean"
-          },
-        {
-          "objectType" : "Port",
           "nodePortType" : "Out",
-          "name" : "doubleSided",
           "execPortType" : "In",
           "typeSpec" : "Boolean"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
+          "name" : "doubleSided",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
             },
-          "nodePortType" : "In",
           "name" : "dummyResult",
+          "nodePortType" : "In",
           "execPortType" : "Out",
           "typeSpec" : "Vec3"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "In",
+          "objectType" : "ExecPort",
           "name" : "instance",
+          "nodePortType" : "In",
           "execPortType" : "Out",
           "typeSpec" : "InlineInstance"
           }
@@ -1232,29 +1284,29 @@ dfgEntry {
       "title" : "GetCube",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiRange" : "(0, 5)"
             },
+          "name" : "size",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Float32" : 2
             },
-          "name" : "size",
           "execPortType" : "In",
           "typeSpec" : "Scalar"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "In",
+          "objectType" : "ExecPort",
           "name" : "mesh",
+          "nodePortType" : "In",
           "execPortType" : "Out",
           "typeSpec" : "PolygonMesh"
           }
@@ -1271,13 +1323,13 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "value"
+              "name" : "value",
+              "nodePortType" : "In"
               }
             ],
           "executable" : "Fabric.Core.Data.Cache",
@@ -1292,21 +1344,21 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "this"
+              "name" : "this",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
+              "name" : "hardAngleRadians",
               "nodePortType" : "In",
               "defaultValues" : {
                 "Float32" : 0
-                },
-              "name" : "hardAngleRadians"
+                }
               }
             ],
           "executable" : "Fabric.Exts.Geometry.PolygonMesh.RecomputePointNormals",
@@ -1321,18 +1373,18 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "mesh"
+              "name" : "mesh",
+              "nodePortType" : "Out"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "debugName"
+              "name" : "debugName",
+              "nodePortType" : "In"
               }
             ],
           "executable" : "Fabric.Exts.Geometry.PolygonMesh.EmptyPolygonMesh",
@@ -1347,43 +1399,43 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "this"
+              "name" : "this",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "xfo"
+              "name" : "xfo",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "x"
+              "name" : "x",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "y"
+              "name" : "y",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "z"
+              "name" : "z",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "setNormals"
+              "name" : "setNormals",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "setUVs"
+              "name" : "setUVs",
+              "nodePortType" : "In"
               }
             ],
           "executable" : "Fabric.Exts.Geometry.PolygonMesh.AddCuboid",
@@ -1421,16 +1473,16 @@ dfgEntry {
       "cacheRule" : "always",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "value",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "$TYPE$"
           }
@@ -1444,32 +1496,32 @@ dfgEntry {
     "Fabric.Exts.Geometry.PolygonMesh.RecomputePointNormals" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Geometry/PolygonMesh.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Geometry/PolygonMesh.html",
         "uiTooltip" : "Recomputes all point normals and introduces normal splits if adjacent polygons' normals differ by more than `hardAngleRadians` radians.\nAll previously stored point normals will be overwritten.\nThe computed normal value is the average of neighbor polygons' :kl-ref:`PolygonMesh.generatePolygonNormal` (or a subset of these if there is a split).\n\n Supported by PolygonMesh"
         },
       "title" : "RecomputePointNormals",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
             },
-          "nodePortType" : "IO",
           "name" : "this",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "PolygonMesh"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "hardAngleRadians",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "Scalar"
           }
@@ -1494,23 +1546,23 @@ dfgEntry {
       "cacheRule" : "never",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "In",
+          "objectType" : "ExecPort",
           "name" : "mesh",
+          "nodePortType" : "In",
           "execPortType" : "Out",
           "typeSpec" : "PolygonMesh"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "debugName",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "String"
           }
@@ -1527,23 +1579,23 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "debugName"
+              "name" : "debugName",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "float64Positions"
+              "name" : "float64Positions",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "result"
+              "name" : "result",
+              "nodePortType" : "Out"
               }
             ],
           "executable" : "Fabric.Exts.Geometry.PolygonMesh.PolygonMesh",
@@ -1558,18 +1610,18 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "this"
+              "name" : "this",
+              "nodePortType" : "IO"
               }
             ],
+          "cacheRule" : "never",
           "executable" : "Fabric.Exts.Geometry.Func.Clear",
-          "presetGUID" : "96D1EC86835296FFDC60533717804EE7",
-          "cacheRule" : "never"
+          "presetGUID" : "96D1EC86835296FFDC60533717804EE7"
           },
         {
           "objectType" : "Var",
@@ -1580,8 +1632,8 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "VarPort",
-              "nodePortType" : "IO",
-              "name" : "value"
+              "name" : "value",
+              "nodePortType" : "IO"
               }
             ],
           "dataType" : "PolygonMesh",
@@ -1606,39 +1658,39 @@ dfgEntry {
     "Fabric.Exts.Geometry.PolygonMesh.PolygonMesh" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Geometry/PolygonMesh.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Geometry/PolygonMesh.html",
         "uiTooltip" : "Constructor.\n\n Supported by PolygonMesh"
         },
       "title" : "PolygonMesh",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "debugName",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "String"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "float64Positions",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "Boolean"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
             },
-          "nodePortType" : "In",
           "name" : "result",
+          "nodePortType" : "In",
           "execPortType" : "Out",
           "typeSpec" : "PolygonMesh"
           }
@@ -1657,22 +1709,22 @@ dfgEntry {
     "Fabric.Exts.Geometry.Func.Clear" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Geometry/GeometryAttributes.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Geometry/GeometryAttributes.html",
         "uiTooltip" : "Removes all attributes, and resets attribute value array sizes to 0.\n\n Supported by GeometryAttributes,BaseGeometry,Points,Lines,PolygonMesh"
         },
       "title" : "Clear",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "this",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "$TYPE$"
           }
@@ -1691,94 +1743,94 @@ dfgEntry {
     "Fabric.Exts.Geometry.PolygonMesh.AddCuboid" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Geometry/PolygonMesh.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Geometry/PolygonMesh.html",
         "uiTooltip" : "Appends a transformed cuboid (cube with specified size) to this mesh.\nBefore applying the transformation, the cuboid is centered at the origin,\nand has a range of [-x/2 .. x/2, -y/2 .. y/2, -z/2 .. z/2].\n\nSet Points Normals\nFace 0 (+Z)\nFace 1 (-Z)\nFace 2 (+Y)\nFace 3 (-Y)\nFace 4 (+X)\nFace 5 (-X)\nSet Uvs\nFace 0 (+Z)\nFace 1 (-Z)\nFace 2 (+Y)\nFace 3 (-Y)\nFace 4 (+X)\nFace 5 (-X)\n\n Supported by PolygonMesh"
         },
       "title" : "AddCuboid",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
             },
-          "nodePortType" : "IO",
           "name" : "this",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "PolygonMesh"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
             },
-          "nodePortType" : "Out",
           "name" : "xfo",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "Xfo"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiRange" : "(0.0, 8.0)"
-            },
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Scalar" : 2
             },
           "name" : "x",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 2
+            },
           "execPortType" : "In",
           "typeSpec" : "Scalar"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiRange" : "(0.0, 8.0)"
-            },
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Scalar" : 2
             },
           "name" : "y",
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "Port",
-          "metadata" : {
-            "uiRange" : "(0.0, 8.0)"
-            },
           "nodePortType" : "Out",
           "defaultValues" : {
             "Scalar" : 2
             },
-          "name" : "z",
           "execPortType" : "In",
           "typeSpec" : "Scalar"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiRange" : "(0.0, 8.0)"
+            },
+          "name" : "z",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 2
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "setNormals",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Boolean" : true
             },
-          "name" : "setNormals",
           "execPortType" : "In",
           "typeSpec" : "Boolean"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
+          "name" : "setUVs",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Boolean" : true
             },
-          "name" : "setUVs",
           "execPortType" : "In",
           "typeSpec" : "Boolean"
           }
@@ -1804,30 +1856,30 @@ dfgEntry {
       "title" : "Transform",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "mesh",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "PolygonMesh"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "xfo",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "Xfo"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "In",
+          "objectType" : "ExecPort",
           "name" : "result",
+          "nodePortType" : "In",
           "execPortType" : "Out",
           "typeSpec" : "PolygonMesh"
           }
@@ -1846,13 +1898,13 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "value"
+              "name" : "value",
+              "nodePortType" : "In"
               }
             ],
           "executable" : "Fabric.Core.Data.Cache",
@@ -1867,18 +1919,18 @@ dfgEntry {
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "mesh"
+              "name" : "mesh",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "xfo"
+              "name" : "xfo",
+              "nodePortType" : "In"
               }
             ],
           "definition" : {
@@ -1886,23 +1938,23 @@ dfgEntry {
             "title" : "applyTransform",
             "ports" : [
               {
-                "objectType" : "Port",
-                "nodePortType" : "IO",
+                "objectType" : "ExecPort",
                 "name" : "exec",
+                "nodePortType" : "IO",
                 "execPortType" : "IO",
                 "typeSpec" : "Execute"
                 },
               {
-                "objectType" : "Port",
-                "nodePortType" : "IO",
+                "objectType" : "ExecPort",
                 "name" : "mesh",
+                "nodePortType" : "IO",
                 "execPortType" : "IO",
                 "typeSpec" : "PolygonMesh"
                 },
               {
-                "objectType" : "Port",
-                "nodePortType" : "Out",
+                "objectType" : "ExecPort",
                 "name" : "xfo",
+                "nodePortType" : "Out",
                 "execPortType" : "In",
                 "typeSpec" : "Xfo"
                 }
@@ -1927,18 +1979,18 @@ dfgEntry
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "value"
+              "name" : "value",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "result"
+              "name" : "result",
+              "nodePortType" : "Out"
               }
             ],
           "executable" : "Fabric.Exts.Geometry.PolygonMesh.ClonePolygonMesh",
@@ -1972,22 +2024,22 @@ dfgEntry
       "title" : "ClonePolygonMesh",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "value",
+          "nodePortType" : "Out",
           "execPortType" : "In"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "In",
+          "objectType" : "ExecPort",
           "name" : "result",
+          "nodePortType" : "In",
           "execPortType" : "Out",
           "typeSpec" : "PolygonMesh"
           }
@@ -2004,23 +2056,23 @@ dfgEntry
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "debugName"
+              "name" : "debugName",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "float64Positions"
+              "name" : "float64Positions",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "Out",
-              "name" : "result"
+              "name" : "result",
+              "nodePortType" : "Out"
               }
             ],
           "executable" : "Fabric.Exts.Geometry.PolygonMesh.PolygonMesh",
@@ -2035,8 +2087,8 @@ dfgEntry
           "ports" : [
             {
               "objectType" : "VarPort",
-              "nodePortType" : "IO",
-              "name" : "value"
+              "name" : "value",
+              "nodePortType" : "IO"
               }
             ],
           "dataType" : "PolygonMesh",
@@ -2051,18 +2103,18 @@ dfgEntry
           "ports" : [
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "exec"
+              "name" : "exec",
+              "nodePortType" : "IO"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "In",
-              "name" : "value"
+              "name" : "value",
+              "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "nodePortType" : "IO",
-              "name" : "clonedValue"
+              "name" : "clonedValue",
+              "nodePortType" : "IO"
               }
             ],
           "executable" : "Fabric.Core.Data.CloneMembersTo",
@@ -2093,23 +2145,23 @@ dfgEntry
       "title" : "CloneMembersTo",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "Out",
+          "objectType" : "ExecPort",
           "name" : "value",
+          "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "$TYPE$"
           },
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "clonedValue",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "$TYPE$"
           }
@@ -2125,22 +2177,23 @@ dfgEntry
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Math/Xfo.html"
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Xfo.html"
         },
       "title" : "-> Xfo",
       "ports" : [
         {
-          "objectType" : "Port",
-          "nodePortType" : "IO",
+          "objectType" : "ExecPort",
           "name" : "exec",
+          "nodePortType" : "IO",
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
             },
+          "name" : "ori",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Quat" : {
@@ -2152,15 +2205,15 @@ dfgEntry
               "w" : 1
               }
             },
-          "name" : "ori",
           "execPortType" : "In",
           "typeSpec" : "Quat"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
             },
+          "name" : "tr",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Vec3" : {
@@ -2169,15 +2222,15 @@ dfgEntry
               "z" : 0
               }
             },
-          "name" : "tr",
           "execPortType" : "In",
           "typeSpec" : "Vec3"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
             },
+          "name" : "sc",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Vec3" : {
@@ -2186,17 +2239,16 @@ dfgEntry
               "z" : 1
               }
             },
-          "name" : "sc",
           "execPortType" : "In",
           "typeSpec" : "Vec3"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
             },
-          "nodePortType" : "In",
           "name" : "result",
+          "nodePortType" : "In",
           "execPortType" : "Out",
           "typeSpec" : "Xfo"
           }
@@ -2204,13 +2256,51 @@ dfgEntry
       "extDeps" : {
         "Math" : "*"
         },
-      "presetGUID" : "C61287D19D84D9733903DDC14FABD4AF",
+      "presetGUID" : "C0E51330BF816566F031E94807D29ED1",
       "code" : "require Math;
 
 dfgEntry {
   result.ori = ori;
   result.tr = tr;
   result.sc = sc;
+}
+"
+      },
+    "Fabric.Core.Func.Copy" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 214,\n  \"g\" : 191,\n  \"b\" : 103\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 188,\n  \"g\" : 129,\n  \"b\" : 83\n  }"
+        },
+      "title" : "Copy",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "value",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "C3E84342DB046C048BABD41DF1B5E3ED",
+      "code" : "
+dfgEntry {
+	result = value;
 }
 "
       }
