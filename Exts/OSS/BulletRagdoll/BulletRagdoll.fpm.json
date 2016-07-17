@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "code": [
+    "BulletRagdoll.kl"
+  ],
+  "dfgPresets": {
+    "dir": "DFG",
+    "presetPath": "OSS.Exts.BulletRagdoll",
+    }
+}
