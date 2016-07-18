@@ -21,7 +21,7 @@ if not x%cwd:fabric\kraken=%==x%cwd% (
     echo *** setting KRAKEN_PATH = %LOCAL_KRAKEN_PATH%
     set KRAKEN_PATH=%LOCAL_KRAKEN_PATH%
 )
-@endlocal
+@endlocal & SET KRAKEN_PATH=%KRAKEN_PATH%
 echo on
 
 set THIRD_PARTY=Z:\dist\fabric\ThirdParty
