@@ -1,0 +1,39 @@
+require Kraken;
+
+object OSS_GetLocalTranslateSolver : KrakenSolver {
+};
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_GetLocalTranslateSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+
+  args.push(KrakenSolverArg('inMatrix', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('inBaseMatrix', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('localTranslate', 'Out', 'Vec3'));
+  args.push(KrakenSolverArg('localTranslateX', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('localTranslateY', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('localTranslateZ', 'Out', 'Scalar'));
+  return args;
+}
+
+
+// Solve
+function OSS_GetLocalTranslateSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Mat44 inMatrix,
+  in Mat44 inBaseMatrix,
+  out Vec3 localTranslate,
+  out Scalar localTranslateX,
+  out Scalar localTranslateY,
+  out Scalar localTranslateZ
+)
+{
+  Mat44 localMatrix = inBaseMatrix.inverse() * inMatrix;
+  localTranslate = localMatrix.translation();
+  localTranslateX = localTranslate.x;
+  localTranslateY = localTranslate.y;
+  localTranslateZ = localTranslate.z;
+}
