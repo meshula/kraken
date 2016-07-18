@@ -2,16 +2,16 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "1000",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9977824687957764,\n    \"y\" : 0.01453047245740891,\n    \"z\" : -0.06480526179075241,\n    \"t\" : 159.7291412353516\n    },\n  \"row1\" : {\n    \"x\" : -3.026303375008865e-06,\n    \"y\" : 0.9757711887359619,\n    \"z\" : 0.2187431156635284,\n    \"t\" : 92.92383575439453\n    },\n  \"row2\" : {\n    \"x\" : 0.06641372293233872,\n    \"y\" : -0.2182575911283493,\n    \"z\" : 0.9736273884773254,\n    \"t\" : 385.3154296875\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9620174765586853,\n    \"y\" : 0.0860012099146843,\n    \"z\" : -0.2590530216693878,\n    \"t\" : -100.6385040283203\n    },\n  \"row1\" : {\n    \"x\" : -3.140389935651911e-06,\n    \"y\" : 0.9490585923194885,\n    \"z\" : 0.3150667250156403,\n    \"t\" : 257.531005859375\n    },\n  \"row2\" : {\n    \"x\" : 0.2729532420635223,\n    \"y\" : -0.3030983805656433,\n    \"z\" : 0.9130300283432007,\n    \"t\" : 578.4945678710938\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "maya_id" : "1",
-    "uiGraphZoom" : "{\n  \"value\" : 0.7652885317802429\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.984951376914978\n  }",
     "timeline_loopMode" : "1",
-    "timeline_start" : "101",
-    "camera_focalDistance" : "543.5110473632813",
-    "timeline_current" : "325",
+    "timeline_start" : "1",
+    "camera_focalDistance" : "804.871826171875",
+    "timeline_current" : "66",
     "timeline_simMode" : "0",
-    "timeline_end" : "560",
-    "uiGraphPan" : "{\n  \"x\" : -917.0029296875,\n  \"y\" : 38.02668571472168\n  }"
+    "timeline_end" : "120",
+    "uiGraphPan" : "{\n  \"x\" : -1166.46533203125,\n  \"y\" : 97.36906433105469\n  }"
     },
   "title" : "",
   "ports" : [
@@ -134,7 +134,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":2120.97322845459,\"y\":107.2706832885742}"
+        "uiGraphPos" : "{\"x\":2234.68791842,\"y\":-49.0821959972}"
         },
       "name" : "DrawLabels_1",
       "ports" : [
@@ -183,7 +183,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1567.040815591812,\"y\":290.0231149196625}"
+        "uiGraphPos" : "{\"x\":1559.93394351,\"y\":290.023101807}"
         },
       "name" : "GetPaths_1",
       "ports" : [
@@ -200,6 +200,9 @@
         {
           "objectType" : "InstPort",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "SInt32" : 1
+            },
           "name" : "mode"
           },
         {
@@ -224,7 +227,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1232.94643163681,\"y\":282.0879073143005}"
+        "uiGraphPos" : "{\"x\":1253.25161648,\"y\":284.118569851}"
         },
       "name" : "Load_1",
       "ports" : [
@@ -237,7 +240,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${KRAKEN_PATH}/Samples/OSS/kyle/kyle.abc"
+            "String" : "${KRAKEN_PATH}/Samples/OSS/kyle/kyle_face.abc"
             },
           "name" : "filePath"
           },
@@ -253,7 +256,8 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1384.314717769623,\"y\":297.4130415916443}"
+        "uiGraphPos" : "{\"x\":1402.58946753,\"y\":295.382467747}",
+        "uiCollapsedState" : "1"
         },
       "name" : "Cache_3",
       "ports" : [
@@ -274,7 +278,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1884.223865270615,\"y\":234.9051480293274}"
+        "uiGraphPos" : "{\"x\":1887.27004266,\"y\":267.394082546}"
         },
       "name" : "GetTransformArray_1",
       "ports" : [
@@ -370,13 +374,11 @@
       "FrameToTime_1.frame"
       ],
     "EmptyDrawingHandle_1.handle" : [
-      "DrawLabels_1.handle"
+      "DrawLabels_1.handle",
+      "DrawAxesInstances_1.this"
       ],
     "DrawAxesInstances_1.dummyResult" : [
       "dummyResult"
-      ],
-    "DrawLabels_1.handle" : [
-      "DrawAxesInstances_1.this"
       ],
     "GetPaths_1.archive" : [
       "GetTransformArray_1.archive"
@@ -756,15 +758,15 @@ if(draw)
       dhandle.setActive(true);
   }
 
-return(pixels);
+return(pixels);    
 }
 
 dfgEntry {
   if(xfos.size() != labels.size())
     return;
-
+    
   Xfo shifts[SInt32];
-
+    
   Xfo offset;
   offset.ori.setFromAxisAndAngle(Vec3(1, 0, 0), HALF_PI);
   offset.sc *= scale * 0.1;
@@ -775,19 +777,19 @@ dfgEntry {
      xfo.tr = xfos[i].tr;
    else
      xfo = xfos[i];
-
+     
     xfo = xfo * offset;
-
+    
     Vec3 v = xfo.tr;
     SInt32 hash = SInt32(v.x * 100.0) * 17 + SInt32(v.y * 100.0) * 219 + SInt32(v.z * 100.0) * 3;
     Xfo shift = shifts.get(hash, Xfo());
-
+    
     xfo = xfo * shift;
-
+    
     shift.tr.z += 1.0;
-
+    
     maCTextLocal(labels[i]+i, handle, labels[i], xfo, color, instance, true);
-
+    
     shifts[hash] = shift;
   }
 }
@@ -4464,7 +4466,7 @@ dfgEntry {
   "args" : [
     {
       "type" : "Float32",
-      "value" : 325
+      "value" : 66
       },
     {
       "type" : "Vec3",
