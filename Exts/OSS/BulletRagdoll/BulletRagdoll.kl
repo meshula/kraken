@@ -1,0 +1,23 @@
+
+require BulletHelpers;
+
+
+
+object BulletRagdoll {
+  Color color;
+  BulletCollisionShape  shapes[];
+  RigidBodyMesh         bodies[];
+  BulletTypedConstraint joints[];
+};
+
+/*
+function BulletRagdoll.addBodyPart!(io RigidBodySimulation sim, Integer index, Xfo xfo)
+{
+  BulletCapsuleShape shape = this.shapes[index];
+  Lines lines();
+  Scalar radius = shape.getRadius();
+  Scalar height = shape.getHalfHeight() * 2.0;
+  lines.addCapsule(Xfo(), radius, height, 24);
+  this.bodies[index] = sim.addRigidBody(1.0, xfo, shape, lines, this.color);
+}
+*/

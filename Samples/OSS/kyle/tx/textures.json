@@ -8,6 +8,7 @@
     "L_eye_geom"         : "tx_kyleReye_D.png",
     "R_eye_geom"         : "tx_kyleReye_D.png",
     "M_hat_geom"         : "tx_kyleHat_D.png",
+    "M_button_geom"      : "tx_kyleHat_D.png",
     "M_tongue_geom"      : "tx_kyleTongue_D.png",
     "M_upTeeth_geom"     : "tx_kyleLoteeth_D.png",
     "M_loTeeth_geom"     : "tx_kyleLoteeth_D.png"
