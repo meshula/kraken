@@ -22,6 +22,8 @@ if not x%cwd:fabric\kraken=%==x%cwd% (
     set KRAKEN_PATH=%LOCAL_KRAKEN_PATH%
 )
 @endlocal & SET KRAKEN_PATH=%KRAKEN_PATH%
+
+echo %KRAKEN_PATH%
 echo on
 
 set THIRD_PARTY=Z:\dist\fabric\ThirdParty
@@ -33,4 +35,3 @@ set FABRIC_EXTS_PATH=%FABRIC_kyle_DIR%;%KRAKEN_PATH%\Samples\OSS;%KRAKEN_PATH%\E
 set FABRIC_DFG_PATH=%FABRIC_kyle_DIR%;%KRAKEN_PATH%\Presets\DFG;%KRAKEN_PATH%\Presets;%FABRIC_DIR%\Presets\DFG;%FABRIC_DFG_PATH%
 
 set PYTHONPATH=%FABRIC_DIR%\Python\2.7;%KRAKEN_PATH%\Python;%PYTHONPATH%;
-
