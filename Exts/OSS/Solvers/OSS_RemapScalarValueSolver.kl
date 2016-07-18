@@ -28,7 +28,7 @@ function OSS_RemapScalarValueSolver.solve!
   out Scalar[] resultPos,
   out Scalar[] result
   )
-{ 
+{
   Scalar scale = 1.0;
   UInt32 size = inputValues.size();
   resultPos.resize(size);
@@ -36,9 +36,9 @@ function OSS_RemapScalarValueSolver.solve!
   result.resize(size);
 
   for(UInt32 i=0; i<inputValues.size(); i++){
-    resultPos.push(Scalar(Math_max(0,inputValues[i]))*scale);
-    resultNeg.push(abs(Scalar(Math_min(0,inputValues[i])))*scale);
-    result.push(resultPos[i] - resultNeg[i]);
+    resultPos[i] = Scalar(Math_max(0,inputValues[i]))*scale;
+    resultNeg[i] = abs(Scalar(Math_min(0,inputValues[i])))*scale;
+    result[i] = resultPos[i] - resultNeg[i];
   }
 }
 
