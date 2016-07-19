@@ -28,6 +28,7 @@ config.setMetaData('RigTitle', os.path.split(args[0])[1].partition('.')[0])
 config.setMetaData('SetupDebugDrawing', True)
 config.setMetaData('CollapseComponents', False)
 config.setMetaData('AddCollectJointsNode', True)
+config.setMetaData('UseRigConstants', True)
 
 builder.build(rig)
 

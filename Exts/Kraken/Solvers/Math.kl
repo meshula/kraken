@@ -265,6 +265,16 @@ function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
   this.setFromMat44(m);
 }
 
+function Quat.align!(SInt8 x, SInt8 y, SInt8 z)
+{
+  Mat33 mat33ori;
+  mat33ori.fromXYZ(x, y, z);
+  Quat quatori;
+  quatori.setFromMat33(mat33ori);
+  this = this*quatori;
+}
+
+
 // function Mat44 Mat44.align(SInt8 x, SInt8 y, SInt8 z)
 // {
 //   Mat33 mat33ori;

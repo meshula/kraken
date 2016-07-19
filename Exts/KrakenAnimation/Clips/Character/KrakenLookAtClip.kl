@@ -5,7 +5,7 @@ object KrakenLookAtClip : KrakenClip {
   KrakenClip childClip;
   Float32 speed;
   String names[];
-  SInt32 controlId[];
+  SInt32 objectID[];
   UInt32 nameToId[String];
   Vec3 targets[];
   Vec3 axes[];
@@ -44,7 +44,7 @@ function Vec3 Quat.getAxis(in SInt8 axisIndex)
 function KrakenLookAtClip(Index matrixIndex, KrakenClip childClip) {
   this.matrixIndex = matrixIndex;
   this.childClip = childClip;
-  this.speed = 1.0;
+  this.speed = 1;
   this.lookup = null;
   this.rigVersion = 0;
   this.simTarget.x = SCALAR_INFINITE;
@@ -66,7 +66,7 @@ function KrakenLookAtClip.defineLookAt!(
   if(id == this.names.size()) {
     this.nameToId[name] = this.names.size();
     this.names.push(name);
-    this.controlId.push(-1);
+    this.objectID.push(-1);
     this.targets.push(target);
     this.axes.push(axis);
     this.locked.push(locked);
@@ -98,6 +98,23 @@ Float32 KrakenLookAtClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenC
   return Float32();
 }
 
+/*
+Xfo[] KrakenLookAtClip.solveHierarchy()
+{
+  Xfo allXfos<> = rig.getAllParentXfos();
+  Xfo allParentsXfos<> = rig.getAllParentXfos();
+  Size allXfosSize = allXfos.size(); 
+
+  Xfo hierOutXfos[];
+
+  for(Integer i=0; i<allXfosSize; i++)
+  {
+          Xfo localAXfo = allParentsXfos[i].inverse() * allXfos[i];
+          hierOutXfos[i] = hierOutXfos[i] * localXfo;
+  }
+  return hierOutXfos;
+}
+*/
 Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
 
   if(rig == null)
@@ -106,53 +123,54 @@ Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipConte
     return Xfo();
 
 
-  Xfo allXfos<> = rig.getAllParentXfos();
+  Xfo allXfos<> = rig.getAllXfos();
   Xfo allParentsXfos<> = rig.getAllParentXfos();
-  String allNames <> = rig.getAllNames();
-  KrakenControl controls<> = rig.getControls();
+  String allNames <>   = rig.getAllNames();
   // if control hasn't been matched to its global id by name, do it now.
-  if(this.controlId[id] == -1) {
+  if(this.objectID[id] == -1) {
     for(Size i=0;i<allNames.size();i++) {
       // find matching name and establish global id
       if(allNames[i] == this.names[id]) {
-        this.controlId[id] = i;
+        this.objectID[id] = i;
         break;
       }
     }
-    if(this.controlId[id] == -1)
+    if(this.objectID[id] == -1)
       return Xfo(); // not found
   }
 
-  SInt8 upAxisIndex = 3;
+
+  SInt8 upAxisIndex =3;
   SInt8 alignAxisIndex = 2;
-  Quat offsetOri, restDelta, currentDelta, newDelta, result, newOri;
+  Quat offsetOri, targetOri, currentDelta, newDelta, result, newOri;
+  Xfo targetXfo;
 
   // get current rotation
       //Vec3 inPos = Xfo(inMatrix).tr;
-  Xfo controlXfo_global    = allXfos[this.controlId[id]];
-  Xfo parentXfo = allParentsXfos[this.controlId[id]];
-  // this.parentXfo[id] = controls[this.controlId[id]].global * controls[this.controlId[id]].local.inverse();
+  Xfo controlXfo  = allXfos[this.objectID[id]];
+  Xfo parentXfo   = allParentsXfos[this.objectID[id]];
 
 
   // get current delta
     // Vec3 newVel = (inPos - position); //*drag == ( * 0.9);
+  // getTargetRotation
   Vec3 target = context.matrices[this.matrixIndex].translation();
-  Vec3 direction = (target - controlXfo_global.tr).unit();//ori.getAxis(downAxisIndex).unit();
-    // need to apply rotation offset
-  offsetOri.setFrom2Vectors(parentXfo.ori.getZaxis(), parentXfo.ori.getAxis(alignAxisIndex));
-    //Vec3 upVector = global.ori.getAxis(upAxisIndex).unit();
+  Vec3 direction = (target - parentXfo.tr).unit();
   Vec3 upVector = parentXfo.ori.getAxis(upAxisIndex).unit();
-  restDelta.setFromDirectionAndUpvector(direction,upVector);
-  // currentDelta = restDelta*this.prevOri[id].inverse();
+  targetOri.setFromDirectionAndUpvector(direction, upVector);
+  targetXfo.ori = targetOri;
+  targetXfo.align(1,2,3);
+  targetOri = targetXfo.ori;
+  // offsetOri.setFrom2Vectors(parentXfo.ori.getAxis(alignAxisIndex), parentXfo.ori.getAxis(upAxisIndex));
+  // targetOri = offsetOri*targetOri;
+  
+  // currentDelta = this.prevOri[id].inverse()*targetOri;
+  // newDelta = controlXfo.ori*currentDelta;
+  // controlXfo.ori = this.prevOri[id].sphericalLinearInterpolate(newDelta, Float32(Math_clamp(this.amounts[id], 0.0, 1.0)));
+  controlXfo.ori = parentXfo.ori.sphericalLinearInterpolate(targetOri, Float32(Math_clamp(this.amounts[id], 0.0, 1.0)));
+  this.prevOri[id] = controlXfo.ori;
 
-
-  controlXfo_global.ori = controlXfo_global.ori*offsetOri;
-
-  controlXfo_global.ori = parentXfo.ori.sphericalLinearInterpolate(restDelta, Float32(Math_clamp(this.amounts[id], 0.0, 1.0)));
-  // this.prevOri[id] = controlXfo_global.ori;
-  // controlXfo_global.ori = parentXfo.ori.sphericalLinearInterpolate(restDelta, Float32(Math_clamp(this.amounts[id], 0.0, 1.0)));
-
-  return  parentXfo.ori.inverse() * controlXfo_global.ori; 
+  return  parentXfo.ori.inverse() * controlXfo; 
 }
 
 function KrakenLookAtClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
@@ -215,40 +233,3 @@ function KrakenLookAtClip.loadFromJson!(JSONDictValue json) {
     this.defineLookAt(name, target, axis, locked, amount);
   }
 }
-
-
-
-  /*
-  Xfo global = controls[this.controlId[id]].global;
-  Xfo parentSpace = controls[this.controlId[id]].global * controls[this.controlId[id]].local.inverse();
-
-  Scalar t = Float32(context.delta) * this.speed;
-
-  Vec3 target = context.matrices[this.matrixIndex].translation();
-  if(this.simTarget.x != SCALAR_INFINITE)
-    target = this.simTarget.linearInterpolate(target, t);
-  this.simTarget = target;
-
-  Vec3 srcDir = parentSpace.ori.rotateVector(this.targets[id]).unit();
-  Vec3 newDir = (target - parentSpace.tr).unit();
-  if(newDir.almostEqual(Vec3()))
-    return Xfo();
-
-  Quat result;
-  if(this.locked[id] && !this.axes[id].almostEqual(Vec3())) {
-
-    Vec3 axis = parentSpace.ori.rotateVector(this.axes[id]);
-    srcDir = (srcDir - (axis.dot(srcDir) * axis)).unit();
-    newDir = (newDir - (axis.dot(newDir) * axis)).unit();
-
-  }
-
-  Quat offsetOri;
-  offsetOri.setFrom2Vectors(srcDir, newDir);
-  result = parentSpace.ori * offsetOri;
-
-  global.ori = parentSpace.ori.sphericalLinearInterpolate(result, Float32(Math_clamp(this.amounts[id], 0.0, 1.0)));
-
-  return parentSpace.inverse() * global;
-
-  */

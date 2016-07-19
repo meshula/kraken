@@ -1,0 +1,130 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+    "uiTooltip" : "Supported types:\n  this: KrakenClipStack\n  clip: KrakenClip\n  weight: Float32\n"
+    },
+  "title" : "BlendClip",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Execute" : {}
+        },
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "KrakenClipStack" : null
+        },
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "KrakenClipStack"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "KrakenClip" : null
+        },
+      "name" : "clip",
+      "execPortType" : "In",
+      "typeSpec" : "KrakenClip"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 0.3999999761581421
+        },
+      "name" : "weight",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      }
+    ],
+  "extDeps" : {
+    "KrakenAnimation" : "*"
+    },
+  "presetGUID" : "290FDA09F0419683BF59B8CFA6AC1DCC",
+  "code" : "require KrakenAnimation;
+
+dfgEntry {
+  for(Size i=0;i<this.clips.size();i++) {
+    this.weights[i] = (1-weight)*this.weights[i];
+  }
+  this.addClip(clip, weight);
+}
+",
+  "requiredPresets" : {
+    "Kraken.KrakenAnimation.KrakenClipStack.BlendClip" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiTooltip" : "Supported types:\n  this: KrakenClipStack\n  clip: KrakenClip\n  weight: Float32\n"
+        },
+      "title" : "BlendClip",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "KrakenClipStack" : null
+            },
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "KrakenClipStack"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "KrakenClip" : null
+            },
+          "name" : "clip",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenClip"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 0.3999999761581421
+            },
+          "name" : "weight",
+          "execPortType" : "In",
+          "typeSpec" : "Float32"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "290FDA09F0419683BF59B8CFA6AC1DCC",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  for(Size i=0;i<this.clips.size();i++) {
+    this.weights[i] = (1-weight)*this.weights[i];
+  }
+  this.addClip(clip, weight);
+}
+"
+      }
+    }
+  }

@@ -51,11 +51,10 @@
   "extDeps" : {
     "KrakenAnimation" : "*"
     },
-  "presetGUID" : "D44E283DAE8F2B862C9CB401D5E4E578",
+  "presetGUID" : "7DF3E904AB1882A7AC20E03E23116A6F",
   "code" : "dfgEntry {
   KrakenControl controls<>(this.getControls());
   Size controlCount = controls.size();
-  report(controlCount);
   result.resize(controlCount);
   for(Size i=0;i<controlCount;i++)
     result[i] = controls[i].global;
@@ -115,11 +114,10 @@
       "extDeps" : {
         "KrakenAnimation" : "*"
         },
-      "presetGUID" : "D44E283DAE8F2B862C9CB401D5E4E578",
+      "presetGUID" : "7DF3E904AB1882A7AC20E03E23116A6F",
       "code" : "dfgEntry {
   KrakenControl controls<>(this.getControls());
   Size controlCount = controls.size();
-  report(controlCount);
   result.resize(controlCount);
   for(Size i=0;i<controlCount;i++)
     result[i] = controls[i].global;
