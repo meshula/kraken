@@ -755,6 +755,17 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
+        kl += ["function Xfo[] %s.getAllParentXfos() {" % self.getKLExtensionName()]
+        kl += ["  Xfo result[](%d);" % len(self.__klObjects)]
+        for i in range(len(self.__klObjects)):
+            objParent = self.__klObjects[i]['sceneItem'].getParent()
+            if objParent:
+                kl += ["  result[%d] = this.%s.global;" % (i,self.findKLObjectForSI(objParent)['member']) ]
+            else:
+                kl += ["  result[%d] = Xfo();" % (i)]
+        kl += ["  return result;"]
+        kl += ["}", ""]
+
         kl += ["function String[] %s.getAllNames() {" % self.getKLExtensionName()]
         kl += ["  String result[](%d);" % len(self.__klObjects)]
         for i in range(len(self.__klObjects)):
@@ -789,6 +800,15 @@ class Builder(Builder):
           kl += ["  KrakenControl result<>;"]
         else:
           kl += ["  KrakenControl result<>(this._KrakenControl);"]
+        kl += ["  return result;"]
+        kl += ["}", ""]
+
+        kl += ["function Xfo[] %s.getControlXfos() {" % self.getKLExtensionName()]
+        kl += ["  Xfo result[](%d);" % len(controls)]
+        if len(controls) > 0:
+          kl += ["  KrakenControl controls<>(this._KrakenControl);"]
+          kl += ["  for(Size i=0;i<%s;i++)" % len(controls)]
+          kl += ["    result[i] = controls[i].global;"]
         kl += ["  return result;"]
         kl += ["}", ""]
 
@@ -1182,6 +1202,7 @@ class Builder(Builder):
             if not parent:
                 continue
             obj[parentName] = parent.getDecoratedPath()
+
 
         if hasattr(kSceneItem, 'getParent'):
             parent = kSceneItem.getParent()
