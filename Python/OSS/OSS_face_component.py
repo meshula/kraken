@@ -1,4 +1,5 @@
 import re
+import json
 
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo
@@ -58,6 +59,7 @@ class OSSFaceComponentGuide(OSSFaceComponent):
 
          # Guide Settings
         self.an1DCtrlNames = StringAttribute('an1DNames', value="L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut L_loLidInn L_loLidMid L_loLidOut R_loLidInn R_loLidMid R_loLidOut L_upLidInn L_upLidMid L_upLidOut R_upLidInn R_upLidMid R_upLidOut", parent=self.guideSettingsAttrGrp)
+        self.shapesToControlsJSON = StringAttribute('shapesToControlsJSON', value="", parent=self.guideSettingsAttrGrp)
         self.an2DCtrlNames = StringAttribute('an2DNames', value="", parent=self.guideSettingsAttrGrp)
         self.an3DCtrlNames = StringAttribute('an3DNames', value="", parent=self.guideSettingsAttrGrp)
 
@@ -359,11 +361,20 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
         animControlNameList = getAnimControlNameList(handleNames)
 
+        shapesToControlsJSON = data.get("shapesToControlsJSON", "")
+        shapesToControlDict = None
+        if shapesToControlsJSON:
+            shapesToControlDict = json.loads(shapesToControlsJSON)
 
         segments = ["base", "tweak"]
 
         globalScale = data['globalComponentCtrlSize']
 
+
+        self.RemapScalarValueSolverKLOp = KLOperator(self.getLocation()+self.getName()+str(anCtrlType)+'RemapScalarValueSolverKLOp', 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
+        self.addOperator(self.RemapScalarValueSolverKLOp)
+        self.RemapScalarValueSolverKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         for i, handleName in enumerate(animControlNameList):
             parent = self.faceCtrlSpace
@@ -420,6 +431,47 @@ class OSSFaceComponentRig(OSSFaceComponent):
                         newCtrl.scalePoints(Vec3(.5,.5,.5))
                     newCtrl.rotatePoints(90,0,0)
 
+                    if handleName in shapesToControlDict.keys():
+
+                        LTOp = KLOperator(self.getLocation()+self.getName()+handleName+'GetLocalTranslateSolver', 'OSS_GetLocalTranslateSolver', 'OSS_Kraken')
+                        self.addOperator(LTOp)
+                        LTOp.setInput('drawDebug', self.drawDebugInputAttr)
+                        LTOp.setInput('rigScale', self.rigScaleInputAttr)
+                        LTOp.setInput('inMatrix', newCtrl)
+                        LTOp.setInput('inBaseMatrix', newCtrlSpace)
+
+                        bsAttrGrp = AttributeGroup("BlendShapes", parent=newCtrl)
+                        used_axes = {}
+                        for direction, shapes in shapesToControlDict[handleName].iteritems():
+                            #Need something here to extract single local axis value from handleName
+
+                            sign, axis = direction.split("t")
+                            if axis not in used_axes.keys():
+                                lvAttr = ScalarAttribute("localT"+axis, value=0.5, parent=bsAttrGrp)  #can't currently use dcc eulers directly
+                                LTOp.setOutput('localTranslate'+axis.upper(), lvAttr)
+
+                                posAttr = ScalarAttribute(axis+"Pos", value=0.5, parent=bsAttrGrp)
+                                negAttr = ScalarAttribute(axis+"Neg", value=0.5, parent=bsAttrGrp)
+
+                                used_axes[axis] = {"+": posAttr, "-": negAttr}
+
+                                array = self.RemapScalarValueSolverKLOp.getInput("inputValues") or []
+                                array.append(lvAttr)
+                                self.RemapScalarValueSolverKLOp.setInput('inputValues', array)
+
+                                array = self.RemapScalarValueSolverKLOp.getOutput("resultPos") or []
+                                array.append(posAttr)
+                                self.RemapScalarValueSolverKLOp.setOutput('resultPos', array)
+
+                                array = self.RemapScalarValueSolverKLOp.getOutput("resultNeg") or []
+                                array.append(negAttr)
+                                self.RemapScalarValueSolverKLOp.setOutput('resultNeg', array)
+
+                            for shape in shapes:
+                                bsAttr = ScalarAttribute(shape, value=0.0, isBlendShape=True, parent=bsAttrGrp)
+                                bsAttr.connect(used_axes[axis][sign])
+
+
 
 
 
@@ -445,20 +497,13 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
             # Add Deformer Joint Constrain
             self.outputsToDeformersKLOp     = KLOperator(self.getLocation()+self.getName()+handleName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-            self.RemapScalarValueSolverKLOp = KLOperator(self.getLocation()+self.getName()+handleName+'RemapScalarValueSolverKLOp', 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
-
             self.addOperator(self.outputsToDeformersKLOp)
-            self.addOperator(self.RemapScalarValueSolverKLOp)
 
             # Add Att Inputs
             self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
             self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
 
-            self.RemapScalarValueSolverKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-            self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
-
-            self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         return True
 
@@ -487,9 +532,9 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
         self.parentSpaceInputTgt.childJoints = []
 
-        self.createControls(3, data["an3DNames"], data)
-        self.createControls(2, data["an2DNames"], data)
-        self.createControls(1, data["an1DNames"], data)
+        self.createControls(3, data.get("an3DNames", ""), data)
+        self.createControls(2, data.get("an2DNames", ""), data)
+        self.createControls(1, data.get("an1DNames", ""), data)
         # Eval Operators
         # self.evalOperators()
 
@@ -498,7 +543,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
 def getAnimControlNameList(handleNames):
     """ tokenizes string argument, returns a list"""
-    animControlNameList = re.split(r'[ ,:;]+', handleNames)
+    animControlNameList = re.split(r'[ ,:;]+', handleNames.strip())
 
     # These checks should actually prevent the component_inspector from closing maybe?
     for name in animControlNameList:

@@ -10,7 +10,8 @@
     "Clips/Static/KrakenStaticClip.kl",
     "Clips/Alembic/KrakenAbcClip.kl",
     "Clips/Containers/KrakenClipStack.kl",
-    "Clips/Procedural/KrakenRotationWaveClip.kl"
-    "Clips/Character/KrakenLookAtClip.kl"
+    "Clips/Procedural/KrakenRotationWaveClip.kl",
+    "Clips/Character/KrakenLookAtClip.kl",
+    "Clips/Character/KrakenRagDollClip.kl"
   ]
 }

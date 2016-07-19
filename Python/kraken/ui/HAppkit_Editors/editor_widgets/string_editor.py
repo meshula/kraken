@@ -14,8 +14,9 @@ class StringEditor(BaseValueEditor):
 
         self._editor = QtGui.QTextEdit(self)
         options = valueController.getOption('multiLine')
-        self._editor.setMinimumHeight( options.get('numLines', 5) * 20 )
-        self._editor.setMaximumHeight( options.get('numLines', 5) * 20 )
+        if options: # I was getting None...?
+            self._editor.setMinimumHeight( options.get('numLines', 5) * 20 )
+            self._editor.setMaximumHeight( options.get('numLines', 5) * 20 )
         vbox.addWidget(self._editor, 1)
 
         # vbox.addStretch(0)

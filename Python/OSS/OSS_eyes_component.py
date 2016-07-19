@@ -410,7 +410,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     newDefConstraint = newDef.constrainTo(newLoc)
 
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
-                    upVSpaceBlendInputAttr = ScalarAttribute(handleName+'FKIK', value=0.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
+                    upVSpaceBlendInputAttr = ScalarAttribute(handleName+'FKIK', value=1.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
 
 
 

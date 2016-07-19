@@ -1,0 +1,141 @@
+require Math;
+
+object KrakenRagDollClip : KrakenClip {
+  Index matrixIndex;
+  KrakenClip childClip;
+  Float32 speed;
+  String names[];
+  SInt32 controlId[];
+  UInt32 nameToId[String];
+  Vec3 targets[];
+  Vec3 axes[];
+  Float32 amounts[];
+
+  UInt64 rigVersion;
+  KrakenClipLookup lookup;
+  Vec3 simTarget;
+};
+
+
+function KrakenRagDollClip(Index matrixIndex, KrakenClip childClip) {
+  this.matrixIndex = matrixIndex;
+  this.childClip = childClip;
+  this.speed = 1.0;
+  this.lookup = null;
+  this.rigVersion = 0;
+  this.simTarget.x = SCALAR_INFINITE;
+}
+
+/// \dfgPresetDefault amount 1.0
+/// \dfgPresetRange amount (0.0, 1.0)
+function KrakenRagDollClip.defineRagDoll!(
+  String name, 
+  Float32 amount
+) {
+  UInt32 id = this.nameToId.get(name, this.names.size());
+  if(id == this.names.size()) {
+    this.nameToId[name] = this.names.size();
+    this.names.push(name);
+    this.controlId.push(-1);
+    this.amounts.push(amount);
+  } else {
+    this.amounts[id] = amount;
+  }
+  this.lookup = null;
+}
+
+UInt32 KrakenRagDollClip.getChannelCount() {
+  return this.names.size();
+}
+
+String KrakenRagDollClip.getChannelName(UInt32 id) {
+  return this.names[id];
+}
+
+UInt32 KrakenRagDollClip.getChannelType(UInt32 id) {
+  return KrakenClipChannel_Xfo;
+}
+
+Float32 KrakenRagDollClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+  return Float32();
+}
+
+Xfo KrakenRagDollClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+  if(rig == null)
+    return Xfo();
+  if(this.targets[id].almostEqual(Vec3()))
+    return Xfo();
+
+  KrakenControl controls<> = rig.getControls();
+  if(this.controlId[id] == -1) {
+    for(Size i=0;i<controls.size();i++) {
+      if(controls[i].name == this.names[id]) {
+        this.controlId[id] = i;
+        break;
+      }
+    }
+    if(this.controlId[id] == -1)
+      return Xfo(); // not found
+  }
+  
+  Quat offsetOri, result;
+
+  Xfo global = controls[this.controlId[id]].global;
+  Xfo parentXfo = controls[this.controlId[id]].global * controls[this.controlId[id]].local.inverse();
+
+  return  parentXfo.inverse() * global;
+}
+
+function KrakenRagDollClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
+  if(this.childClip)
+    this.childClip.apply(rig, context, factor);
+
+  KrakenRagDollClip clip = this;
+  if(clip.lookup == null)
+    clip.lookup = KrakenClipLookup(rig, clip);
+  clip.lookup.applyClip(rig, clip, context, factor);
+}
+
+function JSONDictValue KrakenRagDollClip.saveToJson!() {
+  JSONArrayValue lookats();
+  for(Size i=0;i<this.names.size();i++) {
+    JSONDictValue lookat();
+    lookat.setString('name', this.names[i]);
+    lookat.setScalar('amount', this.amounts[i]);
+    lookats.add(lookat);
+  }
+  JSONDictValue content();
+  content.setInteger('matrixIndex', this.matrixIndex);
+  if(this.childClip) {
+    content.setString('childClipType', this.childClip.type());
+    content.set('childClip', this.childClip.saveToJson());
+  }
+  content.set('lookats', lookats);
+  return content;
+}
+
+function KrakenRagDollClip.loadFromJson!(JSONDictValue json) {
+  this.names.resize(0);
+  this.nameToId.clear();
+  this.amounts.resize(0);
+  this.rigVersion = 0;
+  this.speed = 1.0;
+  this.simTarget.x = SCALAR_INFINITE;
+
+  this.matrixIndex = json.getInteger('matrixIndex');
+  if(json.has('childClipType')) {
+    String childClipType = json.getString('childClipType');
+    this.childClip = KrakenClip_getFromTypeName(childClipType);
+    this.childClip.loadFromJson(json.get('childClip'));
+  } else {
+    this.childClip = null;
+  }
+
+  JSONArrayValue lookats = json.get('lookats');
+  for(Size i=0;i<lookats.size();i++) {
+    JSONDictValue lookat = lookats.get(i);
+    String name = lookat.getString('name');
+    Float32 amount = lookat.getScalar('amount');
+    this.defineRagDoll(name, amount);
+  }
+}

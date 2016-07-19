@@ -13,7 +13,9 @@ interface KrakenKLRig {
   evaluate!(KrakenClipContext context, io Mat44 joints<>);
 
   Xfo[] getJointXfos();
+  Xfo[] getControlXfos();
   String[] getJointNames();
+  Xfo[] getAllParentXfos();
   Xfo[] getAllXfos();
   String[] getAllNames();
 

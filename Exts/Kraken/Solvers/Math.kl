@@ -222,6 +222,27 @@ function SInt8 SInt8.normalize(SInt8 v) {
 // -3 = -Z
 // any other values that should should be ignored, currently are not (<3; >3; 0)
 
+
+function Vec3 Quat.getAxis(in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return this.getXaxis();
+    case 1:
+      return this.getYaxis();
+    case 2:
+      return this.getZaxis();
+    case 3:
+      return this.getXaxis().negate();
+    case 4:
+      return this.getYaxis().negate();
+    case 5:
+      return this.getZaxis().negate();
+  }
+  return this.getXaxis();
+}
+
 function Mat33.fromXYZ!(SInt8 x, SInt8 y, SInt8 z) {
   this.row0 = Vec3(x.normalize(1),x.normalize(2),x.normalize(3));
   this.row1 = Vec3(y.normalize(1),y.normalize(2),y.normalize(3));

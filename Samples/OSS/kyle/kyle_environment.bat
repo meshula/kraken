@@ -6,6 +6,7 @@ set FABRIC_DIR=Z:\dist\fabric\releases\FabricEngine-2.3.0-auto-2016052610-Window
 
 set PATH=%FABRIC_DIR%\bin;%PATH%
 
+set FABRIC_LOG_LEVEL=2
 set KRAKEN_PATH=Z:\dist\fabric\Kraken
 :: Set the kraken path based on where this script lives
 :: We really need to have a proper environment setup eventually -TT
