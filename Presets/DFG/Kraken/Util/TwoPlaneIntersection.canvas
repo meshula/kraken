@@ -1,0 +1,346 @@
+{
+  "objectType" : "Func",
+  "title" : "TwoPlaneIntersection",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Execute" : {}
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "plane1",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44" : {
+          "row0" : {
+            "x" : 1,
+            "y" : 0,
+            "z" : 0,
+            "t" : 0
+            },
+          "row1" : {
+            "x" : 0,
+            "y" : 1,
+            "z" : 0,
+            "t" : 0
+            },
+          "row2" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 1,
+            "t" : 0
+            },
+          "row3" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0,
+            "t" : 1
+            }
+          }
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "plane1Normal",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Vec3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0
+          }
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "plane2",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44" : {
+          "row0" : {
+            "x" : 1,
+            "y" : 0,
+            "z" : 0,
+            "t" : 0
+            },
+          "row1" : {
+            "x" : 0,
+            "y" : 1,
+            "z" : 0,
+            "t" : 0
+            },
+          "row2" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 1,
+            "t" : 0
+            },
+          "row3" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0,
+            "t" : 1
+            }
+          }
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "plane2Normal",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Vec3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0
+          }
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "linePoint",
+      "nodePortType" : "In",
+      "defaultValues" : {
+        "Vec3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0
+          }
+        },
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "lineVec",
+      "nodePortType" : "In",
+      "defaultValues" : {
+        "Vec3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0
+          }
+        },
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "8FDACB5AFF30F5A6D3AE1B74FD25A4CA",
+  "code" : "dfgEntry {
+   
+  //Get the normals of the planes.
+  //Vec3 plane1Normal = (plane1.translation() - plane1.multiplyVector3(Vec3(0, 1, 0))).unit();
+  //Vec3 plane2Normal = (plane2.translation() - plane2.multiplyVector3(Vec3(1, 0, 0))).unit();
+    
+  //We can get the direction of the line of intersection of the two planes by calculating the
+  //cross product of the normals of the two planes. Note that this is just a direction and the line
+  //is not fixed in space yet.
+  lineVec = plane1Normal.cross(plane2Normal).unit();
+ 
+  //Next is to calculate a point on the line to fix it's position. This is done by finding a vector from
+  //the plane2 location, moving parallel to it's plane, and intersecting plane1. To prevent rounding
+  //errors, this vector also has to be perpendicular to lineDirection. To get this vector, calculate
+  //the cross product of the normal of plane2 and the lineDirection.     
+  Vec3 ldir = plane2Normal.cross(lineVec).unit();       
+ 
+  Float32 numerator = plane1Normal.dot(ldir);
+ 
+  //Prevent divide by zero.
+  if(numerator > PRECISION) {
+     
+      Vec3 plane1ToPlane2 = plane1.translation() - plane2.translation();
+      Float32 t = plane1ToPlane2.dot(plane1Normal) / numerator;
+      linePoint = plane2.translation() + t * ldir;
+  }
+}
+",
+  "requiredPresets" : {
+    "Kraken.Util.TwoPlaneIntersection" : {
+      "objectType" : "Func",
+      "title" : "TwoPlaneIntersection",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "plane1",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Mat44" : {
+              "row0" : {
+                "x" : 1,
+                "y" : 0,
+                "z" : 0,
+                "t" : 0
+                },
+              "row1" : {
+                "x" : 0,
+                "y" : 1,
+                "z" : 0,
+                "t" : 0
+                },
+              "row2" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 1,
+                "t" : 0
+                },
+              "row3" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0,
+                "t" : 1
+                }
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "plane1Normal",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "plane2",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Mat44" : {
+              "row0" : {
+                "x" : 1,
+                "y" : 0,
+                "z" : 0,
+                "t" : 0
+                },
+              "row1" : {
+                "x" : 0,
+                "y" : 1,
+                "z" : 0,
+                "t" : 0
+                },
+              "row2" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 1,
+                "t" : 0
+                },
+              "row3" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0,
+                "t" : 1
+                }
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "plane2Normal",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "linePoint",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "lineVec",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "8FDACB5AFF30F5A6D3AE1B74FD25A4CA",
+      "code" : "dfgEntry {
+   
+  //Get the normals of the planes.
+  //Vec3 plane1Normal = (plane1.translation() - plane1.multiplyVector3(Vec3(0, 1, 0))).unit();
+  //Vec3 plane2Normal = (plane2.translation() - plane2.multiplyVector3(Vec3(1, 0, 0))).unit();
+    
+  //We can get the direction of the line of intersection of the two planes by calculating the
+  //cross product of the normals of the two planes. Note that this is just a direction and the line
+  //is not fixed in space yet.
+  lineVec = plane1Normal.cross(plane2Normal).unit();
+ 
+  //Next is to calculate a point on the line to fix it's position. This is done by finding a vector from
+  //the plane2 location, moving parallel to it's plane, and intersecting plane1. To prevent rounding
+  //errors, this vector also has to be perpendicular to lineDirection. To get this vector, calculate
+  //the cross product of the normal of plane2 and the lineDirection.     
+  Vec3 ldir = plane2Normal.cross(lineVec).unit();       
+ 
+  Float32 numerator = plane1Normal.dot(ldir);
+ 
+  //Prevent divide by zero.
+  if(numerator > PRECISION) {
+     
+      Vec3 plane1ToPlane2 = plane1.translation() - plane2.translation();
+      Float32 t = plane1ToPlane2.dot(plane1Normal) / numerator;
+      linePoint = plane2.translation() + t * ldir;
+  }
+}
+"
+      }
+    }
+  }
