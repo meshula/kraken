@@ -1035,6 +1035,12 @@ class OSSMouthRig(OSSMouth):
         self.mouthEndOutputTgt.xfo = data['mouthXfo']
         self.mouthOutputTgt.xfo = data['mouthXfo']
 
+        #First
+        for i in range(len(self.loLipCtrls)):
+            self.loLipCtrlsRest.append(self.loLipCtrls[i].xfo)
+        for i in range(len(self.upLipCtrls)):
+            self.upLipCtrlsRest.append(self.upLipCtrls[i].xfo)
+
         self.evalOperators()
 
         # Eval Constraints
