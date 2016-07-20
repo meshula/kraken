@@ -271,11 +271,11 @@ class OSSMainComponentRig(OSSMainComponent):
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
         self.offsetCtrlSpace = self.offsetCtrl.insertCtrlSpace()
 
-        self.rootCtrl = FKControl('root', shape='sphere', parent=self.mainCtrl)
+        self.rootCtrl = FKControl('root', shape='arrow', parent=self.mainCtrl)
         self.rootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
-        self.rootCtrl.setColor("purpleLight")
+        self.rootCtrl.setColor("yellowLight")
         self.rootCtrl.lockScale(x=True, y=True, z=True)
-        self.rootCtrl.scalePoints(Vec3(3.0, 3.0, 3.0))
+        self.rootCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
         self.rootCtrlSpace = self.rootCtrl.insertCtrlSpace()
 
         # COG
@@ -289,6 +289,8 @@ class OSSMainComponentRig(OSSMainComponent):
         self.visIconCtrl = Control('vis', parent=self.ctrlCmpGrp)
         if "oss_vis" not in Config.getInstance().getControlShapes():
             self.visIconCtrl.setCurveData(VIS_SHAPE)
+        self.visIconCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
+        self.visIconCtrl.setColor("yellowMuted")
         self.visIconCtrl.constrainTo(self.mainCtrl, maintainOffset=True)
 
         # Add Component Params to IK control
