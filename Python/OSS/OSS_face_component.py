@@ -468,7 +468,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
                                 self.RemapScalarValueSolverKLOp.setOutput('resultNeg', array)
 
                             for shape in shapes:
-                                bsAttr = ScalarAttribute(shape, value=0.0, isBlendShape=True, parent=bsAttrGrp)
+                                bsAttr = ScalarAttribute(shape, value=0.0, blendShapeName=shape, parent=bsAttrGrp)
                                 bsAttr.connect(used_axes[axis][sign])
 
 
