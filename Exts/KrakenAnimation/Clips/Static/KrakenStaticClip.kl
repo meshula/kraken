@@ -61,6 +61,11 @@ Xfo KrakenStaticClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipConte
   return this.values[id];
 }
 
+Xfo KrakenStaticClip.evaluateXfo!(String name) {
+  UInt32 id = this.nameToId.get(name, this.values.size());
+  return this.values[id];
+}
+
 function KrakenStaticClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
   KrakenStaticClip clip = this;
   if(clip.lookup == null)
