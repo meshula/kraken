@@ -13,6 +13,9 @@ from kraken.core.objects.operators.operator import Operator
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.kraken_system import ks
 
+from kraken.log import getLogger
+
+logger = getLogger('kraken')
 
 class CanvasOperator(Operator):
     """Canvas Operator representation."""
@@ -238,8 +241,8 @@ class CanvasOperator(Operator):
             errorMsg = "Possible problem with Canvas operator '" + \
                 self.getName() + "' port values:"
 
-            print errorMsg
-            pprint.pprint(debug, width=800)
+            logger.critical(errorMsg)
+            logger.critical(pprint.pformat(debug, width=800))
 
             raise Exception(errorMsg)
 
@@ -255,12 +258,11 @@ class CanvasOperator(Operator):
                 obj.setValue(rtval)
             else:
                 if hasattr(obj, '__iter__'):
-                    print "Warning: Trying to set a canvas port item with an \
-                        array directly."
+                    logger.warning("Trying to set a canvas port item with an array directly.")
 
-                print "Warning: Not setting rtval: %s\n\tfor output object: \
-                    %s\n\ton port: %s\n\tof canvas object: %s\n." % \
-                    (rtval, obj, portName, self.getName())
+                if portName != "exec":
+                    logger.warning("Not setting rtval: %s\n\tfor output object: %s\n\ton port: %s\n\tof canvas object: %s\n." % \
+                        (rtval, obj, portName, self.getName()))
 
 
         for i in xrange(self.node.getExecPortCount()):
