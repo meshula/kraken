@@ -362,7 +362,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         animControlNameList = getAnimControlNameList(handleNames)
 
         shapesToControlsJSON = data.get("shapesToControlsJSON", "")
-        shapesToControlDict = None
+        shapesToControlDict = {}
         if shapesToControlsJSON:
             shapesToControlDict = json.loads(shapesToControlsJSON)
 
