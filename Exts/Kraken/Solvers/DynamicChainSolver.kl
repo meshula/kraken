@@ -90,6 +90,11 @@ function DynamicChainSolver.solve!(
 
   if (frame <= resetframe) {
     this.reset(fkPose, animPose);
+
+    if(this.handle != null) {
+      this.handle.clear();
+    }
+
   }
   else {
     Boolean initilized = this.trPrev.size() == animPose.size();
@@ -225,14 +230,15 @@ function DynamicChainSolver.solve!(
 
         Color boneColor(1.0, 1.0, 0);
         for (Integer d=0; d < animPose.size(); d++) {
-          etDrawBone(this.handle.rootTransform, 'bone' + d, animPose[d], 1.0, 0.15, boneColor);
+          // etDrawBone(this.handle.rootTransform, 'bone' + d, animPose[d], 1.0, 0.15, boneColor);
 
-        // drawLine(this.handle.rootTransform, 'prevAnchor' + d, debugAnchorCurrPos[d], debugAnchorPrevAnchorPos[d], Color(0.0, 0.0, 1.0));
-        // drawLine(this.handle.rootTransform, 'nextAnchor' + d, debugAnchorCurrPos[d], debugAnchorNextAnchorPos[d], Color(0.5, 0.5, 0.0));
+          drawLine(this.handle.rootTransform, 'prevAnchor' + d, debugAnchorCurrPos[d], debugAnchorPrevAnchorPos[d], Color(0.0, 0.0, 1.0));
+          // drawLine(this.handle.rootTransform, 'nextAnchor' + d, debugAnchorCurrPos[d], debugAnchorNextAnchorPos[d], Color(0.5, 0.5, 0.0));
 
           Color simTrColor(1.0, 0.0, 0);
-          drawCross(this.handle.rootTransform, 'simTr' + d, debugSimulatedTr[d], 0.2, simTrColor);
+          drawCross(this.handle.rootTransform, 'simTr' + d, debugSimulatedTr[d], 0.15, simTrColor);
         }
+
 
       }
     }
