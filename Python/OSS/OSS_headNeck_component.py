@@ -1,4 +1,5 @@
 from kraken.core.maths import Vec3
+from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
@@ -58,6 +59,9 @@ class OSSHeadNeckComponentGuide(OSSHeadNeckComponent):
 
         Profiler.getInstance().push("Construct HeadNeck Guide Component:" + name)
         super(OSSHeadNeckComponentGuide, self).__init__(name, parent)
+
+        self.constrainBaseToControl = BoolAttribute('constrainBaseToControl', value=False, parent=self.guideSettingsAttrGrp)
+        self.constrainEndToControl = BoolAttribute('constrainEndToControl', value=False, parent=self.guideSettingsAttrGrp)
 
         # =========
         # Controls
@@ -243,7 +247,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         # Head handle
         self.headAlignSpace = CtrlSpace('headAlign', parent=self.headCtrl)
-        self.headHandleCtrlSpace = CtrlSpace('headHandle', parent=self.headAlignSpace)
+        self.headHandleCtrlSpace = CtrlSpace('headHandle', parent=self.neckCtrl)
 
 
         # Head Aim
@@ -535,24 +539,37 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.NURBSNeckKLOp.setInput('neckHandle', self.neckHandleCtrlSpace_link)
             self.NURBSNeckKLOp.setInput('headHandle', self.headHandleCtrlSpace_link)
 
-        self.neckBaseOutputConstraint = self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0])
-        self.headOutputConstraint = self.headOutputTgt.constrainTo(self.neckOutputs[-1])
-
-        # ====================
+       # ====================
         # Evaluate Fabric Ops
         # ====================
         # Eval Operators # Order is important
         self.NURBSNeckKLOp.evaluate()
 
-        for i in xrange(len(self.neckOutputs)):
+        self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0]).evaluate()
+
+        #self.headOutputConstraint = self.headOutputTgt.constrainTo(self.neckOutputs[-1])
+        # We might want to put this as feature of operator.  Certainly this should be a blend...
+        self.headOutputTgt.xfo.tr = self.headAlignSpace.xfo.tr
+        aimAt(self.headOutputTgt.xfo, aimVector=Vec3(0, 1, 0), upVector=Vec3(0, 0, 1), aimAxis=(1, 0, 0), upAxis=(0, 0, 1))
+        self.headOutputTgt.constrainTo(self.headAlignSpace, maintainOffset=True).evaluate()
+
+
+
+        for i in xrange(len(self.neckOutputs)-1):
             constraint = self.deformerJoints[i].constrainTo(self.neckOutputs[i])
             constraint.evaluate()
+
+        #Really
+        #Hard-coded for now....
+        self.deformerJoints[-1].xfo.tr = self.headAlignSpace.xfo.tr
+        aimAt(self.deformerJoints[-1].xfo, aimVector=Vec3(0, 1, 0), upVector=Vec3(0, 0, 1), aimAxis=(1, 0, 0), upAxis=(0, 0, 1))
+        self.deformerJoints[-1].constrainTo(self.headAlignSpace, maintainOffset=True).evaluate()
+
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # ====================
         # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
-        self.neckBaseOutputConstraint.evaluate()
-        self.headOutputConstraint.evaluate()
+
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 
         self.neckBaseOutputTgt.parentJoint =  self.deformerJoints[0]
