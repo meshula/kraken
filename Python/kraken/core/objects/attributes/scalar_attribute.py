@@ -12,11 +12,13 @@ from kraken.core.kraken_system import ks
 class ScalarAttribute(NumberAttribute):
     """Float Attribute. Implemented value type checking and limiting."""
 
-    def __init__(self, name, value=0.0, minValue=None, maxValue=None, parent=None):
+    def __init__(self, name, value=0.0, minValue=None, maxValue=None, blendShapeName='', parent=None):
         super(ScalarAttribute, self).__init__(name, value=value, minValue=minValue,
               maxValue=maxValue, parent=parent)
 
         assert type(self._value) in (int, float), "Value is not of type 'int' or 'float'."
+
+        self._blendShapeName = blendShapeName
 
 
     # ==============
@@ -51,6 +53,30 @@ class ScalarAttribute(NumberAttribute):
             return False
 
         return True
+
+
+    # ==============
+    # Value Methods
+    # ==============
+    def setBlendShapeName(self, blendShapeName):
+        """Sets the blendShape status of this attribute
+
+        Args:
+            blendShapeName (str): name of driven blend shape (seen in kl builder getShapeNames)
+
+
+        """
+        self._blendShapeName = isBlendShapeName
+
+
+    def getBlendShapeName(self):
+        """Sets the blendShape status of this attribute
+
+        Returns:
+            str: name of driven blend shape (seen in kl builder getShapeNames)
+
+        """
+        return self._blendShapeName
 
 
     def getDataType(self):
