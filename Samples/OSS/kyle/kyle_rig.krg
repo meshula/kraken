@@ -269,14 +269,24 @@
       "source": "headNeck:M.head", 
       "target": "eyes:M.parentSpace", 
       "targetIndex": 0
+    }, 
+    {
+      "source": "headNeck:M.head", 
+      "target": "face:M.parentSpace", 
+      "targetIndex": 0
+    }, 
+    {
+      "source": "main:M.rigScale", 
+      "target": "face:M.rigScale", 
+      "targetIndex": 0
     }
   ], 
   "name": "kyle", 
   "components": [
     {
       "graphPos": {
-        "y": 217.8522491455078, 
-        "x": -1280.875244140625, 
+        "y": 250.5695343017578, 
+        "x": -1084.06103515625, 
         "__mathObjectClass__": "Vec2"
       }, 
       "name": "main", 
@@ -371,8 +381,8 @@
     }, 
     {
       "graphPos": {
-        "y": 205.02415466308594, 
-        "x": -948.8043212890625, 
+        "y": 61.600067138671875, 
+        "x": -866.3778076171875, 
         "__mathObjectClass__": "Vec2"
       }, 
       "torsoPosition": {
@@ -417,8 +427,8 @@
     }, 
     {
       "graphPos": {
-        "y": -72.21710205078125, 
-        "x": -673.9322509765625, 
+        "y": -66.4593276977539, 
+        "x": -668.781494140625, 
         "__mathObjectClass__": "Vec2"
       }, 
       "name": "shoulder", 
@@ -431,10 +441,10 @@
         }, 
         "__mathObjectClass__": "Xfo", 
         "tr": {
-          "y": 11343.73828125, 
-          "x": 39.268959045410156, 
+          "y": 12343.826171875, 
+          "x": 41.79528045654297, 
           "__mathObjectClass__": "Vec3", 
-          "z": -165.2552490234375
+          "z": -180.11959838867188
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
@@ -507,8 +517,8 @@
     }, 
     {
       "graphPos": {
-        "y": -219.0786590576172, 
-        "x": -1195.71875, 
+        "y": -38.411991119384766, 
+        "x": -1091.3336181640625, 
         "__mathObjectClass__": "Vec2"
       }, 
       "name": "shoulder", 
@@ -521,14 +531,14 @@
         }, 
         "__mathObjectClass__": "Xfo", 
         "tr": {
-          "y": 11443.7470703125, 
+          "y": 12443.8349609375, 
           "x": -15.268905639648438, 
           "__mathObjectClass__": "Vec3", 
           "z": -24.044452667236328
         }, 
         "ori": {
           "__mathObjectClass__": "Quat", 
-          "w": 6.123234262925839e-17, 
+          "w": 7.273661441694625e-16, 
           "v": {
             "y": 1.0, 
             "x": 0.0, 
@@ -597,8 +607,8 @@
     }, 
     {
       "graphPos": {
-        "y": 406.9622497558594, 
-        "x": -661.5694580078125, 
+        "y": 615.7326049804688, 
+        "x": -765.9546508789062, 
         "__mathObjectClass__": "Vec2"
       }, 
       "addTwistJoints": true, 
@@ -911,8 +921,8 @@
     {
       "mocap": false, 
       "graphPos": {
-        "y": 781.6402587890625, 
-        "x": -1438.5125732421875, 
+        "y": 793.6846923828125, 
+        "x": -1227.7347412109375, 
         "__mathObjectClass__": "Vec2"
       }, 
       "name": "foot", 
@@ -1126,8 +1136,8 @@
     }, 
     {
       "graphPos": {
-        "y": 538.161865234375, 
-        "x": -1296.4605712890625, 
+        "y": 606.4136962890625, 
+        "x": -995.3494873046875, 
         "__mathObjectClass__": "Vec2"
       }, 
       "addTwistJoints": true, 
@@ -1223,8 +1233,8 @@
     }, 
     {
       "graphPos": {
-        "y": 122.06057739257812, 
-        "x": -1578.213134765625, 
+        "y": 138.11984252929688, 
+        "x": -1393.5316162109375, 
         "__mathObjectClass__": "Vec2"
       }, 
       "addTwistJoints": true, 
@@ -1320,8 +1330,8 @@
     }, 
     {
       "graphPos": {
-        "y": 116.01506042480469, 
-        "x": -461.42449951171875, 
+        "y": 117.15099334716797, 
+        "x": -472.7838134765625, 
         "__mathObjectClass__": "Vec2"
       }, 
       "addTwistJoints": true, 
@@ -1419,7 +1429,7 @@
       "mocap": false, 
       "graphPos": {
         "y": 122.02586364746094, 
-        "x": -251.06875610351562, 
+        "x": -252.20468139648438, 
         "__mathObjectClass__": "Vec2"
       }, 
       "name": "hand", 
@@ -2143,8 +2153,8 @@
     {
       "mocap": false, 
       "graphPos": {
-        "y": 104.59974670410156, 
-        "x": -1802.9833984375, 
+        "y": 271.2145690917969, 
+        "x": -1606.2574462890625, 
         "__mathObjectClass__": "Vec2"
       }, 
       "name": "hand", 
@@ -2867,8 +2877,8 @@
     }, 
     {
       "graphPos": {
-        "y": -288.4566345214844, 
-        "x": -903.3562622070312, 
+        "y": -173.24105834960938, 
+        "x": -888.0903930664062, 
         "__mathObjectClass__": "Vec2"
       }, 
       "name": "headNeck", 
@@ -2932,8 +2942,8 @@
         }
       }, 
       "graphPos": {
-        "y": -372.4679260253906, 
-        "x": -728.17138671875, 
+        "y": -361.6375427246094, 
+        "x": -994.8921508789062, 
         "__mathObjectClass__": "Vec2"
       }, 
       "EyesNames": "L_Eye R_Eye", 
@@ -3073,6 +3083,1280 @@
       ], 
       "class": "OSS.OSS_eyes_component.OSSEyesComponentGuide", 
       "mocap": false
+    }, 
+    {
+      "mocap": false, 
+      "shapesToControlsJSON": "{\n\"L_loLidInn\":\n    {\n        \"+ty\": [\"L_loLid_up_inn_bsShape\"],\n        \"-ty\": [\"L_loLid_dn_inn_bsShape\"]\n    },\n\"L_loLidMid\":\n    {\n        \"+ty\": [\"L_loLid_up_mid_bsShape\"],\n        \"-ty\": [\"L_loLid_dn_mid_bsShape\"]\n    },\n\"L_loLidOut\":\n    {\n        \"+ty\": [\"L_loLid_up_out_bsShape\"],\n        \"-ty\": [\"L_loLid_dn_out_bsShape\"]\n    },\n\"L_upLidInn\":\n    {\n        \"+ty\": [\"L_upLid_up_inn_bsShape\"],\n        \"-ty\": [\"L_upLid_dn_inn_bsShape\"]\n    },\n\"L_upLidMid\":\n    {\n        \"+ty\": [\"L_upLid_up_mid_bsShape\"],\n        \"-ty\": [\"L_upLid_dn_mid_bsShape\"]\n    },\n\"L_upLidOut\":\n    {\n        \"+ty\": [\"L_upLid_up_out_bsShape\"],\n        \"-ty\": [\"L_upLid_dn_out_bsShape\"]\n    },\n\"L_squintInn\":\n    {\n        \"+ty\": [],\n        \"-ty\": []\n    },\n\"L_squintMid\":\n    {\n        \"+ty\": [],\n        \"-ty\": []\n    },\n\"L_squintOut\":\n    {\n        \"+ty\": [],\n        \"-ty\": []\n    },\n\"L_BrowInn\":\n    {\n        \"+tx\": [\"L_brow_out_inn_bsShape\"],\n        \"-tx\": [\"L_brow_in_inn_bsShape\"],\n        \"+ty\": [\"L_brow_up_inn_bsShape\"],\n        \"-ty\": [\"L_brow_dn_inn_bsShape\", \"L_lidCrease_dn_inn_bsShape\"]\n    },\n\"L_BrowMid\":\n    {\n        \"+tx\": [\"L_brow_out_mid_bsShape\"],\n        \"-tx\": [\"L_brow_in_mid_bsShape\"],\n        \"+ty\": [\"L_brow_up_mid_bsShape\"],\n        \"-ty\": [\"L_brow_dn_mid_bsShape\", \"L_lidCrease_dn_mid_bsShape\"]\n    },\n\"L_BrowOut\":\n    {\n        \"+tx\": [\"L_brow_out_out_bsShape\"],\n        \"-tx\": [\"L_brow_in_out_bsShape\"],\n        \"+ty\": [\"L_brow_up_out_bsShape\"],\n        \"-ty\": [\"L_brow_dn_out_bsShape\", \"L_lidCrease_dn_out_bsShape\"]\n    },\n\"R_loLidInn\":\n    {\n        \"+ty\": [\"R_loLid_up_inn_bsShape\"],\n        \"-ty\": [\"R_loLid_dn_inn_bsShape\"]\n    },\n\"R_loLidMid\":\n    {\n        \"+ty\": [\"R_loLid_up_mid_bsShape\"],\n        \"-ty\": [\"R_loLid_dn_mid_bsShape\"]\n    },\n\"R_loLidOut\":\n    {\n        \"+ty\": [\"R_loLid_up_out_bsShape\"],\n        \"-ty\": [\"R_loLid_dn_out_bsShape\"]\n    },\n\"R_upLidInn\":\n    {\n        \"+ty\": [\"R_upLid_up_inn_bsShape\"],\n        \"-ty\": [\"R_upLid_dn_inn_bsShape\"]\n    },\n\"R_upLidMid\":\n    {\n        \"+ty\": [\"R_upLid_up_mid_bsShape\"],\n        \"-ty\": [\"R_upLid_dn_mid_bsShape\"]\n    },\n\"R_upLidOut\":\n    {\n        \"+ty\": [\"R_upLid_up_out_bsShape\"],\n        \"-ty\": [\"R_upLid_dn_out_bsShape\"]\n    },\n\"R_squintInn\":\n    {\n        \"+ty\": [],\n        \"-ty\": []\n    },\n\"R_squintMid\":\n    {\n        \"+ty\": [],\n        \"-ty\": []\n    },\n\"R_squintOut\":\n    {\n        \"+ty\": [],\n        \"-ty\": []\n    },\n\"R_BrowInn\":\n    {\n        \"+tx\": [\"R_brow_out_inn_bsShape\"],\n        \"-tx\": [\"R_brow_in_inn_bsShape\"],\n        \"+ty\": [\"R_brow_up_inn_bsShape\"],\n        \"-ty\": [\"R_brow_dn_inn_bsShape\", \"R_lidCrease_dn_inn_bsShape\"]\n    },\n\"R_BrowMid\":\n    {\n        \"+tx\": [\"R_brow_out_mid_bsShape\"],\n        \"-tx\": [\"R_brow_in_mid_bsShape\"],\n        \"+ty\": [\"R_brow_up_mid_bsShape\"],\n        \"-ty\": [\"R_brow_dn_mid_bsShape\", \"R_lidCrease_dn_mid_bsShape\"]\n    },\n\"R_BrowOut\":\n    {\n        \"+tx\": [\"R_brow_out_out_bsShape\"],\n        \"-tx\": [\"R_brow_in_out_bsShape\"],\n        \"+ty\": [\"R_brow_up_out_bsShape\"],\n        \"-ty\": [\"R_brow_dn_out_bsShape\", \"R_lidCrease_dn_out_bsShape\"]\n    }\n}", 
+      "graphPos": {
+        "y": -379.00323486328125, 
+        "x": -732.550048828125, 
+        "__mathObjectClass__": "Vec2"
+      }, 
+      "an1DNames": "L_loLidInn L_loLidMid L_loLidOut R_loLidInn R_loLidMid R_loLidOut L_upLidInn L_upLidMid L_upLidOut R_upLidInn R_upLidMid R_upLidOut  L_squintInn L_squintMid L_squintOut R_squintInn R_squintMid R_squintOut ", 
+      "name": "face", 
+      "faceEndXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 115.1176528930664, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 14.400740623474121
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "ShapeVisibility": false, 
+      "class": "OSS.OSS_face_component.OSSFaceComponentGuide", 
+      "an2DCtrlsXfos": [
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": 16.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": 16.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": 18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": 18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": 20.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": 20.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": -16.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": -16.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 6.123234262925839e-17, 
+            "v": {
+              "y": 1.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": -18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": -18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 6.123234262925839e-17, 
+            "v": {
+              "y": 1.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": -20.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 136.0, 
+            "x": -20.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 6.123234262925839e-17, 
+            "v": {
+              "y": 1.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }
+      ], 
+      "faceXfo": {
+        "sc": {
+          "y": 1.0, 
+          "x": 1.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 1.0
+        }, 
+        "__mathObjectClass__": "Xfo", 
+        "tr": {
+          "y": 120.2966537475586, 
+          "x": 0.0, 
+          "__mathObjectClass__": "Vec3", 
+          "z": 0.0
+        }, 
+        "ori": {
+          "__mathObjectClass__": "Quat", 
+          "w": 1.0, 
+          "v": {
+            "y": 0.0, 
+            "x": 0.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 0.0
+          }
+        }
+      }, 
+      "an2DNames": "L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut", 
+      "an3DNames": "", 
+      "visibility": true, 
+      "globalComponentCtrlSize": 1.5, 
+      "an1DCtrlsXfos": [
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": 17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": 17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": 18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": 18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": 19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": 19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": -17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": -17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": -18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": -18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": -19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 126.2966537475586, 
+            "x": -19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": 17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": 17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": 18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": 18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": 19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": 19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": -17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": -17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": -18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": -18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": -19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 130.29666137695312, 
+            "x": -19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": 17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": 17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": 18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": 18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": 19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": 19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": -17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": -17.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": -18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": -18.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": -19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }, 
+        {
+          "sc": {
+            "y": 1.0, 
+            "x": 1.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 1.0
+          }, 
+          "__mathObjectClass__": "Xfo", 
+          "tr": {
+            "y": 124.0, 
+            "x": -19.0, 
+            "__mathObjectClass__": "Vec3", 
+            "z": 10.0
+          }, 
+          "ori": {
+            "__mathObjectClass__": "Quat", 
+            "w": 1.0, 
+            "v": {
+              "y": 0.0, 
+              "x": 0.0, 
+              "__mathObjectClass__": "Vec3", 
+              "z": 0.0
+            }
+          }
+        }
+      ], 
+      "an3DCtrlsXfos": [], 
+      "SingleDeformerGroup": true, 
+      "location": "M"
     }
   ], 
   "metaData": {
