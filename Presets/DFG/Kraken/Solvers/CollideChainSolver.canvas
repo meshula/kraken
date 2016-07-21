@@ -1,8 +1,10 @@
 {
   "objectType" : "Graph",
   "metadata" : {
-    "uiGraphZoom" : "{\n  \"value\" : 0.3789041936397553\n  }",
-    "uiGraphPan" : "{\n  \"x\" : 376.6180419921875,\n  \"y\" : -298.9859619140625\n  }"
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.5247942805290222\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 308.4326782226563,\n  \"y\" : -896.8681640625\n  }"
     },
   "title" : "CollideChainSolver",
   "ports" : [
@@ -55,13 +57,91 @@
       "name" : "joints",
       "nodePortType" : "Out",
       "defaultValues" : {
-        "Mat44[]" : []
+        "Mat44[]" : [
+          {
+            "row0" : {
+              "x" : -1,
+              "y" : 0,
+              "z" : 1.454732288338925e-15,
+              "t" : 6.550460815429688
+              },
+            "row1" : {
+              "x" : 0,
+              "y" : 1,
+              "z" : 0,
+              "t" : 7.546784400939941
+              },
+            "row2" : {
+              "x" : -1.454732288338925e-15,
+              "y" : 0,
+              "z" : -1,
+              "t" : 0.02967842482030392
+              },
+            "row3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0,
+              "t" : 1
+              }
+            },
+          {
+            "row0" : {
+              "x" : -1,
+              "y" : 0,
+              "z" : 1.454732288338925e-15,
+              "t" : 6.550460815429688
+              },
+            "row1" : {
+              "x" : 0,
+              "y" : 1,
+              "z" : 0,
+              "t" : 2.972928285598755
+              },
+            "row2" : {
+              "x" : -1.454732288338925e-15,
+              "y" : 0,
+              "z" : -1,
+              "t" : -2.922484159469605
+              },
+            "row3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0,
+              "t" : 1
+              }
+            },
+          {
+            "row0" : {
+              "x" : -1,
+              "y" : 0,
+              "z" : 1.454732288338925e-15,
+              "t" : 6.550460815429688
+              },
+            "row1" : {
+              "x" : 0,
+              "y" : 1,
+              "z" : 0,
+              "t" : 1.165923595428467
+              },
+            "row2" : {
+              "x" : -1.454732288338925e-15,
+              "y" : 0,
+              "z" : -1,
+              "t" : -10.47374248504639
+              },
+            "row3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0,
+              "t" : 1
+              }
+            }
+          ]
         },
       "execPortType" : "In"
       },
     {
       "objectType" : "ExecPort",
-      "metadata" : {},
       "name" : "outputs",
       "nodePortType" : "In",
       "defaultValues" : {
@@ -72,7 +152,7 @@
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "B2C7F6F860CAE8F613A77ED45E7D6057",
+  "presetGUID" : "73AE31D92986DE079DB97C613D0C3963",
   "nodes" : [
     {
       "objectType" : "Inst",
@@ -114,14 +194,13 @@
           "exec" : {
             "objectType" : "Graph",
             "metadata" : {
-              "uiGraphZoom" : "{\n  \"value\" : 0.1341002136468887\n  }",
-              "uiGraphPan" : "{\n  \"x\" : 480.390380859375,\n  \"y\" : 100.0910491943359\n  }"
+              "uiGraphZoom" : "{\n  \"value\" : 0.7807489633560181\n  }",
+              "uiGraphPan" : "{\n  \"x\" : -475.4635105617044,\n  \"y\" : -246.7239376624206\n  }"
               },
             "title" : "",
             "ports" : [
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "ground",
                 "nodePortType" : "Out",
                 "execPortType" : "In",
@@ -129,7 +208,6 @@
                 },
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "joints",
                 "nodePortType" : "Out",
                 "execPortType" : "In",
@@ -162,7 +240,7 @@
                 "objectType" : "Inst",
                 "metadata" : {
                   "uiComment" : "Root",
-                  "uiGraphPos" : "{\"x\":-1902.11,\"y\":1145.87}",
+                  "uiGraphPos" : "{\"x\":-1912.15,\"y\":1165.94}",
                   "uiCommentExpanded" : "true"
                   },
                 "name" : "Get_1",
@@ -195,7 +273,7 @@
                 "objectType" : "Inst",
                 "metadata" : {
                   "uiComment" : "Target",
-                  "uiGraphPos" : "{\"x\":-202.209,\"y\":749.728}",
+                  "uiGraphPos" : "{\"x\":-191.73,\"y\":746.734}",
                   "uiCollapsedState" : "0",
                   "uiCommentExpanded" : "true"
                   },
@@ -228,7 +306,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-325.224,\"y\":808.2190000000001}",
+                  "uiGraphPos" : "{\"x\":-314.745,\"y\":805.225}",
                   "uiCollapsedState" : "2"
                   },
                 "name" : "Add_1",
@@ -448,7 +526,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":112.664,\"y\":514.511}"
+                  "uiGraphPos" : "{\"x\":123.143,\"y\":511.517}"
                   },
                 "name" : "TwoPlaneIntersection",
                 "ports" : [
@@ -494,7 +572,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":849.417,\"y\":438.862}"
+                  "uiGraphPos" : "{\"x\":859.896,\"y\":435.868}"
                   },
                 "name" : "GetPlaneHitOffsetLen",
                 "ports" : [
@@ -528,7 +606,7 @@
                   "objectType" : "Graph",
                   "metadata" : {
                     "uiGraphZoom" : "{\n  \"value\" : 1.187211155891419\n  }",
-                    "uiGraphPan" : "{\n  \"x\" : -1384.165742267667,\n  \"y\" : -593.2421620719191\n  }"
+                    "uiGraphPan" : "{\n  \"x\" : -1279.165771484375,\n  \"y\" : -478.2421875\n  }"
                     },
                   "title" : "GetPlaneHitOffsetLen",
                   "ports" : [
@@ -814,7 +892,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-222.433,\"y\":454.524}"
+                  "uiGraphPos" : "{\"x\":-211.954,\"y\":451.53}"
                   },
                 "name" : "GroundNormal",
                 "ports" : [
@@ -856,7 +934,6 @@
                       },
                     {
                       "objectType" : "ExecPort",
-                      "metadata" : {},
                       "name" : "ground",
                       "nodePortType" : "Out",
                       "execPortType" : "In",
@@ -1034,7 +1111,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-209.322,\"y\":599.718}"
+                  "uiGraphPos" : "{\"x\":-198.843,\"y\":596.7240000000001}"
                   },
                 "name" : "RootNormal",
                 "ports" : [
@@ -1252,7 +1329,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":101.517,\"y\":309.566}"
+                  "uiGraphPos" : "{\"x\":111.996,\"y\":306.572}"
                   },
                 "name" : "TargetUnderGround",
                 "ports" : [
@@ -1534,7 +1611,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":510.929,\"y\":532.433}"
+                  "uiGraphPos" : "{\"x\":521.408,\"y\":529.439}"
                   },
                 "name" : "PlaneToHitPointLen",
                 "ports" : [
@@ -1701,7 +1778,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":1169.62,\"y\":616.462}"
+                  "uiGraphPos" : "{\"x\":1180.1,\"y\":612.468}"
                   },
                 "name" : "GetNewTargetPos",
                 "ports" : [
@@ -1727,6 +1804,11 @@
                     },
                   {
                     "objectType" : "InstPort",
+                    "name" : "TargetBehindRoot",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
                     "name" : "result",
                     "nodePortType" : "Out"
                     }
@@ -1735,7 +1817,7 @@
                   "objectType" : "Graph",
                   "metadata" : {
                     "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
-                    "uiGraphPan" : "{\n  \"x\" : -906.375,\n  \"y\" : 101.1105041503906\n  }"
+                    "uiGraphPan" : "{\n  \"x\" : -653.375,\n  \"y\" : -278.3894958496094\n  }"
                     },
                   "title" : "GetNewTargetPos",
                   "ports" : [
@@ -1763,6 +1845,17 @@
                       "name" : "length",
                       "nodePortType" : "Out",
                       "execPortType" : "In"
+                      },
+                    {
+                      "objectType" : "ExecPort",
+                      "metadata" : {},
+                      "name" : "TargetBehindRoot",
+                      "nodePortType" : "Out",
+                      "defaultValues" : {
+                        "Boolean" : false
+                        },
+                      "execPortType" : "In",
+                      "typeSpec" : "Boolean"
                       },
                     {
                       "objectType" : "ExecPort",
@@ -1838,7 +1931,7 @@
                     {
                       "objectType" : "Inst",
                       "metadata" : {
-                        "uiGraphPos" : "{\"x\":1302.21,\"y\":269.671}"
+                        "uiGraphPos" : "{\"x\":1275.21,\"y\":450.671}"
                         },
                       "name" : "Mul_1",
                       "ports" : [
@@ -1857,7 +1950,7 @@
                           "name" : "rhs",
                           "nodePortType" : "In",
                           "defaultValues" : {
-                            "Scalar" : -1
+                            "Scalar" : 1
                             }
                           },
                         {
@@ -1868,6 +1961,90 @@
                         ],
                       "executable" : "Fabric.Core.Math.Mul",
                       "presetGUID" : "CC951B43BB879483B46EFF7965692350"
+                      },
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":1089.38,\"y\":507.389}"
+                        },
+                      "name" : "If_1",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "cond",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "if_true",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "if_false",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "result",
+                          "nodePortType" : "Out"
+                          }
+                        ],
+                      "executable" : "Fabric.Core.Control.If",
+                      "presetGUID" : "3182A478A21643455D549E483D35F831"
+                      },
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":921.38,\"y\":565.389}"
+                        },
+                      "name" : "Scalar_1",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "value",
+                          "nodePortType" : "In",
+                          "defaultValues" : {
+                            "Scalar" : 1
+                            }
+                          }
+                        ],
+                      "executable" : "Fabric.Core.Constants.Scalar",
+                      "presetGUID" : "E0E96C6E234F70063BC98887B83327DC"
+                      },
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":924.38,\"y\":630.389}"
+                        },
+                      "name" : "Scalar_2",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "value",
+                          "nodePortType" : "In",
+                          "defaultValues" : {
+                            "Scalar" : -1
+                            }
+                          }
+                        ],
+                      "executable" : "Fabric.Core.Constants.Scalar",
+                      "presetGUID" : "E0E96C6E234F70063BC98887B83327DC"
                       }
                     ],
                   "connections" : {
@@ -1880,6 +2057,9 @@
                     "length" : [
                       "Mul_1.lhs"
                       ],
+                    "TargetBehindRoot" : [
+                      "If_1.cond"
+                      ],
                     "Add_1.result" : [
                       "result"
                       ],
@@ -1888,6 +2068,15 @@
                       ],
                     "Mul_1.result" : [
                       "MultiplyScalar_1.other"
+                      ],
+                    "If_1.result" : [
+                      "Mul_1.rhs"
+                      ],
+                    "Scalar_1.value" : [
+                      "If_1.if_true"
+                      ],
+                    "Scalar_2.value" : [
+                      "If_1.if_false"
                       ]
                     }
                   }
@@ -2332,7 +2521,7 @@
                 "objectType" : "Inst",
                 "metadata" : {
                   "uiComment" : "If Target is Under the Ground",
-                  "uiGraphPos" : "{\"x\":1623.19,\"y\":703.7720000000001}",
+                  "uiGraphPos" : "{\"x\":1633.67,\"y\":700.778}",
                   "uiCommentExpanded" : "true"
                   },
                 "name" : "If_2",
@@ -2369,7 +2558,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":1204.64,\"y\":799.797}"
+                  "uiGraphPos" : "{\"x\":1215.12,\"y\":796.803}"
                   },
                 "name" : "Translation_1",
                 "ports" : [
@@ -2396,7 +2585,7 @@
                 "objectType" : "Inst",
                 "metadata" : {
                   "uiComment" : "Computed Root",
-                  "uiGraphPos" : "{\"x\":-1268.97,\"y\":854.103}",
+                  "uiGraphPos" : "{\"x\":-1279.01,\"y\":874.177}",
                   "uiCommentExpanded" : "true"
                   },
                 "name" : "If_3",
@@ -2433,7 +2622,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-1498.95,\"y\":628.552}"
+                  "uiGraphPos" : "{\"x\":-1508.99,\"y\":648.626}"
                   },
                 "name" : "Gt_1",
                 "ports" : [
@@ -2464,7 +2653,7 @@
               {
                 "objectType" : "Get",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-2092.24,\"y\":572.379}"
+                  "uiGraphPos" : "{\"x\":-2102.28,\"y\":592.453}"
                   },
                 "name" : "get_2",
                 "ports" : [
@@ -2479,7 +2668,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-1908.75,\"y\":575.727}"
+                  "uiGraphPos" : "{\"x\":-1918.79,\"y\":595.801}"
                   },
                 "name" : "Get_3",
                 "ports" : [
@@ -2510,7 +2699,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-2031.91,\"y\":643.322}",
+                  "uiGraphPos" : "{\"x\":-2041.95,\"y\":663.396}",
                   "uiCollapsedState" : "2"
                   },
                 "name" : "Sub_2",
@@ -2545,7 +2734,7 @@
               {
                 "objectType" : "Get",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":390.534,\"y\":287.826}"
+                  "uiGraphPos" : "{\"x\":401.013,\"y\":284.832}"
                   },
                 "name" : "get_3",
                 "ports" : [
@@ -2560,7 +2749,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":563.703,\"y\":292.362}"
+                  "uiGraphPos" : "{\"x\":574.182,\"y\":289.368}"
                   },
                 "name" : "Get_4",
                 "ports" : [
@@ -2591,7 +2780,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-1703.86,\"y\":854.587}"
+                  "uiGraphPos" : "{\"x\":-1713.9,\"y\":874.6609999999999}"
                   },
                 "name" : "MultiplyVector3_1",
                 "ports" : [
@@ -2622,7 +2811,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-1876.8,\"y\":898.862}"
+                  "uiGraphPos" : "{\"x\":-1886.84,\"y\":918.936}"
                   },
                 "name" : "ComposeVec3_1",
                 "ports" : [
@@ -2658,7 +2847,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-1497.61,\"y\":877.039}"
+                  "uiGraphPos" : "{\"x\":-1507.65,\"y\":897.1130000000001}"
                   },
                 "name" : "SetTranslation_1",
                 "ports" : [
@@ -2684,7 +2873,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-1048.78,\"y\":898.638}"
+                  "uiGraphPos" : "{\"x\":-1058.82,\"y\":918.712}"
                   },
                 "name" : "ProjectRootIfBelowGround",
                 "ports" : [
@@ -2732,7 +2921,6 @@
                       },
                     {
                       "objectType" : "ExecPort",
-                      "metadata" : {},
                       "name" : "root",
                       "nodePortType" : "Out",
                       "execPortType" : "In",
@@ -3800,7 +3988,7 @@
               {
                 "objectType" : "Get",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-1643.73,\"y\":631.918}",
+                  "uiGraphPos" : "{\"x\":-1653.77,\"y\":651.992}",
                   "uiCollapsedState" : "2"
                   },
                 "name" : "get_5",
@@ -3816,7 +4004,7 @@
               {
                 "objectType" : "Get",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":397.824,\"y\":355.915}",
+                  "uiGraphPos" : "{\"x\":408.303,\"y\":352.921}",
                   "uiCollapsedState" : "2"
                   },
                 "name" : "get_6",
@@ -3832,7 +4020,7 @@
               {
                 "objectType" : "Get",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-2056.44,\"y\":1191.75}",
+                  "uiGraphPos" : "{\"x\":-2066.48,\"y\":1211.82}",
                   "uiCollapsedState" : "2"
                   },
                 "name" : "get_7",
@@ -3848,7 +4036,7 @@
               {
                 "objectType" : "Get",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-2174.55,\"y\":642.669}",
+                  "uiGraphPos" : "{\"x\":-2184.59,\"y\":662.7430000000001}",
                   "uiCollapsedState" : "2"
                   },
                 "name" : "get_8",
@@ -3864,7 +4052,7 @@
               {
                 "objectType" : "Get",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-465.159,\"y\":811.079}",
+                  "uiGraphPos" : "{\"x\":-454.68,\"y\":808.085}",
                   "uiCollapsedState" : "2"
                   },
                 "name" : "get_9",
@@ -3906,7 +4094,7 @@
               {
                 "objectType" : "Get",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-2200.2,\"y\":890.975}"
+                  "uiGraphPos" : "{\"x\":-2203.7,\"y\":888.665}"
                   },
                 "name" : "get_11",
                 "ports" : [
@@ -3921,7 +4109,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-2027.03,\"y\":895.51}"
+                  "uiGraphPos" : "{\"x\":-2037.07,\"y\":915.584}"
                   },
                 "name" : "Get_5",
                 "ports" : [
@@ -3952,8 +4140,8 @@
               {
                 "objectType" : "Get",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":-2192.91,\"y\":959.064}",
-                  "uiCollapsedState" : "2"
+                  "uiGraphPos" : "{\"x\":-2310.16,\"y\":960.115}",
+                  "uiCollapsedState" : "1"
                   },
                 "name" : "get_12",
                 "ports" : [
@@ -3969,8 +4157,8 @@
                 "objectType" : "User",
                 "metadata" : {
                   "uiTitle" : "Calculate Root Based On Condition",
-                  "uiGraphPos" : "{\"x\":-2235.91,\"y\":528.019}",
-                  "uiGraphSize" : "{\"w\":1440.88,\"h\":731.059}"
+                  "uiGraphPos" : "{\"x\":-2330.71,\"y\":548.093}",
+                  "uiGraphSize" : "{\"w\":1525.64,\"h\":725.649}"
                   },
                 "name" : "backDrop_3",
                 "ports" : []
@@ -3979,11 +4167,367 @@
                 "objectType" : "User",
                 "metadata" : {
                   "uiTitle" : "Calculate Target Position",
-                  "uiGraphPos" : "{\"x\":-500.518,\"y\":227.957}",
+                  "uiGraphPos" : "{\"x\":-490.039,\"y\":224.963}",
                   "uiGraphSize" : "{\"w\":2275.89,\"h\":683.746}"
                   },
                 "name" : "backDrop_4",
                 "ports" : []
+                },
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":-2171.83,\"y\":961.204}",
+                  "uiCollapsedState" : "2"
+                  },
+                "name" : "Sub_3",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "exec",
+                    "nodePortType" : "IO"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "lhs",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "rhs",
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "Index" : 1
+                      }
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "result",
+                    "nodePortType" : "Out"
+                    }
+                  ],
+                "executable" : "Fabric.Core.Math.Sub",
+                "presetGUID" : "F9754B19F43BC017056B8BA291E7B8B4"
+                },
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":868.548,\"y\":711.13}"
+                  },
+                "name" : "TestTargetBehindRoot",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "exec",
+                    "nodePortType" : "IO"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "target",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "root",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "result",
+                    "nodePortType" : "Out"
+                    }
+                  ],
+                "definition" : {
+                  "objectType" : "Graph",
+                  "metadata" : {
+                    "uiGraphZoom" : "{\n  \"value\" : 0.9963104724884033\n  }",
+                    "uiGraphPan" : "{\n  \"x\" : -227.2280578613281,\n  \"y\" : -868.2167358398438\n  }"
+                    },
+                  "title" : "TestTargetBehindRoot",
+                  "ports" : [
+                    {
+                      "objectType" : "ExecPort",
+                      "name" : "exec",
+                      "nodePortType" : "IO",
+                      "execPortType" : "IO",
+                      "typeSpec" : "Execute"
+                      },
+                    {
+                      "objectType" : "ExecPort",
+                      "metadata" : {},
+                      "name" : "target",
+                      "nodePortType" : "Out",
+                      "execPortType" : "In",
+                      "typeSpec" : "Mat44"
+                      },
+                    {
+                      "objectType" : "ExecPort",
+                      "metadata" : {},
+                      "name" : "root",
+                      "nodePortType" : "Out",
+                      "execPortType" : "In",
+                      "typeSpec" : "Mat44"
+                      },
+                    {
+                      "objectType" : "ExecPort",
+                      "name" : "result",
+                      "nodePortType" : "In",
+                      "execPortType" : "Out",
+                      "typeSpec" : "Boolean"
+                      }
+                    ],
+                  "extDeps" : {},
+                  "nodes" : [
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":561.682,\"y\":1064.12}"
+                        },
+                      "name" : "Dot_1",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "this",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "other",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "result",
+                          "nodePortType" : "Out"
+                          }
+                        ],
+                      "executable" : "Fabric.Exts.Math.Func.Dot",
+                      "presetGUID" : "17C51FBA9AB500DD36FEA3A69CF58128"
+                      },
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":-42.0635,\"y\":1105.35}"
+                        },
+                      "name" : "Decompose_1",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "this",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "scaling",
+                          "nodePortType" : "Out"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "rotation",
+                          "nodePortType" : "Out"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "translation",
+                          "nodePortType" : "Out"
+                          }
+                        ],
+                      "executable" : "Fabric.Exts.Math.Mat44.Decompose",
+                      "presetGUID" : "E868E74C09F4DB6F8E0C0FB42619F723"
+                      },
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":132.145,\"y\":1129.28}"
+                        },
+                      "name" : "Transpose_1",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "this",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "result",
+                          "nodePortType" : "Out"
+                          }
+                        ],
+                      "executable" : "Fabric.Exts.Math.Func.Transpose",
+                      "presetGUID" : "7691D1969E80FD1DFDF5BE79BDD65B06"
+                      },
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":299.705,\"y\":1138.59}"
+                        },
+                      "name" : "DecomposeMat33_1",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "value",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "row0",
+                          "nodePortType" : "Out"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "row1",
+                          "nodePortType" : "Out"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "row2",
+                          "nodePortType" : "Out"
+                          }
+                        ],
+                      "executable" : "Fabric.Exts.Math.Mat33.DecomposeMat33",
+                      "presetGUID" : "834EEEC78A5F4A843CBCBE2DB5A2D180"
+                      },
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":426.039,\"y\":1002.95}"
+                        },
+                      "name" : "Sub_4",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "lhs",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "rhs",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "result",
+                          "nodePortType" : "Out"
+                          }
+                        ],
+                      "executable" : "Fabric.Core.Math.Sub",
+                      "presetGUID" : "F9754B19F43BC017056B8BA291E7B8B4"
+                      },
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":287.735,\"y\":967.044}"
+                        },
+                      "name" : "Translation_2",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "this",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "result",
+                          "nodePortType" : "Out"
+                          }
+                        ],
+                      "executable" : "Fabric.Exts.Math.Mat44.Translation",
+                      "presetGUID" : "35DC8AE364F6509754699978B97928A7"
+                      },
+                    {
+                      "objectType" : "Inst",
+                      "metadata" : {
+                        "uiGraphPos" : "{\"x\":731.578,\"y\":1060.09}"
+                        },
+                      "name" : "Lt_1",
+                      "ports" : [
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "lhs",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "rhs",
+                          "nodePortType" : "In"
+                          },
+                        {
+                          "objectType" : "InstPort",
+                          "name" : "result",
+                          "nodePortType" : "Out"
+                          }
+                        ],
+                      "executable" : "Fabric.Core.Logic.Lt",
+                      "presetGUID" : "F4011A958885F47D54E4955E9E46B3CA"
+                      }
+                    ],
+                  "connections" : {
+                    "target" : [
+                      "Translation_2.this"
+                      ],
+                    "root" : [
+                      "Decompose_1.this"
+                      ],
+                    "Dot_1.result" : [
+                      "Lt_1.lhs"
+                      ],
+                    "Decompose_1.rotation" : [
+                      "Transpose_1.this"
+                      ],
+                    "Decompose_1.translation" : [
+                      "Sub_4.rhs"
+                      ],
+                    "Transpose_1.result" : [
+                      "DecomposeMat33_1.value"
+                      ],
+                    "DecomposeMat33_1.row2" : [
+                      "Dot_1.other"
+                      ],
+                    "Sub_4.result" : [
+                      "Dot_1.this"
+                      ],
+                    "Translation_2.result" : [
+                      "Sub_4.lhs"
+                      ],
+                    "Lt_1.result" : [
+                      "result"
+                      ]
+                    }
+                  }
                 }
               ],
             "connections" : {
@@ -4007,7 +4551,8 @@
                 ],
               "Get_2.element" : [
                 "TargetUnderGround.target",
-                "Translation_1.this"
+                "Translation_1.this",
+                "TestTargetBehindRoot.target"
                 ],
               "Add_1.result" : [
                 "Get_2.index"
@@ -4110,7 +4655,8 @@
                 ],
               "ProjectRootIfBelowGround.result" : [
                 "RootNormal.root",
-                "AimAtTarget.root"
+                "AimAtTarget.root",
+                "TestTargetBehindRoot.root"
                 ],
               "Merge4_1.result" : [
                 "exec"
@@ -4146,7 +4692,13 @@
                 "ComposeVec3_1.z"
                 ],
               "get_12.value" : [
+                "Sub_3.lhs"
+                ],
+              "Sub_3.result" : [
                 "Get_5.index"
+                ],
+              "TestTargetBehindRoot.result" : [
+                "GetNewTargetPos.TargetBehindRoot"
                 ]
               }
             }
@@ -4314,7 +4866,6 @@ dfgEntry {
             },
           {
             "objectType" : "ExecPort",
-            "metadata" : {},
             "name" : "size",
             "nodePortType" : "Out",
             "execPortType" : "In",
@@ -4677,7 +5228,6 @@ dfgEntry {
             "ports" : [
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "joints",
                 "nodePortType" : "Out",
                 "execPortType" : "In",
@@ -5588,8 +6138,10 @@ dfgEntry {
     "Kraken.Solvers.CollideChainSolver" : {
       "objectType" : "Graph",
       "metadata" : {
-        "uiGraphZoom" : "{\n  \"value\" : 0.3789041936397553\n  }",
-        "uiGraphPan" : "{\n  \"x\" : 376.6180419921875,\n  \"y\" : -298.9859619140625\n  }"
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiGraphZoom" : "{\n  \"value\" : 0.5247942805290222\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 308.4326782226563,\n  \"y\" : -896.8681640625\n  }"
         },
       "title" : "CollideChainSolver",
       "ports" : [
@@ -5642,13 +6194,91 @@ dfgEntry {
           "name" : "joints",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "Mat44[]" : []
+            "Mat44[]" : [
+              {
+                "row0" : {
+                  "x" : -1,
+                  "y" : 0,
+                  "z" : 1.454732288338925e-15,
+                  "t" : 6.550460815429688
+                  },
+                "row1" : {
+                  "x" : 0,
+                  "y" : 1,
+                  "z" : 0,
+                  "t" : 7.546784400939941
+                  },
+                "row2" : {
+                  "x" : -1.454732288338925e-15,
+                  "y" : 0,
+                  "z" : -1,
+                  "t" : 0.02967842482030392
+                  },
+                "row3" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0,
+                  "t" : 1
+                  }
+                },
+              {
+                "row0" : {
+                  "x" : -1,
+                  "y" : 0,
+                  "z" : 1.454732288338925e-15,
+                  "t" : 6.550460815429688
+                  },
+                "row1" : {
+                  "x" : 0,
+                  "y" : 1,
+                  "z" : 0,
+                  "t" : 2.972928285598755
+                  },
+                "row2" : {
+                  "x" : -1.454732288338925e-15,
+                  "y" : 0,
+                  "z" : -1,
+                  "t" : -2.922484159469605
+                  },
+                "row3" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0,
+                  "t" : 1
+                  }
+                },
+              {
+                "row0" : {
+                  "x" : -1,
+                  "y" : 0,
+                  "z" : 1.454732288338925e-15,
+                  "t" : 6.550460815429688
+                  },
+                "row1" : {
+                  "x" : 0,
+                  "y" : 1,
+                  "z" : 0,
+                  "t" : 1.165923595428467
+                  },
+                "row2" : {
+                  "x" : -1.454732288338925e-15,
+                  "y" : 0,
+                  "z" : -1,
+                  "t" : -10.47374248504639
+                  },
+                "row3" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0,
+                  "t" : 1
+                  }
+                }
+              ]
             },
           "execPortType" : "In"
           },
         {
           "objectType" : "ExecPort",
-          "metadata" : {},
           "name" : "outputs",
           "nodePortType" : "In",
           "defaultValues" : {
@@ -5659,7 +6289,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "B2C7F6F860CAE8F613A77ED45E7D6057",
+      "presetGUID" : "73AE31D92986DE079DB97C613D0C3963",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -5701,14 +6331,13 @@ dfgEntry {
               "exec" : {
                 "objectType" : "Graph",
                 "metadata" : {
-                  "uiGraphZoom" : "{\n  \"value\" : 0.1341002136468887\n  }",
-                  "uiGraphPan" : "{\n  \"x\" : 480.390380859375,\n  \"y\" : 100.0910491943359\n  }"
+                  "uiGraphZoom" : "{\n  \"value\" : 0.7807489633560181\n  }",
+                  "uiGraphPan" : "{\n  \"x\" : -475.4635105617044,\n  \"y\" : -246.7239376624206\n  }"
                   },
                 "title" : "",
                 "ports" : [
                   {
                     "objectType" : "ExecPort",
-                    "metadata" : {},
                     "name" : "ground",
                     "nodePortType" : "Out",
                     "execPortType" : "In",
@@ -5716,7 +6345,6 @@ dfgEntry {
                     },
                   {
                     "objectType" : "ExecPort",
-                    "metadata" : {},
                     "name" : "joints",
                     "nodePortType" : "Out",
                     "execPortType" : "In",
@@ -5749,7 +6377,7 @@ dfgEntry {
                     "objectType" : "Inst",
                     "metadata" : {
                       "uiComment" : "Root",
-                      "uiGraphPos" : "{\"x\":-1902.11,\"y\":1145.87}",
+                      "uiGraphPos" : "{\"x\":-1912.15,\"y\":1165.94}",
                       "uiCommentExpanded" : "true"
                       },
                     "name" : "Get_1",
@@ -5782,7 +6410,7 @@ dfgEntry {
                     "objectType" : "Inst",
                     "metadata" : {
                       "uiComment" : "Target",
-                      "uiGraphPos" : "{\"x\":-202.209,\"y\":749.728}",
+                      "uiGraphPos" : "{\"x\":-191.73,\"y\":746.734}",
                       "uiCollapsedState" : "0",
                       "uiCommentExpanded" : "true"
                       },
@@ -5815,7 +6443,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-325.224,\"y\":808.2190000000001}",
+                      "uiGraphPos" : "{\"x\":-314.745,\"y\":805.225}",
                       "uiCollapsedState" : "2"
                       },
                     "name" : "Add_1",
@@ -6035,7 +6663,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":112.664,\"y\":514.511}"
+                      "uiGraphPos" : "{\"x\":123.143,\"y\":511.517}"
                       },
                     "name" : "TwoPlaneIntersection",
                     "ports" : [
@@ -6081,7 +6709,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":849.417,\"y\":438.862}"
+                      "uiGraphPos" : "{\"x\":859.896,\"y\":435.868}"
                       },
                     "name" : "GetPlaneHitOffsetLen",
                     "ports" : [
@@ -6115,7 +6743,7 @@ dfgEntry {
                       "objectType" : "Graph",
                       "metadata" : {
                         "uiGraphZoom" : "{\n  \"value\" : 1.187211155891419\n  }",
-                        "uiGraphPan" : "{\n  \"x\" : -1384.165742267667,\n  \"y\" : -593.2421620719191\n  }"
+                        "uiGraphPan" : "{\n  \"x\" : -1279.165771484375,\n  \"y\" : -478.2421875\n  }"
                         },
                       "title" : "GetPlaneHitOffsetLen",
                       "ports" : [
@@ -6401,7 +7029,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-222.433,\"y\":454.524}"
+                      "uiGraphPos" : "{\"x\":-211.954,\"y\":451.53}"
                       },
                     "name" : "GroundNormal",
                     "ports" : [
@@ -6443,7 +7071,6 @@ dfgEntry {
                           },
                         {
                           "objectType" : "ExecPort",
-                          "metadata" : {},
                           "name" : "ground",
                           "nodePortType" : "Out",
                           "execPortType" : "In",
@@ -6621,7 +7248,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-209.322,\"y\":599.718}"
+                      "uiGraphPos" : "{\"x\":-198.843,\"y\":596.7240000000001}"
                       },
                     "name" : "RootNormal",
                     "ports" : [
@@ -6839,7 +7466,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":101.517,\"y\":309.566}"
+                      "uiGraphPos" : "{\"x\":111.996,\"y\":306.572}"
                       },
                     "name" : "TargetUnderGround",
                     "ports" : [
@@ -7121,7 +7748,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":510.929,\"y\":532.433}"
+                      "uiGraphPos" : "{\"x\":521.408,\"y\":529.439}"
                       },
                     "name" : "PlaneToHitPointLen",
                     "ports" : [
@@ -7288,7 +7915,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":1169.62,\"y\":616.462}"
+                      "uiGraphPos" : "{\"x\":1180.1,\"y\":612.468}"
                       },
                     "name" : "GetNewTargetPos",
                     "ports" : [
@@ -7314,6 +7941,11 @@ dfgEntry {
                         },
                       {
                         "objectType" : "InstPort",
+                        "name" : "TargetBehindRoot",
+                        "nodePortType" : "In"
+                        },
+                      {
+                        "objectType" : "InstPort",
                         "name" : "result",
                         "nodePortType" : "Out"
                         }
@@ -7322,7 +7954,7 @@ dfgEntry {
                       "objectType" : "Graph",
                       "metadata" : {
                         "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
-                        "uiGraphPan" : "{\n  \"x\" : -906.375,\n  \"y\" : 101.1105041503906\n  }"
+                        "uiGraphPan" : "{\n  \"x\" : -653.375,\n  \"y\" : -278.3894958496094\n  }"
                         },
                       "title" : "GetNewTargetPos",
                       "ports" : [
@@ -7350,6 +7982,17 @@ dfgEntry {
                           "name" : "length",
                           "nodePortType" : "Out",
                           "execPortType" : "In"
+                          },
+                        {
+                          "objectType" : "ExecPort",
+                          "metadata" : {},
+                          "name" : "TargetBehindRoot",
+                          "nodePortType" : "Out",
+                          "defaultValues" : {
+                            "Boolean" : false
+                            },
+                          "execPortType" : "In",
+                          "typeSpec" : "Boolean"
                           },
                         {
                           "objectType" : "ExecPort",
@@ -7425,7 +8068,7 @@ dfgEntry {
                         {
                           "objectType" : "Inst",
                           "metadata" : {
-                            "uiGraphPos" : "{\"x\":1302.21,\"y\":269.671}"
+                            "uiGraphPos" : "{\"x\":1275.21,\"y\":450.671}"
                             },
                           "name" : "Mul_1",
                           "ports" : [
@@ -7444,7 +8087,7 @@ dfgEntry {
                               "name" : "rhs",
                               "nodePortType" : "In",
                               "defaultValues" : {
-                                "Scalar" : -1
+                                "Scalar" : 1
                                 }
                               },
                             {
@@ -7455,6 +8098,90 @@ dfgEntry {
                             ],
                           "executable" : "Fabric.Core.Math.Mul",
                           "presetGUID" : "CC951B43BB879483B46EFF7965692350"
+                          },
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":1089.38,\"y\":507.389}"
+                            },
+                          "name" : "If_1",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "cond",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "if_true",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "if_false",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "result",
+                              "nodePortType" : "Out"
+                              }
+                            ],
+                          "executable" : "Fabric.Core.Control.If",
+                          "presetGUID" : "3182A478A21643455D549E483D35F831"
+                          },
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":921.38,\"y\":565.389}"
+                            },
+                          "name" : "Scalar_1",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "value",
+                              "nodePortType" : "In",
+                              "defaultValues" : {
+                                "Scalar" : 1
+                                }
+                              }
+                            ],
+                          "executable" : "Fabric.Core.Constants.Scalar",
+                          "presetGUID" : "E0E96C6E234F70063BC98887B83327DC"
+                          },
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":924.38,\"y\":630.389}"
+                            },
+                          "name" : "Scalar_2",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "value",
+                              "nodePortType" : "In",
+                              "defaultValues" : {
+                                "Scalar" : -1
+                                }
+                              }
+                            ],
+                          "executable" : "Fabric.Core.Constants.Scalar",
+                          "presetGUID" : "E0E96C6E234F70063BC98887B83327DC"
                           }
                         ],
                       "connections" : {
@@ -7467,6 +8194,9 @@ dfgEntry {
                         "length" : [
                           "Mul_1.lhs"
                           ],
+                        "TargetBehindRoot" : [
+                          "If_1.cond"
+                          ],
                         "Add_1.result" : [
                           "result"
                           ],
@@ -7475,6 +8205,15 @@ dfgEntry {
                           ],
                         "Mul_1.result" : [
                           "MultiplyScalar_1.other"
+                          ],
+                        "If_1.result" : [
+                          "Mul_1.rhs"
+                          ],
+                        "Scalar_1.value" : [
+                          "If_1.if_true"
+                          ],
+                        "Scalar_2.value" : [
+                          "If_1.if_false"
                           ]
                         }
                       }
@@ -7919,7 +8658,7 @@ dfgEntry {
                     "objectType" : "Inst",
                     "metadata" : {
                       "uiComment" : "If Target is Under the Ground",
-                      "uiGraphPos" : "{\"x\":1623.19,\"y\":703.7720000000001}",
+                      "uiGraphPos" : "{\"x\":1633.67,\"y\":700.778}",
                       "uiCommentExpanded" : "true"
                       },
                     "name" : "If_2",
@@ -7956,7 +8695,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":1204.64,\"y\":799.797}"
+                      "uiGraphPos" : "{\"x\":1215.12,\"y\":796.803}"
                       },
                     "name" : "Translation_1",
                     "ports" : [
@@ -7983,7 +8722,7 @@ dfgEntry {
                     "objectType" : "Inst",
                     "metadata" : {
                       "uiComment" : "Computed Root",
-                      "uiGraphPos" : "{\"x\":-1268.97,\"y\":854.103}",
+                      "uiGraphPos" : "{\"x\":-1279.01,\"y\":874.177}",
                       "uiCommentExpanded" : "true"
                       },
                     "name" : "If_3",
@@ -8020,7 +8759,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-1498.95,\"y\":628.552}"
+                      "uiGraphPos" : "{\"x\":-1508.99,\"y\":648.626}"
                       },
                     "name" : "Gt_1",
                     "ports" : [
@@ -8051,7 +8790,7 @@ dfgEntry {
                   {
                     "objectType" : "Get",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-2092.24,\"y\":572.379}"
+                      "uiGraphPos" : "{\"x\":-2102.28,\"y\":592.453}"
                       },
                     "name" : "get_2",
                     "ports" : [
@@ -8066,7 +8805,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-1908.75,\"y\":575.727}"
+                      "uiGraphPos" : "{\"x\":-1918.79,\"y\":595.801}"
                       },
                     "name" : "Get_3",
                     "ports" : [
@@ -8097,7 +8836,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-2031.91,\"y\":643.322}",
+                      "uiGraphPos" : "{\"x\":-2041.95,\"y\":663.396}",
                       "uiCollapsedState" : "2"
                       },
                     "name" : "Sub_2",
@@ -8132,7 +8871,7 @@ dfgEntry {
                   {
                     "objectType" : "Get",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":390.534,\"y\":287.826}"
+                      "uiGraphPos" : "{\"x\":401.013,\"y\":284.832}"
                       },
                     "name" : "get_3",
                     "ports" : [
@@ -8147,7 +8886,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":563.703,\"y\":292.362}"
+                      "uiGraphPos" : "{\"x\":574.182,\"y\":289.368}"
                       },
                     "name" : "Get_4",
                     "ports" : [
@@ -8178,7 +8917,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-1703.86,\"y\":854.587}"
+                      "uiGraphPos" : "{\"x\":-1713.9,\"y\":874.6609999999999}"
                       },
                     "name" : "MultiplyVector3_1",
                     "ports" : [
@@ -8209,7 +8948,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-1876.8,\"y\":898.862}"
+                      "uiGraphPos" : "{\"x\":-1886.84,\"y\":918.936}"
                       },
                     "name" : "ComposeVec3_1",
                     "ports" : [
@@ -8245,7 +8984,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-1497.61,\"y\":877.039}"
+                      "uiGraphPos" : "{\"x\":-1507.65,\"y\":897.1130000000001}"
                       },
                     "name" : "SetTranslation_1",
                     "ports" : [
@@ -8271,7 +9010,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-1048.78,\"y\":898.638}"
+                      "uiGraphPos" : "{\"x\":-1058.82,\"y\":918.712}"
                       },
                     "name" : "ProjectRootIfBelowGround",
                     "ports" : [
@@ -8319,7 +9058,6 @@ dfgEntry {
                           },
                         {
                           "objectType" : "ExecPort",
-                          "metadata" : {},
                           "name" : "root",
                           "nodePortType" : "Out",
                           "execPortType" : "In",
@@ -9387,7 +10125,7 @@ dfgEntry {
                   {
                     "objectType" : "Get",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-1643.73,\"y\":631.918}",
+                      "uiGraphPos" : "{\"x\":-1653.77,\"y\":651.992}",
                       "uiCollapsedState" : "2"
                       },
                     "name" : "get_5",
@@ -9403,7 +10141,7 @@ dfgEntry {
                   {
                     "objectType" : "Get",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":397.824,\"y\":355.915}",
+                      "uiGraphPos" : "{\"x\":408.303,\"y\":352.921}",
                       "uiCollapsedState" : "2"
                       },
                     "name" : "get_6",
@@ -9419,7 +10157,7 @@ dfgEntry {
                   {
                     "objectType" : "Get",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-2056.44,\"y\":1191.75}",
+                      "uiGraphPos" : "{\"x\":-2066.48,\"y\":1211.82}",
                       "uiCollapsedState" : "2"
                       },
                     "name" : "get_7",
@@ -9435,7 +10173,7 @@ dfgEntry {
                   {
                     "objectType" : "Get",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-2174.55,\"y\":642.669}",
+                      "uiGraphPos" : "{\"x\":-2184.59,\"y\":662.7430000000001}",
                       "uiCollapsedState" : "2"
                       },
                     "name" : "get_8",
@@ -9451,7 +10189,7 @@ dfgEntry {
                   {
                     "objectType" : "Get",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-465.159,\"y\":811.079}",
+                      "uiGraphPos" : "{\"x\":-454.68,\"y\":808.085}",
                       "uiCollapsedState" : "2"
                       },
                     "name" : "get_9",
@@ -9493,7 +10231,7 @@ dfgEntry {
                   {
                     "objectType" : "Get",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-2200.2,\"y\":890.975}"
+                      "uiGraphPos" : "{\"x\":-2203.7,\"y\":888.665}"
                       },
                     "name" : "get_11",
                     "ports" : [
@@ -9508,7 +10246,7 @@ dfgEntry {
                   {
                     "objectType" : "Inst",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-2027.03,\"y\":895.51}"
+                      "uiGraphPos" : "{\"x\":-2037.07,\"y\":915.584}"
                       },
                     "name" : "Get_5",
                     "ports" : [
@@ -9539,8 +10277,8 @@ dfgEntry {
                   {
                     "objectType" : "Get",
                     "metadata" : {
-                      "uiGraphPos" : "{\"x\":-2192.91,\"y\":959.064}",
-                      "uiCollapsedState" : "2"
+                      "uiGraphPos" : "{\"x\":-2310.16,\"y\":960.115}",
+                      "uiCollapsedState" : "1"
                       },
                     "name" : "get_12",
                     "ports" : [
@@ -9556,8 +10294,8 @@ dfgEntry {
                     "objectType" : "User",
                     "metadata" : {
                       "uiTitle" : "Calculate Root Based On Condition",
-                      "uiGraphPos" : "{\"x\":-2235.91,\"y\":528.019}",
-                      "uiGraphSize" : "{\"w\":1440.88,\"h\":731.059}"
+                      "uiGraphPos" : "{\"x\":-2330.71,\"y\":548.093}",
+                      "uiGraphSize" : "{\"w\":1525.64,\"h\":725.649}"
                       },
                     "name" : "backDrop_3",
                     "ports" : []
@@ -9566,11 +10304,367 @@ dfgEntry {
                     "objectType" : "User",
                     "metadata" : {
                       "uiTitle" : "Calculate Target Position",
-                      "uiGraphPos" : "{\"x\":-500.518,\"y\":227.957}",
+                      "uiGraphPos" : "{\"x\":-490.039,\"y\":224.963}",
                       "uiGraphSize" : "{\"w\":2275.89,\"h\":683.746}"
                       },
                     "name" : "backDrop_4",
                     "ports" : []
+                    },
+                  {
+                    "objectType" : "Inst",
+                    "metadata" : {
+                      "uiGraphPos" : "{\"x\":-2171.83,\"y\":961.204}",
+                      "uiCollapsedState" : "2"
+                      },
+                    "name" : "Sub_3",
+                    "ports" : [
+                      {
+                        "objectType" : "InstPort",
+                        "name" : "exec",
+                        "nodePortType" : "IO"
+                        },
+                      {
+                        "objectType" : "InstPort",
+                        "name" : "lhs",
+                        "nodePortType" : "In"
+                        },
+                      {
+                        "objectType" : "InstPort",
+                        "name" : "rhs",
+                        "nodePortType" : "In",
+                        "defaultValues" : {
+                          "Index" : 1
+                          }
+                        },
+                      {
+                        "objectType" : "InstPort",
+                        "name" : "result",
+                        "nodePortType" : "Out"
+                        }
+                      ],
+                    "executable" : "Fabric.Core.Math.Sub",
+                    "presetGUID" : "F9754B19F43BC017056B8BA291E7B8B4"
+                    },
+                  {
+                    "objectType" : "Inst",
+                    "metadata" : {
+                      "uiGraphPos" : "{\"x\":868.548,\"y\":711.13}"
+                      },
+                    "name" : "TestTargetBehindRoot",
+                    "ports" : [
+                      {
+                        "objectType" : "InstPort",
+                        "name" : "exec",
+                        "nodePortType" : "IO"
+                        },
+                      {
+                        "objectType" : "InstPort",
+                        "name" : "target",
+                        "nodePortType" : "In"
+                        },
+                      {
+                        "objectType" : "InstPort",
+                        "name" : "root",
+                        "nodePortType" : "In"
+                        },
+                      {
+                        "objectType" : "InstPort",
+                        "name" : "result",
+                        "nodePortType" : "Out"
+                        }
+                      ],
+                    "definition" : {
+                      "objectType" : "Graph",
+                      "metadata" : {
+                        "uiGraphZoom" : "{\n  \"value\" : 0.9963104724884033\n  }",
+                        "uiGraphPan" : "{\n  \"x\" : -227.2280578613281,\n  \"y\" : -868.2167358398438\n  }"
+                        },
+                      "title" : "TestTargetBehindRoot",
+                      "ports" : [
+                        {
+                          "objectType" : "ExecPort",
+                          "name" : "exec",
+                          "nodePortType" : "IO",
+                          "execPortType" : "IO",
+                          "typeSpec" : "Execute"
+                          },
+                        {
+                          "objectType" : "ExecPort",
+                          "metadata" : {},
+                          "name" : "target",
+                          "nodePortType" : "Out",
+                          "execPortType" : "In",
+                          "typeSpec" : "Mat44"
+                          },
+                        {
+                          "objectType" : "ExecPort",
+                          "metadata" : {},
+                          "name" : "root",
+                          "nodePortType" : "Out",
+                          "execPortType" : "In",
+                          "typeSpec" : "Mat44"
+                          },
+                        {
+                          "objectType" : "ExecPort",
+                          "name" : "result",
+                          "nodePortType" : "In",
+                          "execPortType" : "Out",
+                          "typeSpec" : "Boolean"
+                          }
+                        ],
+                      "extDeps" : {},
+                      "nodes" : [
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":561.682,\"y\":1064.12}"
+                            },
+                          "name" : "Dot_1",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "this",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "other",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "result",
+                              "nodePortType" : "Out"
+                              }
+                            ],
+                          "executable" : "Fabric.Exts.Math.Func.Dot",
+                          "presetGUID" : "17C51FBA9AB500DD36FEA3A69CF58128"
+                          },
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":-42.0635,\"y\":1105.35}"
+                            },
+                          "name" : "Decompose_1",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "this",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "scaling",
+                              "nodePortType" : "Out"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "rotation",
+                              "nodePortType" : "Out"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "translation",
+                              "nodePortType" : "Out"
+                              }
+                            ],
+                          "executable" : "Fabric.Exts.Math.Mat44.Decompose",
+                          "presetGUID" : "E868E74C09F4DB6F8E0C0FB42619F723"
+                          },
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":132.145,\"y\":1129.28}"
+                            },
+                          "name" : "Transpose_1",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "this",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "result",
+                              "nodePortType" : "Out"
+                              }
+                            ],
+                          "executable" : "Fabric.Exts.Math.Func.Transpose",
+                          "presetGUID" : "7691D1969E80FD1DFDF5BE79BDD65B06"
+                          },
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":299.705,\"y\":1138.59}"
+                            },
+                          "name" : "DecomposeMat33_1",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "value",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "row0",
+                              "nodePortType" : "Out"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "row1",
+                              "nodePortType" : "Out"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "row2",
+                              "nodePortType" : "Out"
+                              }
+                            ],
+                          "executable" : "Fabric.Exts.Math.Mat33.DecomposeMat33",
+                          "presetGUID" : "834EEEC78A5F4A843CBCBE2DB5A2D180"
+                          },
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":426.039,\"y\":1002.95}"
+                            },
+                          "name" : "Sub_4",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "lhs",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "rhs",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "result",
+                              "nodePortType" : "Out"
+                              }
+                            ],
+                          "executable" : "Fabric.Core.Math.Sub",
+                          "presetGUID" : "F9754B19F43BC017056B8BA291E7B8B4"
+                          },
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":287.735,\"y\":967.044}"
+                            },
+                          "name" : "Translation_2",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "this",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "result",
+                              "nodePortType" : "Out"
+                              }
+                            ],
+                          "executable" : "Fabric.Exts.Math.Mat44.Translation",
+                          "presetGUID" : "35DC8AE364F6509754699978B97928A7"
+                          },
+                        {
+                          "objectType" : "Inst",
+                          "metadata" : {
+                            "uiGraphPos" : "{\"x\":731.578,\"y\":1060.09}"
+                            },
+                          "name" : "Lt_1",
+                          "ports" : [
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "exec",
+                              "nodePortType" : "IO"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "lhs",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "rhs",
+                              "nodePortType" : "In"
+                              },
+                            {
+                              "objectType" : "InstPort",
+                              "name" : "result",
+                              "nodePortType" : "Out"
+                              }
+                            ],
+                          "executable" : "Fabric.Core.Logic.Lt",
+                          "presetGUID" : "F4011A958885F47D54E4955E9E46B3CA"
+                          }
+                        ],
+                      "connections" : {
+                        "target" : [
+                          "Translation_2.this"
+                          ],
+                        "root" : [
+                          "Decompose_1.this"
+                          ],
+                        "Dot_1.result" : [
+                          "Lt_1.lhs"
+                          ],
+                        "Decompose_1.rotation" : [
+                          "Transpose_1.this"
+                          ],
+                        "Decompose_1.translation" : [
+                          "Sub_4.rhs"
+                          ],
+                        "Transpose_1.result" : [
+                          "DecomposeMat33_1.value"
+                          ],
+                        "DecomposeMat33_1.row2" : [
+                          "Dot_1.other"
+                          ],
+                        "Sub_4.result" : [
+                          "Dot_1.this"
+                          ],
+                        "Translation_2.result" : [
+                          "Sub_4.lhs"
+                          ],
+                        "Lt_1.result" : [
+                          "result"
+                          ]
+                        }
+                      }
                     }
                   ],
                 "connections" : {
@@ -9594,7 +10688,8 @@ dfgEntry {
                     ],
                   "Get_2.element" : [
                     "TargetUnderGround.target",
-                    "Translation_1.this"
+                    "Translation_1.this",
+                    "TestTargetBehindRoot.target"
                     ],
                   "Add_1.result" : [
                     "Get_2.index"
@@ -9697,7 +10792,8 @@ dfgEntry {
                     ],
                   "ProjectRootIfBelowGround.result" : [
                     "RootNormal.root",
-                    "AimAtTarget.root"
+                    "AimAtTarget.root",
+                    "TestTargetBehindRoot.root"
                     ],
                   "Merge4_1.result" : [
                     "exec"
@@ -9733,7 +10829,13 @@ dfgEntry {
                     "ComposeVec3_1.z"
                     ],
                   "get_12.value" : [
+                    "Sub_3.lhs"
+                    ],
+                  "Sub_3.result" : [
                     "Get_5.index"
+                    ],
+                  "TestTargetBehindRoot.result" : [
+                    "GetNewTargetPos.TargetBehindRoot"
                     ]
                   }
                 }
@@ -9901,7 +11003,6 @@ dfgEntry {
                 },
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "size",
                 "nodePortType" : "Out",
                 "execPortType" : "In",
@@ -10264,7 +11365,6 @@ dfgEntry {
                 "ports" : [
                   {
                     "objectType" : "ExecPort",
-                    "metadata" : {},
                     "name" : "joints",
                     "nodePortType" : "Out",
                     "execPortType" : "In",
@@ -11388,7 +12488,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiAlwaysShowDaisyChainPorts" : "true",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/FabricInterfaces/Execute.html"
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/FabricInterfaces/Execute.html"
         },
       "title" : "Execute",
       "ports" : [
@@ -11744,7 +12844,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Mat44.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat44.html",
         "uiTooltip" : "Returns the product of this matrix and a Vec3\n\n Supported by Mat44"
         },
       "title" : "MultiplyVector3",
@@ -11802,7 +12902,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Vec2.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Vec2.html",
         "uiTooltip" : "Returns the unit vector of this one, throws and exception if almost zero length\n\n Supported by Vec2,Vec2_d,Vec2_i,Vec3,Vec3_d,Vec3_i,Vec4,Vec4_d,Vec4_i,Quat,Quat_d,Quat_i"
         },
       "title" : "Unit",
@@ -11844,7 +12944,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Mat44.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat44.html",
         "uiTooltip" : "Returns the translation components of\nthis matrix as a Vec3\n\n Supported by Mat44"
         },
       "title" : "Translation",
@@ -11892,7 +12992,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Vec2.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Vec2.html",
         "uiTooltip" : "Returns the dot product of this vector and another one\n\n Supported by Vec2,Vec3,Vec4,Quat"
         },
       "title" : "Dot",
@@ -11982,7 +13082,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Vec2.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Vec2.html",
         "uiTooltip" : "Returns the length of this vector\n\n Supported by Vec2,Vec3,Vec4,Quat"
         },
       "title" : "Length",
@@ -12024,7 +13124,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/RGB.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/RGB.html",
         "uiTooltip" : "Returns the product of this RGB color and a scalar\n\n Supported by RGB,RGBA,ARGB,Color,Vec2,Vec3,Vec4,Mat22,Mat33,Mat44,Quat"
         },
       "title" : "MultiplyScalar",
@@ -12113,11 +13213,39 @@ dfgEntry {
 }
 "
       },
+    "Fabric.Core.Constants.Scalar" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiAlwaysShowDaisyChainPorts" : "true"
+        },
+      "title" : "Scalar",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "value",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "E0E96C6E234F70063BC98887B83327DC",
+      "code" : "dfgEntry {
+}
+"
+      },
     "Fabric.Exts.Math.Mat33.SetColumns" : {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Mat33.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat33.html",
         "uiTooltip" : "Setter from vectors, column-wise\n\n Supported by Mat33"
         },
       "title" : "SetColumns",
@@ -12185,7 +13313,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Vec3.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Vec3.html",
         "uiTooltip" : "Returns the cross product of this vector and another one\n\n Supported by Vec3,Vec3_d,Vec3_i"
         },
       "title" : "Cross",
@@ -12234,7 +13362,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Mat44.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat44.html",
         "uiTooltip" : "Decompose the Mat44 into the scaling, rotation and\ntranslation components and return them in the provided io args.\n\n Supported by Mat44"
         },
       "title" : "Decompose",
@@ -12302,7 +13430,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Mat22.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat22.html",
         "uiTooltip" : "Returns the transposed matrix of this matrix\n\n Supported by Mat22,Mat22_d,Mat22_i,Mat33,Mat33_d,Mat33_i,Mat44,Mat44_d,Mat44_i"
         },
       "title" : "Transpose",
@@ -12344,7 +13472,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Mat33.html"
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat33.html"
         },
       "title" : "Mat33 ->",
       "ports" : [
@@ -12432,7 +13560,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Mat44.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat44.html",
         "uiTooltip" : "replaces the upper left 3 x 3 components from a Mat33.\n\n Supported by Mat44"
         },
       "title" : "SetUpperLeft",
@@ -12480,7 +13608,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Mat44.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat44.html",
         "uiTooltip" : "Sets the translation components\nof this matrix to a given Vec3\n\n Supported by Mat44"
         },
       "title" : "SetTranslation",
@@ -12569,7 +13697,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Vec3.html"
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Vec3.html"
         },
       "title" : "-> Vec3",
       "ports" : [
@@ -12637,7 +13765,7 @@ dfgEntry {
     "Fabric.Exts.FabricInterfaces.Execute.Merge4" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/FabricInterfaces/Execute.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/FabricInterfaces/Execute.html",
         "uiTooltip" : "\n\n Supported by Execute"
         },
       "title" : "Merge4",
@@ -12901,7 +14029,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.1/HTML/KLExtensionsGuide/Math/Vec2.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Vec2.html",
         "uiTooltip" : "Returns the distance of this vector to another one\n\n Supported by Vec2,Vec3,Vec4,Xfo"
         },
       "title" : "DistanceTo",
