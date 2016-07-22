@@ -550,23 +550,15 @@ class OSSMouthRig(OSSMouth):
         # ==============
         # Constrain I/O
         # ==============
-        # Mouth
+        # Input
         self.mouthInputConstraint = self.mouthCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-        self.mouthConstraint = self.mouthOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
-        self.mouthEndConstraint = self.mouthEndOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
+        # Output
+        #self.lipOutputTgtConstraint = self.lipOutputTgt.constrainTo(self.midLipCtrl)
+        self.mouthOutputTgtConstraint = self.mouthOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
+        self.mouthEndOutputTgtConstraint = self.mouthEndOutputTgt.constrainTo(self.mouthCtrl, maintainOffset=False)
 
         self.mouthOutputTgt.parentJoint =  self.mouthDef
 
-        # Lip
-        # lipInputConstraint = PoseConstraint('_'.join([self.midLipCtrl.getName(), 'To', self.parentSpaceInputTgt.getName()]))
-        # lipInputConstraint.setMaintainOffset(True)
-        # lipInputConstraint.addConstrainer(self.parentSpaceInputTgt)
-        # self.midLipCtrlSpace.addConstraint(lipInputConstraint)
-
-        # Constraint outputs
-        # lipConstraint = PoseConstraint('_'.join([self.lipOutputTgt.getName(), 'To', self.midLipCtrl.getName()]))
-        # lipConstraint.addConstrainer(self.midLipCtrl)
-        # self.lipOutputTgt.addConstraint(lipConstraint)
         Profiler.getInstance().pop()
 
 
@@ -756,7 +748,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipControls.append(self.R_loLipHandleCtrl)
         self.loLipControls.append(self.rMouthCtrl)
 
-            
+
         self.loLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.loLipRigOp.setInput('rigScale', 1.0)
         self.loLipRigOp.setInput('alignX', self.alignX )
@@ -1035,11 +1027,9 @@ class OSSMouthRig(OSSMouth):
         self.mouthEndOutputTgt.xfo = data['mouthXfo']
         self.mouthOutputTgt.xfo = data['mouthXfo']
 
-        self.evalOperators()
-
         # Eval Constraints
-        self.mouthConstraint.evaluate()
-        self.mouthEndConstraint.evaluate()
+        self.mouthOutputTgtConstraint.evaluate()
+        self.mouthEndOutputTgtConstraint.evaluate()
 
         # loLip
         self.loLipCtrlSpace.xfo = data['midLipXfo']
@@ -1097,11 +1087,13 @@ class OSSMouthRig(OSSMouth):
             self.loLipCtrlsRest.append(self.loLipCtrls[i].xfo)
         for i in range(len(self.upLipCtrls)):
             self.upLipCtrlsRest.append(self.upLipCtrls[i].xfo)
-        # ============
-        # Set IO Xfos
-        # ============
-        self.parentSpaceInputTgt.xfo = data['midLipXfo']
-        self.lipOutputTgt.xfo = data['midLipXfo']
+
+        self.evalOperators()
+
+        #self.lipOutputTgtConstraint.evaluate()
+        self.mouthOutputTgtConstraint.evaluate()
+        self.mouthEndOutputTgtConstraint.evaluate()
+
 
 
 

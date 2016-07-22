@@ -43,8 +43,7 @@ class OSSCurveComponent(OSS_Component):
         # ===========
 
         # Declare Output Xfos
-        self.firstOutputTgt = self.createOutput('hips', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-        self.pelvisOutputTgt = self.createOutput('pelvis', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.curveBaseOutputTgt = self.createOutput('curveBase', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.CurveEndOutputTgt = self.createOutput('CurveEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         self.CurveVertebraeOutput = self.createOutput('CurveVertebrae', dataType='Xfo[]')
@@ -62,13 +61,12 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         # =========
         # Controls
         # ========
-        self.curveCtrlNames = StringAttribute('curveCtrlNames', value="Pelvis Torso Chest UpChest", parent=self.guideSettingsAttrGrp)
+        self.curveCtrlNames = StringAttribute('curveCtrlNames', value="A B C D", parent=self.guideSettingsAttrGrp)
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=99, parent=self.guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
         # Guide Controls
 
-        self.curveCtrls = []
-        self.curveDeformers = []
+        self.controlInputs = []
         self.curveCtrlNames.setValueChangeCallback(self.updateCurveCtrls)
 
 
@@ -116,7 +114,7 @@ class OSSCurveComponentGuide(OSSCurveComponent):
 
 
     def updateCurveCtrls(self, defNames):
-        self.createGuideControls("curveControls", self.curveCtrls, defNames)
+        self.createGuideControls("curveControls", self.controlInputs, defNames)
 
 
 
@@ -230,18 +228,16 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.controlInputs = []
         self.controlRestInputs = []
 
-        self.CurveOutputs = []
+        self.curveOutputs = []
         self.params = []
         self.rigControlAligns = []
         #self.setNumDeformers(1)
 
-        self.curveCtrls = []
-        self.curveDeformers = []
         # =====================
         # Create Component I/O
         # =====================
         # Setup component Xfo I/O's
-        self.CurveVertebraeOutput.setTarget(self.CurveOutputs)
+        self.CurveVertebraeOutput.setTarget(self.curveOutputs)
 
 
         # ===============
@@ -265,11 +261,11 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.NURBSCurveKLOp.setInput('parent', self.ctrlCmpGrp)
         self.NURBSCurveKLOp.setInput('atVec', self.ctrlCmpGrp) # atVec should be optional, but is not currently in the Solver
         self.NURBSCurveKLOp.setInput('controlAligns', self.rigControlAligns)
-        self.NURBSCurveKLOp.setInput('controls', self.curveCtrls)
+        self.NURBSCurveKLOp.setInput('controls', self.controlInputs)
         self.NURBSCurveKLOp.setInput('controlsRest', self.controlRestInputs)
         self.NURBSCurveKLOp.setInput('params', self.params )
 
-        self.NURBSCurveKLOp.setOutput('outputs', self.CurveOutputs)
+        self.NURBSCurveKLOp.setOutput('outputs', self.curveOutputs)
 
 
 
@@ -319,32 +315,32 @@ class OSSCurveComponentRig(OSSCurveComponent):
         return controlsList
 
 
-    def setNumDeformers(self, numDeformers):
+    def setNumDeformers(self, numDeformers, data):
 
-        for output in reversed(self.CurveOutputs):
+        for output in reversed(self.curveOutputs):
             output.getParent().removeChild(output)
-        del self.CurveOutputs[:] #Clear since this array obj is tied to output already
+        del self.curveOutputs[:] #Clear since this array obj is tied to output already
 
         for joint in reversed(self.deformerJoints):
             joint.getParent().removeChild(joint)
         del self.deformerJoints[:] #Clear since this array obj is tied to output already
 
         # Add new deformers and outputs
-        for i in xrange(len(self.CurveOutputs), numDeformers):
+        for i in xrange(len(self.curveOutputs), numDeformers):
             name = 'Curve' + str(i).zfill(2)
             #Need dynamic ports branch to be able to see this updated in Graph
             CurveOutput = self.createOutput(name, dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-            self.CurveOutputs.append(CurveOutput)
+            self.curveOutputs.append(CurveOutput)
 
         parent = self.deformersParent
         for i in xrange(len(self.deformerJoints), numDeformers):
             if i != 0:
                 parent = self.deformerJoints[-1]
-            name = 'Curve' + str(i).zfill(2)
+            name = str(i).zfill(2)
             CurveDef = Joint(name, parent=parent)
             CurveDef.setComponent(self)
             self.deformerJoints.append(CurveDef)
-            if name == "pelvis":
+            if i == 0:
                 self.parentSpaceInputTgt.childJoints = [CurveDef]
 
 
@@ -352,12 +348,10 @@ class OSSCurveComponentRig(OSSCurveComponent):
         a = 0.0
         b = 1.0
         for i in range(numDeformers):
-            print i
             ratio = float(i) / float(numDeformers-1)
             self.params.append((1.0-ratio)*a + ratio*b)
             self.rigControlAligns.append(Vec3(1,2,3))
 
-        print self.params
         if hasattr(self, 'NURBSCurveKLOp'):  # Check in case this is ever called from Guide callback
             self.NURBSCurveKLOp.setInput('params',  self.params)
 
@@ -379,73 +373,68 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
         numDeformers = data['numDeformers']
 
-        self.curveDeformers = []
-        self.curveCtrls = self.createControls("curveControls", self.curveCtrls, data["curveCtrlNames"], data)
+        self.controlInputs = self.createControls("curveControls", self.controlInputs, data["curveCtrlNames"], data)
 
-        # self.curveDeformers = self.createGuideControls("curveDeformers", self.curveDeformers, data["numDeformers"])
 
         # Update number of deformers and outputs
-        self.setNumDeformers(numDeformers)
+        self.setNumDeformers(numDeformers, data)
 
         # ==============
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.firstCurveCtrl = self.curveCtrls[0].getParent()
-        #print "First Control: %s"%(self.firstCurveCtrl.getDecoratedName())
-        #self.firstCtrlSpaceConstraint  = self.firstCurveCtrl.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.firstCurveCtrl = self.controlInputs[0].getParent()
+        print "First Control: %s"%(self.firstCurveCtrl.getDecoratedName())
+        # self.firstCtrlSpaceConstraint  = self.firstCurveCtrl.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
-        for i in range(len(self.curveCtrls)):
-            self.controlRestInputs.append(self.curveCtrls[i].xfo)
+        for i in xrange(len(self.controlInputs)):
+            self.controlRestInputs.append(self.controlInputs[i].xfo)
 
-        if self.curveCtrls:
+
+        if self.controlInputs:
             # build control hierarchy
-            numCtrls = len(self.curveCtrls)
+            numCtrls = len(self.controlInputs)
 
             for i in range(numCtrls):
-                ctrl = self.curveCtrls[i]
+                ctrl = self.controlInputs[i]
                 ctrl.setColor("yellowMuted")
                 ctrlParent = ctrl.insertCtrlSpace()
 
 
-
-
         # ==============
         # Constrain I/O
         # ==============
         # Constraint inputs
+        self.evalOperators()
+        self.NURBSCurveKLOp.evaluate()
 
-
+        print len(self.curveOutputs)
+        for i in xrange(len(self.curveOutputs)):
+            constraint = self.deformerJoints[i].constrainTo(self.curveOutputs[i])
+            constraint.evaluate()
         # ====================
         # Evaluate Fabric Ops
         # ====================
         # Eval Operators # Order is important
-        self.evalOperators()
-        self.NURBSCurveKLOp.evaluate()
-        #self.firstCtrlSpaceConstraint.evaluate()
 
-        # evaluate the constraint op so that all the joint transforms are updated.
-        for i in xrange(len(self.CurveOutputs)):
-            constraint = self.deformerJoints[i].constrainTo(self.CurveOutputs[i])
-            constraint.evaluate()
 
-        # Constrain Outputs
-        # self.CurveEndOutputConstraint = self.CurveEndOutputTgt.constrainTo(self.CurveOutputs[-1])
+        # self.firstCtrlSpaceConstraint.evaluate()
+
+        # evaluate the constraint op so that all the joint transforms are updated.I s
+        self.curveBaseOutputConstraint =  self.curveBaseOutputTgt.constrainTo(self.curveOutputs[0])
+        self.CurveEndOutputConstraint  =  self.CurveEndOutputTgt.constrainTo(self.curveOutputs[-1])
+
 
 
         # # ====================
         # # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # # ====================
         # # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
-        # self.firstCtrlSpaceConstraint.evaluate()
-        # self.hipsOutputConstraint.evaluate()
-        # #self.CurveBaseOutputConstraint.evaluate()
-        # #self.pelvisOutputConstraint.evaluate()
-        # self.CurveEndOutputConstraint.evaluate()
+        self.curveBaseOutputConstraint.evaluate()
+        self.CurveEndOutputConstraint.evaluate()
 
-        # self.firstOutputTgt.parentJoint = self.deformerJoints[0]
-        # self.pelvisOutputTgt.parentJoint = self.deformerJoints[0]
-        # self.CurveEndOutputTgt.parentJoint = self.deformerJoints[-1]
+        self.curveBaseOutputTgt.parentJoint = self.deformerJoints[0]
+        # self.curveEndOutputTgt.parentJoint  = self.deformerJoints[-1]
 
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 
