@@ -686,14 +686,13 @@ class OSSMouthRig(OSSMouth):
         # self.params = [0.025,0.125,0.3,0.5,0.7,0.875,0.975]
         self.params = [0.05,0.25,0.5,0.75,0.95]
 
-        self.upLipControls = []
+        self.upLipControls = [self.lMouthCtrl, self.L_upLipHandleCtrl, self.upLipCtrl, self.R_upLipHandleCtrl, self.rMouthCtrl]
+        self.upLipControlsRest = []
         self.upLipOutputs = []
         self.rigControlAligns = []
-        self.upLipControls.append(self.lMouthCtrl)
-        self.upLipControls.append(self.L_upLipHandleCtrl)
-        self.upLipControls.append(self.upLipCtrl)
-        self.upLipControls.append(self.R_upLipHandleCtrl)
-        self.upLipControls.append(self.rMouthCtrl)
+
+        for c in self.upLipControls:
+            self.upLipControlsRest.append(c.xfo)
 
         '''
 
@@ -725,7 +724,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipRigOp.setInput('atVec', self.mouthCtrl)
         self.upLipRigOp.setInput('controlAligns', self.rigControlAligns)
         self.upLipRigOp.setInput('controls', self.upLipControls)
-        self.upLipRigOp.setInput('controlsRest', self.upLipControls)
+        self.upLipRigOp.setInput('controlsRest', self.upLipControlsRest)
         self.upLipRigOp.setInput('params',self.params )
 
         self.upLipRigOp.setOutput('outputs', self.upLipOutputs)
@@ -739,15 +738,12 @@ class OSSMouthRig(OSSMouth):
         self.loLipRigOp = KLOperator('loLipRigOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(self.loLipRigOp)
 
-        self.loLipControls = []
+        self.loLipControls = [self.lMouthCtrl, self.L_loLipHandleCtrl, self.loLipCtrl, self.R_loLipHandleCtrl, self.rMouthCtrl]
         self.loLipControlsRest = []
         self.loLipOutputs = []
-        self.loLipControls.append(self.lMouthCtrl)
-        self.loLipControls.append(self.L_loLipHandleCtrl)
-        self.loLipControls.append(self.loLipCtrl)
-        self.loLipControls.append(self.R_loLipHandleCtrl)
-        self.loLipControls.append(self.rMouthCtrl)
 
+        for c in self.loLipControls:
+            self.loLipControlsRest.append(c.xfo)
 
         self.loLipRigOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.loLipRigOp.setInput('rigScale', 1.0)
@@ -764,7 +760,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipRigOp.setInput('atVec', self.mouthCtrl)
         self.loLipRigOp.setInput('controlAligns', self.rigControlAligns)
         self.loLipRigOp.setInput('controls', self.loLipControls)
-        self.loLipRigOp.setInput('controlsRest', self.loLipControls)
+        self.loLipRigOp.setInput('controlsRest', self.loLipControlsRest)
         self.loLipRigOp.setInput('params', self.params )
 
         self.loLipRigOp.setOutput('outputs', self.loLipOutputs)
@@ -773,7 +769,7 @@ class OSSMouthRig(OSSMouth):
             self.rigControlAligns.append(Vec3(1,2,3))
 
         self.rigControlAligns[3] = Vec3(-1,2,-3)
-        self.rigControlAligns[4] = Vec3(1,-2,-3)
+        self.rigControlAligns[4] = Vec3(-1,2,3)
 
         # Add lowLip Guide Canvas Op
         self.blendMidMouthRigOp = CanvasOperator('blendMidMouthRigOp', 'OSS.Solvers.blendMat44Solver')
@@ -875,6 +871,8 @@ class OSSMouthRig(OSSMouth):
         self.upLipDefOp.setInput('followCurveTangent', 0.5)
         self.upLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.upLipDefOp.setInput('parent', self.mouthCtrlSpace)
+        self.upLipDefOp.setInput('useLocalNormal', 1.0)
+        self.upLipDefOp.setInput('followCurveNormal', 0.0)
 
         self.upLipDefOp.setInput('atVec', self.mouthCtrl)
         self.upLipDefOp.setInput('controlAligns', self.defControlAligns)
@@ -936,6 +934,8 @@ class OSSMouthRig(OSSMouth):
         self.loLipDefOp.setInput('followCurveTangent', 0.5)
         self.loLipDefOp.setInput('altTangent', Vec3(0.0,0.0,1.0))
         self.loLipDefOp.setInput('parent', self.mouthCtrlSpace)
+        self.loLipDefOp.setInput('useLocalNormal', 1.0)
+        self.loLipDefOp.setInput('followCurveNormal', 0.0)
 
         self.loLipDefOp.setInput('atVec', self.mouthCtrl)
         self.loLipDefOp.setInput('controlAligns', self.defControlAligns)
