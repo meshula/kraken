@@ -263,7 +263,7 @@ class FKChainComponentGuide(FKChainComponent):
 
 
 class FKChainComponentRig(FKChainComponent):
-    """FK Chain Leg Rig"""
+    """FK Chain Rig"""
 
     def __init__(self, name='FKChain', parent=None):
 
@@ -386,8 +386,8 @@ class FKChainComponentRig(FKChainComponent):
             for i in xrange(len(self.boneOutputsTgt), numDeformers):
                 name = 'bone' + str(i + 1).zfill(2)
 
-                legOutput = ComponentOutput(name, parent=self.outputHrcGrp)
-                self.boneOutputsTgt.append(legOutput)
+                defOutput = ComponentOutput(name, parent=self.outputHrcGrp)
+                self.boneOutputsTgt.append(defOutput)
 
                 boneDef = Joint(name, parent=self.defCmpGrp)
                 boneDef.setComponent(self)
