@@ -39,6 +39,9 @@ class CanvasOperator(Operator):
             rtVal = self.binding.getArgValue(portName)
             portDataType = rtVal.getTypeName().getSimpleType()
 
+            if portDataType == 'Execute':
+                continue
+
             if portConnectionType == 'In':
                 if portDataType.endswith('[]'):
                     self.inputs[portName] = []
@@ -138,6 +141,9 @@ class CanvasOperator(Operator):
             if portDataType == '$TYPE$':
                 return
 
+            if portDataType == 'Execute':
+                continue
+
             if portDataType in ('EvalContext', 'time', 'frame'):
                 portVal = ks.constructRTVal(portDataType)
                 self.binding.setArgValue(portName, portVal, False)
@@ -179,7 +185,6 @@ class CanvasOperator(Operator):
                     rtVal = getRTVal(self.outputs[portName], asInput=False)
 
                     validateArg(rtVal, portName, portDataType)
-
                     self.binding.setArgValue(portName, rtVal, False)
 
             portDebug = {
@@ -196,7 +201,10 @@ class CanvasOperator(Operator):
 
         try:
             self.binding.execute()
-        except:
+        except Exception as e:
+            print str(e)
+            print self.binding.getErrors(True)
+
             errorMsg = "Possible problem with Canvas operator '" + \
                 self.getName() + "' port values:"
 
@@ -217,11 +225,9 @@ class CanvasOperator(Operator):
                 obj.setValue(rtval)
             else:
                 if hasattr(obj, '__iter__'):
-                    print "Warning: Trying to set a canvas port item with an \
-                        array directly."
+                    print "Warning: Trying to set a canvas port item with an array directly."
 
-                print "Warning: Not setting rtval: %s\n\tfor output object: \
-                    %s\n\ton port: %s\n\tof canvas object: %s\n." % \
+                print "Warning: Not setting rtval: %s\n\tfor output object: %s\n\ton port: %s\n\tof canvas object: %s\n." % \
                     (rtval, obj, portName, self.getName())
 
 
@@ -230,6 +236,9 @@ class CanvasOperator(Operator):
             portConnectionType = portTypeMap[self.node.getExecPortType(i)]
             rtVal = self.binding.getArgValue(portName)
             portDataType = rtVal.getTypeName().getSimpleType()
+
+            if portDataType == 'Execute':
+                continue
 
             if portConnectionType != 'In':
                 outVal = self.binding.getArgValue(portName)
