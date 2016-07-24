@@ -932,13 +932,14 @@ class Builder(Builder):
                                                dstPortPath=kOperator.getName() + "." + portName)
 
                     else:
-                        pm.FabricCanvasAddPort(
-                            mayaNode=canvasNode,
-                            execPath="",
-                            desiredPortName=portName,
-                            portType="In",
-                            typeSpec=portDataType,
-                            connectToPortPath="")
+                        if portDataType != 'Execute':
+                            pm.FabricCanvasAddPort(
+                                mayaNode=canvasNode,
+                                execPath="",
+                                desiredPortName=portName,
+                                portType="In",
+                                typeSpec=portDataType,
+                                connectToPortPath="")
 
                         pm.FabricCanvasConnect(
                             mayaNode=canvasNode,
@@ -970,13 +971,14 @@ class Builder(Builder):
                             srcPortPath=kOperator.getName() + "." + portName,
                             dstPortPath=portName)
                     else:
-                        pm.FabricCanvasAddPort(
-                            mayaNode=canvasNode,
-                            execPath="",
-                            desiredPortName=portName,
-                            portType="Out",
-                            typeSpec=portDataType,
-                            connectToPortPath="")
+                        if portDataType != 'Execute':
+                            pm.FabricCanvasAddPort(
+                                mayaNode=canvasNode,
+                                execPath="",
+                                desiredPortName=portName,
+                                portType="Out",
+                                typeSpec=portDataType,
+                                connectToPortPath="")
 
                         pm.FabricCanvasConnect(
                             mayaNode=canvasNode,
@@ -987,6 +989,8 @@ class Builder(Builder):
                     raise Exception("Invalid connection type:" + portConnectionType)
 
                 if portDataType == 'EvalContext':
+                    continue
+                elif portDataType == 'Execute':
                     continue
                 elif portDataType == 'DrawingHandle':
                     continue

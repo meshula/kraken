@@ -1186,6 +1186,8 @@ class Builder(Builder):
 
                 if portDataType == 'EvalContext':
                     return
+                elif portDataType == 'Execute':
+                    return
                 elif portDataType == 'DrawingHandle':
                     si.FabricCanvasAddPort(canvasOpPath, "", portName, "Out", portDataType, canvasGraphPort, "", "")
                 elif portDataType == 'InlineDebugShape':
