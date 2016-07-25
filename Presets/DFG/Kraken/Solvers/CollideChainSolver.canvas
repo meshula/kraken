@@ -3,8 +3,8 @@
   "metadata" : {
     "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
     "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-    "uiGraphZoom" : "{\n  \"value\" : 0.5247942805290222\n  }",
-    "uiGraphPan" : "{\n  \"x\" : 308.4326782226563,\n  \"y\" : -896.8681640625\n  }"
+    "uiGraphZoom" : "{\n  \"value\" : 1.16822361946106\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 740.0048828125,\n  \"y\" : -1986.981689453125\n  }"
     },
   "title" : "CollideChainSolver",
   "ports" : [
@@ -17,6 +17,28 @@
         },
       "execPortType" : "IO",
       "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {},
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Boolean" : false
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {},
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 0
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
       },
     {
       "objectType" : "ExecPort",
@@ -51,6 +73,17 @@
           }
         },
       "execPortType" : "In"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {},
+      "name" : "ground_offsetY",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 0
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
       },
     {
       "objectType" : "ExecPort",
@@ -152,7 +185,7 @@
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "73AE31D92986DE079DB97C613D0C3963",
+  "presetGUID" : "470A0A15C6C4BFB26566CBB1943B65D8",
   "nodes" : [
     {
       "objectType" : "Inst",
@@ -1848,7 +1881,6 @@
                       },
                     {
                       "objectType" : "ExecPort",
-                      "metadata" : {},
                       "name" : "TargetBehindRoot",
                       "nodePortType" : "Out",
                       "defaultValues" : {
@@ -4253,7 +4285,6 @@
                       },
                     {
                       "objectType" : "ExecPort",
-                      "metadata" : {},
                       "name" : "target",
                       "nodePortType" : "Out",
                       "execPortType" : "In",
@@ -4261,7 +4292,6 @@
                       },
                     {
                       "objectType" : "ExecPort",
-                      "metadata" : {},
                       "name" : "root",
                       "nodePortType" : "Out",
                       "execPortType" : "In",
@@ -6079,11 +6109,114 @@ dfgEntry {
         },
       "name" : "backDrop_3",
       "ports" : []
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-139.804,\"y\":1824.75}"
+        },
+      "name" : "SetTranslation_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "this",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "tr",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 1.75,
+              "z" : 0
+              }
+            }
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Mat44.SetTranslation",
+      "presetGUID" : "DD392C0F4D740AFE3C1A66AE3849AB19"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":54.1959,\"y\":1744.75}"
+        },
+      "name" : "Mul_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "lhs",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "rhs",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "Fabric.Core.Math.Mul",
+      "presetGUID" : "CC951B43BB879483B46EFF7965692350"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-273.924,\"y\":1801.01}"
+        },
+      "name" : "ComposeVec3_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "x",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "y",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "z",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Vec3.ComposeVec3",
+      "presetGUID" : "49CDCDB01672F8D73A3B71175E0DD2D2"
       }
     ],
   "connections" : {
     "ground" : [
-      "CollideJointCore.body.ground"
+      "Mul_1.lhs"
+      ],
+    "ground_offsetY" : [
+      "ComposeVec3_1.y"
       ],
     "joints" : [
       "CollideJointCore.body.joints",
@@ -6132,6 +6265,15 @@ dfgEntry {
       ],
     "Sub_1.result" : [
       "ForLoop_2.count"
+      ],
+    "SetTranslation_1.this" : [
+      "Mul_1.rhs"
+      ],
+    "Mul_1.result" : [
+      "CollideJointCore.body.ground"
+      ],
+    "ComposeVec3_1.result" : [
+      "SetTranslation_1.tr"
       ]
     },
   "requiredPresets" : {
@@ -6140,8 +6282,8 @@ dfgEntry {
       "metadata" : {
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-        "uiGraphZoom" : "{\n  \"value\" : 0.5247942805290222\n  }",
-        "uiGraphPan" : "{\n  \"x\" : 308.4326782226563,\n  \"y\" : -896.8681640625\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 1.16822361946106\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 740.0048828125,\n  \"y\" : -1986.981689453125\n  }"
         },
       "title" : "CollideChainSolver",
       "ports" : [
@@ -6154,6 +6296,28 @@ dfgEntry {
             },
           "execPortType" : "IO",
           "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {},
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {},
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
           },
         {
           "objectType" : "ExecPort",
@@ -6188,6 +6352,17 @@ dfgEntry {
               }
             },
           "execPortType" : "In"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {},
+          "name" : "ground_offsetY",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
           },
         {
           "objectType" : "ExecPort",
@@ -6289,7 +6464,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "73AE31D92986DE079DB97C613D0C3963",
+      "presetGUID" : "470A0A15C6C4BFB26566CBB1943B65D8",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -7985,7 +8160,6 @@ dfgEntry {
                           },
                         {
                           "objectType" : "ExecPort",
-                          "metadata" : {},
                           "name" : "TargetBehindRoot",
                           "nodePortType" : "Out",
                           "defaultValues" : {
@@ -10390,7 +10564,6 @@ dfgEntry {
                           },
                         {
                           "objectType" : "ExecPort",
-                          "metadata" : {},
                           "name" : "target",
                           "nodePortType" : "Out",
                           "execPortType" : "In",
@@ -10398,7 +10571,6 @@ dfgEntry {
                           },
                         {
                           "objectType" : "ExecPort",
-                          "metadata" : {},
                           "name" : "root",
                           "nodePortType" : "Out",
                           "execPortType" : "In",
@@ -12216,11 +12388,114 @@ dfgEntry {
             },
           "name" : "backDrop_3",
           "ports" : []
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-139.804,\"y\":1824.75}"
+            },
+          "name" : "SetTranslation_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "tr",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Vec3" : {
+                  "x" : 0,
+                  "y" : 1.75,
+                  "z" : 0
+                  }
+                }
+              }
+            ],
+          "executable" : "Fabric.Exts.Math.Mat44.SetTranslation",
+          "presetGUID" : "DD392C0F4D740AFE3C1A66AE3849AB19"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":54.1959,\"y\":1744.75}"
+            },
+          "name" : "Mul_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "lhs",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rhs",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Fabric.Core.Math.Mul",
+          "presetGUID" : "CC951B43BB879483B46EFF7965692350"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-273.924,\"y\":1801.01}"
+            },
+          "name" : "ComposeVec3_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "x",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "y",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "z",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Fabric.Exts.Math.Vec3.ComposeVec3",
+          "presetGUID" : "49CDCDB01672F8D73A3B71175E0DD2D2"
           }
         ],
       "connections" : {
         "ground" : [
-          "CollideJointCore.body.ground"
+          "Mul_1.lhs"
+          ],
+        "ground_offsetY" : [
+          "ComposeVec3_1.y"
           ],
         "joints" : [
           "CollideJointCore.body.joints",
@@ -12269,6 +12544,15 @@ dfgEntry {
           ],
         "Sub_1.result" : [
           "ForLoop_2.count"
+          ],
+        "SetTranslation_1.this" : [
+          "Mul_1.rhs"
+          ],
+        "Mul_1.result" : [
+          "CollideJointCore.body.ground"
+          ],
+        "ComposeVec3_1.result" : [
+          "SetTranslation_1.tr"
           ]
         }
       },
