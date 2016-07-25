@@ -184,8 +184,6 @@ class FabriceClavicleRig(FabriceClavicle):
         defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
         self.addItem('defCmpGrp', self.defCmpGrp)
 
-        self.ctrlCmpGrp.setComponent(self)
-
         self.clavicleDef = Joint('clavicle', parent=defCmpGrp)
         self.clavicleDef.setComponent(self)
 

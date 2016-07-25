@@ -322,7 +322,7 @@ class FKCollisionComponentRig(FKCollisionComponent):
         # ==============
         # Constrain I/O
         # ==============
-        # Constraint inputs
+        # Constrain inputs
         self.rootInputConstraint = PoseConstraint('_'.join([self.fkCtrlSpaces[0].getName(), 'To', self.rootInputTgt.getName()]))
         self.rootInputConstraint.setMaintainOffset(True)
         self.rootInputConstraint.addConstrainer(self.rootInputTgt)
@@ -524,7 +524,7 @@ class FKCollisionComponentRig(FKCollisionComponent):
         # =============
 
         # ====================
-        # Evaluate Splice Ops
+        # Evaluate Canvas Ops
         # ====================
         # Eval Collision Op to evaulate with new outputs and controls
         self.collisionCanvasOp.evaluate()
