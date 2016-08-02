@@ -330,9 +330,9 @@ class FKCollisionComponentRig(FKCollisionComponent):
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Output Splice Op
+        # Add Output Canvas Op
         self.collisionCanvasOp = CanvasOperator('collisionCanvasOp', 'Kraken.Solvers.CollideChainSolver')
         self.addOperator(self.collisionCanvasOp)
 
@@ -348,7 +348,7 @@ class FKCollisionComponentRig(FKCollisionComponent):
         # Add Xfo Outputs
         self.collisionCanvasOp.setOutput('outputs', self.boneOutputsTgt)
 
-        # Add Deformer Splice Op
+        # Add Deformer Canvas Op
         self.deformersToOutputsKLOp = KLOperator('fkChainDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
