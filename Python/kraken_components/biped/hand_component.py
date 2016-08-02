@@ -288,7 +288,7 @@ class HandComponentGuide(HandComponent):
         # Create Canvas Operators
         # ===========================
         # Add Finger Guide Canvas Op
-        fingerGuideCanvasOp = CanvasOperator(name + 'FingerGuideOp', 'Kraken.Solvers.Biped.BipedFingerGuideSolver')
+        fingerGuideCanvasOp = CanvasOperator('fingerGuide', 'Kraken.Solvers.Biped.BipedFingerGuideSolver')
         self.addOperator(fingerGuideCanvasOp)
 
         # Add Att Inputs
@@ -514,7 +514,7 @@ class HandComponentRig(HandComponent):
         # Create Operators
         # =================
         # Add Deformer KL Op
-        deformersToCtrlsKLOp = KLOperator(name + 'DeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        deformersToCtrlsKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(deformersToCtrlsKLOp)
 
         # Add Att Inputs

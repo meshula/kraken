@@ -244,7 +244,7 @@ class KLOperator(Operator):
 
         """
 
-        logger.debug("\nEvaluating kl operator [%s] of type [%s] from extension [%s]..." % (self.getName(), self.solverTypeName, self.extension))
+        # logger.debug("\nEvaluating kl operator [%s] of type [%s] from extension [%s]..." % (self.getName(), self.solverTypeName, self.extension))
 
         super(KLOperator, self).evaluate()
 
@@ -380,8 +380,8 @@ class KLOperator(Operator):
                 })
 
         try:
-            argstr = [str(arg) for arg in argVals]
-            logger.debug("%s.solve('', %s)" % (self.solverTypeName, ", ".join(argstr)))
+            # argstr = [str(arg) for arg in argVals]
+            # logger.debug("%s.solve('', %s)" % (self.solverTypeName, ", ".join(argstr)))
             self.solverRTVal.solve('', *argVals)
         except Exception as e:
 

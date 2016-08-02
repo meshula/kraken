@@ -245,7 +245,7 @@ class ClavicleComponentRig(ClavicleComponent):
         # Add Splice Ops
         # ===============
         # Add Deformer Splice Op
-        spliceOp = KLOperator('clavicleDeformerKLOp', 'PoseConstraintSolver', 'Kraken')
+        spliceOp = KLOperator('defConstraint', 'PoseConstraintSolver', 'Kraken')
         self.addOperator(spliceOp)
 
         # Add Att Inputs

@@ -289,7 +289,7 @@ class StretchyLimbComponentRig(StretchyLimbComponent):
         # Add Splice Ops
         # ===============
         # Add StretchyLimb Splice Op
-        self.limbIKKLOp = KLOperator('limbKLOp', 'TwoBoneStretchyIKSolver', 'Kraken')
+        self.limbIKKLOp = KLOperator('limb', 'TwoBoneStretchyIKSolver', 'Kraken')
         self.addOperator(self.limbIKKLOp)
 
         # Add Att Inputs
@@ -324,7 +324,7 @@ class StretchyLimbComponentRig(StretchyLimbComponent):
         # =====================
 
         # Add StretchyLimb Deformer Splice Op
-        self.outputsToDeformersKLOp = KLOperator('limbDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.outputsToDeformersKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
 
         # Add Att Inputs

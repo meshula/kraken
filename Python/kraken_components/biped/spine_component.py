@@ -293,7 +293,7 @@ class SpineComponentRig(SpineComponent):
         # Add Splice Ops
         # ===============
         # Add Spine Splice Op
-        self.bezierSpineKLOp = KLOperator('spineKLOp', 'BezierSpineSolver', 'Kraken')
+        self.bezierSpineKLOp = KLOperator('spine', 'BezierSpineSolver', 'Kraken')
         self.addOperator(self.bezierSpineKLOp)
 
         # Add Att Inputs
@@ -311,7 +311,7 @@ class SpineComponentRig(SpineComponent):
         self.bezierSpineKLOp.setOutput('outputs', self.spineOutputs)
 
         # Add Deformer Splice Op
-        self.deformersToOutputsKLOp = KLOperator('spineDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.deformersToOutputsKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
         # Add Att Inputs
@@ -325,7 +325,7 @@ class SpineComponentRig(SpineComponent):
         self.deformersToOutputsKLOp.setOutput('constrainees', self.deformerJoints)
 
         # Add Pelvis Splice Op
-        self.pelvisDefKLOp = KLOperator('pelvisDeformerKLOp', 'PoseConstraintSolver', 'Kraken')
+        self.pelvisDefKLOp = KLOperator('pelvisDefConstraint', 'PoseConstraintSolver', 'Kraken')
         self.addOperator(self.pelvisDefKLOp)
 
         # Add Att Inputs

@@ -315,10 +315,10 @@ class FKChainComponentRig(FKChainComponent):
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Output Splice Op
-        self.outputsToControlsKLOp = KLOperator('fkChainOutputKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        # Add Output Canvas Op
+        self.outputsToControlsKLOp = KLOperator('outputConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToControlsKLOp)
 
         # Add Att Inputs
@@ -331,8 +331,8 @@ class FKChainComponentRig(FKChainComponent):
         # Add Xfo Outputs
         self.outputsToControlsKLOp.setOutput('constrainees', self.boneOutputsTgt)
 
-        # Add Deformer Splice Op
-        self.deformersToOutputsKLOp = KLOperator('fkChainDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        # Add Deformer Canvas Op
+        self.deformersToOutputsKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
         # Add Att Inputs

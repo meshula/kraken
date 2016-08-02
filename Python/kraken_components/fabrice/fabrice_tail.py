@@ -98,7 +98,7 @@ class FabriceTailGuide(FabriceTail):
         # Add Splice Ops
         # ===============
         # Add Tail Splice Op
-        self.bezierSpineKLOp = KLOperator('spineGuideKLOp', 'BezierSpineSolver', 'Kraken')
+        self.bezierSpineKLOp = KLOperator('guide', 'BezierSpineSolver', 'Kraken')
         self.bezierSpineKLOp.setOutput('outputs', self.tailVertebraeOutput.getTarget())
 
         self.addOperator(self.bezierSpineKLOp)
@@ -369,7 +369,7 @@ class FabriceTailRig(FabriceTail):
         # Add Splice Ops
         # ===============
         # Add Tail Splice Op
-        self.bezierTailKLOp = KLOperator('tailKLOp', 'BezierSpineSolver', 'Kraken')
+        self.bezierTailKLOp = KLOperator('tail', 'BezierSpineSolver', 'Kraken')
         self.addOperator(self.bezierTailKLOp)
 
         # Add Att Inputs
@@ -387,7 +387,7 @@ class FabriceTailRig(FabriceTail):
         self.bezierTailKLOp.setOutput('outputs', self.tailOutputs)
 
         # Add Deformer Splice Op
-        self.deformersToOutputsKLOp = KLOperator('tailDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.deformersToOutputsKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
         # Add Att Inputs

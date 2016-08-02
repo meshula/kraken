@@ -366,8 +366,8 @@ class FootComponentRig(FootComponent):
         # =========================
         # Add Foot Pivot Canvas Op
         # =========================
-        # self.footPivotCanvasOp = CanvasOperator('footPivotCanvasOp', 'Kraken.Solvers.Biped.BipedFootPivotSolver')
-        self.footPivotCanvasOp = KLOperator('footPivotKLOp', 'BipedFootPivotSolver', 'Kraken')
+        # self.footPivotCanvasOp = CanvasOperator('footPivot', 'Kraken.Solvers.Biped.BipedFootPivotSolver')
+        self.footPivotCanvasOp = KLOperator('footPivot', 'BipedFootPivotSolver', 'Kraken')
 
         self.addOperator(self.footPivotCanvasOp)
 
@@ -392,8 +392,8 @@ class FootComponentRig(FootComponent):
         # =========================
         # Add Foot Solver Canvas Op
         # =========================
-        # self.footSolverCanvasOp = CanvasOperator('footSolverCanvasOp', 'Kraken.Solvers.Biped.BipedFootSolver')
-        self.footSolverCanvasOp = KLOperator('footSolverKLOp', 'BipedFootSolver', 'Kraken')
+        # self.footSolverCanvasOp = CanvasOperator('footSolver', 'Kraken.Solvers.Biped.BipedFootSolver')
+        self.footSolverCanvasOp = KLOperator('footSolver', 'BipedFootSolver', 'Kraken')
         self.addOperator(self.footSolverCanvasOp)
 
         # Add Att Inputs
@@ -418,7 +418,7 @@ class FootComponentRig(FootComponent):
         # ===================
         # Add Deformer KL Op
         # ===================
-        self.outputsToDeformersKLOp = KLOperator('foot' + self.getLocation() + 'DeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.outputsToDeformersKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
 
         # Add Att Inputs
