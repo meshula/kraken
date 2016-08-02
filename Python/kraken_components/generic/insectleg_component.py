@@ -110,7 +110,7 @@ class InsectLegComponentGuide(InsectLegComponent):
 
         jointPositions = []
         for i in xrange(len(self.jointCtrls)):
-            jointPositions.append(self.jointCtrls[i].xfo.tr)
+            jointPositions.append(self.jointCtrls[i].xfo)
 
         data['jointPositions'] = jointPositions
 
@@ -131,7 +131,7 @@ class InsectLegComponentGuide(InsectLegComponent):
         super(InsectLegComponentGuide, self).loadData(data)
 
         for i in xrange(len(data['jointPositions'])):
-            self.jointCtrls[i].xfo.tr = data['jointPositions'][i]
+            self.jointCtrls[i].xfo = data['jointPositions'][i]
 
         return True
 
@@ -476,9 +476,6 @@ class InsectLegComponentRig(InsectLegComponent):
         boneLengths = data['boneLengths']
         numJoints = data['numJoints']
         endXfo = data['endXfo']
-
-        for i in xrange(len(boneXfos)):
-            logger.info(boneXfos[i])
 
         # Add extra controls and outputs
         self.setNumControls(numJoints)

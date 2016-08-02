@@ -1104,6 +1104,8 @@ class Builder(Builder):
                     portName = port.name.getSimpleType()
                     portDataType = port.dataType.getSimpleType()
                     portConnectionType = port.connectionType.getSimpleType()
+                elif portDataType == 'Execute':
+                    return
                 else:
                     portName = node.getExecPortName(i)
                     rtVal = opBinding.getArgValue(portName)

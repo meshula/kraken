@@ -42,6 +42,9 @@ class CanvasOperator(Operator):
             rtVal = self.binding.getArgValue(portName)
             portDataType = rtVal.getTypeName().getSimpleType()
 
+            if portDataType == 'Execute':
+                continue
+
             if portConnectionType == 'In':
                 if portDataType.endswith('[]'):
                     self.inputs[portName] = []
@@ -223,6 +226,9 @@ class CanvasOperator(Operator):
             if portDataType == '$TYPE$':
                 return
 
+            if portDataType == 'Execute':
+                continue
+
             if portDataType in ('EvalContext', 'time', 'frame'):
                 portVal = ks.constructRTVal(portDataType)
                 self.binding.setArgValue(portName, portVal, False)
@@ -231,8 +237,9 @@ class CanvasOperator(Operator):
 
             if portConnectionType == 'In':
                 if str(portDataType).endswith('[]'):
-                    if not len(self.outputs[portName]):
+                    if not len(self.inputs[portName]):
                         continue
+
                     rtValArray = ks.rtVal(portDataType)
                     rtValArray.resize(len(self.inputs[portName]))
                     for j in xrange(len(self.inputs[portName])):
@@ -283,7 +290,6 @@ class CanvasOperator(Operator):
                         rtVal = getRTVal(self.outputs[portName], asInput=False)
 
                     validateArg(rtVal, portName, portDataType)
-
                     self.binding.setArgValue(portName, rtVal, False)
 
             portDebug = {
@@ -300,14 +306,15 @@ class CanvasOperator(Operator):
 
         try:
             self.binding.execute()
-        except:
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(self.binding.getErrors(True))
+
             errorMsg = "Possible problem with Canvas operator '" + \
                 self.getName() + "' port values:"
 
-            print errorMsg
-            pprint.pprint(debug, width=800)
-
-            raise Exception(errorMsg)
+            logger.error(errorMsg)
+            logger.error(pprint.pformat(debug, width=800))
 
         # Now put the computed values out to the connected output objects.
         def setRTVal(obj, rtval):
@@ -332,6 +339,9 @@ class CanvasOperator(Operator):
             portConnectionType = self.portTypeMap[self.node.getExecPortType(i)]
             rtVal = self.binding.getArgValue(portName)
             portDataType = rtVal.getTypeName().getSimpleType()
+
+            if portDataType == 'Execute':
+                continue
 
             if portConnectionType != 'In':
                 if portName == 'exec':  # Skip the exec port on each solver

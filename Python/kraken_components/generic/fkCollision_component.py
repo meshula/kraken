@@ -1,6 +1,8 @@
 import math
 
 from kraken.core.maths import Vec3
+from kraken.core.maths import Math_degToRad
+from kraken.core.maths.quat import Quat
 from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.xfo import xfoFromDirAndUpV
 
@@ -18,24 +20,25 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.components.component_output import ComponentOutput
 from kraken.core.objects.hierarchy_group import HierarchyGroup
-from kraken.core.objects.locator import Locator
+from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.control import Control
 
+from kraken.core.objects.operators.canvas_operator import CanvasOperator
 from kraken.core.objects.operators.kl_operator import KLOperator
 
 from kraken.core.profiler import Profiler
 from kraken.helpers.utility_methods import logHierarchy
 
 
-class FKChainComponent(BaseExampleComponent):
-    """FK Chain Base"""
+class FKCollisionComponent(BaseExampleComponent):
+    """FK Collision Base"""
 
-    def __init__(self, name='FKChainBase', parent=None):
+    def __init__(self, name='FKCollisionBase', parent=None):
 
-        super(FKChainComponent, self).__init__(name, parent)
+        super(FKCollisionComponent, self).__init__(name, parent)
 
         # ===========
         # Declare IO
@@ -56,13 +59,13 @@ class FKChainComponent(BaseExampleComponent):
         # Declare Output Attrs
 
 
-class FKChainComponentGuide(FKChainComponent):
-    """FKChain Component Guide"""
+class FKCollisionComponentGuide(FKCollisionComponent):
+    """FKCollision Component Guide"""
 
-    def __init__(self, name='FKChain', parent=None):
+    def __init__(self, name='FKCollision', parent=None):
 
-        Profiler.getInstance().push("Construct FKCHain Guide Component:" + name)
-        super(FKChainComponentGuide, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct FKCollision Guide Component:" + name)
+        super(FKCollisionComponentGuide, self).__init__(name, parent)
 
         # =========
         # Controls
@@ -74,7 +77,7 @@ class FKChainComponentGuide(FKChainComponent):
         self.jointCtrls = []
 
         numJoints = self.numJoints.getValue()
-        jointPositions = self.generateGuidePositions(numJoints)
+        jointXfos = self.generateGuideXfos(numJoints)
 
         for i in xrange(numJoints + 1):
             if i == 0:
@@ -88,7 +91,7 @@ class FKChainComponentGuide(FKChainComponent):
 
         data = {
            "location": "L",
-           "jointPositions": jointPositions,
+           "jointXfos": jointXfos,
            "numJoints": self.numJoints.getValue()
           }
 
@@ -108,13 +111,13 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
-        data = super(FKChainComponentGuide, self).saveData()
+        data = super(FKCollisionComponentGuide, self).saveData()
 
-        jointPositions = []
+        jointXfos = []
         for i in xrange(len(self.jointCtrls)):
-            jointPositions.append(self.jointCtrls[i].xfo.tr)
+            jointXfos.append(self.jointCtrls[i].xfo)
 
-        data['jointPositions'] = jointPositions
+        data['jointXfos'] = jointXfos
 
         return data
 
@@ -130,10 +133,10 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
-        super(FKChainComponentGuide, self).loadData(data)
+        super(FKCollisionComponentGuide, self).loadData(data)
 
-        for i in xrange(len(data['jointPositions'])):
-            self.jointCtrls[i].xfo.tr = data['jointPositions'][i]
+        for i in xrange(len(data['jointXfos'])):
+            self.jointCtrls[i].xfo = data['jointXfos'][i]
 
         return True
 
@@ -146,26 +149,29 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
-        data = super(FKChainComponentGuide, self).getRigBuildData()
+        data = super(FKCollisionComponentGuide, self).getRigBuildData()
 
         numJoints = self.numJoints.getValue()
 
         # Calculate Xfos
-        fw = Vec3(0, 0, 1)
         boneXfos = []
         boneLengths = []
 
         for i in xrange(numJoints):
+
             boneVec = self.jointCtrls[i + 1].xfo.tr.subtract(self.jointCtrls[i].xfo.tr)
             boneLengths.append(boneVec.length())
-            bone1Normal = fw.cross(boneVec).unit()
-            bone1ZAxis = boneVec.cross(bone1Normal).unit()
 
             xfo = Xfo()
-            xfo.setFromVectors(boneVec.unit(), bone1Normal, bone1ZAxis, self.jointCtrls[i].xfo.tr)
+            q = Quat()
+            q.setFromDirectionAndUpvector(boneVec.unit(), self.jointCtrls[i].xfo.ori.getYaxis())
+            qDir = Quat().setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-90))
+            xfo.ori = q * qDir
+            xfo.tr = self.jointCtrls[i].xfo.tr
 
             boneXfos.append(xfo)
 
+        data['jointXfos'] = [x.xfo for x in self.jointCtrls]
         data['boneXfos'] = boneXfos
         data['endXfo'] = self.jointCtrls[-1].xfo
         data['boneLengths'] = boneLengths
@@ -210,14 +216,14 @@ class FKChainComponentGuide(FKChainComponent):
                 extraCtrl.getParent().removeChild(extraCtrl)
 
         # Reset the control positions based on new number of joints
-        jointPositions = self.generateGuidePositions(numJoints)
+        jointXfos = self.generateGuideXfos(numJoints)
         for i in xrange(len(self.jointCtrls)):
-            self.jointCtrls[i].xfo.tr = jointPositions[i]
+            self.jointCtrls[i].xfo = jointXfos[i]
 
         return True
 
 
-    def generateGuidePositions(self, numJoints):
+    def generateGuideXfos(self, numJoints):
         """Generates the positions for the guide controls based on the number
         of joints.
 
@@ -229,11 +235,11 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
-        guidePositions = []
+        guideXfos = []
         for i in xrange(numJoints + 1):
-            guidePositions.append(Vec3(0, 0, i))
+            guideXfos.append(Xfo(tr=Vec3(0, 0, i)))
 
-        return guidePositions
+        return guideXfos
 
 
     # ==============
@@ -259,25 +265,34 @@ class FKChainComponentGuide(FKChainComponent):
 
         """
 
-        return FKChainComponentRig
+        return FKCollisionComponentRig
 
 
-class FKChainComponentRig(FKChainComponent):
-    """FK Chain Rig"""
+class FKCollisionComponentRig(FKCollisionComponent):
+    """FK Collision Rig"""
 
-    def __init__(self, name='FKChain', parent=None):
+    def __init__(self, name='FKCollision', parent=None):
 
-        Profiler.getInstance().push("Construct FK Chain Rig Component:" + name)
-        super(FKChainComponentRig, self).__init__(name, parent)
+        Profiler.getInstance().push("Construct FK Collision Rig Component:" + name)
+        super(FKCollisionComponentRig, self).__init__(name, parent)
 
 
         # =========
         # Controls
         # =========
+        # Ground
+        self.groundCtrl = Control('ground', parent=self.ctrlCmpGrp, shape='square')
+        self.groundCtrl.insertCtrlSpace()
+
+        groundSettingsAttrGrp = AttributeGroup("DisplayInfo_ChainSettings", parent=self.groundCtrl)
+        self.groundOffsetYInputAttr = ScalarAttribute('ground_offsetY', 0.0, minValue=0.0, maxValue=10.0, parent=groundSettingsAttrGrp)
+
         # FK
         self.fkCtrlSpaces = []
         self.fkCtrls = []
+        self.transforms = []
         self.setNumControls(4)
+        self.setNumTransforms(4)
 
         # Add Component Params to FK control
         chainSettingsAttrGrp = AttributeGroup("DisplayInfo_ChainSettings", parent=self.fkCtrls[0])
@@ -307,7 +322,7 @@ class FKChainComponentRig(FKChainComponent):
         # ==============
         # Constrain I/O
         # ==============
-        # Constraint inputs
+        # Constrain inputs
         self.rootInputConstraint = PoseConstraint('_'.join([self.fkCtrlSpaces[0].getName(), 'To', self.rootInputTgt.getName()]))
         self.rootInputConstraint.setMaintainOffset(True)
         self.rootInputConstraint.addConstrainer(self.rootInputTgt)
@@ -315,28 +330,30 @@ class FKChainComponentRig(FKChainComponent):
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Output Splice Op
-        self.outputsToControlsKLOp = KLOperator('fkChainOutputKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-        self.addOperator(self.outputsToControlsKLOp)
+        # Add Output Canvas Op
+        self.collisionCanvasOp = CanvasOperator('collisionCanvasOp', 'Kraken.Solvers.CollideChainSolver')
+        self.addOperator(self.collisionCanvasOp)
 
         # Add Att Inputs
-        self.outputsToControlsKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.outputsToControlsKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.collisionCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.collisionCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.collisionCanvasOp.setInput('ground_offsetY', self.groundOffsetYInputAttr)
 
         # Add Xfo Inputs
-        self.outputsToControlsKLOp.setInput('constrainers', self.fkCtrls)
+        self.collisionCanvasOp.setInput('ground', self.groundCtrl)
+        self.collisionCanvasOp.setInput('joints', self.transforms)
 
         # Add Xfo Outputs
-        self.outputsToControlsKLOp.setOutput('constrainees', self.boneOutputsTgt)
+        self.collisionCanvasOp.setOutput('outputs', self.boneOutputsTgt)
 
-        # Add Deformer Splice Op
+        # Add Deformer Canvas Op
         self.deformersToOutputsKLOp = KLOperator('fkChainDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
         # Add Att Inputs
-        self.deformersToOutputsKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.deformersToOutputsKLOp.setInput('drawDebug', False)
         self.deformersToOutputsKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
@@ -363,8 +380,6 @@ class FKChainComponentRig(FKChainComponent):
 
                 boneFKCtrl = Control(boneName, parent=boneFKCtrlSpace, shape="cube")
                 boneFKCtrl.alignOnXAxis()
-                boneFKCtrl.lockScale(x=True, y=True, z=True)
-                boneFKCtrl.lockTranslation(x=True, y=True, z=True)
 
                 self.fkCtrlSpaces.append(boneFKCtrlSpace)
                 self.fkCtrls.append(boneFKCtrl)
@@ -377,6 +392,29 @@ class FKChainComponentRig(FKChainComponent):
                 extraCtrl = self.fkCtrls.pop()
                 extraCtrlSpace.getParent().removeChild(extraCtrlSpace)
                 extraCtrl.getParent().removeChild(extraCtrl)
+
+
+    def setNumTransforms(self, numTransforms):
+
+        numTransforms += 1
+
+        # Add more transforms
+        if numTransforms > len(self.transforms):
+            for i in xrange(len(self.transforms), numTransforms):
+                name = 'transform' + str(i + 1).zfill(2)
+
+                transform = Transform(name, parent=self.outputHrcGrp)
+                self.transforms.append(transform)
+
+        # Remove extra transforms
+        elif numTransforms < len(self.transforms):
+            numExtraTransforms = len(self.transforms) - numTransforms
+
+            for i in xrange(numExtraTransforms):
+                extraTransform = self.transforms.pop()
+                extraTransform.getParent().removeChild(extraTransform)
+
+        return True
 
 
     def setNumDeformers(self, numDeformers):
@@ -419,20 +457,25 @@ class FKChainComponentRig(FKChainComponent):
 
         """
 
-        super(FKChainComponentRig, self).loadData( data )
+        super(FKCollisionComponentRig, self).loadData( data )
 
+        jointXfos = data['jointXfos']
         boneXfos = data['boneXfos']
         boneLengths = data['boneLengths']
         numJoints = data['numJoints']
 
         # Add extra controls and outputs
         self.setNumControls(numJoints)
+        self.setNumTransforms(numJoints)
         self.setNumDeformers(numJoints)
 
         for i in xrange(numJoints):
             self.fkCtrlSpaces[i].xfo = boneXfos[i]
             self.fkCtrls[i].xfo = boneXfos[i]
             self.fkCtrls[i].scalePoints(Vec3(boneLengths[i], boneLengths[i] * 0.45, boneLengths[i] * 0.45))
+
+        for i in xrange(len(self.transforms)):
+            self.transforms[i].xfo = jointXfos[i]
 
         # ==========================
         # Create Output Constraints
@@ -449,6 +492,20 @@ class FKChainComponentRig(FKChainComponent):
         self.chainEndPosOutputConstraint.setMaintainOffset(True)
         self.chainEndPosOutputConstraint.addConstrainer(self.boneOutputsTgt[-1])
         self.chainEndPosOutputTgt.addConstraint(self.chainEndPosOutputConstraint)
+
+        self.transformConstraints = []
+        for i in xrange(len(self.transforms)):
+            if i == len(self.transforms) - 1:
+                constrainer = self.fkCtrls[i - 1]
+            else:
+                constrainer = self.fkCtrls[i]
+
+            transformConstraint = PoseConstraint('_'.join([self.transforms[i].getName(), 'To', constrainer.getName()]))
+            transformConstraint.setMaintainOffset(True)
+            transformConstraint.addConstrainer(constrainer)
+            self.transforms[i].addConstraint(transformConstraint)
+
+            self.transformConstraints.append(transformConstraint)
 
 
         # ============
@@ -467,20 +524,23 @@ class FKChainComponentRig(FKChainComponent):
         # =============
 
         # ====================
-        # Evaluate Splice Ops
+        # Evaluate Canvas Ops
         # ====================
-        # Eval Outputs to Controls Op to evaulate with new outputs and controls
-        self.outputsToControlsKLOp.evaluate()
+        # Eval Collision Op to evaulate with new outputs and controls
+        self.collisionCanvasOp.evaluate()
 
         # evaluate the output splice op to evaluate with new outputs and deformers
         self.deformersToOutputsKLOp.evaluate()
 
         # evaluate the constraints to ensure the outputs are now in the correct location.
+        for constraint in self.transformConstraints:
+            constraint.evaluate()
+
         self.rootInputConstraint.evaluate()
         self.chainEndXfoOutputConstraint.evaluate()
 
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
-ks.registerComponent(FKChainComponentGuide)
-ks.registerComponent(FKChainComponentRig)
+ks.registerComponent(FKCollisionComponentGuide)
+ks.registerComponent(FKCollisionComponentRig)
