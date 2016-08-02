@@ -9,6 +9,28 @@ object TentacleSolver : KrakenSolver {
 // Default Constructor
 function TentacleSolver()
 {
+  Mat44 fkcontrols[];
+  Mat44 pose[];
+  this.defaultValues["time"] = 0.0;
+  this.defaultValues["ikblend"] = 0.123;
+  this.defaultValues["waveLength_Y"] = 1.0;
+  this.defaultValues["waveAmplitude_Y"] = 0.0;
+  this.defaultValues["waveFrequency_Y"] = 2.0;
+  this.defaultValues["waveLength_Z"] = 2.329;
+  this.defaultValues["waveAmplitude_Z"] = 0.0;
+  this.defaultValues["waveFrequency_Z"] = 3.354;
+  this.defaultValues["tipBias"] = 1.0;
+  this.defaultValues["springStrength"] = 0.3;
+  this.defaultValues["dampening"] = 0.03;
+  this.defaultValues["simulationWeight"] = 1.0;
+  this.defaultValues["softLimitBounds"] = 5.0;
+  this.defaultValues["chainBase"] = Mat44();
+  this.defaultValues["ikgoal"] = Mat44();
+  //this.defaultValues["ikgoal"].tr.y = 1.0
+  this.defaultValues["fkcontrols"] = fkcontrols;
+  this.defaultValues["tipBoneLen"] = 1.0;
+  this.defaultValues["pose"] = pose;
+  this.defaultValues["tentacleEnd"] = Mat44();
 }
 
 

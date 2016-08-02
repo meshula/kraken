@@ -957,7 +957,6 @@ class Builder(Builder):
         self.rigGraph.connectNodes(varNode, 'value', node, solverPort)
 
         argPorts = {}
-        arraySizes = {}
 
         args = kOperator.getSolverArgs()
         for i in xrange(len(args)):
@@ -989,9 +988,9 @@ class Builder(Builder):
             elif argConnectionType in ['IO', 'Out']:
                 connectedObjects = kOperator.getOutput(argName)
 
-            self.connectCanvasOperatorPort(kOperator, node, argPort, argDataType, argConnectionType, connectedObjects, arraySizes)
+            self.connectCanvasOperatorPort(kOperator, node, argPort, argDataType, argConnectionType, connectedObjects)
 
-        opSourceCode = kOperator.generateSourceCode(arraySizes=arraySizes)
+        opSourceCode = kOperator.generateSourceCode()
 
         funcExec = self.rigGraph.getSubExec(node)
         funcExec.setCode(opSourceCode)
@@ -1023,8 +1022,6 @@ class Builder(Builder):
             2: 'Out'
         }
 
-        arraySizes = {}
-
         for i in xrange(subExec.getExecPortCount()):
             portName = subExec.getExecPortName(i)
             portConnectionType = portTypeMap[subExec.getExecPortType(i)]
@@ -1045,7 +1042,7 @@ class Builder(Builder):
             else:
                 connectedObjects = kOperator.getOutput(portName)
 
-            self.connectCanvasOperatorPort(kOperator, node, portName, portDataType, portConnectionType, connectedObjects, arraySizes)
+            self.connectCanvasOperatorPort(kOperator, node, portName, portDataType, portConnectionType, connectedObjects)
 
         return True
 
