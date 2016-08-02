@@ -346,10 +346,10 @@ class InsectLegComponentRig(InsectLegComponent):
         self.chainBase.addConstraint(chainBaseInputConstraint)
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Splice Op
-        self.nBoneSolverKLOp = KLOperator('legKLOp', 'NBoneIKSolver', 'Kraken')
+        # Add Canvas Op
+        self.nBoneSolverKLOp = KLOperator('leg', 'NBoneIKSolver', 'Kraken')
         self.addOperator(self.nBoneSolverKLOp)
 
         # # Add Att Inputs
@@ -372,8 +372,8 @@ class InsectLegComponentRig(InsectLegComponent):
 
         self.nBoneSolverKLOp.setOutput('legEnd', self.legEndPosOutputTgt)
 
-        # Add Deformer Splice Op
-        self.outputsToDeformersKLOp = KLOperator('insectLegDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        # Add Deformer Canvas Op
+        self.outputsToDeformersKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
 
         # Add Att Inputs

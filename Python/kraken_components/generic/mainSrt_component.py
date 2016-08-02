@@ -210,7 +210,7 @@ class MainSrtComponentRig(MainSrtComponent):
         # Add Splice Ops
         # ===============
         #Add Rig Scale Splice Op
-        self.rigScaleKLOp = KLOperator('rigScaleKLOp', 'RigScaleSolver', 'Kraken')
+        self.rigScaleKLOp = KLOperator('rigScale', 'RigScaleSolver', 'Kraken')
         self.addOperator(self.rigScaleKLOp)
 
         # Add Att Inputs

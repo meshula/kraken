@@ -271,10 +271,10 @@ class TwistComponentRig(TwistComponent):
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Spine Splice Op
-        self.twistKLOp = KLOperator('TwistOp', 'TwistSolver', 'Kraken')
+        # Add Spine Canvas Op
+        self.twistKLOp = KLOperator('twist', 'TwistSolver', 'Kraken')
         self.addOperator(self.twistKLOp)
 
         # Add Att Inputs
@@ -291,8 +291,8 @@ class TwistComponentRig(TwistComponent):
         # Add Xfo Outputs
         self.twistKLOp.setOutput('pose', self.twistOutputs)
 
-        # # Add Deformer Splice Op
-        self.deformersToOutputsKLOp = KLOperator('twistDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        # # Add Deformer Canvas Op
+        self.deformersToOutputsKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
         # Add Att Inputs

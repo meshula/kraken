@@ -349,10 +349,10 @@ class TentacleComponentRig(TentacleComponent):
         self.chainBase.addConstraint(chainBaseInputConstraint)
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Splice Op
-        self.tentacleSolverKLOp = KLOperator('tentacleKLOp', 'TentacleSolver', 'Kraken')
+        # Add Canvas Op
+        self.tentacleSolverKLOp = KLOperator('tentacle', 'TentacleSolver', 'Kraken')
         self.addOperator(self.tentacleSolverKLOp)
 
         # # Add Att Inputs
@@ -386,8 +386,8 @@ class TentacleComponentRig(TentacleComponent):
         self.tentacleSolverKLOp.setOutput('tentacleEnd', self.tentacleEndXfoOutputTgt)
 
 
-        # Add Deformer Splice Op
-        self.outputsToDeformersKLOp = KLOperator('TentacleDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        # Add Deformer Canvas Op
+        self.outputsToDeformersKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
 
         # Add Att Inputs

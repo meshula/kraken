@@ -330,7 +330,7 @@ class HeadComponentRig(HeadComponent):
         self.eyeROutputTgt.addConstraint(self.eyeROutputConstraint)
 
         # Add Eye Left Direction KL Op
-        self.eyeLeftDirKLOp = KLOperator('eyeLeftDirKLOp', 'DirectionConstraintSolver', 'Kraken')
+        self.eyeLeftDirKLOp = KLOperator('eyeLeftDir', 'DirectionConstraintSolver', 'Kraken')
         self.addOperator(self.eyeLeftDirKLOp)
 
         # Add Att Inputs
@@ -346,7 +346,7 @@ class HeadComponentRig(HeadComponent):
         self.eyeLeftDirKLOp.setOutput('constrainee', self.eyeLeftCtrlSpace)
 
         # Add Eye Right Direction KL Op
-        self.eyeRightDirKLOp = KLOperator('eyeRightDirKLOp', 'DirectionConstraintSolver', 'Kraken')
+        self.eyeRightDirKLOp = KLOperator('eyeRightDir', 'DirectionConstraintSolver', 'Kraken')
         self.addOperator(self.eyeRightDirKLOp)
 
         # Add Att Inputs
@@ -363,7 +363,7 @@ class HeadComponentRig(HeadComponent):
 
 
         # Add Deformer Joints KL Op
-        self.outputsToDeformersKLOp = KLOperator('headDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.outputsToDeformersKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
 
         # Add Att Inputs

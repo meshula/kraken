@@ -81,7 +81,7 @@ class LegComponentGuide(LegComponent):
         self.guideOpHost = Transform('guideOpHost', self.ctrlCmpGrp)
 
         # Guide Operator
-        self.legGuideKLOp = KLOperator(name + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
+        self.legGuideKLOp = KLOperator('guide', 'TwoBoneIKGuideSolver', 'Kraken')
         self.addOperator(self.legGuideKLOp)
 
         # Add Att Inputs
@@ -347,7 +347,7 @@ class LegComponentRig(LegComponent):
         # Add Splice Ops
         # ===============
         # Add Leg Splice Op
-        self.legIKKLOp = KLOperator('legKLOp', 'TwoBoneIKSolver', 'Kraken')
+        self.legIKKLOp = KLOperator('ikSolver', 'TwoBoneIKSolver', 'Kraken')
         self.addOperator(self.legIKKLOp)
 
         # Add Att Inputs
@@ -374,7 +374,7 @@ class LegComponentRig(LegComponent):
 
 
         # Add Leg Deformer Splice Op
-        self.outputsToDeformersKLOp = KLOperator('legDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.outputsToDeformersKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
 
         # Add Att Inputs

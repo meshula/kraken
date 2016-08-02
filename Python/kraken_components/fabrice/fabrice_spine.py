@@ -95,10 +95,10 @@ class FabriceSpineGuide(FabriceSpine):
         self.spineEndCtrl.translatePoints(Vec3(0, 1.0, 0))
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Spine Splice Op
-        self.bezierSpineKLOp = KLOperator('spineGuideKLOp', 'BezierSpineSolver', 'Kraken')
+        # Add Spine Canvas Op
+        self.bezierSpineKLOp = KLOperator('guide', 'BezierSpineSolver', 'Kraken')
         self.addOperator(self.bezierSpineKLOp)
 
         # Add Att Inputs
@@ -412,10 +412,10 @@ class FabriceSpineRig(FabriceSpine):
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Spine Splice Op
-        self.bezierSpineKLOp = KLOperator('spineKLOp', 'BezierSpineSolver', 'Kraken')
+        # Add Spine Canvas Op
+        self.bezierSpineKLOp = KLOperator('spine', 'BezierSpineSolver', 'Kraken')
         self.addOperator(self.bezierSpineKLOp)
 
         # Add Att Inputs
@@ -432,8 +432,8 @@ class FabriceSpineRig(FabriceSpine):
         # Add Xfo Outputs
         self.bezierSpineKLOp.setOutput('outputs', self.spineOutputs)
 
-        # Add Deformer Splice Op
-        self.deformersToOutputsKLOp = KLOperator('spineDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        # Add Deformer Canvas Op
+        self.deformersToOutputsKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
         # Add Att Inputs

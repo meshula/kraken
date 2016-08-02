@@ -501,10 +501,10 @@ class mjEyelidComponentRig(mjEyelidComponent):
         self.eyeballLocator.addConstraint(self.eyeballInputConstraint)
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add MultiPoseConstraint Joints Splice Op
-        self.outputsToDeformersKLOp = KLOperator('Canvas_Eyelid_Side_Op', 'MultiPoseConstraintSolver', 'Kraken')
+        # Add MultiPoseConstraint Joints Canvas Op
+        self.outputsToDeformersKLOp = KLOperator('lidSideDefConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
         # Add Att Inputs
         self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -519,7 +519,7 @@ class mjEyelidComponentRig(mjEyelidComponent):
                                                                ])
 
         # Add Lid Up Canvas Op
-        self.lidUpCanvasOp = CanvasOperator('Canvas_Eyelid_Up_Op', 'MJCG.Solvers.mjEyelidConstraintSolver')
+        self.lidUpCanvasOp = CanvasOperator('eyelidUp', 'MJCG.Solvers.mjEyelidConstraintSolver')
         self.addOperator(self.lidUpCanvasOp)
 
         # Add Attributes Inputs
@@ -546,7 +546,7 @@ class mjEyelidComponentRig(mjEyelidComponent):
 
 
         # Add Lid Low Canvas Op
-        self.lidLowCanvasOp = CanvasOperator('Canvas_Eyelid_Low_Op', 'MJCG.Solvers.mjEyelidConstraintSolver')
+        self.lidLowCanvasOp = CanvasOperator('eyelidLow', 'MJCG.Solvers.mjEyelidConstraintSolver')
         self.addOperator(self.lidLowCanvasOp)
 
         # Add Attributes Inputs
