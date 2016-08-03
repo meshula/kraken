@@ -18,6 +18,8 @@ class SceneItem(object):
         self._component = None
         self._sources = []
         self._id = SceneItem.__maxId
+        self._metaData = {}
+
         SceneItem.__maxId = SceneItem.__maxId + 1
 
     # ==============
@@ -293,5 +295,49 @@ class SceneItem(object):
         """
 
         self._component = component
+
+        return True
+
+
+    # ==========
+    # Meta Data
+    # ==========
+    def getMetaData(self):
+        """Gets the meta data from the rig.
+
+        Returns:
+            dict: Extra data stored on the rig.
+
+        """
+
+        return self._metaData
+
+    def getMetaDataItem(self, name):
+        """Returns an item in the meta data by the key name.
+
+        Args:
+            name (String): Name of the key in the meta data dictionary to get
+            data for.
+
+        Returns:
+            Data from the specified key, None if not present.
+
+        """
+
+        if name in self._metaData:
+            return self._metaData.get(name, None)
+
+    def setMetaDataItem(self, name, data):
+        """Sets meta data on the rig.
+
+        Args:
+            data (dict): Extra data needed to persist the rig / graph.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._metaData[name] = data
 
         return True

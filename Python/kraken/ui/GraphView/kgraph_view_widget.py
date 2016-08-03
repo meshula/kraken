@@ -153,7 +153,7 @@ class KGraphViewWidget(GraphViewWidget):
             backdropData = [x.getData() for x in backdropNodes]
 
             # Add Meta Data to rig
-            self.guideRig.setMetaData('backdrops', backdropData)
+            self.guideRig.setMetaDataItem('backdrops', backdropData)
 
             # Write rig file
             try:
