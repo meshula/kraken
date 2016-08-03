@@ -20,7 +20,6 @@ class Rig(Container):
 
     def __init__(self, name='rig'):
         super(Rig, self).__init__(name)
-        self._metaData = {}
 
     # ====================
     # Load / Save Methods
@@ -179,10 +178,10 @@ class Rig(Container):
         if 'metaData' in jsonData:
 
             for k, v in jsonData['metaData'].iteritems():
-                self.setMetaData(k, v)
+                self.setMetaDataItem(k, v)
 
         if 'guideData' in jsonData:
-            self.setMetaData('guideData', jsonData['guideData'])
+            self.setMetaDataItem('guideData', jsonData['guideData'])
 
         Profiler.getInstance().pop()
 
@@ -284,31 +283,3 @@ class Rig(Container):
         rigBuildData['connections'] = connectionsJson
 
         return rigBuildData
-
-    # ==========
-    # Meta Data
-    # ==========
-    def getMetaData(self):
-        """Gets the meta data from the rig.
-
-        Returns:
-            dict: Extra data stored on the rig.
-
-        """
-
-        return self._metaData
-
-    def setMetaData(self, name, data):
-        """Sets meta data on the rig.
-
-        Args:
-            data (dict): Extra data needed to persist the rig / graph.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        self._metaData[name] = data
-
-        return True
