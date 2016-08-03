@@ -79,7 +79,7 @@ class NeckComponentGuide(NeckComponent):
         self.neckMidCtrlShape.setColor('orange')
 
         # Guide Operator
-        self.neckGuideKLOp = KLOperator(name + 'GuideKLOp', 'NeckGuideSolver', 'Kraken')
+        self.neckGuideKLOp = KLOperator('guide', 'NeckGuideSolver', 'Kraken')
         self.addOperator(self.neckGuideKLOp)
 
         # Add Att Inputs
@@ -316,7 +316,7 @@ class NeckComponentRig(NeckComponent):
         # Add Operators
         # ==============
         # Add Deformer KL Op
-        self.neckDeformerKLOp = KLOperator('neckDeformerKLOp',
+        self.neckDeformerKLOp = KLOperator('defConstraint',
                                            'MultiPoseConstraintSolver',
                                            'Kraken')
 

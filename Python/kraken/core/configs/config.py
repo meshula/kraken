@@ -189,7 +189,9 @@ class Config(object):
                 "Joint": "def",
                 "Layer": "",
                 "Locator": "loc",
-                "CtrlSpace": "ctrlSpace"
+                "CtrlSpace": "ctrlSpace",
+                "KLOperator": "klOp",
+                "CanvasOperator": "canvasOp"
             },
             "formats":
                 {
@@ -1060,8 +1062,7 @@ class Config(object):
         if Config.__instance is None:
             cls()
         elif not isinstance(Config.__instance, Config):
-            raise Exception("Multiple different Config types have been \
-                            constructed.")
+            raise Exception("Multiple different Config types have been constructed.")
 
         return Config.__instance
 

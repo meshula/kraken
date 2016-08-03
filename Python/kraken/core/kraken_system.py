@@ -9,7 +9,6 @@ import logging
 import os
 import sys
 import json
-import re
 import importlib
 from collections import OrderedDict
 
@@ -119,7 +118,9 @@ class KrakenSystem(object):
             RTVal: The RTVal object
 
         """
+
         self.loadCoreClient()
+
         if RTTypeName is None:
             RTTypeName = target.type('String').getSimpleType()
         rtValType = getattr(self.client.RT.types, RTTypeName)

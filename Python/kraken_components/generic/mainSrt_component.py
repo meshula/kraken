@@ -59,6 +59,7 @@ class MainSrtComponentGuide(MainSrtComponent):
         guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
 
         self.mainSrtSizeInputAttr = ScalarAttribute('mainSrtSize', value=5.0, minValue=1.0, maxValue=50.0, parent=guideSettingsAttrGrp)
+        self.mainSrtSizeInputAttr.setValueChangeCallback(self.resizeMainSrtCtrl)
 
         # =========
         # Controls
@@ -112,7 +113,9 @@ class MainSrtComponentGuide(MainSrtComponent):
         self.mainSrtSizeInputAttr.setValue(data["mainSrtSize"])
         self.mainSrtCtrl.xfo = data["mainSrtXfo"]
 
-        self.mainSrtCtrl.scalePoints(Vec3(data["mainSrtSize"], 1.0, data["mainSrtSize"]))
+        scaleValue = data["mainSrtSize"]
+        self.mainSrtCtrl.setShape('circle')
+        self.mainSrtCtrl.scalePoints(Vec3(scaleValue, 1.0, scaleValue))
 
         return True
 
@@ -131,6 +134,13 @@ class MainSrtComponentGuide(MainSrtComponent):
         data["mainSrtXfo"] = self.mainSrtCtrl.xfo
 
         return data
+
+    # ==========
+    # Callbacks
+    # ==========
+    def resizeMainSrtCtrl(self, newSize):
+        self.mainSrtCtrl.setShape('circle')
+        self.mainSrtCtrl.scalePoints(Vec3(newSize, 1.0, newSize))
 
     # ==============
     # Class Methods
@@ -180,7 +190,7 @@ class MainSrtComponentRig(MainSrtComponent):
         self.offsetCtrl.setColor("orange")
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
 
-        # Add Component Params to IK control
+        # Add Component Params to Main control
         mainSrtSettingsAttrGrp = AttributeGroup('DisplayInfo_MainSrtSettings', parent=self.mainSRTCtrl)
         self.rigScaleAttr = ScalarAttribute('rigScale', value=1.0, parent=mainSrtSettingsAttrGrp, minValue=0.1, maxValue=100.0)
 
@@ -194,9 +204,9 @@ class MainSrtComponentRig(MainSrtComponent):
         # ==============
         # Constrain I/O
         # ==============
-        # Constraint inputs
+        # Constrain inputs
 
-        # Constraint outputs
+        # Constrain outputs
         srtConstraint = PoseConstraint('_'.join([self.srtOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
         srtConstraint.addConstrainer(self.mainSRTCtrl)
         self.srtOutputTgt.addConstraint(srtConstraint)
@@ -210,7 +220,7 @@ class MainSrtComponentRig(MainSrtComponent):
         # Add Splice Ops
         # ===============
         #Add Rig Scale Splice Op
-        self.rigScaleKLOp = KLOperator('rigScaleKLOp', 'RigScaleSolver', 'Kraken')
+        self.rigScaleKLOp = KLOperator('rigScale', 'RigScaleSolver', 'Kraken')
         self.addOperator(self.rigScaleKLOp)
 
         # Add Att Inputs

@@ -450,7 +450,7 @@ class Builder(object):
     # =========================
     # Operator Builder Methods
     # =========================
-    def buildKLOperator(self, kKLOperator):
+    def buildKLOperator(self, kKLOperator, buildName):
         """Builds Splice Operators on the components.
 
         Note:
@@ -464,11 +464,12 @@ class Builder(object):
 
         """
 
-        logger.info("buildKLOperator:" + kKLOperator.getPath())
+        logger.info("buildKLOperator:" + kKLOperator.getPath() + " as: " +
+                    buildName)
 
         return True
 
-    def buildCanvasOperator(self, kOperator):
+    def buildCanvasOperator(self, kOperator, buildName):
         """Builds Splice Operators on the components.
 
         Note:
@@ -483,7 +484,8 @@ class Builder(object):
 
         """
 
-        logger.info("buildCanvasOperator: " + kOperator.getPath())
+        logger.info("buildCanvasOperator: " + kOperator.getPath() + " as: " +
+                    buildName)
 
         return True
 
@@ -631,11 +633,11 @@ class Builder(object):
 
         elif kObject.isTypeOf("KLOperator"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildKLOperator(kObject)
+                dccSceneItem = self.buildKLOperator(kObject, buildName)
 
         elif kObject.isTypeOf("CanvasOperator"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildCanvasOperator(kObject)
+                dccSceneItem = self.buildCanvasOperator(kObject, buildName)
 
         # Important Note: The order of these tests is important.
         # New classes should be added above the classes they are derrived from.

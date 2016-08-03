@@ -66,10 +66,13 @@ class OSSConfig(Config):
                                   "Layer": "",
                                   "Locator": "loc",
                                   "Transform": "xfo",
-                                  "CtrlSpace": "space"
+                                  "CtrlSpace": "space",
+                                  "KLOperator": "klOp",
+                                  "CanvasOperator": "canvasOp"
                                  },
                         "formats":
                                   {
+                                   "default"         : ["component", "sep", "location", "sep", "name", "sep", "type"],
                                    "Container"       : ["name"],
                                    "Layer"           : ["container", "sep", "name"],
                                    "Control"         : ["location", "sep", "name", "sep", "type"],
@@ -77,9 +80,10 @@ class OSSConfig(Config):
                                    "FKControl"       : ["location", "sep", "name", "sep", "type"],
                                    "IKControl"       : ["location", "sep", "name", "sep", "type"],
                                    "MCControl"       : ["location", "sep", "name", "sep", "type"],
-                                   "default"         : ["component", "sep", "location", "sep", "name", "sep", "type"],
                                    "Joint"           : ["location", "sep", "name", "sep", "type"],
-                                   "Transform"       : ["location", "sep", "name", "sep", "type"]
+                                   "Transform"       : ["location", "sep", "name", "sep", "type"],
+                                   #"KLOperator"      : ["location", "sep", "name", "sep", "type"],
+                                   #"CanvasOperator"  : ["location", "sep", "name", "sep", "type"]
                                   }
                        }
 

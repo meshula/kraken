@@ -184,8 +184,6 @@ class FabriceClavicleRig(FabriceClavicle):
         defCmpGrp = ComponentGroup(self.getName(), self, parent=deformersLayer)
         self.addItem('defCmpGrp', self.defCmpGrp)
 
-        self.ctrlCmpGrp.setComponent(self)
-
         self.clavicleDef = Joint('clavicle', parent=defCmpGrp)
         self.clavicleDef.setComponent(self)
 
@@ -206,21 +204,21 @@ class FabriceClavicleRig(FabriceClavicle):
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Deformer Splice Op
-        spliceOp = KLOperator('clavicleDeformerKLOp', 'PoseConstraintSolver', 'Kraken')
-        self.addOperator(spliceOp)
+        # Add Deformer Canvas Op
+        self.defConstraintOp = KLOperator('defConstraint', 'PoseConstraintSolver', 'Kraken')
+        self.addOperator(self.defConstraintOp)
 
         # Add Att Inputs
-        spliceOp.setInput('drawDebug', self.drawDebugInputAttr)
-        spliceOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.defConstraintOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.defConstraintOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
-        spliceOp.setInput('constrainer', self.clavicleOutputTgt)
+        self.defConstraintOp.setInput('constrainer', self.clavicleOutputTgt)
 
         # Add Xfo Outputs
-        spliceOp.setOutput('constrainee', self.clavicleDef)
+        self.defConstraintOp.setOutput('constrainee', self.clavicleDef)
 
         Profiler.getInstance().pop()
 
@@ -242,11 +240,12 @@ class FabriceClavicleRig(FabriceClavicle):
         self.clavicleCtrl.xfo = data['clavicleXfo']
         self.clavicleCtrl.setCurveData(data['clavicleCtrlCrvData'])
 
-        # ============
         # Set IO Xfos
-        # ============
         self.spineEndInputTgt.xfo = data['clavicleXfo']
         self.clavicleOutputTgt.xfo = data['clavicleXfo']
+
+        # Eval Operators
+        self.defConstraintOp.evaluate()
 
 
 from kraken.core.kraken_system import KrakenSystem

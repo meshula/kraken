@@ -250,7 +250,7 @@ class FabriceHeadRig(FabriceHead):
 
         # Add Aim Canvas Op
         # =================
-        self.headAimCanvasOp = CanvasOperator('headAimCanvasOp', 'Kraken.Solvers.DirectionConstraintSolver')
+        self.headAimCanvasOp = CanvasOperator('headAim', 'Kraken.Solvers.DirectionConstraintSolver')
         self.addOperator(self.headAimCanvasOp)
 
         # Add Att Inputs
@@ -267,7 +267,7 @@ class FabriceHeadRig(FabriceHead):
 
         # Add Deformer KL Op
         # ==================
-        self.deformersToOutputsKLOp = KLOperator('headDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.deformersToOutputsKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
         # Add Att Inputs

@@ -83,7 +83,7 @@ class ArmComponentGuide(ArmComponent):
         self.guideOpHost = Transform('guideOpHost', self.ctrlCmpGrp)
 
         # Guide Operator
-        self.armGuideKLOp = KLOperator(name + self.getLocation() + 'GuideKLOp', 'TwoBoneIKGuideSolver', 'Kraken')
+        self.armGuideKLOp = KLOperator('guide', 'TwoBoneIKGuideSolver', 'Kraken')
         self.addOperator(self.armGuideKLOp)
 
         # Add Att Inputs
@@ -349,7 +349,7 @@ class ArmComponentRig(ArmComponent):
         # Add Splice Ops
         # ===============
         # Add Splice Op
-        self.armSolverKLOperator = KLOperator('armKLOp', 'TwoBoneIKSolver', 'Kraken')
+        self.armSolverKLOperator = KLOperator('ikSolver', 'TwoBoneIKSolver', 'Kraken')
         self.addOperator(self.armSolverKLOperator)
 
         # Add Att Inputs
@@ -376,7 +376,7 @@ class ArmComponentRig(ArmComponent):
 
 
         # Add Deformer Splice Op
-        self.outputsToDeformersKLOp = KLOperator('armDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        self.outputsToDeformersKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
 
         # Add Att Inputs

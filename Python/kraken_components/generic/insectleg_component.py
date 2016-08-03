@@ -110,7 +110,7 @@ class InsectLegComponentGuide(InsectLegComponent):
 
         jointPositions = []
         for i in xrange(len(self.jointCtrls)):
-            jointPositions.append(self.jointCtrls[i].xfo.tr)
+            jointPositions.append(self.jointCtrls[i].xfo)
 
         data['jointPositions'] = jointPositions
 
@@ -131,7 +131,7 @@ class InsectLegComponentGuide(InsectLegComponent):
         super(InsectLegComponentGuide, self).loadData(data)
 
         for i in xrange(len(data['jointPositions'])):
-            self.jointCtrls[i].xfo.tr = data['jointPositions'][i]
+            self.jointCtrls[i].xfo = data['jointPositions'][i]
 
         return True
 
@@ -346,10 +346,10 @@ class InsectLegComponentRig(InsectLegComponent):
         self.chainBase.addConstraint(chainBaseInputConstraint)
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Splice Op
-        self.nBoneSolverKLOp = KLOperator('legKLOp', 'NBoneIKSolver', 'Kraken')
+        # Add Canvas Op
+        self.nBoneSolverKLOp = KLOperator('leg', 'NBoneIKSolver', 'Kraken')
         self.addOperator(self.nBoneSolverKLOp)
 
         # # Add Att Inputs
@@ -372,8 +372,8 @@ class InsectLegComponentRig(InsectLegComponent):
 
         self.nBoneSolverKLOp.setOutput('legEnd', self.legEndPosOutputTgt)
 
-        # Add Deformer Splice Op
-        self.outputsToDeformersKLOp = KLOperator('insectLegDeformerKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+        # Add Deformer Canvas Op
+        self.outputsToDeformersKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.outputsToDeformersKLOp)
 
         # Add Att Inputs
@@ -476,9 +476,6 @@ class InsectLegComponentRig(InsectLegComponent):
         boneLengths = data['boneLengths']
         numJoints = data['numJoints']
         endXfo = data['endXfo']
-
-        for i in xrange(len(boneXfos)):
-            logger.info(boneXfos[i])
 
         # Add extra controls and outputs
         self.setNumControls(numJoints)
