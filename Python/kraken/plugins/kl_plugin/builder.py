@@ -800,11 +800,13 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
+        # To have scalar attributes drive blendShapes in the KL build,
+        # assign a "blendShapeName" metaData string to the driver attribute and the kl builder will pick it up
         if self.__krkShapes:
             kl += ["function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
             kl += ["  String result[](%d);" % len(self.__krkShapes)]
             for i in range(len(self.__krkShapes)):
-                kl += ["  result[%d] = \"%s\";" % (i, self.__krkShapes[i]['name'])]
+                kl += ["  result[%d] = \"%s\";" % (i, self.__krkShapes[i]['sceneItem'].getMetaDataItem("blendShapeName"))]
             kl += ["  return result;"]
             kl += ["}", ""]
 
@@ -1277,7 +1279,7 @@ class Builder(Builder):
 
         self.__klAttributes.append(attr)
 
-        if kAttribute.isTypeOf("ScalarAttribute") and kAttribute.getBlendShapeName() != "":
+        if kAttribute.isTypeOf("ScalarAttribute") and kAttribute.getMetaDataItem("blendShapeName") is not None:
             self.__krkShapes.append(attr)
 
 
@@ -1596,11 +1598,13 @@ class Builder(Builder):
     # =========================
     # Operator Builder Methods
     # =========================
-    def buildKLOperator(self, kOperator):
+    def buildKLOperator(self, kOperator, buildName):
         """Builds Splice Operators on the components.
 
         Args:
             kOperator (Object): Kraken operator that represents a Splice operator.
+
+            buildName (str): Name to use for built object.  Not used in KL build yet
 
         Return:
             bool: True if successful.
@@ -1615,6 +1619,7 @@ class Builder(Builder):
           "member": self.getUniqueObjectMember(kOperator, kOperator.getSolverTypeName()),
           "path": kOperator.getDecoratedPath(),
           "type": kOperator.getSolverTypeName(),
+          "buildName": buildName
         }
 
         self.__klSolvers.append(solver)
@@ -1626,7 +1631,7 @@ class Builder(Builder):
         return True
 
 
-    def buildCanvasOperator(self, kOperator):
+    def buildCanvasOperator(self, kOperator, buildName):
         """Builds KL Operators on the components.
 
         Args:
@@ -1656,7 +1661,8 @@ class Builder(Builder):
           "node": node,
           "exec": subExec,
           "member": self.getUniqueName(kOperator),
-          "path": kOperator.getDecoratedPath()
+          "path": kOperator.getDecoratedPath(),
+          "buildName": buildName
         }
         self.__klCanvasOps.append(canvasOp)
 
