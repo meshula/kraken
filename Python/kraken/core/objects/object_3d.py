@@ -656,7 +656,6 @@ class Object3D(SceneItem):
 
         return True
 
-
     def addAttributeGroup(self, attributeGroup):
         """Adds an attributeGroup to this object.
 
@@ -1037,12 +1036,15 @@ class Object3D(SceneItem):
         """Sets the color of this object.
 
         Args:
-            color (str): Name of the color you wish to set.
+            color (str, Color): Name of the color from the Config or a Color() object.
 
         Returns:
             bool: True if successful.
 
         """
+
+        assert type(color).__name__ in ('str', 'Color'), self.getPath() + \
+            ".setColor(), 'color' argument type is not of type 'str' or 'Color'."
 
         self._color = color
 

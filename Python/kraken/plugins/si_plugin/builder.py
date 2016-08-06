@@ -1331,9 +1331,30 @@ class Builder(Builder):
 
         if buildColor is not None:
             displayProperty = dccSceneItem.AddProperty("Display Property")
-            displayProperty.Parameters("wirecolorr").Value = colors[buildColor][1][0]
-            displayProperty.Parameters("wirecolorg").Value = colors[buildColor][1][1]
-            displayProperty.Parameters("wirecolorb").Value = colors[buildColor][1][2]
+
+            # Object color is set as a string
+            if type(buildColor) is str:
+
+                # Color in config is stored as rgb scalar values in a list
+                if type(colors[buildColor]) is list:
+                    displayProperty.Parameters("wirecolorr").Value = colors[buildColor][0]
+                    displayProperty.Parameters("wirecolorg").Value = colors[buildColor][1]
+                    displayProperty.Parameters("wirecolorb").Value = colors[buildColor][2]
+
+                # Color in config is stored as a Color object
+                elif type(colors[buildColor]).__name__ == 'Color':
+                    displayProperty.Parameters("wirecolorr").Value = colors[buildColor].r
+                    displayProperty.Parameters("wirecolorg").Value = colors[buildColor].g
+                    displayProperty.Parameters("wirecolorb").Value = colors[buildColor].b
+
+                else:
+                    raise TypeError(kSceneItem.getPath() + " has an invalid type: '" + type(colors[buildColor]).__name__ + "'")
+
+            # Object color is set as a Color object
+            elif type(buildColor).__name__ == 'Color':
+                displayProperty.Parameters("wirecolorr").Value = buildColor.r
+                displayProperty.Parameters("wirecolorg").Value = buildColor.g
+                displayProperty.Parameters("wirecolorb").Value = buildColor.b
 
         return True
 
