@@ -114,7 +114,7 @@ class Color(MathObject):
         return self._rtval.b.getSimpleType()
 
 
-    @g.setter
+    @b.setter
     def b(self, value):
         """Sets blue channel from the input channel.
 
@@ -143,6 +143,21 @@ class Color(MathObject):
         return self._rtval.a.getSimpleType()
 
 
+    @a.setter
+    def a(self, value):
+        """Sets a channel from the input channel.
+
+        Args:
+            channel (float): Value to set the a property as.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._rtval.a = ks.rtVal('Scalar', value)
+
+
     def __eq__(self, other):
         return self.equal(other)
 
@@ -160,21 +175,6 @@ class Color(MathObject):
 
     def __div__(self, other):
         return self.divide(other)
-
-
-    @g.setter
-    def a(self, value):
-        """Sets a channel from the input channel.
-
-        Args:
-            channel (float): Value to set the a property as.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        self._rtval.a = ks.rtVal('Scalar', value)
 
 
     def clone(self):
