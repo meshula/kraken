@@ -247,7 +247,7 @@ class HeadComponentRig(HeadComponent):
         self.eyeLeftCtrlSpace = self.eyeLeftCtrl.insertCtrlSpace()
         self.eyeLeftCtrl.rotatePoints(0, 90, 0)
         self.eyeLeftCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
-        self.eyeLeftCtrl.setColor('blueMedium')
+        self.eyeLeftCtrl.setColor('mediumblue')
 
         # Eye Right
         self.eyeRightCtrl = Control('eyeRight', parent=self.ctrlCmpGrp, shape='sphere')
@@ -256,7 +256,7 @@ class HeadComponentRig(HeadComponent):
         self.eyeRightCtrlSpace = self.eyeRightCtrl.insertCtrlSpace()
         self.eyeRightCtrl.rotatePoints(0, 90, 0)
         self.eyeRightCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
-        self.eyeRightCtrl.setColor('blueMedium')
+        self.eyeRightCtrl.setColor('mediumblue')
 
         # LookAt Control
         self.lookAtCtrl = Control('lookAt', parent=self.ctrlCmpGrp, shape='square')

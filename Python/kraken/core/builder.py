@@ -771,11 +771,20 @@ class Builder(object):
         buildColor = None
         if objectColor is not None:
 
-            if objectColor not in colors.keys():
-                raise ValueError("Invalid color '" + objectColor +
-                                 "' set on: " + kSceneItem.getPath())
+            if type(objectColor) is str:
+                if objectColor not in colors:
+                    buildColor = colorMap['Default']
 
-            buildColor = objectColor
+                    warning = "Invalid color '{}' on '{}', default color '{}' will be used."
+                    logger.warn(warning.format(objectColor, kSceneItem.getPath(), buildColor))
+
+                else:
+                    buildColor = objectColor
+
+            elif type(objectColor).__name__ == "Color":
+                buildColor = objectColor
+            else:
+                raise TypeError("Invalid type for object color: '" + type(objectColor).__name__ + "'")
 
         else:
             #  Find the first color mapping that matches a type in the object

@@ -1277,7 +1277,7 @@ class Builder(Builder):
         """Sets the color on the dccSceneItem.
 
         Args:
-            kSceneItem (Object): kraken object to set the color on.
+            kSceneItem (object): kraken object to set the color on.
 
         Return:
             bool: True if successful.
@@ -1290,7 +1290,20 @@ class Builder(Builder):
 
         if buildColor is not None:
             dccSceneItem.overrideEnabled.set(True)
-            dccSceneItem.overrideColor.set(colors[buildColor][0])
+            dccSceneItem.overrideRGBColors.set(True)
+
+            if type(buildColor) is str:
+
+                # Color in config is stored as rgb scalar values in a list
+                if type(colors[buildColor]) is list:
+                    dccSceneItem.overrideColorRGB.set(colors[buildColor][0], colors[buildColor][1], colors[buildColor][2])
+
+                # Color in config is stored as a Color object
+                elif type(colors[buildColor]).__name__ == 'Color':
+                    dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
+
+            elif type(buildColor).__name__ == 'Color':
+                dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
 
         return True
 
