@@ -9,7 +9,7 @@ Web Page & Documentation
 ------------------------
 [Kraken Github Page](http://fabric-engine.github.io/Kraken)
 
-[Kraken Documentation](http://kraken-rigging-framework.readthedocs.org/en/1.1.0/)
+[Kraken Documentation](http://kraken-rigging-framework.readthedocs.io/en/latest/)
 
 
 Development Guidelines
