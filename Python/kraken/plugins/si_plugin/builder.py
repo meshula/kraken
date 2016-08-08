@@ -1456,13 +1456,19 @@ class Builder(Builder):
 
         return True
 
-    def _postBuild(self):
+    def _postBuild(self, kSceneItem):
         """Post-Build commands.
+
+        Args:
+            kSceneItem (object): kraken kSceneItem object to run post-build
+                operations on.
 
         Returns:
             bool: True if successful.
 
         """
+
+        super(Builder, self)._postBuild(kSceneItem)
 
         # Find all Canvas Ops and set to only execute if necessary
         nameTemplate = self.config.getNameTemplate()

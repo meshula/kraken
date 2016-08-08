@@ -1817,12 +1817,18 @@ class Builder(Builder):
         return True
 
 
-    def _postBuild(self):
+    def _postBuild(self, kSceneItem):
         """Post-Build commands.
+
+        Args:
+            kSceneItem (object): kraken kSceneItem object to run post-build
+                operations on.
 
         Return:
             bool: True if successful.
 
         """
 
-        return self.saveKLExtension()
+        super(Builder, self)._postBuild(kSceneItem)
+
+        return self.saveKLExtension(kSceneItem)
