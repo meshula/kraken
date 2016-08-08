@@ -1053,7 +1053,6 @@ class Builder(Builder):
                 # Generate the operator source code.
                 opSourceCode = kOperator.generateSourceCode()
                 si.FabricCanvasSetCode(canvasOpPath, solverNodeName, opSourceCode)
-                solverNodeName = kOperator.getName()
 
             else:
                 host = ks.getCoreClient().DFG.host
