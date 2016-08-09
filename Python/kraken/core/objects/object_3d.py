@@ -6,6 +6,9 @@ Object3D - Base Object3D Object.
 """
 
 import re
+import logging
+
+from kraken.log import getLogger
 
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
@@ -21,11 +24,14 @@ from kraken.core.objects.constraints.position_constraint import PositionConstrai
 from kraken.core.objects.constraints.scale_constraint import ScaleConstraint
 from kraken.core.objects.operators.operator import Operator
 
+logger = getLogger('kraken')
+logger.setLevel(logging.INFO)
+
 
 class Object3D(SceneItem):
     """Kraken base object type for any 3D object."""
 
-    def __init__(self, name, parent=None):
+    def __init__(self, name, parent=None, flags=None):
         super(Object3D, self).__init__(name, parent)
         self._children = []
         self._flags = {}
@@ -47,6 +53,16 @@ class Object3D(SceneItem):
         if parent is not None:
             parent.addChild(self)
 
+        if flags is not None:
+            assert type(flags) is str, "Flags argument must be a comma separated string."
+
+            for flag in flags.replace(' ', '').split(','):
+                if not re.match("[\w]*$", flag):
+                    msg = "{} '{}' {} ({}: {}) {}\n".format("Invalid flag", flag, "set on", self.getName(), self.getPath(), ". Alphanumeric and underscores only!")
+                    logger.warn(msg)
+                    continue
+#
+                self.setFlag(flag)
 
     # ==================
     # Property Methods
@@ -635,6 +651,17 @@ class Object3D(SceneItem):
             return True
 
         return False
+
+    def getFlags(self):
+        """Returns all flags set on this object.
+
+        Returns:
+            list: Flags set on this object.
+
+        """
+
+        return self._flags.keys()
+
 
     # ========================
     # Attribute Group Methods
