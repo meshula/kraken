@@ -244,7 +244,8 @@ class Object3D(SceneItem):
                     location = self.getComponent().getLocation()
 
                 if location not in nameTemplate['locations']:
-                    raise ValueError("Invalid location on: " + self.getPath())
+                    msg = "Invalid location on '{}'. Location: {}. Valid locations: {}".format(self.getPath(), location, nameTemplate['locations'])
+                    raise ValueError(msg)
 
                 builtName += location
 
