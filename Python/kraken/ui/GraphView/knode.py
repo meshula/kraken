@@ -47,22 +47,6 @@ class KNodePortCircle(PortCircle):
 
     def canConnectTo(self, otherPortCircle):
 
-        if self.connectionPointType() == otherPortCircle.connectionPointType():
-            return False
-
-        if self.getPort().getDataType() != otherPortCircle.getPort().getDataType():
-
-            if self.isInConnectionPoint():
-                outDataType = otherPortCircle.getPort().getDataType()
-                inDataType = self.getPort().getDataType()
-            else:
-                outDataType = self.getPort().getDataType()
-                inDataType = otherPortCircle.getPort().getDataType()
-
-            # Outports of Array types can be connected to inports of the array element type..
-            if not (outDataType.startswith(inDataType) and outDataType.endswith('[]')):
-                return False
-
         # Check if you're trying to connect to a port on the same node.
         # TODO: Do propper cycle checking..
         otherPort = otherPortCircle.getPort()
@@ -70,7 +54,10 @@ class KNodePortCircle(PortCircle):
         if otherPort.getNode() == port.getNode():
             return False
 
-        return True
+        if self.isInConnectionPoint():
+            return self.getPort().getComponentInput().canConnectTo(otherPortCircle.getPort().getComponentOutput())
+        else:
+            return self.getPort().getComponentOutput().canConnectTo(otherPortCircle.getPort().getComponentInput())
 
 
 class KNodeInputPort(InputPort):
