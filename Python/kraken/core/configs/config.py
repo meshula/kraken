@@ -310,6 +310,10 @@ class Config(object):
                 "Layer": "",
                 "Locator": "loc",
                 "CtrlSpace": "ctrlSpace",
+                "OrientationConstraint": "oriCns",
+                "PoseConstraint": "poseCns",
+                "PositionConstraint": "posCns",
+                "ScaleConstraint": "sclCns",
                 "KLOperator": "klOp",
                 "CanvasOperator": "canvasOp"
             },

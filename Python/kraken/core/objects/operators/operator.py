@@ -148,6 +148,16 @@ class Operator(SceneItem):
 
         return False
 
+    def getFlags(self):
+        """Returns all flags set on this object.
+
+        Returns:
+            list: Flags set on this object.
+
+        """
+
+        return self._flags.keys()
+
     # ===============
     # Source Methods
     # ===============

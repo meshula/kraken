@@ -350,7 +350,7 @@ class Builder(object):
     # =========================
     # Constraint Build Methods
     # =========================
-    def buildOrientationConstraint(self, kConstraint):
+    def buildOrientationConstraint(self, kConstraint, buildName):
         """Builds an orientation constraint represented by the kConstraint.
 
         Args:
@@ -369,7 +369,7 @@ class Builder(object):
 
         return dccSceneItem
 
-    def buildPoseConstraint(self, kConstraint):
+    def buildPoseConstraint(self, kConstraint, buildName):
         """Builds an pose constraint represented by the kConstraint.
 
         Args:
@@ -388,7 +388,7 @@ class Builder(object):
 
         return dccSceneItem
 
-    def buildPositionConstraint(self, kConstraint):
+    def buildPositionConstraint(self, kConstraint, buildName):
         """Builds an position constraint represented by the kConstraint.
 
         Args:
@@ -407,7 +407,7 @@ class Builder(object):
 
         return dccSceneItem
 
-    def buildScaleConstraint(self, kConstraint):
+    def buildScaleConstraint(self, kConstraint, buildName):
         """Builds an scale constraint represented by the kConstraint.
 
         Args:
@@ -587,19 +587,19 @@ class Builder(object):
 
         elif kObject.isTypeOf("OrientationConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildOrientationConstraint(kObject)
+                dccSceneItem = self.buildOrientationConstraint(kObject, buildName)
 
         elif kObject.isTypeOf("PoseConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildPoseConstraint(kObject)
+                dccSceneItem = self.buildPoseConstraint(kObject, buildName)
 
         elif kObject.isTypeOf("PositionConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildPositionConstraint(kObject)
+                dccSceneItem = self.buildPositionConstraint(kObject, buildName)
 
         elif kObject.isTypeOf("ScaleConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildScaleConstraint(kObject)
+                dccSceneItem = self.buildScaleConstraint(kObject, buildName)
 
         elif kObject.isTypeOf("KLOperator"):
             if phase == self._buildPhase_ConstraintsOperators:

@@ -549,7 +549,7 @@ class Builder(Builder):
     # =========================
     # Constraint Build Methods
     # =========================
-    def buildOrientationConstraint(self, kConstraint):
+    def buildOrientationConstraint(self, kConstraint, buildName):
         """Builds an orientation constraint represented by the kConstraint.
 
         Args:
@@ -590,11 +590,13 @@ class Builder(Builder):
                                              offsetAngles.y,
                                              offsetAngles.z])
 
+        pm.rename(dccSceneItem, buildName)
+
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
         return dccSceneItem
 
-    def buildPoseConstraint(self, kConstraint):
+    def buildPoseConstraint(self, kConstraint, buildName):
         """Builds an pose constraint represented by the kConstraint.
 
         Args:
@@ -609,13 +611,21 @@ class Builder(Builder):
         dccSceneItem = pm.parentConstraint(
             [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
             constraineeDCCSceneItem,
-            name=kConstraint.getName() + "_par_cns",
+            name=buildName,
             maintainOffset=kConstraint.getMaintainOffset())
+
+        # We need this block of code to replace the pose constraint name with
+        # the scale constraint name since we don't have a single pos, rot, scl,
+        # constraint in Maya.
+        config = Config.getInstance()
+        nameTemplate = config.getNameTemplate()
+        poseCnsName = nameTemplate['types']['PoseConstraint']
+        sclCnsName = nameTemplate['types']['ScaleConstraint']
 
         scaleConstraint = pm.scaleConstraint(
             [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
             constraineeDCCSceneItem,
-            name=kConstraint.getName() + "_scl_cns",
+            name=buildName.replace(poseCnsName, sclCnsName),
             maintainOffset=kConstraint.getMaintainOffset())
 
         if kConstraint.getMaintainOffset() is True:
@@ -669,7 +679,7 @@ class Builder(Builder):
 
         return dccSceneItem
 
-    def buildPositionConstraint(self, kConstraint):
+    def buildPositionConstraint(self, kConstraint, buildName):
         """Builds an position constraint represented by the kConstraint.
 
         Args:
@@ -684,7 +694,7 @@ class Builder(Builder):
         dccSceneItem = pm.pointConstraint(
             [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
             constraineeDCCSceneItem,
-            name=kConstraint.getName() + "_pos_cns",
+            name=buildName,
             maintainOffset=kConstraint.getMaintainOffset())
 
         if kConstraint.getMaintainOffset() is True:
@@ -699,7 +709,7 @@ class Builder(Builder):
 
         return dccSceneItem
 
-    def buildScaleConstraint(self, kConstraint):
+    def buildScaleConstraint(self, kConstraint, buildName):
         """Builds an scale constraint represented by the kConstraint.
 
         Args:
@@ -714,7 +724,7 @@ class Builder(Builder):
         dccSceneItem = pm.scaleConstraint(
             [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
             constraineeDCCSceneItem,
-            name=kConstraint.getName() + "_scl_cns",
+            name=buildName,
             maintainOffset=kConstraint.getMaintainOffset())
 
         if kConstraint.getMaintainOffset() is True:
