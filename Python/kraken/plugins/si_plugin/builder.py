@@ -564,7 +564,7 @@ class Builder(Builder):
     # =========================
     # Constraint Build Methods
     # =========================
-    def buildOrientationConstraint(self, kConstraint):
+    def buildOrientationConstraint(self, kConstraint, buildName):
         """Builds an orientation constraint represented by the kConstraint.
 
         Args:
@@ -610,11 +610,13 @@ class Builder(Builder):
             dccSceneItem.Parameters('offy').Value = Math_radToDeg(offsetAngles.y)
             dccSceneItem.Parameters('offz').Value = Math_radToDeg(offsetAngles.z)
 
+        si.SetUserKeyword(dccSceneItem, buildName)
+
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
         return dccSceneItem
 
-    def buildPoseConstraint(self, kConstraint):
+    def buildPoseConstraint(self, kConstraint, buildName):
         """Builds an pose constraint represented by the kConstraint.
 
         Args:
@@ -684,11 +686,13 @@ class Builder(Builder):
             dccSceneItem.Parameters('posy').Value = offsetXfo.tr.y
             dccSceneItem.Parameters('posz').Value = offsetXfo.tr.z
 
+        si.SetUserKeyword(dccSceneItem, buildName)
+
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
         return dccSceneItem
 
-    def buildPositionConstraint(self, kConstraint):
+    def buildPositionConstraint(self, kConstraint, buildName):
         """Builds an position constraint represented by the kConstraint.
 
         Args:
@@ -717,11 +721,13 @@ class Builder(Builder):
             dccSceneItem.Parameters('off1y').Value = offsetXfo.tr.y
             dccSceneItem.Parameters('off1z').Value = offsetXfo.tr.z
 
+        si.SetUserKeyword(dccSceneItem, buildName)
+
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
         return dccSceneItem
 
-    def buildScaleConstraint(self, kConstraint):
+    def buildScaleConstraint(self, kConstraint, buildName):
         """Builds an scale constraint represented by the kConstraint.
 
         Args:
@@ -749,6 +755,8 @@ class Builder(Builder):
             dccSceneItem.Parameters('offx').Value = offsetXfo.sc.x
             dccSceneItem.Parameters('offy').Value = offsetXfo.sc.y
             dccSceneItem.Parameters('offz').Value = offsetXfo.sc.z
+
+        si.SetUserKeyword(dccSceneItem, buildName)
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 

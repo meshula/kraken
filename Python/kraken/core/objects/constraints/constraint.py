@@ -6,7 +6,9 @@ Constraint - Base Constraint.
 """
 
 from kraken.core.kraken_system import ks
+from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
+
 from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.mat44 import Mat44
 
@@ -20,6 +22,146 @@ class Constraint(SceneItem):
         self._constrainee = None
         self._constrainers = []
         self._maintainOffset = False
+        self._flags = {}
+
+    # =============
+    # Name Methods
+    # =============
+    def getBuildName(self):
+        """Returns the build name for the object.
+
+        Returns:
+            str: Name to be used in the DCC.
+
+        """
+
+        typeNameHierarchy = self.getTypeHierarchyNames()
+
+        config = Config.getInstance()
+
+        # If flag is set on object to use explicit name, return it.
+        if config.getExplicitNaming() is True or \
+                self.testFlag('EXPLICIT_NAME'):
+                return self.getName()
+
+        nameTemplate = config.getNameTemplate()
+
+        # Get the token list for this type of object
+        format = None
+        for typeName in nameTemplate['formats'].keys():
+            if typeName in typeNameHierarchy:
+                format = nameTemplate['formats'][typeName]
+                break
+
+        if format is None:
+            format = nameTemplate['formats']['default']
+
+        objectType = None
+        for eachType in typeNameHierarchy:
+            if eachType in nameTemplate['types'].keys():
+                objectType = eachType
+                break
+
+        if objectType is None:
+            objectType = 'default'
+
+        # Generate a name by concatenating the resolved tokens together.
+        builtName = ""
+        skipSep = False
+        for token in format:
+
+            if token is 'sep':
+                if not skipSep:
+                    builtName += nameTemplate['separator']
+
+            elif token is 'location':
+                location = self.getParent().getComponent().getLocation()
+
+                if location not in nameTemplate['locations']:
+                    raise ValueError("Invalid location on: " + self.getPath())
+
+                builtName += location
+
+            elif token is 'type':
+                builtName += nameTemplate['types'][objectType]
+
+            elif token is 'name':
+                builtName += self.getName()
+
+            elif token is 'component':
+                if self.getParent() is None:
+                    skipSep = True
+                    continue
+
+                builtName += self.getParent().getName()
+
+            elif token is 'container':
+                if self.getContainer() is None:
+                    skipSep = True
+                    continue
+
+                builtName += self.getContainer().getName()
+
+            else:
+                raise ValueError("Unresolvabled token '" + token +
+                    "' used on: " + self.getPath())
+
+        return builtName
+
+    # =============
+    # Flag Methods
+    # =============
+    def setFlag(self, name):
+        """Sets the flag of the specified name.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._flags[name] = True
+
+        return True
+
+    def testFlag(self, name):
+        """Tests if the specified flag is set.
+
+        Args:
+            name (str): Name of the flag to test.
+
+        Returns:
+            bool: True if flag is set.
+
+        """
+
+        return name in self._flags
+
+    def clearFlag(self, name):
+        """Clears the flag of the specified name.
+
+        Args:
+            name (str): Name of the flag to clear.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if name in self._flags:
+            del self._flags[name]
+            return True
+
+        return False
+
+    def getFlags(self):
+        """Returns all flags set on this object.
+
+        Returns:
+            list: Flags set on this object.
+
+        """
+
+        return self._flags.keys()
 
     # ===============
     # Source Methods
@@ -47,7 +189,6 @@ class Constraint(SceneItem):
 
         return self._maintainOffset
 
-
     def setMaintainOffset(self, value):
         """Sets the constraint to maintain offset when creating the constraint.
 
@@ -60,7 +201,6 @@ class Constraint(SceneItem):
         """
 
         self._maintainOffset = value
-
 
     def setConstrainee(self, constrainee):
         """Sets the constrainee object for this constraint.
@@ -78,7 +218,6 @@ class Constraint(SceneItem):
 
         return True
 
-
     def getConstrainee(self):
         """Returns the constrainee object for this constraint.
 
@@ -88,7 +227,6 @@ class Constraint(SceneItem):
         """
 
         return self._constrainee
-
 
     def addConstrainer(self, kObject3D):
         """Adds a constrainer object to this constraint.
@@ -105,7 +243,6 @@ class Constraint(SceneItem):
         self.setConstrainer(kObject3D, len(self._constrainers) - 1)
 
         return True
-
 
     def setConstrainer(self, kObject3D, index=0):
         """Sets the constrainer at the specified index.
@@ -133,7 +270,6 @@ class Constraint(SceneItem):
 
         return True
 
-
     def removeConstrainerByIndex(self, index):
         """Removes a constrainer object by its index.
 
@@ -147,7 +283,6 @@ class Constraint(SceneItem):
 
         return True
 
-
     def getConstrainers(self):
         """Returns the constrainers of this constraint.
 
@@ -157,7 +292,6 @@ class Constraint(SceneItem):
         """
 
         return self._constrainers
-
 
     def compute(self):
         """invokes the constraint and returns the resulting transform
