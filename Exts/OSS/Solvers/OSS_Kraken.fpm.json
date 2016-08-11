@@ -11,5 +11,6 @@
     "OSS_RemapScalarValueSolver.kl",
     "OSS_AimKLSolver.kl",
     "OSS_GetLocalTranslateSolver.kl"
+    "OSS_WeightedAverageMat44KLSolver.kl"
   ]
 }

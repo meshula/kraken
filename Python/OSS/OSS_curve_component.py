@@ -63,6 +63,8 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         # ========
         self.curveCtrlNames = StringAttribute('curveCtrlNames', value="A B C D", parent=self.guideSettingsAttrGrp)
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=99, parent=self.guideSettingsAttrGrp)
+        self.popFirst = BoolAttribute('popFirst', value=False,  parent=self.guideSettingsAttrGrp)
+        self.popFirst = BoolAttribute('popLast', value=False, parent=self.guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
         # Guide Controls
 
@@ -317,8 +319,20 @@ class OSSCurveComponentRig(OSSCurveComponent):
         return controlsList
 
 
-    def setNumDeformers(self, numDeformers, data):
+    def fillValues(self, numDefs, minVal=0.0, maxVal=1.0, popFirst=False, popLast=False):
+        params = []
+        for i in range(numDefs):
+            ratio = float(i) / float(numDefs-1)
+            params.append((1.0-ratio)*minVal + ratio*maxVal)
+        if popFirst:
+            print "popping first"
+            del params[0]
+        if popLast:
+            print "popping last"
+            del params[-1]
+        return params
 
+    def setNumDeformers(self, numDeformers, data):
         for output in reversed(self.curveOutputs):
             output.getParent().removeChild(output)
         del self.curveOutputs[:] #Clear since this array obj is tied to output already
@@ -326,6 +340,19 @@ class OSSCurveComponentRig(OSSCurveComponent):
         for joint in reversed(self.deformerJoints):
             joint.getParent().removeChild(joint)
         del self.deformerJoints[:] #Clear since this array obj is tied to output already
+
+        # Determine params for number of Deformers
+        self.popFirst = bool(data['popFirst'])  #This should be a simple method instead
+        self.popLast = bool(data['popLast'])  #This should be a simple method instead
+
+        print "First %s"%(self.popFirst)
+        print "Last %s"%(self.popLast)
+        self.params = self.fillValues(numDeformers, minVal=0.0, maxVal=1.0, popFirst=self.popFirst, popLast=self.popLast)
+        for i in range(len(self.params)):
+            self.rigControlAligns.append(Vec3(1,2,3))
+
+        numDeformers = len(self.params)
+
 
         # Add new deformers and outputs
         for i in xrange(len(self.curveOutputs), numDeformers):
@@ -346,13 +373,6 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 self.parentSpaceInputTgt.childJoints = [CurveDef]
 
 
-        # Determine params for number of Deformers
-        a = 0.0
-        b = 1.0
-        for i in range(numDeformers):
-            ratio = float(i) / float(numDeformers-1)
-            self.params.append((1.0-ratio)*a + ratio*b)
-            self.rigControlAligns.append(Vec3(1,2,3))
 
         if hasattr(self, 'NURBSCurveKLOp'):  # Check in case this is ever called from Guide callback
             self.NURBSCurveKLOp.setInput('params',  self.params)

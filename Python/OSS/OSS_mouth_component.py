@@ -856,8 +856,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipCtrlsRest = []
 
         # numDefs plus two for the corners, this should be determined per closest point on curve
-        self.paramsOut = [1, .96, .9, .81, .74, .66, .58, 0.5, 0.42, 0.34, 0.26, 0.19, 0.1, 0.04, 0]
-
+        self.paramsOut = [1, 0.94, 0.86, 0.79, 0.72, 0.653, 0.583, 0.5, 0.417, 0.347, 0.28, 0.21, 0.14, 0.06, 0]
         self.upLipDefs =  [self.rUpLipCorner] + self.upLipDefs + [self.lUpLipCorner]
 
         self.upLipDefOp.setInput('drawDebug', self.drawDebugInputAttr)

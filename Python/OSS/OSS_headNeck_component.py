@@ -316,7 +316,6 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.NURBSNeckKLOp.setInput('rigScale', self.rigScaleInputAttr)
         self.NURBSNeckKLOp.setInput('drawDebug', self.drawDebugInputAttr)
 
-
         self.NURBSNeckKLOp.setInput('alignX', 1 )
         self.NURBSNeckKLOp.setInput('alignY', 2 )
         self.NURBSNeckKLOp.setInput('alignZ', 3 )
@@ -333,6 +332,46 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.NURBSNeckKLOp.setInput('controlAligns', self.rigControlAligns)
         self.NURBSNeckKLOp.setInput('controls', self.controlInputs)
         self.NURBSNeckKLOp.setInput('controlsRest', self.controlRestInputs)
+
+
+        # ===============
+        # Add Fabric Ops
+        # ===============
+        # Add Spine Canvas Op
+        self.HeadAlignKLOp = KLOperator('HeadAlignKLOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
+        self.addOperator(self.HeadAlignKLOp)
+
+        # Add Att Inputs
+        self.HeadAlignKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.HeadAlignKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        
+        self.HeadAlignKLOp.setInput('mats', self.alignSpaces)
+        self.HeadAlignKLOp.setInput('matWeights', self.alignWeights)
+        self.HeadAlignKLOp.setInput('translationAmt',  0)
+        self.HeadAlignKLOp.setInput('scaleAmt',  0)
+        self.HeadAlignKLOp.setInput('rotationAmt',  1)
+        self.HeadAlignKLOp.setInput('parent',  self.headCtrl)
+        self.HeadAlignKLOp.setOutput('result', self.headAlignSpace)
+
+
+        # Add Aim Splice Op
+        # =================
+        # self.headIKCanvasOp = KLOperator('headIKCanvasOp', 'DirectionConstraintSolver', 'Kraken')
+        self.headIKCanvasOp = CanvasOperator('headIKCanvasOp', 'Kraken.Solvers.DirectionConstraintSolver')
+        self.addOperator(self.headIKCanvasOp)
+
+        # Add Att Inputs
+        self.headIKCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.headIKCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
+
+        # Add Xfo Inputs
+        self.headIKCanvasOp.setInput('position', self.headCtrl)
+        self.headIKCanvasOp.setInput('upVector', self.headIKUpV)
+        self.headIKCanvasOp.setInput('atVector', self.headIKCtrl)
+
+        # Add Xfo Outputs
+        self.headIKCanvasOp.setOutput('constrainee', self.headSpace)
+
 
         self.NURBSNeckKLOp.setInput('params', self.params )
         self.NURBSNeckKLOp.setOutput('outputs', self.neckOutputs)

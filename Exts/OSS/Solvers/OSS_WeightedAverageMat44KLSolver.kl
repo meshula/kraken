@@ -1,0 +1,147 @@
+require Math;
+require Kraken;
+
+object OSS_WeightedAverageMat44KLSolver : KrakenSolver {
+};
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_WeightedAverageMat44KLSolver.getArguments() {
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('mats', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('matWeights', 'In', 'Scalar[]'));
+  args.push(KrakenSolverArg('translationAmt', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('scaleAmt', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('rotationAmt', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('parent', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('result', 'Out', 'Mat44'));
+  return args;
+}
+
+//NOTE: weights need to be normalized
+
+function Scalar[].normalizeScalarArray!()  {
+  Boolean takeFirstIfInvalid = true;
+  UInt32 count = this.size();
+  Scalar sum;
+  
+  for( Size i = 0; i < this.size(); ++i )
+    sum += this[i];
+    
+  if( sum > 0.0001 ) {
+    for( Size i = 0; i < count; ++i )
+      this[i] = this[i]/sum;
+  
+  } else if(count) {
+    //Just put equal weights; ensures sum is 1.0
+    for( Size i = 0; i < count; ++i )
+      if (!takeFirstIfInvalid) {
+        this[i] = 1/Scalar(count);
+      } else {
+        if (i==0) this[i]=1;
+        else this[i]=0;
+      }
+  }
+}
+
+
+function Quat weightedAverageQuat(in Scalar[] quatWeights, io Quat[] quats) {
+  UInt32 numQuats = quatWeights.size();
+  Quat cumQuat = Quat()*0;
+  quats.resize(numQuats);
+ 
+  for (UInt32 i=0; i<numQuats; i++)
+  { 
+    Quat wQuat = quats[i]*quatWeights[i];
+    
+    //Before we add the new rotation to the average (mean), we have to check whether the quaternion has to be inverted. Because
+    //q and -q are the same rotation, but cannot be averaged, we have to make sure they are all the same.
+    if (wQuat.almostEqual(cumQuat)){
+        wQuat.inverse(); 
+    }
+    cumQuat += wQuat;
+  }
+  return cumQuat.unit_safe();
+}
+
+
+function Vec3 weightedAverageVec3 (in Scalar[] vecWeights, io Vec3[] vectors) {
+  Vec3 result;
+  UInt32 numVecs = vecWeights.size();
+  Vec3 cumVec = Vec3()*0;
+  vectors.resize(numVecs);
+ 
+  for (UInt32 i=0; i<numVecs; i++)
+  { 
+    Vec3 wVec = vectors[i]*vecWeights[i];
+    result += wVec;
+  }
+  return result;
+}
+
+// Solve
+function OSS_WeightedAverageMat44KLSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Mat44[] mats,
+  in Scalar[] matWeights,
+  in Scalar translationAmt,
+  in Scalar scaleAmt,
+  in Scalar rotationAmt,
+  in Mat44 parent,
+  out Mat44 result
+)
+{
+  // get Original Transform
+  Xfo origXfo = mats[0];
+  Xfo resultXfo;
+  
+  Xfo xfos[];
+  xfos.resize(mats.size());
+  for (UInt32 i = 0; i<xfos.size(); i++){
+    xfos[i].setFromMat44(mats[i]);
+  }
+
+  Scalar normMatWeights[];
+  normMatWeights.resize(matWeights.size());
+  for (UInt32 i = 0; i<matWeights.size(); i++){
+    normMatWeights[i] = matWeights[i];
+  }
+  normMatWeights.normalizeScalarArray();
+
+  UInt32 s = xfos.size();
+  
+  Quat ori[];
+  Vec3 tr[];
+  Vec3 sc[];
+  
+  ori.resize(s);
+  tr.resize(s);
+  sc.resize(s);
+  
+  for (UInt32 i =0; i<xfos.size(); i++)
+  {
+    ori[i]= xfos[i].ori;
+    tr[i] = xfos[i].tr;
+    sc[i] = xfos[i].sc;
+  }
+  
+  Quat averageRotation    = weightedAverageQuat(normMatWeights, ori);
+  Vec3 averageTranslation = weightedAverageVec3(normMatWeights, tr);
+  Vec3 averageScale       = weightedAverageVec3(normMatWeights, sc);
+  
+  for (UInt32 i =0; i<xfos.size(); i++)
+  {
+    ori[i]= xfos[i].ori;
+    tr[i] = xfos[i].tr;
+    sc[i] = xfos[i].sc;
+  }
+  
+  resultXfo.ori = origXfo.ori.sphericalLinearInterpolate(averageRotation, rotationAmt);
+  resultXfo.tr = origXfo.tr.linearInterpolate(averageTranslation, translationAmt);
+  resultXfo.sc = origXfo.sc.linearInterpolate(averageScale, scaleAmt);
+  
+  resultXfo = parent.inverse()*resultXfo;
+  result = resultXfo.toMat44();
+}
+
