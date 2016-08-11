@@ -7,6 +7,11 @@ object BipedFootSolver : KrakenSolver {
 
 
 // Default Constructor
+/// \dfgPresetTitle BipedFootSolver
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\BipedFootSolver
 function BipedFootSolver()
 {
 
@@ -14,6 +19,7 @@ function BipedFootSolver()
 
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] BipedFootSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('ikBlend', 'In', 'Scalar'));
@@ -31,7 +37,11 @@ function KrakenSolverArg[] BipedFootSolver.getArguments(){
   return args;
 }
 
-
+/// \dfgPresetTitle BipedFootSolver_AnkleIKSolve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\BipedFootSolver
 function Xfo ankleIKSolve
 (
   Scalar rigScale,
@@ -63,7 +73,11 @@ function Xfo ankleIKSolve
   return ankleIKOut;
 }
 
-
+/// \dfgPresetTitle BipedFootSolver_ToeIKSolve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\BipedFootSolver
 function Xfo toeIKSolve
 (
   Scalar rigScale,
@@ -98,6 +112,11 @@ function Xfo toeIKSolve
 
 
 // Solve
+/// \dfgPresetTitle BipedFootSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\BipedFootSolver
 function BipedFootSolver.solve!
 (
   in Boolean drawDebug,

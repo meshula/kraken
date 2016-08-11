@@ -1,3 +1,4 @@
+require Math;
 require InlineDrawing;
 require Geometry;
 
@@ -7,6 +8,11 @@ object BipedFootPivotSolver : KrakenSolver {
 
 
 // Default Constructor
+/// \dfgPresetTitle BipedFootPivotSolver
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\BipedFootPivotSolver
 function BipedFootPivotSolver()
 {
 
@@ -14,6 +20,7 @@ function BipedFootPivotSolver()
 
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] BipedFootPivotSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('rightSide', 'In', 'Boolean'));
@@ -30,7 +37,7 @@ function KrakenSolverArg[] BipedFootPivotSolver.getArguments(){
   return args;
 }
 
-
+/// \dfgPresetOmit
 function Scalar rescale
 (
   Scalar value,
@@ -44,6 +51,11 @@ function Scalar rescale
 }
 
 // Solve
+/// \dfgPresetTitle BipedFootPivotSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\BipedFootPivotSolver
 function BipedFootPivotSolver.solve!
 (
   in Boolean drawDebug,

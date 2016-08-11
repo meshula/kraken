@@ -1,7 +1,7 @@
 require Math;
 require InlineDrawing;
 
-
+/// \dfgPresetOmit
 function InlineShape constructBoneShape(
   in Scalar length,
   in Scalar radius)
@@ -14,7 +14,7 @@ function InlineShape constructBoneShape(
   return shape;
 }
 
-
+/// \dfgPresetOmit
 function etDrawBone(
   io InlineTransform rootTransform,
   in String name,
@@ -41,7 +41,7 @@ function etDrawBone(
   }
 }
 
-
+/// \dfgPresetOmit
 function InlineLinesShape drawSegmentedLine(
   io InlineTransform rootTransform,
   in String name,
