@@ -1,0 +1,37 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+    "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+    "uiTooltip" : "Supported types:\n  result: BipedFootPivotSolver\n"
+    },
+  "title" : "BipedFootPivotSolver",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "BipedFootPivotSolver"
+      }
+    ],
+  "extDeps" : {
+    "Kraken" : "*"
+    },
+  "presetGUID" : "4463186C5019D67BF038104D9DA3ED32",
+  "code" : "require Kraken;
+
+dfgEntry {
+  result = BipedFootPivotSolver();
+}
+"
+  }
