@@ -11,6 +11,7 @@ object DynamicChainSolver : KrakenSolver {
 };
 
 // Default Constructor
+/// \dfgPresetTitle DynamicChainSolver_Constructor
 /// \dfgPresetColor Color(49, 60, 61)
 /// \dfgPresetHeaderColor Color(42, 94, 102)
 /// \dfgPresetTextColor Color(168, 229, 240)

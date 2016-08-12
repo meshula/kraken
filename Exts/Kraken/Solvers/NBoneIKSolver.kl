@@ -6,7 +6,7 @@ object NBoneIKSolver : KrakenSolver, Persistable {
 };
 
 // Default Constructor
-/// \dfgPresetTitle NBoneIKSolver
+/// \dfgPresetTitle NBoneIKSolver_Constructor
 /// \dfgPresetColor Color(49, 60, 61)
 /// \dfgPresetHeaderColor Color(42, 94, 102)
 /// \dfgPresetTextColor Color(168, 229, 240)
@@ -16,7 +16,7 @@ function NBoneIKSolver()
 
 }
 
-/// \dfgPresetTitle NBoneIKSolver_Init
+/// \dfgPresetTitle NBoneIKSolver_Constructor_Init
 /// \dfgPresetColor Color(49, 60, 61)
 /// \dfgPresetHeaderColor Color(42, 94, 102)
 /// \dfgPresetTextColor Color(168, 229, 240)
