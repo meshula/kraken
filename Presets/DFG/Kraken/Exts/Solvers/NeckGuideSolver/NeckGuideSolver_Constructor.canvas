@@ -5,9 +5,9 @@
     "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
     "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
     "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
-    "uiTooltip" : "Supported types:\n  result: PoseConstraintSolver\n"
+    "uiTooltip" : "Supported types:\n  result: NeckGuideSolver\n"
     },
-  "title" : "PoseConstraintSolver",
+  "title" : "NeckGuideSolver_Constructor",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -21,17 +21,17 @@
       "name" : "result",
       "nodePortType" : "In",
       "execPortType" : "Out",
-      "typeSpec" : "PoseConstraintSolver"
+      "typeSpec" : "NeckGuideSolver"
       }
     ],
   "extDeps" : {
     "Kraken" : "*"
     },
-  "presetGUID" : "B8E7E0C67E2E488AB391C559EFACA099",
+  "presetGUID" : "B6CFE899071BFAAE3992E1E92A04A3AE",
   "code" : "require Kraken;
 
 dfgEntry {
-  result = PoseConstraintSolver();
+  result = NeckGuideSolver();
 }
 "
   }

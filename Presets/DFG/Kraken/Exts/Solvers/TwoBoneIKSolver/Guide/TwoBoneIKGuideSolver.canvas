@@ -1,12 +1,5 @@
-// Created by kl2dfg (processFunction)
 {
-  "objectType" : "Func",
-  "metadata" : {
-    "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
-    "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
-    "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
-    "uiTooltip" : "Supported types:\n  result: TwoBoneIKGuideSolver\n"
-    },
+  "objectType" : "Graph",
   "title" : "TwoBoneIKGuideSolver",
   "ports" : [
     {
@@ -18,20 +11,422 @@
       },
     {
       "objectType" : "ExecPort",
-      "name" : "result",
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "root",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "mid",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "end",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "guideOpHost",
       "nodePortType" : "In",
       "execPortType" : "Out",
-      "typeSpec" : "TwoBoneIKGuideSolver"
+      "typeSpec" : "Mat44"
       }
     ],
   "extDeps" : {
     "Kraken" : "*"
     },
-  "presetGUID" : "2F093A4A137F0554719523C5750035B4",
-  "code" : "require Kraken;
+  "nodes" : [
+    {
+      "objectType" : "Var",
+      "name" : "solver",
+      "ports" : [
+        {
+          "objectType" : "VarPort",
+          "name" : "value",
+          "nodePortType" : "IO"
+          }
+        ],
+      "dataType" : "TwoBoneIKGuideSolver",
+      "extDep" : "Kraken:*"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+        },
+      "name" : "TwoBoneIKGuideSolver_Constructor",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "Kraken.Exts.Solvers.TwoBoneIKSolver.Guide.TwoBoneIKGuideSolver_Constructor",
+      "presetGUID" : "2F093A4A137F0554719523C5750035B4"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":200.0,\"y\":0.0}"
+        },
+      "name" : "TwoBoneIKGuideSolver_Solve",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "this",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "drawDebug",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "rigScale",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "root",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "mid",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "end",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "guideOpHost",
+          "nodePortType" : "IO"
+          }
+        ],
+      "executable" : "Kraken.Exts.Solvers.TwoBoneIKSolver.Guide.TwoBoneIKGuideSolver_Solve",
+      "presetGUID" : "290EA7F7D9E9B07A1F42BF7D53C0FF85"
+      }
+    ],
+  "connections" : {
+    "drawDebug" : [
+      "TwoBoneIKGuideSolver_Solve.drawDebug"
+      ],
+    "rigScale" : [
+      "TwoBoneIKGuideSolver_Solve.rigScale"
+      ],
+    "root" : [
+      "TwoBoneIKGuideSolver_Solve.root"
+      ],
+    "mid" : [
+      "TwoBoneIKGuideSolver_Solve.mid"
+      ],
+    "end" : [
+      "TwoBoneIKGuideSolver_Solve.end"
+      ],
+    "solver.value" : [
+      "TwoBoneIKGuideSolver_Solve.this"
+      ],
+    "TwoBoneIKGuideSolver_Constructor.result" : [
+      "solver.value"
+      ],
+    "TwoBoneIKGuideSolver_Solve.this" : [
+      "exec"
+      ],
+    "TwoBoneIKGuideSolver_Solve.guideOpHost" : [
+      "guideOpHost"
+      ]
+    },
+  "requiredPresets" : {
+    "Kraken.Exts.Solvers.TwoBoneIKSolver.Guide.TwoBoneIKGuideSolver_Constructor" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+        "uiTooltip" : "Supported types:\n  result: TwoBoneIKGuideSolver\n"
+        },
+      "title" : "TwoBoneIKGuideSolver_Constructor",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "TwoBoneIKGuideSolver"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "2F093A4A137F0554719523C5750035B4",
+      "code" : "require Kraken;
 
 dfgEntry {
   result = TwoBoneIKGuideSolver();
 }
 "
+      },
+    "Kraken.Exts.Solvers.TwoBoneIKSolver.Guide.TwoBoneIKGuideSolver_Solve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+        "uiTooltip" : "Supported types:\n  this: TwoBoneIKGuideSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  root: Mat44\n  mid: Mat44\n  end: Mat44\n  guideOpHost: Mat44\n"
+        },
+      "title" : "TwoBoneIKGuideSolver_Solve",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "this",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "TwoBoneIKGuideSolver"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "root",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "mid",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "end",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "guideOpHost",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "290EA7F7D9E9B07A1F42BF7D53C0FF85",
+      "code" : "require Kraken;
+
+dfgEntry {
+  this.solve(drawDebug, rigScale, root, mid, end, guideOpHost);
+}
+"
+      }
+    },
+  "args" : [
+    {
+      "type" : "Boolean",
+      "value" : false
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
+      "ext" : "Math"
+      }
+    ]
   }

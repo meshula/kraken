@@ -32,6 +32,9 @@
       },
     {
       "objectType" : "ExecPort",
+      "metadata" : {
+        "uiRange" : "(0.1, 1000.0)"
+        },
       "name" : "rigScale",
       "nodePortType" : "Out",
       "execPortType" : "In",
@@ -46,6 +49,9 @@
       },
     {
       "objectType" : "ExecPort",
+      "metadata" : {
+        "uiRange" : "(0.0, 1.0)"
+        },
       "name" : "ikblend",
       "nodePortType" : "Out",
       "execPortType" : "In",

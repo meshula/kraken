@@ -1,12 +1,5 @@
-// Created by kl2dfg (processFunction)
 {
-  "objectType" : "Func",
-  "metadata" : {
-    "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
-    "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
-    "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
-    "uiTooltip" : "Supported types:\n  result: TentacleSolver\n"
-    },
+  "objectType" : "Graph",
   "title" : "TentacleSolver",
   "ports" : [
     {
@@ -18,20 +11,791 @@
       },
     {
       "objectType" : "ExecPort",
-      "name" : "result",
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "time",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "ikblend",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "waveLength_Y",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "waveAmplitude_Y",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "waveFrequency_Y",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "waveLength_Z",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "waveAmplitude_Z",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "waveFrequency_Z",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "tipBias",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "springStrength",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "dampening",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "simulationWeight",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "softLimitBounds",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "chainBase",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "ikgoal",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "fkcontrols",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "tipBoneLen",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "pose",
       "nodePortType" : "In",
       "execPortType" : "Out",
-      "typeSpec" : "TentacleSolver"
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "tentacleEnd",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44"
       }
     ],
   "extDeps" : {
     "Kraken" : "*"
     },
-  "presetGUID" : "18472A1BD2EB2BB2B058AB0F09F4165E",
-  "code" : "require Kraken;
+  "nodes" : [
+    {
+      "objectType" : "Var",
+      "name" : "solver",
+      "ports" : [
+        {
+          "objectType" : "VarPort",
+          "name" : "value",
+          "nodePortType" : "IO"
+          }
+        ],
+      "dataType" : "TentacleSolver",
+      "extDep" : "Kraken:*"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+        },
+      "name" : "TentacleSolver_Constructor",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "Kraken.Exts.Solvers.TentacleSolver.TentacleSolver_Constructor",
+      "presetGUID" : "18472A1BD2EB2BB2B058AB0F09F4165E"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":200.0,\"y\":0.0}"
+        },
+      "name" : "TentacleSolver_Solve",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "this",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "drawDebug",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "rigScale",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "time",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "ikblend",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "waveLength_Y",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "waveAmplitude_Y",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "waveFrequency_Y",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "waveLength_Z",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "waveAmplitude_Z",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "waveFrequency_Z",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "tipBias",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "springStrength",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "dampening",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "simulationWeight",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "softLimitBounds",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "chainBase",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "ikgoal",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "fkcontrols",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "tipBoneLen",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "pose",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "tentacleEnd",
+          "nodePortType" : "IO"
+          }
+        ],
+      "executable" : "Kraken.Exts.Solvers.TentacleSolver.TentacleSolver_Solve",
+      "presetGUID" : "DB5FD5C955EA3ED2B2CCDB5C772E85EA"
+      }
+    ],
+  "connections" : {
+    "drawDebug" : [
+      "TentacleSolver_Solve.drawDebug"
+      ],
+    "rigScale" : [
+      "TentacleSolver_Solve.rigScale"
+      ],
+    "time" : [
+      "TentacleSolver_Solve.time"
+      ],
+    "ikblend" : [
+      "TentacleSolver_Solve.ikblend"
+      ],
+    "waveLength_Y" : [
+      "TentacleSolver_Solve.waveLength_Y"
+      ],
+    "waveAmplitude_Y" : [
+      "TentacleSolver_Solve.waveAmplitude_Y"
+      ],
+    "waveFrequency_Y" : [
+      "TentacleSolver_Solve.waveFrequency_Y"
+      ],
+    "waveLength_Z" : [
+      "TentacleSolver_Solve.waveLength_Z"
+      ],
+    "waveAmplitude_Z" : [
+      "TentacleSolver_Solve.waveAmplitude_Z"
+      ],
+    "waveFrequency_Z" : [
+      "TentacleSolver_Solve.waveFrequency_Z"
+      ],
+    "tipBias" : [
+      "TentacleSolver_Solve.tipBias"
+      ],
+    "springStrength" : [
+      "TentacleSolver_Solve.springStrength"
+      ],
+    "dampening" : [
+      "TentacleSolver_Solve.dampening"
+      ],
+    "simulationWeight" : [
+      "TentacleSolver_Solve.simulationWeight"
+      ],
+    "softLimitBounds" : [
+      "TentacleSolver_Solve.softLimitBounds"
+      ],
+    "chainBase" : [
+      "TentacleSolver_Solve.chainBase"
+      ],
+    "ikgoal" : [
+      "TentacleSolver_Solve.ikgoal"
+      ],
+    "fkcontrols" : [
+      "TentacleSolver_Solve.fkcontrols"
+      ],
+    "tipBoneLen" : [
+      "TentacleSolver_Solve.tipBoneLen"
+      ],
+    "solver.value" : [
+      "TentacleSolver_Solve.this"
+      ],
+    "TentacleSolver_Constructor.result" : [
+      "solver.value"
+      ],
+    "TentacleSolver_Solve.this" : [
+      "exec"
+      ],
+    "TentacleSolver_Solve.pose" : [
+      "pose"
+      ],
+    "TentacleSolver_Solve.tentacleEnd" : [
+      "tentacleEnd"
+      ]
+    },
+  "requiredPresets" : {
+    "Kraken.Exts.Solvers.TentacleSolver.TentacleSolver_Constructor" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+        "uiTooltip" : "Supported types:\n  result: TentacleSolver\n"
+        },
+      "title" : "TentacleSolver_Constructor",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "TentacleSolver"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "18472A1BD2EB2BB2B058AB0F09F4165E",
+      "code" : "require Kraken;
 
 dfgEntry {
   result = TentacleSolver();
 }
 "
+      },
+    "Kraken.Exts.Solvers.TentacleSolver.TentacleSolver_Solve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+        "uiTooltip" : "Supported types:\n  this: TentacleSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  time: Scalar\n  ikblend: Scalar\n  waveLength_Y: Scalar\n  waveAmplitude_Y: Scalar\n  waveFrequency_Y: Scalar\n  waveLength_Z: Scalar\n  waveAmplitude_Z: Scalar\n  waveFrequency_Z: Scalar\n  tipBias: Scalar\n  springStrength: Scalar\n  dampening: Scalar\n  simulationWeight: Scalar\n  softLimitBounds: Scalar\n  chainBase: Mat44\n  ikgoal: Mat44\n  fkcontrols: Mat44[]\n  tipBoneLen: Scalar\n  pose: Mat44[]\n  tentacleEnd: Mat44\n"
+        },
+      "title" : "TentacleSolver_Solve",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "this",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "TentacleSolver"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "time",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ikblend",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "waveLength_Y",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "waveAmplitude_Y",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "waveFrequency_Y",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "waveLength_Z",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "waveAmplitude_Z",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "waveFrequency_Z",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "tipBias",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "springStrength",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "dampening",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "simulationWeight",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "softLimitBounds",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "chainBase",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "ikgoal",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "fkcontrols",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "tipBoneLen",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "pose",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "tentacleEnd",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "DB5FD5C955EA3ED2B2CCDB5C772E85EA",
+      "code" : "require Kraken;
+
+dfgEntry {
+  this.solve(drawDebug, rigScale, time, ikblend, waveLength_Y, waveAmplitude_Y, waveFrequency_Y, waveLength_Z, waveAmplitude_Z, waveFrequency_Z, tipBias, springStrength, dampening, simulationWeight, softLimitBounds, chainBase, ikgoal, fkcontrols, tipBoneLen, pose, tentacleEnd);
+}
+"
+      }
+    },
+  "args" : [
+    {
+      "type" : "Boolean",
+      "value" : false
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Mat44[]",
+      "value" : [],
+      "ext" : "Math"
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Mat44[]",
+      "value" : [],
+      "ext" : "Math"
+      },
+    {
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
+      "ext" : "Math"
+      }
+    ]
   }

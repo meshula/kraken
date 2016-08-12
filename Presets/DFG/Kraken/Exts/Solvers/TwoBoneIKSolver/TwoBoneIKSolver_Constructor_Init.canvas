@@ -5,9 +5,9 @@
     "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
     "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
     "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
-    "uiTooltip" : "Supported types:\n  initPose: Xfo[]\n  result: TwoBoneStretchyIKSolver\n"
+    "uiTooltip" : "Supported types:\n  initPose: Xfo[]\n  result: TwoBoneIKSolver\n"
     },
-  "title" : "TwoBoneStretchyIKSolver_Init",
+  "title" : "TwoBoneIKSolver_Constructor_Init",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -31,17 +31,17 @@
       "name" : "result",
       "nodePortType" : "In",
       "execPortType" : "Out",
-      "typeSpec" : "TwoBoneStretchyIKSolver"
+      "typeSpec" : "TwoBoneIKSolver"
       }
     ],
   "extDeps" : {
     "Kraken" : "*"
     },
-  "presetGUID" : "7CDBA6431D47A5775399BB11C4081444",
+  "presetGUID" : "96109C0FD9ADEC458333DB966C21CAA1",
   "code" : "require Kraken;
 
 dfgEntry {
-  result = TwoBoneStretchyIKSolver(initPose);
+  result = TwoBoneIKSolver(initPose);
 }
 "
   }
