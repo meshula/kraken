@@ -980,7 +980,6 @@ class Builder(Builder):
         canvasOpPath = None
         try:
             if isKLBased is True:
-                solverTypeName = kOperator.getSolverTypeName()
                 ports = kOperator.getSolverArgs()
                 portCount = len(ports)
 
@@ -1023,44 +1022,73 @@ class Builder(Builder):
                 typeTokens = nameTemplate['types']
                 opTypeToken = typeTokens.get(type(kOperator).__name__, 'op')
                 solverNodeName = '_'.join([kOperator.getName(), opTypeToken])
+                solverSolveNodeName = '_'.join([kOperator.getName(), 'solve', opTypeToken])
 
-                si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken")
+                si.FabricCanvasSetExtDeps(canvasOpPath, "", kOperator.getExtension())
 
-                si.FabricCanvasAddFunc(canvasOpPath, "",
+                solverTypeName = kOperator.getSolverTypeName()
+
+                # Create Solver Function Node
+                dfgEntry = "dfgEntry {\n  solver = " + solverTypeName + "();\n}"
+                solverNodeCode = "{}\n\n{}".format('require ' + kOperator.getExtension() + ';', dfgEntry)
+
+                si.FabricCanvasAddFunc(canvasOpPath,
+                                       "",
                                        solverNodeName,
-                                       "dfgEntry {}",
-                                       "400",
-                                       "0")
+                                       solverNodeCode,
+                                       "-220",
+                                       "100")
 
                 si.FabricCanvasAddPort(canvasOpPath,
                                        solverNodeName,
                                        "solver",
-                                       "IO",
+                                       "Out",
                                        solverTypeName,
                                        "",
-                                       "Kraken")
+                                       kOperator.getExtension())
 
-                si.FabricCanvasAddPort(canvasOpPath,
-                                       "",
-                                       "solver",
-                                       "IO",
-                                       solverTypeName,
-                                       "",
-                                       "Kraken")
-
-                si.FabricCanvasConnect(canvasOpPath,
-                                       "",
-                                       "solver",
-                                       solverNodeName + ".solver")
+                solverVarName = si.FabricCanvasAddVar(canvasOpPath,
+                                                      "",
+                                                      "solverVar",
+                                                      solverTypeName,
+                                                      kOperator.getExtension(),
+                                                      "-75",
+                                                      "100")
 
                 si.FabricCanvasConnect(canvasOpPath,
                                        "",
                                        solverNodeName + ".solver",
-                                       "solver")
+                                       solverVarName + ".value")
+
+                # Crate Solver "Solve" Function Node
+                si.FabricCanvasAddFunc(canvasOpPath,
+                                       "",
+                                       solverSolveNodeName,
+                                       "dfgEntry {}"
+                                       "100",
+                                       "100")
+
+                si.FabricCanvasAddPort(canvasOpPath,
+                                       solverSolveNodeName,
+                                       "solver",
+                                       "IO",
+                                       solverTypeName,
+                                       "",
+                                       kOperator.getExtension())
+
+                si.FabricCanvasConnect(canvasOpPath,
+                                       "",
+                                       solverVarName + ".value",
+                                       solverSolveNodeName + ".solver")
+
+                si.FabricCanvasConnect(canvasOpPath,
+                                       "",
+                                       solverSolveNodeName + ".solver",
+                                       "exec")
 
                 # Generate the operator source code.
                 opSourceCode = kOperator.generateSourceCode()
-                si.FabricCanvasSetCode(canvasOpPath, solverNodeName, opSourceCode)
+                si.FabricCanvasSetCode(canvasOpPath, solverSolveNodeName, opSourceCode)
 
             else:
                 host = ks.getCoreClient().DFG.host
@@ -1112,7 +1140,7 @@ class Builder(Builder):
                 canvasOp.Name = buildName
                 self._registerSceneItemPair(kOperator, canvasOp)
 
-                si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken")
+                si.FabricCanvasSetExtDeps(canvasOpPath, "", kOperator.getExtension())
                 uniqueNodeName = si.FabricCanvasInstPreset(canvasOpPath, "", kOperator.getPresetPath(), "400", "0")
                 solverNodeName = uniqueNodeName
 
@@ -1132,10 +1160,10 @@ class Builder(Builder):
                 aCount = 0  # Store how many array nodes have been created.
                 if portConnectionType == 'In':
                     if isKLBased is True:
-                        si.FabricCanvasAddPort(canvasOpPath, solverNodeName, portName, "In", portDataType, "")
+                        si.FabricCanvasAddPort(canvasOpPath, solverSolveNodeName, portName, "In", portDataType, "")
 
                     si.FabricCanvasAddPort(canvasOpPath, "", portName, "In", portDataType, "")
-                    si.FabricCanvasConnect(canvasOpPath, "", portName, solverNodeName + "." + portName)
+                    si.FabricCanvasConnect(canvasOpPath, "", portName, solverSolveNodeName + "." + portName)
 
                 elif portConnectionType in ('IO', 'Out'):
 
@@ -1169,7 +1197,7 @@ class Builder(Builder):
                         arrayNodeCode += "}"
 
                         si.FabricCanvasAddPort(canvasOpPath,
-                                               solverNodeName,
+                                               solverSolveNodeName,
                                                portName,
                                                "Out",
                                                portDataType,
@@ -1181,7 +1209,7 @@ class Builder(Builder):
 
                         si.FabricCanvasConnect(canvasOpPath,
                                                "",
-                                               solverNodeName + "." + portName,
+                                               solverSolveNodeName + "." + portName,
                                                arrayNode + "." + portName)
 
                         for j in xrange(len(connectedObjects)):
@@ -1190,7 +1218,7 @@ class Builder(Builder):
 
                     else:
                         if isKLBased is True:
-                            si.FabricCanvasAddPort(canvasOpPath, solverNodeName, portName, "Out", portDataType, "")
+                            si.FabricCanvasAddPort(canvasOpPath, solverSolveNodeName, portName, "Out", portDataType, "")
 
                         if portDataType not in ('Execute', 'DrawingHandle'):
                             si.FabricCanvasAddPort(canvasOpPath, "", portName, "Out", portDataType, "")
@@ -1198,12 +1226,12 @@ class Builder(Builder):
                         if portDataType in ('Execute', 'DrawingHandle') and portName == 'exec':
                             pass
                         elif portDataType in ('Execute', 'DrawingHandle') and portName != 'exec':
-                            si.FabricCanvasConnect(canvasOpPath, "", solverNodeName + "." + portName, "exec")
+                            si.FabricCanvasConnect(canvasOpPath, "", solverSolveNodeName + "." + portName, "exec")
                         else:
-                            si.FabricCanvasConnect(canvasOpPath, "", solverNodeName + "." + portName, portName)
+                            si.FabricCanvasConnect(canvasOpPath, "", solverSolveNodeName + "." + portName, portName)
 
                 else:
-                    raise Exception("Operator:'" + solverNodeName + " has an invalid 'portConnectionType': " + portConnectionType)
+                    raise Exception("Operator:'" + solverSolveNodeName + " has an invalid 'portConnectionType': " + portConnectionType)
 
             # Make connections from DCC objects to operator ports
             for i in xrange(portCount):
@@ -1224,7 +1252,7 @@ class Builder(Builder):
                 elif portConnectionType in ('IO', 'Out'):
                     addPortConnection(canvasOpPath, portName, portDataType, portConnectionType)
                 else:
-                    raise Exception("Operator:'" + solverNodeName + " has an invalid 'portConnectionType': " + portConnectionType)
+                    raise Exception("Operator:'" + solverSolveNodeName + " has an invalid 'portConnectionType': " + portConnectionType)
 
         finally:
             canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
