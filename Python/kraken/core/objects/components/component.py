@@ -32,7 +32,7 @@ class Component(Object3D):
     """Kraken Component object."""
 
     def __init__(self, name, parent=None, location='M'):
-        self._location = location
+        self.location = StringAttribute('location', value=location)
         super(Component, self).__init__(name, parent)
         self._color = (154, 205, 50, 255)
         self._inputs = []
@@ -109,7 +109,7 @@ class Component(Object3D):
 
         """
 
-        return self._location
+        return self.location.getValue()
 
 
     def setLocation(self, location):
@@ -131,7 +131,7 @@ class Component(Object3D):
             logger.warn("'{}' is not a valid location. Valid locations are: {}".format(location, ','.join(locations)))
             return False
 
-        self._location = location
+        self.location.setValue(location)
 
         # The new location might cause a name colision.
         # forcing a name refresh will generate a new name if a collision exists
