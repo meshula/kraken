@@ -56,7 +56,7 @@ function Quat weightedAverageQuat(in Scalar[] quatWeights, io Quat[] quats) {
     //Before we add the new rotation to the average (mean), we have to check whether the quaternion has to be inverted. Because
     //q and -q are the same rotation, but cannot be averaged, we have to make sure they are all the same.
     if (wQuat.almostEqual(cumQuat)){
-        wQuat.inverse(); 
+        wQuat.unit_safe().conjugate(); 
     }
     cumQuat += wQuat;
   }

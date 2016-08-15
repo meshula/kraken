@@ -349,14 +349,10 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.EyeAutoAimKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.EyeAutoAimKLOp.setInput('rigScale', self.rigScaleInputAttr)
         self.EyeAutoAimKLOp.setInput('blend',  0)
-        self.EyeAutoAimKLOp.setInput('atAxis',  0)
-        self.EyeAutoAimKLOp.setInput('upAxis',  5)
 
         self.EyeAutoAimKLOp.setOutput('result', self.eyeTrackerIKSpace)
-        self.EyeAutoAimKLOp.setInput('position', self.eyeTracker)
+        self.EyeAutoAimKLOp.setInput('rest', self.eyeTracker)
         self.EyeAutoAimKLOp.setInput('ik', self.eyesCtrlSpace)
-        self.EyeAutoAimKLOp.setInput('fk', self.eyeTracker)
-        # Add Xfo Inputs
         self.EyeAutoAimKLOp.setInput('up', self.eyeTrackerUpSpace)
         # temp now until handles are swapped
 
@@ -454,13 +450,10 @@ class OSSEyesComponentRig(OSSEyesComponent):
 
             # Add Att Inputs
             self.EyeIkFkBlendKLOp.setInput('blend',  upVSpaceBlendInputAttr)
-            self.EyeIkFkBlendKLOp.setInput('position', fkCtrl)
-            self.EyeIkFkBlendKLOp.setInput('atAxis',  0)
-            self.EyeIkFkBlendKLOp.setInput('upAxis',  2)
+            self.EyeIkFkBlendKLOp.setInput('rest', fkCtrl)
 
             self.EyeIkFkBlendKLOp.setOutput('result', newLoc)
             self.EyeIkFkBlendKLOp.setInput('ik', ikCtrl)
-            self.EyeIkFkBlendKLOp.setInput('fk', fkCtrl)
             # Add Xfo Inputs
             self.EyeIkFkBlendKLOp.setInput('up', upCtrlSpace)
             # temp now until handles are swapped
@@ -497,12 +490,10 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.eyeTracker.xfo = data['eyesEndXfo']
         self.eyeTrackerIKSpace.xfo = data['eyesEndXfo']
 
-
-
         self.createControls(data["EyesNames"], data)
 
         # Eval Operators
-        # self.evalOperators()
+        self.evalOperators()
 
 
 def getAnimControlNameList(handleNames):

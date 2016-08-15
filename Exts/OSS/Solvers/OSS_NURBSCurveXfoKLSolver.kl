@@ -77,7 +77,6 @@ function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   args.push(KrakenSolverArg('controlsRest', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('controls', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('outputs', 'Out', 'Mat44[]'));
-  args.push(KrakenSolverArg('dummyResult', 'Out', 'Vec3'));
   args.push(KrakenSolverArg('instance', 'Out', 'InlineInstance'));
   return args;
 }
@@ -121,7 +120,6 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     in Mat44 controlsRest[],
     in Mat44 controls[],
     io Mat44 outputs[],
-    out Vec3 dummyResult,
     out InlineInstance instance
     )
 {
@@ -191,10 +189,10 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   }
 
   // Set debugging visibility.
-  if(drawDebug) {
-    if(!this.handle)
-      this.handle = DrawingHandle();
-    // drawLines(root, 'Tangents', positions, lineTangents, Color(0.5, 0.0, 0,1));
-    this.handle.drawAxesInstances('controls', wd.xfos, dummyResult, instance);
-  }
+  // if(drawDebug) {
+  //   if(!this.handle)
+  //     this.handle = DrawingHandle();
+  //   // drawLines(root, 'Tangents', positions, lineTangents, Color(0.5, 0.0, 0,1));
+  //   this.handle.drawAxesInstances('controls', wd.xfos, dummyResult, instance);
+  // }
 }

@@ -44,6 +44,7 @@ class OSSHeadNeckComponent(OSS_Component):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
+        self.worldSRTInputTgt = self.createInput('worldSRT', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
 
         # Declare Output Xfos
         self.neckBaseOutputTgt = self.createOutput('neckBase', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -233,6 +234,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Neck handle
         self.neckHandleCtrlSpace = CtrlSpace('neckHandle', parent=self.neckCtrlSpace)
 
+        # Head handle
+        self.headHandleCtrlSpace = CtrlSpace('headHandle', parent=self.neckCtrl)
         # Head
         self.headCtrl = FKControl('head', parent=self.neckCtrl, shape="square")
         self.headCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
@@ -240,19 +243,19 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.headCtrl.scalePoints(Vec3(6.0, 6.0, 6.0))
         self.headCtrlSpace  = self.headCtrl.insertCtrlSpace()
 
-        limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.headCtrl)
-        self.HeadAlignFkSpaceAttr = ScalarAttribute('headFK', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-        self.HeadAlignIkSpaceAttr = ScalarAttribute('headIK', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-        self.HeadAlignWorldSpaceAttr = ScalarAttribute('headWorld', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+        headNeckSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.headCtrl)
+        self.HeadAlignFkSpaceAttr = ScalarAttribute('headFK', value=1.0, minValue=0.0, maxValue=1.0, parent=headNeckSettingsAttrGrp)
+        self.HeadAlignIkSpaceAttr = ScalarAttribute('headIK', value=0.0, minValue=0.0, maxValue=1.0, parent=headNeckSettingsAttrGrp)
+        self.HeadAlignWorldSpaceAttr = ScalarAttribute('headWorld', value=0.0, minValue=0.0, maxValue=1.0, parent=headNeckSettingsAttrGrp)
 
-        # Head handle
-        self.headAlignSpace = CtrlSpace('headAlign', parent=self.headCtrl)
-        self.headHandleCtrlSpace = CtrlSpace('headHandle', parent=self.neckCtrl)
 
 
         # Head Aim
         self.headSpace = CtrlSpace('head', parent=self.globalSRTInputTgt)
-        self.headIKCtrlSpace = CtrlSpace('headIK', parent=self.globalSRTInputTgt)
+        self.headWorldRef  = CtrlSpace('headWorldRef', parent=self.ctrlCmpGrp)
+        self.headFKRef  = CtrlSpace('headFKRef', parent=self.neckCtrl)
+        self.headIKRef = CtrlSpace('headIKRef', parent=self.neckCtrl)
+        self.headIKCtrlSpace = CtrlSpace('headIK', parent=self.ctrlCmpGrp)
         self.headIKCtrl = IKControl('head', parent=self.headIKCtrlSpace, shape="square")
         self.headIKCtrl.setColor('red')
         self.headIKCtrl.rotatePoints(90,0,0)
@@ -263,13 +266,6 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.headIKUpV = Control('headUpV', parent=self.headIKUpVSpace, shape="circle")
         self.headIKUpV.lockScale(x=True, y=True, z=True)
         self.headIKUpV.lockRotation(x=True, y=True, z=True)
-
-
-        self.headWorldCtrl = IKControl('headWorld', parent=self.globalSRTInputTgt, shape="square")
-        self.headWorldCtrl.setColor('blue')
-        self.headWorldCtrl.scalePoints(Vec3(7.0, 7.0, 7.0))
-        self.headWorldCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
-        self.headWorldCtrlSpace  = self.headWorldCtrl.insertCtrlSpace()
 
 
         # ==========
@@ -299,9 +295,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # ==============
         # Constraint inputs
         self.neckCtrlSpaceConstraint = self.neckCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-        self.headIKUpVSpaceConstraint = self.headIKUpVSpace.constrainTo(self.headCtrl, constraintType="Position", maintainOffset=True)
+        self.headIKUpVSpaceConstraint = self.headIKUpVSpace.constrainTo(self.headFKRef, constraintType="Position", maintainOffset=True)
 
-        self.headWorldSpaceConstraint = self.headWorldCtrlSpace.constrainTo(self.headCtrl, constraintType="Position", maintainOffset=True)
 
 
 
@@ -333,10 +328,30 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.NURBSNeckKLOp.setInput('controls', self.controlInputs)
         self.NURBSNeckKLOp.setInput('controlsRest', self.controlRestInputs)
 
+        self.NURBSNeckKLOp.setInput('params', self.params )
+        self.NURBSNeckKLOp.setOutput('outputs', self.neckOutputs)
 
         # ===============
         # Add Fabric Ops
         # ===============
+
+        # Add Spine Canvas Op
+        self.HeadAimKLOp = KLOperator('HeadAimKLOp', 'OSS_AimKLSolver', 'OSS_Kraken')
+        self.addOperator(self.HeadAimKLOp)
+
+        # Add Att Inputs
+        self.HeadAimKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.HeadAimKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.HeadAimKLOp.setInput('blend',  0)
+
+        self.HeadAimKLOp.setInput('rest', self.headFKRef)
+        self.HeadAimKLOp.setInput('ik', self.headIKCtrl)
+        # Add Xfo Inputs
+        self.HeadAimKLOp.setInput('up', self.headIKUpV)
+        self.HeadAimKLOp.setOutput('result', self.headIKRef)
+
+
+
         # Add Spine Canvas Op
         self.HeadAlignKLOp = KLOperator('HeadAlignKLOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
         self.addOperator(self.HeadAlignKLOp)
@@ -350,31 +365,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.HeadAlignKLOp.setInput('translationAmt',  0)
         self.HeadAlignKLOp.setInput('scaleAmt',  0)
         self.HeadAlignKLOp.setInput('rotationAmt',  1)
-        self.HeadAlignKLOp.setInput('parent',  self.headCtrl)
-        self.HeadAlignKLOp.setOutput('result', self.headAlignSpace)
+        self.HeadAlignKLOp.setInput('parent',  self.neckCtrl)
+        self.HeadAlignKLOp.setOutput('result', self.headCtrlSpace)
 
-
-        # Add Aim Splice Op
-        # =================
-        # self.headIKCanvasOp = KLOperator('headIKCanvasOp', 'DirectionConstraintSolver', 'Kraken')
-        self.headIKCanvasOp = CanvasOperator('headIKCanvasOp', 'Kraken.Solvers.DirectionConstraintSolver')
-        self.addOperator(self.headIKCanvasOp)
-
-        # Add Att Inputs
-        self.headIKCanvasOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.headIKCanvasOp.setInput('rigScale', self.rigScaleInputAttr)
-
-        # Add Xfo Inputs
-        self.headIKCanvasOp.setInput('position', self.headCtrl)
-        self.headIKCanvasOp.setInput('upVector', self.headIKUpV)
-        self.headIKCanvasOp.setInput('atVector', self.headIKCtrl)
-
-        # Add Xfo Outputs
-        self.headIKCanvasOp.setOutput('constrainee', self.headSpace)
-
-
-        self.NURBSNeckKLOp.setInput('params', self.params )
-        self.NURBSNeckKLOp.setOutput('outputs', self.neckOutputs)
 
 
         Profiler.getInstance().pop()
@@ -451,11 +444,10 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.neckHandleCtrlSpace.xfo.tr = neckHandlePosition
         self.headHandleCtrlSpace.xfo.tr = headHandlePosition
         self.headCtrlSpace.xfo.tr = headPosition
-        self.headAlignSpace.xfo.tr = headPosition
         self.headCtrl.xfo.tr = headPosition
-
-        self.headWorldCtrlSpace.xfo.tr = headPosition
-        self.headWorldCtrl.xfo.tr = headPosition
+        self.headIKRef.xfo.tr = headPosition
+        self.headFKRef.xfo.tr = headPosition
+        self.headWorldRef.xfo.tr = headPosition
 
         # Head LookAt/Aim Controls
         self.headIKCtrlSpace.xfo.ori = self.headCtrlSpace.xfo.ori
@@ -471,17 +463,17 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.controlInputs.append(self.neckCtrl)
         self.controlInputs.append(self.neckHandleCtrlSpace)
         self.controlInputs.append(self.headHandleCtrlSpace)
-        self.controlInputs.append(self.headAlignSpace)
+        self.controlInputs.append(self.headCtrl)
 
         self.controlRestInputs.append(self.neckCtrl.xfo)
         self.controlRestInputs.append(self.neckHandleCtrlSpace.xfo)
         self.controlRestInputs.append(self.headHandleCtrlSpace.xfo)
-        self.controlRestInputs.append(self.headAlignSpace.xfo)
+        self.controlRestInputs.append(self.headCtrl.xfo)
 
 
-        self.alignSpaces.append(self.headCtrl)
-        self.alignSpaces.append(self.headSpace)
-        self.alignSpaces.append(self.headWorldCtrl)
+        self.alignSpaces.append(self.headFKRef)
+        self.alignSpaces.append(self.headIKRef)
+        self.alignSpaces.append(self.headWorldRef)
 
         self.alignWeights.append(self.HeadAlignFkSpaceAttr)
         self.alignWeights.append(self.HeadAlignIkSpaceAttr)
@@ -583,16 +575,15 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # ====================
         # Eval Operators # Order is important
         self.NURBSNeckKLOp.evaluate()
+        self.HeadAlignKLOp.evaluate()
 
         self.neckBaseOutputTgt.constrainTo(self.neckOutputs[0]).evaluate()
 
         #self.headOutputConstraint = self.headOutputTgt.constrainTo(self.neckOutputs[-1])
         # We might want to put this as feature of operator.  Certainly this should be a blend...
-        self.headOutputTgt.xfo.tr = self.headAlignSpace.xfo.tr
+        self.headOutputTgt.xfo.tr = self.headCtrl.xfo.tr
         aimAt(self.headOutputTgt.xfo, aimVector=Vec3(0, 1, 0), upVector=Vec3(0, 0, 1), aimAxis=(1, 0, 0), upAxis=(0, 0, 1))
-        self.headOutputTgt.constrainTo(self.headAlignSpace, maintainOffset=True).evaluate()
-
-
+        self.headOutputTgt.constrainTo(self.headCtrl, maintainOffset=True).evaluate()
 
         for i in xrange(len(self.neckOutputs)-1):
             constraint = self.deformerJoints[i].constrainTo(self.neckOutputs[i])
@@ -600,9 +591,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         #Really
         #Hard-coded for now....
-        self.deformerJoints[-1].xfo.tr = self.headAlignSpace.xfo.tr
+        self.deformerJoints[-1].xfo.tr = self.headCtrl.xfo.tr
         aimAt(self.deformerJoints[-1].xfo, aimVector=Vec3(0, 1, 0), upVector=Vec3(0, 0, 1), aimAxis=(1, 0, 0), upAxis=(0, 0, 1))
-        self.deformerJoints[-1].constrainTo(self.headAlignSpace, maintainOffset=True).evaluate()
+        self.deformerJoints[-1].constrainTo(self.headCtrl, maintainOffset=True).evaluate()
 
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
@@ -615,6 +606,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.headOutputTgt.parentJoint =  self.deformerJoints[-1]
 
 
+
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
@@ -624,9 +616,6 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.neckCtrl.scalePoints(globalScale)
         self.headCtrl.scalePoints(globalScale)
 
-        self.headWorldCtrl.rotatePoints(-90, 0, 0)
-        self.headWorldCtrl.translatePoints(Vec3(0, 1.5, 0.0))
-        self.headWorldCtrl.scalePoints(globalScale)
 
 
 from kraken.core.kraken_system import KrakenSystem

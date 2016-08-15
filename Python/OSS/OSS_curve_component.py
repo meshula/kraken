@@ -61,6 +61,7 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         # =========
         # Controls
         # ========
+        self.name = name
         self.curveCtrlNames = StringAttribute('curveCtrlNames', value="A B C D", parent=self.guideSettingsAttrGrp)
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=99, parent=self.guideSettingsAttrGrp)
         self.popFirst = BoolAttribute('popFirst', value=False,  parent=self.guideSettingsAttrGrp)
@@ -104,7 +105,7 @@ class OSSCurveComponentGuide(OSSCurveComponent):
 
 
             for i, defName in enumerate(defControlNameList):
-                newCtrl = Control(defName, parent=parent, shape="circle")
+                newCtrl = Control(self.name + defName, parent=parent, shape="circle")
                 newCtrl.setColor("brownMuted")
                 newCtrl.xfo = parent.xfo.multiply(Xfo(tr=Vec3(0, i, 0)))
                 controlsList.append(newCtrl)
