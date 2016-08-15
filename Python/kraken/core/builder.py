@@ -5,6 +5,7 @@ Builder -- Base builder object to build objects in DCC.
 
 """
 
+import os
 import logging
 
 from kraken.log import getLogger
@@ -706,7 +707,7 @@ class Builder(object):
                                       self._buildPhase_ConstraintsOperators)
 
         finally:
-            self._postBuild()
+            self._postBuild(kSceneItem)
 
             # Clear Config when finished.
             self.config.clearInstance()
@@ -873,12 +874,52 @@ class Builder(object):
 
         return True
 
-    def _postBuild(self):
+    def _postBuild(self, kSceneItem):
         """Protected Post-Build method.
+
+        Args:
+            kSceneItem (object): kraken kSceneItem object to run post-build
+                operations on.
 
         Returns:
             bool: True if successful.
 
         """
 
+        if os.environ.get('KRAKEN_DCC', None) is not None:
+            self.logOrphanedGraphItems(kSceneItem)
+
         return True
+
+    def logOrphanedGraphItems(self, kSceneItem):
+        """Logs any objects that were left out from the build process.
+
+        Args:
+            kSceneItem (object): kraken kSceneItem object to recursively iterate
+                on to find objects that weren't built.
+
+        Returns:
+            Type: True if successful.
+
+        """
+
+        def iterChildren(item, orphanedObjects):
+
+            for each in item.getChildren():
+                if each.getName() in ('implicitAttrGrp', 'visibility', 'ShapeVisibility'):
+                    continue
+
+                if each.isTypeOf('Component'):
+                    continue
+
+                if self.getDCCSceneItem(each) is None:
+                    orphanedObjects.append(each)
+
+                iterChildren(each, orphanedObjects)
+
+        orphanedObjects = []
+        iterChildren(kSceneItem, orphanedObjects)
+
+        if len(orphanedObjects) > 0:
+            logger.warn("Orphaned objects found:")
+            logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() for x in orphanedObjects]))
