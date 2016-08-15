@@ -889,6 +889,20 @@ class Builder(object):
         if os.environ.get('KRAKEN_DCC', None) is not None:
             self.logOrphanedGraphItems(kSceneItem)
 
+            invalidOps = []
+            self.checkEvaluatedOps(kSceneItem, invalidOps)
+
+            if len(invalidOps) > 0:
+                logger.warn("Non-evaluated Operators:")
+                logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() for x in invalidOps]))
+
+            invalidConstraints = []
+            self.checkEvaluatedConstraints(kSceneItem, invalidConstraints)
+
+            if len(invalidConstraints) > 0:
+                logger.warn("Non-evaluated Constraints:")
+                logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() for x in invalidConstraints]))
+
         return True
 
     def logOrphanedGraphItems(self, kSceneItem):
@@ -923,3 +937,44 @@ class Builder(object):
         if len(orphanedObjects) > 0:
             logger.warn("Orphaned objects found:")
             logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() for x in orphanedObjects]))
+
+    def checkEvaluatedOps(self, kSceneItem, invalidOps):
+        """Recursively checks for operators that haven't been evaluated.
+
+        Args:
+            kSceneItem (Object3D): Object to recursively check for invalid ops.
+            invalidOps (list): List invalid operators will be appended to.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if kSceneItem.isTypeOf('Component'):
+            for op in kSceneItem.getOperators():
+                if op.testFlag('HAS_EVALUATED') is False:
+                    invalidOps.append(op)
+
+        for each in kSceneItem.getChildren():
+            self.checkEvaluatedOps(each, invalidOps)
+
+    def checkEvaluatedConstraints(self, kSceneItem, invalidConstraints):
+        """Recursively checks for constraints that haven't been evaluated.
+
+        Args:
+            kSceneItem (Object3D): Object to recursively check for invalid ops.
+            invalidConstraints (list): List invalid constraints will be appended to.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if kSceneItem.isTypeOf('Object3D'):
+            for i in xrange(kSceneItem.getNumConstraints()):
+                constraint = kSceneItem.getConstraintByIndex(i)
+                if constraint.testFlag('HAS_EVALUATED') is False:
+                    invalidConstraints.append(constraint)
+
+        for each in kSceneItem.getChildren():
+            self.checkEvaluatedConstraints(each, invalidConstraints)

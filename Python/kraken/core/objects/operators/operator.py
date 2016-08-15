@@ -412,5 +412,6 @@ class Operator(SceneItem):
         """
 
         self.updateTargets()
+        self.setFlag("HAS_EVALUATED")
 
         return True
