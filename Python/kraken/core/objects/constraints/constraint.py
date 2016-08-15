@@ -353,6 +353,8 @@ class Constraint(SceneItem):
 
         """
 
+        self.setFlag("HAS_EVALUATED")
+
         if self.getMaintainOffset() is False:
             self.getConstrainee().xfo = self.compute()
             return True
