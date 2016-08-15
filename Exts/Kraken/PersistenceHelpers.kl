@@ -1,5 +1,10 @@
 require JSON;
 
+/// \dfgPresetTitle QuatFromJSON
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function Quat quatFromJSON(JSONDictValue dict){
     Quat value;
     value.v.x = dict.getScalar('x');
@@ -9,7 +14,11 @@ function Quat quatFromJSON(JSONDictValue dict){
     return value;
 }
 
-/// constructor provided a Vec4 value
+/// \dfgPresetTitle QuatToJSON
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function JSONDictValue quatToJSON(Quat value){
     JSONDictValue dict();
     dict.setScalar('x', value.v.x);
@@ -19,6 +28,11 @@ function JSONDictValue quatToJSON(Quat value){
     return dict;
 }
 
+/// \dfgPresetTitle XfoToJSON
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function JSONDictValue xfoToJSON(Xfo value) {
     JSONDictValue dict();
     dict.setVec3("tr", value.tr);
@@ -27,6 +41,11 @@ function JSONDictValue xfoToJSON(Xfo value) {
     return dict;
 }
 
+/// \dfgPresetTitle XfoFromJSON
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function Xfo xfoFromJSON(JSONDictValue dict) {
     Xfo value;
     value.tr = dict.getVec3("tr");

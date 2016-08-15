@@ -10,7 +10,19 @@ object DynamicChainSolver : KrakenSolver {
   Vec3 trCurr[];
 };
 
+// Default Constructor
+/// \dfgPresetTitle DynamicChainSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\DynamicChainSolver
+function DynamicChainSolver()
+{
+
+}
+
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] DynamicChainSolver.getArguments() {
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('simulate', 'In', 'Boolean'));
@@ -27,10 +39,11 @@ function KrakenSolverArg[] DynamicChainSolver.getArguments() {
   return args;
 }
 
-inline DynamicChainSolver() {
-}
-
-
+/// \dfgPresetTitle DynamicChainSolver_Reset
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\DynamicChainSolver
 function DynamicChainSolver.reset!(
   in Mat44 fkPose[],
   io Mat44 animPose[]
@@ -44,7 +57,11 @@ function DynamicChainSolver.reset!(
   }
 }
 
-
+/// \dfgPresetTitle DynamicChainSolver_Init
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\DynamicChainSolver
 function DynamicChainSolver.init!(
   in Mat44 fkPose[],
   io Mat44 animPose[]) {
@@ -71,6 +88,11 @@ function DynamicChainSolver.init!(
 
 }
 
+/// \dfgPresetTitle DynamicChainSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\DynamicChainSolver
 function DynamicChainSolver.solve!(
   in Boolean drawDebug,
   in Scalar rigScale,

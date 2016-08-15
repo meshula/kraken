@@ -1,4 +1,4 @@
-
+/// \dfgPresetOmit
 struct KrakenSolverArg {
     String name;
     String connectionType;
@@ -7,11 +7,13 @@ struct KrakenSolverArg {
 
 
 // Default Constructor
+/// \dfgPresetOmit
 inline KrakenSolverArg()
 {
 
 }
 
+/// \dfgPresetOmit
 inline KrakenSolverArg(
   String name,
   String connectionType,

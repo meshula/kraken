@@ -4,8 +4,19 @@ require Geometry;
 object MultiPoseConstraintSolver : KrakenSolver {
 };
 
+// Default Constructor
+/// \dfgPresetTitle MultiPoseConstraintSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\MultiPoseConstraintSolver
+function MultiPoseConstraintSolver()
+{
+
+}
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] MultiPoseConstraintSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('constrainers', 'In', 'Mat44[]'));
@@ -15,6 +26,11 @@ function KrakenSolverArg[] MultiPoseConstraintSolver.getArguments(){
 
 
 // Solve
+/// \dfgPresetTitle MultiPoseConstraintSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\MultiPoseConstraintSolver
 function MultiPoseConstraintSolver.solve!
 (
   in Boolean drawDebug,

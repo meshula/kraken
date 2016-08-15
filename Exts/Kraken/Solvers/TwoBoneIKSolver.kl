@@ -1,16 +1,20 @@
 require Math;
 require InlineDrawing;
 
-
 object TwoBoneIKSolver : KrakenSolver {
   Xfo initPose[];
 };
 
-// Default Constructor
+/// Default Constructor
+/// \dfgPresetTitle TwoBoneIKSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwoBoneIKSolver
 function TwoBoneIKSolver()
 {
   this.defaultValues["rightSide"] = false;
-  this.defaultValues["ikblend"] = 0.123;
+  this.defaultValues["ikblend"] = 0.0;
   this.defaultValues["root"] = Mat44();
   this.defaultValues["bone0FK"] = Mat44();
   this.defaultValues["bone1FK"] = Mat44();
@@ -20,6 +24,11 @@ function TwoBoneIKSolver()
   this.defaultValues["bone1Len"] = 1.0;
 }
 
+/// \dfgPresetTitle TwoBoneIKSolver_Constructor_Init
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwoBoneIKSolver
 function TwoBoneIKSolver(
   Xfo initPose[])
 {
@@ -29,6 +38,7 @@ function TwoBoneIKSolver(
 
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] TwoBoneIKSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('rightSide', 'In', 'Boolean'));
@@ -50,7 +60,11 @@ function KrakenSolverArg[] TwoBoneIKSolver.getArguments(){
   return args;
 }
 
-
+/// \dfgPresetTitle Solve2BoneIK
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function solve2BoneIK(
   in Scalar bone0Length,
   in Scalar bone1Length,
@@ -91,6 +105,13 @@ function solve2BoneIK(
 
 
 // Solve
+/// \dfgPresetTitle TwoBoneIKSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwoBoneIKSolver
+/// \dfgPresetRange rigScale (0.1, 1000.0)
+/// \dfgPresetRange ikblend (0.0, 1.0)
 function TwoBoneIKSolver.solve!
 (
   Boolean drawDebug,
@@ -177,6 +198,11 @@ object TwoBoneIKGuideSolver : KrakenSolver {
 };
 
 // Default Constructor
+/// \dfgPresetTitle TwoBoneIKGuideSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwoBoneIKSolver\Guide
 function TwoBoneIKGuideSolver()
 {
 
@@ -184,6 +210,7 @@ function TwoBoneIKGuideSolver()
 
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] TwoBoneIKGuideSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
 
@@ -195,6 +222,11 @@ function KrakenSolverArg[] TwoBoneIKGuideSolver.getArguments(){
   return args;
 }
 
+/// \dfgPresetTitle TwoBoneIKGuideSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwoBoneIKSolver\Guide
 function TwoBoneIKGuideSolver.solve!(
   Boolean drawDebug,
   Scalar rigScale,

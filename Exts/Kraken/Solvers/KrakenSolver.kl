@@ -1,9 +1,11 @@
 require InlineDrawing;
 
+/// \dfgPresetOmitl
 interface IKrakenSolver {
     KrakenSolverArg[] getArguments();
 };
 
+/// \dfgPresetOmitl
 object KrakenSolver : IKrakenSolver {
 
     RTVal defaultValues[String];
@@ -13,6 +15,7 @@ object KrakenSolver : IKrakenSolver {
 };
 
 // Default Constructor
+/// \dfgPresetOmit
 inline KrakenSolver() {
 
   this.defaultValues["drawDebug"] = false;
@@ -22,6 +25,7 @@ inline KrakenSolver() {
 }
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] KrakenSolver.getArguments(){
     KrakenSolverArg args[];
     args.push(KrakenSolverArg('drawDebug', 'In', 'Boolean'));
@@ -29,6 +33,7 @@ function KrakenSolverArg[] KrakenSolver.getArguments(){
     return args;
 }
 
+/// \dfgPresetOmit
 function KrakenSolver.setDebug!(in Boolean active) {
     this.drawDebug = active;
     if(this.handle)

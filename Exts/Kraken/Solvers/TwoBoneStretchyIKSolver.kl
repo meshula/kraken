@@ -1,3 +1,9 @@
+/*
+
+Contributed by Roy Nieterau roy_nieterau@hotmail.com
+
+*/
+
 require InlineDrawing;
 require Kraken;
 require Math;
@@ -10,12 +16,21 @@ object TwoBoneStretchyIKSolver : KrakenSolver {
 
 
 // Default Constructor
+/// \dfgPresetTitle TwoBoneStretchyIKSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwoBoneStretchyIKSolver
 function TwoBoneStretchyIKSolver()
 {
 
 }
 
-
+/// \dfgPresetTitle TwoBoneStretchyIKSolver_Constructor_Init
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwoBoneStretchyIKSolver
 function TwoBoneStretchyIKSolver(
   Xfo initPose[])
 {
@@ -24,6 +39,7 @@ function TwoBoneStretchyIKSolver(
 
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] TwoBoneStretchyIKSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('rightSide', 'In', 'Boolean'));
@@ -52,6 +68,11 @@ function KrakenSolverArg[] TwoBoneStretchyIKSolver.getArguments(){
 
 
 // Solve
+/// \dfgPresetTitle TwoBoneStretchyIKSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwoBoneStretchyIKSolver
 function TwoBoneStretchyIKSolver.solve!
 (
   Boolean drawDebug,
@@ -170,8 +191,8 @@ function TwoBoneStretchyIKSolver.solve!
           }
 
           if (stretch && stretchBlend > 0.0)
-          { 
-            // Scale bones by ratio between IK and Soft IK so that we preserve the soft IK 
+          {
+            // Scale bones by ratio between IK and Soft IK so that we preserve the soft IK
             // motion while hitting the IK handle. See: http://www.softimageblog.com/archives/109
             Scalar stretchyFinalRatio = 1.0 / Math_linearInterpolate(1.0, finalRatio, stretchBlend);
 
@@ -182,7 +203,7 @@ function TwoBoneStretchyIKSolver.solve!
 
         }
       }
-      
+
       // Stretchy
       if (stretch && stretchBlend > 0.0)
       {
@@ -247,8 +268,8 @@ function TwoBoneStretchyIKSolver.solve!
       bone2Xfo = bone2FkXfo;
     }
     // Solve IK/FK blend
-    else 
-    { 
+    else
+    {
       // Orient and scale the bone and then position the child bone based on the parent's length
       // We don't use the Xfo.transformVector() so we don't get the "scaled" transform value along
       // with the length of the bone that already contains that "scale". Otherwise we'd have double
@@ -260,7 +281,7 @@ function TwoBoneStretchyIKSolver.solve!
       bone1Xfo.tr =  bone0Xfo.tr + bone0Xfo.ori.rotateVector(Vec3(bone0OutLen, 0, 0));
       bone1Xfo.ori = bone1FkXfo.ori.sphericalLinearInterpolate(bone1Xfo.ori, ikblend);
       bone1Xfo.sc =  bone1FkXfo.sc.linearInterpolate(bone1Xfo.sc, ikblend);
-      
+
       Scalar bone1OutLen = Math_linearInterpolate(bone1FkXfo.sc.x * bone1Len * rigScale, scaledBone1Len, ikblend);
       bone2Xfo.tr =  bone1Xfo.tr + bone1Xfo.ori.rotateVector(Vec3(bone1OutLen, 0, 0));
       bone2Xfo.ori = bone2FkXfo.ori.sphericalLinearInterpolate(bone2Xfo.ori, ikblend);
