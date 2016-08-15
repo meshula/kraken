@@ -123,7 +123,13 @@ class Component(Object3D):
 
         """
 
-        # TODO: check that the given location is a valid value found in the config
+        config = Config.getInstance()
+        nameTemplate = config.getNameTemplate()
+        locations = nameTemplate['locations']
+
+        if location not in locations:
+            logger.warn("'{}' is not a valid location. Valid locations are: {}".format(location, ','.join(locations)))
+            return False
 
         self._location = location
 
