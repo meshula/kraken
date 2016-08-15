@@ -1,0 +1,272 @@
+{
+  "objectType" : "Graph",
+  "title" : "NeckGuideSolver",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "sources",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "targets",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44[]"
+      }
+    ],
+  "extDeps" : {
+    "Kraken" : "*"
+    },
+  "nodes" : [
+    {
+      "objectType" : "Var",
+      "name" : "solver",
+      "ports" : [
+        {
+          "objectType" : "VarPort",
+          "name" : "value",
+          "nodePortType" : "IO"
+          }
+        ],
+      "dataType" : "NeckGuideSolver",
+      "extDep" : "Kraken:*"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+        },
+      "name" : "NeckGuideSolver_Constructor",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Constructor",
+      "presetGUID" : "B6CFE899071BFAAE3992E1E92A04A3AE"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":200.0,\"y\":0.0}"
+        },
+      "name" : "NeckGuideSolver_Solve",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "this",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "drawDebug",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "rigScale",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "sources",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "targets",
+          "nodePortType" : "IO"
+          }
+        ],
+      "executable" : "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Solve",
+      "presetGUID" : "9B9087CD72D8F83637EDC428FC3A9A47"
+      }
+    ],
+  "connections" : {
+    "drawDebug" : [
+      "NeckGuideSolver_Solve.drawDebug"
+      ],
+    "rigScale" : [
+      "NeckGuideSolver_Solve.rigScale"
+      ],
+    "sources" : [
+      "NeckGuideSolver_Solve.sources"
+      ],
+    "solver.value" : [
+      "NeckGuideSolver_Solve.this"
+      ],
+    "NeckGuideSolver_Constructor.result" : [
+      "solver.value"
+      ],
+    "NeckGuideSolver_Solve.this" : [
+      "exec"
+      ],
+    "NeckGuideSolver_Solve.targets" : [
+      "targets"
+      ]
+    },
+  "requiredPresets" : {
+    "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Constructor" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+        "uiTooltip" : "Supported types:\n  result: NeckGuideSolver\n"
+        },
+      "title" : "NeckGuideSolver_Constructor",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "NeckGuideSolver"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "B6CFE899071BFAAE3992E1E92A04A3AE",
+      "code" : "require Kraken;
+
+dfgEntry {
+  result = NeckGuideSolver();
+}
+"
+      },
+    "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Solve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+        "uiTooltip" : "Supported types:\n  this: NeckGuideSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  sources: Mat44[]\n  targets: Mat44[]\n"
+        },
+      "title" : "NeckGuideSolver_Solve",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "this",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "NeckGuideSolver"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "sources",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "targets",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Mat44[]"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "9B9087CD72D8F83637EDC428FC3A9A47",
+      "code" : "require Kraken;
+
+dfgEntry {
+  this.solve(drawDebug, rigScale, sources, targets);
+}
+"
+      }
+    },
+  "args" : [
+    {
+      "type" : "Boolean",
+      "value" : false
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Mat44[]",
+      "value" : [],
+      "ext" : "Math"
+      },
+    {
+      "type" : "Mat44[]",
+      "value" : [],
+      "ext" : "Math"
+      }
+    ]
+  }

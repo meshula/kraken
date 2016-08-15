@@ -6,11 +6,21 @@ object NBoneIKSolver : KrakenSolver, Persistable {
 };
 
 // Default Constructor
+/// \dfgPresetTitle NBoneIKSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
 function NBoneIKSolver()
 {
 
 }
 
+/// \dfgPresetTitle NBoneIKSolver_Constructor_Init
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
 function NBoneIKSolver(
   Xfo initPose[])
 {
@@ -19,6 +29,7 @@ function NBoneIKSolver(
 
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] NBoneIKSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('useInitPose', 'In', 'Boolean'));
@@ -35,9 +46,12 @@ function KrakenSolverArg[] NBoneIKSolver.getArguments(){
 }
 
 
-
-
 // Solve
+/// \dfgPresetTitle NBoneIKSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
 function NBoneIKSolver.solve!
 (
   Boolean drawDebug,
@@ -147,6 +161,11 @@ function NBoneIKSolver.solve!
 }
 
 
+/// \dfgPresetTitle NBoneIKSolverSaveData
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
 function String NBoneIKSolver.saveDataToString(PersistenceContext context){
   JSONDoc doc();
 
@@ -160,6 +179,11 @@ function String NBoneIKSolver.saveDataToString(PersistenceContext context){
 }
 
 
+/// \dfgPresetTitle NBoneIKSolverLoadData
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
 function NBoneIKSolver.loadDataFromString!(PersistenceContext context, String data){
   JSONDoc doc();
   if(doc.parse(data)){

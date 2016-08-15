@@ -4,8 +4,19 @@ require Geometry;
 object DirectionConstraintSolver : KrakenSolver {
 };
 
+// Default Constructor
+/// \dfgPresetTitle DirectionConstraintSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\DirectionConstraintSolver
+function DirectionConstraintSolver()
+{
+
+}
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] DirectionConstraintSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('position', 'In', 'Mat44'));
@@ -15,8 +26,12 @@ function KrakenSolverArg[] DirectionConstraintSolver.getArguments(){
   return args;
 }
 
-
 // Solve
+/// \dfgPresetTitle DirectionConstraintSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\DirectionConstraintSolver
 function DirectionConstraintSolver.solve!
 (
   in Boolean drawDebug,

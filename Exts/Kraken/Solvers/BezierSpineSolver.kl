@@ -3,8 +3,19 @@ require InlineDrawing;
 object BezierSpineSolver : KrakenSolver {
 };
 
+// Default Constructor
+/// \dfgPresetTitle BezierSpineSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\BezierSpineSolver
+function BezierSpineSolver()
+{
+
+}
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] BezierSpineSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('length', 'In', 'Scalar'));
@@ -16,6 +27,7 @@ function KrakenSolverArg[] BezierSpineSolver.getArguments(){
   return args;
 }
 
+/// \dfgPresetOmit
 function Vec3[4] bezierCoeffs(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3){
   Vec3 coeffs[4];
   coeffs[0] = p3 - p0 - 3.0 * p2 + 3.0 * p1;
@@ -25,12 +37,14 @@ function Vec3[4] bezierCoeffs(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3){
   return coeffs;
 }
 
+/// \dfgPresetOmit
 function Vec3 evalBezier(Vec3 coeffs[4], Scalar t){
   Scalar t2 = t * t;
   Scalar t3 = t2 * t;
   return coeffs[0] * t3 + 3.0 * coeffs[1] * t2 + 3.0 * coeffs[2] * t + coeffs[3];
 }
 
+/// \dfgPresetOmit
 function Scalar[] measureBezierLength(Vec3 coeffs[4], UInt32 numSamples){
   Scalar distances[];
   distances.resize(numSamples);
@@ -49,6 +63,11 @@ function Scalar[] measureBezierLength(Vec3 coeffs[4], UInt32 numSamples){
 
 
 // Solve
+/// \dfgPresetTitle BezierSpineSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\BezierSpineSolver
 function BezierSpineSolver.solve!
 (
   Boolean drawDebug,

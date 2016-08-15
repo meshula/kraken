@@ -4,8 +4,19 @@ require Geometry;
 object PoseConstraintSolver : KrakenSolver {
 };
 
+// Default Constructor
+/// \dfgPresetTitle PoseConstraintSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\PoseConstraintSolver
+function PoseConstraintSolver()
+{
+
+}
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] PoseConstraintSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('constrainer', 'In', 'Mat44'));
@@ -15,6 +26,11 @@ function KrakenSolverArg[] PoseConstraintSolver.getArguments(){
 
 
 // Solve
+/// \dfgPresetTitle PoseConstraint_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\PoseConstraintSolver
 function PoseConstraintSolver.solve!
 (
   in Boolean drawDebug,
