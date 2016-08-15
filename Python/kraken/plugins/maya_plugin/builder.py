@@ -915,19 +915,6 @@ class Builder(Builder):
                                        srcPortPath=solverVarName + ".value",
                                        dstPortPath=solverSolveNodeName + ".solver")
 
-                # pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                #                        execPath="",
-                #                        desiredPortName="solver",
-                #                        portType="IO",
-                #                        typeSpec=solverTypeName,
-                #                        connectToPortPath="",
-                #                        extDep=kOperator.getExtension())
-
-                # pm.FabricCanvasConnect(mayaNode=canvasNode,
-                #                        execPath="",
-                #                        srcPortPath="solver",
-                #                        dstPortPath=solverNodeName + ".solver")
-
                 pm.FabricCanvasConnect(mayaNode=canvasNode,
                                        execPath="",
                                        srcPortPath=solverSolveNodeName + ".solver",
