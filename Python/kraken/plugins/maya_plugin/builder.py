@@ -856,6 +856,7 @@ class Builder(Builder):
             typeTokens = nameTemplate['types']
             opTypeToken = typeTokens.get(type(kOperator).__name__, 'op')
             solverNodeName = '_'.join([kOperator.getName(), opTypeToken])
+            solverSolveNodeName = '_'.join([kOperator.getName(), 'solve', opTypeToken])
 
             if isKLBased is True:
 
@@ -865,21 +866,44 @@ class Builder(Builder):
 
                 solverTypeName = kOperator.getSolverTypeName()
 
+                # Create Solver Function Node
+                dfgEntry = "dfgEntry {\n  solver = " + solverTypeName + "();\n}"
+                solverNodeCode = "{}\n\n{}".format('require ' + kOperator.getExtension() + ';', dfgEntry)
+
                 pm.FabricCanvasAddFunc(mayaNode=canvasNode,
                                        execPath="",
                                        title=solverNodeName,
-                                       code="dfgEntry {}", xPos="100", yPos="100")
+                                       code=solverNodeCode, xPos="-220", yPos="100")
 
                 pm.FabricCanvasAddPort(mayaNode=canvasNode,
                                        execPath=solverNodeName,
                                        desiredPortName="solver",
-                                       portType="IO",
+                                       portType="Out",
                                        typeSpec=solverTypeName,
                                        connectToPortPath="",
                                        extDep=kOperator.getExtension())
 
-                pm.FabricCanvasAddPort(mayaNode=canvasNode,
+                solverVarName = pm.FabricCanvasAddVar(mayaNode=canvasNode,
+                                                      execPath="",
+                                                      desiredNodeName="solverVar",
+                                                      xPos="-75",
+                                                      yPos="100",
+                                                      type=solverTypeName,
+                                                      extDep=kOperator.getExtension())
+
+                pm.FabricCanvasConnect(mayaNode=canvasNode,
                                        execPath="",
+                                       srcPortPath=solverNodeName + ".solver",
+                                       dstPortPath=solverVarName + ".value")
+
+                # Crate Solver "Solve" Function Node
+                pm.FabricCanvasAddFunc(mayaNode=canvasNode,
+                                       execPath="",
+                                       title=solverSolveNodeName,
+                                       code="dfgEntry {}", xPos="100", yPos="100")
+
+                pm.FabricCanvasAddPort(mayaNode=canvasNode,
+                                       execPath=solverSolveNodeName,
                                        desiredPortName="solver",
                                        portType="IO",
                                        typeSpec=solverTypeName,
@@ -888,13 +912,26 @@ class Builder(Builder):
 
                 pm.FabricCanvasConnect(mayaNode=canvasNode,
                                        execPath="",
-                                       srcPortPath="solver",
-                                       dstPortPath=solverNodeName + ".solver")
+                                       srcPortPath=solverVarName + ".value",
+                                       dstPortPath=solverSolveNodeName + ".solver")
+
+                # pm.FabricCanvasAddPort(mayaNode=canvasNode,
+                #                        execPath="",
+                #                        desiredPortName="solver",
+                #                        portType="IO",
+                #                        typeSpec=solverTypeName,
+                #                        connectToPortPath="",
+                #                        extDep=kOperator.getExtension())
+
+                # pm.FabricCanvasConnect(mayaNode=canvasNode,
+                #                        execPath="",
+                #                        srcPortPath="solver",
+                #                        dstPortPath=solverNodeName + ".solver")
 
                 pm.FabricCanvasConnect(mayaNode=canvasNode,
                                        execPath="",
-                                       srcPortPath=solverNodeName + ".solver",
-                                       dstPortPath="solver")
+                                       srcPortPath=solverSolveNodeName + ".solver",
+                                       dstPortPath="exec")
             else:
                 pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
                                           execPath="",
@@ -937,7 +974,7 @@ class Builder(Builder):
                                                connectToPortPath="")
 
                         pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                                               execPath=solverNodeName,
+                                               execPath=solverSolveNodeName,
                                                desiredPortName=portName,
                                                portType="In",
                                                typeSpec=portDataType,
@@ -946,7 +983,7 @@ class Builder(Builder):
                         pm.FabricCanvasConnect(mayaNode=canvasNode,
                                                execPath="",
                                                srcPortPath=portName,
-                                               dstPortPath=solverNodeName + "." + portName)
+                                               dstPortPath=solverSolveNodeName + "." + portName)
 
                     else:
                         if portDataType != 'Execute':
@@ -976,7 +1013,7 @@ class Builder(Builder):
 
                         pm.FabricCanvasAddPort(
                             mayaNode=canvasNode,
-                            execPath=solverNodeName,
+                            execPath=solverSolveNodeName,
                             desiredPortName=portName,
                             portType="Out",
                             typeSpec=portDataType,
@@ -985,7 +1022,7 @@ class Builder(Builder):
                         pm.FabricCanvasConnect(
                             mayaNode=canvasNode,
                             execPath="",
-                            srcPortPath=solverNodeName + "." + portName,
+                            srcPortPath=solverSolveNodeName + "." + portName,
                             dstPortPath=portName)
                     else:
                         if portDataType != 'Execute':
@@ -1064,7 +1101,7 @@ class Builder(Builder):
                         else:
                             opType = kOperator.getPresetPath()
 
-                        logger.warning("Operator '" + solverNodeName +
+                        logger.warning("Operator '" + solverSolveNodeName +
                                        "' of type '" + opType +
                                        "' port '" + portName + "' not connected.")
 
@@ -1155,7 +1192,7 @@ class Builder(Builder):
             if isKLBased is True:
                 opSourceCode = kOperator.generateSourceCode()
                 pm.FabricCanvasSetCode(mayaNode=canvasNode,
-                                       execPath=solverNodeName,
+                                       execPath=solverSolveNodeName,
                                        code=opSourceCode)
 
         finally:
