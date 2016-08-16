@@ -142,7 +142,7 @@ private KrakenAbcClip.getSampleInfo(Vec2 range, Size numSamples, Float64 time, o
   }
 }
 
-Float32 KrakenAbcClip.evaluateFloat32!(UInt32 id, KrakenClipContext context) {
+Float32 KrakenAbcClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
   if(this.types[id] != KrakenClipChannel_Float32)
     return Float32();
 
@@ -164,7 +164,7 @@ Float32 KrakenAbcClip.evaluateFloat32!(UInt32 id, KrakenClipContext context) {
   return Math_linearInterpolate(this.scalars[propId][a], this.scalars[propId][b], t);
 }
 
-Xfo KrakenAbcClip.evaluateXfo!(UInt32 id, KrakenClipContext context) {
+Xfo KrakenAbcClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
   if(this.xfos[id].size() == 0)
     return Xfo();
 

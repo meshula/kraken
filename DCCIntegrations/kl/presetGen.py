@@ -2,6 +2,8 @@ import os
 import sys
 import optparse
 
+os.environ['KRAKEN_DCC'] = 'KL'
+
 from kraken import plugins
 from kraken.core.kraken_system import KrakenSystem
 from kraken.core.objects.rig import Rig
@@ -45,8 +47,6 @@ def argOpts():
 
 
 def main():
-
-    os.environ['KRAKEN_DCC'] = 'KL'
 
     options, args = argOpts()
 
