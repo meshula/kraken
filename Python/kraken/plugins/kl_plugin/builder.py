@@ -41,6 +41,7 @@ from kraken.log import getLogger
 
 logger = getLogger('kraken')
 logger.setLevel(logging.INFO)
+
 def Boolean(b):
   return str(b).lower()
 
@@ -436,7 +437,7 @@ class Builder(Builder):
 
                     kl += solver_kl
                 else:
-                    print(indent+"sourceSolver:"),;print(sourceSolver['member'])
+                    logger.debug(indent+"sourceSolver: %s" % sourceSolver['member'])
                 output_kl = []
                 # output to the results!
                 for i in xrange(len(args)):
@@ -818,7 +819,12 @@ class Builder(Builder):
             #kl += ["  weights[0] = 1.0;"]
             kl += ["}", ""]
         else:
-            kl += ["//No Blend Shapes"]
+            kl += ["function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
+            kl += ["  String result[](%d);" % len(self.__krkShapes)]
+            kl += ["  return result;"]
+            kl += ["}", ""]
+            kl += ["function %s.getShapeWeights(io Float32 weights<>) {" % self.getKLExtensionName()]
+            kl += ["}", ""]
 
         kl += ["function KrakenScalarAttribute<> %s.getScalarAttributes() {" % self.getKLExtensionName()]
         if len(scalarAttributes) == 0:
@@ -1729,7 +1735,12 @@ class Builder(Builder):
         if value:
             colors = self.config.getColors()
             c = colors[value]
-            value = Color(r=c[1][0], g=c[1][1], b=c[1][2], a=1.0)
+            if isinstance(c, Color):
+              value = c
+            elif isinstance(c, list):
+              value = Color(r = c[0], g = c[1], b = c[2], a = 1.0)
+            else:
+              value = None
 
         if value is None:
           return True
