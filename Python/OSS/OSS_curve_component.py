@@ -105,7 +105,7 @@ class OSSCurveComponentGuide(OSSCurveComponent):
 
 
             for i, defName in enumerate(defControlNameList):
-                newCtrl = Control(self.name + defName, parent=parent, shape="circle")
+                newCtrl = Control(defName, parent=parent, shape="circle")
                 newCtrl.setColor("brownMuted")
                 newCtrl.xfo = parent.xfo.multiply(Xfo(tr=Vec3(0, i, 0)))
                 controlsList.append(newCtrl)
@@ -226,6 +226,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # Deformers
         # ==========
 
+        self.name = name
         self.deformerJoints = []
 
         self.controlInputs = []
@@ -263,7 +264,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.NURBSCurveKLOp.setInput('useLocalNormal', 1.0)
         self.NURBSCurveKLOp.setInput('followCurveNormal', 0.0)
         self.NURBSCurveKLOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
-        self.NURBSCurveKLOp.setInput('parent', self.ctrlCmpGrp)
+        self.NURBSCurveKLOp.setInput('parent', self.parentSpaceInputTgt)
         self.NURBSCurveKLOp.setInput('atVec', self.ctrlCmpGrp) # atVec should be optional, but is not currently in the Solver
         self.NURBSCurveKLOp.setInput('controlAligns', self.rigControlAligns)
         self.NURBSCurveKLOp.setInput('controls', self.controlInputs)
@@ -295,11 +296,11 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 return True
 
             for i, defName in enumerate(defControlNameList):
-                newCtrl = Locator(defName + "_" + ctrlType.replace("Def",""), parent= self.ctrlCmpGrp)
+                newCtrl = Locator(self.name + defName + "_" + ctrlType.replace("Def",""), parent= self.ctrlCmpGrp)
                 newCtrl.setShapeVisibility(False)
                 controlsList.append(newCtrl)
 
-                newDef = Joint(defName + "_" + ctrlType.replace("Def",""), parent= self.mouthDef)
+                newDef = Joint(self.name + defName + "_" + ctrlType.replace("Def",""), parent= self.mouthDef)
                 newDef.setComponent(self)
                 newDef.constrainTo(newCtrl)
 
@@ -312,7 +313,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 return True
 
             for i, defName in enumerate(defControlNameList):
-                newCtrl = Control(defName, parent=parent, shape="squarePointed")
+                newCtrl = Control(self.name + defName, parent=parent, shape="squarePointed")
                 newCtrl.setColor("red")
                 newCtrl.xfo = data[defName + "Xfo"]
                 controlsList.append(newCtrl)
@@ -367,13 +368,11 @@ class OSSCurveComponentRig(OSSCurveComponent):
             if i != 0:
                 parent = self.deformerJoints[-1]
             name = str(i).zfill(2)
-            CurveDef = Joint(name, parent=parent)
+            CurveDef = Joint(self.name + name, parent=parent)
             CurveDef.setComponent(self)
             self.deformerJoints.append(CurveDef)
             if i == 0:
                 self.parentSpaceInputTgt.childJoints = [CurveDef]
-
-
 
         if hasattr(self, 'NURBSCurveKLOp'):  # Check in case this is ever called from Guide callback
             self.NURBSCurveKLOp.setInput('params',  self.params)
@@ -399,6 +398,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.controlInputs = self.createControls("curveControls", self.controlInputs, data["curveCtrlNames"], data)
 
 
+
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers, data)
 
@@ -408,7 +408,6 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # Constraint inputs
         self.firstCurveCtrl = self.controlInputs[0].getParent()
         print "First Control: %s"%(self.firstCurveCtrl.getDecoratedName())
-        # self.firstCtrlSpaceConstraint  = self.firstCurveCtrl.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         for i in xrange(len(self.controlInputs)):
             self.controlRestInputs.append(self.controlInputs[i].xfo)
@@ -422,7 +421,8 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 ctrl = self.controlInputs[i]
                 ctrl.setColor("yellowMuted")
                 ctrlParent = ctrl.insertCtrlSpace()
-
+                #this is for a curve only solution
+                ctrlParent.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # ==============
         # Constrain I/O
@@ -441,7 +441,6 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # Eval Operators # Order is important
 
 
-        # self.firstCtrlSpaceConstraint.evaluate()
 
         # evaluate the constraint op so that all the joint transforms are updated.I s
         self.curveBaseOutputConstraint =  self.curveBaseOutputTgt.constrainTo(self.curveOutputs[0])

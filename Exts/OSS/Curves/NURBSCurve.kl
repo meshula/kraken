@@ -8,7 +8,7 @@
 require Math, FabricStatistics;
 require Geometry, Color;
 
-const UInt32 NURBSCurve_StandardResolution = 8;
+const UInt32 NURBSCurve_StandardResolution = 16;
 const UInt32 NURBSCurve_MaxDegree = 16;
 const Float32 NURBSCurve_TangentEpsilon = 0.0001;
 
