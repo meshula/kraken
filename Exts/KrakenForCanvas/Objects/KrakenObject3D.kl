@@ -4,6 +4,7 @@ require Geometry;
 require Kraken;
 
 struct KrakenObject3D {
+  SInt32 evalID;
   String name;
   String buildName;
   String path;

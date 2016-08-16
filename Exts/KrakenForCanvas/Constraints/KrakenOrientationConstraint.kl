@@ -22,7 +22,8 @@ function Mat44 KrakenOrientationConstraint.compute?(
   Mat44 m
 ) {
   Xfo result = m;
-  result.ori = Quat();
+
+  result.ori = Quat(Vec3(0.0, 0.0, 0.0), 0.0);
 
   for(Size i=0;i<this.constrainers.size();i++) {
     Xfo constrainer(this.constrainers[i]);
