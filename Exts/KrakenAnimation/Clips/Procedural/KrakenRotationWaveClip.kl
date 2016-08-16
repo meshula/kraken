@@ -60,11 +60,11 @@ UInt32 KrakenRotationWaveClip.getChannelType(UInt32 id) {
   return KrakenClipChannel_Xfo;
 }
 
-Float32 KrakenRotationWaveClip.evaluateFloat32!(UInt32 id, KrakenClipContext context) {
+Float32 KrakenRotationWaveClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
   return Float32();
 }
 
-Xfo KrakenRotationWaveClip.evaluateXfo!(UInt32 id, KrakenClipContext context) {
+Xfo KrakenRotationWaveClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
   Xfo xfo;
   Float32 angle = this.shifts[id] + this.amplitudes[id] * sin(this.offsets[id] + Float32(context.time) * this.speeds[id]);
   xfo.ori.setFromAxisAndAngle(this.axes[id], angle);

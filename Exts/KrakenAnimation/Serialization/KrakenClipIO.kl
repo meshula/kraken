@@ -31,6 +31,10 @@ function KrakenClip KrakenClip_getFromTypeName(String typeName) {
 function KrakenClip KrakenClip_loadFromFile(String filePath) {
   FilePath path = filePath;
   path = path.expandEnvVars();
+  if(!path.exists()) {
+    report('KrakenClip file '+filePath+' does not exist.');
+    return null;
+  }
 
   TextReader reader(path.string());
   String json = reader.readAll();
