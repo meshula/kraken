@@ -75,6 +75,8 @@ function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   args.push(KrakenSolverArg('compressionAmt', 'In', 'Scalar'));
   args.push(KrakenSolverArg('controlAligns', 'In', 'Vec3[]'));
   args.push(KrakenSolverArg('controlsRest', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('rigidIDs', 'In', 'UInt32[]'));
+  args.push(KrakenSolverArg('rigidMat44s', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('controls', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('outputs', 'Out', 'Mat44[]'));
   args.push(KrakenSolverArg('instance', 'Out', 'InlineInstance'));
@@ -118,6 +120,8 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     in Scalar compressionAmt,
     in Vec3 controlAligns[],
     in Mat44 controlsRest[],
+    in UInt32 rigidIDs[],
+    in Mat44 rigidMat44s[],
     in Mat44 controls[],
     io Mat44 outputs[],
     out InlineInstance instance
@@ -176,16 +180,26 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
 
   for (UInt32 i =0; i<outCount; i++) {
     wd.positions[i]   = posedCurveRef.getPoint(params[i], keepArcLength, keepCurveLen);
-    wd.tangents[i] = posedCurveRef.getTangent(params[i], true, keepArcLength, keepCurveLen);
+    wd.tangents[i]    = posedCurveRef.getTangent(params[i], true, keepArcLength, keepCurveLen);
     // lineTangents[i] = positions[i] + tangents[i];
     wd.altTangents[i] = localAltTangent;
     wd.altNormals[i]  = parent.translation() - wd.positions[i];
     __evalXfosTask(i, wd.xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, wd.altTangents, wd.altNormals);
     __evalCompressionTask(i, wd.compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
     Scalar localCompression = Scalar(Math_linearInterpolate(1, wd.compression[i], compressionAmt));
-    wd.xfos[i].sc = wd.xfos[i].sc * Vec3(1,localCompression,localCompression);
+    wd.xfos[i].sc = wd.xfos[i].sc * Vec3(1,localCompression,localCompression);  
     wd.xfos[i].align(alignX,alignY,alignZ);
     outputs[i] = wd.xfos[i].toMat44();
+
+    if(rigidIDs.size()) {
+      for(UInt32 n=0; n<rigidIDs.size(); n++) {
+        if (i==rigidIDs[n]) 
+          {
+            report('should be rigid: '+i);
+            outputs[i] = rigidMat44s[n];
+        }
+      }
+    }
   }
 
   // Set debugging visibility.

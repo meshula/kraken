@@ -282,6 +282,9 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.spineOutputs = []
         self.params = []
         self.rigControlAligns = []
+
+        self.rigidIDs = []
+        self.rigidMat44s = []
         #self.setNumDeformers(1)
 
         # =====================
@@ -325,6 +328,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.NURBSSpineKLOp.setInput('controlAligns', self.rigControlAligns)
         self.NURBSSpineKLOp.setInput('controls', self.controlInputs)
         self.NURBSSpineKLOp.setInput('controlsRest', self.controlRestInputs)
+        self.NURBSSpineKLOp.setInput('rigidIDs', [0,5])
+        self.NURBSSpineKLOp.setInput('rigidMat44s', self.rigidMat44s)
 
         self.NURBSSpineKLOp.setInput('params', self.params )
 
@@ -442,8 +447,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.controlRestInputs.append(self.upChestCtrl.xfo)
         self.controlRestInputs.append(self.neckCtrlSpace.xfo)
 
-
-
+        self.rigidMat44s.append(self.controlInputs[0])
+        self.rigidMat44s.append(self.controlInputs[-1])
 
         # Constrain Outputs
         self.spineEndOutputConstraint = self.spineEndOutputTgt.constrainTo(self.spineOutputs[-1])

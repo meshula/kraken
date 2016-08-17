@@ -283,6 +283,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.params = []
         self.rigControlAligns = []
 
+        self.rigidIDs = []
+        self.rigidMat44s = []
+
         # =====================
         # Create Component I/O
         # =====================
@@ -327,6 +330,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.NURBSNeckKLOp.setInput('controlAligns', self.rigControlAligns)
         self.NURBSNeckKLOp.setInput('controls', self.controlInputs)
         self.NURBSNeckKLOp.setInput('controlsRest', self.controlRestInputs)
+        self.NURBSNeckKLOp.setInput('rigidIDs', [0,5])
+        self.NURBSNeckKLOp.setInput('rigidMat44s', self.rigidMat44s)
 
         self.NURBSNeckKLOp.setInput('params', self.params )
         self.NURBSNeckKLOp.setOutput('outputs', self.neckOutputs)
@@ -470,6 +475,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.controlRestInputs.append(self.headHandleCtrlSpace.xfo)
         self.controlRestInputs.append(self.headCtrl.xfo)
 
+        self.rigidMat44s.append(self.controlInputs[0])
+        self.rigidMat44s.append(self.controlInputs[-1])
 
         self.alignSpaces.append(self.headFKRef)
         self.alignSpaces.append(self.headIKRef)
@@ -581,8 +588,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         #self.headOutputConstraint = self.headOutputTgt.constrainTo(self.neckOutputs[-1])
         # We might want to put this as feature of operator.  Certainly this should be a blend...
-        self.headOutputTgt.xfo.tr = self.headCtrl.xfo.tr
-        aimAt(self.headOutputTgt.xfo, aimVector=Vec3(0, 1, 0), upVector=Vec3(0, 0, 1), aimAxis=(1, 0, 0), upAxis=(0, 0, 1))
+        # self.headOutputTgt.xfo.tr = self.headCtrl.xfo.tr
+        # aimAt(self.headOutputTgt.xfo, aimVector=Vec3(0, 1, 0), upVector=Vec3(0, 0, 1), aimAxis=(1, 0, 0), upAxis=(0, 0, 1))
+        
         self.headOutputTgt.constrainTo(self.headCtrl, maintainOffset=True).evaluate()
 
         for i in xrange(len(self.neckOutputs)-1):
