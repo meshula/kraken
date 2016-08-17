@@ -10,8 +10,8 @@ fabricPath = os.environ.get("FABRIC_DIR")
 kl2dfgPath = os.path.join(fabricPath, 'bin', 'kl2dfg.exe')
 krakenPath = os.environ.get('KRAKEN_PATH')
 krakenExtsPath = os.path.join(krakenPath, 'Exts')
-krakenDFGPath = os.path.join(krakenPath, 'Presets', 'DFG', 'Kraken', 'Exts')
-krakenDFGSolverPath = os.path.join(krakenPath, 'Presets', 'DFG', 'Kraken', 'Exts', 'Solvers')
+krakenDFGPath = os.path.join(krakenPath, 'Exts', 'Kraken', 'DFG')
+krakenDFGSolverPath = os.path.join(krakenDFGPath, 'Solvers')
 
 # Clear the Existing Presets
 if os.path.exists(krakenDFGPath):
@@ -131,7 +131,6 @@ for root, dirs, files in os.walk(krakenDFGSolverPath):
 
             if portConnectionType == 'IO' and portName not in ('exec', 'this'):
                 solverParamOutPort = dfgExec.addExecPort(portName, client.DFG.PortTypes.Out, portDataType)
-                # dfgExec.connectTo(solverParamOutPort, solverSolve + '.' + portName)
                 dfgExec.connectTo(solverSolve + '.' + portName, solverParamOutPort)
 
         content = dfgBinding.exportJSON()
