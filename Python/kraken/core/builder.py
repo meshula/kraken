@@ -5,6 +5,7 @@ Builder -- Base builder object to build objects in DCC.
 
 """
 
+import os
 import logging
 
 from kraken.log import getLogger
@@ -350,7 +351,7 @@ class Builder(object):
     # =========================
     # Constraint Build Methods
     # =========================
-    def buildOrientationConstraint(self, kConstraint):
+    def buildOrientationConstraint(self, kConstraint, buildName):
         """Builds an orientation constraint represented by the kConstraint.
 
         Args:
@@ -369,7 +370,7 @@ class Builder(object):
 
         return dccSceneItem
 
-    def buildPoseConstraint(self, kConstraint):
+    def buildPoseConstraint(self, kConstraint, buildName):
         """Builds an pose constraint represented by the kConstraint.
 
         Args:
@@ -388,7 +389,7 @@ class Builder(object):
 
         return dccSceneItem
 
-    def buildPositionConstraint(self, kConstraint):
+    def buildPositionConstraint(self, kConstraint, buildName):
         """Builds an position constraint represented by the kConstraint.
 
         Args:
@@ -407,7 +408,7 @@ class Builder(object):
 
         return dccSceneItem
 
-    def buildScaleConstraint(self, kConstraint):
+    def buildScaleConstraint(self, kConstraint, buildName):
         """Builds an scale constraint represented by the kConstraint.
 
         Args:
@@ -617,19 +618,19 @@ class Builder(object):
 
         elif kObject.isTypeOf("OrientationConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildOrientationConstraint(kObject)
+                dccSceneItem = self.buildOrientationConstraint(kObject, buildName)
 
         elif kObject.isTypeOf("PoseConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildPoseConstraint(kObject)
+                dccSceneItem = self.buildPoseConstraint(kObject, buildName)
 
         elif kObject.isTypeOf("PositionConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildPositionConstraint(kObject)
+                dccSceneItem = self.buildPositionConstraint(kObject, buildName)
 
         elif kObject.isTypeOf("ScaleConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
-                dccSceneItem = self.buildScaleConstraint(kObject)
+                dccSceneItem = self.buildScaleConstraint(kObject, buildName)
 
         elif kObject.isTypeOf("KLOperator"):
             if phase == self._buildPhase_ConstraintsOperators:
@@ -738,7 +739,7 @@ class Builder(object):
                                       self._buildPhase_ConstraintsOperators)
 
         finally:
-            self._postBuild()
+            self._postBuild(kSceneItem)
 
             # Clear Config when finished.
             self.config.clearInstance()
@@ -803,11 +804,21 @@ class Builder(object):
         buildColor = None
         if objectColor is not None:
 
-            if objectColor not in colors.keys():
-                raise ValueError("Invalid color '" + objectColor +
-                                 "' set on: " + kSceneItem.getPath())
+            if type(objectColor) is str:
+                if objectColor not in colors:
+                    print("TTPrint: colorMap:"),;print(colorMap)
+                    buildColor = colorMap['Default']
 
-            buildColor = objectColor
+                    warning = "Invalid color '{}' on '{}', default color '{}' will be used."
+                    logger.warn(warning.format(objectColor, kSceneItem.getPath(), buildColor))
+
+                else:
+                    buildColor = objectColor
+
+            elif type(objectColor).__name__ == "Color":
+                buildColor = objectColor
+            else:
+                raise TypeError("Invalid type for object color: '" + type(objectColor).__name__ + "'")
 
         else:
             #  Find the first color mapping that matches a type in the object
@@ -896,12 +907,107 @@ class Builder(object):
 
         return True
 
-    def _postBuild(self):
+    def _postBuild(self, kSceneItem):
         """Protected Post-Build method.
+
+        Args:
+            kSceneItem (object): kraken kSceneItem object to run post-build
+                operations on.
 
         Returns:
             bool: True if successful.
 
         """
 
+        if os.environ.get('KRAKEN_DCC', None) is not None:
+            self.logOrphanedGraphItems(kSceneItem)
+
+            invalidOps = []
+            self.checkEvaluatedOps(kSceneItem, invalidOps)
+
+            if len(invalidOps) > 0:
+                logger.warn("Non-evaluated Operators:")
+                logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() for x in invalidOps]))
+
+            invalidConstraints = []
+            self.checkEvaluatedConstraints(kSceneItem, invalidConstraints)
+
+            if len(invalidConstraints) > 0:
+                logger.warn("Non-evaluated Constraints:")
+                logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() for x in invalidConstraints]))
+
         return True
+
+    def logOrphanedGraphItems(self, kSceneItem):
+        """Logs any objects that were left out from the build process.
+
+        Args:
+            kSceneItem (object): kraken kSceneItem object to recursively iterate
+                on to find objects that weren't built.
+
+        Returns:
+            Type: True if successful.
+
+        """
+
+        def iterChildren(item, orphanedObjects):
+
+            for each in item.getChildren():
+                if each.getName() in ('implicitAttrGrp', 'visibility', 'ShapeVisibility'):
+                    continue
+
+                if each.isTypeOf('Component'):
+                    continue
+
+                if self.getDCCSceneItem(each) is None:
+                    orphanedObjects.append(each)
+
+                iterChildren(each, orphanedObjects)
+
+        orphanedObjects = []
+        iterChildren(kSceneItem, orphanedObjects)
+
+        if len(orphanedObjects) > 0:
+            logger.warn("Orphaned objects found:")
+            logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() for x in orphanedObjects]))
+
+    def checkEvaluatedOps(self, kSceneItem, invalidOps):
+        """Recursively checks for operators that haven't been evaluated.
+
+        Args:
+            kSceneItem (Object3D): Object to recursively check for invalid ops.
+            invalidOps (list): List invalid operators will be appended to.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if kSceneItem.isTypeOf('Component'):
+            for op in kSceneItem.getOperators():
+                if op.testFlag('HAS_EVALUATED') is False:
+                    invalidOps.append(op)
+
+        for each in kSceneItem.getChildren():
+            self.checkEvaluatedOps(each, invalidOps)
+
+    def checkEvaluatedConstraints(self, kSceneItem, invalidConstraints):
+        """Recursively checks for constraints that haven't been evaluated.
+
+        Args:
+            kSceneItem (Object3D): Object to recursively check for invalid ops.
+            invalidConstraints (list): List invalid constraints will be appended to.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if kSceneItem.isTypeOf('Object3D'):
+            for i in xrange(kSceneItem.getNumConstraints()):
+                constraint = kSceneItem.getConstraintByIndex(i)
+                if constraint.testFlag('HAS_EVALUATED') is False:
+                    invalidConstraints.append(constraint)
+
+        for each in kSceneItem.getChildren():
+            self.checkEvaluatedConstraints(each, invalidConstraints)

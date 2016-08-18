@@ -1,11 +1,16 @@
 
 require Math;
 
+/// \dfgPresetOmit
 function Scalar sq(Scalar v) {
   return v * v;
 }
 
-
+/// \dfgPresetTitle SolveNBoneIK
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function Xfo[] solveNBoneIK(
   in Xfo basePose[],
   in Vec3 goalPosition,
@@ -149,6 +154,11 @@ function Xfo[] solveNBoneIK(
 
 
 // Solve the chain after aligning it with the goal and up-vector.
+/// \dfgPresetTitle SolveNBoneIKWithUpVector
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function Xfo[] solveNBoneIKWithUpVector(
   in Xfo basePose[],
   in Vec3 goalPosition,
@@ -203,6 +213,7 @@ function Xfo[] solveNBoneIKWithUpVector(
 /// methods for aligning Xforms intuitively
 
 // 'normalizes' Integer so that it returns 1 or -1 respectively if it matches the Input Value or it's negative value.
+/// \dfgPresetOmit
 function SInt8 SInt8.normalize(SInt8 v) {
   if (this == v) {
     return SInt8(1);
@@ -221,7 +232,6 @@ function SInt8 SInt8.normalize(SInt8 v) {
 //  3 =  Z
 // -3 = -Z
 // any other values that should should be ignored, currently are not (<3; >3; 0)
-
 
 function Vec3 Quat.getAxis(in UInt32 axisIndex)
 {
@@ -243,12 +253,24 @@ function Vec3 Quat.getAxis(in UInt32 axisIndex)
   return this.getXaxis();
 }
 
+
+
+/// \dfgPresetTitle Mat33FromXYZ
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function Mat33.fromXYZ!(SInt8 x, SInt8 y, SInt8 z) {
   this.row0 = Vec3(x.normalize(1),x.normalize(2),x.normalize(3));
   this.row1 = Vec3(y.normalize(1),y.normalize(2),y.normalize(3));
   this.row2 = Vec3(z.normalize(1),z.normalize(2),z.normalize(3));
 }
 
+/// \dfgPresetTitle Mat44Align
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function Mat44.align!(SInt8 x, SInt8 y, SInt8 z)
 {
   Mat33 mat33ori;
@@ -258,6 +280,11 @@ function Mat44.align!(SInt8 x, SInt8 y, SInt8 z)
   this = this*mat44ori;
 }
 
+/// \dfgPresetTitle XfoAlign
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
 {
   Mat44 m = this.toMat44();

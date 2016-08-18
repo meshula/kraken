@@ -41,7 +41,6 @@ class ComponentInputPort(SceneItem):
 
         return True
 
-
     def getDataType(self):
         """Returns the data type for this input.
 
@@ -66,7 +65,6 @@ class ComponentInputPort(SceneItem):
 
         return self._connection is not None
 
-
     def getConnection(self):
         """Gets the connection of this input.
 
@@ -76,7 +74,6 @@ class ComponentInputPort(SceneItem):
         """
 
         return self._connection
-
 
     def setConnection(self, connectionObj, index = 0):
         """Sets the connection to the component output.
@@ -102,8 +99,6 @@ class ComponentInputPort(SceneItem):
 
         return True
 
-
-
     def removeConnection(self):
         """Removes the connection to the component output.
 
@@ -114,6 +109,34 @@ class ComponentInputPort(SceneItem):
 
         self._connection._removeConnection(self)
         self._connection = None
+
+        return True
+
+    def canConnectTo(self, otherPort):
+        """Tests whether or not this port can connect to the other port.
+
+        Args:
+            otherPort (Port): Port to test if able to connect to.
+
+        Returns:
+            bool: True if can connect, false otherwise.
+
+        """
+
+        if otherPort.isTypeOf('ComponentInputPort'):
+            return False
+
+        if self.getDataType() != otherPort.getDataType():
+
+            outDataType = otherPort.getDataType()
+            inDataType = self.getDataType()
+
+            # Outports of Array types can be connected to inports of the array element type..
+            if not (outDataType.startswith(inDataType) and outDataType.endswith('[]')):
+                return False
+
+        if self.getParent() == otherPort.getParent():
+            return False
 
         return True
 
@@ -133,7 +156,6 @@ class ComponentInputPort(SceneItem):
         """
 
         self._target = target
-
 
     def getTarget(self):
         """Returns the target of the input.
@@ -158,7 +180,6 @@ class ComponentInputPort(SceneItem):
         """
 
         return self._index
-
 
     def __setIndex(self, index):
         """Sets the index of the connection.

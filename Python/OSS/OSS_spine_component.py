@@ -461,20 +461,20 @@ class OSSSpineComponentRig(OSSSpineComponent):
             # hips
             self.hipsMocapCtrl = MCControl('hips', parent=self.ctrlCmpGrp, shape="circle")
             self.hipsMocapCtrl.scalePoints(Vec3(4.5, height, 2.5))
-            self.hipsMocapCtrl.setColor("purpleLight")
+            self.hipsMocapCtrl.setColor("mediumpurple")
             self.hipsMocapCtrl.xfo.tr = pelvisPosition
             self.hipsMocapCtrlSpace = self.hipsMocapCtrl.insertCtrlSpace()
 
             self.pelvisMocapCtrl = MCControl('pelvis', parent=self.hipsMocapCtrl, shape="circle")
             self.pelvisMocapCtrl.scalePoints(Vec3(4.5, height, 2.5))
-            self.pelvisMocapCtrl.setColor("purpleLight")
+            self.pelvisMocapCtrl.setColor("mediumpurple")
             self.pelvisMocapCtrl.xfo.tr = pelvisPosition
             self.pelvisMocapCtrlSpace = self.pelvisMocapCtrl.insertCtrlSpace()
 
             # Torso
             self.torsoMocapCtrl = MCControl('torso', parent=self.hipsMocapCtrl, shape="circle")
             self.torsoMocapCtrl.scalePoints(Vec3(5.0, height, 3.0))
-            self.torsoMocapCtrl.setColor("purpleLight")
+            self.torsoMocapCtrl.setColor("mediumpurple")
 
             self.torsoMocapCtrl.xfo.tr = torsoPosition
             self.torsoMocapCtrlSpace = self.torsoMocapCtrl.insertCtrlSpace()
@@ -482,14 +482,14 @@ class OSSSpineComponentRig(OSSSpineComponent):
             # Chest
             self.chestMocapCtrl = MCControl('chest', parent=self.torsoMocapCtrl, shape="circle")
             self.chestMocapCtrl.scalePoints(Vec3(5.0, height, 3.0))
-            self.chestMocapCtrl.setColor("purpleLight")
+            self.chestMocapCtrl.setColor("mediumpurple")
             self.chestMocapCtrl.xfo.tr = chestPosition
             self.chestMocapCtrlSpace = self.chestMocapCtrl.insertCtrlSpace()
 
             # UpChest
             self.upChestMocapCtrl = MCControl('upChest', parent=self.chestMocapCtrl, shape="circle")
             self.upChestMocapCtrl.scalePoints(Vec3(5.0, height, 3.0))
-            self.upChestMocapCtrl.setColor("purpleLight")
+            self.upChestMocapCtrl.setColor("mediumpurple")
             self.upChestMocapCtrl.xfo.tr = upChestPosition
             self.upChestMocapCtrlSpace = self.upChestMocapCtrl.insertCtrlSpace()
 

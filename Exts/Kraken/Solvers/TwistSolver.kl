@@ -4,8 +4,19 @@ require Geometry;
 object TwistSolver : KrakenSolver {
 };
 
+// Default Constructor
+/// \dfgPresetTitle TwistSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwistSolver
+function TwistSolver()
+{
+
+}
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] TwistSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('blendBias', 'In', 'Scalar'));
@@ -19,6 +30,11 @@ function KrakenSolverArg[] TwistSolver.getArguments(){
 
 
 // Solve
+/// \dfgPresetTitle TwistSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\TwistSolver
 function TwistSolver.solve!
 (
   in Boolean drawDebug,

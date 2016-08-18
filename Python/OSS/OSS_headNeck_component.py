@@ -364,7 +364,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Add Att Inputs
         self.HeadAlignKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.HeadAlignKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        
+
         self.HeadAlignKLOp.setInput('mats', self.alignSpaces)
         self.HeadAlignKLOp.setInput('matWeights', self.alignWeights)
         self.HeadAlignKLOp.setInput('translationAmt',  0)
@@ -503,7 +503,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             # Neck
             self.neckMocapCtrl = MCControl('neck', parent=self.ctrlCmpGrp, shape="circle")
             self.neckMocapCtrl.scalePoints(Vec3(5.0, 5.0, 5.0))
-            self.neckMocapCtrl.setColor("purpleLight")
+            self.neckMocapCtrl.setColor("mediumpurple")
             self.neckMocapCtrl.xfo.tr = neckPosition
 
             self.neckMocapCtrlSpace = self.neckMocapCtrl.insertCtrlSpace()
@@ -516,7 +516,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             # Head
             self.headMocapCtrl = MCControl('head', parent=self.neckMocapCtrl, shape="circle")
             self.headMocapCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
-            self.headMocapCtrl.setColor("purpleLight")
+            self.headMocapCtrl.setColor("mediumpurple")
             self.headMocapCtrl.xfo.tr = headPosition
 
             self.headMocapCtrlSpace = self.headMocapCtrl.insertCtrlSpace()
@@ -590,7 +590,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # We might want to put this as feature of operator.  Certainly this should be a blend...
         # self.headOutputTgt.xfo.tr = self.headCtrl.xfo.tr
         # aimAt(self.headOutputTgt.xfo, aimVector=Vec3(0, 1, 0), upVector=Vec3(0, 0, 1), aimAxis=(1, 0, 0), upAxis=(0, 0, 1))
-        
+
         self.headOutputTgt.constrainTo(self.headCtrl, maintainOffset=True).evaluate()
 
         for i in xrange(len(self.neckOutputs)-1):

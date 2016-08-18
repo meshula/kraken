@@ -38,7 +38,6 @@ class ComponentOutputPort(SceneItem):
 
         return True
 
-
     def getDataType(self):
         """Returns the data type for this input.
 
@@ -63,7 +62,6 @@ class ComponentOutputPort(SceneItem):
 
         return len(self._connections) > 0
 
-
     def getConnection(self, index):
         """Gets the connection of this input.
 
@@ -77,7 +75,6 @@ class ComponentOutputPort(SceneItem):
 
         return self._connections[index]
 
-
     def getNumConnections(self):
         """Gets the number of connections for this output port.
 
@@ -87,7 +84,6 @@ class ComponentOutputPort(SceneItem):
         """
 
         return len(self._connections)
-
 
     def _addConnection(self, connectionObj):
         """Adds a connection to the output.
@@ -111,7 +107,6 @@ class ComponentOutputPort(SceneItem):
 
         return True
 
-
     def _removeConnection(self, connectionObj):
         """Removes a connection.
 
@@ -130,6 +125,33 @@ class ComponentOutputPort(SceneItem):
 
         return True
 
+    def canConnectTo(self, otherPort):
+        """Tests whether or not this port can connect to the other port.
+
+        Args:
+            otherPort (Port): Port to test if able to connect to.
+
+        Returns:
+            bool: True if can connect, false otherwise.
+
+        """
+
+        if otherPort.isTypeOf('ComponentOutputPort'):
+            return False
+
+        if self.getDataType() != otherPort.getDataType():
+
+            outDataType = self.getDataType()
+            inDataType = otherPort.getDataType()
+
+            # Outports of Array types can be connected to inports of the array element type..
+            if not (outDataType.startswith(inDataType) and outDataType.endswith('[]')):
+                return False
+
+        if self.getParent() == otherPort.getParent():
+            return False
+
+        return True
 
     # ===============
     # Target Methods
@@ -146,7 +168,6 @@ class ComponentOutputPort(SceneItem):
         """
 
         self._target = target
-
 
     def getTarget(self):
         """Returns the target of the input.

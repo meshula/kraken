@@ -11,8 +11,8 @@ from kraken.core.objects.object_3d import Object3D
 class HierarchyGroup(Object3D):
     """HierarchyGroup object."""
 
-    def __init__(self, name, parent=None):
-        super(HierarchyGroup, self).__init__(name, parent=parent)
+    def __init__(self, name, parent=None, flags=None):
+        super(HierarchyGroup, self).__init__(name, parent=parent, flags=flags)
 
         self.setShapeVisibility(False)
         self.lockRotation(True, True, True)

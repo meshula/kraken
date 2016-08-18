@@ -356,7 +356,7 @@ class OSSMouthGuide(OSSMouth):
             for i, defName in enumerate(defControlNameList):
                 newCtrl = Control(defName, parent=parent, shape="circle")
                 newCtrl.rotatePoints(90,0,0)
-                newCtrl.setColor("brownMuted")
+                newCtrl.setColor("sienna")
                 newCtrl.xfo = parent.xfo
                 newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0, 0, 8)))
                 newCtrl.scalePoints(Vec3(.5,.5,.5))
@@ -641,7 +641,7 @@ class OSSMouthRig(OSSMouth):
             for i, defName in enumerate(defControlNameList):
                 newCtrl = Control(defName, parent=parent, shape="halfCircle")
                 newCtrl.rotatePoints(90,0,0)
-                newCtrl.setColor("brownMuted")
+                newCtrl.setColor("sienna")
                 newCtrl.xfo = parent.xfo
                 newCtrl.scalePoints(Vec3(.125,.125,.125))
                 controlsList.append(newCtrl)
@@ -833,7 +833,7 @@ class OSSMouthRig(OSSMouth):
             for i in range(numCtrls):
                 ctrl = self.upLipCtrls[i]
                 ctrl.translatePoints(Vec3(Vec3(0, lipCtrlY, lipCtrlZ)))
-                ctrl.setColor("yellowMuted")
+                ctrl.setColor("goldenrod")
                 ctrlUberParent = ctrl.insertCtrlSpace()
                 ctrlParent = ctrl.insertCtrlSpace()
 
@@ -1035,7 +1035,7 @@ class OSSMouthRig(OSSMouth):
         self.loLipCtrl.xfo = data['midLipXfo']
         self.loLipCtrl.rotatePoints(90.0, 0.0, 0.0)
         self.loLipCtrl.scalePoints(Vec3(Vec3(.5, -.125,.5)))
-        self.loLipCtrl.setColor("brownMuted")
+        self.loLipCtrl.setColor("sienna")
         self.loLipCtrl.lockScale(x=False, y=True, z=True)
 
         self.L_loLipHandleCtrl.xfo = data['L_midLipHandleXfo']
@@ -1049,7 +1049,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipCtrl.xfo = data['midLipXfo']
         self.upLipCtrl.rotatePoints(90.0, 0.0, 0.0)
         self.upLipCtrl.scalePoints(Vec3(Vec3(.5, .125,.5)))
-        self.upLipCtrl.setColor("yellowMuted")
+        self.upLipCtrl.setColor("goldenrod")
         self.upLipCtrl.lockScale(x=False, y=True, z=True)
 
         self.L_upLipHandleCtrl.xfo = data['L_midLipHandleXfo']

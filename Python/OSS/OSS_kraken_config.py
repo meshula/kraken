@@ -19,11 +19,13 @@ class OSSConfig(Config):
         """
 
         colorMap = {
+                    "Default": "gold",
+
                     "Control": {
-                                "default": "yellowLight",
-                                "L": "turqoiseMuted",
-                                "M": "yellowLight",
-                                "R": "mutedMagenta"
+                                "default": "gold",
+                                "L": "mediumseagreen",
+                                "M": "gold",
+                                "R": "mediumvioletred"
                                }
                    }
 
@@ -67,6 +69,10 @@ class OSSConfig(Config):
                                   "Locator": "loc",
                                   "Transform": "xfo",
                                   "CtrlSpace": "space",
+                                  "OrientationConstraint": "oriCns",
+                                  "PoseConstraint": "poseCns",
+                                  "PositionConstraint": "posCns",
+                                  "ScaleConstraint": "sclCns",
                                   "KLOperator": "klOp",
                                   "CanvasOperator": "canvasOp"
                                  },
