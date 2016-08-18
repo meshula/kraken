@@ -1,6 +1,7 @@
 require InlineDrawing;
 require Geometry;
 
+
 object RigScaleSolver : KrakenSolver {
 };
 
