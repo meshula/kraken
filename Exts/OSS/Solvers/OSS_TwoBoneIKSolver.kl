@@ -29,23 +29,23 @@ function OSS_TwoBoneIKSolver()
 function KrakenSolverArg[] OSS_TwoBoneIKSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
 
-  args.push(KrakenSolverArg('ikBlend', 'In', 'Scalar', '1.0'));
-  args.push(KrakenSolverArg('softDist', 'In', 'Scalar', '0.0'));
-  args.push(KrakenSolverArg('stretch', 'In', 'Scalar', '0.0'));
+  args.push(KrakenSolverArg('ikBlend', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('softDist', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('stretch', 'In', 'Scalar'));
 
-  args.push(KrakenSolverArg('root', 'In', 'Mat44', 'Mat44()'));
-  args.push(KrakenSolverArg('bone0FK', 'In', 'Mat44', 'Mat44()'));
-  args.push(KrakenSolverArg('bone1FK', 'In', 'Mat44', 'Mat44()'));
-  args.push(KrakenSolverArg('ikHandle', 'In', 'Mat44', 'Mat44()'));
-  args.push(KrakenSolverArg('upV', 'In', 'Mat44', 'Mat44()'));
-  args.push(KrakenSolverArg('boneAxis', 'In', 'UInt32', '0'));
-  args.push(KrakenSolverArg('upAxis', 'In', 'UInt32', '1'));
+  args.push(KrakenSolverArg('root', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('bone0FK', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('bone1FK', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('ikHandle', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('upV', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('boneAxis', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('upAxis', 'In', 'UInt32'));
 
-  args.push(KrakenSolverArg('bone0Len', 'In', 'Scalar', '2.0'));
-  args.push(KrakenSolverArg('bone1Len', 'In', 'Scalar', '1.0'));
-  args.push(KrakenSolverArg('bone0Out', 'Out', 'Mat44', ''));
-  args.push(KrakenSolverArg('bone1Out', 'Out', 'Mat44', ''));
-  args.push(KrakenSolverArg('bone2Out', 'Out', 'Mat44', ''));
+  args.push(KrakenSolverArg('bone0Len', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('bone1Len', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('bone0Out', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('bone1Out', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('bone2Out', 'Out', 'Mat44'));
   return args;
 }
 
