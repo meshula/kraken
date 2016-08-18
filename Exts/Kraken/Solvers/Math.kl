@@ -233,6 +233,28 @@ function SInt8 SInt8.normalize(SInt8 v) {
 // -3 = -Z
 // any other values that should should be ignored, currently are not (<3; >3; 0)
 
+function Vec3 Quat.getAxis(in UInt32 axisIndex)
+{
+  switch (axisIndex)
+  {
+    case 0:
+      return this.getXaxis();
+    case 1:
+      return this.getYaxis();
+    case 2:
+      return this.getZaxis();
+    case 3:
+      return this.getXaxis().negate();
+    case 4:
+      return this.getYaxis().negate();
+    case 5:
+      return this.getZaxis().negate();
+  }
+  return this.getXaxis();
+}
+
+
+
 /// \dfgPresetTitle Mat33FromXYZ
 /// \dfgPresetColor Color(49, 60, 61)
 /// \dfgPresetHeaderColor Color(42, 94, 102)
@@ -269,3 +291,40 @@ function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
   m.align(x, y, z);
   this.setFromMat44(m);
 }
+
+function Quat.align!(SInt8 x, SInt8 y, SInt8 z)
+{
+  Mat33 mat33ori;
+  mat33ori.fromXYZ(x, y, z);
+  Quat quatori;
+  quatori.setFromMat33(mat33ori);
+  this = this*quatori;
+}
+
+
+// function Mat44 Mat44.align(SInt8 x, SInt8 y, SInt8 z)
+// {
+//   Mat33 mat33ori;
+//   mat33ori.fromXYZ(x, y, z);
+//   Mat44 mat44ori;
+//   mat44ori.setFromMat33(mat33ori);
+//   return mat44ori;
+// }
+
+// function Xfo Xfo.align(SInt8 x, SInt8 y, SInt8 z)
+// {
+//   Mat44 m = this.toMat44();
+//   m.align(x, y, z);
+//   Xfo outXfo = setFromMat44(m);
+//   return outXfo;
+// }
+
+// function Mat44.align!(SInt8 x, SInt8 y, SInt8 z)
+// {
+//   this = Mat44.align(x, y,  z);
+// }
+
+// function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
+// {
+//   this = Xfo.align(x, y,  z);
+// }
