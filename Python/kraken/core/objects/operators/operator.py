@@ -251,7 +251,6 @@ class Operator(SceneItem):
 
         return True
 
-
     def getInput(self, name):
         """Returns the input with the specified name.
 
