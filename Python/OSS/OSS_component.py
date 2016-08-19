@@ -255,7 +255,7 @@ class OSS_Component(BaseExampleComponent):
         return NURBSCurveKLOp
 
 
-    def blend_two_xfos(self, target, sourceA, sourceB, blend=0, blendTranslate=None, blendRotate=None, blendScale=None, parentSpace=self.ctrlCmpGrp, name=None):
+    def blend_two_xfos(self, target, sourceA, sourceB, blend=0, blendTranslate=None, blendRotate=None, blendScale=None, parentSpace=None, name=None):
         """Constrain target to a blend between two source Xfos
         Simplifies OSS_BlendTRSConstraintSolver for many cases
 
@@ -279,6 +279,9 @@ class OSS_Component(BaseExampleComponent):
 
         blendTRSConstraint = KLOperator(name, 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
         self.addOperator(blendTRSConstraint)
+
+        if parentSpace is None:
+            parentSpace = self.ctrlCmpGrp
 
         if blendTranslate is None:
              blendTranslate = blend
