@@ -390,32 +390,40 @@ class Object3D(SceneItem):
             bool: True if successful.
 
         """
+        SceneItem.setParent(child, self)
 
         if child.getParent() is not None:
             parent = child.getParent()
             if child in parent.getChildren():
                 parent.getChildren().remove(child)
 
-
-        # check for name collision and adjust the name if they exist
-        # Increment name if it already exists
-        initName = child.getName()
-        name = initName
-        suffix = 1
-
-        while self.getChildByDecoratedName(name + child.getNameDecoration()) is not None:
-            name = initName + str(suffix).zfill(2)
-            suffix += 1
-
-        if initName != name:
-            child.setName(name)
+        child.setName(child.getName())
 
         self.getChildren().append(child)
-        child.setParent(self)
 
         # Assign the child the same component.
         if self._component is not None:
             child.setComponent(self._component)
+
+        return True
+
+
+    def setParent(self, parent):
+        """Sets the parent of this object.
+
+        Arguments:
+        parent (Object): Object that is the parent of this one.
+
+        Returns:
+            bool: True if successful.
+
+        """
+        if parent:
+            parent.addChild(self)
+        else:
+            if self._parent is not None:
+                parent.removeChild(self)
+            SceneItem.setParent(self, None)
 
         return True
 
@@ -433,7 +441,7 @@ class Object3D(SceneItem):
         if self._checkChildIndex(index) is not True:
             return False
 
-        del self.getChildren()[index]
+        self.removeChild(self.getChildren()[index])
 
         return True
 
@@ -480,7 +488,7 @@ class Object3D(SceneItem):
                             "' does not have child:" + child.getPath() +
                             ". it does have:" + str(names))
 
-        child.setParent(None)
+        SceneItem.setParent(child, None)
 
         # Un-assign the child the component.
         if self._component is not None:
