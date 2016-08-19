@@ -397,7 +397,7 @@ class Object3D(SceneItem):
             if child in parent.getChildren():
                 parent.getChildren().remove(child)
 
-        child.setName(name)
+        child.setName(child.getName())
 
         self.getChildren().append(child)
 
