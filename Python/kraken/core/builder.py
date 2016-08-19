@@ -537,7 +537,6 @@ class Builder(object):
         dccSceneItem = None
 
         buildName = kObject.getName()
-
         if hasattr(kObject, 'getBuildName'):
             buildName = kObject.getBuildName()
 
@@ -660,7 +659,6 @@ class Builder(object):
         if dccSceneItem is not None and isinstance(kObject, Object3D) and \
                 phase == self._buildPhase_ConstraintsOperators:
 
-
             self.setTransform(kObject)
             self.lockParameters(kObject)
             self.setVisibility(kObject)
@@ -720,6 +718,7 @@ class Builder(object):
             objects3d = traverser.getItemsOfType('Object3D')
             attributeGroups = traverser.getItemsOfType(['AttributeGroup'])
             attributes = traverser.getItemsOfType(['Attribute'])
+
             # build all 3D objects and attributes
             self.__buildSceneItemList(objects3d,
                                       self._buildPhase_3DObjectsAttributes)
@@ -806,7 +805,6 @@ class Builder(object):
 
             if type(objectColor) is str:
                 if objectColor not in colors:
-                    print("TTPrint: colorMap:"),;print(colorMap)
                     buildColor = colorMap['Default']
 
                     warning = "Invalid color '{}' on '{}', default color '{}' will be used."
