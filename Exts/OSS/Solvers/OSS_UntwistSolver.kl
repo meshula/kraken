@@ -10,7 +10,7 @@ function KrakenSolverArg[] OSS_UntwistSolver.getArguments(){
 
   args.push(KrakenSolverArg('inMatrix', 'In', 'Mat44'));
   args.push(KrakenSolverArg('inBaseMatrix', 'In', 'Mat44'));
-  args.push(KrakenSolverArg('axis', 'In', 'UInt32', '0'));
+  args.push(KrakenSolverArg('axis', 'In', 'UInt32'));
   args.push(KrakenSolverArg('untwistedMatrix', 'Out', 'Mat44'));
   return args;
 }

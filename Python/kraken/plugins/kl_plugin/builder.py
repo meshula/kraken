@@ -41,6 +41,7 @@ from kraken.log import getLogger
 
 logger = getLogger('kraken')
 logger.setLevel(logging.INFO)
+
 def Boolean(b):
   return str(b).lower()
 
@@ -436,7 +437,7 @@ class Builder(Builder):
 
                     kl += solver_kl
                 else:
-                    print(indent+"sourceSolver:"),;print(sourceSolver['member'])
+                    logger.debug(indent+"sourceSolver: %s" % sourceSolver['member'])
                 output_kl = []
                 # output to the results!
                 for i in xrange(len(args)):
@@ -818,7 +819,12 @@ class Builder(Builder):
             #kl += ["  weights[0] = 1.0;"]
             kl += ["}", ""]
         else:
-            kl += ["//No Blend Shapes"]
+            kl += ["function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
+            kl += ["  String result[](%d);" % len(self.__krkShapes)]
+            kl += ["  return result;"]
+            kl += ["}", ""]
+            kl += ["function %s.getShapeWeights(io Float32 weights<>) {" % self.getKLExtensionName()]
+            kl += ["}", ""]
 
         kl += ["function KrakenScalarAttribute<> %s.getScalarAttributes() {" % self.getKLExtensionName()]
         if len(scalarAttributes) == 0:
@@ -1529,7 +1535,7 @@ class Builder(Builder):
     # =========================
     # Constraint Build Methods
     # =========================
-    def buildOrientationConstraint(self, kConstraint):
+    def buildOrientationConstraint(self, kConstraint, buildName):
         """Builds an orientation constraint represented by the kConstraint.
 
         Args:
@@ -1541,7 +1547,7 @@ class Builder(Builder):
         """
         return self.buildKLConstraint(kConstraint)
 
-    def buildPoseConstraint(self, kConstraint):
+    def buildPoseConstraint(self, kConstraint, buildName):
         """Builds an pose constraint represented by the kConstraint.
 
         Args:
@@ -1553,7 +1559,7 @@ class Builder(Builder):
         """
         return self.buildKLConstraint(kConstraint)
 
-    def buildPositionConstraint(self, kConstraint):
+    def buildPositionConstraint(self, kConstraint, buildName):
         """Builds an position constraint represented by the kConstraint.
 
         Args:
@@ -1565,7 +1571,7 @@ class Builder(Builder):
         """
         return self.buildKLConstraint(kConstraint)
 
-    def buildScaleConstraint(self, kConstraint):
+    def buildScaleConstraint(self, kConstraint, buildName):
         """Builds an scale constraint represented by the kConstraint.
 
         Args:
@@ -1729,7 +1735,12 @@ class Builder(Builder):
         if value:
             colors = self.config.getColors()
             c = colors[value]
-            value = Color(r=c[1][0], g=c[1][1], b=c[1][2], a=1.0)
+            if isinstance(c, Color):
+              value = c
+            elif isinstance(c, list):
+              value = Color(r = c[0], g = c[1], b = c[2], a = 1.0)
+            else:
+              value = None
 
         if value is None:
           return True
@@ -1817,12 +1828,18 @@ class Builder(Builder):
         return True
 
 
-    def _postBuild(self):
+    def _postBuild(self, kSceneItem):
         """Post-Build commands.
+
+        Args:
+            kSceneItem (object): kraken kSceneItem object to run post-build
+                operations on.
 
         Return:
             bool: True if successful.
 
         """
+
+        super(Builder, self)._postBuild(kSceneItem)
 
         return self.saveKLExtension()

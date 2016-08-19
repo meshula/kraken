@@ -20,5 +20,9 @@
     "Solvers/Biped/NeckGuideSolver.kl",
     "Solvers/TwistSolver.kl",
     "PersistenceHelpers.kl"
-  ]
+  ],
+  "dfgPresets": {
+    "dir": "DFG",
+    "presetPath": "Kraken.Exts.Solvers.StuffyThings"
+  }
 }

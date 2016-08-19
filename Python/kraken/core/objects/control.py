@@ -15,7 +15,7 @@ from kraken.core.objects.ctrlSpace import CtrlSpace
 class Control(Curve):
     """Base Control object."""
 
-    def __init__(self, name, parent=None, shape="null"):
+    def __init__(self, name, parent=None, shape="null", flags=None):
         """Initializes control object.
 
         Args:
@@ -24,7 +24,7 @@ class Control(Curve):
 
         """
 
-        super(Control, self).__init__(name, parent=parent)
+        super(Control, self).__init__(name, parent=parent, flags=flags)
         self.shape = shape
 
         self.setShape(shape)

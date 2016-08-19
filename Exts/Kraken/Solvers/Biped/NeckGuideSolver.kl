@@ -3,8 +3,19 @@ require InlineDrawing;
 object NeckGuideSolver : KrakenSolver {
 };
 
+// Default Constructor
+/// \dfgPresetTitle NeckGuideSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NeckGuideSolver
+function NeckGuideSolver()
+{
+
+}
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] NeckGuideSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('sources', 'In', 'Mat44[]'));
@@ -14,6 +25,11 @@ function KrakenSolverArg[] NeckGuideSolver.getArguments(){
 
 
 // Solve
+/// \dfgPresetTitle NeckGuideSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NeckGuideSolver
 function NeckGuideSolver.solve!
 (
   in Boolean drawDebug,

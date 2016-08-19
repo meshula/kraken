@@ -310,7 +310,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
             self.shldrMocapCtrl = MCControl('shldr', parent=self.ctrlCmpGrp, shape="circle")
             self.shldrMocapCtrl.scalePoints(Vec3(5.0, 5.0, 5.0))
             self.shldrMocapCtrl.rotatePoints(0.0, 0.0, 90.0)
-            self.shldrMocapCtrl.setColor("purpleLight")
+            self.shldrMocapCtrl.setColor("mediumpurple")
             self.shldrMocapCtrl.xfo = data['shldrXfo']
             self.shldrMocapCtrlSpace = self.shldrMocapCtrl.insertCtrlSpace()
 

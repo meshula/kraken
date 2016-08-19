@@ -106,7 +106,7 @@ class OSSCurveComponentGuide(OSSCurveComponent):
 
             for i, defName in enumerate(defControlNameList):
                 newCtrl = Control(defName, parent=parent, shape="circle")
-                newCtrl.setColor("brownMuted")
+                newCtrl.setColor("brown")
                 newCtrl.xfo = parent.xfo.multiply(Xfo(tr=Vec3(0, i, 0)))
                 controlsList.append(newCtrl)
         return True
@@ -419,7 +419,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
             for i in range(numCtrls):
                 ctrl = self.controlInputs[i]
-                ctrl.setColor("yellowMuted")
+                ctrl.setColor("gold")
                 ctrlParent = ctrl.insertCtrlSpace()
                 #this is for a curve only solution
                 ctrlParent.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)

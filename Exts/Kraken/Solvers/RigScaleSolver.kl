@@ -1,10 +1,16 @@
 require InlineDrawing;
 require Geometry;
 
+
 object RigScaleSolver : KrakenSolver {
 };
 
 // Default Constructor
+/// \dfgPresetTitle RigScaleSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\RigScaleSolver
 function RigScaleSolver()
 {
   this.defaultValues["target"] = Mat44();
@@ -12,6 +18,7 @@ function RigScaleSolver()
 
 
 // Return Arguments for Kraken
+/// \dfgPresetOmit
 function KrakenSolverArg[] RigScaleSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('target', 'Out', 'Mat44'));
@@ -20,6 +27,11 @@ function KrakenSolverArg[] RigScaleSolver.getArguments(){
 
 
 // Solve
+/// \dfgPresetTitle RigScaleSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\RigScaleSolver
 function RigScaleSolver.solve!
 (
   in Boolean drawDebug,

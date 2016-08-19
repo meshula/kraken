@@ -148,6 +148,16 @@ class Operator(SceneItem):
 
         return False
 
+    def getFlags(self):
+        """Returns all flags set on this object.
+
+        Returns:
+            list: Flags set on this object.
+
+        """
+
+        return self._flags.keys()
+
     # ===============
     # Source Methods
     # ===============
@@ -240,7 +250,6 @@ class Operator(SceneItem):
             self.inputs[name] = operatorInput
 
         return True
-
 
     def getInput(self, name):
         """Returns the input with the specified name.
@@ -403,5 +412,6 @@ class Operator(SceneItem):
         """
 
         self.updateTargets()
+        self.setFlag("HAS_EVALUATED")
 
         return True

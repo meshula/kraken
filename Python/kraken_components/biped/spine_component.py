@@ -239,7 +239,7 @@ class SpineComponentRig(SpineComponent):
         self.pelvisCtrl.translatePoints(Vec3(0.0, -0.5, -0.25))
         self.pelvisCtrl.lockTranslation(True, True, True)
         self.pelvisCtrl.lockScale(True, True, True)
-        self.pelvisCtrl.setColor("blueLightMuted")
+        self.pelvisCtrl.setColor("dodgerblue")
 
 
         # ==========

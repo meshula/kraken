@@ -1,0 +1,59 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+    "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat33.html",
+    "uiTooltip" : "Supported types:\n  this: Mat33\n  x: SInt8\n  y: SInt8\n  z: SInt8\n"
+    },
+  "title" : "Mat33FromXYZ",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Mat33"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "x",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt8"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "y",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt8"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "z",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt8"
+      }
+    ],
+  "extDeps" : {
+    "Kraken" : "*"
+    },
+  "presetGUID" : "C1F3DAE77F59CC3D1602C4333DBE199A",
+  "code" : "require Kraken;
+
+dfgEntry {
+  this.fromXYZ(x, y, z);
+}
+"
+  }

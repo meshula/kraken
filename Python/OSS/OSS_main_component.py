@@ -168,6 +168,7 @@ class OSSMainComponentGuide(OSSMainComponent):
         if "oss_vis" not in Config.getInstance().getControlShapes():
             self.visIconCtrl.setCurveData(VIS_SHAPE)
         self.visIconCtrl.scalePoints(Vec3(8, 1.0, 8))
+        self.visIconCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
 
         return True
 
@@ -182,7 +183,7 @@ class OSSMainComponentGuide(OSSMainComponent):
             if self.mocapIconCtrl is None:
                 self.mocapIconCtrl = Control('mocapIcon', parent=self.ctrlCmpGrp)
                 self.mocapIconCtrl.setCurveData(MOCAP_SHAPE)
-                self.mocapIconCtrl.setColor("purpleLight")
+                self.mocapIconCtrl.setColor("mediumpurple")
                 self.mocapIconCtrl.scalePoints(Vec3(2.0, 2.0, 2.0))
                 self.mocapIconCtrl.xfo.tr = Vec3(0.0, 0.0, 3.0)  #How to load default in this callback without access to data?
                 self.mocap = True
@@ -259,7 +260,7 @@ class OSSMainComponentRig(OSSMainComponent):
         if "oss_master" not in Config.getInstance().getControlShapes():
             self.mainCtrl.setCurveData(MASTER_SHAPE)
         self.mainCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
-        self.mainCtrl.setColor("blueLightMuted")
+        self.mainCtrl.setColor("lightsalmon")
         self.mainCtrl.lockScale(x=True, y=True, z=True)
         self.mainCtrlSpace = self.mainCtrl.insertCtrlSpace()
 
@@ -267,13 +268,13 @@ class OSSMainComponentRig(OSSMainComponent):
         if "oss_master" not in Config.getInstance().getControlShapes():
             self.offsetCtrl.setCurveData(MASTER_SHAPE)
         self.offsetCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
-        self.offsetCtrl.setColor("blueDark")
+        self.offsetCtrl.setColor("steelblue")
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
         self.offsetCtrlSpace = self.offsetCtrl.insertCtrlSpace()
 
         self.rootCtrl = FKControl('root', shape='arrow', parent=self.mainCtrl)
         self.rootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
-        self.rootCtrl.setColor("yellowLight")
+        self.rootCtrl.setColor("gold")
         self.rootCtrl.lockScale(x=True, y=True, z=True)
         self.rootCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
         self.rootCtrlSpace = self.rootCtrl.insertCtrlSpace()
@@ -290,7 +291,7 @@ class OSSMainComponentRig(OSSMainComponent):
         if "oss_vis" not in Config.getInstance().getControlShapes():
             self.visIconCtrl.setCurveData(VIS_SHAPE)
         self.visIconCtrl.scalePoints(Vec3(0.5, 0.5, 0.5))
-        self.visIconCtrl.setColor("yellowMuted")
+        self.visIconCtrl.setColor("gold")
         self.visIconCtrl.constrainTo(self.mainCtrl, maintainOffset=True)
 
         # Add Component Params to IK control
@@ -380,6 +381,7 @@ class OSSMainComponentRig(OSSMainComponent):
 
         self.visIconCtrl.xfo = data['visIconXfo']
         self.visIconCtrl.scalePoints(Vec3(8, 1.0, 8))
+        self.visIconCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
 
 
         if self.mocap:
@@ -389,7 +391,7 @@ class OSSMainComponentRig(OSSMainComponent):
             if "oss_mocap" not in Config.getInstance().getControlShapes():
                 self.mocapIconCtrl.setCurveData(MOCAP_SHAPE)
             self.mocapIconCtrl.xfo = data["mocapIconXfo"]
-            self.mocapIconCtrl.setColor("purpleLight")
+            self.mocapIconCtrl.setColor("mediumpurple")
             self.mocapIconCtrl.scalePoints(Vec3(2.0, 2.0, 2.0))
             self.mocapIconCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
 
@@ -401,7 +403,7 @@ class OSSMainComponentRig(OSSMainComponent):
 
             # COG
             self.cogMocapCtrl = MCControl('cog', parent=self.offsetCtrl, shape="circle")
-            self.cogMocapCtrl.setColor("purpleLight")
+            self.cogMocapCtrl.setColor("mediumpurple")
             self.cogMocapCtrl.xfo.tr = data["cogPosition"]
             self.cogMocapCtrlSpace = self.cogMocapCtrl.insertCtrlSpace()
 

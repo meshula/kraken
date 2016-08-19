@@ -12,6 +12,7 @@ from kraken.log import getLogger
 
 from kraken.core.maths import Math_radToDeg, RotationOrder
 from kraken.core.kraken_system import ks
+from kraken.core.configs.config import Config
 from kraken.core.builder import Builder
 
 from kraken.core.maths import Vec2, Vec3, Xfo, Mat44, Math_radToDeg, RotationOrder
@@ -563,7 +564,7 @@ class Builder(Builder):
     # =========================
     # Constraint Build Methods
     # =========================
-    def buildOrientationConstraint(self, kConstraint):
+    def buildOrientationConstraint(self, kConstraint, buildName):
         """Builds an orientation constraint represented by the kConstraint.
 
         Args:
@@ -609,11 +610,13 @@ class Builder(Builder):
             dccSceneItem.Parameters('offy').Value = Math_radToDeg(offsetAngles.y)
             dccSceneItem.Parameters('offz').Value = Math_radToDeg(offsetAngles.z)
 
+        si.SetUserKeyword(dccSceneItem, buildName)
+
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
         return dccSceneItem
 
-    def buildPoseConstraint(self, kConstraint):
+    def buildPoseConstraint(self, kConstraint, buildName):
         """Builds an pose constraint represented by the kConstraint.
 
         Args:
@@ -683,11 +686,13 @@ class Builder(Builder):
             dccSceneItem.Parameters('posy').Value = offsetXfo.tr.y
             dccSceneItem.Parameters('posz').Value = offsetXfo.tr.z
 
+        si.SetUserKeyword(dccSceneItem, buildName)
+
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
         return dccSceneItem
 
-    def buildPositionConstraint(self, kConstraint):
+    def buildPositionConstraint(self, kConstraint, buildName):
         """Builds an position constraint represented by the kConstraint.
 
         Args:
@@ -716,11 +721,13 @@ class Builder(Builder):
             dccSceneItem.Parameters('off1y').Value = offsetXfo.tr.y
             dccSceneItem.Parameters('off1z').Value = offsetXfo.tr.z
 
+        si.SetUserKeyword(dccSceneItem, buildName)
+
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
         return dccSceneItem
 
-    def buildScaleConstraint(self, kConstraint):
+    def buildScaleConstraint(self, kConstraint, buildName):
         """Builds an scale constraint represented by the kConstraint.
 
         Args:
@@ -748,6 +755,8 @@ class Builder(Builder):
             dccSceneItem.Parameters('offx').Value = offsetXfo.sc.x
             dccSceneItem.Parameters('offy').Value = offsetXfo.sc.y
             dccSceneItem.Parameters('offz').Value = offsetXfo.sc.z
+
+        si.SetUserKeyword(dccSceneItem, buildName)
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -971,7 +980,6 @@ class Builder(Builder):
         canvasOpPath = None
         try:
             if isKLBased is True:
-                solverTypeName = kOperator.getSolverTypeName()
                 ports = kOperator.getSolverArgs()
                 portCount = len(ports)
 
@@ -1009,44 +1017,78 @@ class Builder(Builder):
                 canvasOp.Name = buildName
                 self._registerSceneItemPair(kOperator, canvasOp)
 
-                si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken")
+                config = Config.getInstance()
+                nameTemplate = config.getNameTemplate()
+                typeTokens = nameTemplate['types']
+                opTypeToken = typeTokens.get(type(kOperator).__name__, 'op')
+                solverNodeName = '_'.join([kOperator.getName(), opTypeToken])
+                solverSolveNodeName = '_'.join([kOperator.getName(), 'solve', opTypeToken])
 
-                si.FabricCanvasAddFunc(canvasOpPath, "",
-                                       kOperator.getName(),
-                                       "dfgEntry {}",
-                                       "400",
-                                       "0")
+                si.FabricCanvasSetExtDeps(canvasOpPath, "", kOperator.getExtension())
+
+                solverTypeName = kOperator.getSolverTypeName()
+
+                # Create Solver Function Node
+                dfgEntry = "dfgEntry {\n  solver = " + solverTypeName + "();\n}"
+                solverNodeCode = "{}\n\n{}".format('require ' + kOperator.getExtension() + ';', dfgEntry)
+
+                si.FabricCanvasAddFunc(canvasOpPath,
+                                       "",
+                                       solverNodeName,
+                                       solverNodeCode,
+                                       "-220",
+                                       "100")
 
                 si.FabricCanvasAddPort(canvasOpPath,
-                                       kOperator.getName(),
+                                       solverNodeName,
+                                       "solver",
+                                       "Out",
+                                       solverTypeName,
+                                       "",
+                                       kOperator.getExtension())
+
+                solverVarName = si.FabricCanvasAddVar(canvasOpPath,
+                                                      "",
+                                                      "solverVar",
+                                                      solverTypeName,
+                                                      kOperator.getExtension(),
+                                                      "-75",
+                                                      "100")
+
+                si.FabricCanvasConnect(canvasOpPath,
+                                       "",
+                                       solverNodeName + ".solver",
+                                       solverVarName + ".value")
+
+                # Crate Solver "Solve" Function Node
+                si.FabricCanvasAddFunc(canvasOpPath,
+                                       "",
+                                       solverSolveNodeName,
+                                       "dfgEntry {}"
+                                       "100",
+                                       "100")
+
+                si.FabricCanvasAddPort(canvasOpPath,
+                                       solverSolveNodeName,
                                        "solver",
                                        "IO",
                                        solverTypeName,
                                        "",
-                                       "Kraken")
-
-                si.FabricCanvasAddPort(canvasOpPath,
-                                       "",
-                                       "solver",
-                                       "IO",
-                                       solverTypeName,
-                                       "",
-                                       "Kraken")
+                                       kOperator.getExtension())
 
                 si.FabricCanvasConnect(canvasOpPath,
                                        "",
-                                       "solver",
-                                       kOperator.getName() + ".solver")
+                                       solverVarName + ".value",
+                                       solverSolveNodeName + ".solver")
 
                 si.FabricCanvasConnect(canvasOpPath,
                                        "",
-                                       kOperator.getName() + ".solver",
-                                       "solver")
+                                       solverSolveNodeName + ".solver",
+                                       "exec")
 
                 # Generate the operator source code.
                 opSourceCode = kOperator.generateSourceCode()
-                si.FabricCanvasSetCode(canvasOpPath, kOperator.getName(), opSourceCode)
-                solverNodeName = kOperator.getName()
+                si.FabricCanvasSetCode(canvasOpPath, solverSolveNodeName, opSourceCode)
 
             else:
                 host = ks.getCoreClient().DFG.host
@@ -1098,7 +1140,7 @@ class Builder(Builder):
                 canvasOp.Name = buildName
                 self._registerSceneItemPair(kOperator, canvasOp)
 
-                si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken")
+                si.FabricCanvasSetExtDeps(canvasOpPath, "", kOperator.getExtension())
                 uniqueNodeName = si.FabricCanvasInstPreset(canvasOpPath, "", kOperator.getPresetPath(), "400", "0")
                 solverNodeName = uniqueNodeName
 
@@ -1109,8 +1151,6 @@ class Builder(Builder):
                     portName = port.name.getSimpleType()
                     portDataType = port.dataType.getSimpleType()
                     portConnectionType = port.connectionType.getSimpleType()
-                elif portDataType == 'Execute':
-                    return
                 else:
                     portName = node.getExecPortName(i)
                     rtVal = opBinding.getArgValue(portName)
@@ -1120,10 +1160,10 @@ class Builder(Builder):
                 aCount = 0  # Store how many array nodes have been created.
                 if portConnectionType == 'In':
                     if isKLBased is True:
-                        si.FabricCanvasAddPort(canvasOpPath, solverNodeName, portName, "In", portDataType, "")
+                        si.FabricCanvasAddPort(canvasOpPath, solverSolveNodeName, portName, "In", portDataType, "")
 
                     si.FabricCanvasAddPort(canvasOpPath, "", portName, "In", portDataType, "")
-                    si.FabricCanvasConnect(canvasOpPath, "", portName, solverNodeName + "." + portName)
+                    si.FabricCanvasConnect(canvasOpPath, "", portName, solverSolveNodeName + "." + portName)
 
                 elif portConnectionType in ('IO', 'Out'):
 
@@ -1157,7 +1197,7 @@ class Builder(Builder):
                         arrayNodeCode += "}"
 
                         si.FabricCanvasAddPort(canvasOpPath,
-                                               solverNodeName,
+                                               solverSolveNodeName,
                                                portName,
                                                "Out",
                                                portDataType,
@@ -1169,7 +1209,7 @@ class Builder(Builder):
 
                         si.FabricCanvasConnect(canvasOpPath,
                                                "",
-                                               solverNodeName + "." + portName,
+                                               solverSolveNodeName + "." + portName,
                                                arrayNode + "." + portName)
 
                         for j in xrange(len(connectedObjects)):
@@ -1178,7 +1218,7 @@ class Builder(Builder):
 
                     else:
                         if isKLBased is True:
-                            si.FabricCanvasAddPort(canvasOpPath, solverNodeName, portName, "Out", portDataType, "")
+                            si.FabricCanvasAddPort(canvasOpPath, solverSolveNodeName, portName, "Out", portDataType, "")
 
                         if portDataType not in ('Execute', 'DrawingHandle'):
                             si.FabricCanvasAddPort(canvasOpPath, "", portName, "Out", portDataType, "")
@@ -1186,12 +1226,12 @@ class Builder(Builder):
                         if portDataType in ('Execute', 'DrawingHandle') and portName == 'exec':
                             pass
                         elif portDataType in ('Execute', 'DrawingHandle') and portName != 'exec':
-                            si.FabricCanvasConnect(canvasOpPath, "", solverNodeName + "." + portName, "exec")
+                            si.FabricCanvasConnect(canvasOpPath, "", solverSolveNodeName + "." + portName, "exec")
                         else:
-                            si.FabricCanvasConnect(canvasOpPath, "", solverNodeName + "." + portName, portName)
+                            si.FabricCanvasConnect(canvasOpPath, "", solverSolveNodeName + "." + portName, portName)
 
                 else:
-                    raise Exception("Operator:'" + kOperator.getName() + " has an invalid 'portConnectionType': " + portConnectionType)
+                    raise Exception("Operator:'" + solverSolveNodeName + " has an invalid 'portConnectionType': " + portConnectionType)
 
             # Make connections from DCC objects to operator ports
             for i in xrange(portCount):
@@ -1212,7 +1252,7 @@ class Builder(Builder):
                 elif portConnectionType in ('IO', 'Out'):
                     addPortConnection(canvasOpPath, portName, portDataType, portConnectionType)
                 else:
-                    raise Exception("Operator:'" + kOperator.getName() + " has an invalid 'portConnectionType': " + portConnectionType)
+                    raise Exception("Operator:'" + solverSolveNodeName + " has an invalid 'portConnectionType': " + portConnectionType)
 
         finally:
             canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
@@ -1326,9 +1366,30 @@ class Builder(Builder):
 
         if buildColor is not None:
             displayProperty = dccSceneItem.AddProperty("Display Property")
-            displayProperty.Parameters("wirecolorr").Value = colors[buildColor][1][0]
-            displayProperty.Parameters("wirecolorg").Value = colors[buildColor][1][1]
-            displayProperty.Parameters("wirecolorb").Value = colors[buildColor][1][2]
+
+            # Object color is set as a string
+            if type(buildColor) is str:
+
+                # Color in config is stored as rgb scalar values in a list
+                if type(colors[buildColor]) is list:
+                    displayProperty.Parameters("wirecolorr").Value = colors[buildColor][0]
+                    displayProperty.Parameters("wirecolorg").Value = colors[buildColor][1]
+                    displayProperty.Parameters("wirecolorb").Value = colors[buildColor][2]
+
+                # Color in config is stored as a Color object
+                elif type(colors[buildColor]).__name__ == 'Color':
+                    displayProperty.Parameters("wirecolorr").Value = colors[buildColor].r
+                    displayProperty.Parameters("wirecolorg").Value = colors[buildColor].g
+                    displayProperty.Parameters("wirecolorb").Value = colors[buildColor].b
+
+                else:
+                    raise TypeError(kSceneItem.getPath() + " has an invalid type: '" + type(colors[buildColor]).__name__ + "'")
+
+            # Object color is set as a Color object
+            elif type(buildColor).__name__ == 'Color':
+                displayProperty.Parameters("wirecolorr").Value = buildColor.r
+                displayProperty.Parameters("wirecolorg").Value = buildColor.g
+                displayProperty.Parameters("wirecolorb").Value = buildColor.b
 
         return True
 
@@ -1431,13 +1492,19 @@ class Builder(Builder):
 
         return True
 
-    def _postBuild(self):
+    def _postBuild(self, kSceneItem):
         """Post-Build commands.
+
+        Args:
+            kSceneItem (object): kraken kSceneItem object to run post-build
+                operations on.
 
         Returns:
             bool: True if successful.
 
         """
+
+        super(Builder, self)._postBuild(kSceneItem)
 
         # Find all Canvas Ops and set to only execute if necessary
         nameTemplate = self.config.getNameTemplate()
