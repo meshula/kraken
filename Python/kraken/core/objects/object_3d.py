@@ -289,7 +289,7 @@ class Object3D(SceneItem):
             bool: True if successful.
 
         """
-        self._originalName = name
+
         # check for name collision and adjust the name if they exist
         if self.getParent() is not None:
             # Increment name if it already exists
@@ -397,9 +397,7 @@ class Object3D(SceneItem):
             if child in parent.getChildren():
                 parent.getChildren().remove(child)
 
-
-        # Under new parent, name may not require collision numbers appended
-        child.setName(child.getOriginalName())
+        child.setName(child.getName())
 
         self.getChildren().append(child)
 
