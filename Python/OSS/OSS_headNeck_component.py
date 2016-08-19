@@ -358,7 +358,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
 
         # Add Spine Canvas Op
-        self.HeadAlignKLOp = KLOperator('HeadAlignKLOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
+        self.HeadAlignKLOp = KLOperator('headAlignKLOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
         self.addOperator(self.HeadAlignKLOp)
 
         # Add Att Inputs

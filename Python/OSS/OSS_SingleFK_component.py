@@ -41,7 +41,6 @@ class OSSSingleFK(OSS_Component):
         # Declare Inputs Xfos
 
         # Declare Output Xfos
-        self.SingleFKStartOutputTgt = self.createOutput('start', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.SingleFKEndOutputTgt = self.createOutput('end', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
@@ -61,7 +60,6 @@ class OSSSingleFKGuide(OSSSingleFK):
         # =========
         # Guide Controls
         self.SingleFKCtrl = Control(self.getName() , parent=self.ctrlCmpGrp, shape="null")
-        self.SingleFKEndCtrl = Control(self.getName() + 'End', shape="cube", parent=self.SingleFKCtrl)
 
         data = {
                 "name": name,
@@ -189,16 +187,15 @@ class OSSSingleFKRig(OSSSingleFK):
         # =========
         # SingleFK
 
-        self.SingleFK_offsetCtrl = Control(self.getName() + '_offset', parent=self.ctrlCmpGrp, shape="cube")
-        self.SingleFK_offsetCtrl.xfo = data[self.getName() + 'Xfo']
-        self.SingleFK_offsetCtrl.alignOnXAxis()
-        self.SingleFK_offsetCtrlSpace = self.SingleFK_offsetCtrl.insertCtrlSpace()
-
-        self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFK_offsetCtrl, shape="null")
-        self.SingleFKCtrl.xfo = data[self.getName() + 'Xfo']
-        self.SingleFKEndOutputTgt.xfo = data[self.getName() + 'EndXfo']
+        self.SingleFKEndOutputTgt.xfo = data[self.getName() + 'Xfo']
+        self.SingleFKParentSpace = CtrlSpace(self.getName() + 'ParentSpace', parent=self.ctrlCmpGrp)
+        self.SingleFKCtrlSpace = CtrlSpace(self.getName() + 'CtrlSpace', parent=self.SingleFKParentSpace)
+        self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFKCtrlSpace, shape="cube")
         #self.SingleFKCtrl.setCurveData(data['SingleFKCtrlCrvData'])
 
+        self.SingleFKParentSpace.xfo = data[self.getName() + 'Xfo']
+        self.SingleFKCtrlSpace.xfo = data[self.getName() + 'Xfo']
+        self.SingleFKCtrl.xfo = data[self.getName() + 'Xfo']
         # ==========
         # Deformers
         # ==========
@@ -211,22 +208,38 @@ class OSSSingleFKRig(OSSSingleFK):
         # Constrain I/O
         # ==============
         # Constraint inputs
-
+        self.SingleFKSpaceConstraint = self.SingleFKParentSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         # ==============
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.SingleFKInputConstraint = self.SingleFK_offsetCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-
-        # Constraint outputs
-        self.SingleFKStartOutputTgtConstraint = self.SingleFKStartOutputTgt.constrainTo(self.SingleFKCtrl)
-        self.SingleFKEndOutputTgtConstraint = self.SingleFKEndOutputTgt.constrainTo(self.SingleFKCtrl, maintainOffset=True)
-        self.SingleFKDefConstraint = self.SingleFKDef.constrainTo(self.SingleFKCtrl)
-        self.SingleFKStartOutputTgtConstraint.evaluate()
-        self.SingleFKEndOutputTgtConstraint.evaluate()
-
-        self.SingleFKStartOutputTgt.parentJoint =  self.SingleFKDef
         self.SingleFKEndOutputTgt.parentJoint =  self.SingleFKDef
+
+        # WorldSpace Blend Aim
+        SingleFKSettingsAttrGrp = AttributeGroup("DisplayInfo_Settings", parent=self.SingleFKCtrl)
+        self.parentSpaceAttr = ScalarAttribute('alignToParent', value=1.0, minValue=0.0, maxValue=1.0, parent=SingleFKSettingsAttrGrp)
+        self.worldSpaceAttr = ScalarAttribute('alignToWorld', value=0.0, minValue=0.0, maxValue=1.0, parent=SingleFKSettingsAttrGrp)
+
+
+        # Add Spine Canvas Op
+        self.alignSpacesKLOp = KLOperator('headAlignKLOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
+        self.addOperator(self.alignSpacesKLOp)
+
+        self.alignSpaces = []
+        self.alignWeights = []
+        # Add Att Inputs
+        self.alignSpacesKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.alignSpacesKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        
+        self.alignSpacesKLOp.setInput('mats', self.alignSpaces)
+        self.alignSpacesKLOp.setInput('matWeights', self.alignWeights)
+        self.alignSpacesKLOp.setInput('translationAmt',  0)
+        self.alignSpacesKLOp.setInput('scaleAmt',  0)
+        self.alignSpacesKLOp.setInput('rotationAmt',  1)
+        self.alignSpacesKLOp.setInput('parent',  self.SingleFKParentSpace)
+        self.alignSpacesKLOp.setOutput('result', self.SingleFKCtrlSpace)
+
+
 
         Profiler.getInstance().pop()
 
@@ -241,15 +254,24 @@ class OSSSingleFKRig(OSSSingleFK):
         True if successful.
 
         """
-
         super(OSSSingleFKRig, self).loadData( data )
 
         self.createControls(data)
 
+        # Add items into Blend
+        self.alignSpaces.append(self.SingleFKParentSpace)
+        self.alignSpaces.append(self.ctrlCmpGrp)
+
+        self.alignWeights.append(self.parentSpaceAttr)
+        self.alignWeights.append(self.worldSpaceAttr)
+
+        # Constraint outputs
+        self.SingleFKEndOutputTgtConstraint = self.SingleFKEndOutputTgt.constrainTo(self.SingleFKCtrl, maintainOffset=True)
+        self.SingleFKDefConstraint = self.SingleFKDef.constrainTo(self.SingleFKCtrl)
+        self.SingleFKEndOutputTgtConstraint.evaluate()
 
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
         self.SingleFKCtrl.scalePoints(globalScale)
-        self.SingleFK_offsetCtrl.scalePoints(globalScale)
 
 
 from kraken.core.kraken_system import KrakenSystem
