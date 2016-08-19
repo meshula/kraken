@@ -220,17 +220,17 @@ class MainSrtComponentRig(MainSrtComponent):
         # Add Canvas Ops
         # ===============
         # Add Rig Scale Canvas Op
-        self.rigScaleKLOp = KLOperator('rigScale', 'RigScaleSolver', 'Kraken')
-        self.addOperator(self.rigScaleKLOp)
+        self.rigScaleOp = KLOperator('rigScale', 'RigScaleSolver', 'Kraken')
+        self.addOperator(self.rigScaleOp)
 
         # Add Att Inputs
-        self.rigScaleKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.rigScaleKLOp.setInput('rigScale', self.rigScaleOutputAttr)
+        self.rigScaleOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.rigScaleOp.setInput('rigScale', self.rigScaleOutputAttr)
 
         # Add Xfo Inputs
 
         # Add Xfo Outputs
-        self.rigScaleKLOp.setOutput('target', self.mainSRTCtrlSpace)
+        self.rigScaleOp.setOutput('target', self.mainSRTCtrlSpace)
 
 
         Profiler.getInstance().pop()
@@ -272,6 +272,10 @@ class MainSrtComponentRig(MainSrtComponent):
         # Evaluate Constraints
         self.srtOutputToSrtCtrlConstraint.evaluate()
         self.offsetToSrtCtrlConstraint.evaluate()
+
+        # Evaluate Operators
+        self.rigScaleOp.evaluate()
+
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
