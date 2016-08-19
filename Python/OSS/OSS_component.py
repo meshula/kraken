@@ -148,7 +148,7 @@ class OSS_Component(BaseExampleComponent):
         partialBlendSolver.setInput('constrainerScaleA', joint)
         partialBlendSolver.setInput('constrainerScaleB', baseScale)
         # Add Xfo Outputs
-        partialBlendSolver.setOutput('constrainee', null)
+        partialBlendSolver.setOutput('result', null)
 
         partialJointDef.constrainTo(null).evaluate()
 
@@ -253,3 +253,52 @@ class OSS_Component(BaseExampleComponent):
         NURBSCurveKLOp.evaluate()
 
         return NURBSCurveKLOp
+
+
+    def blend_two_xfos(self, target, sourceA, sourceB, blend=0, blendTranslate=None, blendRotate=None, blendScale=None, parentSpace=self.ctrlCmpGrp, name=None):
+        """Constrain target to a blend between two source Xfos
+        Simplifies OSS_BlendTRSConstraintSolver for many cases
+
+        Args:
+            sourceA (Xfo): first xfo
+            sourceB (Xfo): second xfo
+            target (Xfo): destination xfo
+            blend (float): overall blend value
+            blendTranslate (float): translate blend override
+            blendRotate (float): rotate blend override
+            blendScale (float): scale blend override
+            parentSpace  (Xfo): return result in local space of this xfo
+
+        Returns:
+            The KL constraint operator
+
+        """
+
+        if not name:
+            name = target.getName()+"_blendTRSConstraint"
+
+        blendTRSConstraint = KLOperator(name, 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+        self.addOperator(blendTRSConstraint)
+
+        if blendTranslate is None:
+             blendTranslate = blend
+
+        if blendRotate is None:
+             blendRotate = blend
+
+        if blendScale is None:
+             blendScale = blend
+
+        blendTRSConstraint.setInput('blendTranslate', blendTranslate)
+        blendTRSConstraint.setInput('blendRotate', blendRotate)
+        blendTRSConstraint.setInput('blendScale', blendScale)
+        blendTRSConstraint.setInput('parentSpace', parentSpace)
+        blendTRSConstraint.setInput('constrainerTranslateA', sourceA)
+        blendTRSConstraint.setInput('constrainerTranslateB', sourceB)
+        blendTRSConstraint.setInput('constrainerRotateA', sourceA)
+        blendTRSConstraint.setInput('constrainerRotateB', sourceB)
+        blendTRSConstraint.setInput('constrainerScaleA', sourceA)
+        blendTRSConstraint.setInput('constrainerScaleB', sourceB)
+        blendTRSConstraint.setOutput('result', target)
+
+        return blendTRSConstraint

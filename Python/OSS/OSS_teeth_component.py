@@ -182,7 +182,7 @@ class OSSTeethRig(OSSTeeth):
         self.teethCtrlSpace.xfo = data['teethXfo']
         self.teethCtrl.xfo = data['teethXfo']
         #self.teethCtrl.setCurveData(data['teethCtrlCrvData'])
-        self.teethCtrl.setColor("turqoise")
+        self.teethCtrl.setColor("turquoise")
 
         self.teethCtrl.scalePoints(Vec3(Vec3(2.5,2.5,2.5)))
         self.teethCtrl.rotatePoints(90.0, 0.0, 0.0)

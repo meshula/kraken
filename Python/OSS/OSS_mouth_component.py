@@ -771,21 +771,11 @@ class OSSMouthRig(OSSMouth):
         self.rigControlAligns[3] = Vec3(-1,2,-3)
         self.rigControlAligns[4] = Vec3(-1,2,3)
 
-        # Add lowLip Guide Canvas Op
-        self.blendMidMouthRigOp = CanvasOperator('blendMidMouthRigOp', 'OSS.Solvers.blendMat44Solver')
-        self.addOperator(self.blendMidMouthRigOp)
-
-        # self.blendMidMouthRigOp.setInput('drawDebug', self.drawDebugInputAttr)
-        # self.blendMidMouthRigOp.setInput('rigScale', 1.0)
-        self.blendMidMouthRigOp.setInput('rotationAmt', .5)
-        self.blendMidMouthRigOp.setInput('translationAmt', .5)
-        self.blendMidMouthRigOp.setInput('scaleAmt', .5)
-
-        self.blendMidMouthRigOp.setInput('parentSpace', self.ctrlCmpGrp)
-        self.blendMidMouthRigOp.setInput('A', self.topMouthCtrlSpace)
-        self.blendMidMouthRigOp.setInput('B', self.loLipCtrlSpace)
-
-        self.blendMidMouthRigOp.setOutput('result', self.midMouthCtrlSpace)
+        self.blendMidMouthRigOp = self.blend_two_xfos(
+            self.midMouthCtrlSpace,
+            self.topMouthCtrlSpace, self.loLipCtrlSpace,
+            blend=0.5,
+            name="blendMidMouthRigOp")
 
 
         # ===============
@@ -947,48 +937,30 @@ class OSSMouthRig(OSSMouth):
 
 
 
-        # Add lowLip Guide Canvas Op
+        # Left corner
         self.lMouthCornerLoc = Locator('L_mouthCorner', parent=self.ctrlCmpGrp)
         self.lMouthCornerLoc.setShapeVisibility(False)
 
-        self.blendLeftCornerOp = CanvasOperator('blendLeftCornerOp', 'OSS.Solvers.blendMat44Solver')
-        self.addOperator(self.blendLeftCornerOp)
-
-        # self.blendLeftCornerOp.setInput('drawDebug', self.drawDebugInputAttr)
-        # self.blendLeftCornerOp.setInput('rigScale', 1.0)
-        self.blendLeftCornerOp.setInput('rotationAmt', .5)
-        self.blendLeftCornerOp.setInput('translationAmt', .5)
-        self.blendLeftCornerOp.setInput('scaleAmt', .5)
-
-        self.blendLeftCornerOp.setInput('parentSpace', self.ctrlCmpGrp)
-        self.blendLeftCornerOp.setInput('A', self.lUpLipCorner)
-        self.blendLeftCornerOp.setInput('B', self.lLoLipCorner)
-
-        self.blendLeftCornerOp.setOutput('result', self.lMouthCornerLoc)
+        self.blendLeftCornerOp = self.blend_two_xfos(
+            self.lMouthCornerLoc,
+            self.lUpLipCorner, self.lLoLipCorner,
+            blend=0.5,
+            name="blendLeftCornerOp")
 
         self.lMouthCornerDef = Joint('L_mouthCorner',  parent=self.mouthDef)
         self.lMouthCornerDef.setComponent(self)
         self.lMouthCornerDef.constrainTo(self.lMouthCornerLoc)
 
 
-
-        # Add lowLip Guide Canvas Op
+        # Right corner
         self.rMouthCornerLoc = Locator('R_mouthCorner', parent=self.ctrlCmpGrp)
         self.rMouthCornerLoc.setShapeVisibility(False)
-        self.blendRightCornerOp = CanvasOperator('blendRightCornerOp', 'OSS.Solvers.blendMat44Solver')
-        self.addOperator(self.blendRightCornerOp)
 
-        # self.blendRightCornerOp.setInput('drawDebug', self.drawDebugInputAttr)
-        # self.blendRightCornerOp.setInput('rigScale', 1.0)
-        self.blendRightCornerOp.setInput('rotationAmt', .5)
-        self.blendRightCornerOp.setInput('translationAmt', .5)
-        self.blendRightCornerOp.setInput('scaleAmt', .5)
-
-        self.blendRightCornerOp.setInput('parentSpace', self.ctrlCmpGrp)
-        self.blendRightCornerOp.setInput('A', self.rUpLipCorner)
-        self.blendRightCornerOp.setInput('B', self.rLoLipCorner)
-
-        self.blendRightCornerOp.setOutput('result', self.rMouthCornerLoc)
+        self.blendRightCornerOp = self.blend_two_xfos(
+            self.rMouthCornerLoc,
+            self.rUpLipCorner, self.rLoLipCorner,
+            blend=0.5,
+            name="blendRightCornerOp")
 
         self.rMouthCornerDef = Joint('R_mouthCorner',  parent=self.mouthDef)
         self.rMouthCornerDef.setComponent(self)

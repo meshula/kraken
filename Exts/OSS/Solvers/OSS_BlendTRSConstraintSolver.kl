@@ -9,19 +9,38 @@ object OSS_BlendTRSConstraintSolver : KrakenSolver {
 };
 
 
+
+// Default Constructor
+function OSS_BlendTRSConstraintSolver()
+{
+  this.defaultValues["blendTranslate"] = 0;
+  this.defaultValues["blendRotate"] = 0;
+  this.defaultValues["blendScale"] = 0;
+  this.defaultValues["constrainerTranslateA"] = Mat44();
+  this.defaultValues["constrainerTranslateB"] = Mat44();
+  this.defaultValues["constrainerRotateA"] = Mat44();
+  this.defaultValues["constrainerRotateB"] = Mat44();
+  this.defaultValues["constrainerScaleA"] = Mat44();
+  this.defaultValues["constrainerScaleB"] = Mat44();
+  this.defaultValues["result"] = Mat44();
+}
+
+
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_BlendTRSConstraintSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('blendTranslate', 'In', 'Scalar'));
   args.push(KrakenSolverArg('blendRotate', 'In', 'Scalar'));
   args.push(KrakenSolverArg('blendScale', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('parentSpace', 'In', 'Mat44'));
   args.push(KrakenSolverArg('constrainerTranslateA', 'In', 'Mat44'));
   args.push(KrakenSolverArg('constrainerTranslateB', 'In', 'Mat44'));
   args.push(KrakenSolverArg('constrainerRotateA', 'In', 'Mat44'));
   args.push(KrakenSolverArg('constrainerRotateB', 'In', 'Mat44'));
   args.push(KrakenSolverArg('constrainerScaleA', 'In', 'Mat44'));
   args.push(KrakenSolverArg('constrainerScaleB', 'In', 'Mat44'));
-  args.push(KrakenSolverArg('constrainee', 'Out', 'Mat44'));
+  args.push(KrakenSolverArg('result', 'Out', 'Mat44'));
+
   return args;
 }
 
@@ -34,65 +53,65 @@ function OSS_BlendTRSConstraintSolver.solve!
   in Scalar blendTranslate,
   in Scalar blendRotate,
   in Scalar blendScale,
+  in Mat44 parentSpace,
   in Mat44 constrainerTranslateA,
   in Mat44 constrainerTranslateB,
   in Mat44 constrainerRotateA,
   in Mat44 constrainerRotateB,
   in Mat44 constrainerScaleA,
   in Mat44 constrainerScaleB,
-  io Mat44 constrainee
+  out Mat44 result
   )
 {
+
+  // Can we assume that the interp methods are optimized in the case of 0 and 1 and get rid of most of this logic?```
+
   // Rotate
-  if (blendRotate >= 0)
+  if (blendRotate <= 0.0)
   {
-    if (blendRotate == 0.0)
-    {
-      constrainee.setRotation(Xfo(constrainerRotateA).ori);
-    }
-    else if (blendRotate >= 1.0)
-    {
-      constrainee.setRotation(Xfo(constrainerRotateB).ori);
-    }
-    else
-    {
-      constrainee.setRotation(Xfo(constrainerRotateA).ori.sphericalLinearInterpolate(Xfo(constrainerRotateB).ori, blendRotate));
-    }
+    result.setRotation(Xfo(constrainerRotateA).ori);
   }
+  else if (blendRotate >= 1.0)
+  {
+    result.setRotation(Xfo(constrainerRotateB).ori);
+  }
+  else
+  {
+    result.setRotation(Xfo(constrainerRotateA).ori.sphericalLinearInterpolate(Xfo(constrainerRotateB).ori, blendRotate));
+  }
+
 
   // Translate
-  if (blendTranslate >= 0)
+  if (blendTranslate <= 0.0)
   {
-    if (blendTranslate <= 0.0)
-    {
-      constrainee.setTranslation(constrainerTranslateA.translation());
-    }
-    else if (blendTranslate >= 1.0)
-    {
-      constrainee.setTranslation(constrainerTranslateB.translation());
-    }
-    else
-    {
-      constrainee.setTranslation(constrainerTranslateA.translation().linearInterpolate(constrainerTranslateB.translation(), blendTranslate));
-    }
+    result.setTranslation(constrainerTranslateA.translation());
+  }
+  else if (blendTranslate >= 1.0)
+  {
+    result.setTranslation(constrainerTranslateB.translation());
+  }
+  else
+  {
+    result.setTranslation(constrainerTranslateA.translation().linearInterpolate(constrainerTranslateB.translation(), blendTranslate));
   }
 
+
   // Scale
-  if (blendScale >= 0)
+  if (blendScale <= 0.0)
   {
-    if (blendScale <= 0.0)
-    {
-      constrainee.setScaling(Xfo(constrainerScaleA).sc);
-    }
-    else if (blendScale >= 1.0)
-    {
-      constrainee.setScaling(Xfo(constrainerScaleB).sc);
-    }
-    else
-    {
-      constrainee.setScaling(Xfo(constrainerScaleA).sc.linearInterpolate(Xfo(constrainerScaleB).sc, blendScale));
-    }
+    result.setScaling(Xfo(constrainerScaleA).sc);
   }
+  else if (blendScale >= 1.0)
+  {
+    result.setScaling(Xfo(constrainerScaleB).sc);
+  }
+  else
+  {
+    result.setScaling(Xfo(constrainerScaleA).sc.linearInterpolate(Xfo(constrainerScaleB).sc, blendScale));
+  }
+
+  // Would it be faster to check for parentSpace is indenity first and not do this?
+  result = parentSpace.inverse() * result;
 
   // Set debugging visibility.
   this.setDebug(this.drawDebug);
