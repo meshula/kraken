@@ -378,6 +378,9 @@ class NeckComponentRig(NeckComponent):
         self.neck02OutCnstr.evaluate()
         self.neckEndCnstr.evaluate()
 
+        # Evaluate Operators
+        self.neckDeformerKLOp.evaluate()
+
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()

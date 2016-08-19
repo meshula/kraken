@@ -1005,7 +1005,9 @@ class Builder(object):
             for i in xrange(kSceneItem.getNumConstraints()):
                 constraint = kSceneItem.getConstraintByIndex(i)
                 if constraint.testFlag('HAS_EVALUATED') is False:
-                    invalidConstraints.append(constraint)
+                    constrainee = constraint.getConstrainee()
+                    if constrainee.getTypeName() != 'ComponentInput':
+                        invalidConstraints.append(constraint)
 
         for each in kSceneItem.getChildren():
             self.checkEvaluatedConstraints(each, invalidConstraints)

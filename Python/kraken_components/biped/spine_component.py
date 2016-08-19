@@ -290,9 +290,9 @@ class SpineComponentRig(SpineComponent):
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        # Add Spine Splice Op
+        # Add Spine Canvas Op
         self.bezierSpineKLOp = KLOperator('spine', 'BezierSpineSolver', 'Kraken')
         self.addOperator(self.bezierSpineKLOp)
 
@@ -310,7 +310,7 @@ class SpineComponentRig(SpineComponent):
         # Add Xfo Outputs
         self.bezierSpineKLOp.setOutput('outputs', self.spineOutputs)
 
-        # Add Deformer Splice Op
+        # Add Deformer Canvas Op
         self.deformersToOutputsKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
         self.addOperator(self.deformersToOutputsKLOp)
 
@@ -324,7 +324,7 @@ class SpineComponentRig(SpineComponent):
         # Add Xfo Outputs
         self.deformersToOutputsKLOp.setOutput('constrainees', self.deformerJoints)
 
-        # Add Pelvis Splice Op
+        # Add Pelvis Canvas Op
         self.pelvisDefKLOp = KLOperator('pelvisDefConstraint', 'PoseConstraintSolver', 'Kraken')
         self.addOperator(self.pelvisDefKLOp)
 
@@ -411,21 +411,17 @@ class SpineComponentRig(SpineComponent):
         # Set IO Xfos
         # ============
 
-        # ====================
-        # Evaluate Splice Ops
-        # ====================
-        # evaluate the spine op so that all the output transforms are updated.
-        self.bezierSpineKLOp.evaluate()
-
-        # evaluate the constraint op so that all the joint transforms are updated.
-        self.deformersToOutputsKLOp.evaluate()
-        self.pelvisDefKLOp.evaluate()
-
-        # evaluate the constraints to ensure the outputs are now in the correct location.
+        # Evaluate Constraints
+        self.spineSrtInputConstraint.evaluate()
         self.spineCogOutputConstraint.evaluate()
         self.spineBaseOutputConstraint.evaluate()
         self.pelvisOutputConstraint.evaluate()
         self.spineEndOutputConstraint.evaluate()
+
+        # Evaluate Operators
+        self.bezierSpineKLOp.evaluate()
+        self.deformersToOutputsKLOp.evaluate()
+        self.pelvisDefKLOp.evaluate()
 
 
 

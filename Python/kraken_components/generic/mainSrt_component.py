@@ -207,30 +207,30 @@ class MainSrtComponentRig(MainSrtComponent):
         # Constrain inputs
 
         # Constrain outputs
-        srtConstraint = PoseConstraint('_'.join([self.srtOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
-        srtConstraint.addConstrainer(self.mainSRTCtrl)
-        self.srtOutputTgt.addConstraint(srtConstraint)
+        self.srtOutputToSrtCtrlConstraint = PoseConstraint('_'.join([self.srtOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
+        self.srtOutputToSrtCtrlConstraint.addConstrainer(self.mainSRTCtrl)
+        self.srtOutputTgt.addConstraint(self.srtOutputToSrtCtrlConstraint)
 
-        offsetConstraint = PoseConstraint('_'.join([self.offsetOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
-        offsetConstraint.addConstrainer(self.offsetCtrl)
-        self.offsetOutputTgt.addConstraint(offsetConstraint)
+        self.offsetToSrtCtrlConstraint = PoseConstraint('_'.join([self.offsetOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
+        self.offsetToSrtCtrlConstraint.addConstrainer(self.offsetCtrl)
+        self.offsetOutputTgt.addConstraint(self.offsetToSrtCtrlConstraint)
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        #Add Rig Scale Splice Op
-        self.rigScaleKLOp = KLOperator('rigScale', 'RigScaleSolver', 'Kraken')
-        self.addOperator(self.rigScaleKLOp)
+        # Add Rig Scale Canvas Op
+        self.rigScaleOp = KLOperator('rigScale', 'RigScaleSolver', 'Kraken')
+        self.addOperator(self.rigScaleOp)
 
         # Add Att Inputs
-        self.rigScaleKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.rigScaleKLOp.setInput('rigScale', self.rigScaleOutputAttr)
+        self.rigScaleOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.rigScaleOp.setInput('rigScale', self.rigScaleOutputAttr)
 
         # Add Xfo Inputs
 
         # Add Xfo Outputs
-        self.rigScaleKLOp.setOutput('target', self.mainSRTCtrlSpace)
+        self.rigScaleOp.setOutput('target', self.mainSRTCtrlSpace)
 
 
         Profiler.getInstance().pop()
@@ -268,6 +268,13 @@ class MainSrtComponentRig(MainSrtComponent):
         # ============
         self.srtOutputTgt = data["mainSrtXfo"]
         self.offsetOutputTgt = data["mainSrtXfo"]
+
+        # Evaluate Constraints
+        self.srtOutputToSrtCtrlConstraint.evaluate()
+        self.offsetToSrtCtrlConstraint.evaluate()
+
+        # Evaluate Operators
+        self.rigScaleOp.evaluate()
 
 
 from kraken.core.kraken_system import KrakenSystem

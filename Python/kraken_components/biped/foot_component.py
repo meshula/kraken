@@ -418,18 +418,18 @@ class FootComponentRig(FootComponent):
         # ===================
         # Add Deformer KL Op
         # ===================
-        self.outputsToDeformersKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
-        self.addOperator(self.outputsToDeformersKLOp)
+        self.footDefKLOp = KLOperator('defConstraint', 'MultiPoseConstraintSolver', 'Kraken')
+        self.addOperator(self.footDefKLOp)
 
         # Add Att Inputs
-        self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.footDefKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.footDefKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
-        self.outputsToDeformersKLOp.setInput('constrainers', [self.ankleOutputTgt, self.toeOutputTgt])
+        self.footDefKLOp.setInput('constrainers', [self.ankleOutputTgt, self.toeOutputTgt])
 
         # Add Xfo Outputs
-        self.outputsToDeformersKLOp.setOutput('constrainees', [self.ankleDef, self.toeDef])
+        self.footDefKLOp.setOutput('constrainees', [self.ankleDef, self.toeDef])
 
         Profiler.getInstance().pop()
 
@@ -514,8 +514,12 @@ class FootComponentRig(FootComponent):
         self.footSolverCanvasOp.evaluate()
 
         # Eval Constraints
+        self.pivotAllInputConstraint.evaluate()
         self.ikTargetOutputConstraint.evaluate()
         self.ankleFKInputConstraint.evaluate()
+
+        # Eval Operators
+        self.footDefKLOp.evaluate()
 
 
 from kraken.core.kraken_system import KrakenSystem
