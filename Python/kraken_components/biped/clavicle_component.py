@@ -242,21 +242,21 @@ class ClavicleComponentRig(ClavicleComponent):
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canavs Ops
         # ===============
-        # Add Deformer Splice Op
-        spliceOp = KLOperator('defConstraint', 'PoseConstraintSolver', 'Kraken')
-        self.addOperator(spliceOp)
+        # Add Deformer Canvas Op
+        self.clavicleDefOp = KLOperator('defConstraint', 'PoseConstraintSolver', 'Kraken')
+        self.addOperator(self.clavicleDefOp)
 
         # Add Att Inputs
-        spliceOp.setInput('drawDebug', self.drawDebugInputAttr)
-        spliceOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.clavicleDefOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.clavicleDefOp.setInput('rigScale', self.rigScaleInputAttr)
 
         # Add Xfo Inputs
-        spliceOp.setInput('constrainer', self.clavicleOutputTgt)
+        self.clavicleDefOp.setInput('constrainer', self.clavicleOutputTgt)
 
         # Add Xfo Outputs
-        spliceOp.setOutput('constrainee', self.clavicleDef)
+        self.clavicleDefOp.setOutput('constrainee', self.clavicleDef)
 
         Profiler.getInstance().pop()
 
@@ -299,6 +299,9 @@ class ClavicleComponentRig(ClavicleComponent):
         self.clavicleInputConstraint.evaluate()
         self.clavicleConstraint.evaluate()
         self.clavicleEndConstraint.evaluate()
+
+        # Eval Operators
+        self.clavicleDefOp.evaluate()
 
 
 from kraken.core.kraken_system import KrakenSystem

@@ -207,19 +207,19 @@ class MainSrtComponentRig(MainSrtComponent):
         # Constrain inputs
 
         # Constrain outputs
-        srtConstraint = PoseConstraint('_'.join([self.srtOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
-        srtConstraint.addConstrainer(self.mainSRTCtrl)
-        self.srtOutputTgt.addConstraint(srtConstraint)
+        self.srtOutputToSrtCtrlConstraint = PoseConstraint('_'.join([self.srtOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
+        self.srtOutputToSrtCtrlConstraint.addConstrainer(self.mainSRTCtrl)
+        self.srtOutputTgt.addConstraint(self.srtOutputToSrtCtrlConstraint)
 
-        offsetConstraint = PoseConstraint('_'.join([self.offsetOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
-        offsetConstraint.addConstrainer(self.offsetCtrl)
-        self.offsetOutputTgt.addConstraint(offsetConstraint)
+        self.offsetToSrtCtrlConstraint = PoseConstraint('_'.join([self.offsetOutputTgt.getName(), 'To', self.mainSRTCtrl.getName()]))
+        self.offsetToSrtCtrlConstraint.addConstrainer(self.offsetCtrl)
+        self.offsetOutputTgt.addConstraint(self.offsetToSrtCtrlConstraint)
 
 
         # ===============
-        # Add Splice Ops
+        # Add Canvas Ops
         # ===============
-        #Add Rig Scale Splice Op
+        # Add Rig Scale Canvas Op
         self.rigScaleKLOp = KLOperator('rigScale', 'RigScaleSolver', 'Kraken')
         self.addOperator(self.rigScaleKLOp)
 
@@ -269,6 +269,9 @@ class MainSrtComponentRig(MainSrtComponent):
         self.srtOutputTgt = data["mainSrtXfo"]
         self.offsetOutputTgt = data["mainSrtXfo"]
 
+        # Evaluate Constraints
+        self.srtOutputToSrtCtrlConstraint.evaluate()
+        self.offsetToSrtCtrlConstraint.evaluate()
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
