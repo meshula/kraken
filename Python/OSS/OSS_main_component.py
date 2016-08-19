@@ -168,6 +168,7 @@ class OSSMainComponentGuide(OSSMainComponent):
         if "oss_vis" not in Config.getInstance().getControlShapes():
             self.visIconCtrl.setCurveData(VIS_SHAPE)
         self.visIconCtrl.scalePoints(Vec3(8, 1.0, 8))
+        self.visIconCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
 
         return True
 
@@ -380,6 +381,7 @@ class OSSMainComponentRig(OSSMainComponent):
 
         self.visIconCtrl.xfo = data['visIconXfo']
         self.visIconCtrl.scalePoints(Vec3(8, 1.0, 8))
+        self.visIconCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
 
 
         if self.mocap:
