@@ -212,6 +212,7 @@ class Node(QtGui.QGraphicsWidget):
 
     def setSelected(self, selected=True):
         self.__selected = selected
+        self.setZValue(20.0)
         self.update()
 
 
@@ -334,6 +335,15 @@ class Node(QtGui.QGraphicsWidget):
             else:
                 if not self.isSelected():
                     self.__graph.selectNode(self, clearSelection=True)
+
+                    # Push all nodes back 1 level in z depth to bring selected
+                    # node to front
+                    for node in [x for x in self.__graph.getNodes().values()]:
+                        if node == self:
+                            continue
+
+                        if node.zValue() != 0.0:
+                            node.setZValue(node.zValue() - 1)
 
                 self.__dragging = True
                 self._mouseDownPoint = self.mapToScene(event.pos())
