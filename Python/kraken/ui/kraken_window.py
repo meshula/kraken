@@ -84,6 +84,7 @@ class KrakenWindow(QtGui.QMainWindow):
     def createConnections(self):
         self.statusBar.outputLogButton.clicked.connect(self.showOutputDialog)
         self.krakenUI.graphViewWidget.rigLoaded.connect(self.krakenMenu.buildRecentFilesMenu)
+        self.krakenUI.graphViewWidget.rigLoadedConfig.connect(self.krakenMenu.setCurrentConfigByName)
         self.krakenUI.graphViewWidget.rigNameChanged.connect(self.krakenMenu.updateRigNameLabel)
 
 
