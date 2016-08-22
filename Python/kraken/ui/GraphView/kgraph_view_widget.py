@@ -248,10 +248,9 @@ class KGraphViewWidget(GraphViewWidget):
             logger.info('Building Guide')
             self.window().setCursor(QtCore.Qt.WaitCursor)
 
-            # self.window().statusBar().showMessage('Building Guide')
-
             initConfigIndex = self.window().krakenMenu.configsWidget.currentIndex()
 
+            self.synchGuideRig()
 
             # Append "_guide" to rig name when building guide
             if self.guideRig.getName().endswith('_guide') is False:
