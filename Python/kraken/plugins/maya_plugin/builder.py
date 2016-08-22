@@ -989,15 +989,15 @@ class Builder(Builder):
                             dstPortPath=graphNodeName + "." + portName)
 
                 elif portConnectionType in ['IO', 'Out']:
-                    if isKLBased is True:
-                        pm.FabricCanvasAddPort(
-                            mayaNode=canvasNode,
-                            execPath="",
-                            desiredPortName=portName,
-                            portType="Out",
-                            typeSpec=portDataType,
-                            connectToPortPath="")
 
+                    if portDataType in ('Execute', 'InlineInstance', 'DrawingHandle'):
+                        # Don't expose invalid Maya data type InlineInstance, instead connect to exec port
+                        dstPortPath = "exec"
+                    else:
+                        dstPortPath = portName
+
+                    if isKLBased is True:
+                        srcPortNode = solverSolveNodeName
                         pm.FabricCanvasAddPort(
                             mayaNode=canvasNode,
                             execPath=solverSolveNodeName,
@@ -1005,27 +1005,24 @@ class Builder(Builder):
                             portType="Out",
                             typeSpec=portDataType,
                             connectToPortPath="")
-
-                        pm.FabricCanvasConnect(
-                            mayaNode=canvasNode,
-                            execPath="",
-                            srcPortPath=solverSolveNodeName + "." + portName,
-                            dstPortPath=portName)
                     else:
-                        if portDataType != 'Execute':
-                            pm.FabricCanvasAddPort(
-                                mayaNode=canvasNode,
-                                execPath="",
-                                desiredPortName=portName,
-                                portType="Out",
-                                typeSpec=portDataType,
-                                connectToPortPath="")
+                        srcPortNode = graphNodeName
 
-                        pm.FabricCanvasConnect(
+                    if portDataType not in ('Execute', 'InlineInstance', 'DrawingHandle'):
+                        pm.FabricCanvasAddPort(
                             mayaNode=canvasNode,
                             execPath="",
-                            srcPortPath=graphNodeName + "." + portName,
-                            dstPortPath=portName)
+                            desiredPortName=portName,
+                            portType="Out",
+                            typeSpec=portDataType,
+                            connectToPortPath="")
+
+                    pm.FabricCanvasConnect(
+                        mayaNode=canvasNode,
+                        execPath="",
+                        srcPortPath=srcPortNode + "." + portName,
+                        dstPortPath=dstPortPath)
+
                 else:
                     raise Exception("Invalid connection type:" + portConnectionType)
 
