@@ -6,6 +6,7 @@ KLOperator - Splice operator object.
 """
 
 import pprint
+import re
 
 from kraken.core.maths import MathObject, Mat44, Xfo, Vec2, Vec3
 from kraken.core.objects.object_3d import Object3D
