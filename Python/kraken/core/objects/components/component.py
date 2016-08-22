@@ -925,13 +925,17 @@ class Component(Object3D):
 
         """
 
-        if 'location' in data:
+        location = data.get('location', None)
+        compName = data.get('name', None)
+        graphPos = data.get('graphPos', None)
+
+        if location is not None:
             self.setLocation(data['location'])
 
-        if 'name' in data:
+        if compName is not None:
             self.setName(data['name'])
 
-        if 'graphPos' in data:
+        if graphPos is not None:
             self.setGraphPos(data['graphPos'])
 
         for i in range(self.getNumAttributeGroups()):
