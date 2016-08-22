@@ -159,7 +159,9 @@ class KGraphView(GraphView):
                 contextMenu.addAction("Add Backdrop").triggered.connect(graphViewWidget.addBackdrop)
                 contextMenu.popup(event.globalPos())
 
-            if isinstance(graphicItem, KNode) and graphicItem.isSelected():
+            if isinstance(graphicItem, KNode):
+                self.selectNode(graphicItem, clearSelection=True, emitSignal=True)
+
                 contextMenu = QtGui.QMenu(self.getGraphViewWidget())
                 contextMenu.setObjectName('rightClickContextMenu')
                 contextMenu.setMinimumWidth(150)
