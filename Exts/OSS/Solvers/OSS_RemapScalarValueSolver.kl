@@ -3,6 +3,20 @@ require Kraken;
 object OSS_RemapScalarValueSolver : KrakenSolver {
 };
 
+function OSS_RemapScalarValueSolver()
+{
+  // NOTE, Kraken can create default values for anything
+  // we don't specificy here.  Arrays will be empty, matrices identity, etc.
+
+  Scalar inputValues[];
+  Scalar resultPos[];
+  Scalar resultNeg[];
+
+  this.defaultValues["inputValues"] = inputValues;
+  this.defaultValues["resultPos"] = resultPos;
+  this.defaultValues["resultNeg"] = resultNeg;
+}
+
 
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_RemapScalarValueSolver.getArguments(){
