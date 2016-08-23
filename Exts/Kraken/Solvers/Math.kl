@@ -232,7 +232,11 @@ function SInt8 SInt8.normalize(SInt8 v) {
 //  3 =  Z
 // -3 = -Z
 // any other values that should should be ignored, currently are not (<3; >3; 0)
-
+/// \dfgPresetTitle QuatGetAxis
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function Vec3 Quat.getAxis(in UInt32 axisIndex)
 {
   switch (axisIndex)
@@ -292,6 +296,11 @@ function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
   this.setFromMat44(m);
 }
 
+/// \dfgPresetTitle QuatAlign
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Utils
 function Quat.align!(SInt8 x, SInt8 y, SInt8 z)
 {
   Mat33 mat33ori;
