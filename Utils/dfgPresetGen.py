@@ -71,9 +71,14 @@ for root, dirs, files in os.walk(krakenDFGSolverPath):
 
         # Create preset
         dfgBinding = dfgHost.createBindingToNewGraph()
+
         dfgExec = dfgBinding.getExec()
         dfgExec.setTitle(solverName)
         dfgExec.addExtDep('Kraken')
+
+        dfgExec.setMetadata("uiTextColor", "{\"r\": 168, \"g\": 229, \"b\": 240}", False)
+        dfgExec.setMetadata("uiNodeColor", "{\"r\": 49, \"g\": 60, \"b\": 61}", False)
+        dfgExec.setMetadata("uiHeaderColor", "{\"r\": 42, \"g\": 94, \"b\": 102}", False)
 
         # Generate the Kraken relative preset path
         folders = []
@@ -106,7 +111,7 @@ for root, dirs, files in os.walk(krakenDFGSolverPath):
 
         solverSolve = dfgExec.addInstFromPreset(solvePresetPath)
         dfgExec.connectTo(var + '.value', solverSolve + '.this')
-        dfgExec.setNodeMetadata(solverSolve, "uiGraphPos", "{\"x\":200.0,\"y\":0.0}", False)
+        dfgExec.setNodeMetadata(solverSolve, "uiGraphPos", "{\"x\": 200.0,\"y\": 0.0}", False)
 
         dfgExec.connectTo(solverSolve + '.this', 'exec')
 

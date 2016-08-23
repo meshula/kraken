@@ -1,5 +1,10 @@
 {
   "objectType" : "Graph",
+  "metadata" : {
+    "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+    "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+    "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+    },
   "title" : "TwoBoneIKSolver",
   "ports" : [
     {
@@ -156,7 +161,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":200.0,\"y\":0.0}"
+        "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
         },
       "name" : "TwoBoneIKSolver_Solve",
       "ports" : [
