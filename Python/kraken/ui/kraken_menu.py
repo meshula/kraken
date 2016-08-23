@@ -152,7 +152,6 @@ class KrakenMenu(QtGui.QWidget):
 
         self.setLayout(self.menuLayout)
 
-
     def createConnections(self):
 
         krakenUIWidget = self.parentWidget().getKrakenUI()
@@ -249,6 +248,32 @@ class KrakenMenu(QtGui.QWidget):
             configs = ks.getConfigClassNames()
             configClass = ks.getConfigClass(configs[index-1])
             configClass.makeCurrent()
+
+    def setCurrentConfigByName(self, configName):
+        """Set the current config by the name of the config.
+
+        If the config doesn't exist it won't change itself.
+
+        Args:
+            configName (str): Config name.
+
+        Returns:
+            Type: True if successful.
+
+        """
+
+        if configName == 'Default Config':
+            self.setCurrentConfig(0)
+        else:
+            configs = KrakenSystem.getInstance().getConfigClassNames()
+            if configName in configs:
+                itemIndex = self.configsWidget.findData(configName, role=QtCore.Qt.UserRole)
+                self.setCurrentConfig(itemIndex)
+            else:
+                logger.warn("Config from rig file could not be found: {}".format(configName))
+
+        return True
+
 
     def reloadAllComponents(self):
         krakenUIWidget = self.window().krakenUI
