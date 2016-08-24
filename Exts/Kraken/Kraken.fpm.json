@@ -23,6 +23,6 @@
   ],
   "dfgPresets": {
     "dir": "DFG",
-    "presetPath": "Kraken.Exts.Solvers.StuffyThings"
+    "presetPath": "Kraken.Exts"
   }
 }

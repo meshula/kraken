@@ -133,14 +133,14 @@ class KrakenMenu(QtGui.QWidget):
         self.configsWidget.setAutoFillBackground(True)
         self.configsWidget.setObjectName('configWidget')
         self.configsWidget.setMinimumWidth(160)
-        self.configsWidget.addItem('Default Config')
+        self.configsWidget.addItem('Default Config', userData='Default Config')
 
         self.configsLayout.addWidget(self.configsWidget)
         self.configsParent.setLayout(self.configsLayout)
 
         configs = KrakenSystem.getInstance().getConfigClassNames()
         for config in configs:
-            self.configsWidget.addItem(config.split('.')[-1])
+            self.configsWidget.addItem(config.split('.')[-1], userData=config)
 
         self.rigNameLabel = RigNameLabel('Rig Name:')
 
@@ -151,7 +151,6 @@ class KrakenMenu(QtGui.QWidget):
         self.menuLayout.addWidget(self.rigNameLabel, 0)
 
         self.setLayout(self.menuLayout)
-
 
     def createConnections(self):
 
@@ -250,6 +249,32 @@ class KrakenMenu(QtGui.QWidget):
             configClass = ks.getConfigClass(configs[index-1])
             configClass.makeCurrent()
 
+    def setCurrentConfigByName(self, configName):
+        """Set the current config by the name of the config.
+
+        If the config doesn't exist it won't change itself.
+
+        Args:
+            configName (str): Config name.
+
+        Returns:
+            Type: True if successful.
+
+        """
+
+        if configName == 'Default Config':
+            self.setCurrentConfig(0)
+        else:
+            configs = KrakenSystem.getInstance().getConfigClassNames()
+            if configName in configs:
+                itemIndex = self.configsWidget.findData(configName, role=QtCore.Qt.UserRole)
+                self.setCurrentConfig(itemIndex)
+            else:
+                logger.warn("Config from rig file could not be found: {}".format(configName))
+
+        return True
+
+
     def reloadAllComponents(self):
         krakenUIWidget = self.window().krakenUI
         graphViewWidget = krakenUIWidget.graphViewWidget
@@ -281,8 +306,11 @@ class KrakenMenu(QtGui.QWidget):
         krakenUIWidget = self.window().krakenUI
         graphViewWidget = krakenUIWidget.graphViewWidget
 
+        configIndex = self.configsWidget.currentIndex()
+        configName = self.configsWidget.itemData(configIndex)
+
         settings.beginGroup("KrakenMenu")
-        settings.setValue("currentConfig", self.configsWidget.currentIndex())
+        settings.setValue("currentConfigName", configName)
         settings.setValue("snapToGrid", graphViewWidget.graphView.getSnapToGrid())
         settings.setValue("recentFiles", ';'.join(self.recentFiles))
 
@@ -293,11 +321,16 @@ class KrakenMenu(QtGui.QWidget):
         graphViewWidget = krakenUIWidget.graphViewWidget
 
         settings.beginGroup('KrakenMenu')
-        if settings.contains('currentConfig'):
-            #TODO: Should be storing the name of the config, not an index
-            currentConfig = int(settings.value('currentConfig', 0))
-            if currentConfig < self.configsWidget.count():
-                self.setCurrentConfig(currentConfig)
+
+        if settings.contains('currentConfigName'):
+            configName = str(settings.value('currentConfigName', 0))
+
+            if configName != 'Default Config':
+
+                configs = KrakenSystem.getInstance().getConfigClassNames()
+                if configName in configs:
+                    itemIndex = self.configsWidget.findData(configName, role=QtCore.Qt.UserRole)
+                    self.setCurrentConfig(itemIndex)
 
         if settings.contains('snapToGrid'):
             if settings.value('snapToGrid') == 'true':

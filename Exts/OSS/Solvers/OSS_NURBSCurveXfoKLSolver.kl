@@ -44,6 +44,10 @@ function OSS_NURBSCurveXfoKLSolver()
 {
   // NOTE, Kraken can create default values for anything
   // we don't specificy here.  Arrays will be empty, matrices identity, etc.
+
+  UInt32 rigidIDs[];
+  Mat44 rigidMat44s[];
+
   this.defaultValues["degree"] = 3;
   this.defaultValues["keepArcLength"] = 0.0;
   this.defaultValues["followCurveTangent"] = 1.0;
@@ -53,6 +57,9 @@ function OSS_NURBSCurveXfoKLSolver()
   this.defaultValues["alignY"] = 2;
   this.defaultValues["alignZ"] = 3;
   this.defaultValues["altTangent"] = Vec3(1,0,0);
+  this.defaultValues["rigidIDs"] = rigidIDs;
+  this.defaultValues["rigidMat44s"] = rigidMat44s;
+  this.defaultValues["instance"] = InlineInstance();
 
   this.workData = OSS_NURBSCurveXfoKLSolver_WorkData();
 }
@@ -145,7 +152,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   NURBSCurve restCurve = wd.restCurve;
   NURBSCurve posedCurve = wd.posedCurve;
 
-  // only recompute the rest curve if the input control 
+  // only recompute the rest curve if the input control
   // count change. this assumes that the rest curve is static
   if(restCurve.cmats.size() != inCount) {
     Mat44 alignedControlsRest[](inCount);
@@ -187,13 +194,13 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     __evalXfosTask(i, wd.xfos, posedCurveRef, params, keepArcLength, keepCurveLen, useLocalNormal, followCurveTangent, followCurveNormal, wd.altTangents, wd.altNormals);
     __evalCompressionTask(i, wd.compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
     Scalar localCompression = Scalar(Math_linearInterpolate(1, wd.compression[i], compressionAmt));
-    wd.xfos[i].sc = wd.xfos[i].sc * Vec3(1,localCompression,localCompression);  
+    wd.xfos[i].sc = wd.xfos[i].sc * Vec3(1,localCompression,localCompression);
     wd.xfos[i].align(alignX,alignY,alignZ);
     outputs[i] = wd.xfos[i].toMat44();
 
     if(rigidIDs.size()) {
       for(UInt32 n=0; n<rigidIDs.size(); n++) {
-        if (i==rigidIDs[n]) 
+        if (i==rigidIDs[n])
           {
             outputs[i] = rigidMat44s[n];
         }

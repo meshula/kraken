@@ -159,7 +159,9 @@ class KGraphView(GraphView):
                 contextMenu.addAction("Add Backdrop").triggered.connect(graphViewWidget.addBackdrop)
                 contextMenu.popup(event.globalPos())
 
-            if isinstance(graphicItem, KNode) and graphicItem.isSelected():
+            if isinstance(graphicItem, KNode):
+                self.selectNode(graphicItem, clearSelection=True, emitSignal=True)
+
                 contextMenu = QtGui.QMenu(self.getGraphViewWidget())
                 contextMenu.setObjectName('rightClickContextMenu')
                 contextMenu.setMinimumWidth(150)
@@ -173,7 +175,10 @@ class KGraphView(GraphView):
 
                     def pasteSettings():
                         # Paste the settings, not modifying the location, because that will be used to determine symmetry.
-                        graphicItem.getComponent().pasteData(self.getClipboardData()['components'][0], setLocation=False)
+                        pasteData = self.getClipboardData()['components'][0]
+                        pasteData.pop('graphPos', None)
+
+                        graphicItem.getComponent().pasteData(pasteData, setLocation=False)
 
                     contextMenu.addSeparator()
                     contextMenu.addAction("Paste Data").triggered.connect(pasteSettings)
@@ -321,8 +326,10 @@ class KGraphView(GraphView):
                 component.pasteData(componentData, setLocation=False)
             else:
                 component.pasteData(componentData, setLocation=True)
+
             graphPos = component.getGraphPos()
             component.setGraphPos(Vec2(graphPos.x + delta.x(), graphPos.y + delta.y()))
+
             node = KNode(self, component)
             self.addNode(node)
             self.selectNode(node, False)
@@ -330,7 +337,7 @@ class KGraphView(GraphView):
             # save a dict of the nodes using the orignal names
             pastedComponents[nameMapping[decoratedName]] = component
 
-
+        # Create Connections
         for connectionData in clipboardData['connections']:
             sourceComponentDecoratedName, outputName = connectionData['source'].split('.')
             targetComponentDecoratedName, inputName = connectionData['target'].split('.')

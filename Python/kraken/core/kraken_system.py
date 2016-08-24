@@ -68,7 +68,6 @@ class KrakenSystem(object):
 
             Profiler.getInstance().pop()
 
-
     def getCoreClient(self):
         """Returns the Fabric Engine Core Client owned by the KrakenSystem
 
@@ -81,7 +80,6 @@ class KrakenSystem(object):
             self.loadCoreClient()
 
         return self.client
-
 
     def loadExtension(self, extension):
         """Loads the given extension and updates the registeredTypes cache.
@@ -100,10 +98,10 @@ class KrakenSystem(object):
             self.loadedExtensions.append(extension)
             Profiler.getInstance().pop()
 
+
     # ==============
     # RTVal Methods
     # ==============
-
     def convertFromRTVal(self, target, RTTypeName=None):
         """Generates an RTVal object based on the simple type of target
         and passes target to constructor. Converts a property of an RTVal object
@@ -127,7 +125,6 @@ class KrakenSystem(object):
         pythonRTVal = rtValType(target)
 
         return pythonRTVal
-
 
     def constructRTVal(self, dataType, defaultValue=None):
         """Constructs a new RTVal using the given name and optional devault value.
@@ -177,7 +174,6 @@ class KrakenSystem(object):
                 except Exception as e:
                     raise Exception("Error constructing RTVal:" + dataType)
 
-
     def rtVal(self, dataType, defaultValue=None):
         """Constructs a new RTVal using the given name and optional devault value.
 
@@ -192,7 +188,6 @@ class KrakenSystem(object):
 
         return self.constructRTVal(dataType, defaultValue)
 
-
     def isRTVal(self, value):
         """Returns true if the given value is an RTVal.
 
@@ -205,7 +200,6 @@ class KrakenSystem(object):
         """
 
         return str(type(value)) == "<type 'PyRTValObject'>"
-
 
     def getRTValTypeName(self, rtval):
         """Returns the name of the type, handling extracting the name from KL RTVals.
@@ -226,7 +220,6 @@ class KrakenSystem(object):
     # ==================
     # Config Methods
     # ==================
-
     def registerConfig(self, configClass):
         """Registers a config Python class with the KrakenSystem so ti can be built by the rig builder.
 
@@ -236,13 +229,8 @@ class KrakenSystem(object):
         """
 
         configModulePath = configClass.__module__ + "." + configClass.__name__
-        if configModulePath in self.registeredConfigs:
-            # we allow reregistring of configs because as a config's class is edited
-            # it will be re-imported by python(in Maya), and the classes reregistered.
-            pass
 
         self.registeredConfigs[configModulePath] = configClass
-
 
     def getConfigClass(self, className):
         """Returns the registered Python config class with the given name
@@ -260,7 +248,6 @@ class KrakenSystem(object):
 
         return self.registeredConfigs[className]
 
-
     def getConfigClassNames(self):
         """Returns the names of the registered Python config classes
 
@@ -274,7 +261,6 @@ class KrakenSystem(object):
     # ==================
     # Component Methods
     # ==================
-
     def registerComponent(self, componentClass):
         """Registers a component Python class with the KrakenSystem so ti can be built by the rig builder.
 
@@ -289,7 +275,6 @@ class KrakenSystem(object):
             pass
 
         self.registeredComponents[componentClassPath] = componentClass
-
 
     def getComponentClass(self, className):
         """Returns the registered Python component class with the given name
@@ -307,7 +292,6 @@ class KrakenSystem(object):
 
         return self.registeredComponents[className]
 
-
     def getComponentClassNames(self):
         """Returns the names of the registered Python component classes
 
@@ -317,7 +301,6 @@ class KrakenSystem(object):
         """
 
         return self.registeredComponents.keys()
-
 
     def loadComponentModules(self):
         """Loads all the component modules and configs specified in the 'KRAKEN_PATHS' environment variable.

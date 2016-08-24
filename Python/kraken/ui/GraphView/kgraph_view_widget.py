@@ -15,6 +15,7 @@ from kraken.ui.undoredo.undo_redo_manager import UndoRedoManager
 import graph_commands
 
 from kraken.log import getLogger
+from kraken.core.configs.config import Config
 from kraken.core.objects.rig import Rig
 from kraken import plugins
 
@@ -31,6 +32,7 @@ class KGraphViewWidget(GraphViewWidget):
 
     rigNameChanged = QtCore.Signal()
     rigLoaded = QtCore.Signal(object)
+    rigLoadedConfig = QtCore.Signal(object)
 
     def __init__(self, parent=None):
 
@@ -152,8 +154,16 @@ class KGraphViewWidget(GraphViewWidget):
             backdropNodes = graphView.getNodesOfType('KBackdrop')
             backdropData = [x.getData() for x in backdropNodes]
 
+            # =====================
             # Add Meta Data to rig
+            # =====================
             self.guideRig.setMetaDataItem('backdrops', backdropData)
+
+            currConfig = Config.getInstance()
+            if currConfig.getModulePath() == "kraken.core.configs.config.Config":
+                self.guideRig.setMetaDataItem('config', "Default Config")
+            else:
+                self.guideRig.setMetaDataItem('config', currConfig.getModulePath())
 
             # Write rig file
             try:
@@ -228,7 +238,14 @@ class KGraphViewWidget(GraphViewWidget):
 
         self.guideRig = Rig()
         self.guideRig.loadRigDefinitionFile(filePath)
-        self.setGuideRigName(self.guideRig.getName())  # Remove "_guide" from end of name
+
+
+        self.setGuideRigName(self.guideRig.getName())
+
+        rigConfig = self.guideRig.getMetaDataItem('config')
+        if rigConfig is not None:
+            self.rigLoadedConfig.emit(rigConfig)
+
         self.graphView.displayGraph(self.guideRig)
 
         settings = self.window().getSettings()
@@ -248,10 +265,9 @@ class KGraphViewWidget(GraphViewWidget):
             logger.info('Building Guide')
             self.window().setCursor(QtCore.Qt.WaitCursor)
 
-            # self.window().statusBar().showMessage('Building Guide')
-
             initConfigIndex = self.window().krakenMenu.configsWidget.currentIndex()
 
+            self.synchGuideRig()
 
             # Append "_guide" to rig name when building guide
             if self.guideRig.getName().endswith('_guide') is False:
