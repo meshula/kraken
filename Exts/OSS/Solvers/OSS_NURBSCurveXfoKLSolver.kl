@@ -195,7 +195,6 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
       for(UInt32 n=0; n<rigidIDs.size(); n++) {
         if (i==rigidIDs[n]) 
           {
-            report('should be rigid: '+i);
             outputs[i] = rigidMat44s[n];
         }
       }
