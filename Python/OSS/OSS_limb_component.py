@@ -355,6 +355,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbIKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
 
 
+        # MidCtrls (Bend/Bow) Creation - may need to make this an option
         # uplimbMid
         self.uplimbMidCtrlSpace = CtrlSpace(self.uplimbName+'Mid', parent=self.ctrlCmpGrp)
         self.uplimbMidCtrl = FKControl(self.uplimbName+'Mid', parent=self.uplimbMidCtrlSpace, shape="circle")
@@ -556,7 +557,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setOutput('bone2Out', self.endlimb_cmpOut)
 
 
-        # MidCtrl (Bend/Bow) Creation
+        # MidCtrl (Bend/Bow) Creation - may need to make this an option
         sourceA = self.uplimb_cmpOut
         sourceB = self.lolimbIKCtrl
         self.uplimbMidCtrlRigOp = KLOperator(self.uplimbName + "MidBlendOp", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
