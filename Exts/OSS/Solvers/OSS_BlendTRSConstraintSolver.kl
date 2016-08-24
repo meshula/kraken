@@ -16,6 +16,7 @@ function OSS_BlendTRSConstraintSolver()
   this.defaultValues["blendTranslate"] = 0;
   this.defaultValues["blendRotate"] = 0;
   this.defaultValues["blendScale"] = 0;
+  this.defaultValues["parentSpace"] = Mat44();
   this.defaultValues["constrainerTranslateA"] = Mat44();
   this.defaultValues["constrainerTranslateB"] = Mat44();
   this.defaultValues["constrainerRotateA"] = Mat44();
