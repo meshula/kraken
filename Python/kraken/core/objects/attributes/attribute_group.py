@@ -177,7 +177,7 @@ class AttributeGroup(SceneItem):
 
         jsonData = {
             '__typeHierarchy__': classHierarchy,
-            'name': self.name,
+            'name': self._name,
             'parent': self.getParent().getName(),
             'attributes': []
         }

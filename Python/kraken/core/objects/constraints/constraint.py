@@ -383,7 +383,7 @@ class Constraint(SceneItem):
 
         jsonData = {
             '__typeHierarchy__': classHierarchy,
-            'name': self.name,
+            'name': self._name,
             'constrainee': self._constrainee.getName(),
             'constrainers': []
         }

@@ -76,8 +76,8 @@ class MathObject(object):
         """
 
         if jsonData["__mathObjectClass__"] != self.__class__.__name__:
-            raise Exception("Error in jsonDecode. Json data specifies a \
-                            different class:" + jsonData["__class__"] + "!==" +
+            raise Exception("Error in jsonDecode. Json data specifies a " +
+                            "different class:" + jsonData["__class__"] + "!==" +
                             self.__class__.__name__)
 
         for key, value in jsonData.iteritems():

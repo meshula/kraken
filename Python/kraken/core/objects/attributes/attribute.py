@@ -279,7 +279,7 @@ class Attribute(SceneItem):
 
         jsonData = {
             '__typeHierarchy__': classHierarchy,
-            'name': self.name,
+            'name': self._name,
             'value': saver.encodeValue(self._value),
             'parent': None
         }
@@ -302,6 +302,6 @@ class Attribute(SceneItem):
         """
 
         self.name = jsonData['name']
-        self._value = loader.decodeValue(jsonData['value'])
+        self._value = jsonData['value']
 
         return True
