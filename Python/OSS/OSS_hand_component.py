@@ -436,7 +436,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.handDef = Joint('hand', parent=self.deformersParent)
         self.handDef.setComponent(self)
-        self.handDef.constrainTo(self.handCtrl)
+        self.handDef.constrainTo(self.hand_cmpOut, maintainOffset=False)
         self.hand_cmpOut.parentJoint =  self.handDef
 
         self.palmDef = Joint('palm', parent=self.handDef)
