@@ -1140,6 +1140,8 @@ class Config(object):
 
         """
 
+        assert type(value) is bool, "Value argument is not of type: bool"
+
         self._explicitNaming = value
 
         return True
@@ -1151,10 +1153,17 @@ class Config(object):
     def getMetaData(self, key, value=None):
         """Returns the value of a metaData flag.
 
+        Args:
+            key (str): Key to look up in the meta data
+            value: Default value to use if not found
+
         Returns:
             str: current value or None for default value
 
         """
+
+        assert type(key) is str, "Key value is not a string"
+
         return self._metaData.get(key, value)
 
     def setMetaData(self, key, value):
@@ -1162,12 +1171,14 @@ class Config(object):
 
         Args:
             key (str): the key under which to store the value
-            value (any): the value to store for a given key
+            value: the value to store for a given key
 
         Returns:
             bool: True if successful.
 
         """
+
+        assert type(key) is str, "Key value is not a string"
 
         self._metaData[key] = value
 

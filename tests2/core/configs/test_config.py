@@ -83,27 +83,65 @@ class TestConfig(unittest.TestCase):
             len(set(requiredKeys + nameTemplate.keys())), 5)
 
     def testGetNameTemplate(self):
-        pass
+        config = self._config.getInstance()
+        nameTemplate = config.getNameTemplate()
+        requiredKeys = ['locations', 'mirrorMap', 'separator', 'types', 'formats']
+
+        self.assertIsNotNone(nameTemplate)
+        self.assertTrue(type(nameTemplate) is dict)
+        self.assertEquals(
+            len(set(requiredKeys + nameTemplate.keys())), 5)
 
     def testInitControlShapes(self):
-        pass
+        config = self._config.getInstance()
+        controlShapes = config.initControlShapes()
+
+        self.assertIsNotNone(controlShapes)
+        self.assertTrue(type(controlShapes) is dict)
 
     def testGetControlShapes(self):
-        pass
+        config = self._config.getInstance()
+        controlShapes = config.getControlShapes()
+
+        self.assertIsNotNone(controlShapes)
+        self.assertTrue(type(controlShapes) is dict)
 
     def testGetExplicitNaming(self):
-        pass
+        config = self._config.getInstance()
+
+        self.assertTrue(type(config.getExplicitNaming()) is bool)
 
     def testSetExplicitNaming(self):
-        pass
+        config = self._config.getInstance()
+        config.setExplicitNaming(True)
+
+        self.assertTrue(config.getExplicitNaming())
+
+    @unittest.expectedFailure
+    def testSetExplicitNamingTypeFail(self):
+        """This should fail as explicit naming requires a bool value."""
+
+        config = self._config.getInstance()
+        config.setExplicitNaming("test")
 
     def testGetMetaData(self):
-        pass
+        config = self._config.getInstance()
+        testMetaData = config.getMetaData('test', value='testValue')
+
+        self.assertEquals(testMetaData, 'testValue')
 
     def testSetMetaData(self):
-        pass
+        config = self._config.getInstance()
+        setMetaData = config.setMetaData('test', 'testValue')
 
+        self.assertTrue(setMetaData)
 
+    @unittest.expectedFailure
+    def testSetMetaDataTypeFail(self):
+        """This should fail as meta data requires a string key."""
+
+        config = self._config.getInstance()
+        setMetaData = config.setMetaData(5, 'testValue')
 
     def testGetInstance(self):
         config = self._config.getInstance()

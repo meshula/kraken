@@ -9,3 +9,6 @@ builderSuite = test_builder.suite()
 configSuite = test_config.suite()
 
 alltests = unittest.TestSuite([coreSuite, builderSuite, configSuite])
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)
