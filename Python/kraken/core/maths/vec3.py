@@ -34,7 +34,7 @@ class Vec3(MathObject):
 
         """
 
-        return "Vec3(" + str(self.x) + "," + str(self.y) + "," + str(self.z) + ")"
+        return "Vec3(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ")"
 
 
     @property
