@@ -50,16 +50,16 @@ class Euler(MathObject):
         else:
 
             if x is not None and not isinstance(x, (int, float)) and not isinstance(x, Euler):
-                raise TypeError("Euler: Invalid type for 'x' argument. \
-                                Must be an int or float.")
+                raise TypeError("Euler: Invalid type for 'x' argument. " +
+                                "Must be an int or float.")
 
             if y is not None and not isinstance(y, (int, float)):
-                raise TypeError("Euler: Invalid type for 'y' argument. Must be \
-                                an int or float.")
+                raise TypeError("Euler: Invalid type for 'y' argument. Must be " +
+                                "an int or float.")
 
             if z is not None and not isinstance(z, (int, float)):
-                raise TypeError("Euler: Invalid type for 'z' argument. Must be \
-                                an int or float.")
+                raise TypeError("Euler: Invalid type for 'z' argument. Must be " +
+                                "an int or float.")
 
             if ro is not None:
                 if isinstance(ro, basestring) or isinstance(ro, (int)):
@@ -78,7 +78,7 @@ class Euler(MathObject):
     def __str__(self):
         """String representation of Euler object."""
 
-        return "Euler(x=" + str(self.x) + ", y=" + str(self.y) + ", z=" + str(self.z) + ", ro= '" + str(self.ro) + "')"
+        return "Euler(x=" + str(self.x) + ", y=" + str(self.y) + ", z=" + str(self.z) + ", ro=" + str(self.ro) + ")"
 
 
     @property
@@ -249,7 +249,7 @@ class Euler(MathObject):
 
         """
 
-        return self._rtval.almostEqual('Boolean', ks.rtVal('Euler', other), ks.rtVal('Scalar', precision))
+        return self._rtval.almostEqual('Boolean', ks.rtVal('Euler', other), ks.rtVal('Scalar', precision)).getSimpleType()
 
 
     def toMat33(self):
