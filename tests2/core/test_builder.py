@@ -2,7 +2,6 @@
 import unittest
 
 from kraken.core.builder import Builder
-from kraken.core.configs.config import Config
 from kraken.core.objects.rig import Rig
 
 
@@ -11,11 +10,13 @@ class TestBuilder(unittest.TestCase):
     def testBuilderClass(self):
         builder = Builder()
 
+        self.assertIsNotNone(builder)
+
     def testBuild(self):
         builder = Builder()
         bobRig = Rig("testRig")
 
-        self.assertIsNotNone(bobRig)
+        builder.build(bobRig)
 
 
 def suite():
