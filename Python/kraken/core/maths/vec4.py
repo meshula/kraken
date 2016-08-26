@@ -33,9 +33,9 @@ class Vec4(MathObject):
             str: String representation of the Vec4 object."""
 
         stringRep = "Vec4("
-        stringRep += str(self.x) + ","
-        stringRep += str(self.y) + ","
-        stringRep += str(self.z) + ","
+        stringRep += str(self.x) + ", "
+        stringRep += str(self.y) + ", "
+        stringRep += str(self.z) + ", "
         stringRep += str(self.t) + ")"
 
         return stringRep

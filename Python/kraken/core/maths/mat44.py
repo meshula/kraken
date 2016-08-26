@@ -37,9 +37,9 @@ class Mat44(MathObject):
         """
 
         stringRep = "Mat44("
-        stringRep += str(self.row0) + ","
-        stringRep += str(self.row1) + ","
-        stringRep += str(self.row2) + ","
+        stringRep += str(self.row0) + ", "
+        stringRep += str(self.row1) + ", "
+        stringRep += str(self.row2) + ", "
         stringRep += str(self.row3) + ")"
 
         return stringRep
