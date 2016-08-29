@@ -48,7 +48,7 @@ class Quat(MathObject):
 
         """
 
-        return "Quat(" + str(self.v) + "," + str(self.w) + ")"
+        return "Quat(" + str(self.v) + ", " + str(self.w) + ")"
 
 
     @property
@@ -201,7 +201,7 @@ class Quat(MathObject):
 
         """
 
-        return Quat(self._rtval.setFromEuler('Quat', ks.rtVal('Vec3', angles),
+        return Quat(self._rtval.setFromEulerAngles('Quat', ks.rtVal('Vec3', angles),
                     ks.rtVal('RotationOrder', ro)))
 
 
