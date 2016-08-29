@@ -117,13 +117,11 @@ class RotationOrder(MathObject):
             elif lowerOrder == 'yxz':
                 newOrder = 5
             else:
-                print "Invalid rotation order '" + order + "', using default 0 (XYZ)."
-                newOrder = 0
+                raise ValueError("Invalid rotation order '" + order + "'.")
 
         elif type(order) == int:
             if order < 0 or order > 5:
-                print "Invalid rotation order: '" + str(order) + "', using default 0 (XYZ)."
-                newOrder = 0
+                raise ValueError("Invalid rotation order: '" + str(order) + "'.")
             else:
                 newOrder = order
         else:
