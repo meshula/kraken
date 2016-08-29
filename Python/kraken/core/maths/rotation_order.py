@@ -36,7 +36,7 @@ class RotationOrder(MathObject):
 
         """
 
-        return "RotationOrder(order='" + str(self.order) + "')"
+        return "RotationOrder(" + str(self.order) + ")"
 
 
     @property

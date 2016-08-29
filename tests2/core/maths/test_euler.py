@@ -11,7 +11,7 @@ class TestEuler(unittest.TestCase):
     def testString(self):
         euler = Euler()
 
-        self.assertEquals(str(euler), "Euler(x=0.0, y=0.0, z=0.0, ro=RotationOrder(order='0'))")
+        self.assertEquals(str(euler), "Euler(0.0, 0.0, 0.0, RotationOrder(0))")
 
     def testGetPropertyValues(self):
         euler = Euler()

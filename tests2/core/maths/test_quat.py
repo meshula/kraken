@@ -52,7 +52,7 @@ class TestQuat(unittest.TestCase):
             v=Vec3(0, 1, 0),
             w=2.3)
 
-        self.assertEqual(quat1, quat2)
+        self.assertNotEqual(quat1, quat2)
 
     def testAdd(self):
         quat1 = Quat(
@@ -207,8 +207,11 @@ class TestQuat(unittest.TestCase):
         self.assertTrue(result)
 
     def testAlmostEqual(self):
-        quat1 = Quat(v=Vec3(0, 1, 0), w=1.0)
-        quat2 = Quat(v=Vec3(0, 1.1, 0), w=1.0)
+        quat1 = Quat()
+        quat1.setFromAxisAndAngle(Vec3(1, 0, 0), Math_degToRad(90))
+
+        quat2 = Quat()
+        quat2.setFromAxisAndAngle(Vec3(1, 0, 0), Math_degToRad(89.999))
 
         result = quat1.almostEqual(quat2)
 
@@ -317,52 +320,127 @@ class TestQuat(unittest.TestCase):
         self.assertEquals(inv.w, -0.5163977742195129)
 
     def testAlignWith(self):
-        quat1 = Quat()
-        quat2 = Quat()
+        quat1 = Quat(v=Vec3(-0.5, 0, -0.5), w=-1.0)
+        quat2 = Quat(v=Vec3(0, 1, 0), w=1.0)
 
-        quat2 = quat2.setFromAxisAndAngle(Vec3(1, 0, 0), Math_degToRad(90))
+        quat1.alignWith(quat2)
 
-        result = quat1.alignWith(quat2)
-
-        print result.v
-        print result.w
-
-        self.assertEquals(result.v, Vec3(-0.25819888711, -0.774596691132, -0.25819888711))
-        self.assertEquals(result.w, -0.5163977742195129)
+        self.assertEquals(quat1.v, Vec3(0.5, 0.0, 0.5))
+        self.assertEquals(quat1.w, 1.0)
 
     def testGetAngle(self):
         quat = Quat()
+        quat.setFromAxisAndAngle(Vec3(1, 0, 0), Math_degToRad(90))
+
+        angle = quat.getAngle()
+
+        self.assertEquals(angle, 1.5707963705062866)
 
     def testGetXaxis(self):
         quat = Quat()
 
+        xAxis = quat.getXaxis()
+
+        self.assertEqual(xAxis, Vec3(1, 0, 0))
+
     def testGetYaxis(self):
         quat = Quat()
+
+        yAxis = quat.getYaxis()
+
+        self.assertEqual(yAxis, Vec3(0, 1, 0))
 
     def testGetZaxis(self):
         quat = Quat()
 
-    def testMirror(self):
+        zAxis = quat.getZaxis()
+
+        self.assertEqual(zAxis, Vec3(0, 0, 1))
+
+    def testMirrorX(self):
         quat = Quat()
+        quat.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-45))
+
+        quat.mirror(0)
+
+        self.assertEquals(quat.v, Vec3(-0.0, 0.923879504204, -0.0))
+        self.assertEquals(quat.w, -0.3826834559440613)
+
+    def testMirrorY(self):
+        quat = Quat()
+        quat.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-45))
+
+        quat.mirror(1)
+
+        self.assertEquals(quat.v, Vec3(-0.923879504204, -0.0, -0.382683455944))
+        self.assertEquals(quat.w, 0.0)
+
+    def testMirrorZ(self):
+        quat = Quat()
+        quat.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-45))
+
+        quat.mirror(2)
+
+        self.assertEquals(quat.v, Vec3(-0.0, -0.382683455944, 0.0))
+        self.assertEquals(quat.w, -0.9238795042037964)
 
     def testToMat33(self):
         quat = Quat()
+        quat.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-45))
+
+        mat33 = quat.toMat33()
+
+        self.assertEqual(mat33.row0, Vec3(0.70710670948, 0.0, -0.70710682869))
+        self.assertEqual(mat33.row1, Vec3(0.0, 1.0, 0.0))
+        self.assertEqual(mat33.row2, Vec3(0.70710682869, 0.0, 0.70710670948))
 
     def testToEuler(self):
         quat = Quat()
+        quat.setFromAxisAndAngle(Vec3(0, 1, 0), Math_degToRad(-45))
+
+        euler = quat.toEuler(RotationOrder(1))
+
+        self.assertEqual(euler, Euler(-0.0, -0.785398244858, 0.0, RotationOrder(1)))
 
     def testToEulerAnglesWithRotOrder(self):
         quat = Quat()
+        quat.setFromAxisAndAngle(Vec3(0.5, 0.5, 0), Math_degToRad(-45))
+
+        angles = quat.toEulerAnglesWithRotOrder(RotationOrder(1))
+
+        self.assertEqual(angles, Vec3(-0.529902756214, -0.529902756214, 0.146975189447))
 
     def testToEulerAngles(self):
         quat = Quat()
+        quat.setFromAxisAndAngle(Vec3(0.5, 0.5, 0), Math_degToRad(-45))
+
+        angles = quat.toEulerAngles()
+
+        self.assertEqual(angles, Vec3(-0.615479648113, -0.523598790169, -0.169918462634))
 
     def testSphericalLinearInterpolate(self):
-        quat = Quat()
+        quat1 = Quat()
+        quat1.setFromAxisAndAngle(Vec3(0.0, 1.0, 0), Math_degToRad(-90))
+
+        quat2 = Quat()
+        quat2.setFromAxisAndAngle(Vec3(0.0, 1.0, 0), Math_degToRad(90))
+
+        quat1.sphericalLinearInterpolate(quat2, 0.5)
+
+        self.assertEqual(quat1.v, Vec3(-0.0, -0.707106769085, -0.0))
+        self.assertEqual(quat1.w, 0.7071067690849304)
 
     def testLinearInterpolate(self):
-        quat = Quat()
+        quat1 = Quat()
+        quat1.setFromAxisAndAngle(Vec3(0.0, 1.0, 0), Math_degToRad(-90))
 
+        quat2 = Quat()
+        quat2.setFromAxisAndAngle(Vec3(0.0, 1.0, 0), Math_degToRad(90))
+
+        quat1.linearInterpolate(quat2, 0.5)
+
+        self.assertEqual(quat1.v, Vec3(-0.0, -0.707106769085, -0.0))
+        self.assertEqual(quat1.w, 0.7071067690849304)
 
 
 def suite():

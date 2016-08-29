@@ -78,7 +78,7 @@ class Euler(MathObject):
     def __str__(self):
         """String representation of Euler object."""
 
-        return "Euler(x=" + str(self.x) + ", y=" + str(self.y) + ", z=" + str(self.z) + ", ro=" + str(self.ro) + ")"
+        return "Euler(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ", " + str(self.ro) + ")"
 
 
     @property
