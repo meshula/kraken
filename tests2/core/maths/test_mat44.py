@@ -322,6 +322,21 @@ class TestMat44(unittest.TestCase):
 
         self.assertEqual(mat2, resultMat)
 
+    def testSetTranslation(self):
+        mat = Mat44()
+        mat.setTranslation(Vec3(2, 4, 3))
+
+        resultMat = Mat44(
+            row0=Vec4(1.0, 0.0, 0.0, 2.0),
+            row1=Vec4(0.0, 1.0, 0.0, 4.0),
+            row2=Vec4(0.0, 0.0, 1.0, 3.0),
+            row3=Vec4(0.0, 0.0, 0.0, 1.0))
+
+        self.assertEqual(mat.row0, resultMat.row0)
+        self.assertEqual(mat.row1, resultMat.row1)
+        self.assertEqual(mat.row2, resultMat.row2)
+        self.assertEqual(mat.row3, resultMat.row3)
+
     def testSetRotation(self):
         mat = Mat44()
         quat = Quat()

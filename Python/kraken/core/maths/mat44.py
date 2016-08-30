@@ -311,7 +311,7 @@ class Mat44(MathObject):
 
         return self._rtval.equal('Boolean', ks.rtVal('Mat44', other)).getSimpleType()
 
-    def almostEqual(self, other, precision):
+    def almostEqualWithPrecision(self, other, precision):
         """Checks almost equality of this Matrix44 with another.
 
         Args:
@@ -471,6 +471,21 @@ class Mat44(MathObject):
         """
 
         return Mat44(self._rtval.inverse_safe('Mat44'))
+
+    def setTranslation(self, vec):
+        """Sets the translation of the matrix by a Vec3.
+
+        Args:
+            vec (Vec3): Vector to set the scaling of the matrix from.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._rtval.setTranslation('', ks.rtVal('Vec3', vec))
+
+        return True
 
     def setRotation(self, quat):
         """Sets the rotation of the matrix by a quaternion.
