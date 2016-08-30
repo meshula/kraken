@@ -10,6 +10,7 @@ import test_mat33
 import test_mat44
 import test_quat
 import test_rotation_order
+import test_xfo
 
 loadVec2Suite = test_vec2.suite()
 loadVec3Suite = test_vec3.suite()
@@ -20,6 +21,7 @@ loadMat33Suite = test_mat33.suite()
 loadMat44Suite = test_mat44.suite()
 loadQuatSuite = test_quat.suite()
 loadRotationOrderSuite = test_rotation_order.suite()
+loadXfoSuite = test_xfo.suite()
 
 
 def suite():
@@ -32,7 +34,8 @@ def suite():
         loadMat33Suite,
         loadMat44Suite,
         loadQuatSuite,
-        loadRotationOrderSuite]
+        loadRotationOrderSuite,
+        loadXfoSuite]
 
     return unittest.TestSuite(suites)
 
