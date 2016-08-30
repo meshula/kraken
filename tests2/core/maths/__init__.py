@@ -3,6 +3,7 @@ import unittest
 
 import test_vec2
 import test_vec3
+import test_vec4
 import test_color
 import test_euler
 import test_mat33
@@ -12,6 +13,7 @@ import test_rotation_order
 
 loadVec2Suite = test_vec2.suite()
 loadVec3Suite = test_vec3.suite()
+loadVec4Suite = test_vec4.suite()
 loadColorSuite = test_color.suite()
 loadEulerSuite = test_euler.suite()
 loadMat33Suite = test_mat33.suite()
@@ -24,6 +26,7 @@ def suite():
     suites = [
         loadVec2Suite,
         loadVec3Suite,
+        loadVec4Suite,
         loadColorSuite,
         loadEulerSuite,
         loadMat33Suite,

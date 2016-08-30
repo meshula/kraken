@@ -10,7 +10,7 @@ class TestVec2(unittest.TestCase):
         vec = Vec2()
 
         self.assertEquals(str(vec),
-            "Vec2(0.0, 0.0)")
+                          "Vec2(0.0, 0.0)")
 
     def testGetPropertyValues(self):
         vec = Vec2(0.0, 1.0)
