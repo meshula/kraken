@@ -63,7 +63,7 @@ class Object3D(SceneItem):
                     msg = "{} '{}' {} ({}: {}) {}\n".format("Invalid flag", flag, "set on", self.getName(), self.getPath(), ". Alphanumeric and underscores only!")
                     logger.warn(msg)
                     continue
-#
+
                 self.setFlag(flag)
 
     # ==================

@@ -6,8 +6,10 @@ from kraken.core.objects.components.component_input import ComponentInput
 
 class TestComponentInput(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        cmpInput = ComponentInput('test')
+
+        self.assertIsNotNone(cmpInput)
 
 
 def suite():

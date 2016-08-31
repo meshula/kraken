@@ -6,8 +6,10 @@ from kraken.core.objects.constraints.position_constraint import PositionConstrai
 
 class TestPositionConstraint(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        constraint = PositionConstraint('testConstraint')
+
+        self.assertIsNotNone(constraint)
 
 
 def suite():

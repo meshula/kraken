@@ -53,10 +53,6 @@ class ScalarAttribute(NumberAttribute):
         return True
 
 
-    # ==============
-    # Value Methods
-    # ==============
-
     def getDataType(self):
         """Returns the name of the data type for this attribute.
 

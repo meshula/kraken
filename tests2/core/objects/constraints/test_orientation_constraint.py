@@ -6,8 +6,10 @@ from kraken.core.objects.constraints.orientation_constraint import OrientationCo
 
 class TestOrientationConstraint(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        constraint = OrientationConstraint('testConstraint')
+
+        self.assertIsNotNone(constraint)
 
 
 def suite():

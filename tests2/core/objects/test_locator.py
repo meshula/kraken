@@ -6,8 +6,10 @@ from kraken.core.objects.locator import Locator
 
 class TestLocator(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        locator = Locator('test')
+
+        self.assertIsNotNone(locator)
 
 
 def suite():

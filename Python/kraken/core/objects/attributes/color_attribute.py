@@ -55,7 +55,6 @@ class ColorAttribute(Attribute):
         return ks.rtVal('Color', self._value)
 
 
-
     def getDataType(self):
         """Returns the name of the data type for this attribute.
 

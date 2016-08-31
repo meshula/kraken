@@ -9,6 +9,18 @@ class TestScalarAttribute(unittest.TestCase):
     def testGetName(self):
         pass
 
+    def getRTVal(self):
+        pass
+        # getRTVal
+
+    def validateValue(self):
+        pass
+        # validateValue
+
+    def getDataType(self):
+        pass
+        # getDataType
+
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(TestScalarAttribute)

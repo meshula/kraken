@@ -9,6 +9,15 @@ class TestJoint(unittest.TestCase):
     def testGetName(self):
         pass
 
+    def testGetRadius(self):
+        pass
+        # getRadius
+
+    def testSetRadius(self):
+        pass
+        # setRadius
+
+
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(TestJoint)

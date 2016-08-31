@@ -9,6 +9,14 @@ class TestBaseExampleComponent(unittest.TestCase):
     def testGetName(self):
         pass
 
+    def testDetach(self):
+        pass
+        # detach
+
+    def testAttach(self):
+        pass
+        # attach
+
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(TestBaseExampleComponent)

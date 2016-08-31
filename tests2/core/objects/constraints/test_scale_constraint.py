@@ -6,8 +6,10 @@ from kraken.core.objects.constraints.scale_constraint import ScaleConstraint
 
 class TestScaleConstraint(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        constraint = ScaleConstraint('testConstraint')
+
+        self.assertIsNotNone(constraint)
 
 
 def suite():

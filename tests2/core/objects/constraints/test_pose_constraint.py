@@ -6,8 +6,10 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
 class TestPoseConstraint(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        constraint = PoseConstraint('testConstraint')
+
+        self.assertIsNotNone(constraint)
 
 
 def suite():

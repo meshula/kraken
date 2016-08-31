@@ -6,8 +6,10 @@ from kraken.core.objects.ctrlSpace import CtrlSpace
 
 class TestCtrlSpace(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        ctrlSpace = CtrlSpace('test')
+
+        self.assertIsNotNone(ctrlSpace)
 
 
 def suite():

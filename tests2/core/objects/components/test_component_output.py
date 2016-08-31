@@ -6,8 +6,10 @@ from kraken.core.objects.components.component_output import ComponentOutput
 
 class TestComponentOutput(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        cmpOutput = ComponentOutput('test')
+
+        self.assertIsNotNone(cmpOutput)
 
 
 def suite():

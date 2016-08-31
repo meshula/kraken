@@ -9,6 +9,14 @@ class TestComponentGroup(unittest.TestCase):
     def testGetName(self):
         pass
 
+    def testGetName(self):
+        pass
+        # getName
+
+    def testGetNameDecoration(self):
+        pass
+        # getNameDecoration
+
 
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(TestComponentGroup)

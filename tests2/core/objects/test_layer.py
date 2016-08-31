@@ -6,8 +6,10 @@ from kraken.core.objects.layer import Layer
 
 class TestLayer(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        layer = Layer('test')
+
+        self.assertIsNotNone(layer)
 
 
 def suite():

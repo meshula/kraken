@@ -6,8 +6,10 @@ from kraken.core.objects.hierarchy_group import HierarchyGroup
 
 class TestHierarchyGroup(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    def testInstance(self):
+        hrcGrp = HierarchyGroup('test')
+
+        self.assertIsNotNone(hrcGrp)
 
 
 def suite():
