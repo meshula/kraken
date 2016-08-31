@@ -10,7 +10,7 @@ require Geometry, Color;
 
 const UInt32 NURBSCurve_StandardResolution = 16;
 const UInt32 NURBSCurve_MaxDegree = 16;
-const Float32 NURBSCurve_TangentEpsilon = 0.0001;
+const Float32 NURBSCurve_TangentEpsilon = 0.001;
 
 /// An implementation of a Non-uniform rational B-spline curve.
 object NURBSCurve {
@@ -317,22 +317,24 @@ inline Scalar NURBSCurve.getClosestDistanceIndex(Scalar param, Scalar keepCurveL
   // tipLength is the approximated, curvelength at incoming param t, considering attenuated restDistance
   
   Scalar tipLength = param*this.getCurveLength(keepCurveLen);
-  Scalar low = 0,
-  high = this.distances.values.size()-1;
-  Scalar idx = 0;
-  while (low < high) {
-    idx = low + (((high - low) / 2) | 0);  
-    if (this.distances.values[idx] < tipLength) {
-      low = idx + 1;
+  Scalar curIdx = 0;
+  Scalar minIdx = 0;
+  Scalar maxIdx = this.distances.values.size()-1;
+  // report("tipLength:" + tipLength);
+  // report("total:" + this.distances.values[maxIdx]);
+  Scalar curIdxDistance;
+  while (minIdx <= maxIdx) {
+    curIdx = (((minIdx + maxIdx) / 2) | 0);  
+    curIdxDistance = this.distances.values[curIdx];
+    if (curIdxDistance < tipLength) {
+      minIdx = curIdx + 1;
+    } else if(curIdxDistance > tipLength) {
+      maxIdx = curIdx - 1;
     } else {
-      high = idx;
+      return curIdx;
     }
   }
-  if (this.distances.values[idx] > tipLength) {
-    idx -= 1;
-  }
-
-  return idx;
+  return curIdx;
 }
 
 
@@ -878,16 +880,20 @@ function Scalar NURBSCurve.getCompression(Scalar param, NURBSCurve referenceCurv
 
 function Scalar NURBSCurve.getCompression(Scalar t, NURBSCurve referenceCurve) {
   Scalar keepCurveLen = 0;
-  UInt32 index = this.getClosestDistanceIndex(t,keepCurveLen)+1;
-  Scalar lengthSample = this.distances.values[index];
-  Scalar lengthSampleRef = referenceCurve.distances.values[index];
+
+  UInt32 index = this.getClosestDistanceIndex(t,keepCurveLen) | 1;
+  Scalar lengthSample    = this.distances.values[index] - this.distances.values[index-1];
+  Scalar lengthSampleRef = referenceCurve.distances.values[index] - referenceCurve.distances.values[index-1];
+  // report('Scalar: '+t);
+  // report('Index          : ' + index);
+  // report('lengthSample   : ' + lengthSample);
+  // report('lengthSampleRef: ' + lengthSampleRef);
   if(lengthSample == 0) return 1.0;
   return lengthSampleRef/lengthSample;
 }
 
 
 /// LENGTH
-
 inline Scalar NURBSCurve.getCurveLength(Scalar keepCurveLen) {
   UInt32 s = this.distances.values.size();
   if (keepCurveLen==0) return this.distances.values[s-1];

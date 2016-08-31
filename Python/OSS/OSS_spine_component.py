@@ -1,4 +1,5 @@
 from kraken.core.maths import Vec3
+from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.maths.euler import rotationOrderStrToIntMapping
 
@@ -285,6 +286,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         self.rigidIDs = []
         self.rigidMat44s = []
+        self.rigidAligns = []
         #self.setNumDeformers(1)
 
         # =====================
@@ -330,6 +332,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.NURBSSpineKLOp.setInput('controlsRest', self.controlRestInputs)
         self.NURBSSpineKLOp.setInput('rigidIDs', [0,5])
         self.NURBSSpineKLOp.setInput('rigidMat44s', self.rigidMat44s)
+        self.NURBSSpineKLOp.setInput('rigidAligns', self.rigidAligns)
 
         self.NURBSSpineKLOp.setInput('params', self.params )
 
@@ -449,6 +452,9 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         self.rigidMat44s.append(self.controlInputs[0])
         self.rigidMat44s.append(self.controlInputs[-1])
+        self.rigidAligns.append(Vec3(-2,1,3))
+        self.rigidAligns.append(Vec3(-2,1,3))
+
 
         # Constrain Outputs
         self.spineEndOutputConstraint = self.spineEndOutputTgt.constrainTo(self.spineOutputs[-1])

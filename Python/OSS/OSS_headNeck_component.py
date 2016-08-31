@@ -285,6 +285,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         self.rigidIDs = []
         self.rigidMat44s = []
+        self.rigidAligns = []
 
         # =====================
         # Create Component I/O
@@ -332,6 +333,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.NURBSNeckKLOp.setInput('controlsRest', self.controlRestInputs)
         self.NURBSNeckKLOp.setInput('rigidIDs', [0,5])
         self.NURBSNeckKLOp.setInput('rigidMat44s', self.rigidMat44s)
+        self.NURBSNeckKLOp.setInput('rigidAligns', self.rigidAligns)
 
         self.NURBSNeckKLOp.setInput('params', self.params )
         self.NURBSNeckKLOp.setOutput('outputs', self.neckOutputs)
@@ -477,6 +479,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         self.rigidMat44s.append(self.controlInputs[0])
         self.rigidMat44s.append(self.controlInputs[-1])
+        self.rigidAligns.append(Vec3(-2,1,3))
+        self.rigidAligns.append(Vec3(-2,1,3))
 
         self.alignSpaces.append(self.headFKRef)
         self.alignSpaces.append(self.headIKRef)

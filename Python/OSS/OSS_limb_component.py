@@ -542,7 +542,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.uplimbFKCtrlSpace,
             self.uplimbParentSpace, self.uplimbWorldSpace,
             blendTranslate=0,
-            blendRotate=1,
+            blendRotate=self.worldSpaceAttr,
             blendScale=0, 
             blend=self.worldSpaceAttr,
             name= self.uplimbName + 'BlendKLOp')

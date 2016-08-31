@@ -47,7 +47,7 @@ function OSS_NURBSCurveXfoKLSolver()
 
   UInt32 rigidIDs[];
   Mat44 rigidMat44s[];
-
+  Vec3 rigidAligns[];
   this.defaultValues["degree"] = 3;
   this.defaultValues["keepArcLength"] = 0.0;
   this.defaultValues["followCurveTangent"] = 1.0;
@@ -59,6 +59,7 @@ function OSS_NURBSCurveXfoKLSolver()
   this.defaultValues["altTangent"] = Vec3(1,0,0);
   this.defaultValues["rigidIDs"] = rigidIDs;
   this.defaultValues["rigidMat44s"] = rigidMat44s;
+  this.defaultValues["rigidAligns"] = rigidAligns;
   this.defaultValues["instance"] = InlineInstance();
 
   this.workData = OSS_NURBSCurveXfoKLSolver_WorkData();
@@ -84,6 +85,7 @@ function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   args.push(KrakenSolverArg('controlsRest', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('rigidIDs', 'In', 'UInt32[]'));
   args.push(KrakenSolverArg('rigidMat44s', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('rigidAligns', 'In', 'Vec3[]'));
   args.push(KrakenSolverArg('controls', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('outputs', 'Out', 'Mat44[]'));
   args.push(KrakenSolverArg('instance', 'Out', 'InlineInstance'));
@@ -129,6 +131,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     in Mat44 controlsRest[],
     in UInt32 rigidIDs[],
     in Mat44 rigidMat44s[],
+    in Vec3 rigidAligns[],
     in Mat44 controls[],
     io Mat44 outputs[],
     out InlineInstance instance
@@ -143,25 +146,15 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   OSS_NURBSCurveXfoKLSolver_WorkData wd = this.workData;
   wd.resize(inCount, outCount);
 
+  // Todo - remove this
   Xfo posedXfo;
   Xfo restXfo;
 
   Scalar keepCurveLen = 0;
   outputs.resize(outCount);
 
-  NURBSCurve restCurve = wd.restCurve;
+  NURBSCurve restCurve =  wd.restCurve;
   NURBSCurve posedCurve = wd.posedCurve;
-
-  // only recompute the rest curve if the input control
-  // count change. this assumes that the rest curve is static
-  if(restCurve.cmats.size() != inCount) {
-    Mat44 alignedControlsRest[](inCount);
-    for (UInt32 i =0; i<inCount; i++) {
-      alignedControlsRest[i] = controlsRest[i];
-      alignedControlsRest[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
-    }
-    restCurve.initiate(alignedControlsRest, degree);
-  }
 
   /// Align Controls according to main Curve Direction, given the controlAligns Input array
   for (UInt32 i =0; i<inCount; i++) {
@@ -169,7 +162,29 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     wd.alignedControls[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
   }
 
+  // iniate posedCurve with aligned Controls
   posedCurve.initiate(wd.alignedControls, degree);
+
+  // initiate restCurve with proxy values if no restMats have been added
+  if (restCurve.controlMat44s.size() != inCount) {
+    restCurve.initiate(wd.alignedControls, degree);
+  }
+
+  // now dirty the restCurve if restMats have changed
+  Boolean restCurveIsStale = false;
+  Mat44 alignedControlsRest[](inCount);
+  for (UInt32 i =0; i<inCount; i++) {
+    // if any of the mats don't match the existing one, recreate them;
+    alignedControlsRest[i] = controlsRest[i];
+    alignedControlsRest[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
+    if(restCurve.controlMat44s.values[i] != alignedControlsRest[i]) {
+      restCurveIsStale = true;
+    }
+  }
+  if (restCurveIsStale) {
+    restCurve.initiate(alignedControlsRest, degree);
+  }
+
 
   Ref <NURBSCurve> posedCurveRef = posedCurve;
   Ref <NURBSCurve> restCurveRef = restCurve;
@@ -201,8 +216,12 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     if(rigidIDs.size()) {
       for(UInt32 n=0; n<rigidIDs.size(); n++) {
         if (i==rigidIDs[n])
-          {
-            outputs[i] = rigidMat44s[n];
+          { 
+            // Shouldn't have to do a xfo conversion
+            Xfo alignedXfo;
+            alignedXfo.setFromMat44(rigidMat44s[n]);
+            alignedXfo.align(rigidAligns[n].x, rigidAligns[n].y, rigidAligns[n].z);
+            outputs[i] = alignedXfo.toMat44();
         }
       }
     }
