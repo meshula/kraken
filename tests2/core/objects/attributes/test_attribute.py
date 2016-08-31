@@ -1,69 +1,170 @@
 
 import unittest
 
+from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.attributes.attribute import Attribute
 
 
 class TestAttribute(unittest.TestCase):
 
+    # ======
+    # Setup
+    # ======
+    @classmethod
+    def setUpClass(cls):
+        cls._attributeGroup = AttributeGroup('testAttributeGroup')
+        cls._attribute = Attribute('test', True, parent=cls._attributeGroup)
+
+    def getAttributeGroup(self):
+        return self._attributeGroup
+
+    def getAttribute(self):
+        return self._attribute
+
+    # ======
+    # Tests
+    # ======
     def testGetName(self):
-        pass
+        attribute = self.getAttribute()
+        name = attribute.getName()
+
+        self.assertTrue(type(name) is str)
+        self.assertEquals(name, 'test')
 
     def testGetValue(self):
-        pass
-        # getValue
+        attribute = self.getAttribute()
+        value = attribute.getValue()
+
+        self.assertIsNotNone(value)
+        self.assertEquals(value, True)
 
     def testSetValue(self):
-        pass
-        # setValue
+        attribute = self.getAttribute()
+        attribute.setValue(False)
+
+        value = attribute.getValue()
+
+        self.assertIsNotNone(value)
+        self.assertEquals(value, False)
+
+        attribute.setValue(True)
 
     def testSetValueChangeCallback(self):
-        pass
-        # setValueChangeCallback
+        attribute = self.getAttribute()
+
+        def testCallback(newValue):
+            print newValue
+
+        attribute.setValueChangeCallback(testCallback)
+
+        self.assertIsNotNone(attribute._callback)
+        self.assertIs(attribute._callback, testCallback)
 
     def testGetKeyable(self):
-        pass
-        # getKeyable
+        attribute = self.getAttribute()
+        keyable = attribute.getKeyable()
+
+        self.assertTrue(keyable)
+
+    def testSetKeyable(self):
+        attribute = self.getAttribute()
+
+        attribute.setKeyable(False)
+        self.assertFalse(attribute.getKeyable())
+
+        attribute.setKeyable(True)
+        self.assertTrue(attribute.getKeyable())
+
+        self.assertRaises(TypeError, lambda: attribute.setKeyable(2.0))
 
     def testGetLock(self):
-        pass
-        # getLock
+        attribute = self.getAttribute()
+        lock = attribute.getLock()
+
+        self.assertFalse(lock)
 
     def testSetLock(self):
-        pass
-        # setLock
+        attribute = self.getAttribute()
 
-    def testSetAnimatable(self):
-        pass
-        # setAnimatable
+        attribute.setLock(False)
+        self.assertFalse(attribute.getLock())
+
+        attribute.setLock(True)
+        self.assertTrue(attribute.getLock())
+
+        self.assertRaises(TypeError, lambda: attribute.setLock(2.0))
 
     def testGetAnimatable(self):
-        pass
-        # getAnimatable
+        attribute = self.getAttribute()
+        animatable = attribute.getAnimatable()
+
+        self.assertTrue(animatable)
+
+    def testSetAnimatable(self):
+        attribute = self.getAttribute()
+
+        attribute.setAnimatable(True)
+        self.assertTrue(attribute.getAnimatable())
+
+        attribute.setAnimatable(False)
+        self.assertFalse(attribute.getAnimatable())
+
+        self.assertRaises(TypeError, lambda: attribute.setAnimatable(2.0))
 
     def testGetRTVal(self):
-        pass
-        # getRTVal
+        attribute = self.getAttribute()
+
+        self.assertRaises(NotImplementedError, lambda: attribute.getRTVal())
 
     def testValidateValue(self):
-        pass
-        # validateValue
+        attribute = self.getAttribute()
+
+        self.assertRaises(NotImplementedError, lambda: attribute.validateValue(3))
 
     def testIsConnected(self):
-        pass
-        # isConnected
+        attribute = self.getAttribute()
+        connected = attribute.isConnected()
+
+        self.assertFalse(connected)
+
+        attribute2 = Attribute('test', False)
+        attribute.connect(attribute2)
+        connected = attribute.isConnected()
+
+        self.assertTrue(connected)
+
+        attribute.disconnect()
 
     def testGetConnection(self):
-        pass
-        # getConnection
+        attribute = self.getAttribute()
+        attribute2 = Attribute('test', False)
+        attribute.connect(attribute2)
+
+        connection = attribute.getConnection()
+
+        self.assertIs(connection, attribute2)
+
+        attribute.disconnect()
 
     def testConnect(self):
-        pass
-        # connect
+        attribute = self.getAttribute()
+        attribute2 = Attribute('test', False)
+        attribute.connect(attribute2)
+
+        self.assertTrue(attribute.isConnected())
+        self.assertIs(attribute.getConnection(), attribute2)
+
+        attribute.disconnect()
 
     def testDisconnect(self):
-        pass
-        # disconnect
+        attribute = self.getAttribute()
+        attribute2 = Attribute('test', False)
+        attribute.connect(attribute2)
+
+        attribute.disconnect()
+
+        self.assertFalse(attribute.isConnected())
+        self.assertIsNone(attribute.getConnection())
 
 
 
