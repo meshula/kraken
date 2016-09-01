@@ -1,25 +1,48 @@
 
 import unittest
 
+from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 
 
 class TestScalarAttribute(unittest.TestCase):
 
-    def testGetName(self):
-        pass
+    # ======
+    # Setup
+    # ======
+    @classmethod
+    def setUpClass(cls):
+        cls._attributeGroup = AttributeGroup('testAttributeGroup')
+        cls._attribute = ScalarAttribute('test', parent=cls._attributeGroup)
 
-    def getRTVal(self):
-        pass
-        # getRTVal
+    def getAttributeGroup(self):
+        return self._attributeGroup
 
-    def validateValue(self):
-        pass
-        # validateValue
+    def getAttribute(self):
+        return self._attribute
 
-    def getDataType(self):
-        pass
-        # getDataType
+    # ======
+    # Tests
+    # ======
+    def testGetRTVal(self):
+        attribute = self.getAttribute()
+        rtVal = attribute.getRTVal()
+
+        self.assertEqual(type(rtVal).__name__, 'PyRTValObject')
+        self.assertTrue(type(rtVal.getSimpleType()) is float)
+        self.assertEqual(rtVal.getSimpleType(), 0.0)
+
+    def testValidateValue(self):
+        attribute = self.getAttribute()
+
+        self.assertRaises(TypeError, lambda: attribute.validateValue(True))
+        self.assertRaises(TypeError, lambda: attribute.validateValue({}))
+        self.assertRaises(TypeError, lambda: attribute.validateValue('One'))
+
+    def testGetDataType(self):
+        attribute = self.getAttribute()
+
+        self.assertEqual(attribute.getDataType(), 'Scalar')
 
 
 def suite():
