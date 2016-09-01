@@ -48,7 +48,7 @@ class IntegerAttribute(NumberAttribute):
         """
 
         if type(value) is not int:
-            return False
+            raise TypeError("Value is not of type 'int'.")
 
         return True
 

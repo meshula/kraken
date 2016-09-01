@@ -14,7 +14,7 @@ class ScalarAttribute(NumberAttribute):
 
     def __init__(self, name, value=0.0, minValue=None, maxValue=None, parent=None):
         super(ScalarAttribute, self).__init__(name, value=value, minValue=minValue,
-              maxValue=maxValue, parent=parent)
+                                              maxValue=maxValue, parent=parent)
 
         assert type(self._value) in (int, float), "Value is not of type 'int' or 'float'."
 
@@ -48,7 +48,7 @@ class ScalarAttribute(NumberAttribute):
         """
 
         if type(value) not in (int, float):
-            return False
+            raise TypeError("Value is not of type 'int' or 'float'.")
 
         return True
 
