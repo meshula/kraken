@@ -718,7 +718,13 @@ class OSSMouthRig(OSSMouth):
         # create Rest Xfos and Aligns
         defCtrlsRest = []
         defCtrlsAligns = []
+
+        defCtrlsRot = []
         for c in defCtrls:
+            defCtrlsRot.append(Transform(c.getName()+ 'Rot', parent=c))
+
+
+        for c in defCtrlsRot:
            defCtrlsAligns.append(Vec3(1,2,3))
            defCtrlsRest.append(c.xfo)
 
@@ -735,7 +741,7 @@ class OSSMouthRig(OSSMouth):
         curveDefOp.setInput('alignZ', alignZ )
         curveDefOp.setInput('keepArcLength', 0.0)
         curveDefOp.setInput('compressionAmt', 0.0)
-        curveDefOp.setInput('followCurveTangent', 0.25)
+        curveDefOp.setInput('followCurveTangent', 0.75)
         curveDefOp.setInput('altTangent', Vec3(-1.0,0.0,0.0))
         curveDefOp.setInput('parent', parent)
         curveDefOp.setInput('useLocalNormal', 1.0)
@@ -743,14 +749,13 @@ class OSSMouthRig(OSSMouth):
 
         curveDefOp.setInput('atVec', atXfo)
         curveDefOp.setInput('controlAligns', defCtrlsAligns)
-        curveDefOp.setInput('controls', defCtrls)
+        curveDefOp.setInput('controls', defCtrlsRot)
         curveDefOp.setInput('controlsRest', defCtrls)
         curveDefOp.setInput('params', defParams)
 
         curveDefOp.setOutput('outputs', defOutputs)
 
         return curveRigOp, curveDefOp, defCtrls, defOutputs
-
 
 
     def loadData(self, data=None):
@@ -780,7 +785,10 @@ class OSSMouthRig(OSSMouth):
         # Controls
         # =========
         # Mouth
+        # self.mouthCtrlSpace = CtrlSpace('mouth', parent=self.ctrlCmpGrp)
+        # self.mouthCtrl = Control('mouth', parent=self.mouthCtrlSpace, shape="square", scale=0.5)
 
+        # Mouth
         self.jawCtrlSpace = CtrlSpace('jaw', parent=self.ctrlCmpGrp)
         self.jawCtrl = Control('jaw', parent=self.jawCtrlSpace, shape="halfCircle", scale=0.5)
         # midMouth
@@ -858,15 +866,12 @@ class OSSMouthRig(OSSMouth):
             data= data
             )
 
-        self.loLipDefCtrls[0]  = self.L_MouthCornerCtrl
-        self.loLipDefCtrls[-1] = self.R_MouthCornerCtrl
-        self.loLipDefOp.setInput('controls', self.loLipDefCtrls)
-        self.loLipDefOp.setInput('controlsRest', self.loLipDefCtrls)
-
-        self.upLipDefCtrls[0]  = self.L_MouthCornerCtrl
-        self.upLipDefCtrls[-1] = self.R_MouthCornerCtrl
-        self.upLipDefOp.setInput('controls', self.upLipDefCtrls)
-        self.upLipDefOp.setInput('controlsRest', self.upLipDefCtrls)
+        for defOp, ctrls in [(self.loLipDefOp, self.loLipDefCtrls), (self.upLipDefOp, self.upLipDefCtrls)]:
+            ctrls2 = [ctrl.getChildren()[0] for ctrl in ctrls]
+            ctrls2[0]  = self.L_MouthCornerCtrl
+            ctrls2[-1] = self.R_MouthCornerCtrl
+            defOp.setInput('controls', ctrls2)
+            defOp.setInput('controlsRest', ctrls2)
 
         #blending mouth corner defs
         self.blendMidMouthRigOp = self.blend_two_xfos(
@@ -980,18 +985,31 @@ class OSSMouthRig(OSSMouth):
         self.upLipRigOp.evaluate()
         self.loLipRigOp.evaluate()
 
+        uplipCtrlOffset = Vec3(0,0,.5)
+        lolipCtrlOffset = Vec3(0,0,.5)
+        uplipOffset = Vec3(0,0.5,0)
+        lolipOffset = Vec3(0,-0.5,0)
         #should do this up front - why does hierarchy not get evaluated?
-        for ctrls in [self.upLipDefCtrls, self.loLipDefCtrls]:
-            for ctrl in ctrls:
+        lips = [self.upLipDefCtrls, self.loLipDefCtrls]
+        for l in xrange(len(lips)):
+            for ctrl in lips[l]:
                 if ctrl not in [self.L_MouthCtrl, self.R_MouthCtrl, self.R_MouthCornerCtrl, self.L_MouthCornerCtrl]:
                     uberParentXfo = ctrl.getParent().getParent().xfo
                     downAxis = Vec3(-1,-1,-1)*uberParentXfo.ori.getYaxis()
                     ctrl.getParent().xfo = xfo.xfoFromDirAndUpV(Vec3(0,0,0), downAxis, uberParentXfo.ori.getZaxis())
                     ctrl.getParent().xfo.tr = uberParentXfo.tr
                     ctrl.xfo = ctrl.getParent().xfo
+                    ctrl.getChildren()[0].xfo = ctrl.getParent().xfo
                     # need to find a proper way of detecting controls of type curve
                     try:
-                        ctrl.translatePoints(Vec3(Vec3(0,0,.5)))
+                        if l:
+                            ctrl.xfo.tr -= uplipOffset
+                            ctrl.translatePoints(uplipCtrlOffset)
+                            ctrl.translatePoints(uplipOffset)
+                        else: 
+                            ctrl.xfo.tr -= Vec3(lolipOffset)
+                            ctrl.translatePoints(lolipCtrlOffset)
+                            ctrl.translatePoints(lolipOffset)
                     except: 
                         pass
 
@@ -1006,7 +1024,6 @@ class OSSMouthRig(OSSMouth):
             print self.loLipDefCtrls[i].xfo
             self.loLipControlsRest.append(Xfo(self.loLipDefCtrls[i].xfo))
         for i in range(len(self.upLipDefCtrls)):
-            print self.upLipDefCtrls[i].xfo
             self.upLipControlsRest.append(self.upLipDefCtrls[i].xfo)
 
         self.loLipDefOp.setInput('controlsRest', self.loLipControlsRest)

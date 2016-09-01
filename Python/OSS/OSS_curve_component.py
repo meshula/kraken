@@ -259,10 +259,10 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.NURBSCurveKLOp.setInput('alignZ', 3 )
         self.NURBSCurveKLOp.setInput('degree', 3)
         self.NURBSCurveKLOp.setInput('keepArcLength', 0.0)
-        self.NURBSCurveKLOp.setInput('compressionAmt', 0.4)
-        self.NURBSCurveKLOp.setInput('followCurveTangent', 0.0)
+        self.NURBSCurveKLOp.setInput('compressionAmt', 0.5)
+        self.NURBSCurveKLOp.setInput('followCurveTangent', 1.0)
         self.NURBSCurveKLOp.setInput('useLocalNormal', 1.0)
-        self.NURBSCurveKLOp.setInput('followCurveNormal', 0.0)
+        self.NURBSCurveKLOp.setInput('followCurveNormal', 1.0)
         self.NURBSCurveKLOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         self.NURBSCurveKLOp.setInput('parent', self.parentSpaceInputTgt)
         self.NURBSCurveKLOp.setInput('atVec', self.ctrlCmpGrp) # atVec should be optional, but is not currently in the Solver
@@ -323,13 +323,15 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
     def fillValues(self, numDefs, minVal=0.0, maxVal=1.0, popFirst=False, popLast=False):
         params = []
+        if numDefs == 1:
+            return [0.5]
         for i in range(numDefs):
             ratio = float(i) / float(numDefs-1)
             params.append((1.0-ratio)*minVal + ratio*maxVal)
-        if popFirst:
+        if popFirst and (len(params) > 1):
             print "popping first"
             del params[0]
-        if popLast:
+        if popLast and (len(params) > 1):
             print "popping last"
             del params[-1]
         return params
@@ -350,8 +352,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         print "First %s"%(self.popFirst)
         print "Last %s"%(self.popLast)
         self.params = self.fillValues(numDeformers, minVal=0.0, maxVal=1.0, popFirst=self.popFirst, popLast=self.popLast)
-        for i in range(len(self.params)):
-            self.rigControlAligns.append(Vec3(1,2,3))
+
 
         numDeformers = len(self.params)
 
@@ -423,7 +424,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 ctrlParent = ctrl.insertCtrlSpace()
                 #this is for a curve only solution
                 ctrlParent.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-
+                self.rigControlAligns.append(Vec3(1,2,3))
         # ==============
         # Constrain I/O
         # ==============
