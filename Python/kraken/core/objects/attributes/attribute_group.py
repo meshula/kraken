@@ -76,6 +76,9 @@ class AttributeGroup(SceneItem):
 
         """
 
+        if type(index) is not int:
+            raise TypeError("Index is not of type 'int'.")
+
         if self._checkAttributeIndex(index) is not True:
             return False
 
@@ -94,6 +97,9 @@ class AttributeGroup(SceneItem):
             bool: True if successful.
 
         """
+
+        if type(name) is not str:
+            raise TypeError("Name is not of type 'str'.")
 
         removeIndex = None
 
