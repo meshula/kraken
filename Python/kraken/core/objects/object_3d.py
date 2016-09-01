@@ -212,14 +212,14 @@ class Object3D(SceneItem):
         nameTemplate = config.getNameTemplate()
 
         # Get the token list for this type of object
-        format = None
+        nameFormat = None
         for typeName in nameTemplate['formats'].keys():
             if typeName in typeNameHierarchy:
-                format = nameTemplate['formats'][typeName]
+                nameFormat = nameTemplate['formats'][typeName]
                 break
 
-        if format is None:
-            format = nameTemplate['formats']['default']
+        if nameFormat is None:
+            nameFormat = nameTemplate['formats']['default']
 
         objectType = None
         for eachType in typeNameHierarchy:
@@ -233,7 +233,7 @@ class Object3D(SceneItem):
         # Generate a name by concatenating the resolved tokens together.
         builtName = ""
         skipSep = False
-        for token in format:
+        for token in nameFormat:
 
             if token is 'sep':
                 if not skipSep:
@@ -277,7 +277,7 @@ class Object3D(SceneItem):
 
             else:
                 raise ValueError("Unresolvabled token '" + token +
-                    "' used on: " + self.getPath())
+                                 "' used on: " + self.getPath())
 
         return builtName
 
