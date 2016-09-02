@@ -189,11 +189,9 @@ class Component(Object3D):
             container = self
 
         layer = container.getChildByName(name)
-        if layer is None or not layer.isTypeOf('Layer'):
-            raise KeyError("Layer '" + name + "' was not found!")
-
-        # TODO: We should be returning None instead of raising an error and users
-        # will be required to test if None.
+        if layer is not None and layer.isTypeOf('Layer') is False:
+            logger.warn("No layer with name '{}' was found.".format(name))
+            layer = None
 
         return layer
 
@@ -216,7 +214,7 @@ class Component(Object3D):
         layer = None
         if container is not None:
             layer = container.getChildByName(name)
-        if layer is None or not layer.isTypeOf('Layer'):
+        if layer is None or layer.isTypeOf('Layer') is False:
             layer = Layer(name, parent=container)
 
         if container is not None:
@@ -274,14 +272,7 @@ class Component(Object3D):
 
         """
 
-        raise Exception("We should not be here. This method is to be deprecated")
-
-        super(Component, self).addChild(child)
-
-        # Assign the child self as the component.
-        child.setComponent(self)
-
-        return True
+        raise NotImplementedError("We should not be here. This method is to be deprecated")
 
 
     def getHierarchyNodes(self, classType='', inheritedClass=False):
@@ -296,8 +287,8 @@ class Component(Object3D):
             list: Nodes that match the class type.
 
         """
-        if not isinstance(classType,str):
-            logger.warning("Warning in Component %s: getHierarchyNodes needs classType to be passed as string" % self._name)
+
+        assert isinstance(classType, str), "Warning in Component {}: getHierarchyNodes needs classType to be passed as string".format(self._name)
 
 
         nodeList = []
@@ -344,7 +335,10 @@ class Component(Object3D):
 
         """
 
-        if index > len(self._inputs):
+        if len(self._inputs) == 0:
+            return False
+
+        if index > len(self._inputs) - 1:
             raise IndexError("'" + str(index) + "' is out of the range of 'inputs' array.")
 
         return True
@@ -380,6 +374,8 @@ class Component(Object3D):
 
         elif dataType.startswith('String'):
             newInputTgt = StringAttribute(name)
+        else:
+            raise NotImplementedError("Datatype: {} is not a supported type for createInput.".format(dataType))
 
         # Handle keyword arguments
         for k, v in kwargs.iteritems():
@@ -541,7 +537,10 @@ class Component(Object3D):
 
         """
 
-        if index > len(self._outputs):
+        if len(self._outputs) == 0:
+            return False
+
+        if index > len(self._outputs) - 1:
             raise IndexError("'" + str(index) + "' is out of the range of 'outputs' array.")
 
         return True
