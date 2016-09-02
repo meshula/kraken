@@ -8,13 +8,15 @@ Container -- Component container representation.
 from collections import OrderedDict
 
 from kraken.core.objects.object_3d import Object3D
-from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
-# Note: does a container need to inherit off 'Object3D'?
-# These items exist only to structure a rig as a graph.
-# The never get built.
+
 class Container(Object3D):
-    """Container object."""
+    """Container object.
+
+    Note: does a container need to inherit off 'Object3D'?
+    These items exist only to structure a rig as a graph.
+    The never get built.
+    """
 
     def __init__(self, name):
         super(Container, self).__init__(name, None)
