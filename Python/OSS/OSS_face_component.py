@@ -525,6 +525,8 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
                     if side != self.getLocation():
                         newCtrl.setMetaDataItem("altLocation", side)
+                        newCtrlSpace.setMetaDataItem("altLocation", side)
+
                         # newCtrl.lockTranslation(x=True, y=True, z=True)
                     newCtrl.lockScale(x=True, y=True, z=True)
                     newCtrl.lockRotation(x=True, y=True, z=False)
