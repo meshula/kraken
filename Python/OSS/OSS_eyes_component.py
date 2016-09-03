@@ -57,15 +57,18 @@ class OSSEyesComponentGuide(OSSEyesComponent):
 
          # Guide Settings
         self.EyeRadius = ScalarAttribute('EyeRadius', value=2.0, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
-        self.EyesCtrlNames = StringAttribute('EyesNames', value="L_Eye R_Eye", parent=self.guideSettingsAttrGrp)
+        self.EyeCtrlName = StringAttribute('EyeName', value="Eye", parent=self.guideSettingsAttrGrp)
+        self.EyeCtrlName.setValueChangeCallback(self.updateEyesControls)
+        self.LeftRightPair = BoolAttribute('LeftRightPair', value=True, parent=self.guideSettingsAttrGrp)
+        self.LeftRightPair.setValueChangeCallback(self.updateLeftRightPair)
 
         # =========
         # Controls
         # =========
         # Guide Controls
 
-        self.eyesCtrl = Control('eyes', parent=self.ctrlCmpGrp, shape="null")
-        self.eyesEndCtrl = Control('eyesEnd', parent=self.ctrlCmpGrp, shape="square")
+        self.eyesCtrl = Control('eye', parent=self.ctrlCmpGrp, shape="null")
+        self.eyesEndCtrl = Control('eyeEnd', parent=self.ctrlCmpGrp, shape="square")
         self.eyesEndCtrl.rotatePoints(0,90,0)
 
         self.eyesCtrls = []
@@ -81,13 +84,15 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         # find out how to properly access data in updateAnControls
         self.eyesCtrl.xfo = data['eyesXfo']
         self.eyesEndCtrl.xfo = data['eyesEndXfo']
-        self.EyesCtrlNames.setValueChangeCallback(self.updateEyesControls)
+
 
         self.loadData(data)
 
         Profiler.getInstance().pop()
 
-    def updateAnControls(self, controlsList, handleNames):
+
+
+    def updateAnControls(self, controlsList, handleName):
         """Load a saved guide representation from persisted data.
 
         Arguments:
@@ -97,6 +102,7 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         True if successful.
 
         """
+        print "Updating Controls"
         self.controlXforms = []
 
         globalScale = 1.0
@@ -117,33 +123,36 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         del controlsList[:]
 
         # Lets build all new handles
-        animControlNameList = getAnimControlNameList(handleNames)
+        if self.LeftRightPair.getValue():
+            sides = ["L", "R"]
+        else:
+            sides = [self.getLocation()]
 
-        if not animControlNameList:  # Nothing to build
-            return True
-
-        segments = ["fK", "ik"]
+        segments = ["fk", "ik"]
         offset = 2
         lSideIdx= 0
         rSideIdx= 0
         sideIdx = 0
 
-        for i, handleName in enumerate(animControlNameList):
+        for i, side in enumerate(sides):
             parent = self.eyesCtrl
             for j, segment in enumerate(segments):
 
-
                 sideIdx = 0
-                if handleName.startswith("L"):
+                if side == "L":
                     lSideIdx += 1
                     sideIdx = lSideIdx
-                elif handleName.startswith("R"):
+                elif side == "R":
                     rSideIdx += 1
                     sideIdx = -rSideIdx
 
 
-                if j == 0:
-                    newCtrl = Control(handleName+"_"+segment, parent= self.eyesCtrl, shape="direction")
+                if segment == "fk":
+                    metaData = {"altType": "FKControl"}
+                    if side != self.getLocation():
+                        metaData["altLocation"] = side
+
+                    newCtrl = Control(handleName, parent= self.eyesCtrl, shape="direction", metaData=metaData)
                     newCtrl.setShape("direction")
                     newCtrl.setColor("yellow")
                     newCtrl.rotatePoints(90,0,0)
@@ -152,8 +161,12 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                     newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(sideIdx*offset, 0, 0)))
                     parent = newCtrl
 
+
                 else:
-                    newCtrl = Control(handleName+"_"+segment, parent=parent, shape="square")
+                    metaData = {"altType": "IKControl"}
+                    if side != self.getLocation():
+                        metaData["altLocation"] = side
+                    newCtrl = Control(handleName, parent=parent, shape="square", metaData=metaData)
                     newCtrl.setShape("square")
                     newCtrl.setColor("red")
                     newCtrl.lockTranslation(x=True, y=True, z=True)
@@ -162,22 +175,23 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                     newCtrl.scalePoints(Vec3(.5,.5,.5))
                     newCtrl.rotatePoints(90,0,0)
                     newCtrl.translatePoints(Vec3(0,0,10))
-
                     newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0, 0, 0)))
-
+                    if side != self.getLocation():
+                        newCtrl.setMetaDataItem("altLocation", side)
 
                 # parent = newCtrl
                 controlsList.append(newCtrl)
 
-                if i < len(self.controlXforms):
-                    if j < len(self.controlXforms[i]):
-                        newCtrl.xfo = self.controlXforms[i][j]
 
         return True
 
+    # Not sure I like these callbacks for all cases.
+    # There should just be a call to "loadData" or equivalent when building guide rig
+    def updateLeftRightPair(self, LeftRightPairBool):
+        self.updateAnControls(self.eyesCtrls, self.EyeCtrlName.getValue())
 
-    def updateEyesControls(self, handleNames):
-        self.updateAnControls(self.eyesCtrls, handleNames)
+    def updateEyesControls(self, handleName):
+        self.updateAnControls(self.eyesCtrls, handleName)
 
 
     # =============
@@ -360,31 +374,32 @@ class OSSEyesComponentRig(OSSEyesComponent):
 
 
 
-    def createControls(self, handleNames, data):
-
-        animControlNameList = getAnimControlNameList(handleNames)
-
-
-        segments = ["fk", "ik"]
+    def createControls(self, handleName, data):
 
         globalScale = data['globalComponentCtrlSize']
 
 
+        # Lets build all new handles
+        if self.LeftRightPairBool:
+            sides = ["L", "R"]
+        else:
+            sides = [self.getLocation()]
 
-        for i, handleName in enumerate(animControlNameList):
+        segments = ["fk", "ik"]
+        for i, side in enumerate(sides):
             parent = self.eyesCtrlSpace
-            # newCtrls = []
-            # build fk handle
             for j, segment in enumerate(segments):
                 #Eventually, we need outputs and ports for this component for each handle segment
                 #spineOutput = ComponentOutput(handleName+"_"+segment, parent=self.outputHrcGrp)
 
-                newCtrlSpace = CtrlSpace(handleName+"_"+segment, parent=parent)
-                # newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
 
                 if segment == "fk":
-                    # fkCtrl = Transform(handleName+"_"+segment, parent=newCtrlSpace)
-                    fkCtrl = Control(handleName+"_fk", parent=newCtrlSpace, shape="direction")
+
+                    metaData = {"altType": "FKControl"}
+                    if side != self.getLocation():
+                        metaData["altLocation"] = side
+
+                    fkCtrl = Control(handleName, parent=parent, shape="direction", metaData=metaData)
                     upCtrlSpace = fkCtrl.insertCtrlSpace()
                     fkCtrl.setShape("direction")
                     fkCtrl.setColor("yellow")
@@ -392,8 +407,9 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     fkCtrl.rotatePoints(90,0,0)
                     fkCtrl.translatePoints(Vec3(0,0,1))
                     fkCtrl.scalePoints(Vec3(1,1,data['EyeRadius']))
+                    newCtrlSpace = fkCtrl.insertCtrlSpace()
                     # newCtrls.append(fkCtrl)
-                    newRef = Joint(handleName+"_ref", parent=self.deformersParent)
+                    newRef = Joint(handleName, parent=self.deformersParent, metaData={"altLocation": side, "altType":"RefJoint"})
                     newRef.setComponent(self)
                     newRefConstraint = newRef.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
                     self.parentSpaceInputTgt.childJoints.append(newRef)
@@ -401,7 +417,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     newLoc = Locator(handleName+"_fk", parent=self.ctrlCmpGrp)
                     newLoc.setVisibility(False)
 
-                    newDef = Joint(handleName+"_fk", parent=newRef)
+                    newDef = Joint(handleName, parent=newRef, metaData={"altLocation": side})
                     newDef.setComponent(self)
                     newDefConstraint = newDef.constrainTo(newLoc)
 
@@ -411,8 +427,12 @@ class OSSEyesComponentRig(OSSEyesComponent):
 
 
                 if segment == "ik":
+
+                    metaData = {"altType": "IKControl"}
+                    if side != self.getLocation():
+                        metaData["altLocation"] = side
                     # break these out more explicitly
-                    ikCtrl = Control(handleName+"_"+segment, parent=self.eyeTrackerIKSpace, shape="square")
+                    ikCtrl = Control(handleName, parent=self.eyeTrackerIKSpace, shape="square", metaData=metaData)
                     ikCtrlEndSpace = ikCtrl.insertCtrlSpace()
                     ikCtrl.setShape("square")
                     ikCtrl.setColor("red")
@@ -420,6 +440,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     ikCtrl.rotatePoints(90,0,0)
                     ikCtrl.scalePoints(Vec3(.5,.5,.5))
                     # newCtrls.append(ikCtrl)
+                    newCtrlSpace = ikCtrl.insertCtrlSpace()
 
                 ctrlListName = "eyesCtrls"
 
@@ -445,7 +466,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
             # Add Fabric Ops
             # ===============
             # Add Spine Canvas Op
-            self.EyeIkFkBlendKLOp = KLOperator('EyeIkFkBlendKLOp'+"_"+handleName, 'OSS_AimKLSolver', 'OSS_Kraken')
+            self.EyeIkFkBlendKLOp = KLOperator('EyeIkFkBlendKLOp'+"_"+handleName+"_"+side, 'OSS_AimKLSolver', 'OSS_Kraken')
             self.addOperator(self.EyeIkFkBlendKLOp)
 
             # Add Att Inputs
@@ -477,6 +498,8 @@ class OSSEyesComponentRig(OSSEyesComponent):
 
         super(OSSEyesComponentRig, self).loadData( data )
 
+        self.LeftRightPairBool = data.get("LeftRightPair", True)
+
         parent = self.eyesCtrlSpace
         self.eyesCtrlSpace.xfo = data['eyesXfo']
         # ============
@@ -490,21 +513,21 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.eyeTracker.xfo = data['eyesEndXfo']
         self.eyeTrackerIKSpace.xfo = data['eyesEndXfo']
 
-        self.createControls(data["EyesNames"], data)
+        self.createControls(data["EyeName"], data)
 
         # Eval Operators
         self.evalOperators()
 
 
-def getAnimControlNameList(handleNames):
+def getAnimControlNameList(handleName):
     """ tokenizes string argument, returns a list"""
-    animControlNameList = re.split(r'[ ,:;]+', handleNames)
+    animControlNameList = re.split(r'[ ,:;]+', handleName)
 
     # These checks should actually prevent the component_inspector from closing maybe?
     for name in animControlNameList:
         if name and not re.match(r'^[\w_]+$', name):
             # Eventaully specific exception just for component class that display component name, etc.
-            raise ValueError("handleNames \""+name+"\" contains non-alphanumeric characters in component \""+self.getName()+"\"")
+            raise ValueError("handleName \""+name+"\" contains non-alphanumeric characters in component \""+self.getName()+"\"")
 
     animControlNameList = [x for x in animControlNameList if x != ""]
 
@@ -512,7 +535,7 @@ def getAnimControlNameList(handleNames):
         return []
 
     if len(animControlNameList) > len(set(animControlNameList)):
-        raise ValueError("Duplicate names in handleNames in component \""+self.getName()+"\"")
+        raise ValueError("Duplicate names in handleName in component \""+self.getName()+"\"")
 
     return animControlNameList
 

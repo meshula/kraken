@@ -58,11 +58,15 @@ class OSSFaceComponentGuide(OSSFaceComponent):
 
 
          # Guide Settings
-        self.an1DCtrlNames = StringAttribute('an1DNames', value="L_BrowInn L_BrowMid L_BrowOut R_BrowInn R_BrowMid R_BrowOut L_loLidInn L_loLidMid L_loLidOut R_loLidInn R_loLidMid R_loLidOut L_upLidInn L_upLidMid L_upLidOut R_upLidInn R_upLidMid R_upLidOut", parent=self.guideSettingsAttrGrp)
+        self.an1DCtrlNames = StringAttribute('an1DNames', value="BrowInn BrowMid BrowOut loLidInn loLidMid loLidOut upLidInn upLidMid upLidOut", parent=self.guideSettingsAttrGrp)
         self.shapesToControlsJSON = StringAttribute('shapesToControlsJSON', value="", parent=self.guideSettingsAttrGrp)
         self.an2DCtrlNames = StringAttribute('an2DNames', value="", parent=self.guideSettingsAttrGrp)
         self.an3DCtrlNames = StringAttribute('an3DNames', value="", parent=self.guideSettingsAttrGrp)
+        self.LeftRightPairsAttr = BoolAttribute('LeftRightPairs', value=True, parent=self.guideSettingsAttrGrp)
+        self.LeftRightPairsAttr.setValueChangeCallback(self.updateLeftRightPairs)
 
+        self.MirrorLeftToRightAttr = BoolAttribute('MirrorLeftToRightAttr', value=True, parent=self.guideSettingsAttrGrp)
+        self.MirrorLeftToRightAttr.setValueChangeCallback(self.updateLeftRightPairs)
 
         self.an1DCtrlNames.setValueChangeCallback(self.updateAn1DControls)
         self.an2DCtrlNames.setValueChangeCallback(self.updateAn2DControls)
@@ -104,21 +108,20 @@ class OSSFaceComponentGuide(OSSFaceComponent):
         True if successful.
 
         """
-        self.controlXforms = []
+        lmcontrolXforms = []
+        rcontrolXforms = []
+
+        mirrorL2R = self.MirrorLeftToRightAttr.getValue()
 
         globalScale = 1.0
 
         # Store current values if guide controls already exist
         current = 0
-        for i, ctrl in enumerate(controlsList):
-
-            if ctrl.getParent() is self.faceCtrl:
-                self.controlXforms.append([ctrl.xfo])
-                current = len(self.controlXforms) -1
+        for ctrl in controlsList:
+            if ctrl.getMetaDataItem("altLocation") == "R":
+                rcontrolXforms.append(ctrl.xfo)
             else:
-                self.controlXforms[current].append(ctrl.xfo)
-
-
+                lmcontrolXforms.append(ctrl.xfo)
 
         # Delete current controls
         for ctrl in reversed(controlsList):
@@ -128,68 +131,106 @@ class OSSFaceComponentGuide(OSSFaceComponent):
         # Lets build all new handles
         animControlNameList = getAnimControlNameList(handleNames)
 
+        if self.LeftRightPairsAttr.getValue():
+            sides = ["L", "R"]
+        else:
+            sides = [self.getLocation()]
+
         if not animControlNameList:  # Nothing to build
             return True
 
         segments = ["base", "tweak"]
 
-        offset = 0.0
-        for i, handleName in enumerate(animControlNameList):
-            parent = self.faceCtrl
-            for j, segment in enumerate(segments):
+        for side in sides:
+
+            controlXforms = lmcontrolXforms
+            mult = 1.0
+            if side == "R":
+                if not mirrorL2R:
+                    controlXforms = rcontrolXforms
+                mult = -1.0
+
+            offset = 0.0
+
+            for i, handleName in enumerate(animControlNameList):
+                parent = self.faceCtrl
+                for j, segment in enumerate(segments):
+
+                    newCtrl = Control(handleName+"_"+segment, parent=parent, shape="circle")
+                    if side != self.getLocation():
+                        newCtrl.setMetaDataItem("altLocation", side)
+
+                    if anCtrlType==1: # Slider
+                        if j == 0:
+                            newCtrl.setShape("square")
+                            newCtrl.setColor("red")
+                            newCtrl.scalePoints(Vec3(0.125,2,2))
+                        else:
+                            newCtrl.setShape("square")
+                            newCtrl.scalePoints(Vec3(.5,.25,.25))
+                            newCtrl.lockTranslation(x=True, y=False, z=True)
+
+                    elif anCtrlType==2: # Field
+                        if j == 0:
+                            newCtrl.setShape("square")
+                            newCtrl.setColor("green")
+                            newCtrl.scalePoints(Vec3(2,2,2))
+                        else:
+                            newCtrl.setShape("circle")
+                            newCtrl.scalePoints(Vec3(.5,.5,.5))
+                            newCtrl.lockTranslation(x=False, y=False, z=True)
+
+                    elif anCtrlType==3: # Volume
+                        if j == 0:
+                            newCtrl.setShape("cube")
+                            newCtrl.setColor("blue")
+                            newCtrl.scalePoints(Vec3(2,2,2))
+                        else:
+                            newCtrl.setShape("sphere")
+                            newCtrl.scalePoints(Vec3(.5,.5,.5))
+
+                    newCtrl.rotatePoints(90,0,00)
 
 
-                newCtrl = Control(handleName+"_"+segment, parent=parent, shape="circle")
+                    #newCtrl.scalePoints(Vec3(0.25, 0.25, 0.25))
+                    if segment == "base":
+                        offset += 5.0 * mult
+                        newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(offset, 0.0, 0)))
+                        newCtrl.xfo
 
-                if anCtrlType==1: # Slider
-                    if j == 0:
-                        newCtrl.setShape("square")
-                        newCtrl.setColor("red")
-                        newCtrl.scalePoints(Vec3(0.125,2,2))
                     else:
-                        newCtrl.setShape("square")
-                        newCtrl.scalePoints(Vec3(.5,.25,.25))
-                        newCtrl.lockTranslation(x=True, y=False, z=True)
+                        newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0.0, 0.0, 0)))
 
-                elif anCtrlType==2: # Field
-                    if j == 0:
-                        newCtrl.setShape("square")
-                        newCtrl.setColor("green")
-                        newCtrl.scalePoints(Vec3(2,2,2))
+                    controlsList.append(newCtrl)
+                    parent = newCtrl
+
+                    if side == "R" and not mirrorL2R:
+                        indexOffset == len(animControlNameList)
                     else:
-                        newCtrl.setShape("circle")
-                        newCtrl.scalePoints(Vec3(.5,.5,.5))
-                        newCtrl.lockTranslation(x=False, y=False, z=True)
+                        indexOffset = 0
 
-                elif anCtrlType==3: # Volume
-                    if j == 0:
-                        newCtrl.setShape("cube")
-                        newCtrl.setColor("blue")
-                        newCtrl.scalePoints(Vec3(2,2,2))
-                    else:
-                        newCtrl.setShape("sphere")
-                        newCtrl.scalePoints(Vec3(.5,.5,.5))
+                    # If we have stored xforms, put them back
 
-                newCtrl.rotatePoints(90,0,00)
+                    index = indexOffset + (i * len(segments) + j)
+                    if index < len(controlXforms):
+                        xfo = Xfo(controlXforms[index])
+                        if side == "R" and mirrorL2R:
+                            xfo.tr.x = -xfo.tr.x
+                            xfo.ori.mirror(0)
+
+                        newCtrl.xfo = xfo
 
 
-                #newCtrl.scalePoints(Vec3(0.25, 0.25, 0.25))
-                if j == 0:
-                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(-offset, 0.0, 0)))
-                    offset += 5.0
-                else:
-                    newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0.0, 0.0, 0)))
-
-                controlsList.append(newCtrl)
-                parent = newCtrl
-
-                if i < len(self.controlXforms):
-                    if j < len(self.controlXforms[i]):
-                        newCtrl.xfo = self.controlXforms[i][j]
 
 
         return True
 
+    # Not sure I like these callbacks for all cases.
+    # There should just be a call to "loadData" or equivalent when building guide rig
+    def updateLeftRightPairs(self, LeftRightPairBool):
+        self.updateAn1DControls(self.an1DCtrlNames.getValue())
+        self.updateAn2DControls(self.an2DCtrlNames.getValue())
+        self.updateAn3DControls(self.an3DCtrlNames.getValue())
 
     def updateAn1DControls(self, handleNames):
         self.updateAnControls(1, self.an1DCtrls, handleNames)
@@ -211,7 +252,6 @@ class OSSFaceComponentGuide(OSSFaceComponent):
         The JSON data object
 
         """
-
         data = super(OSSFaceComponentGuide, self).saveData()
 
         data['faceXfo'] = self.faceCtrl.xfo
@@ -359,6 +399,8 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
     def createControls(self, anCtrlType, handleNames, data):
 
+        ctrlListName = "an"+str(anCtrlType)+"DCtrls"
+
         animControlNameList = getAnimControlNameList(handleNames)
 
         shapesToControlsJSON = data.get("shapesToControlsJSON", "")
@@ -376,133 +418,142 @@ class OSSFaceComponentRig(OSSFaceComponent):
         self.RemapScalarValueSolverKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
-        for i, handleName in enumerate(animControlNameList):
-            parent = self.faceCtrlSpace
-            newCtrls = []
+        if self.LeftRightPairs:
+            sides = ["L", "R"]
+        else:
+            sides = [self.getLocation()]
 
-            for j, segment in enumerate(segments):
-                #Eventually, we need outputs and ports for this component for each handle segment
-                #spineOutput = ComponentOutput(handleName+"_"+segment, parent=self.outputHrcGrp)
+        for side in sides:
 
+            for i, handleName in enumerate(animControlNameList):
+                parent = self.faceCtrlSpace
+                newCtrls = []
 
-                newCtrlSpace = CtrlSpace(handleName+"_"+segment, parent=parent)
-                # newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
+                for j, segment in enumerate(segments):
+                    #Eventually, we need outputs and ports for this component for each handle segment
+                    #spineOutput = ComponentOutput(handleName+"_"+segment, parent=self.outputHrcGrp)
 
-                if j == 0:
-                    newCtrl = Transform(handleName+"_"+segment, parent=newCtrlSpace)
-                    '''
-                    if anCtrlType ==1: # Slider
+                    newCtrlSpace = CtrlSpace(handleName+"_"+segment, parent=parent)
+                    # newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
+
+                    if j == 0:
+                        newCtrl = Transform(handleName+"_"+segment, parent=newCtrlSpace)
+                        '''
+                        if anCtrlType ==1: # Slider
+                                newCtrl.setShape("square")
+                                newCtrl.setColor("red")
+                                newCtrl.scalePoints(Vec3(0.125,2,2))
+                                # newCtrl.lockTranslation(x=True, y=True, z=True)
+                                newCtrl.lockScale(x=True, y=True, z=True)
+                                newCtrl.lockRotation(x=True, y=True, z=True)
+                        elif anCtrlType==2: # Field
+                                newCtrl.setShape("square")
+                                newCtrl.setColor("green")
+                                newCtrl.scalePoints(Vec3(2,2,2))
+                                # newCtrl.lockTranslation(x=True, y=True, z=True)
+                                newCtrl.lockScale(x=True, y=True, z=True)
+                                newCtrl.lockRotation(x=True, y=True, z=True)
+                        elif anCtrlType==3: # Volume
+                                newCtrl.setShape("cube")
+                                newCtrl.setColor("blue")
+                                newCtrl.scalePoints(Vec3(2,2,2))
+                                # newCtrl.lockTranslation(x=True, y=True, z=True)
+                                newCtrl.lockScale(x=True, y=True, z=True)
+                                newCtrl.lockRotation(x=True, y=True, z=True)
+                        newCtrl.rotatePoints(90,0,0)
+                        '''
+                    else:
+                        newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
+                        if anCtrlType ==1: # Slider
                             newCtrl.setShape("square")
-                            newCtrl.setColor("red")
-                            newCtrl.scalePoints(Vec3(0.125,2,2))
-                            # newCtrl.lockTranslation(x=True, y=True, z=True)
-                            newCtrl.lockScale(x=True, y=True, z=True)
-                            newCtrl.lockRotation(x=True, y=True, z=True)
-                    elif anCtrlType==2: # Field
+                            newCtrl.scalePoints(Vec3(.5,.25,.25))
+                            newCtrl.lockTranslation(x=True, y=False, z=True)
+
+                        elif anCtrlType==2: # Field
                             newCtrl.setShape("square")
-                            newCtrl.setColor("green")
-                            newCtrl.scalePoints(Vec3(2,2,2))
-                            # newCtrl.lockTranslation(x=True, y=True, z=True)
-                            newCtrl.lockScale(x=True, y=True, z=True)
-                            newCtrl.lockRotation(x=True, y=True, z=True)
-                    elif anCtrlType==3: # Volume
-                            newCtrl.setShape("cube")
-                            newCtrl.setColor("blue")
-                            newCtrl.scalePoints(Vec3(2,2,2))
-                            # newCtrl.lockTranslation(x=True, y=True, z=True)
-                            newCtrl.lockScale(x=True, y=True, z=True)
-                            newCtrl.lockRotation(x=True, y=True, z=True)
-                    newCtrl.rotatePoints(90,0,0)
-                    '''
-                else:
-                    newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
-                    if anCtrlType ==1: # Slider
-                        newCtrl.setShape("square")
-                        newCtrl.scalePoints(Vec3(.5,.25,.25))
-                        newCtrl.lockTranslation(x=True, y=False, z=True)
+                            newCtrl.scalePoints(Vec3(.5,.5,.5))
+                            newCtrl.lockTranslation(x=False, y=False, z=True)
 
-                    elif anCtrlType==2: # Field
-                        newCtrl.setShape("square")
-                        newCtrl.scalePoints(Vec3(.5,.5,.5))
-                        newCtrl.lockTranslation(x=False, y=False, z=True)
+                        elif anCtrlType==3: # Volume
+                            newCtrl.setShape("sphere")
+                            newCtrl.scalePoints(Vec3(.5,.5,.5))
+                        newCtrl.rotatePoints(90,0,0)
 
-                    elif anCtrlType==3: # Volume
-                        newCtrl.setShape("sphere")
-                        newCtrl.scalePoints(Vec3(.5,.5,.5))
-                    newCtrl.rotatePoints(90,0,0)
+                        location = self.getLocation()
+                        if side != location:
+                            location = side
+                        if location+"_"+handleName in shapesToControlDict.keys():
 
-                    if handleName in shapesToControlDict.keys():
+                            LTOp = KLOperator(location+self.getName()+handleName+'GetLocalTranslateSolver', 'OSS_GetLocalTranslateSolver', 'OSS_Kraken')
+                            self.addOperator(LTOp)
+                            LTOp.setInput('drawDebug', self.drawDebugInputAttr)
+                            LTOp.setInput('rigScale', self.rigScaleInputAttr)
+                            LTOp.setInput('inMatrix', newCtrl)
+                            LTOp.setInput('inBaseMatrix', newCtrlSpace)
 
-                        LTOp = KLOperator(self.getLocation()+self.getName()+handleName+'GetLocalTranslateSolver', 'OSS_GetLocalTranslateSolver', 'OSS_Kraken')
-                        self.addOperator(LTOp)
-                        LTOp.setInput('drawDebug', self.drawDebugInputAttr)
-                        LTOp.setInput('rigScale', self.rigScaleInputAttr)
-                        LTOp.setInput('inMatrix', newCtrl)
-                        LTOp.setInput('inBaseMatrix', newCtrlSpace)
+                            bsAttrGrp = AttributeGroup("BlendShapes", parent=newCtrl)
+                            used_axes = {}
+                            for direction, shapes in shapesToControlDict[location+"_"+handleName].iteritems():
+                                #Need something here to extract single local axis value from handleName
 
-                        bsAttrGrp = AttributeGroup("BlendShapes", parent=newCtrl)
-                        used_axes = {}
-                        for direction, shapes in shapesToControlDict[handleName].iteritems():
-                            #Need something here to extract single local axis value from handleName
+                                sign, axis = direction.split("t")
+                                if axis not in used_axes.keys():
+                                    lvAttr = ScalarAttribute("localT"+axis, value=0.5, parent=bsAttrGrp)  #can't currently use dcc eulers directly
+                                    LTOp.setOutput('localTranslate'+axis.upper(), lvAttr)
 
-                            sign, axis = direction.split("t")
-                            if axis not in used_axes.keys():
-                                lvAttr = ScalarAttribute("localT"+axis, value=0.5, parent=bsAttrGrp)  #can't currently use dcc eulers directly
-                                LTOp.setOutput('localTranslate'+axis.upper(), lvAttr)
+                                    posAttr = ScalarAttribute(axis+"Pos", value=0.5, parent=bsAttrGrp)
+                                    negAttr = ScalarAttribute(axis+"Neg", value=0.5, parent=bsAttrGrp)
 
-                                posAttr = ScalarAttribute(axis+"Pos", value=0.5, parent=bsAttrGrp)
-                                negAttr = ScalarAttribute(axis+"Neg", value=0.5, parent=bsAttrGrp)
+                                    used_axes[axis] = {"+": posAttr, "-": negAttr}
 
-                                used_axes[axis] = {"+": posAttr, "-": negAttr}
+                                    array = self.RemapScalarValueSolverKLOp.getInput("inputValues") or []
+                                    array.append(lvAttr)
+                                    self.RemapScalarValueSolverKLOp.setInput('inputValues', array)
 
-                                array = self.RemapScalarValueSolverKLOp.getInput("inputValues") or []
-                                array.append(lvAttr)
-                                self.RemapScalarValueSolverKLOp.setInput('inputValues', array)
+                                    array = self.RemapScalarValueSolverKLOp.getOutput("resultPos") or []
+                                    array.append(posAttr)
+                                    self.RemapScalarValueSolverKLOp.setOutput('resultPos', array)
 
-                                array = self.RemapScalarValueSolverKLOp.getOutput("resultPos") or []
-                                array.append(posAttr)
-                                self.RemapScalarValueSolverKLOp.setOutput('resultPos', array)
+                                    array = self.RemapScalarValueSolverKLOp.getOutput("resultNeg") or []
+                                    array.append(negAttr)
+                                    self.RemapScalarValueSolverKLOp.setOutput('resultNeg', array)
 
-                                array = self.RemapScalarValueSolverKLOp.getOutput("resultNeg") or []
-                                array.append(negAttr)
-                                self.RemapScalarValueSolverKLOp.setOutput('resultNeg', array)
+                                for shape in shapes:
+                                    bsAttr = ScalarAttribute(shape, value=0.0, parent=bsAttrGrp)
+                                    bsAttr.setMetaDataItem("blendShapeName", shape)
+                                    bsAttr.connect(used_axes[axis][sign])
 
-                            for shape in shapes:
-                                bsAttr = ScalarAttribute(shape, value=0.0, parent=bsAttrGrp)
-                                bsAttr.setMetaDataItem("blendShapeName", shape)
-                                bsAttr.connect(used_axes[axis][sign])
+                    if side != self.getLocation():
+                        newCtrl.setMetaDataItem("altLocation", side)
+                        # newCtrl.lockTranslation(x=True, y=True, z=True)
+                    newCtrl.lockScale(x=True, y=True, z=True)
+                    newCtrl.lockRotation(x=True, y=True, z=False)
+
+                    newCtrls.append(newCtrl)
+
+                    #self.handleConstraints.append(newDef.constrainTo(newCtrl, maintainOffset=False))
+                    #controlsList.append(newCtrl)
+                    parent = newCtrl
 
 
+                    if (ctrlListName+"Xfos") in data.keys():
+                        if side == "R":
+                            indexOffset = len(animControlNameList) * 2
+                        else:
+                            indexOffset = 0
 
-
-
-                # newCtrl.lockTranslation(x=True, y=True, z=True)
-                newCtrl.lockScale(x=True, y=True, z=True)
-                newCtrl.lockRotation(x=True, y=True, z=False)
-
-                newCtrls.append(newCtrl)
-
-                #self.handleConstraints.append(newDef.constrainTo(newCtrl, maintainOffset=False))
-                #controlsList.append(newCtrl)
-                parent = newCtrl
-                ctrlListName = "an"+str(anCtrlType)+"DCtrls"
-
-                if (ctrlListName+"Xfos") in data.keys():
-
-                    index = i*len(segments) + j
-
-                    if (i*anCtrlType + j) < len(data[ctrlListName+"Xfos"]):
-                        newCtrlSpace.xfo = data[ctrlListName+"Xfos"][index]
-                        newCtrl.xfo = data[ctrlListName+"Xfos"][index]
-
+                        index = indexOffset + (i*len(segments) + j)
+                        if index < len(data[ctrlListName+"Xfos"]):
+                            newCtrlSpace.xfo = data[ctrlListName+"Xfos"][index]
+                            newCtrl.xfo = data[ctrlListName+"Xfos"][index]
 
             # Add Deformer Joint Constrain
-            self.outputsToDeformersKLOp     = KLOperator(self.getLocation()+self.getName()+handleName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
-            self.addOperator(self.outputsToDeformersKLOp)
+            #self.outputsToDeformersKLOp     = KLOperator(self.getLocation()+self.getName()+handleName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+            #self.addOperator(self.outputsToDeformersKLOp)
 
             # Add Att Inputs
-            self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-            self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
+            #self.outputsToDeformersKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+            #self.outputsToDeformersKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
 
 
@@ -523,6 +574,9 @@ class OSSFaceComponentRig(OSSFaceComponent):
         """
 
         super(OSSFaceComponentRig, self).loadData( data )
+
+        self.LeftRightPairs = data.get("LeftRightPairs", True)
+        self.MirrorLeftToRight = data.get("MirrorLeftToRight", True)
 
         self.faceCtrlSpace.xfo = data['faceXfo']
         # ============

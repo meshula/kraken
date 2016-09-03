@@ -65,6 +65,7 @@ class OSSConfig(Config):
                                   "Curve": "crv",
                                   "HierarchyGroup": "hrc",
                                   "Joint": "def",
+                                  "RefJoint": "ref",
                                   "Layer": "",
                                   "Locator": "loc",
                                   "Transform": "xfo",

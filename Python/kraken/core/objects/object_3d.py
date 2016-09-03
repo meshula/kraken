@@ -31,8 +31,8 @@ logger.setLevel(logging.INFO)
 class Object3D(SceneItem):
     """Kraken base object type for any 3D object."""
 
-    def __init__(self, name, parent=None, flags=None):
-        super(Object3D, self).__init__(name, parent)
+    def __init__(self, name, parent=None, flags=None, metaData=None):
+        super(Object3D, self).__init__(name, parent, metaData)
         self._children = []
         self._flags = {}
         self._attributeGroups = []
@@ -61,7 +61,7 @@ class Object3D(SceneItem):
                     msg = "{} '{}' {} ({}: {}) {}\n".format("Invalid flag", flag, "set on", self.getName(), self.getPath(), ". Alphanumeric and underscores only!")
                     logger.warn(msg)
                     continue
-#
+    #
                 self.setFlag(flag)
 
     # ==================
@@ -241,7 +241,14 @@ class Object3D(SceneItem):
                 if self.isTypeOf('Component'):
                     location = self.getLocation()
                 else:
-                    location = self.getComponent().getLocation()
+                    component = self.getComponent()
+                    if component is None:
+                        raise ValueError("object [%s] does not have a component." % self.getName())
+                    location = component.getLocation()
+
+                altLocation = self.getMetaDataItem("altLocation")
+                if altLocation is not None and altLocation in nameTemplate['locations']:
+                    location = altLocation
 
                 if location not in nameTemplate['locations']:
                     msg = "Invalid location on '{}'. Location: {}. Valid locations: {}".format(self.getPath(), location, nameTemplate['locations'])
@@ -255,6 +262,10 @@ class Object3D(SceneItem):
                     objectType = 'ComponentInput'
                 elif objectType == 'Locator' and self.testFlag('outputObject'):
                     objectType = 'ComponentOutput'
+
+                altType = self.getMetaDataItem("altType")
+                if altType is not None and nameTemplate['types'].get(altType, None) is not None:
+                    objectType = altType
 
                 builtName += nameTemplate['types'][objectType]
 

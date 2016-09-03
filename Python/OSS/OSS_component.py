@@ -64,9 +64,6 @@ class OSS_Component(BaseExampleComponent):
 
         stringList = [x for x in stringList if x != ""]
 
-        if not stringList:
-            return []
-
         if len(stringList) > len(set(stringList)):
             raise ValueError("Duplicate names in inputString in component \""+self.getName()+"\"")
 

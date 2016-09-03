@@ -11,7 +11,7 @@ class SceneItem(object):
 
     __maxId = 0
 
-    def __init__(self, name, parent=None):
+    def __init__(self, name, parent=None, metaData=None):
         super(SceneItem, self).__init__()
         self._parent = parent
         self._name = name
@@ -20,6 +20,8 @@ class SceneItem(object):
         self._sources = []
         self._id = SceneItem.__maxId
         self._metaData = {}
+        if metaData:
+            self._metaData = metaData
 
         SceneItem.__maxId = SceneItem.__maxId + 1
 
@@ -152,10 +154,16 @@ class SceneItem(object):
             str: Decorated name of the object.
 
         """
+        location = ""
         component = self.getComponent()
         if component and component.isTypeOf("Component"):
-            return component.getLocation()
-        return ""
+            location = component.getLocation()
+
+        altLocation = self.getMetaDataItem("altLocation")
+        if altLocation is not None:
+            location = altLocation
+
+        return location
 
     def getDecoratedName(self):
         """Gets the decorated name of the object.
