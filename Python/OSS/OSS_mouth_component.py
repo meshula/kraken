@@ -88,26 +88,26 @@ class OSSMouthGuide(OSSMouth):
         # midLip
         self.midLipCtrl = Control('midLip', parent=self.lipsCtrl)
         self.midLipCtrl.lockTranslation(x=True, y=False, z=False)
-        self.L_midLipHandleCtrl = Control('L_midLipHandle', parent=self.lipsCtrl)
-        self.R_midLipHandleCtrl = Control('R_midLipHandle', parent=self.lipsCtrl)
+        self.L_midLipHandleCtrl = Control('midLipHandle', parent=self.lipsCtrl, metaData={"altLocation":"L"})
+        self.R_midLipHandleCtrl = Control('midLipHandle', parent=self.lipsCtrl, metaData={"altLocation":"R"})
 
-        self.L_MouthCtrl = Control('L_Mouth', parent=self.lipsCtrl)
-        self.R_MouthCtrl = Control('R_Mouth', parent=self.lipsCtrl)
+        self.L_MouthCtrl = Control('Mouth', parent=self.lipsCtrl, metaData={"altLocation":"L"})
+        self.R_MouthCtrl = Control('Mouth', parent=self.lipsCtrl, metaData={"altLocation":"R"})
 
         # upLip
         self.upLipCtrl = Control('upLip', parent=self.lipsCtrl)
         self.upLipCtrl.lockTranslation(x=True, y=False, z=False)
-        self.L_upLipHandleCtrl = Control('L_upLipHandle', parent=self.upLipCtrl)
-        self.R_upLipHandleCtrl = Control('R_upLipHandle', parent=self.upLipCtrl)
+        self.L_upLipHandleCtrl = Control('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"L"})
+        self.R_upLipHandleCtrl = Control('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"R"})
 
-        self.L_MouthOutCtrl = Control('L_MouthOut', parent=self.lipsCtrl)
-        self.R_MouthOutCtrl = Control('R_MouthOut', parent=self.lipsCtrl)
+        self.L_MouthOutCtrl = Control('MouthOut', parent=self.lipsCtrl, metaData={"altLocation":"L"})
+        self.R_MouthOutCtrl = Control('MouthOut', parent=self.lipsCtrl, metaData={"altLocation":"R"})
 
         # loLip
         self.loLipCtrl = Control('loLip', parent=self.lipsCtrl)
         self.loLipCtrl.lockTranslation(x=True, y=False, z=False)
-        self.L_loLipHandleCtrl = Control('L_loLipHandle', parent=self.loLipCtrl)
-        self.R_loLipHandleCtrl = Control('R_loLipHandle', parent=self.loLipCtrl)
+        self.L_loLipHandleCtrl = Control('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"L"})
+        self.R_loLipHandleCtrl = Control('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"R"})
 
 
         # Mark Handles
@@ -282,102 +282,6 @@ class OSSMouthGuide(OSSMouth):
         return self.symMapping
 
 
-    def createGuideControls(self, name, ctrlType, controlsList, defNames):
-        # Delete current controls
-        '''
-        self.controlXforms = []
-        # Store current values if guide controls already exist
-        # for i, name in enumerate(["lipDeformers", "lipControls"]):
-        current = 0
-        for i, ctrl in enumerate(controlsList):
-            self.controlXforms.append([ctrl.xfo])
-            if ctrl.getParent() is self.jawCtrl:
-                self.controlXforms.append([ctrl.xfo])
-                current = len(self.controlXforms) -1
-            else:
-                self.controlXforms[current].append(ctrl.xfo)
-        '''
-        lSideControls = []
-        rSideControls = []
-        # Delete current controls
-        for ctrl in reversed(controlsList):
-            ctrl.getParent().removeChild(ctrl)
-        del controlsList[:]
-
-        del self.refInputs[:]
-
-        if ctrlType == "deformers":
-            parent = self.jawCtrl
-            defControlNameList = []
-
-            #Build Deformer Names
-            half = int(math.floor(defNames/2))
-
-            n=0
-            for i in range(half):
-                lSideControls.append('L_' + str(half-n))
-                rSideControls.append('R_' + str(n+1))
-                n += 1
-
-
-            if lSideControls:
-                lSideControls.reverse()
-
-                defControlNameList = lSideControls + ["Mid"] + rSideControls
-
-            if not defNames % 2 == 0:
-                defControlNameList = lSideControls + ["Mid"] + rSideControls
-            else:
-                defControlNameList = lSideControls + rSideControls
-
-            for i, defName in enumerate(defControlNameList):
-                newCtrl = Control(defName, parent=parent, shape="sphere")
-                newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0, 0, 5)))
-                newCtrl.scalePoints(Vec3(.125,.125,.125))
-                controlsList.append(newCtrl)
-
-
-        if ctrlType == "lipControls":
-            parent = self.midLipCtrl
-            defControlNameList =[]
-
-            # Lets build all new handles
-            defControlNameList = self.convertToStringList(defNames)
-            if not defControlNameList:  # Nothing to build
-                return True
-
-
-            # Setting up names
-            lSideControls = ["L_" + x for x in defControlNameList]
-            rSideControls = ["R_" + x for x in defControlNameList]
-
-            if lSideControls:
-                lSideControls.reverse()
-
-            defControlNameList = lSideControls + ["Mid"] + rSideControls
-
-            for i, defName in enumerate(defControlNameList):
-                newCtrl = Control(defName, parent=parent, shape="circle", scale="0.5")
-                newCtrl.rotatePoints(90,0,0)
-                newCtrl.setColor("lightsteelblue")
-                newCtrl.xfo = parent.xfo
-                newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0, 0, 8)))
-                controlsList.append(newCtrl)
-
-
-        for ctrl in controlsList:
-            self.addToSymDict(ctrl)
-
-        return True
-
-
-    def updateDefNames(self, defNames):
-        self.createGuideControls("deformers", self.defCtrls, defNames)
-
-    def updatelipCtrls(self, defNames):
-        self.createGuideControls("controls", self.lipCtrls, defNames)
-
-
     # =============
     # Data Methods
     # =============
@@ -414,9 +318,7 @@ class OSSMouthGuide(OSSMouth):
         existing_data.update(data)
         data = existing_data
 
-
         super(OSSMouthGuide, self).loadData( data )
-
 
         self.loadAllObjectData(data, "Control")
         self.loadAllObjectData(data, "Transform")
@@ -503,7 +405,7 @@ class OSSMouthRig(OSSMouth):
 
 
 
-    def createGuideControls(self, name, ctrlType, controlsList, defNames):
+    def createGuideControls(self, name, ctrlType, controlsList, names):
         # Delete current controls
         '''
         self.controlXforms = []
@@ -532,26 +434,17 @@ class OSSMouthRig(OSSMouth):
         parent = self.ctrlCmpGrp
 
         if ctrlType == "deformers":
-            defControlNameList = []
 
             #Build Deformer Names
-            half = int(math.floor(defNames/2))
-
-            n=0
+            half = int(math.floor(int(names)/2))
             for i in range(half):
-                lSideControls.append('L_' + str(half-n))
-                rSideControls.append('R_' + str(n+1))
-                n += 1
+                lSideControls.append(str(half-i))
+                rSideControls.append(str(i+1))
 
             lSideControls.reverse()
             rSideControls.reverse()
 
-            if not defNames % 2 == 0:
-                defControlNameList = rSideControls + ["Mid"] + lSideControls
-            else:
-                defControlNameList = rSideControls + lSideControls
-
-            for i, defName in enumerate(defControlNameList):
+            def creatDefControl(defName, side=None):
                 newCtrl = Locator(defName + "_" + name, parent= self.ctrlCmpGrp)
                 newCtrl.setShapeVisibility(False)
                 newCtrl.xfo = parent.xfo
@@ -561,37 +454,57 @@ class OSSMouthRig(OSSMouth):
                 newDef.setComponent(self)
                 newDef.constrainTo(newCtrl)
 
+                if side:
+                    newCtrl.setMetaDataItem("altLocation", side)
+                    newDef.setMetaDataItem("altLocation", side)
+
+
+            for defCtrlName in rSideControls:
+                creatDefControl(defCtrlName, side="R")
+
+            if not int(names) % 2 == 0:
+                creatDefControl("Mid")
+
+            for defCtrlName in lSideControls:
+                creatDefControl(defCtrlName, side="L")
+
 
         if ctrlType == "controls":
-            defControlNameList =[]
 
             # Lets build all new handles
-            defControlNameList = self.convertToStringList(defNames)
-            if not defControlNameList:  # Nothing to build
+            controlNameList = self.convertToStringList(names)
+            if not controlNameList:  # Nothing to build
                 return True
 
 
             # etting up names
-            lSideControls = ["L" + x for x in defControlNameList]
-            rSideControls = ["R" + x for x in defControlNameList]
+            lSideControls = [x for x in reversed(controlNameList)]
+            rSideControls = [x for x in controlNameList]
 
-            if lSideControls:
-                lSideControls.reverse()
 
-            defControlNameList = lSideControls + ["Mid"] + rSideControls
 
-            for i, defName in enumerate(defControlNameList):
-                newCtrl = Control(name + defName, parent=parent, shape="halfCircle")
+            def createControl(ctrlName, side=None):
+                newCtrl = Control(name + ctrlName, parent=parent, shape="halfCircle")
                 newCtrl.rotatePoints(90,0,0)
                 newCtrl.setColor("sienna")
                 newCtrl.xfo = parent.xfo
                 controlsList.append(newCtrl)
                 newCtrl.lockRotation(x=False, y=True, z=True)
                 newCtrl.lockScale(x=True, y=True, z=True)
+                if side:
+                    newCtrl.setMetaDataItem("altLocation", side)
                 try:
                     newCtrl.scalePoints(Vec3(.125,.125,.125))
                 except:
                     pass
+
+            for ctrlName in rSideControls:
+                createControl(ctrlName, side="R")
+
+            createControl("Mid")
+
+            for ctrlName in lSideControls:
+                createControl(ctrlName, side="L")
 
 
         # for ctrl in controlsList:
@@ -618,6 +531,9 @@ class OSSMouthRig(OSSMouth):
         newCtrlSpace = CtrlSpace(name, parent=ctrl.getParent())
         if ctrl.getParent() is not None:
             ctrl.getParent().removeChild(ctrl)
+
+        if ctrl.getMetaDataItem("altLocation"):
+            newCtrlSpace.setMetaDataItem("altLocation", ctrl.getMetaDataItem("altLocation"))
 
         ctrl.setParent(newCtrlSpace)
         newCtrlSpace.addChild(ctrl)
@@ -776,6 +692,7 @@ class OSSMouthRig(OSSMouth):
         # Deformers
         # ==========
 
+
         self.parentSpaceInputTgt.childJoints = []
 
         # Mouth
@@ -803,25 +720,25 @@ class OSSMouthRig(OSSMouth):
         # loLip
         self.loLipCtrlSpace = CtrlSpace('loLip', parent=self.jawCtrl)
         self.loLipCtrl = Control('loLip', parent=self.loLipCtrlSpace, shape="halfCircle")
-        self.L_loLipHandleCtrl = CtrlSpace('L_loLipHandle', parent=self.loLipCtrl)
-        self.R_loLipHandleCtrl = CtrlSpace('R_loLipHandle', parent=self.loLipCtrl)
+        self.L_loLipHandleCtrl = CtrlSpace('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"L"})
+        self.R_loLipHandleCtrl = CtrlSpace('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"R"})
 
         # upLip
         self.upLipCtrlSpace = CtrlSpace('upLip', parent=self.jawCtrlSpace)
         self.upLipCtrl = Control('upLip', parent=self.upLipCtrlSpace, shape="halfCircle")
-        self.L_upLipHandleCtrl = CtrlSpace('L_upLipHandle', parent=self.upLipCtrl)
-        self.R_upLipHandleCtrl = CtrlSpace('R_upLipHandle', parent=self.upLipCtrl)
+        self.L_upLipHandleCtrl = CtrlSpace('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"L"})
+        self.R_upLipHandleCtrl = CtrlSpace('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"R"})
 
-        self.L_MouthCtrlSpace = CtrlSpace('L_Mouth', parent=self.midMouthCtrl)
-        self.L_MouthCtrl = Control('L_Mouth', parent=self.L_MouthCtrlSpace, shape="circle", scale=0.5)
-        self.L_MouthCornerCtrlSpace = CtrlSpace('L_Mouth', parent=self.L_MouthCtrl)
-        self.L_MouthCornerCtrl = Control('L_MouthCorner', parent=self.L_MouthCornerCtrlSpace, shape="circle", scale=0.125)
+        self.L_MouthCtrlSpace = CtrlSpace('Mouth', parent=self.midMouthCtrl, metaData={"altLocation":"L"})
+        self.L_MouthCtrl = Control('Mouth', parent=self.L_MouthCtrlSpace, shape="circle", scale=0.5, metaData={"altLocation":"L"})
+        self.L_MouthCornerCtrlSpace = CtrlSpace('Mouth', parent=self.L_MouthCtrl, metaData={"altLocation":"L"})
+        self.L_MouthCornerCtrl = Control('MouthCorner', parent=self.L_MouthCornerCtrlSpace, shape="circle", scale=0.125, metaData={"altLocation":"L"})
         self.L_MouthCtrl.setColor("mediumseagreen")
 
-        self.R_MouthCtrlSpace = CtrlSpace('R_Mouth', parent=self.midMouthCtrl)
-        self.R_MouthCtrl = Control('R_Mouth', parent=self.R_MouthCtrlSpace, shape="circle", scale=0.5)
-        self.R_MouthCornerCtrlSpace = CtrlSpace('R_Mouth', parent=self.R_MouthCtrl)
-        self.R_MouthCornerCtrl = Control('R_MouthCorner', parent=self.R_MouthCornerCtrlSpace, shape="circle", scale=0.125)
+        self.R_MouthCtrlSpace = CtrlSpace('Mouth', parent=self.midMouthCtrl, metaData={"altLocation":"R"})
+        self.R_MouthCtrl = Control('Mouth', parent=self.R_MouthCtrlSpace, shape="circle", scale=0.5, metaData={"altLocation":"R"})
+        self.R_MouthCornerCtrlSpace = CtrlSpace('Mouth', parent=self.R_MouthCtrl, metaData={"altLocation":"R"})
+        self.R_MouthCornerCtrl = Control('MouthCorner', parent=self.R_MouthCornerCtrlSpace, shape="circle", scale=0.125, metaData={"altLocation":"R"})
         self.R_MouthCtrl.setColor("mediumvioletred")
 
 
@@ -853,8 +770,8 @@ class OSSMouthRig(OSSMouth):
 
         self.upLipRigOp, self.upLipDefOp, self.upLipDefCtrls, self.upLipDefOutputs  = self.createCurveRig(
             name = 'upLip',
-            rigCtrls = self.upLipControls, 
-            rigParams = self.rigParams, 
+            rigCtrls = self.upLipControls,
+            rigParams = self.rigParams,
             defParams = self.defParams,
             data= data
             )
@@ -865,8 +782,8 @@ class OSSMouthRig(OSSMouth):
 
         self.loLipRigOp, self.loLipDefOp, self.loLipDefCtrls, self.loLipDefOutputs  = self.createCurveRig(
             name = 'loLip',
-            rigCtrls = self.loLipControls, 
-            rigParams = self.rigParams, 
+            rigCtrls = self.loLipControls,
+            rigParams = self.rigParams,
             defParams = self.defParams,
             data= data
             )
@@ -894,7 +811,7 @@ class OSSMouthRig(OSSMouth):
         self.jawCtrlConstraint = self.mouthDef.constrainTo(self.jawCtrl, maintainOffset=False)
 
         # Left corner
-        self.L_MouthCornerLoc = Locator('L_mouthCorner', parent=self.ctrlCmpGrp)
+        self.L_MouthCornerLoc = Locator('mouthCorner', parent=self.ctrlCmpGrp, metaData={"altLocation":"L"})
         self.L_MouthCornerLoc.setShapeVisibility(False)
 
         self.blendLeftCornerOp = self.blend_two_xfos(
@@ -903,13 +820,13 @@ class OSSMouthRig(OSSMouth):
             blend=0.5,
             name="blendLeftCornerOp")
 
-        self.L_MouthCornerDef = Joint('L_mouthCorner',  parent=self.mouthDef)
+        self.L_MouthCornerDef = Joint('mouthCorner',  parent=self.mouthDef, metaData={"altLocation":"L"})
         self.L_MouthCornerDef.setComponent(self)
         self.L_MouthCornerDef.constrainTo(self.L_MouthCornerLoc)
 
 
         # Right corner
-        self.R_MouthCornerLoc = Locator('R_mouthCorner', parent=self.ctrlCmpGrp)
+        self.R_MouthCornerLoc = Locator('mouthCorner', parent=self.ctrlCmpGrp, metaData={"altLocation":"R"})
         self.R_MouthCornerLoc.setShapeVisibility(False)
 
         self.blendRightCornerOp = self.blend_two_xfos(
@@ -918,7 +835,7 @@ class OSSMouthRig(OSSMouth):
             blend=0.5,
             name="blendRightCornerOp")
 
-        self.R_MouthCornerDef = Joint('R_mouthCorner',  parent=self.mouthDef)
+        self.R_MouthCornerDef = Joint('mouthCorner',  parent=self.mouthDef, metaData={"altLocation":"R"})
         self.R_MouthCornerDef.setComponent(self)
         self.R_MouthCornerDef.constrainTo(self.R_MouthCornerLoc)
 

@@ -1019,6 +1019,8 @@ class Component(Object3D):
         """
         for obj in objectList:
             objName = obj.getName()
+            if obj.getMetaDataItem("altLocation") is not None:
+                objName = obj.getMetaDataItem("altLocation") + "_" + objName
             data[objName + "Xfo"] = obj.xfo
             if obj.isTypeOf("Curve"):
                 data[objName + "CurveData"] = obj.getCurveData()
@@ -1059,6 +1061,9 @@ class Component(Object3D):
              # this should probably live in the GuideClase
         for obj in objectList:
             objName = obj.getName()
+            if obj.getMetaDataItem("altLocation") is not None:
+                objName = obj.getMetaDataItem("altLocation") + "_" + objName
+
             if (objName + "Xfo") in data:
                 obj.xfo = data[objName + "Xfo"]
 
