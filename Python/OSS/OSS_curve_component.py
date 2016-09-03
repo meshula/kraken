@@ -58,6 +58,11 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         Profiler.getInstance().push("Construct Curve Guide Component:" + name)
         super(OSSCurveComponentGuide, self).__init__(name, parent)
 
+        # ===========
+        # Declare IO
+        # ===========
+        # Declare Inputs Xfos
+        self.contstrainFirstControl_cmpIn = None
         # =========
         # Controls
         # ========
@@ -66,11 +71,17 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=99, parent=self.guideSettingsAttrGrp)
         self.popFirst = BoolAttribute('popFirst', value=False,  parent=self.guideSettingsAttrGrp)
         self.popFirst = BoolAttribute('popLast', value=False, parent=self.guideSettingsAttrGrp)
+        self.contstrainFirstControlInput = BoolAttribute('contstrainFirstControl', value=False, parent=self.guideSettingsAttrGrp)
+        self.removeFirstControlInput = BoolAttribute('removeFirstControl', value=False, parent=self.guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
         # Guide Controls
 
         self.controlInputs = []
         self.curveCtrlNames.setValueChangeCallback(self.updateCurveCtrls)
+
+        self.contstrainFirstControlInput.setValueChangeCallback(self.updateContstrainFirstControl)
+        # self.removeFirstControlInput.setValueChangeCallback(self.removeFirstControl)
+
 
 
         data = {
@@ -170,6 +181,23 @@ class OSSCurveComponentGuide(OSSCurveComponent):
 
         return True
 
+
+
+
+    def updateContstrainFirstControl(self, contstrainFirstControl):
+        """ Callback to changing the component setting 'useOtherIKGoalInput' """
+
+        if contstrainFirstControl:
+            if self.contstrainFirstControl_cmpIn is None:
+                print "Constraining First Control"
+                self.firstControlInput = self.createInput('firstControlXfo', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        else:
+            if self.contstrainFirstControl_cmpIn is None:
+                print "NOT constraining First Control"
+                # self.deleteInput('firstControlXfo', parent=self.inputHrcGrp)
+                # self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
+                # self.ikgoal_cmpIn = None
+                self.contstrainFirstControl_cmpIn = None
 
 
     def getRigBuildData(self):

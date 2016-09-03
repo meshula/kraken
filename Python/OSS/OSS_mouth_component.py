@@ -54,6 +54,8 @@ class OSSMouth(OSS_Component):
         # Declare Output Xfos
         self.lipOutputTgt      = self.createOutput('lip', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.mouthOutputTgt    = self.createOutput('mouth', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.lMouthCornerOutputTgt = self.createOutput('L_MouthCorner', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.rMouthCornerOutputTgt = self.createOutput('R_MouthCorner', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.jawEndOutputTgt = self.createOutput('jawEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
@@ -831,6 +833,9 @@ class OSSMouthRig(OSSMouth):
 
         # Output
         #self.lipOutputTgtConstraint = self.lipOutputTgt.constrainTo(self.midLipCtrl)
+        self.lMouthCornerOutputTgtConstraint = self.lMouthCornerOutputTgt.constrainTo(self.L_MouthCornerCtrl, maintainOffset=False)
+        self.rMouthCornerOutputTgtConstraint = self.rMouthCornerOutputTgt.constrainTo(self.R_MouthCornerCtrl, maintainOffset=False)
+
         self.mouthOutputTgtConstraint = self.mouthOutputTgt.constrainTo(self.jawCtrl, maintainOffset=False)
         self.jawEndOutputTgtConstraint = self.jawEndOutputTgt.constrainTo(self.jawCtrl, maintainOffset=False)
         self.mouthOutputTgt.parentJoint =  self.mouthDef
