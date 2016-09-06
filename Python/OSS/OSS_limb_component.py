@@ -172,7 +172,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
         if "useOtherIKGoalInput" in data.keys():
             self.updateUseOtherIKGoal(bool(data["useOtherIKGoalInput"]))
-        
+
 
 
         return True
@@ -345,6 +345,11 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.uplimbFKCtrlSpace.xfo = data['uplimbXfo']
         self.uplimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
 
+        if self.untwistUplimb:
+            # We should be able to insert a space to any kind of 3D object, not just controls
+            self.uplimbUntwistBase = CtrlSpace(name=self.uplimbName+"UntwistBase", parent=self.uplimbParentSpace)
+            self.uplimbUntwistBase.xfo = data['uplimbXfo']
+
         # lolimb
         self.lolimbFKCtrlSpace = CtrlSpace(self.lolimbName, parent=self.uplimbFKCtrl)
         self.lolimbFKCtrl = FKControl(self.lolimbName, parent=self.lolimbFKCtrlSpace)
@@ -356,7 +361,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # lolimbIK
         self.lolimbIKCtrlSpace = CtrlSpace(self.lolimbName+'IK', parent=self.ctrlCmpGrp)
         self.lolimbIKCtrl = FKControl(self.lolimbName+'IK', parent=self.lolimbIKCtrlSpace, shape="circle", scale=globalScale*0.8)
-        self.lolimbIKCtrlSpace.xfo = data['lolimbXfo']  
+        self.lolimbIKCtrlSpace.xfo = data['lolimbXfo']
         self.lolimbIKCtrl.xfo = data['lolimbXfo']
         self.lolimbIKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
         self.lolimbIKCtrl.lockRotation(x=True, y=True, z=True)
@@ -543,7 +548,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.uplimbParentSpace, self.uplimbWorldSpace,
             blendTranslate=0,
             blendRotate=self.worldSpaceAttr,
-            blendScale=0, 
+            blendScale=0,
             blend=self.worldSpaceAttr,
             name= self.uplimbName + 'BlendKLOp')
 
@@ -647,7 +652,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.untwistKLOp.setInput('drawDebug', self.drawDebugInputAttr)
             self.untwistKLOp.setInput('rigScale', self.rigScaleInputAttr)
             self.untwistKLOp.setInput('inMatrix', uplimbSolverOut)
-            self.untwistKLOp.setInput('inBaseMatrix', self.uplimbFKCtrlSpace)
+            self.untwistKLOp.setInput('inBaseMatrix', self.uplimbUntwistBase)
             self.untwistKLOp.setInput('axis', AXIS_NAME_TO_INT_MAP[self.boneAxisStr])
             self.untwistKLOp.setOutput('untwistedMatrix', self.uplimb_cmpOut)
 
@@ -789,7 +794,11 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         if self.addPartialJoints:
 
-            uplimbBaseRotate = self.uplimbFKCtrlSpace
+            if self.untwistUplimb:
+                uplimbBaseRotate = self.uplimbUntwistBase
+            else:
+                uplimbBaseRotate = self.uplimbFKCtrlSpace
+
             uplimbPartialDef = self.createPartialJoint(self.uplimbDef, baseTranslate=self.uplimbDef, baseRotate=uplimbBaseRotate, parent=self.uplimbDef.getParent())
 
             lolimbPartialConstrainer = self.uplimb_cmpOut
