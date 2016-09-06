@@ -6,11 +6,10 @@ from kraken.core.objects.container import Container
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.locator import Locator
 
+from kraken.core.objects.container import Container
 from kraken.core.objects.components.component import Component
-from kraken.core.objects.components.component_input_port import ComponentInputPort
-from kraken.core.objects.components.component_input import ComponentInput
-from kraken.core.objects.components.component_output_port import ComponentOutputPort
-from kraken.core.objects.components.component_output import ComponentOutput
+from kraken_components.biped.arm_component import ArmComponentGuide
+from kraken.core.objects.operators.operator import Operator
 
 
 class TestComponent(unittest.TestCase):
@@ -265,121 +264,243 @@ class TestComponent(unittest.TestCase):
         self.assertRaises(IndexError, lambda: component.checkOutputIndex(1))
 
     def testCreateOutput(self):
-        pass
-        # createOutput
+        component = Component('testComponentLocal', location='M')
+
+        component.createOutput('testXfoOutput', 'Xfo')
+        component.createOutput('testBooleanOutput', 'Boolean')
+        component.createOutput('testFloatOutput', 'Float')
+        component.createOutput('testIntegerOutput', 'Integer')
+        component.createOutput('testStringOutput', 'String')
+
+        outputs = component.getOutputs()
+
+        self.assertTrue('testXfoOutput' in [x.getName() for x in outputs])
+        self.assertTrue('testBooleanOutput' in [x.getName() for x in outputs])
+        self.assertTrue('testFloatOutput' in [x.getName() for x in outputs])
+        self.assertTrue('testIntegerOutput' in [x.getName() for x in outputs])
+        self.assertTrue('testStringOutput' in [x.getName() for x in outputs])
+
+        self.assertRaises(NotImplementedError, lambda: component.createInput('testVecInput', 'Vec3'))
 
     def testAddOutput(self):
-        pass
-        # addOutput
+        component = Component('testComponentLocal', location='M')
+        component.addOutput('testXfoOutput', 'Xfo')
+
+        outputs = component.getOutputs()
+
+        self.assertTrue('testXfoOutput' in [x.getName() for x in outputs])
 
     def testGetNumOutputs(self):
-        pass
-        # getNumOutputs
+        component = Component('testComponentLocal', location='M')
+
+        component.createOutput('testXfoOutput', 'Xfo')
+        component.createOutput('testBooleanOutput', 'Boolean')
+        numOutputs = component.getNumOutputs()
+
+        self.assertEqual(numOutputs, 2)
 
     def testGetOutputByIndex(self):
-        pass
-        # getOutputByIndex
+        component = Component('testComponentLocal', location='M')
+        outputPort = component.addOutput('testXfoOutput', 'Xfo')
+        testGetOutput = component.getOutputByIndex(0)
+
+        self.assertIs(testGetOutput, outputPort)
 
     def testGetOutputByName(self):
-        pass
-        # getOutputByName
+        component = Component('testComponentLocal', location='M')
+        component.addOutput('testXfoOutput', 'Xfo')
+        testGetInput = component.getOutputByName('testXfoOutput')
+
+        self.assertIsNotNone(testGetInput)
 
     def testEvalOperators(self):
-        pass
-        # evalOperators
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+        component.evalOperators()
+
+        self.assertTrue(testOperator.testFlag('HAS_EVALUATED'))
 
     def testCheckOperatorIndex(self):
-        pass
-        # checkOperatorIndex
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+
+        self.assertTrue(component.checkOperatorIndex(0))
+        self.assertRaises(IndexError, lambda: component.checkOperatorIndex(1))
 
     def testAddOperator(self):
-        pass
-        # addOperator
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+
+        self.assertTrue(testOperator in component._operators)
 
     def testRemoveOperatorByIndex(self):
-        pass
-        # removeOperatorByIndex
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+
+        component.removeOperatorByIndex(0)
+
+        self.assertEqual(len(component._operators), 0)
 
     def testRemoveOperatorByName(self):
-        pass
-        # removeOperatorByName
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+
+        component.removeOperatorByName('testOperator')
+
+        self.assertEqual(len(component._operators), 0)
 
     def testGetNumOperators(self):
-        pass
-        # getNumOperators
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+        testOperator2 = Operator('testOperator2')
+        component.addOperator(testOperator2)
+
+        self.assertEqual(component.getNumOperators(), 2)
 
     def testGetOperatorByIndex(self):
-        pass
-        # getOperatorByIndex
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+        testOperator2 = Operator('testOperator2')
+        component.addOperator(testOperator2)
+
+        self.assertIs(component.getOperatorByIndex(1), testOperator2)
 
     def testGetOperatorByName(self):
-        pass
-        # getOperatorByName
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+        testOperator2 = Operator('testOperator2')
+        component.addOperator(testOperator2)
+
+        self.assertIs(component.getOperatorByName('testOperator2'), testOperator2)
 
     def testGetOperatorByType(self):
-        pass
-        # getOperatorByType
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+
+        ops = component.getOperatorByType('Operator')
+        self.assertEqual(len(ops), 1)
+
+        ops = component.getOperatorByType('Operator2')
+        self.assertEqual(len(ops), 0)
 
     def testGetOperatorIndex(self):
-        pass
-        # getOperatorIndex
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+
+        opIndex = component.getOperatorIndex(testOperator)
+        self.assertEqual(opIndex, 0)
 
     def testMoveOperatorToIndex(self):
-        pass
-        # moveOperatorToIndex
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+        testOperator2 = Operator('testOperator2')
+        component.addOperator(testOperator2)
+
+        testMove = component.moveOperatorToIndex(testOperator2, 0)
+        self.assertTrue(testMove)
+        self.assertEqual(component.getOperatorIndex(testOperator2), 0)
 
     def testGetOperators(self):
-        pass
-        # getOperators
+        component = Component('testComponentLocal', location='M')
+        testOperator = Operator('testOperator')
+        component.addOperator(testOperator)
+        testOperator2 = Operator('testOperator2')
+        component.addOperator(testOperator2)
+
+        ops = component.getOperators()
+
+        self.assertEqual(len(ops), 2)
+        self.assertTrue(testOperator in ops)
+        self.assertTrue(testOperator2 in ops)
 
     def testSaveData(self):
-        pass
-        # saveData
+        component = Component('testComponentLocal', location='M')
+        data = component.saveData()
+
+        for key in ['class', 'name', 'location', 'graphPos']:
+            self.assertTrue(key in data)
 
     def testLoadData(self):
-        pass
-        # loadData
+        component = Component('testComponentLocal', location='M')
+        data = component.saveData()
+
+        data['location'] = 'L'
+
+        component.loadData(data)
+
+        self.assertEqual(component.getLocation(), 'L')
 
     def testCopyData(self):
-        pass
-        # copyData
+        component = Component('testComponentLocal', location='M')
+        data = component.copyData()
+
+        for key in ['class', 'name', 'location', 'graphPos']:
+            self.assertTrue(key in data)
 
     def testPasteData(self):
-        pass
-        # pasteData
+        component = Component('testComponentLocal', location='M')
+        data = component.copyData()
+
+        component2 = Component('testComponentLocal2', location='L')
+        component2.pasteData(data, setLocation=True)
+
+        component3 = Component('testComponentLocal3', location='L')
+        component3.pasteData(data, setLocation=False)
+
+        self.assertEqual(component2.getLocation(), 'M')
+        self.assertEqual(component3.getLocation(), 'L')
 
     def testSaveAllObjectData(self):
+        # TODO: Oculus Implement Test
         pass
-        # saveAllObjectData
 
     def testSaveObjectData(self):
+        # TODO: Oculus Implement Test
         pass
-        # saveObjectData
 
     def testLoadAllObjectData(self):
+        # TODO: Oculus Implement Test
         pass
-        # loadAllObjectData
 
     def testLoadObjectData(self):
+        # TODO: Oculus Implement Test
         pass
-        # loadObjectData
 
     def testGetRigBuildData(self):
-        pass
-        # getRigBuildData
+        armCmp = ArmComponentGuide('testComponentLocal', location='L')
+        buildData = armCmp.getRigBuildData()
+
+        for key in ['class', 'name', 'location']:
+            self.assertTrue(key in buildData)
 
     def testDetach(self):
-        pass
-        # detach
+        component = Component('testComponentLocal', location='M')
+
+        self.assertRaises(NotImplementedError, lambda: component.detach())
 
     def testAttach(self):
-        pass
-        # attach
+        container = Container('testContainer')
+        component = Component('testComponentLocal', location='M')
+
+        self.assertRaises(NotImplementedError, lambda: component.attach(container))
 
     def testGetComponentType(self):
-        pass
-        # getComponentType
+        component = Component('testComponentLocal', location='M')
+        armCmp = ArmComponentGuide('testComponentLocal', location='L')
 
+        self.assertEqual(component.getComponentType(), 'Base')
+        self.assertEqual(armCmp.getComponentType(), 'Guide')
 
 
 def suite():
