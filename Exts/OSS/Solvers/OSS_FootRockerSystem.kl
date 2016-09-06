@@ -25,7 +25,12 @@ function KrakenSolverArg[] OSS_FootRockerSystem.getArguments(){
   args.push(KrakenSolverArg('rightSide', 'In', 'Boolean'));
   args.push(KrakenSolverArg('footRocker', 'In', 'Scalar'));
   args.push(KrakenSolverArg('ballBreak', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('footBend', 'In', 'Scalar'));
   args.push(KrakenSolverArg('footTilt', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('footSwivel', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('ballBend', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('ballTwist', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('ballSwivel', 'In', 'Scalar'));
   args.push(KrakenSolverArg('ikCtrl', 'In', 'Mat44'));
   args.push(KrakenSolverArg('heelPivot', 'In', 'Mat44'));
   args.push(KrakenSolverArg('ballPivot', 'In', 'Mat44'));
@@ -66,8 +71,12 @@ function OSS_FootRockerSystem.solve!
   Boolean rightSide,
   Scalar footRocker,
   Scalar ballBreak,
+  Scalar footBend,
   Scalar footTilt,
-
+  Scalar footSwivel,
+  Scalar ballBend,
+  Scalar ballTwist,
+  Scalar ballSwivel,
   Mat44 ikCtrl,
   Mat44 heelPivot,
   Mat44 ballPivot,
@@ -143,12 +152,23 @@ function OSS_FootRockerSystem.solve!
 
   }
 
+  if (footBend) {
+
+    offsetRotationXfo = Xfo(Quat(Euler(Math_degToRad(footBend), 0.0, 0.0)));
+
+    rotateOnPivotXfo = ballPivotXfo * offsetRotationXfo * ballPivotXfo.inverse();
+
+    ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
+    footXfo = rotateOnPivotXfo * footXfo;
+    toeXfo = rotateOnPivotXfo * toeXfo;
+  }
+
   if (footTilt) {
 
-      Scalar negate = -1;
-      if (rightSide) negate = 1;
+    Scalar negate = -1;
+    if (rightSide) negate = 1;
 
-      offsetRotationXfo = Xfo(Quat(Euler(0.0, 0.0, negate * Math_degToRad(footTilt))));
+    offsetRotationXfo = Xfo(Quat(Euler(0.0, 0.0, negate * Math_degToRad(footTilt))));
 
     if (footTilt < 0) {
       rotateOnPivotXfo = innerPivotXfo * offsetRotationXfo * innerPivotXfo.inverse();
@@ -159,6 +179,49 @@ function OSS_FootRockerSystem.solve!
     ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
     footXfo = rotateOnPivotXfo * footXfo;
     toeXfo = rotateOnPivotXfo * toeXfo;
+  }
+
+  if (footSwivel) {
+
+    Scalar negate = -1;
+    if (rightSide) negate = 1;
+
+    offsetRotationXfo = Xfo(Quat(Euler(0.0, negate * Math_degToRad(footSwivel), 0.0)));
+    rotateOnPivotXfo = ballPivotXfo * offsetRotationXfo * ballPivotXfo.inverse();
+    ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
+    footXfo = rotateOnPivotXfo * footXfo;
+    toeXfo = rotateOnPivotXfo * toeXfo;
+  }
+
+
+  if (ballBend) {
+
+    offsetRotationXfo = Xfo(Quat(Euler(Math_degToRad(ballBend), 0.0, 0.0)));
+    rotateOnPivotXfo = ballPivotXfo * offsetRotationXfo * ballPivotXfo.inverse();
+    footXfo = rotateOnPivotXfo * footXfo;
+    ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
+  }
+
+  if (ballTwist) {
+
+    Scalar negate = -1;
+    if (rightSide) negate = 1;
+
+    offsetRotationXfo = Xfo(Quat(Euler(0.0, 0.0, negate * Math_degToRad(ballTwist))));
+    rotateOnPivotXfo = ballPivotXfo * offsetRotationXfo * ballPivotXfo.inverse();
+    footXfo = rotateOnPivotXfo * footXfo;
+    ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
+  }
+
+  if (ballSwivel) {
+
+    Scalar negate = -1;
+    if (rightSide) negate = 1;
+
+    offsetRotationXfo = Xfo(Quat(Euler(0.0, negate * Math_degToRad(ballSwivel), 0.0)));
+    rotateOnPivotXfo = ballPivotXfo * offsetRotationXfo * ballPivotXfo.inverse();
+    footXfo = rotateOnPivotXfo * footXfo;
+    ikCtrlXfo = rotateOnPivotXfo * ikCtrlXfo;
   }
 
 

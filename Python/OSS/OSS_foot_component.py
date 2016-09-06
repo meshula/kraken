@@ -345,8 +345,15 @@ class OSSFootComponentRig(OSSFootComponent):
         footIKAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         footRockerAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=self.handleCtrlAttrGrp)
         ballBreakAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
-        footTiltAttr = ScalarAttribute('footTilt', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
 
+        # should we have this be footRocker with reverse break?
+        footBendAttr = ScalarAttribute('footBend', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
+        footTiltAttr = ScalarAttribute('footTilt', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
+        footSwivelAttr = ScalarAttribute('footSwivel', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
+
+        ballBendAttr = ScalarAttribute('ballBend', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
+        ballTwistAttr = ScalarAttribute('ballTwist', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
+        ballSwivelAttr = ScalarAttribute('ballSwivel', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
 
         self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=self.handleCtrlAttrGrp)
         self.softDist_cmpOutAttr.connect(self.softDistAttr)
@@ -419,7 +426,15 @@ class OSSFootComponentRig(OSSFootComponent):
         #self.footRockerKLOp.setInput('rightSide', self.getLocation() == 'R')
         self.footRockerKLOp.setInput('footRocker', footRockerAttr)
         self.footRockerKLOp.setInput('ballBreak', ballBreakAttr)
+
+        self.footRockerKLOp.setInput('footBend', footBendAttr)
         self.footRockerKLOp.setInput('footTilt', footTiltAttr)
+        self.footRockerKLOp.setInput('footSwivel', footSwivelAttr)
+
+        self.footRockerKLOp.setInput('ballBend', ballBendAttr)
+        self.footRockerKLOp.setInput('ballTwist', ballTwistAttr)
+        self.footRockerKLOp.setInput('ballSwivel', ballSwivelAttr)
+
         # Add Xfo Inputs
         self.footRockerKLOp.setInput('ikCtrl', self.ikGoalRefTransform)
         self.footRockerKLOp.setInput('heelPivot', self.heelPivotTransform)
