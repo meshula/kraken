@@ -700,7 +700,7 @@ class Component(Object3D):
 
         """
 
-        if index > len(self._operators):
+        if index > len(self._operators) - 1:
             raise IndexError("'" + str(index) + "' is out of the range of the 'children' array.")
 
         return True
@@ -829,7 +829,7 @@ class Component(Object3D):
 
         childrenOfType = []
         for eachOperator in self._operators:
-            if isinstance(eachOperator, childType):
+            if eachOperator.isTypeOf(childType):
                 childrenOfType.append(eachOperator)
 
         return childrenOfType
@@ -846,8 +846,8 @@ class Component(Object3D):
 
         """
 
-        for index, eachOp in xrange(self.getNumOperators()):
-            if eachOp is operator:
+        for index in xrange(self.getNumOperators()):
+            if self._operators[index] is operator:
                 return index
 
         return None
@@ -866,7 +866,7 @@ class Component(Object3D):
         """
 
         oldIndex = self.getOperatorIndex(operator)
-        self._operators.insert(index, self._operators.pop(oldindex))
+        self._operators.insert(index, self._operators.pop(oldIndex))
 
         return True
 
@@ -896,7 +896,7 @@ class Component(Object3D):
             'name': self.getName(),
             'location': self.getLocation(),
             'graphPos': self._graphPos
-           }
+        }
 
 
         # TODO: AttributeGroup needs to become a hierachy object like all the others.
@@ -938,7 +938,7 @@ class Component(Object3D):
             self.setGraphPos(data['graphPos'])
 
         for i in range(self.getNumAttributeGroups()):
-            grp  = self.getAttributeGroupByIndex(i)
+            grp = self.getAttributeGroupByIndex(i)
             for i in range(grp.getNumAttributes()):
                 attr = grp.getAttributeByIndex(i)
                 if attr.getName() in data:
@@ -960,7 +960,6 @@ class Component(Object3D):
 
         return self.saveData()
 
-
     def pasteData(self, data, setLocation=True):
         """Paste a copied guide representation.
 
@@ -973,12 +972,15 @@ class Component(Object3D):
 
         """
 
-        if not setLocation and data['location'] != self.getLocation():
+        if data['location'] != self.getLocation():
             config = Config.getInstance()
             mirrorMap = config.getNameTemplate()['mirrorMap']
             if mirrorMap[data['location']] != data['location']:
                 data = mirrorData(data, 0)
-                del data['location']
+
+        if setLocation is False:
+            del data['location']
+
 
         self.loadData(data)
 
@@ -997,15 +999,14 @@ class Component(Object3D):
             dict: The JSON rig data object.
 
         """
+
         objects = self.getHierarchyNodes(classType=classType, inheritedClass=inheritedClass)
         self.saveObjectData(data, objects)
 
         return data
 
-
     def saveObjectData(self, data, objectList):
-        """
-        Stores the Guide data for component objects in this list.
+        """Stores the Guide data for component objects in this list.
         Guide data is xfo and curve information
 
         Args:
@@ -1016,6 +1017,7 @@ class Component(Object3D):
             dict: The JSON rig data object.
 
         """
+
         for obj in objectList:
             objName = obj.getName()
             data[objName + "Xfo"] = obj.xfo
@@ -1023,8 +1025,6 @@ class Component(Object3D):
                 data[objName + "CurveData"] = obj.getCurveData()
 
         return data
-
-
 
     def loadAllObjectData(self, data, classType="Control", inheritedClass=False):
         """Stores the Guide data for all objects of this type in the component.
@@ -1043,7 +1043,6 @@ class Component(Object3D):
         self.loadObjectData(data, objects)
 
         return data
-
 
     def loadObjectData(self, data, objectList):
         """
@@ -1069,9 +1068,9 @@ class Component(Object3D):
     # ==================
     # Rig Build Methods
     # =================
-
     def getRigBuildData(self):
-        """Returns the Guide data used by the Rig Component to define the layout of the final rig..
+        """Returns the Guide data used by the Rig Component to define the layout
+        of the final rig.
 
         Returns:
             dict: The JSON rig data object.
@@ -1104,8 +1103,7 @@ class Component(Object3D):
 
         """
 
-        raise NotImplemented("This method should be implemented in sub-classes.")
-
+        raise NotImplementedError("This method should be implemented in sub-classes.")
 
     def attach(self, container):
         """Attaches component to container.
@@ -1118,7 +1116,7 @@ class Component(Object3D):
 
         """
 
-        raise NotImplemented("This method should be implemented in sub-classes.")
+        raise NotImplementedError("This method should be implemented in sub-classes.")
 
 
     # ==============
@@ -1137,4 +1135,3 @@ class Component(Object3D):
         """
 
         return 'Base'
-
