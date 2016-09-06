@@ -58,6 +58,11 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         Profiler.getInstance().push("Construct Curve Guide Component:" + name)
         super(OSSCurveComponentGuide, self).__init__(name, parent)
 
+        # ===========
+        # Declare IO
+        # ===========
+        # Declare Inputs Xfos
+        self.contstrainFirstControl_cmpIn = None
         # =========
         # Controls
         # ========
@@ -66,11 +71,17 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=99, parent=self.guideSettingsAttrGrp)
         self.popFirst = BoolAttribute('popFirst', value=False,  parent=self.guideSettingsAttrGrp)
         self.popFirst = BoolAttribute('popLast', value=False, parent=self.guideSettingsAttrGrp)
+        self.contstrainFirstControlInput = BoolAttribute('contstrainFirstControl', value=False, parent=self.guideSettingsAttrGrp)
+        self.removeFirstControlInput = BoolAttribute('removeFirstControl', value=False, parent=self.guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
         # Guide Controls
 
         self.controlInputs = []
         self.curveCtrlNames.setValueChangeCallback(self.updateCurveCtrls)
+
+        self.contstrainFirstControlInput.setValueChangeCallback(self.updateContstrainFirstControl)
+        # self.removeFirstControlInput.setValueChangeCallback(self.removeFirstControl)
+
 
 
         data = {
@@ -172,6 +183,23 @@ class OSSCurveComponentGuide(OSSCurveComponent):
 
 
 
+
+    def updateContstrainFirstControl(self, contstrainFirstControl):
+        """ Callback to changing the component setting 'useOtherIKGoalInput' """
+
+        if contstrainFirstControl:
+            if self.contstrainFirstControl_cmpIn is None:
+                print "Constraining First Control"
+                self.firstControlInput = self.createInput('firstControlXfo', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+        else:
+            if self.contstrainFirstControl_cmpIn is None:
+                print "NOT constraining First Control"
+                # self.deleteInput('firstControlXfo', parent=self.inputHrcGrp)
+                # self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
+                # self.ikgoal_cmpIn = None
+                self.contstrainFirstControl_cmpIn = None
+
+
     def getRigBuildData(self):
         """Returns the Guide data used by the Rig Component to define the layout of the final rig.
 
@@ -259,10 +287,10 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.NURBSCurveKLOp.setInput('alignZ', 3 )
         self.NURBSCurveKLOp.setInput('degree', 3)
         self.NURBSCurveKLOp.setInput('keepArcLength', 0.0)
-        self.NURBSCurveKLOp.setInput('compressionAmt', 0.4)
-        self.NURBSCurveKLOp.setInput('followCurveTangent', 0.0)
+        self.NURBSCurveKLOp.setInput('compressionAmt', 0.5)
+        self.NURBSCurveKLOp.setInput('followCurveTangent', 1.0)
         self.NURBSCurveKLOp.setInput('useLocalNormal', 1.0)
-        self.NURBSCurveKLOp.setInput('followCurveNormal', 0.0)
+        self.NURBSCurveKLOp.setInput('followCurveNormal', 1.0)
         self.NURBSCurveKLOp.setInput('altTangent', Vec3(0.0,1.0,0.0))
         self.NURBSCurveKLOp.setInput('parent', self.parentSpaceInputTgt)
         self.NURBSCurveKLOp.setInput('atVec', self.ctrlCmpGrp) # atVec should be optional, but is not currently in the Solver
@@ -323,13 +351,15 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
     def fillValues(self, numDefs, minVal=0.0, maxVal=1.0, popFirst=False, popLast=False):
         params = []
+        if numDefs == 1:
+            return [0.5]
         for i in range(numDefs):
             ratio = float(i) / float(numDefs-1)
             params.append((1.0-ratio)*minVal + ratio*maxVal)
-        if popFirst:
+        if popFirst and (len(params) > 1):
             print "popping first"
             del params[0]
-        if popLast:
+        if popLast and (len(params) > 1):
             print "popping last"
             del params[-1]
         return params
@@ -350,8 +380,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         print "First %s"%(self.popFirst)
         print "Last %s"%(self.popLast)
         self.params = self.fillValues(numDeformers, minVal=0.0, maxVal=1.0, popFirst=self.popFirst, popLast=self.popLast)
-        for i in range(len(self.params)):
-            self.rigControlAligns.append(Vec3(1,2,3))
+
 
         numDeformers = len(self.params)
 
@@ -423,7 +452,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 ctrlParent = ctrl.insertCtrlSpace()
                 #this is for a curve only solution
                 ctrlParent.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-
+                self.rigControlAligns.append(Vec3(1,2,3))
         # ==============
         # Constrain I/O
         # ==============
