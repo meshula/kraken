@@ -909,8 +909,8 @@ class OSSMouthRig(OSSMouth):
 
         uplipCtrlOffset = Vec3(0,0,.5)
         lolipCtrlOffset = Vec3(0,0,.5)
-        uplipOffset = Vec3(0,0.5,0)
-        lolipOffset = Vec3(0,-0.5,0)
+        uplipOffset = Vec3(0,0.75,0)
+        lolipOffset = Vec3(0,-0.75,0)
         #should do this up front - why does hierarchy not get evaluated?
         lips = [self.upLipDefCtrls, self.loLipDefCtrls]
         for l in xrange(len(lips)):
@@ -925,10 +925,12 @@ class OSSMouthRig(OSSMouth):
                     # need to find a proper way of detecting controls of type curve
                     try:
                         if l:
+                            ctrl.getParent().xfo.tr -= uplipOffset
                             ctrl.xfo.tr -= uplipOffset
                             ctrl.translatePoints(uplipCtrlOffset)
                             ctrl.translatePoints(uplipOffset)
                         else: 
+                            ctrl.getParent().xfo.tr -= lolipOffset
                             ctrl.xfo.tr -= Vec3(lolipOffset)
                             ctrl.translatePoints(lolipCtrlOffset)
                             ctrl.translatePoints(lolipOffset)
