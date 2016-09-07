@@ -814,26 +814,49 @@ class OSSMouthRig(OSSMouth):
         self.L_MouthCornerLoc = Locator('mouthCorner', parent=self.ctrlCmpGrp, metaData={"altLocation":"L"})
         self.L_MouthCornerLoc.setShapeVisibility(False)
 
-        self.blendLeftCornerOp = self.blend_two_xfos(
-            self.L_MouthCornerLoc,
-            self.loLipDefOutputs[-1], self.upLipDefOutputs[-1],
-            blend=0.5,
-            name="blendLeftCornerOp")
+        lSourceA = self.loLipDefOutputs[-1]
+        rSourceB = self.upLipDefOutputs[-1]
 
-        self.L_MouthCornerDef = Joint('mouthCorner',  parent=self.mouthDef, metaData={"altLocation":"L"})
-        self.L_MouthCornerDef.setComponent(self)
-        self.L_MouthCornerDef.constrainTo(self.L_MouthCornerLoc)
+        self.blendLeftCornerOp = KLOperator("blendLeftCornerOp" + "MidBlendOp", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+        self.addOperator(self.blendLeftCornerOp)
+        self.blendLeftCornerOp.setInput('blendTranslate', 0.0)
+        self.blendLeftCornerOp.setInput('blendRotate', 0.5)
+        self.blendLeftCornerOp.setInput('blendScale', 0.5)
+        self.blendLeftCornerOp.setInput('parentSpace', self.ctrlCmpGrp)
+        self.blendLeftCornerOp.setInput('constrainerTranslateA', lSourceA)
+        self.blendLeftCornerOp.setInput('constrainerTranslateB', rSourceB)
+        self.blendLeftCornerOp.setInput('constrainerRotateA', self.loLipDefOutputs[-2])
+        self.blendLeftCornerOp.setInput('constrainerRotateB', self.upLipDefOutputs[-2])
+        self.blendLeftCornerOp.setInput('constrainerScaleA', lSourceA)
+        self.blendLeftCornerOp.setInput('constrainerScaleB', rSourceB)
+        self.blendLeftCornerOp.setOutput('result', self.L_MouthCornerLoc)
 
 
         # Right corner
         self.R_MouthCornerLoc = Locator('mouthCorner', parent=self.ctrlCmpGrp, metaData={"altLocation":"R"})
         self.R_MouthCornerLoc.setShapeVisibility(False)
 
-        self.blendRightCornerOp = self.blend_two_xfos(
-            self.R_MouthCornerLoc,
-            self.loLipDefOutputs[0], self.upLipDefOutputs[0],
-            blend=0.5,
-            name="blendRightCornerOp")
+        rSourceA = self.loLipDefOutputs[0]
+        rSourceB = self.upLipDefOutputs[0]
+
+        self.blendRightCornerOp = KLOperator("blendRightCornerOp", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+        self.addOperator(self.blendRightCornerOp)
+        self.blendRightCornerOp.setInput('blendTranslate', 0)
+        self.blendRightCornerOp.setInput('blendRotate', 0.5)
+        self.blendRightCornerOp.setInput('blendScale',  0.5)
+        self.blendRightCornerOp.setInput('parentSpace', self.ctrlCmpGrp)
+        self.blendRightCornerOp.setInput('constrainerTranslateA', rSourceA)
+        self.blendRightCornerOp.setInput('constrainerTranslateB', rSourceB)
+        self.blendRightCornerOp.setInput('constrainerRotateA', self.loLipDefOutputs[1])
+        self.blendRightCornerOp.setInput('constrainerRotateB', self.upLipDefOutputs[1])
+        self.blendRightCornerOp.setInput('constrainerScaleA', rSourceA)
+        self.blendRightCornerOp.setInput('constrainerScaleB', rSourceB)
+        self.blendRightCornerOp.setOutput('result', self.R_MouthCornerLoc)
+
+        self.L_MouthCornerDef = Joint('mouthCorner',  parent=self.mouthDef, metaData={"altLocation":"L"})
+        self.L_MouthCornerDef.setComponent(self)
+        self.L_MouthCornerDef.constrainTo(self.L_MouthCornerLoc)
+
 
         self.R_MouthCornerDef = Joint('mouthCorner',  parent=self.mouthDef, metaData={"altLocation":"R"})
         self.R_MouthCornerDef.setComponent(self)
