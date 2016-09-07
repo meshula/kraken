@@ -231,14 +231,13 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.neckCtrlSpace = self.neckCtrl.insertCtrlSpace()
 
         # Head
-        self.headCtrl = FKControl('head', parent=self.neckCtrl, shape="square", scale=6)
+        self.headCtrl = FKControl('head', parent=self.neckCtrl, shape="halfCircle", scale=2)
         self.headCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
-        #self.headCtrl.rotatePoints(0, 0, 90)
         self.headCtrlSpace  = self.headCtrl.insertCtrlSpace()
 
 
 
-        self.neckMidCtrl = FKControl('neckMid', parent=self.neckCtrl, shape="circle", scale=4)
+        self.neckMidCtrl = FKControl('neckMid', parent=self.neckCtrl, shape="circle", scale=6)
         self.neckMidCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
         #self.headCtrl.rotatePoints(0, 0, 90)
         self.neckMidCtrlSpace  = self.neckMidCtrl.insertCtrlSpace()
@@ -631,7 +630,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
 
         self.headCtrl.rotatePoints(-90, 0, 0)
-        self.headCtrl.translatePoints(Vec3(0, 1.5, 0.0))
+        self.headCtrl.scalePoints(Vec3(1, -1, 1))
+        self.headCtrl.translatePoints(Vec3(0.0, 2.5, 0.0))
+        self.neckCtrl.translatePoints(Vec3(0.0, 1.0, 0.0))
         self.neckCtrl.scalePoints(globalScale)
         self.headCtrl.scalePoints(globalScale)
 
