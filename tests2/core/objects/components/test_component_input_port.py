@@ -25,9 +25,12 @@ class TestComponentInputPort(unittest.TestCase):
 
     def testIsConnected(self):
         cmpInputPort = ComponentInputPort('testCmpInputPort', None, 'Scalar')
-        testConnected = cmpInputPort.isConnected()
+        self.assertFalse(cmpInputPort.isConnected())
 
-        self.assertFalse(testConnected)
+        cmpOutputPort = ComponentOutputPort('testOutput', None, 'Scalar')
+        cmpInputPort.setConnection(cmpOutputPort)
+
+        self.assertTrue(cmpInputPort.isConnected())
 
     def testGetConnection(self):
         cmpInputPort = ComponentInputPort('testCmpInputPort', None, 'Scalar')
