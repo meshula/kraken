@@ -2,7 +2,6 @@
 import unittest
 
 from kraken.core.maths.vec2 import Vec2
-from kraken.core.objects.container import Container
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.locator import Locator
 
