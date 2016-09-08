@@ -85,6 +85,7 @@ class KLOperator(Operator):
 
     def getInputType(self, name):
         """Returns the type of input with the specified name."""
+
         for arg in self.args:
             if arg.connectionType.getSimpleType() == "In" and arg.name.getSimpleType() == name:
                 return arg.dataType.getSimpleType()
@@ -140,11 +141,11 @@ class KLOperator(Operator):
             return RTVal
 
         else:
-            if True: #mode == "arg":  #Only report a warning if default value is not provided for arg
+            if True:  # mode == "arg":  #Only report a warning if default value is not provided for arg
                 logger.warn("No default value for %s.%s.%s[%s]." % (self.solverTypeName, self.getName(), mode, name))
 
         defaultValue = ks.rtVal(RTValDataType)
-        if True: #mode == "arg":
+        if True:  # mode == "arg":
             logger.warn("    Creating default value by generating new RTVal object of type: %s. You should set default values for %s.%s(%s) in your KL Operator." %
                 (RTValDataType, self.solverTypeName, mode, name,))
 

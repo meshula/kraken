@@ -62,6 +62,7 @@ class CanvasOperator(Operator):
 
         Args:
             name (str): Name of the input to get.
+            RTValDataType (?): ?
             mode (str): "inputs" or "outputs"
 
         Returns:
@@ -94,7 +95,9 @@ class CanvasOperator(Operator):
 
         """
 
-        return self.graphDesc
+        raise DeprecationWarning("Method 'getGraphDesc' has been deprecated.")
+
+        # return self.graphDesc
 
     def getInput(self, name):
         """Returns the input with the specified name.
@@ -142,6 +145,7 @@ class CanvasOperator(Operator):
 
     def getInputType(self, name):
         """Returns the type of input with the specified name."""
+
         for i in xrange(self.node.getExecPortCount()):
             portName = self.node.getExecPortName(i)
             portConnectionType = self.portTypeMap[self.node.getExecPortType(i)]
@@ -164,7 +168,7 @@ class CanvasOperator(Operator):
             if portConnectionType == 'Out' and portName == name:
                 return portDataType
 
-        raise Exception("Could not find output port %s in canvas operator %s" % (name, self.getName()))
+        raise Exception("Could not find output port '%s' in canvas operator: %s" % (name, self.getName()))
 
     def evaluate(self):
         """Invokes the Canvas node causing the output values to be computed.
@@ -330,8 +334,7 @@ class CanvasOperator(Operator):
                 if hasattr(obj, '__iter__'):
                     print "Warning: Trying to set a canvas port item with an array directly."
 
-                print "Warning: Not setting rtval: %s\n\tfor output object: %s\n\ton port: %s\n\tof canvas object: %s\n." % \
-                    (rtval, obj, portName, self.getName())
+                print "Warning: Not setting rtval: %s\n\tfor output object: %s\n\ton port: %s\n\tof canvas object: %s\n." % (rtval, obj, portName, self.getName())
 
 
         for i in xrange(self.node.getExecPortCount()):

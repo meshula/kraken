@@ -5,6 +5,8 @@ Operator - Base operator object.
 
 """
 
+import warnings
+
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
 
@@ -42,14 +44,14 @@ class Operator(SceneItem):
         nameTemplate = config.getNameTemplate()
 
         # Get the token list for this type of object
-        format = None
+        nameFormat = None
         for typeName in nameTemplate['formats'].keys():
             if typeName in typeNameHierarchy:
-                format = nameTemplate['formats'][typeName]
+                nameFormat = nameTemplate['formats'][typeName]
                 break
 
-        if format is None:
-            format = nameTemplate['formats']['default']
+        if nameFormat is None:
+            nameFormat = nameTemplate['formats']['default']
 
         objectType = None
         for eachType in typeNameHierarchy:
@@ -63,13 +65,16 @@ class Operator(SceneItem):
         # Generate a name by concatenating the resolved tokens together.
         builtName = ""
         skipSep = False
-        for token in format:
+        for token in nameFormat:
 
             if token is 'sep':
                 if not skipSep:
                     builtName += nameTemplate['separator']
 
             elif token is 'location':
+                if self.getParent() is None:
+                    continue
+
                 location = self.getParent().getLocation()
 
                 if location not in nameTemplate['locations']:
@@ -172,11 +177,14 @@ class Operator(SceneItem):
         sources = []
         for name in self.getInputNames():
             inputTargets = self.getInput(name)
+
             if not isinstance(inputTargets, list):
                 inputTargets = [inputTargets]
+
             for inputTarget in inputTargets:
                 if not isinstance(inputTarget, SceneItem):
                     continue
+
                 sources.append(inputTarget)
 
         return super(Operator, self).getSources() + sources
@@ -196,18 +204,20 @@ class Operator(SceneItem):
 
         """
 
-        if name not in self.inputs:
-            raise Exception("Input with name '" + name +
-                            "' was not found in operator: " + self.getName() +
-                            ".")
+        raise DeprecationWarning("Method 'resizeInput' has been deprecated!")
 
-        if isinstance(self.inputs[name], list):
-            while len(self.inputs[name]) < count:
-                self.inputs[name].append(None)
-        else:
-            raise Exception("Input is not an array input: " + name + ".")
+        # if name not in self.inputs:
+        #     raise Exception("Input with name '" + name +
+        #                     "' was not found in operator: " + self.getName() +
+        #                     ".")
 
-        return True
+        # if isinstance(self.inputs[name], list):
+        #     while len(self.inputs[name]) < count:
+        #         self.inputs[name].append(None)
+        # else:
+        #     raise Exception("Input is not an array input: " + name + ".")
+
+        # return True
 
     def setInput(self, name, operatorInput, index=0):
         """Sets the input by the given name.
@@ -222,10 +232,10 @@ class Operator(SceneItem):
         """
 
         if name not in self.inputs:
-            raise Exception("Input with name '" + name +
-                            "' was not found in operator: " + self.getName() +
-                            ".\nValid inputs are:\n" +
-                            "\n".join(self.inputs.keys()))
+            raise KeyError("Input with name '" + name +
+                           "' was not found in operator: " + self.getName() +
+                           ".\nValid inputs are:\n" +
+                           "\n".join(self.inputs.keys()))
 
 
         if self.inputs[name] is None and self.getInputType(name).endswith('[]'):
@@ -272,7 +282,8 @@ class Operator(SceneItem):
 
     def getInputType(self, name):
         """Returns the type of input with the specified name."""
-        pass
+
+        raise NotImplementedError("Method 'getInputType' must be re-implemented in sub-classes.")
 
     def getInputNames(self):
         """Returns the names of all inputs.
@@ -299,18 +310,21 @@ class Operator(SceneItem):
 
         """
 
-        if name not in self.outputs:
-            raise Exception("Output with name '" + name +
-                            "' was not found in operator: " + self.getName() +
-                            ".")
 
-        if isinstance(self.outputs[name], list):
-            while len(self.outputs[name]) < count:
-                self.outputs[name].append(None)
-        else:
-            raise Exception("Output is not an array output: " + name + ".")
+        raise DeprecationWarning("Method 'resizeInput' has been deprecated!")
 
-        return True
+        # if name not in self.outputs:
+        #     raise Exception("Output with name '" + name +
+        #                     "' was not found in operator: " + self.getName() +
+        #                     ".")
+
+        # if isinstance(self.outputs[name], list):
+        #     while len(self.outputs[name]) < count:
+        #         self.outputs[name].append(None)
+        # else:
+        #     raise Exception("Output is not an array output: " + name + ".")
+
+        # return True
 
     def setOutput(self, name, operatorOutput, index=0):
         """Sets the output by the given name.
@@ -373,8 +387,8 @@ class Operator(SceneItem):
 
     def getOutputType(self, name):
         """Returns the type of input with the specified name."""
-        pass
 
+        raise NotImplementedError("Method 'getInputType' must be re-implemented in sub-classes.")
 
     def getOutputNames(self):
         """Returns the names of all outputs.
