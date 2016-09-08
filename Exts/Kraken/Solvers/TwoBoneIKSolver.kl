@@ -20,8 +20,8 @@ function TwoBoneIKSolver()
   this.defaultValues["bone1FK"] = Mat44();
   this.defaultValues["ikHandle"] = Mat44();
   this.defaultValues["upV"] = Mat44();
-  this.defaultValues["bone0Len"] = 654.321;
-  this.defaultValues["bone1Len"] = 1.0;
+  this.defaultValues["bone0Len"] = 4.35313892365;
+  this.defaultValues["bone1Len"] = 4.3648891449;
 }
 
 /// \dfgPresetTitle TwoBoneIKSolver_Constructor_Init
@@ -34,6 +34,17 @@ function TwoBoneIKSolver(
 {
   TwoBoneIKSolver();
   this.initPose = initPose;
+
+  // Set Default Values
+  this.defaultValues["rightSide"] = false;
+  this.defaultValues["ikblend"] = 0.0;
+  this.defaultValues["root"] = Mat44();
+  this.defaultValues["bone0FK"] = Mat44();
+  this.defaultValues["bone1FK"] = Mat44();
+  this.defaultValues["ikHandle"] = Mat44();
+  this.defaultValues["upV"] = Mat44();
+  this.defaultValues["bone0Len"] = 4.35313892365;
+  this.defaultValues["bone1Len"] = 4.3648891449;
 }
 
 
