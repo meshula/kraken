@@ -106,6 +106,7 @@ class KLOperator(Operator):
 
         Args:
             name (str): Name of the input to get.
+            RTValDataType (?): ?
             mode (str): "inputs" or "outputs"
 
         Returns:
@@ -147,15 +148,15 @@ class KLOperator(Operator):
         defaultValue = ks.rtVal(RTValDataType)
         if True:  # mode == "arg":
             logger.warn("    Creating default value by generating new RTVal object of type: %s. You should set default values for %s.%s(%s) in your KL Operator." %
-                (RTValDataType, self.solverTypeName, mode, name,))
+                        (RTValDataType, self.solverTypeName, mode, name,))
 
         return defaultValue
 
     def getInput(self, name):
         """Returns the input with the specified name.
 
-        If there is no input value, it get the default RTVal and converts to
-        python data
+        If there is no input value, it gets the default RTVal and converts to
+        a Kraken Math Type.
 
         Args:
             name (str): Name of the input to get.
@@ -183,15 +184,14 @@ class KLOperator(Operator):
             else:
                 return rtVal.getSimpleType()
 
-            #raise ValueError("Cannot convert rtval %s from %s" (rtVal, rtType))
-
         argDataType = None
         for arg in self.args:
             if arg.name.getSimpleType() == name:
                 argDataType = arg.dataType.getSimpleType()
                 break
+
         if argDataType is None:
-            raise Exception("Cannot find arg %s for object %s" (arg, self.getName()))
+            raise Exception("Cannot find arg '{}' for object {}".format(arg, self.getName()))
 
         defaultVal = self.getDefaultValue(name, argDataType, mode="arg")
         pyVal = rt2Py(defaultVal, argDataType)
@@ -271,7 +271,7 @@ class KLOperator(Operator):
             elif type(obj) is str:
                 return ks.rtVal('String', obj)
             else:
-                return obj #
+                return obj
 
         def validateArg(rtVal, argName, argDataType):
             """Validate argument types when passing built in Python types.
@@ -362,7 +362,7 @@ class KLOperator(Operator):
                     if argName in self.outputs and self.outputs[argName] is not None:
                         rtVal = getRTVal(self.outputs[argName], asInput=False)
                     else:
-                        rtVal = self.getDefaultValue(argName, argDataType, mode="output")
+                        rtVal = self.getDefaultValue(argName, argDataType, mode="arg")
 
                     validateArg(rtVal, argName, argDataType)
 
@@ -407,8 +407,8 @@ class KLOperator(Operator):
                 if hasattr(obj, '__iter__'):
                     logger.warning("Warning: Trying to set a KL port with an array directly.")
 
-                logger.warning("Not setting rtval: %s\n\tfor output object: %s\n\tof KL object: %s\n." % \
-                    (rtval, obj.getName(), self.getName()))
+                logger.warning("Not setting rtval: %s\n\tfor output object: %s\n\tof KL object: %s\n." %
+                               (rtval, obj.getName(), self.getName()))
 
         for i in xrange(len(argVals)):
             arg = self.args[i]
@@ -421,6 +421,6 @@ class KLOperator(Operator):
                     for j in xrange(len(argVals[i])):
                         setRTVal(self.outputs[argName][j], argVals[i][j])
                 elif argName in self.outputs and self.outputs[argName] is not None:
-                        setRTVal(self.outputs[argName], argVals[i])
+                    setRTVal(self.outputs[argName], argVals[i])
 
         return True
