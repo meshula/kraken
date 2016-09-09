@@ -44,6 +44,14 @@ class Curve(Object3D):
 
         """
 
+        dataErrorMsg = ("Curve Object '{}', sub-curve[{}] data does not contain "
+                        "required '{}' data.")
+
+        for i, subCurve in enumerate(data):
+            assert 'points' in subCurve, dataErrorMsg.format(self.getName(), str(i), 'points')
+            assert 'degree' in subCurve, dataErrorMsg.format(self.getName(), str(i), 'degree')
+            assert 'closed' in subCurve, dataErrorMsg.format(self.getName(), str(i), 'closed')
+
         self._data = copy.deepcopy(data)
 
         return True
@@ -60,6 +68,9 @@ class Curve(Object3D):
             bool: True if successful.
 
         """
+
+        if self._data is None:
+            raise ValueError("Curve object has no curve data to append to.")
 
         self._data += data
 
