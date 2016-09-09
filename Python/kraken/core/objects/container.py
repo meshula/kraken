@@ -42,8 +42,6 @@ class Container(Object3D):
 
         """
 
-
-
         # Assign the child self as the component.
         item.setComponent(self)
 
