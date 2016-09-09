@@ -131,7 +131,6 @@ class TestKLOperator(unittest.TestCase):
         self.assertEqual(str(testOp.outputs['midJointOut'].xfo.tr), "Vec3(1.40800035, 5.4371008873, -0.504299998283)")
 
 
-
 def suite():
     return unittest.TestLoader().loadTestsFromTestCase(TestKLOperator)
 
