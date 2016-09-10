@@ -203,13 +203,14 @@ class OSSLimbComponentGuide(OSSLimbComponent):
             if self.ikgoal_cmpIn is None:
                 self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
                 self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', parent=self.cmpInputAttrGrp)
-                self.softDistAttr = self.createInput('softDist', dataType='Float', parent=self.cmpInputAttrGrp)
+                self.dampingDistAttr = self.createInput('dampingDist', dataType='Float', parent=self.cmpInputAttrGrp)
+                self.squashhAttr = self.createInput('squash', dataType='Float', parent=self.cmpInputAttrGrp)
                 self.stretchAttr = self.createInput('stretch', dataType='Float', parent=self.cmpInputAttrGrp)
         else:
             if self.ikgoal_cmpIn is not None:
                 # self.deleteInput('ikGoalInput', parent=self.inputHrcGrp)
                 # self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
-                # self.deleteInput('softDist', parent=self.cmpInputAttrGrp)
+                # self.deleteInput('dampingDist', parent=self.cmpInputAttrGrp)
                 # self.deleteInput('stretch', parent=self.cmpInputAttrGrp)
                 self.ikgoal_cmpIn = None
 
@@ -429,17 +430,19 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
             self.limbIKCtrl.constrainTo(self.ikgoal_cmpIn, maintainOffset=True)
             self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', value=1.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
-            self.softDistAttr = self.createInput('softDist', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
+            self.dampingDistAttr = self.createInput('dampingDist', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
+            self.squashAttr = self.createInput('squash', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
             self.stretchAttr = self.createInput('stretch', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
         else:
             self.ikgoal_cmpIn = None
             self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-            self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
+            self.dampingDistAttr = ScalarAttribute('dampingDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
+            self.squashAttr = ScalarAttribute('squash', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
             self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
 
         self.limbBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=limbSettingsAttrGrp)
         self.limbBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=limbSettingsAttrGrp)
-        self.limbDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=limbSettingsAttrGrp)
+        self.limbDrawDebugAttr = BoolAttribute('drawDebug', value=True, parent=limbSettingsAttrGrp)
 
         self.drawDebugInputAttr.connect(self.limbDrawDebugAttr)
 
@@ -561,7 +564,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('bone0Len', self.limbBone0LenInputAttr)
         self.limbIKKLOp.setInput('bone1Len', self.limbBone1LenInputAttr)
         self.limbIKKLOp.setInput('ikBlend', self.ikBlendAttr)
-        self.limbIKKLOp.setInput('softDist', self.softDistAttr)
+        self.limbIKKLOp.setInput('dampingDist', self.dampingDistAttr)
+        self.limbIKKLOp.setInput('squash', self.squashAttr)
         self.limbIKKLOp.setInput('stretch', self.stretchAttr)
         # Add Xfo Inputs
         self.limbIKKLOp.setInput('root', self.uplimbFKCtrlSpace)
@@ -706,6 +710,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.createControls(data)
 
+        self.drawDebugInputAttr.setValue(True)
 
         if self.getLocation() == "R":
             pass
@@ -834,6 +839,9 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if not self.useOtherIKGoal:
             self.limbIKCtrl.scalePoints(self.globalScaleVec)
         self.limbUpVCtrl.scalePoints(self.globalScaleVec)
+
+        self.connectReverse(self.ikBlendAttr, self.uplimbFKCtrl.getVisibilityAttr())
+        self.connectReverse(self.ikBlendAttr, self.lolimbFKCtrl.getVisibilityAttr())
 
 
 

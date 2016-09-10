@@ -71,7 +71,7 @@ class CanvasOperator(Operator):
 
         rtVal = self.node.getPortDefaultValue(name, RTValDataType)
 
-        logger.info("Using default value for %s.%s.%s(%s) --> %s" % (self.canvasPresetPath, self.getName(), mode, name, rtVal))
+        logger.debug("Using default value for %s.%s.%s(%s) --> %s" % (self.canvasPresetPath, self.getName(), mode, name, rtVal))
 
         return rtVal
 

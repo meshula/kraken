@@ -368,6 +368,9 @@ class Operator(SceneItem):
                             "' was not found in operator: " + self.getName() +
                             ".")
 
+        if self.outputs[name] is None and self.getOutputType(name).endswith('[]'):
+            self.outputs[name] = []
+
         return self.outputs[name]
 
 

@@ -45,6 +45,9 @@ function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
 
 // Make this take in a specific aim and upvector later
 // Hard-coded to aim pos +X and use +Z as normal
+// This should actually just be a set of hard-coded mat33s that we multply to inXfo
+// if we always know the incoming boneAxis and upAxis
+// Good place for optimization
 function setCorrectAxes(
   in Xfo inXfo,
   in UInt32 boneAxis,
