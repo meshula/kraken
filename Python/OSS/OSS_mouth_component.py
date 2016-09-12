@@ -85,6 +85,9 @@ class OSSMouthGuide(OSSMouth):
         self.alignYAttr = IntegerAttribute('alignY', value=-1, minValue=-3, maxValue=3,  parent=self.guideSettingsAttrGrp)
         self.alignZAttr = IntegerAttribute('alignZ', value=3, minValue=-3, maxValue=3,  parent=self.guideSettingsAttrGrp)
 
+
+        self.mouthCtrl = Control('mouth', parent=self.ctrlCmpGrp)
+
         # midLip
         self.midLipCtrl = Control('midLip', parent=self.lipsCtrl)
         self.midLipCtrl.lockTranslation(x=True, y=False, z=False)
@@ -145,6 +148,7 @@ class OSSMouthGuide(OSSMouth):
         data = {
                 "name": name,
                 "location": "M",
+                "mouthXfo": Xfo(Vec3(0, 15, 0)),
                 "jawXfo": Xfo(Vec3(0, 15, 0)),
                 "lipsXfo": Xfo(Vec3(0, 15, 4)),
                 "midLipXfo": Xfo(Vec3(0, 15, 4)),
@@ -260,24 +264,25 @@ class OSSMouthGuide(OSSMouth):
     def addToSymDict(self, ctrl):
         if not self.symMapping:
             self.symMapping = {}
+
         name = ctrl.getName()
-        if not (name.startswith("L_") or name.startswith("R_")):
+        side = ctrl.getMetaDataItem("altLocation")
+
+        # lock non sided Controls x translation
+        if not side:
             ctrl.lockTranslation(x=True, y=False, z=False)
             return  self.symMapping
 
-        if name.startswith("R_"):
-            idxName = name.replace("R_","L_")
-        else:
-            idxName = name
 
-        if not idxName in  self.symMapping:
-             self.symMapping[idxName] = {}
+        # lock non sided Controls x translation
+        if not name in self.symMapping:
+             self.symMapping[name] = {}
 
-        if name.startswith("L_"):
-             self.symMapping[idxName]["lSide"] = ctrl
-             self.symMapping[idxName]["lSideParent"] = ctrl.getParent()
+        if side == "L":
+             self.symMapping[name]["lSide"] = ctrl
+             self.symMapping[name]["lSideParent"] = ctrl.getParent()
         else:
-             self.symMapping[idxName]["rSide"] = ctrl
+             self.symMapping[name]["rSide"] = ctrl
 
         return self.symMapping
 
@@ -431,10 +436,10 @@ class OSSMouthRig(OSSMouth):
                 ctrlParent.removeChild(ctrl)
         del controlsList[:]
 
-        parent = self.ctrlCmpGrp
 
         if ctrlType == "deformers":
 
+            parent = Transform(name + 'Deformers', parent=self.ctrlCmpGrp)
             #Build Deformer Names
             half = int(math.floor(int(names)/2))
             for i in range(half):
@@ -444,8 +449,9 @@ class OSSMouthRig(OSSMouth):
             lSideControls.reverse()
             rSideControls.reverse()
 
+
             def creatDefControl(defName, side=None):
-                newCtrl = Locator(defName + "_" + name, parent= self.ctrlCmpGrp)
+                newCtrl = Locator(defName + "_" + name, parent= parent)
                 newCtrl.setShapeVisibility(False)
                 newCtrl.xfo = parent.xfo
                 controlsList.append(newCtrl)
@@ -471,6 +477,7 @@ class OSSMouthRig(OSSMouth):
 
         if ctrlType == "controls":
 
+            parent = Transform(name + 'Controls', parent=self.ctrlCmpGrp)
             # Lets build all new handles
             controlNameList = self.convertToStringList(names)
             if not controlNameList:  # Nothing to build
@@ -707,13 +714,13 @@ class OSSMouthRig(OSSMouth):
         # =========
         # Jaw
         self.lipsRefSpace = CtrlSpace('lipsRef', parent=self.ctrlCmpGrp)
-        self.lipsCtrlSpace = CtrlSpace('lips', parent=self.ctrlCmpGrp)
 
         self.jawCtrlSpace = CtrlSpace('jaw', parent=self.ctrlCmpGrp)
         self.jawCtrl = Control('jaw', parent=self.jawCtrlSpace, shape="halfCircle", scale=0.5)
 
         # midMouth
         self.midMouthCtrlSpace = CtrlSpace('midMouth', parent=self.ctrlCmpGrp)
+        self.midMouthRefSpace = CtrlSpace('midMouthRef', parent=self.ctrlCmpGrp)
 
         # Mouth
         self.mouthCtrlSpace = CtrlSpace('mouth', parent=self.ctrlCmpGrp)
@@ -726,7 +733,7 @@ class OSSMouthRig(OSSMouth):
         self.R_loLipHandleCtrl = CtrlSpace('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"R"})
 
         # upLip
-        self.upLipCtrlSpace = CtrlSpace('upLip', parent=self.lipsCtrlSpace)
+        self.upLipCtrlSpace = CtrlSpace('upLip', parent=self.ctrlCmpGrp)
         self.upLipCtrl = Control('upLip', parent=self.upLipCtrlSpace, shape="halfCircle")
         self.L_upLipHandleCtrl = CtrlSpace('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"L"})
         self.R_upLipHandleCtrl = CtrlSpace('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"R"})
@@ -750,6 +757,8 @@ class OSSMouthRig(OSSMouth):
         # Constrain I/O
         # ==============
         # Input
+        self.mouthInputConstraint = self.mouthCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.mouthInputConstraint = self.lipsRefSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         self.mouthInputConstraint = self.jawCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # Output
@@ -793,11 +802,10 @@ class OSSMouthRig(OSSMouth):
             )
 
 
-        self.offsetOp([self.jawCtrl, self.lipsCtrlSpace, self.L_MouthRefSpace, self.R_MouthRefSpace],
-                      [self.loLipCtrlSpace, self.upLipCtrlSpace, self.L_MouthCtrlSpace, self.R_MouthCtrlSpace ],
+        #Mouth Offset
+        self.offsetOp([self.jawCtrl, self.lipsRefSpace,  self.midMouthRefSpace],
+                      [self.loLipCtrlSpace, self.upLipCtrlSpace, self.midMouthCtrlSpace ],
                        self.mouthCtrl.getParent(), self.mouthCtrl, name="Beta")
-
-        # self.offsetOp([self.lipsRefSpace],  [self.midMouthCtrlSpace], self.mouthCtrl.getParent(), self.mouthCtrl)
 
 
         for Level1Op, ctrls in [(self.loLipLevel1Op, self.loLipLevel1Ctrls), (self.upLipLevel1Op, self.upLipLevel1Ctrls)]:
@@ -810,7 +818,7 @@ class OSSMouthRig(OSSMouth):
 
         #blending mouth corner defs
         self.blendMidMouthLevel0Op = self.blend_two_xfos(
-            self.midMouthCtrlSpace,
+            self.midMouthRefSpace,
             self.jawCtrl, self.jawCtrlSpace,
             blend=0.5,
             name="blendMidMouthLevel0Op")
@@ -882,13 +890,15 @@ class OSSMouthRig(OSSMouth):
         for ctrl in [self.R_loLipHandleCtrl, self.R_upLipHandleCtrl]:
             ctrl.xfo = data['R_midLipHandleXfo']
 
-        for ctrl in [self.midMouthCtrlSpace]:
+        for ctrl in [self.midMouthCtrlSpace, self.lipsRefSpace, self.midMouthRefSpace]:
             ctrl.xfo = data['midLipXfo']
 
-        for ctrl in [self.jawCtrlSpace, self.lipsRefSpace, self.lipsCtrlSpace, self.jawCtrl, self.jawEndOutputTgt, self.mouthOutputTgt, self.mouthCtrlSpace, self.mouthCtrl]:
+        for ctrl in [self.jawCtrlSpace, self.jawCtrl, self.jawEndOutputTgt, self.mouthOutputTgt, self.mouthCtrlSpace, self.mouthCtrl]:
             ctrl.xfo = data['jawXfo']
 
 
+        for ctrl in [self.mouthCtrlSpace, self.mouthCtrl]:
+            ctrl.xfo = data['mouthXfo']
 
         self.jawCtrl.rotatePoints(-90.0, 0.0, 0.0)
         self.jawCtrl.xfo = data['jawXfo']
