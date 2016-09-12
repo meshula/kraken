@@ -77,10 +77,7 @@ class Operator(SceneItem):
                 parent = self.getParent()
                 if parent is None:
                     raise ValueError("operator [%s] does not have a parent." % self.getName())
-                component = parent.getComponent()
-                if component is None:
-                    raise ValueError("operator [%s] parent [%s] does not have a component." % (self.getName(), parent))
-                location = component.getLocation()
+                location = parent.getLocation()
 
                 if location not in nameTemplate['locations']:
                     raise ValueError("Invalid location on: " + self.getPath())
