@@ -31,9 +31,9 @@ logger = getLogger('kraken')
 class Component(Object3D):
     """Kraken Component object."""
 
-    def __init__(self, name, parent=None, location='M'):
+    def __init__(self, name, parent=None, location='M', metaData=None):
         self.location = StringAttribute('location', value=location)
-        super(Component, self).__init__(name, parent)
+        super(Component, self).__init__(name, parent, metaData=metaData)
         self._color = (154, 205, 50, 255)
         self._inputs = []
         self._outputs = []

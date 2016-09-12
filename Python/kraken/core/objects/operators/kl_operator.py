@@ -21,8 +21,8 @@ logger = getLogger('kraken')
 class KLOperator(Operator):
     """KL Operator representation."""
 
-    def __init__(self, name, solverTypeName, extension):
-        super(KLOperator, self).__init__(name)
+    def __init__(self, name, solverTypeName, extension, metaData=None):
+        super(KLOperator, self).__init__(name, metaData=metaData)
 
         self.solverTypeName = solverTypeName
         self.extension = extension
@@ -136,7 +136,7 @@ class KLOperator(Operator):
                 # when we run it on it's own and use the type that we query.  Gotta investigate this further...
                 RTVal = ks.convertFromRTVal(self.solverRTVal.defaultValues[name], RTTypeName=RTValDataType)
 
-            logger.info("Using default value for %s.%s.%s(%s) --> %s" % (self.solverTypeName, self.getName(), mode, name, RTVal))
+            logger.debug("Using default value for %s.%s.%s(%s) --> %s" % (self.solverTypeName, self.getName(), mode, name, RTVal))
             return RTVal
 
         else:
@@ -401,7 +401,10 @@ class KLOperator(Operator):
             elif isinstance(obj, Mat44):
                 obj.setFromMat44(rtval)
             elif isinstance(obj, Attribute):
-                obj.setValue(rtval)
+                if ks.isRTVal(rtval):
+                    obj.setValue(rtval.getSimpleType())
+                else:
+                    obj.setValue(rtval)
             else:
                 if hasattr(obj, '__iter__'):
                     logger.warning("Warning: Trying to set a KL port with an array directly.")
@@ -416,10 +419,12 @@ class KLOperator(Operator):
             argConnectionType = arg.connectionType.getSimpleType()
 
             if argConnectionType != 'In':
-                if str(argDataType).endswith('[]'):
-                    for j in xrange(len(argVals[i])):
-                        setRTVal(self.outputs[argName][j], argVals[i][j])
-                elif argName in self.outputs and self.outputs[argName] is not None:
+                if argName in self.outputs and self.outputs[argName] is not None:
+                    if str(argDataType).endswith('[]'):
+                        for j in xrange(len(argVals[i])):
+                            if len(self.outputs[argName]) > j and self.outputs[argName][j] is not None:
+                                setRTVal(self.outputs[argName][j], argVals[i][j])
+                    else:
                         setRTVal(self.outputs[argName], argVals[i])
 
         return True

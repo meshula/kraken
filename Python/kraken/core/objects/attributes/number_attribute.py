@@ -11,8 +11,8 @@ from kraken.core.objects.attributes.attribute import Attribute
 class NumberAttribute(Attribute):
     """Number Attributee. Base class for number attribute types"""
 
-    def __init__(self, name, value=0, minValue=None, maxValue=None, parent=None):
-        super(NumberAttribute, self).__init__(name, value=value, parent=parent)
+    def __init__(self, name, value=0, minValue=None, maxValue=None, parent=None, metaData=None):
+        super(NumberAttribute, self).__init__(name, value=value, parent=parent, metaData=metaData)
 
         self._min = minValue
         self._max = maxValue
@@ -33,9 +33,8 @@ class NumberAttribute(Attribute):
             bool: True if successful.
 
         """
-
         if self.validateValue(value) is False:
-            raise TypeError("Value: '" + str(value) + "' has an invalid type!")
+            raise TypeError("Can't set attribute [%s] of type [%s] to value [%s] of type [%s]" % (self.getName(), type(self), value, type(value)))
 
         super(NumberAttribute, self).setValue(value)
 

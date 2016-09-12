@@ -32,7 +32,7 @@ class Object3D(SceneItem):
     """Kraken base object type for any 3D object."""
 
     def __init__(self, name, parent=None, flags=None, metaData=None):
-        super(Object3D, self).__init__(name, parent, metaData)
+        super(Object3D, self).__init__(name, parent=parent, metaData=metaData)
         self._children = []
         self._flags = {}
         self._attributeGroups = []
@@ -61,7 +61,7 @@ class Object3D(SceneItem):
                     msg = "{} '{}' {} ({}: {}) {}\n".format("Invalid flag", flag, "set on", self.getName(), self.getPath(), ". Alphanumeric and underscores only!")
                     logger.warn(msg)
                     continue
-    #
+
                 self.setFlag(flag)
 
     # ==================

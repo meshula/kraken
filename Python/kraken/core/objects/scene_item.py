@@ -15,12 +15,11 @@ class SceneItem(object):
         super(SceneItem, self).__init__()
         self._parent = parent
         self._name = name
-        self._originalName = name
         self._component = None
         self._sources = []
         self._id = SceneItem.__maxId
         self._metaData = {}
-        if metaData:
+        if metaData is not None:
             self._metaData = metaData
 
         SceneItem.__maxId = SceneItem.__maxId + 1
@@ -119,20 +118,6 @@ class SceneItem(object):
         self._name = name
 
         return True
-
-    # =============
-    # Name methods
-    # =============
-    def getOriginalName(self):
-        """Returns the original name of the object as a string.
-           The name attribute may have been procedurally incremented
-
-        Returns:
-            str: Object's originally set name.
-
-        """
-
-        return self._originalName
 
     def getPath(self):
         """Returns the full hierarchical path to this object.

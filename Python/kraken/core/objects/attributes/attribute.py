@@ -11,8 +11,8 @@ from kraken.core.objects.scene_item import SceneItem
 class Attribute(SceneItem):
     """Attribute object."""
 
-    def __init__(self, name, value, parent=None):
-        super(Attribute, self).__init__(name)
+    def __init__(self, name, value, parent=None, metaData=None):
+        super(Attribute, self).__init__(name, metaData=metaData)
         self._value = value
         self._connection = None
         self._keyable = True
@@ -228,7 +228,7 @@ class Attribute(SceneItem):
 
         return self._connection
 
-    def connect(self, attribute):
+    def connect(self, attribute, lock=False):
         """Connects this attribute with another..
 
         Args:
@@ -242,6 +242,9 @@ class Attribute(SceneItem):
         self.removeSource(self._connection)
         self._connection = attribute
         self.addSource(attribute)
+
+        if lock:  # only lock if true, otherwise don't change # Currently is not working for visibility attr
+            self.setLock(lock)
 
         return True
 

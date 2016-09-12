@@ -304,6 +304,37 @@ class OSS_Component(BaseExampleComponent):
         return blendTRSConstraint
 
 
+    def connectReverse(self, sourceAttribute, destAttribute, name=None, lock=True):
+
+        sourceObject = sourceAttribute.getParent().getParent()
+        destObject = destAttribute.getParent().getParent()
+
+        name = sourceObject.getName()+"_"+sourceAttribute.getName()+"_2_"+destObject.getName()+"_"+destAttribute.getName()+'_RemapScalarValueSolver'
+        attrGrp = AttributeGroup("Reversed", parent=destObject)
+        if destAttribute.isTypeOf("BoolAttribute"):  #Can't pass bool to kl solver so create an intermediate float attribute
+            parent = destAttribute.getParent()
+            floatAttr = ScalarAttribute(destAttribute.getName()+"_float", value=1.0, minValue=0.0, maxValue=1.0, parent=attrGrp)
+        else:
+            floatAttr = sourceAttribute
+
+        #############################
+
+        ReverseSolver = KLOperator(name, 'OSS_ReverseSolver', 'OSS_Kraken')
+        self.addOperator(ReverseSolver)
+        ReverseSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        ReverseSolver.setInput('rigScale', self.rigScaleInputAttr)
+        ReverseSolver.setInput('input', sourceAttribute)
+        ReverseSolver.setOutput('result', floatAttr)
+
+        if destAttribute.isTypeOf("BoolAttribute"):
+            destAttribute.connect(floatAttr)
+            floatAttr.setLock(True)
+
+        if lock:
+            destAttribute.setLock(True)
+
+
+
     def offsetOp(self, objects, targets, offsetA, offsetB, name=None):
         """Constrain target to a blend between two source Xfos
         outputs Mat44 array of objects tranformed by the delta of OffsetA to OffsetB

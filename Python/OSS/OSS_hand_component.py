@@ -57,7 +57,7 @@ class OSSHandComponent(OSS_Component):
         self.drawDebugOutputAttr = self.createOutput('drawDebug', dataType='Boolean', value=False, parent=self.cmpOutputAttrGrp).getTarget()
         self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=1.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.limbMocap_cmpOutAttr = self.createOutput('limbMocap', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
-        self.softDist_cmpOutAttr = self.createOutput('softDist', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.dampingDist_cmpOutAttr = self.createOutput('dampingDist', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.stretch_cmpOutAttr = self.createOutput('stretch', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
 
 
@@ -84,7 +84,6 @@ class OSSHandComponentGuide(OSSHandComponent):
         self.digit1SegmentNames = StringAttribute('Digit1SegmentNames', value="", parent=self.guideSettingsAttrGrp)
 
 
-
         self.digit3SegmentNames.setValueChangeCallback(self.updateDigit3SegmentControls)
         self.digit2SegmentNames.setValueChangeCallback(self.updateDigit2SegmentControls)
         self.digit1SegmentNames.setValueChangeCallback(self.updateDigit1SegmentControls)
@@ -92,6 +91,10 @@ class OSSHandComponentGuide(OSSHandComponent):
         # Guide Controls
         self.handCtrl = Control('hand', parent=self.ctrlCmpGrp, shape="sphere")
         self.palmCtrl = Control('palm', parent=self.ctrlCmpGrp, shape="sphere")
+        self.palmCtrl.setShapeVisibility(False)  # For now, until this is an option
+        self.palmCtrl.lockRotation(True, True, True)
+        self.palmCtrl.lockScale(True, True, True)
+        self.palmCtrl.lockTranslation(True, True, True)
         self.palmTipCtrl = Control('palmTip', parent=self.ctrlCmpGrp, shape="sphere")
         self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="jack")
 
@@ -416,13 +419,13 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
-        handIKInputAttr = ScalarAttribute('handIK', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.handIKInputAttr = ScalarAttribute('handIK', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
 
         # Need a more elegant way to drive attrs on another component, especially this one where we don't even know if the limb has mocap
         self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
-        self.softDistAttr = ScalarAttribute('softDist', value=0.0, minValue=0.0, parent=self.handleCtrlAttrGrp)
-        self.softDist_cmpOutAttr.connect(self.softDistAttr)
+        self.dampingDistAttr = ScalarAttribute('dampingDist', value=0.0, minValue=0.0, parent=self.handleCtrlAttrGrp)
+        self.dampingDist_cmpOutAttr.connect(self.dampingDistAttr)
         self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.stretch_cmpOutAttr.connect(self.stretchAttr)
 
@@ -474,7 +477,7 @@ class OSSHandComponentRig(OSSHandComponent):
         # Add Att Inputs
         self.IKHandBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.IKHandBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.IKHandBlendKLOp.setInput('blend', handIKInputAttr)
+        self.IKHandBlendKLOp.setInput('blend', self.handIKInputAttr)
         # Add Xfo Inputs)
         self.IKHandBlendKLOp.setInput('ikFoot', self.handleIKCtrlSpace)
         self.IKHandBlendKLOp.setInput('fkFoot', self.handCtrl)
@@ -634,66 +637,10 @@ class OSSHandComponentRig(OSSHandComponent):
         self.createControls(2, data["Digit2SegmentNames"], data)
         self.createControls(1, data["Digit1SegmentNames"], data)
 
-        if self.mocap:
-            self.mocapInputAttr = ScalarAttribute('mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
-            # =========
-            # Mocap
-            # =========
-            # Mocap Hand
-            self.handMocapCtrl = MCControl('hand', parent=self.handCtrlSpace, shape="cube")
-            self.handMocapCtrl.alignOnXAxis()
-            self.handMocapCtrl.xfo = data['handXfo']
-            self.handMocapCtrl.scalePointsOnAxis(data['handLen'], self.boneAxisStr)
+        self.connectReverse(self.handIKInputAttr, self.handCtrl.getVisibilityAttr())
 
-
-            # Mocap palm
-            self.palmMocapCtrl = MCControl('palm', parent=self.handMocapCtrl, shape="cube")
-            self.palmMocapCtrl.xfo = data['palmXfo']
-            self.palmMocapCtrl.alignOnXAxis()
-            self.palmMocapCtrl.scalePointsOnAxis(data['palmLen'], self.boneAxisStr)
-            self.palmMocapCtrlSpace = self.palmMocapCtrl.insertCtrlSpace()
-
-
-
-
-            # Add Hand palm HierBlend Solver for Mocap
-            self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
-            self.addOperator(self.mocapHierBlendSolver)
-            self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)
-            self.mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
-            # Add Att Inputs
-            self.mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-            self.mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
-            # Add Xfo Inputs
-            self.mocapHierBlendSolver.setInput('hierA',
-                [
-                self.IKHandBlendKLOpHand_out,
-                self.IKHandBlendKLOpPalm_out
-                ],
-            )
-            self.mocapHierBlendSolver.setInput('hierB',
-                [
-                self.handMocapCtrl,
-                self.palmMocapCtrl,
-                ]
-            )
-            #Create some nodes just for the oupt of the blend.
-            #Wish we could just make direct connections....
-
-            self.handMocapCtrl_link = CtrlSpace('handMocapCtrl_link', parent=self.outputHrcGrp)
-            self.palmMocapCtrl_link = CtrlSpace('palmMocapCtrl_link', parent=self.outputHrcGrp)
-
-            self.mocapHierBlendSolver.setOutput('hierOut',
-                [
-                self.handMocapCtrl_link,
-                self.palmMocapCtrl_link,
-                ]
-            )
-            self.hand_cmpOutConstraint = self.hand_cmpOut.constrainTo(self.handMocapCtrl_link)
-            self.palm_cmpOutConstraint = self.palm_cmpOut.constrainTo(self.palmMocapCtrl_link)
-        else:
-            self.hand_cmpOutConstraint = self.hand_cmpOut.constrainTo(self.IKHandBlendKLOpHand_out)
-            self.palm_cmpOutConstraint = self.palm_cmpOut.constrainTo(self.IKHandBlendKLOpPalm_out)
+        self.hand_cmpOutConstraint = self.hand_cmpOut.constrainTo(self.IKHandBlendKLOpHand_out)
+        self.palm_cmpOutConstraint = self.palm_cmpOut.constrainTo(self.IKHandBlendKLOpPalm_out)
 
 
 

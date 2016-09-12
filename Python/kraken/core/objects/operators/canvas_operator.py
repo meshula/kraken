@@ -20,8 +20,8 @@ logger = getLogger('kraken')
 class CanvasOperator(Operator):
     """Canvas Operator representation."""
 
-    def __init__(self, name, canvasPresetPath):
-        super(CanvasOperator, self).__init__(name)
+    def __init__(self, name, canvasPresetPath, metaData=None):
+        super(CanvasOperator, self).__init__(name, metaData=metaData)
 
         self.canvasPresetPath = canvasPresetPath
 
@@ -71,7 +71,7 @@ class CanvasOperator(Operator):
 
         rtVal = self.node.getPortDefaultValue(name, RTValDataType)
 
-        logger.info("Using default value for %s.%s.%s(%s) --> %s" % (self.canvasPresetPath, self.getName(), mode, name, rtVal))
+        logger.debug("Using default value for %s.%s.%s(%s) --> %s" % (self.canvasPresetPath, self.getName(), mode, name, rtVal))
 
         return rtVal
 
