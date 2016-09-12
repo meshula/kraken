@@ -1,0 +1,40 @@
+require Kraken;
+
+object OSS_offsetSolver : KrakenSolver {
+};
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_offsetSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('objects', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('objectsParent', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('offsets', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('offsetsRest', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('result', 'Out', 'Mat44[]'));
+  return args;
+}
+
+// Solve
+function OSS_offsetSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Mat44[] objects,
+  in Mat44[] objectsParent,
+  in Mat44[] offsets,
+  in Mat44[] offsetsRest,
+  out Mat44[] result
+  )
+{
+  Size size = objects.size();
+  result.resize(size);
+
+  for(UInt32 i=0; i<size; i++){
+    // get local Transform
+    result[i] = offsetsRest[i].inverse()*objects[i];
+    result[i] = offsets[i]*result[i];
+    result[i] = objectsParent[i].inverse()*result[i];
+  }
+
+}
+

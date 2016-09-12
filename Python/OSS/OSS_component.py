@@ -302,3 +302,30 @@ class OSS_Component(BaseExampleComponent):
         blendTRSConstraint.setOutput('result', target)
 
         return blendTRSConstraint
+
+
+    def offsetOp(self, objects, targets, offsetA, offsetB, name=None):
+        """Constrain target to a blend between two source Xfos
+        outputs Mat44 array of objects tranformed by the delta of OffsetA to OffsetB
+
+        Args:
+            objects (Mat44): objects that provide source Mat44
+            targets (Mat44): targets after offset 
+            offsetA (Mat44): First Value for Delta
+            offsetB (Mat44): Second Value for Delta
+        Returns:
+            The KL constraint operator
+
+        """
+
+        if not name:
+            name = offsetB.getName()+"OffsetOp"
+
+        offsetOpp = KLOperator(name, 'OSS_offsetSolver', 'OSS_Kraken')
+        self.addOperator(offsetOpp)
+        offsetOpp.setInput('objects', objects)
+        offsetOpp.setInput('objectsParent', [o.getParent() for o in objects])
+        offsetOpp.setInput('offsetsRest', [offsetA for o in objects])
+        offsetOpp.setInput('offsets', [offsetB for o in objects])
+        offsetOpp.setOutput('result', targets)
+        return offsetOpp
