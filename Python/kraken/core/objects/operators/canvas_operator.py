@@ -20,8 +20,8 @@ logger = getLogger('kraken')
 class CanvasOperator(Operator):
     """Canvas Operator representation."""
 
-    def __init__(self, name, canvasPresetPath):
-        super(CanvasOperator, self).__init__(name)
+    def __init__(self, name, canvasPresetPath, metaData=None):
+        super(CanvasOperator, self).__init__(name, metaData=metaData)
 
         self.canvasPresetPath = canvasPresetPath
 

@@ -16,8 +16,8 @@ from kraken.core.maths.mat44 import Mat44
 class Constraint(SceneItem):
     """Constraint object."""
 
-    def __init__(self, name, parent=None):
-        super(Constraint, self).__init__(name, parent)
+    def __init__(self, name, parent=None, metaData=None):
+        super(Constraint, self).__init__(name, parent, metaData=metaData)
 
         self._constrainee = None
         self._constrainers = []

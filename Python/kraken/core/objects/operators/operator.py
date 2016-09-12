@@ -12,8 +12,8 @@ from kraken.core.objects.scene_item import SceneItem
 class Operator(SceneItem):
     """Operator representation."""
 
-    def __init__(self, name, parent=None):
-        super(Operator, self).__init__(name, parent)
+    def __init__(self, name, parent=None, metaData=None):
+        super(Operator, self).__init__(name, parent, metaData=metaData)
 
         self.inputs = {}
         self.outputs = {}
