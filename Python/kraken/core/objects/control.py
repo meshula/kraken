@@ -325,7 +325,7 @@ class Control(Curve):
         if self.getParent() is not None:
             self.getParent().removeChild(self)
 
-        if self.getMetaDataItem("altLocation"):
+        if self.getMetaDataItem("altLocation") is not None:
             newCtrlSpace.setMetaDataItem("altLocation", self.getMetaDataItem("altLocation"))
 
         self.setParent(newCtrlSpace)
