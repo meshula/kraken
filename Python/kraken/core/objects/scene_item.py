@@ -19,7 +19,7 @@ class SceneItem(object):
         self._sources = []
         self._id = SceneItem.__maxId
         self._metaData = {}
-        if metaData:
+        if metaData is not None:
             self._metaData = metaData
 
         SceneItem.__maxId = SceneItem.__maxId + 1

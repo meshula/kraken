@@ -11,8 +11,8 @@ from kraken.core.objects.scene_item import SceneItem
 class Attribute(SceneItem):
     """Attribute object."""
 
-    def __init__(self, name, value, parent=None):
-        super(Attribute, self).__init__(name)
+    def __init__(self, name, value, parent=None, metaData=None):
+        super(Attribute, self).__init__(name, metaData=metaData)
         self._value = value
         self._connection = None
         self._keyable = True

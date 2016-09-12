@@ -21,8 +21,8 @@ logger = getLogger('kraken')
 class KLOperator(Operator):
     """KL Operator representation."""
 
-    def __init__(self, name, solverTypeName, extension):
-        super(KLOperator, self).__init__(name)
+    def __init__(self, name, solverTypeName, extension, metaData=None):
+        super(KLOperator, self).__init__(name, metaData=metaData)
 
         self.solverTypeName = solverTypeName
         self.extension = extension
