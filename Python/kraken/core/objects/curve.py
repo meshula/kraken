@@ -88,8 +88,9 @@ class Curve(Object3D):
 
         """
 
-        if index > len(self.getCurveData()):
-            raise IndexError("'" + str(index) + "' is out of the range of the 'data' array.")
+        if index > len(self.getCurveData()) - 1:
+            errMsg = "Invalid index [{}], out of the range [{}] of the 'data' array."
+            raise IndexError(errMsg.format(str(index), str(len(self.getCurveData()) - 1)))
 
         return True
 

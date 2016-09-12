@@ -14,4 +14,3 @@ class CtrlSpace(Object3D):
     def __init__(self, name, parent=None, flags=None):
         super(CtrlSpace, self).__init__(name, parent=parent, flags=flags)
         self.setShapeVisibility(False)
-
