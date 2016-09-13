@@ -71,6 +71,8 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=99, parent=self.guideSettingsAttrGrp)
         self.popFirst = BoolAttribute('popFirst', value=False,  parent=self.guideSettingsAttrGrp)
         self.popFirst = BoolAttribute('popLast', value=False, parent=self.guideSettingsAttrGrp)
+        self.exposeControls = BoolAttribute('exposeControls', value=True, parent=self.guideSettingsAttrGrp)
+        self.tweakControls = BoolAttribute('tweakControls', value=False, parent=self.guideSettingsAttrGrp)
         self.contstrainFirstControlInput = BoolAttribute('contstrainFirstControl', value=False, parent=self.guideSettingsAttrGrp)
         self.removeFirstControlInput = BoolAttribute('removeFirstControl', value=False, parent=self.guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
@@ -315,6 +317,9 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
         parent = self.ctrlCmpGrp
 
+        self.exposeControls = bool(data['exposeControls'])  #This should be a simple method instead
+        self.tweakControls = bool(data['tweakControls'])  #This should be a simple method instead
+
         if ctrlType == "curveDeformers":
             defControlNameList = []
 
@@ -333,6 +338,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 newDef.constrainTo(newCtrl)
 
         if ctrlType == "curveControls":
+
             defControlNameList =[]
 
             # Lets build all new handles
@@ -341,8 +347,13 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 return True
 
             for i, defName in enumerate(defControlNameList):
-                newCtrl = Control(self.name + defName, parent=parent, shape="squarePointed")
-                newCtrl.setColor("red")
+
+                if self.exposeControls:
+                    newCtrl = Control(self.name + defName, parent=parent, shape="squarePointed")
+                    newCtrl.setColor("red")
+                else: 
+                    newCtrl = Transform(self.name + defName, parent=parent)
+
                 newCtrl.xfo = data[defName + "Xfo"]
                 controlsList.append(newCtrl)
 
@@ -449,7 +460,10 @@ class OSSCurveComponentRig(OSSCurveComponent):
             for i in range(numCtrls):
                 ctrl = self.controlInputs[i]
                 ctrl.setColor("gold")
-                ctrlParent = ctrl.insertCtrlSpace()
+                if ctrl.getTypeName() != "Transform":
+                    ctrlParent = ctrl.insertCtrlSpace()
+                else: 
+                    ctrlParent = ctrl
                 #this is for a curve only solution
                 ctrlParent.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
                 self.rigControlAligns.append(Vec3(1,2,3))

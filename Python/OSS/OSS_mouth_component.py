@@ -705,7 +705,9 @@ class OSSMouthRig(OSSMouth):
         self.parentSpaceInputTgt.childJoints = []
 
         # Mouth
-        self.mouthDef = Joint('jaw', parent=self.deformersParent)
+        self.mouthDef = Joint('mouth', parent=self.deformersParent)
+        self.jawDef = Joint('jaw', parent=self.mouthDef)
+        self.jawDef.setComponent(self)
         self.mouthDef.setComponent(self)
         self.parentSpaceInputTgt.childJoints.append(self.mouthDef)
 
@@ -829,7 +831,7 @@ class OSSMouthRig(OSSMouth):
         # Add Splice Ops
         # ===============
         # Add Deformer Splice Op
-        self.jawCtrlConstraint = self.mouthDef.constrainTo(self.jawCtrl, maintainOffset=False)
+        self.jawCtrlConstraint = self.jawDef.constrainTo(self.jawCtrl, maintainOffset=False)
 
         # Left corner
         self.L_MouthCornerLoc = Locator('mouthCorner', parent=self.ctrlCmpGrp, metaData={"altLocation":"L"})
@@ -893,7 +895,7 @@ class OSSMouthRig(OSSMouth):
         for ctrl in [self.midMouthCtrlSpace, self.lipsRefSpace, self.midMouthRefSpace]:
             ctrl.xfo = data['midLipXfo']
 
-        for ctrl in [self.jawCtrlSpace, self.jawCtrl, self.jawEndOutputTgt, self.mouthOutputTgt, self.mouthCtrlSpace, self.mouthCtrl]:
+        for ctrl in [self.jawCtrlSpace, self.jawCtrl, self.jawEndOutputTgt, self.mouthOutputTgt, self.mouthCtrlSpace, self.mouthCtrl, self.mouthDef]:
             ctrl.xfo = data['jawXfo']
 
 
