@@ -242,11 +242,14 @@ class Object3D(SceneItem):
             elif token is 'location':
                 if self.isTypeOf('Component'):
                     location = self.getLocation()
+                elif self.getComponent() is None:
+                    location = None
                 else:
                     location = self.getComponent().getLocation()
 
                 if location not in nameTemplate['locations']:
-                    msg = "Invalid location on '{}'. Location: {}. Valid locations: {}".format(self.getPath(), location, nameTemplate['locations'])
+                    msg = "Invalid location on '{}'. Location: {}. Valid locations: {}"
+                    msg = msg.format(self.getPath(), location, nameTemplate['locations'])
                     raise ValueError(msg)
 
                 builtName += location
