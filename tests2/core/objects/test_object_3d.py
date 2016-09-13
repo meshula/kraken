@@ -1,31 +1,77 @@
 
 import unittest
 
+from kraken.core.maths.xfo import Xfo
+from kraken.core.maths.vec3 import Vec3
+from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.objects.object_3d import Object3D
+from kraken.core.objects.components.component import Component
+from kraken.core.objects.component_group import ComponentGroup
+from kraken.core.objects.container import Container
 
 
 class TestObject3D(unittest.TestCase):
 
-    def testGetName(self):
-        pass
-
     def testGetPropertyValues(self):
-        pass
+        testObj3D = Object3D('testObj3D')
+        testXfo = testObj3D.xfo
+        testRO = testObj3D.ro
+        testLocalXfo = testObj3D.localXfo
+        testGlobalXfo = testObj3D.globalXfo
+
+        self.assertIsNotNone(testXfo)
+        self.assertEqual(testXfo, Xfo())
+        self.assertIsNotNone(testRO)
+        self.assertEqual(testRO, RotationOrder())
+        self.assertIsNotNone(testLocalXfo)
+        self.assertEqual(testLocalXfo, Xfo())
+        self.assertIsNotNone(testGlobalXfo)
+        self.assertEqual(testGlobalXfo, Xfo())
 
     def testSetPropertyValues(self):
-        pass
+        testObj3D = Object3D('testObj3D')
+        newXfo = Xfo(tr=Vec3(0, 5, 0))
+        testObj3D.xfo = newXfo
+
+        self.assertEqual(testObj3D.xfo, newXfo)
 
     def testGetBuildName(self):
-        pass
-        # getBuildName
+        testCmp = Component('testComponent', location='M')
+        testCmpGrp = ComponentGroup('testCmpGrp', testCmp)
+        testCmp.addItem('testCmpGrp', testCmpGrp)
+        testObj3D = Object3D('testObj3D', parent=testCmpGrp)
+        buildName = testObj3D.getBuildName()
+
+        self.assertEqual(buildName, 'testComponent_M_testObj3D_null')
+
+        testCmp = Component('testComponent', location='M')
+        testCmpGrp = ComponentGroup('testCmpGrp', testCmp)
+        testCmp.addItem('testCmpGrp', testCmpGrp)
+        testObj3D = Object3D('testObj3D', parent=testCmpGrp)
+        testObj3D.setFlag('EXPLICIT_NAME')
+        buildName = testObj3D.getBuildName()
+
+        self.assertEqual(buildName, 'testObj3D')
 
     def testSetName(self):
-        pass
-        # setName
+        testObj3D = Object3D('testObj3D')
+        setNameCall = testObj3D.setName('myObj')
+
+        self.assertTrue(setNameCall)
+        self.assertEqual(testObj3D._name, 'myObj')
 
     def testGetContainer(self):
-        pass
-        # getContainer
+        testObj3D = Object3D('testObj3D')
+        container = testObj3D.getContainer()
+
+        self.assertIsNone(container)
+
+        testContainer = Container('TestContainer')
+        testParent = Object3D('testParent', parent=testContainer)
+        testObj3D = Object3D('testObj3D', parent=testParent)
+        testContainer.addItem('testObj3D', testObj3D)
+
+        self.assertIs(testObj3D.getContainer(), testContainer)
 
     def testGetLayer(self):
         pass
