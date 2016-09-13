@@ -126,7 +126,7 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
         super(OSSShoulderComponentGuide, self).loadData( data )
 
         self.shldrCtrl.xfo = data['shldrXfo']
-        self.shldrUpVCtrl.xfo = self.shldrCtrl.xfo.multiply(data['shldrUpVXfo'])
+        self.shldrUpVCtrl.xfo = data['shldrUpVXfo']
         self.shldrEndCtrl.xfo = data['shldrEndXfo']
 
         return True
