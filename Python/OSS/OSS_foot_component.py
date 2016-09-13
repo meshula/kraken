@@ -78,8 +78,9 @@ class OSSFootComponentGuide(OSSFootComponent):
         #self.heelOffsetAsChannelsAttr = BoolAttribute('heelOffsetAsChannels', value=False, parent=self.guideSettingsAttrGrp)
 
         # Guide Controls
-        self.footCtrl = Control('foot', parent=self.ctrlCmpGrp, shape="sphere")
-        self.pivotCtrl = Control(self.getName(), parent=self.ctrlCmpGrp, shape="circle", metaData={"altType": "Pivot"})
+        # Guide Controls must have a consistent and unique name so that their data can be set and stored regardless of config settings
+        self.footCtrl = Control(self.getName(), parent=self.ctrlCmpGrp, shape="sphere")
+        self.pivotCtrl = Control("pivot", parent=self.ctrlCmpGrp, shape="circle")  #don't set metaData here
         self.ballFKCtrl = Control('ball', parent=self.ctrlCmpGrp, shape="sphere")
         self.ballTipCtrl = Control('ballTip', parent=self.ctrlCmpGrp, shape="sphere")
         self.heelPivotCtrl = Control('heelPivot', parent=self.ctrlCmpGrp, shape="sphere")
@@ -336,12 +337,12 @@ class OSSFootComponentRig(OSSFootComponent):
         # =========
 
         # IK Handle
-        self.handleCtrl = IKControl("foot", parent=self.ctrlCmpGrp, shape="jack")
+        self.handleCtrl = IKControl(self.getName(), parent=self.ctrlCmpGrp, shape="jack")
         self.handleCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later careful when combining with foot!
         self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace(name="foot_ik")
 
         # FK Foot
-        self.footCtrl = FKControl('foot', parent=self.ctrlCmpGrp, shape="cube")
+        self.footCtrl = FKControl(self.getName(), parent=self.ctrlCmpGrp, shape="cube")
         self.footCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
         self.footCtrlSpace = self.footCtrl.insertCtrlSpace(name="foot_fk") #avoid name clash with ik spacectrl
 
