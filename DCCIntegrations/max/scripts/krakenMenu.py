@@ -2,21 +2,56 @@ import webbrowser
 
 import MaxPlus
 
+from PySide import QtGui
 
+import kraken
+from kraken import plugins
+from kraken.core.objects.rig import Rig
+from kraken.ui.kraken_window import KrakenWindow
+from kraken.ui.kraken_splash import KrakenSplash
+
+
+# ===============
+# Menu Callbacks
+# ===============
 def openKrakenEditor():
-    print 'Open Kraken Editor!'
+    print 'Releasing the Kraken!'
+
+    class _GCProtector(object):
+        widgets = []
+
+    app = QtGui.QApplication.instance()
+    if not app:
+        app = QtGui.QApplication([])
+
+    splash = KrakenSplash(app)
+    splash.show()
+
+    try:
+        window = KrakenWindow(parent=MaxPlus.GetQMaxWindow())
+        _GCProtector.widgets.append(window)
+        window.show()
+    except Exception, e:
+        print e
+
+    splash.finish(window)
+
 
 def openKrakenSite():
     webbrowser.open_new_tab('http://fabric-engine.github.io/Kraken')
 
+
 def openKrakenDocs():
     webbrowser.open_new_tab('http://kraken-rigging-framework.readthedocs.io')
+
 
 def openFabricForums():
     webbrowser.open_new_tab('http://forums.fabricengine.com/categories/kraken')
 
 
-
+# ==============
+# Menu Creation
+# ==============
 def setupMenu():
     menu = None
 
