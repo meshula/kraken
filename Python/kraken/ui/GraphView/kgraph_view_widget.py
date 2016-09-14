@@ -41,6 +41,7 @@ class KGraphViewWidget(GraphViewWidget):
 
         self._builder = None
         self._guideBuilder = None
+        self.guideRig = None
 
         graphView = KGraphView(parent=self)
         graphView.nodeAdded.connect(self.__onNodeAdded)
