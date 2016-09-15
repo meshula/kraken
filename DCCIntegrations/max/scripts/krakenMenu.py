@@ -1,5 +1,6 @@
 import webbrowser
 
+import pymxs
 import MaxPlus
 
 from PySide import QtGui
@@ -28,6 +29,7 @@ def openKrakenEditor():
     splash.show()
 
     try:
+        MaxPlus.CUI.DisableAccelerators()
         window = KrakenWindow(parent=MaxPlus.GetQMaxWindow())
         _GCProtector.widgets.append(window)
         window.show()
