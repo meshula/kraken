@@ -24,22 +24,22 @@ class DCCHandler(logging.Handler):
         msg = self.format(record)
 
         if record.levelno == logging.CRITICAL:
-            print(msg)
+            print('CRITICAL ' + msg)
 
         elif record.levelno == logging.ERROR:
-            print(msg)
+            print('ERROR ' + msg)
 
         elif record.levelno == logging.WARNING:
-            print(msg)
+            print('WARNING ' + msg)
 
         elif record.levelno == logging.INFORM:
-            print(msg)
+            print('INFORM ' + msg)
 
         elif record.levelno == logging.INFO:
-            print(msg)
+            print('INFO ' + msg)
 
         elif record.levelno == logging.DEBUG:
-            print(msg)
+            print('DEBUG ' + msg)
 
         else:
             print(msg)

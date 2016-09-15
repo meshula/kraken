@@ -13,10 +13,11 @@ def getClient():
 
     """
 
-    contextID = cmds.fabricSplice('getClientContextID')
+    contextID = MaxPlus.Core.EvalMAXScript("fabric.ContextId").Get()
     if contextID == '':
-        cmds.fabricSplice('constructClient')
-        contextID = cmds.fabricSplice('getClientContextID')
+        client = FabricEngine.Core.createClient()
+        contextID = client.getContextID()
+        MaxPlus.Core.EvalMAXScript("fabric.ContextId = \"" + str(contextID) + "\"")
 
     options = {
         'contextID': contextID,

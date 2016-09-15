@@ -18,11 +18,10 @@ from kraken.core.maths import Vec2, Vec3, Xfo, Mat44, Math_radToDeg, RotationOrd
 from kraken.core.builder import Builder
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.attributes.attribute import Attribute
-from kraken.plugins.maya_plugin.utils import *
+from kraken.plugins.max_plugin.utils import *
 
 from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 
-import maya.cmds as cmds
 
 logger = getLogger('kraken')
 logger.setLevel(logging.INFO)
@@ -43,7 +42,8 @@ class Builder(Builder):
 
             node = builtElement['tgt']
             if node.exists():
-                pm.delete(node)
+                # pm.delete(node)
+                pass
 
         self._buildElements = []
 
@@ -67,31 +67,38 @@ class Builder(Builder):
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
-        dccSceneItem = pm.group(name="group", em=True)
-        pm.parent(dccSceneItem, parentNode)
-        pm.rename(dccSceneItem, buildName)
+        obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
+        node = MaxPlus.Factory.CreateNode(obj)
+        node.Name = buildName
+        node.SetHidden(True)
+
+        if parentNode is not None:
+            node.SetParent(parentNode)
+
+        dccSceneItem = node
 
         if kSceneItem.isTypeOf('Rig'):
-            krakenRigAttr = dccSceneItem.addAttr('krakenRig',
-                                                 niceName='krakenRig',
-                                                 attributeType="bool",
-                                                 defaultValue=True,
-                                                 keyable=False)
+            pass
+        #     krakenRigAttr = dccSceneItem.addAttr('krakenRig',
+        #                                          niceName='krakenRig',
+        #                                          attributeType="bool",
+        #                                          defaultValue=True,
+        #                                          keyable=False)
 
-            dccSceneItem.attr('krakenRig').setLocked(True)
+        #     dccSceneItem.attr('krakenRig').setLocked(True)
 
-            # Put Rig Data on DCC Item
-            metaData = kSceneItem.getMetaData()
-            if 'guideData' in metaData:
-                pureJSON = metaData['guideData']
+        #     # Put Rig Data on DCC Item
+        #     metaData = kSceneItem.getMetaData()
+        #     if 'guideData' in metaData:
+        #         pureJSON = metaData['guideData']
 
-                krakenRigDataAttr = dccSceneItem.addAttr('krakenRigData',
-                                                     niceName='krakenRigData',
-                                                     dataType="string",
-                                                     keyable=False)
+        #         krakenRigDataAttr = dccSceneItem.addAttr('krakenRigData',
+        #                                              niceName='krakenRigData',
+        #                                              dataType="string",
+        #                                              keyable=False)
 
-                dccSceneItem.attr('krakenRigData').set(json.dumps(pureJSON, indent=2))
-                dccSceneItem.attr('krakenRigData').setLocked(True)
+        #         dccSceneItem.attr('krakenRigData').set(json.dumps(pureJSON, indent=2))
+        #         dccSceneItem.attr('krakenRigData').setLocked(True)
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -112,9 +119,15 @@ class Builder(Builder):
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
-        dccSceneItem = pm.group(name="group", em=True)
-        pm.parent(dccSceneItem, parentNode)
-        pm.rename(dccSceneItem, buildName)
+        obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
+        node = MaxPlus.Factory.CreateNode(obj)
+        node.Name = buildName
+        node.SetHidden(True)
+
+        if parentNode is not None:
+            node.SetParent(parentNode)
+
+        dccSceneItem = node
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -135,9 +148,15 @@ class Builder(Builder):
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
-        dccSceneItem = pm.group(name="group", em=True)
-        pm.parent(dccSceneItem, parentNode)
-        pm.rename(dccSceneItem, buildName)
+        obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
+        node = MaxPlus.Factory.CreateNode(obj)
+        node.Name = buildName
+        node.SetHidden(True)
+
+        if parentNode is not None:
+            node.SetParent(parentNode)
+
+        dccSceneItem = node
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -158,9 +177,15 @@ class Builder(Builder):
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
-        dccSceneItem = pm.group(name="group", em=True)
-        pm.parent(dccSceneItem, parentNode)
-        pm.rename(dccSceneItem, buildName)
+        obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
+        node = MaxPlus.Factory.CreateNode(obj)
+        node.Name = buildName
+        node.SetHidden(True)
+
+        if parentNode is not None:
+            node.SetParent(parentNode)
+
+        dccSceneItem = node
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -181,11 +206,11 @@ class Builder(Builder):
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
-        pm.select(parentNode)
-        dccSceneItem = pm.joint(name="joint")
-        pm.rename(dccSceneItem, buildName)
+        # pm.select(parentNode)
+        dccSceneItem = None # pm.joint(name="joint")
+        # pm.rename(dccSceneItem, buildName)
 
-        radius = dccSceneItem.attr('radius').set(kSceneItem.getRadius())
+        # radius = dccSceneItem.attr('radius').set(kSceneItem.getRadius())
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -205,9 +230,15 @@ class Builder(Builder):
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
-        dccSceneItem = pm.spaceLocator(name="locator")
-        pm.parent(dccSceneItem, parentNode)
-        pm.rename(dccSceneItem, buildName)
+        obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
+        node = MaxPlus.Factory.CreateNode(obj)
+        node.Name = buildName
+        node.SetHidden(True)
+
+        if parentNode is not None:
+            node.SetParent(parentNode)
+
+        dccSceneItem = node
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -237,34 +268,39 @@ class Builder(Builder):
             formattedPoints = eachSubCurve["points"]
             curvePoints.append(formattedPoints)
 
-        mainCurve = None
-        for i, eachSubCurve in enumerate(curvePoints):
-            closedSubCurve = curveData[i]["closed"]
-            degreeSubCurve = curveData[i]["degree"]
+        # mainCurve = None
+        obj = MaxPlus.Factory.CreateShapeObject(MaxPlus.ClassIds.CV_Curve)
+        mainCurve = MaxPlus.Factory.CreateNode(obj)
+        mainCurve.Name = buildName
 
-            currentSubCurve = pm.curve(per=False,
-                                       point=curvePoints[i],
-                                       degree=degreeSubCurve)
+        if parentNode is not None:
+            mainCurve.SetParent(parentNode)
 
-            if closedSubCurve:
-                pm.closeCurve(currentSubCurve,
-                              preserveShape=True,
-                              replaceOriginal=True)
+        # for i, eachSubCurve in enumerate(curvePoints):
+        #     closedSubCurve = curveData[i]["closed"]
+        #     degreeSubCurve = curveData[i]["degree"]
 
-            if mainCurve is None:
-                mainCurve = currentSubCurve
+            # currentSubCurve = pm.curve(per=False,
+            #                            point=curvePoints[i],
+            #                            degree=degreeSubCurve)
 
-            if i > 0:
-                pm.parent(currentSubCurve.getShape(),
-                          mainCurve,
-                          relative=True,
-                          shape=True)
+            # if closedSubCurve:
+            #     pm.closeCurve(currentSubCurve,
+            #                   preserveShape=True,
+            #                   replaceOriginal=True)
 
-                pm.delete(currentSubCurve)
+            # if mainCurve is None:
+            #     mainCurve = currentSubCurve
+
+            # if i > 0:
+            #     pm.parent(currentSubCurve.getShape(),
+            #               mainCurve,
+            #               relative=True,
+            #               shape=True)
+
+            #     pm.delete(currentSubCurve)
 
         dccSceneItem = mainCurve
-        pm.parent(dccSceneItem, parentNode)
-        pm.rename(dccSceneItem, buildName)
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -294,34 +330,39 @@ class Builder(Builder):
             formattedPoints = eachSubCurve["points"]
             curvePoints.append(formattedPoints)
 
-        mainCurve = None
-        for i, eachSubCurve in enumerate(curvePoints):
-            closedSubCurve = curveData[i]["closed"]
-            degreeSubCurve = curveData[i]["degree"]
+        # mainCurve = None
+        obj = MaxPlus.Factory.CreateShapeObject(MaxPlus.ClassIds.CV_Curve)
+        mainCurve = MaxPlus.Factory.CreateNode(obj)
+        mainCurve.Name = buildName
 
-            currentSubCurve = pm.curve(per=False,
-                                       point=curvePoints[i],
-                                       degree=degreeSubCurve)
+        if parentNode is not None:
+            mainCurve.SetParent(parentNode)
 
-            if closedSubCurve:
-                pm.closeCurve(currentSubCurve,
-                              preserveShape=True,
-                              replaceOriginal=True)
+        # for i, eachSubCurve in enumerate(curvePoints):
+        #     closedSubCurve = curveData[i]["closed"]
+        #     degreeSubCurve = curveData[i]["degree"]
 
-            if mainCurve is None:
-                mainCurve = currentSubCurve
+        #     currentSubCurve = pm.curve(per=False,
+        #                                point=curvePoints[i],
+        #                                degree=degreeSubCurve)
 
-            if i > 0:
-                pm.parent(currentSubCurve.getShape(),
-                          mainCurve,
-                          relative=True,
-                          shape=True)
+        #     if closedSubCurve:
+        #         pm.closeCurve(currentSubCurve,
+        #                       preserveShape=True,
+        #                       replaceOriginal=True)
 
-                pm.delete(currentSubCurve)
+        #     if mainCurve is None:
+        #         mainCurve = currentSubCurve
+
+        #     if i > 0:
+        #         pm.parent(currentSubCurve.getShape(),
+        #                   mainCurve,
+        #                   relative=True,
+        #                   shape=True)
+
+        #         pm.delete(currentSubCurve)
 
         dccSceneItem = mainCurve
-        pm.parent(dccSceneItem, parentNode)
-        pm.rename(dccSceneItem, buildName)
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -346,14 +387,14 @@ class Builder(Builder):
             return False
 
         parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-        parentDCCSceneItem.addAttr(kAttribute.getName(),
-                                   niceName=kAttribute.getName(),
-                                   attributeType="bool",
-                                   defaultValue=kAttribute.getValue(),
-                                   keyable=True)
+        # parentDCCSceneItem.addAttr(kAttribute.getName(),
+        #                            niceName=kAttribute.getName(),
+        #                            attributeType="bool",
+        #                            defaultValue=kAttribute.getValue(),
+        #                            keyable=True)
 
-        dccSceneItem = parentDCCSceneItem.attr(kAttribute.getName())
-        dccSceneItem.setLocked(kAttribute.getLock())
+        dccSceneItem = None # parentDCCSceneItem.attr(kAttribute.getName())
+        # dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -374,27 +415,27 @@ class Builder(Builder):
             return False
 
         parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-        parentDCCSceneItem.addAttr(kAttribute.getName(),
-                                   niceName=kAttribute.getName(),
-                                   attributeType="float",
-                                   defaultValue=kAttribute.getValue(),
-                                   keyable=True)
+        # parentDCCSceneItem.addAttr(kAttribute.getName(),
+        #                            niceName=kAttribute.getName(),
+        #                            attributeType="float",
+        #                            defaultValue=kAttribute.getValue(),
+        #                            keyable=True)
 
-        dccSceneItem = parentDCCSceneItem.attr(kAttribute.getName())
+        dccSceneItem = None # parentDCCSceneItem.attr(kAttribute.getName())
 
-        if kAttribute.getMin() is not None:
-            dccSceneItem.setMin(kAttribute.getMin())
+        # if kAttribute.getMin() is not None:
+        #     dccSceneItem.setMin(kAttribute.getMin())
 
-        if kAttribute.getMax() is not None:
-            dccSceneItem.setMax(kAttribute.getMax())
+        # if kAttribute.getMax() is not None:
+        #     dccSceneItem.setMax(kAttribute.getMax())
 
-        if kAttribute.getUIMin() is not None:
-            dccSceneItem.setSoftMin(kAttribute.getUIMin())
+        # if kAttribute.getUIMin() is not None:
+        #     dccSceneItem.setSoftMin(kAttribute.getUIMin())
 
-        if kAttribute.getUIMax() is not None:
-            dccSceneItem.setSoftMax(kAttribute.getUIMax())
+        # if kAttribute.getUIMax() is not None:
+        #     dccSceneItem.setSoftMax(kAttribute.getUIMax())
 
-        dccSceneItem.setLocked(kAttribute.getLock())
+        # dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -422,23 +463,23 @@ class Builder(Builder):
             maximum = kAttribute.getValue() * 2
 
         parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-        parentDCCSceneItem.addAttr(kAttribute.getName(), niceName=kAttribute.getName(), attributeType="long", defaultValue=kAttribute.getValue(), minValue=mininum, maxValue=maximum, keyable=True)
-        parentDCCSceneItem.attr(kAttribute.getName())
-        dccSceneItem = parentDCCSceneItem.attr(kAttribute.getName())
+        # parentDCCSceneItem.addAttr(kAttribute.getName(), niceName=kAttribute.getName(), attributeType="long", defaultValue=kAttribute.getValue(), minValue=mininum, maxValue=maximum, keyable=True)
+        # parentDCCSceneItem.attr(kAttribute.getName())
+        dccSceneItem = None # parentDCCSceneItem.attr(kAttribute.getName())
 
-        if kAttribute.getMin() is not None:
-            dccSceneItem.setMin(kAttribute.getMin())
+        # if kAttribute.getMin() is not None:
+        #     dccSceneItem.setMin(kAttribute.getMin())
 
-        if kAttribute.getMax() is not None:
-            dccSceneItem.setMax(kAttribute.getMax())
+        # if kAttribute.getMax() is not None:
+        #     dccSceneItem.setMax(kAttribute.getMax())
 
-        if kAttribute.getUIMin() is not None:
-            dccSceneItem.setSoftMin(kAttribute.getUIMin())
+        # if kAttribute.getUIMin() is not None:
+        #     dccSceneItem.setSoftMin(kAttribute.getUIMin())
 
-        if kAttribute.getUIMax() is not None:
-            dccSceneItem.setSoftMax(kAttribute.getUIMax())
+        # if kAttribute.getUIMax() is not None:
+        #     dccSceneItem.setSoftMax(kAttribute.getUIMax())
 
-        dccSceneItem.setLocked(kAttribute.getLock())
+        # dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -459,13 +500,13 @@ class Builder(Builder):
             return False
 
         parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-        parentDCCSceneItem.addAttr(kAttribute.getName(),
-                                   niceName=kAttribute.getName(),
-                                   dataType="string")
+        # parentDCCSceneItem.addAttr(kAttribute.getName(),
+        #                            niceName=kAttribute.getName(),
+        #                            dataType="string")
 
-        dccSceneItem = parentDCCSceneItem.attr(kAttribute.getName())
-        dccSceneItem.set(kAttribute.getValue())
-        dccSceneItem.setLocked(kAttribute.getLock())
+        dccSceneItem = None # parentDCCSceneItem.attr(kAttribute.getName())
+        # dccSceneItem.set(kAttribute.getValue())
+        # dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -488,14 +529,14 @@ class Builder(Builder):
         if groupName == "implicitAttrGrp":
             return False
 
-        parentDCCSceneItem.addAttr(groupName,
-                                   niceName=groupName,
-                                   attributeType="enum",
-                                   enumName="-----",
-                                   keyable=True)
+        # parentDCCSceneItem.addAttr(groupName,
+        #                            niceName=groupName,
+        #                            attributeType="enum",
+        #                            enumName="-----",
+        #                            keyable=True)
 
-        dccSceneItem = parentDCCSceneItem.attr(groupName)
-        pm.setAttr(parentDCCSceneItem + "." + groupName, lock=True)
+        dccSceneItem = None # parentDCCSceneItem.attr(groupName)
+        # pm.setAttr(parentDCCSceneItem + "." + groupName, lock=True)
 
         self._registerSceneItemPair(kAttributeGroup, dccSceneItem)
 
@@ -513,36 +554,36 @@ class Builder(Builder):
         """
 
         if kAttribute.isConnected() is True:
-
+            pass
             # Detect if driver is visibility attribute and map to correct DCC
             # attribute
-            driverAttr = kAttribute.getConnection()
-            if driverAttr.getName() == 'visibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
-                dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
-                driver = dccItem.attr('visibility')
+            # driverAttr = kAttribute.getConnection()
+            # if driverAttr.getName() == 'visibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+            #     dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
+            #     driver = dccItem.attr('visibility')
 
-            elif driverAttr.getName() == 'shapeVisibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
-                dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
-                shape = dccItem.getShape()
-                driver = shape.attr('visibility')
+            # elif driverAttr.getName() == 'shapeVisibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+            #     dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
+            #     shape = dccItem.getShape()
+            #     driver = shape.attr('visibility')
 
-            else:
-                driver = self.getDCCSceneItem(kAttribute.getConnection())
+            # else:
+            #     driver = self.getDCCSceneItem(kAttribute.getConnection())
 
             # Detect if the driven attribute is a visibility attribute and map
             # to correct DCC attribute
-            if kAttribute.getName() == 'visibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
-                dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-                driven = dccItem.attr('visibility')
+            # if kAttribute.getName() == 'visibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+            #     dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+            #     driven = dccItem.attr('visibility')
 
-            elif kAttribute.getName() == 'shapeVisibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
-                dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-                shape = dccItem.getShape()
-                driven = shape.attr('visibility')
-            else:
-                driven = self.getDCCSceneItem(kAttribute)
+            # elif kAttribute.getName() == 'shapeVisibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+            #     dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+            #     shape = dccItem.getShape()
+            #     driven = shape.attr('visibility')
+            # else:
+            #     driven = self.getDCCSceneItem(kAttribute)
 
-            pm.connectAttr(driver, driven, force=True)
+            # pm.connectAttr(driver, driven, force=True)
 
         return True
 
@@ -561,36 +602,36 @@ class Builder(Builder):
         """
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = pm.orientConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=kConstraint.getName() + "_ori_cns",
-            maintainOffset=kConstraint.getMaintainOffset())
+        dccSceneItem = None # pm.orientConstraint(
+        #     [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+        #     constraineeDCCSceneItem,
+        #     name=kConstraint.getName() + "_ori_cns",
+        #     maintainOffset=kConstraint.getMaintainOffset())
 
-        if kConstraint.getMaintainOffset() is True:
+        # if kConstraint.getMaintainOffset() is True:
 
-            # Maya's rotation order enums:
-            # 0 XYZ
-            # 1 YZX
-            # 2 ZXY
-            # 3 XZY
-            # 4 YXZ <-- 5 in Fabric
-            # 5 ZYX <-- 4 in Fabric
-            order = kConstraint.getConstrainee().ro.order
-            if order == 4:
-                order = 5
-            elif order == 5:
-                order = 4
+        #     # Maya's rotation order enums:
+        #     # 0 XYZ
+        #     # 1 YZX
+        #     # 2 ZXY
+        #     # 3 XZY
+        #     # 4 YXZ <-- 5 in Fabric
+        #     # 5 ZYX <-- 4 in Fabric
+        #     order = kConstraint.getConstrainee().ro.order
+        #     if order == 4:
+        #         order = 5
+        #     elif order == 5:
+        #         order = 4
 
-            offsetXfo = kConstraint.computeOffset()
-            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
-                RotationOrder(order))
+        #     offsetXfo = kConstraint.computeOffset()
+        #     offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
+        #         RotationOrder(order))
 
-            dccSceneItem.attr('offset').set([offsetAngles.x,
-                                             offsetAngles.y,
-                                             offsetAngles.z])
+        #     dccSceneItem.attr('offset').set([offsetAngles.x,
+        #                                      offsetAngles.y,
+        #                                      offsetAngles.z])
 
-        pm.rename(dccSceneItem, buildName)
+        # pm.rename(dccSceneItem, buildName)
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -608,72 +649,72 @@ class Builder(Builder):
         """
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = pm.parentConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName,
-            maintainOffset=kConstraint.getMaintainOffset())
+        dccSceneItem = None # pm.parentConstraint(
+            # [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+            # constraineeDCCSceneItem,
+            # name=buildName,
+            # maintainOffset=kConstraint.getMaintainOffset())
 
         # We need this block of code to replace the pose constraint name with
         # the scale constraint name since we don't have a single pos, rot, scl,
         # constraint in Maya.
-        config = Config.getInstance()
-        nameTemplate = config.getNameTemplate()
-        poseCnsName = nameTemplate['types']['PoseConstraint']
-        sclCnsName = nameTemplate['types']['ScaleConstraint']
+        # config = Config.getInstance()
+        # nameTemplate = config.getNameTemplate()
+        # poseCnsName = nameTemplate['types']['PoseConstraint']
+        # sclCnsName = nameTemplate['types']['ScaleConstraint']
 
-        scaleConstraint = pm.scaleConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName.replace(poseCnsName, sclCnsName),
-            maintainOffset=kConstraint.getMaintainOffset())
+        # scaleConstraint = pm.scaleConstraint(
+        #     [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+        #     constraineeDCCSceneItem,
+        #     name=buildName.replace(poseCnsName, sclCnsName),
+        #     maintainOffset=kConstraint.getMaintainOffset())
 
-        if kConstraint.getMaintainOffset() is True:
+        # if kConstraint.getMaintainOffset() is True:
 
-            # Fabric's rotation order enums:
-            # We need to use the negative rotation order
-            # to calculate propery offset values.
-            #
-            # 0 XYZ
-            # 1 YZX
-            # 2 ZXY
-            # 3 XZY
-            # 4 ZYX
-            # 5 YXZ
+        #     # Fabric's rotation order enums:
+        #     # We need to use the negative rotation order
+        #     # to calculate propery offset values.
+        #     #
+        #     # 0 XYZ
+        #     # 1 YZX
+        #     # 2 ZXY
+        #     # 3 XZY
+        #     # 4 ZYX
+        #     # 5 YXZ
 
-            rotOrderRemap = {
-                0: 4,
-                1: 3,
-                2: 5,
-                3: 1,
-                4: 0,
-                5: 2
-            }
+        #     rotOrderRemap = {
+        #         0: 4,
+        #         1: 3,
+        #         2: 5,
+        #         3: 1,
+        #         4: 0,
+        #         5: 2
+        #     }
 
-            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
-            # if order == 4:
-            #     order = 5
-            # elif order == 5:
-            #     order = 4
+        #     order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
+        #     # if order == 4:
+        #     #     order = 5
+        #     # elif order == 5:
+        #     #     order = 4
 
-            offsetXfo = kConstraint.computeOffset()
-            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
-                RotationOrder(order))
+        #     offsetXfo = kConstraint.computeOffset()
+        #     offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
+        #         RotationOrder(order))
 
-            # Set offsets on parent constraint
-            dccSceneItem.target[0].targetOffsetTranslate.set([offsetXfo.tr.x,
-                                                              offsetXfo.tr.y,
-                                                              offsetXfo.tr.z])
+        #     # Set offsets on parent constraint
+        #     dccSceneItem.target[0].targetOffsetTranslate.set([offsetXfo.tr.x,
+        #                                                       offsetXfo.tr.y,
+        #                                                       offsetXfo.tr.z])
 
-            dccSceneItem.target[0].targetOffsetRotate.set(
-                [Math_radToDeg(offsetAngles.x),
-                 Math_radToDeg(offsetAngles.y),
-                 Math_radToDeg(offsetAngles.z)])
+        #     dccSceneItem.target[0].targetOffsetRotate.set(
+        #         [Math_radToDeg(offsetAngles.x),
+        #          Math_radToDeg(offsetAngles.y),
+        #          Math_radToDeg(offsetAngles.z)])
 
-            # Set offsets on the scale constraint
-            scaleConstraint.offset.set([offsetXfo.sc.x,
-                                        offsetXfo.sc.y,
-                                        offsetXfo.sc.z])
+        #     # Set offsets on the scale constraint
+        #     scaleConstraint.offset.set([offsetXfo.sc.x,
+        #                                 offsetXfo.sc.y,
+        #                                 offsetXfo.sc.z])
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -691,19 +732,19 @@ class Builder(Builder):
         """
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = pm.pointConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName,
-            maintainOffset=kConstraint.getMaintainOffset())
+        dccSceneItem = None # pm.pointConstraint(
+            # [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+            # constraineeDCCSceneItem,
+            # name=buildName,
+            # maintainOffset=kConstraint.getMaintainOffset())
 
-        if kConstraint.getMaintainOffset() is True:
-            offsetXfo = kConstraint.computeOffset()
+        # if kConstraint.getMaintainOffset() is True:
+        #     offsetXfo = kConstraint.computeOffset()
 
-            # Set offsets on the scale constraint
-            dccSceneItem.offset.set([offsetXfo.tr.x,
-                                     offsetXfo.tr.y,
-                                     offsetXfo.tr.z])
+        #     # Set offsets on the scale constraint
+        #     dccSceneItem.offset.set([offsetXfo.tr.x,
+        #                              offsetXfo.tr.y,
+        #                              offsetXfo.tr.z])
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -721,19 +762,19 @@ class Builder(Builder):
         """
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = pm.scaleConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName,
-            maintainOffset=kConstraint.getMaintainOffset())
+        dccSceneItem = None # pm.scaleConstraint(
+        #     [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+        #     constraineeDCCSceneItem,
+        #     name=buildName,
+        #     maintainOffset=kConstraint.getMaintainOffset())
 
-        if kConstraint.getMaintainOffset() is True:
-            offsetXfo = kConstraint.computeOffset()
+        # if kConstraint.getMaintainOffset() is True:
+        #     offsetXfo = kConstraint.computeOffset()
 
-            # Set offsets on the scale constraint
-            dccSceneItem.offset.set([offsetXfo.sc.x,
-                                     offsetXfo.sc.y,
-                                     offsetXfo.sc.z])
+        #     # Set offsets on the scale constraint
+        #     dccSceneItem.offset.set([offsetXfo.sc.x,
+        #                              offsetXfo.sc.y,
+        #                              offsetXfo.sc.z])
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -768,9 +809,9 @@ class Builder(Builder):
         connectionTargetDCCSceneItem = self.getDCCSceneItem(connectionTarget)
         targetDCCSceneItem = self.getDCCSceneItem(inputTarget)
 
-        pm.connectAttr(connectionTargetDCCSceneItem,
-                       targetDCCSceneItem,
-                       force=True)
+        # pm.connectAttr(connectionTargetDCCSceneItem,
+        #                targetDCCSceneItem,
+        #                force=True)
 
         return True
 
@@ -811,376 +852,376 @@ class Builder(Builder):
 
         """
 
-        def validatePortValue(rtVal, portName, portDataType):
-            """Validate port value type when passing built in Python types.
+        # def validatePortValue(rtVal, portName, portDataType):
+        #     """Validate port value type when passing built in Python types.
 
-            Args:
-                rtVal (RTVal): rtValue object.
-                portName (str): Name of the argument being validated.
-                portDataType (str): Type of the argument being validated.
+        #     Args:
+        #         rtVal (RTVal): rtValue object.
+        #         portName (str): Name of the argument being validated.
+        #         portDataType (str): Type of the argument being validated.
 
-            """
+        #     """
 
-            # Validate types when passing a built in Python type
-            if type(rtVal) in (bool, str, int, float):
-                if portDataType in ('Scalar', 'Float32', 'UInt32'):
-                    if type(rtVal) not in (float, int):
-                        raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
+        #     # Validate types when passing a built in Python type
+        #     if type(rtVal) in (bool, str, int, float):
+        #         if portDataType in ('Scalar', 'Float32', 'UInt32'):
+        #             if type(rtVal) not in (float, int):
+        #                 raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
 
-                elif portDataType == 'Boolean':
-                    if type(rtVal) != bool and not (type(rtVal) == int and (rtVal == 0 or rtVal == 1)):
-                        raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
+        #         elif portDataType == 'Boolean':
+        #             if type(rtVal) != bool and not (type(rtVal) == int and (rtVal == 0 or rtVal == 1)):
+        #                 raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
 
-                elif portDataType == 'String':
-                    if type(rtVal) != str:
-                        raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
+        #         elif portDataType == 'String':
+        #             if type(rtVal) != str:
+        #                 raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
 
-        try:
-            if isKLBased is False:
-                host = ks.getCoreClient().DFG.host
-                opBinding = host.createBindingToPreset(kOperator.getPresetPath())
-                node = opBinding.getExec()
+        # try:
+        #     if isKLBased is False:
+        #         host = ks.getCoreClient().DFG.host
+        #         opBinding = host.createBindingToPreset(kOperator.getPresetPath())
+        #         node = opBinding.getExec()
 
-                portTypeMap = {
-                    0: 'In',
-                    1: 'IO',
-                    2: 'Out'
-                }
+        #         portTypeMap = {
+        #             0: 'In',
+        #             1: 'IO',
+        #             2: 'Out'
+        #         }
 
-            # Create Canvas Operator
-            canvasNode = pm.createNode('canvasNode', name=buildName)
-            self._registerSceneItemPair(kOperator, pm.PyNode(canvasNode))
+        #     # Create Canvas Operator
+        #     canvasNode = pm.createNode('canvasNode', name=buildName)
+        #     self._registerSceneItemPair(kOperator, pm.PyNode(canvasNode))
 
-            config = Config.getInstance()
-            nameTemplate = config.getNameTemplate()
-            typeTokens = nameTemplate['types']
-            opTypeToken = typeTokens.get(type(kOperator).__name__, 'op')
-            solverNodeName = '_'.join([kOperator.getName(), opTypeToken])
-            solverSolveNodeName = '_'.join([kOperator.getName(), 'solve', opTypeToken])
+        #     config = Config.getInstance()
+        #     nameTemplate = config.getNameTemplate()
+        #     typeTokens = nameTemplate['types']
+        #     opTypeToken = typeTokens.get(type(kOperator).__name__, 'op')
+        #     solverNodeName = '_'.join([kOperator.getName(), opTypeToken])
+        #     solverSolveNodeName = '_'.join([kOperator.getName(), 'solve', opTypeToken])
 
-            if isKLBased is True:
+        #     if isKLBased is True:
 
-                pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
-                                          execPath="",
-                                          extDep=kOperator.getExtension())
+        #         pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
+        #                                   execPath="",
+        #                                   extDep=kOperator.getExtension())
 
-                solverTypeName = kOperator.getSolverTypeName()
+        #         solverTypeName = kOperator.getSolverTypeName()
 
-                # Create Solver Function Node
-                dfgEntry = "dfgEntry {\n  solver = " + solverTypeName + "();\n}"
-                solverNodeCode = "{}\n\n{}".format('require ' + kOperator.getExtension() + ';', dfgEntry)
+        #         # Create Solver Function Node
+        #         dfgEntry = "dfgEntry {\n  solver = " + solverTypeName + "();\n}"
+        #         solverNodeCode = "{}\n\n{}".format('require ' + kOperator.getExtension() + ';', dfgEntry)
 
-                pm.FabricCanvasAddFunc(mayaNode=canvasNode,
-                                       execPath="",
-                                       title=solverNodeName,
-                                       code=solverNodeCode, xPos="-220", yPos="100")
+        #         pm.FabricCanvasAddFunc(mayaNode=canvasNode,
+        #                                execPath="",
+        #                                title=solverNodeName,
+        #                                code=solverNodeCode, xPos="-220", yPos="100")
 
-                pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                                       execPath=solverNodeName,
-                                       desiredPortName="solver",
-                                       portType="Out",
-                                       typeSpec=solverTypeName,
-                                       connectToPortPath="",
-                                       extDep=kOperator.getExtension())
+        #         pm.FabricCanvasAddPort(mayaNode=canvasNode,
+        #                                execPath=solverNodeName,
+        #                                desiredPortName="solver",
+        #                                portType="Out",
+        #                                typeSpec=solverTypeName,
+        #                                connectToPortPath="",
+        #                                extDep=kOperator.getExtension())
 
-                solverVarName = pm.FabricCanvasAddVar(mayaNode=canvasNode,
-                                                      execPath="",
-                                                      desiredNodeName="solverVar",
-                                                      xPos="-75",
-                                                      yPos="100",
-                                                      type=solverTypeName,
-                                                      extDep=kOperator.getExtension())
+        #         solverVarName = pm.FabricCanvasAddVar(mayaNode=canvasNode,
+        #                                               execPath="",
+        #                                               desiredNodeName="solverVar",
+        #                                               xPos="-75",
+        #                                               yPos="100",
+        #                                               type=solverTypeName,
+        #                                               extDep=kOperator.getExtension())
 
-                pm.FabricCanvasConnect(mayaNode=canvasNode,
-                                       execPath="",
-                                       srcPortPath=solverNodeName + ".solver",
-                                       dstPortPath=solverVarName + ".value")
+        #         pm.FabricCanvasConnect(mayaNode=canvasNode,
+        #                                execPath="",
+        #                                srcPortPath=solverNodeName + ".solver",
+        #                                dstPortPath=solverVarName + ".value")
 
-                # Crate Solver "Solve" Function Node
-                pm.FabricCanvasAddFunc(mayaNode=canvasNode,
-                                       execPath="",
-                                       title=solverSolveNodeName,
-                                       code="dfgEntry {}", xPos="100", yPos="100")
+        #         # Crate Solver "Solve" Function Node
+        #         pm.FabricCanvasAddFunc(mayaNode=canvasNode,
+        #                                execPath="",
+        #                                title=solverSolveNodeName,
+        #                                code="dfgEntry {}", xPos="100", yPos="100")
 
-                pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                                       execPath=solverSolveNodeName,
-                                       desiredPortName="solver",
-                                       portType="IO",
-                                       typeSpec=solverTypeName,
-                                       connectToPortPath="",
-                                       extDep=kOperator.getExtension())
+        #         pm.FabricCanvasAddPort(mayaNode=canvasNode,
+        #                                execPath=solverSolveNodeName,
+        #                                desiredPortName="solver",
+        #                                portType="IO",
+        #                                typeSpec=solverTypeName,
+        #                                connectToPortPath="",
+        #                                extDep=kOperator.getExtension())
 
-                pm.FabricCanvasConnect(mayaNode=canvasNode,
-                                       execPath="",
-                                       srcPortPath=solverVarName + ".value",
-                                       dstPortPath=solverSolveNodeName + ".solver")
+        #         pm.FabricCanvasConnect(mayaNode=canvasNode,
+        #                                execPath="",
+        #                                srcPortPath=solverVarName + ".value",
+        #                                dstPortPath=solverSolveNodeName + ".solver")
 
-                pm.FabricCanvasConnect(mayaNode=canvasNode,
-                                       execPath="",
-                                       srcPortPath=solverSolveNodeName + ".solver",
-                                       dstPortPath="exec")
-            else:
-                pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
-                                          execPath="",
-                                          extDep="Kraken")
+        #         pm.FabricCanvasConnect(mayaNode=canvasNode,
+        #                                execPath="",
+        #                                srcPortPath=solverSolveNodeName + ".solver",
+        #                                dstPortPath="exec")
+        #     else:
+        #         pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
+        #                                   execPath="",
+        #                                   extDep="Kraken")
 
-                graphNodeName = pm.FabricCanvasInstPreset(
-                    mayaNode=canvasNode,
-                    execPath="",
-                    presetPath=kOperator.getPresetPath(),
-                    xPos="100",
-                    yPos="100")
+        #         graphNodeName = pm.FabricCanvasInstPreset(
+        #             mayaNode=canvasNode,
+        #             execPath="",
+        #             presetPath=kOperator.getPresetPath(),
+        #             xPos="100",
+        #             yPos="100")
 
-            portCount = 0
-            if isKLBased is True:
-                portCount = len(kOperator.getSolverArgs())
-            else:
-                portCount = node.getExecPortCount()
+        #     portCount = 0
+        #     if isKLBased is True:
+        #         portCount = len(kOperator.getSolverArgs())
+        #     else:
+        #         portCount = node.getExecPortCount()
 
-            for i in xrange(portCount):
+        #     for i in xrange(portCount):
 
-                if isKLBased is True:
-                    args = kOperator.getSolverArgs()
-                    arg = args[i]
-                    portName = arg.name.getSimpleType()
-                    portConnectionType = arg.connectionType.getSimpleType()
-                    portDataType = arg.dataType.getSimpleType()
-                else:
-                    portName = node.getExecPortName(i)
-                    portConnectionType = portTypeMap[node.getExecPortType(i)]
-                    rtVal = opBinding.getArgValue(portName)
-                    portDataType = rtVal.getTypeName().getSimpleType()
+        #         if isKLBased is True:
+        #             args = kOperator.getSolverArgs()
+        #             arg = args[i]
+        #             portName = arg.name.getSimpleType()
+        #             portConnectionType = arg.connectionType.getSimpleType()
+        #             portDataType = arg.dataType.getSimpleType()
+        #         else:
+        #             portName = node.getExecPortName(i)
+        #             portConnectionType = portTypeMap[node.getExecPortType(i)]
+        #             rtVal = opBinding.getArgValue(portName)
+        #             portDataType = rtVal.getTypeName().getSimpleType()
 
-                if portConnectionType == 'In':
-                    if isKLBased is True:
-                        pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                                               execPath="",
-                                               desiredPortName=portName,
-                                               portType="In",
-                                               typeSpec=portDataType,
-                                               connectToPortPath="")
+        #         if portConnectionType == 'In':
+        #             if isKLBased is True:
+        #                 pm.FabricCanvasAddPort(mayaNode=canvasNode,
+        #                                        execPath="",
+        #                                        desiredPortName=portName,
+        #                                        portType="In",
+        #                                        typeSpec=portDataType,
+        #                                        connectToPortPath="")
 
-                        pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                                               execPath=solverSolveNodeName,
-                                               desiredPortName=portName,
-                                               portType="In",
-                                               typeSpec=portDataType,
-                                               connectToPortPath="")
+        #                 pm.FabricCanvasAddPort(mayaNode=canvasNode,
+        #                                        execPath=solverSolveNodeName,
+        #                                        desiredPortName=portName,
+        #                                        portType="In",
+        #                                        typeSpec=portDataType,
+        #                                        connectToPortPath="")
 
-                        pm.FabricCanvasConnect(mayaNode=canvasNode,
-                                               execPath="",
-                                               srcPortPath=portName,
-                                               dstPortPath=solverSolveNodeName + "." + portName)
+        #                 pm.FabricCanvasConnect(mayaNode=canvasNode,
+        #                                        execPath="",
+        #                                        srcPortPath=portName,
+        #                                        dstPortPath=solverSolveNodeName + "." + portName)
 
-                    else:
-                        if portDataType != 'Execute':
-                            pm.FabricCanvasAddPort(
-                                mayaNode=canvasNode,
-                                execPath="",
-                                desiredPortName=portName,
-                                portType="In",
-                                typeSpec=portDataType,
-                                connectToPortPath="")
+        #             else:
+        #                 if portDataType != 'Execute':
+        #                     pm.FabricCanvasAddPort(
+        #                         mayaNode=canvasNode,
+        #                         execPath="",
+        #                         desiredPortName=portName,
+        #                         portType="In",
+        #                         typeSpec=portDataType,
+        #                         connectToPortPath="")
 
-                        pm.FabricCanvasConnect(
-                            mayaNode=canvasNode,
-                            execPath="",
-                            srcPortPath=portName,
-                            dstPortPath=graphNodeName + "." + portName)
+        #                 pm.FabricCanvasConnect(
+        #                     mayaNode=canvasNode,
+        #                     execPath="",
+        #                     srcPortPath=portName,
+        #                     dstPortPath=graphNodeName + "." + portName)
 
-                elif portConnectionType in ['IO', 'Out']:
+        #         elif portConnectionType in ['IO', 'Out']:
 
-                    if portDataType in ('Execute', 'InlineInstance', 'DrawingHandle'):
-                        # Don't expose invalid Maya data type InlineInstance, instead connect to exec port
-                        dstPortPath = "exec"
-                    else:
-                        dstPortPath = portName
+        #             if portDataType in ('Execute', 'InlineInstance', 'DrawingHandle'):
+        #                 # Don't expose invalid Maya data type InlineInstance, instead connect to exec port
+        #                 dstPortPath = "exec"
+        #             else:
+        #                 dstPortPath = portName
 
-                    if isKLBased is True:
-                        srcPortNode = solverSolveNodeName
-                        pm.FabricCanvasAddPort(
-                            mayaNode=canvasNode,
-                            execPath=solverSolveNodeName,
-                            desiredPortName=portName,
-                            portType="Out",
-                            typeSpec=portDataType,
-                            connectToPortPath="")
-                    else:
-                        srcPortNode = graphNodeName
+        #             if isKLBased is True:
+        #                 srcPortNode = solverSolveNodeName
+        #                 pm.FabricCanvasAddPort(
+        #                     mayaNode=canvasNode,
+        #                     execPath=solverSolveNodeName,
+        #                     desiredPortName=portName,
+        #                     portType="Out",
+        #                     typeSpec=portDataType,
+        #                     connectToPortPath="")
+        #             else:
+        #                 srcPortNode = graphNodeName
 
-                    if portDataType not in ('Execute', 'InlineInstance', 'DrawingHandle'):
-                        pm.FabricCanvasAddPort(
-                            mayaNode=canvasNode,
-                            execPath="",
-                            desiredPortName=portName,
-                            portType="Out",
-                            typeSpec=portDataType,
-                            connectToPortPath="")
+        #             if portDataType not in ('Execute', 'InlineInstance', 'DrawingHandle'):
+        #                 pm.FabricCanvasAddPort(
+        #                     mayaNode=canvasNode,
+        #                     execPath="",
+        #                     desiredPortName=portName,
+        #                     portType="Out",
+        #                     typeSpec=portDataType,
+        #                     connectToPortPath="")
 
-                    pm.FabricCanvasConnect(
-                        mayaNode=canvasNode,
-                        execPath="",
-                        srcPortPath=srcPortNode + "." + portName,
-                        dstPortPath=dstPortPath)
+        #             pm.FabricCanvasConnect(
+        #                 mayaNode=canvasNode,
+        #                 execPath="",
+        #                 srcPortPath=srcPortNode + "." + portName,
+        #                 dstPortPath=dstPortPath)
 
-                else:
-                    raise Exception("Invalid connection type:" + portConnectionType)
+        #         else:
+        #             raise Exception("Invalid connection type:" + portConnectionType)
 
-                if portDataType == 'EvalContext':
-                    continue
-                elif portDataType == 'Execute':
-                    continue
-                elif portDataType == 'DrawingHandle':
-                    continue
-                elif portDataType == 'InlineDebugShape':
-                    continue
-                elif portDataType == 'Execute' and portName == 'exec':
-                    continue
+        #         if portDataType == 'EvalContext':
+        #             continue
+        #         elif portDataType == 'Execute':
+        #             continue
+        #         elif portDataType == 'DrawingHandle':
+        #             continue
+        #         elif portDataType == 'InlineDebugShape':
+        #             continue
+        #         elif portDataType == 'Execute' and portName == 'exec':
+        #             continue
 
-                if portName == 'time':
-                    pm.expression(o=canvasNode + '.time', s=canvasNode + '.time = time;')
-                    continue
-                if portName == 'frame':
-                    pm.expression(o=canvasNode + '.frame', s=canvasNode + '.frame = frame;')
-                    continue
+        #         if portName == 'time':
+        #             pm.expression(o=canvasNode + '.time', s=canvasNode + '.time = time;')
+        #             continue
+        #         if portName == 'frame':
+        #             pm.expression(o=canvasNode + '.frame', s=canvasNode + '.frame = frame;')
+        #             continue
 
-                # Get the port's input from the DCC
-                if portConnectionType == 'In':
-                    connectedObjects = kOperator.getInput(portName)
-                elif portConnectionType in ['IO', 'Out']:
-                    connectedObjects = kOperator.getOutput(portName)
+        #         # Get the port's input from the DCC
+        #         if portConnectionType == 'In':
+        #             connectedObjects = kOperator.getInput(portName)
+        #         elif portConnectionType in ['IO', 'Out']:
+        #             connectedObjects = kOperator.getOutput(portName)
 
-                if portDataType.endswith('[]'):
+        #         if portDataType.endswith('[]'):
 
-                    # In CanvasMaya, output arrays are not resized by the system
-                    # prior to calling into Canvas, so we explicily resize the
-                    # arrays in the generated operator stub code.
-                    if connectedObjects is None:
-                        connectedObjects = []
+        #             # In CanvasMaya, output arrays are not resized by the system
+        #             # prior to calling into Canvas, so we explicily resize the
+        #             # arrays in the generated operator stub code.
+        #             if connectedObjects is None:
+        #                 connectedObjects = []
 
-                    connectionTargets = []
-                    for i in xrange(len(connectedObjects)):
-                        opObject = connectedObjects[i]
-                        dccSceneItem = self.getDCCSceneItem(opObject)
+        #             connectionTargets = []
+        #             for i in xrange(len(connectedObjects)):
+        #                 opObject = connectedObjects[i]
+        #                 dccSceneItem = self.getDCCSceneItem(opObject)
 
-                        if hasattr(opObject, "getName"):
-                            # Handle output connections to visibility attributes.
-                            if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
-                                dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
-                                dccSceneItem = dccItem.attr('visibility')
-                            elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
-                                dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
-                                shape = dccItem.getShape()
-                                dccSceneItem = shape.attr('visibility')
+        #                 if hasattr(opObject, "getName"):
+        #                     # Handle output connections to visibility attributes.
+        #                     if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+        #                         dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+        #                         dccSceneItem = dccItem.attr('visibility')
+        #                     elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+        #                         dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+        #                         shape = dccItem.getShape()
+        #                         dccSceneItem = shape.attr('visibility')
 
-                        connectionTargets.append(
-                            {
-                                'opObject': opObject,
-                                'dccSceneItem': dccSceneItem
-                            })
-                else:
-                    if connectedObjects is None:
-                        if isKLBased:
-                            opType = kOperator.getExtension() + ":" + kOperator.getSolverTypeName()
-                        else:
-                            opType = kOperator.getPresetPath()
+        #                 connectionTargets.append(
+        #                     {
+        #                         'opObject': opObject,
+        #                         'dccSceneItem': dccSceneItem
+        #                     })
+        #         else:
+        #             if connectedObjects is None:
+        #                 if isKLBased:
+        #                     opType = kOperator.getExtension() + ":" + kOperator.getSolverTypeName()
+        #                 else:
+        #                     opType = kOperator.getPresetPath()
 
-                        logger.warning("Operator '" + solverSolveNodeName +
-                                       "' of type '" + opType +
-                                       "' port '" + portName + "' not connected.")
+        #                 logger.warning("Operator '" + solverSolveNodeName +
+        #                                "' of type '" + opType +
+        #                                "' port '" + portName + "' not connected.")
 
-                    opObject = connectedObjects
-                    dccSceneItem = self.getDCCSceneItem(opObject)
-                    if hasattr(opObject, "getName"):
-                        # Handle output connections to visibility attributes.
-                        if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
-                            dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
-                            dccSceneItem = dccItem.attr('visibility')
-                        elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
-                            dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
-                            shape = dccItem.getShape()
-                            dccSceneItem = shape.attr('visibility')
+        #             opObject = connectedObjects
+        #             dccSceneItem = self.getDCCSceneItem(opObject)
+        #             if hasattr(opObject, "getName"):
+        #                 # Handle output connections to visibility attributes.
+        #                 if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+        #                     dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+        #                     dccSceneItem = dccItem.attr('visibility')
+        #                 elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+        #                     dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+        #                     shape = dccItem.getShape()
+        #                     dccSceneItem = shape.attr('visibility')
 
-                    connectionTargets = {
-                        'opObject': opObject,
-                        'dccSceneItem': dccSceneItem
-                    }
+        #             connectionTargets = {
+        #                 'opObject': opObject,
+        #                 'dccSceneItem': dccSceneItem
+        #             }
 
-                # Add the Canvas Port for each port.
-                if portConnectionType == 'In':
+        #         # Add the Canvas Port for each port.
+        #         if portConnectionType == 'In':
 
-                    def connectInput(tgt, opObject, dccSceneItem):
-                        if isinstance(opObject, Attribute):
-                            pm.connectAttr(dccSceneItem, tgt)
-                        elif isinstance(opObject, Object3D):
-                            pm.connectAttr(dccSceneItem.attr('worldMatrix'), tgt)
-                        elif isinstance(opObject, Xfo):
-                            self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
-                        elif isinstance(opObject, Mat44):
-                            self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject)
-                        elif isinstance(opObject, Vec2):
-                            pm.setAttr(tgt, opObject.x, opObject.y, type="double2")
-                        elif isinstance(opObject, Vec3):
-                            pm.setAttr(tgt, opObject.x, opObject.y, opObject.z, type="double3")
-                        else:
-                            validatePortValue(opObject, portName, portDataType)
+        #             def connectInput(tgt, opObject, dccSceneItem):
+        #                 if isinstance(opObject, Attribute):
+        #                     pm.connectAttr(dccSceneItem, tgt)
+        #                 elif isinstance(opObject, Object3D):
+        #                     pm.connectAttr(dccSceneItem.attr('worldMatrix'), tgt)
+        #                 elif isinstance(opObject, Xfo):
+        #                     self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
+        #                 elif isinstance(opObject, Mat44):
+        #                     self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject)
+        #                 elif isinstance(opObject, Vec2):
+        #                     pm.setAttr(tgt, opObject.x, opObject.y, type="double2")
+        #                 elif isinstance(opObject, Vec3):
+        #                     pm.setAttr(tgt, opObject.x, opObject.y, opObject.z, type="double3")
+        #                 else:
+        #                     validatePortValue(opObject, portName, portDataType)
 
-                            pm.setAttr(tgt, opObject)
+        #                     pm.setAttr(tgt, opObject)
 
-                    if portDataType.endswith('[]'):
-                        for i in xrange(len(connectionTargets)):
-                            connectInput(
-                                canvasNode + "." + portName + '[' + str(i) + ']',
-                                connectionTargets[i]['opObject'],
-                                connectionTargets[i]['dccSceneItem'])
-                    else:
-                        connectInput(
-                            canvasNode + "." + portName,
-                            connectionTargets['opObject'],
-                            connectionTargets['dccSceneItem'])
+        #             if portDataType.endswith('[]'):
+        #                 for i in xrange(len(connectionTargets)):
+        #                     connectInput(
+        #                         canvasNode + "." + portName + '[' + str(i) + ']',
+        #                         connectionTargets[i]['opObject'],
+        #                         connectionTargets[i]['dccSceneItem'])
+        #             else:
+        #                 connectInput(
+        #                     canvasNode + "." + portName,
+        #                     connectionTargets['opObject'],
+        #                     connectionTargets['dccSceneItem'])
 
-                elif portConnectionType in ['IO', 'Out']:
+        #         elif portConnectionType in ['IO', 'Out']:
 
-                    def connectOutput(src, opObject, dccSceneItem):
-                        if isinstance(opObject, Attribute):
-                            pm.connectAttr(src, dccSceneItem)
-                        elif isinstance(opObject, Object3D):
-                            decomposeNode = pm.createNode('decomposeMatrix')
-                            pm.connectAttr(src,
-                                           decomposeNode.attr("inputMatrix"),
-                                           force=True)
+        #             def connectOutput(src, opObject, dccSceneItem):
+        #                 if isinstance(opObject, Attribute):
+        #                     pm.connectAttr(src, dccSceneItem)
+        #                 elif isinstance(opObject, Object3D):
+        #                     decomposeNode = pm.createNode('decomposeMatrix')
+        #                     pm.connectAttr(src,
+        #                                    decomposeNode.attr("inputMatrix"),
+        #                                    force=True)
 
-                            decomposeNode.attr("outputRotate").connect(dccSceneItem.attr("rotate"))
-                            decomposeNode.attr("outputScale").connect(dccSceneItem.attr("scale"))
-                            decomposeNode.attr("outputTranslate").connect(dccSceneItem.attr("translate"))
-                        elif isinstance(opObject, Xfo):
-                            raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Xfo outputs types directly!")
-                        elif isinstance(opObject, Mat44):
-                            raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Mat44 types directly!")
-                        else:
-                            raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Python built-in types [%s] directly!" % (src, opObject.__class__.__name__))
+        #                     decomposeNode.attr("outputRotate").connect(dccSceneItem.attr("rotate"))
+        #                     decomposeNode.attr("outputScale").connect(dccSceneItem.attr("scale"))
+        #                     decomposeNode.attr("outputTranslate").connect(dccSceneItem.attr("translate"))
+        #                 elif isinstance(opObject, Xfo):
+        #                     raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Xfo outputs types directly!")
+        #                 elif isinstance(opObject, Mat44):
+        #                     raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Mat44 types directly!")
+        #                 else:
+        #                     raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Python built-in types [%s] directly!" % (src, opObject.__class__.__name__))
 
-                    if portDataType.endswith('[]'):
-                        for i in xrange(len(connectionTargets)):
-                            connectOutput(
-                                str(canvasNode + "." + portName) + '[' + str(i) + ']',
-                                connectionTargets[i]['opObject'],
-                                connectionTargets[i]['dccSceneItem'])
-                    else:
-                        if connectionTargets['opObject'] is not None:
-                            connectOutput(
-                                str(canvasNode + "." + portName),
-                                connectionTargets['opObject'],
-                                connectionTargets['dccSceneItem'])
+        #             if portDataType.endswith('[]'):
+        #                 for i in xrange(len(connectionTargets)):
+        #                     connectOutput(
+        #                         str(canvasNode + "." + portName) + '[' + str(i) + ']',
+        #                         connectionTargets[i]['opObject'],
+        #                         connectionTargets[i]['dccSceneItem'])
+        #             else:
+        #                 if connectionTargets['opObject'] is not None:
+        #                     connectOutput(
+        #                         str(canvasNode + "." + portName),
+        #                         connectionTargets['opObject'],
+        #                         connectionTargets['dccSceneItem'])
 
-            if isKLBased is True:
-                opSourceCode = kOperator.generateSourceCode()
-                pm.FabricCanvasSetCode(mayaNode=canvasNode,
-                                       execPath=solverSolveNodeName,
-                                       code=opSourceCode)
+        #     if isKLBased is True:
+        #         opSourceCode = kOperator.generateSourceCode()
+        #         pm.FabricCanvasSetCode(mayaNode=canvasNode,
+        #                                execPath=solverSolveNodeName,
+        #                                code=opSourceCode)
 
-        finally:
-            pass
+        # finally:
+        #     pass
 
         return True
 
@@ -1201,72 +1242,72 @@ class Builder(Builder):
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
         # Lock Rotation
-        if kSceneItem.testFlag("lockXRotation") is True:
-            pm.setAttr(
-                dccSceneItem.longName() + "." + 'rx',
-                lock=True,
-                keyable=False,
-                channelBox=False)
+        # if kSceneItem.testFlag("lockXRotation") is True:
+        #     pm.setAttr(
+        #         dccSceneItem.longName() + "." + 'rx',
+        #         lock=True,
+        #         keyable=False,
+        #         channelBox=False)
 
-        if kSceneItem.testFlag("lockYRotation") is True:
-            pm.setAttr(
-                dccSceneItem.longName() + "." + 'ry',
-                lock=True,
-                keyable=False,
-                channelBox=False)
+        # if kSceneItem.testFlag("lockYRotation") is True:
+        #     pm.setAttr(
+        #         dccSceneItem.longName() + "." + 'ry',
+        #         lock=True,
+        #         keyable=False,
+        #         channelBox=False)
 
-        if kSceneItem.testFlag("lockZRotation") is True:
-            pm.setAttr(
-                dccSceneItem.longName() + "." + 'rz',
-                lock=True,
-                keyable=False,
-                channelBox=False)
-
-
-        # Lock Scale
-        if kSceneItem.testFlag("lockXScale") is True:
-            pm.setAttr(
-                dccSceneItem.longName() + "." + 'sx',
-                lock=True,
-                keyable=False,
-                channelBox=False)
-
-        if kSceneItem.testFlag("lockYScale") is True:
-            pm.setAttr(
-                dccSceneItem.longName() + "." + 'sy',
-                lock=True,
-                keyable=False,
-                channelBox=False)
-
-        if kSceneItem.testFlag("lockZScale") is True:
-            pm.setAttr(
-                dccSceneItem.longName() + "." + 'sz',
-                lock=True,
-                keyable=False,
-                channelBox=False)
+        # if kSceneItem.testFlag("lockZRotation") is True:
+        #     pm.setAttr(
+        #         dccSceneItem.longName() + "." + 'rz',
+        #         lock=True,
+        #         keyable=False,
+        #         channelBox=False)
 
 
-        # Lock Translation
-        if kSceneItem.testFlag("lockXTranslation") is True:
-            pm.setAttr(
-                dccSceneItem.longName() + "." + 'tx',
-                lock=True,
-                keyable=False,
-                channelBox=False)
+        # # Lock Scale
+        # if kSceneItem.testFlag("lockXScale") is True:
+        #     pm.setAttr(
+        #         dccSceneItem.longName() + "." + 'sx',
+        #         lock=True,
+        #         keyable=False,
+        #         channelBox=False)
 
-        if kSceneItem.testFlag("lockYTranslation") is True:
-            pm.setAttr(
-                dccSceneItem.longName() + "." + 'ty',
-                lock=True,
-                keyable=False,
-                channelBox=False)
+        # if kSceneItem.testFlag("lockYScale") is True:
+        #     pm.setAttr(
+        #         dccSceneItem.longName() + "." + 'sy',
+        #         lock=True,
+        #         keyable=False,
+        #         channelBox=False)
 
-        if kSceneItem.testFlag("lockZTranslation") is True:
-            pm.setAttr(
-                dccSceneItem.longName() + "." + 'tz',
-                lock=True,
-                keyable=False,
-                channelBox=False)
+        # if kSceneItem.testFlag("lockZScale") is True:
+        #     pm.setAttr(
+        #         dccSceneItem.longName() + "." + 'sz',
+        #         lock=True,
+        #         keyable=False,
+        #         channelBox=False)
+
+
+        # # Lock Translation
+        # if kSceneItem.testFlag("lockXTranslation") is True:
+        #     pm.setAttr(
+        #         dccSceneItem.longName() + "." + 'tx',
+        #         lock=True,
+        #         keyable=False,
+        #         channelBox=False)
+
+        # if kSceneItem.testFlag("lockYTranslation") is True:
+        #     pm.setAttr(
+        #         dccSceneItem.longName() + "." + 'ty',
+        #         lock=True,
+        #         keyable=False,
+        #         channelBox=False)
+
+        # if kSceneItem.testFlag("lockZTranslation") is True:
+        #     pm.setAttr(
+        #         dccSceneItem.longName() + "." + 'tz',
+        #         lock=True,
+        #         keyable=False,
+        #         channelBox=False)
 
         return True
 
@@ -1287,17 +1328,17 @@ class Builder(Builder):
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
         # Set Visibility
-        visAttr = kSceneItem.getVisibilityAttr()
-        if visAttr.isConnected() is False and kSceneItem.getVisibility() is False:
-            dccSceneItem.visibility.set(False)
+        # visAttr = kSceneItem.getVisibilityAttr()
+        # if visAttr.isConnected() is False and kSceneItem.getVisibility() is False:
+        #     dccSceneItem.visibility.set(False)
 
-        # Set Shape Visibility
-        shapeVisAttr = kSceneItem.getShapeVisibilityAttr()
-        if shapeVisAttr.isConnected() is False and kSceneItem.getShapeVisibility() is False:
-            # Get shape node, if it exists, hide it.
-            shape = dccSceneItem.getShape()
-            if shape is not None:
-                shape.visibility.set(False)
+        # # Set Shape Visibility
+        # shapeVisAttr = kSceneItem.getShapeVisibilityAttr()
+        # if shapeVisAttr.isConnected() is False and kSceneItem.getShapeVisibility() is False:
+        #     # Get shape node, if it exists, hide it.
+        #     shape = dccSceneItem.getShape()
+        #     if shape is not None:
+        #         shape.visibility.set(False)
 
         return True
 
@@ -1319,22 +1360,22 @@ class Builder(Builder):
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
         buildColor = self.getBuildColor(kSceneItem)
 
-        if buildColor is not None:
-            dccSceneItem.overrideEnabled.set(True)
-            dccSceneItem.overrideRGBColors.set(True)
+        # if buildColor is not None:
+        #     dccSceneItem.overrideEnabled.set(True)
+        #     dccSceneItem.overrideRGBColors.set(True)
 
-            if type(buildColor) is str:
+        #     if type(buildColor) is str:
 
-                # Color in config is stored as rgb scalar values in a list
-                if type(colors[buildColor]) is list:
-                    dccSceneItem.overrideColorRGB.set(colors[buildColor][0], colors[buildColor][1], colors[buildColor][2])
+        #         # Color in config is stored as rgb scalar values in a list
+        #         if type(colors[buildColor]) is list:
+        #             dccSceneItem.overrideColorRGB.set(colors[buildColor][0], colors[buildColor][1], colors[buildColor][2])
 
-                # Color in config is stored as a Color object
-                elif type(colors[buildColor]).__name__ == 'Color':
-                    dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
+        #         # Color in config is stored as a Color object
+        #         elif type(colors[buildColor]).__name__ == 'Color':
+        #             dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
 
-            elif type(buildColor).__name__ == 'Color':
-                dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
+        #     elif type(buildColor).__name__ == 'Color':
+        #         dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
 
         return True
 
@@ -1354,41 +1395,41 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
-        quat = dt.Quaternion(kSceneItem.xfo.ori.v.x,
-                             kSceneItem.xfo.ori.v.y,
-                             kSceneItem.xfo.ori.v.z,
-                             kSceneItem.xfo.ori.w)
+        # quat = dt.Quaternion(kSceneItem.xfo.ori.v.x,
+        #                      kSceneItem.xfo.ori.v.y,
+        #                      kSceneItem.xfo.ori.v.z,
+        #                      kSceneItem.xfo.ori.w)
 
-        dccSceneItem.setScale(dt.Vector(
-            kSceneItem.xfo.sc.x,
-            kSceneItem.xfo.sc.y,
-            kSceneItem.xfo.sc.z))
+        # dccSceneItem.setScale(dt.Vector(
+        #     kSceneItem.xfo.sc.x,
+        #     kSceneItem.xfo.sc.y,
+        #     kSceneItem.xfo.sc.z))
 
-        dccSceneItem.setTranslation(dt.Vector(
-            kSceneItem.xfo.tr.x,
-            kSceneItem.xfo.tr.y,
-            kSceneItem.xfo.tr.z),
-            "world")
+        # dccSceneItem.setTranslation(dt.Vector(
+        #     kSceneItem.xfo.tr.x,
+        #     kSceneItem.xfo.tr.y,
+        #     kSceneItem.xfo.tr.z),
+        #     "world")
 
-        dccSceneItem.setRotation(quat, "world")
+        # dccSceneItem.setRotation(quat, "world")
 
-        # Maya's rotation order enums:
-        # 0 XYZ
-        # 1 YZX
-        # 2 ZXY
-        # 3 XZY
-        # 4 YXZ <-- 5 in Fabric
-        # 5 ZYX <-- 4 in Fabric
-        order = kSceneItem.ro.order
-        if order == 4:
-            order = 5
-        elif order == 5:
-            order = 4
+        # # Maya's rotation order enums:
+        # # 0 XYZ
+        # # 1 YZX
+        # # 2 ZXY
+        # # 3 XZY
+        # # 4 YXZ <-- 5 in Fabric
+        # # 5 ZYX <-- 4 in Fabric
+        # order = kSceneItem.ro.order
+        # if order == 4:
+        #     order = 5
+        # elif order == 5:
+        #     order = 4
 
-        #  Maya api is one off from Maya's own node enum pyMel uses API
-        dccSceneItem.setRotationOrder(order + 1, False)
+        # #  Maya api is one off from Maya's own node enum pyMel uses API
+        # dccSceneItem.setRotationOrder(order + 1, False)
 
-        pm.select(clear=True)
+        # pm.select(clear=True)
 
         return True
 
@@ -1408,13 +1449,13 @@ class Builder(Builder):
 
         """
 
-        mat44 = mat44.transpose()
-        matrix = []
-        rows = [mat44.row0, mat44.row1, mat44.row2, mat44.row3]
-        for row in rows:
-            matrix.extend([row.x, row.y, row.z, row.t])
+        # mat44 = mat44.transpose()
+        # matrix = []
+        # rows = [mat44.row0, mat44.row1, mat44.row2, mat44.row3]
+        # for row in rows:
+        #     matrix.extend([row.x, row.y, row.z, row.t])
 
-        cmds.setAttr(dccSceneItemName + "." + attr, matrix, type="matrix")
+        # cmds.setAttr(dccSceneItemName + "." + attr, matrix, type="matrix")
 
         return True
 
