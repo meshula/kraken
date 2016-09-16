@@ -1,6 +1,8 @@
 import pymxs
 import MaxPlus
 
+rt = pymxs.runtime
+
 
 def lockObjXfo(dccSceneItem):
     """Locks the dccSceneItem's transform parameters.

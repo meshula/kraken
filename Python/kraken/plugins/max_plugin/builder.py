@@ -7,6 +7,7 @@ Builder -- Component representation.
 
 import json
 import logging
+import random
 
 from kraken.log import getLogger
 
@@ -204,13 +205,19 @@ class Builder(Builder):
 
         """
 
-        parentNode = self.getDCCSceneItem(kSceneItem.getParent())
+        dccSceneItem = None
 
-        # pm.select(parentNode)
-        dccSceneItem = None # pm.joint(name="joint")
-        # pm.rename(dccSceneItem, buildName)
+        bone = pymxs.runtime.boneSys.createBone(rt.Point3(0, 0, 0), rt.Point3(1, 0, 0), rt.Point3(0, 0, 1))
+        rdmHash = random.getrandbits(128)
+        bone.Name = str(rdmHash)
 
-        # radius = dccSceneItem.attr('radius').set(kSceneItem.getRadius())
+        node = [x for x in MaxPlus.Core.GetRootNode().Children if x.Name == str(rdmHash)][0]
+        node.SetName(buildName)
+        node.BaseObject.ParameterBlock.Length.Value = 10.0
+        node.BaseObject.ParameterBlock.Width.Value = kSceneItem.getRadius() * 10
+        node.BaseObject.ParameterBlock.Height.Value = kSceneItem.getRadius() * 10
+
+        dccSceneItem = node
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -259,48 +266,41 @@ class Builder(Builder):
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
-        # Format points for Maya
         curveData = kSceneItem.getCurveData()
 
-        # Scale, rotate, translation shape
-        curvePoints = []
-        for eachSubCurve in curveData:
-            formattedPoints = eachSubCurve["points"]
-            curvePoints.append(formattedPoints)
+        obj = MaxPlus.Factory.CreateShapeObject(MaxPlus.ClassIds.SplineShape)
+        shapeObj = MaxPlus.SplineShape__CastFrom(obj)
+        splineShape = shapeObj.GetShape()
+        splineShape.NewShape()
 
-        # mainCurve = None
-        obj = MaxPlus.Factory.CreateShapeObject(MaxPlus.ClassIds.CV_Curve)
-        mainCurve = MaxPlus.Factory.CreateNode(obj)
-        mainCurve.Name = buildName
+        for i, eachSubCurve in enumerate(curveData):
+            closedSubCurve = eachSubCurve['closed']
+            degreeSubCurve = eachSubCurve['degree']
+            points = eachSubCurve['points']
+
+            spline = splineShape.NewSpline()
+
+            if degreeSubCurve == 1:
+                knotType = MaxPlus.SplineKnot.CornerKnot
+                lineType = MaxPlus.SplineKnot.LineLineType
+            else:
+                knotType = MaxPlus.SplineKnot.AutoKnot
+                lineType = MaxPlus.SplineKnot.CurveLineType
+
+            for point in points:
+                point = MaxPlus.Point3(point[0], point[1], point[2])
+                spline.AddKnot(MaxPlus.SplineKnot(knotType, lineType, point, point, point))
+
+            if closedSubCurve:
+                spline.SetClosed(True)
+
+        crvNode = MaxPlus.Factory.CreateNode(obj)
+        crvNode.Name = buildName
 
         if parentNode is not None:
-            mainCurve.SetParent(parentNode)
+            crvNode.SetParent(parentNode)
 
-        # for i, eachSubCurve in enumerate(curvePoints):
-        #     closedSubCurve = curveData[i]["closed"]
-        #     degreeSubCurve = curveData[i]["degree"]
-
-            # currentSubCurve = pm.curve(per=False,
-            #                            point=curvePoints[i],
-            #                            degree=degreeSubCurve)
-
-            # if closedSubCurve:
-            #     pm.closeCurve(currentSubCurve,
-            #                   preserveShape=True,
-            #                   replaceOriginal=True)
-
-            # if mainCurve is None:
-            #     mainCurve = currentSubCurve
-
-            # if i > 0:
-            #     pm.parent(currentSubCurve.getShape(),
-            #               mainCurve,
-            #               relative=True,
-            #               shape=True)
-
-            #     pm.delete(currentSubCurve)
-
-        dccSceneItem = mainCurve
+        dccSceneItem = crvNode
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -321,48 +321,41 @@ class Builder(Builder):
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
-        # Format points for Maya
         curveData = kSceneItem.getCurveData()
 
-        # Scale, rotate, translation shape
-        curvePoints = []
-        for eachSubCurve in curveData:
-            formattedPoints = eachSubCurve["points"]
-            curvePoints.append(formattedPoints)
+        obj = MaxPlus.Factory.CreateShapeObject(MaxPlus.ClassIds.SplineShape)
+        shapeObj = MaxPlus.SplineShape__CastFrom(obj)
+        splineShape = shapeObj.GetShape()
+        splineShape.NewShape()
 
-        # mainCurve = None
-        obj = MaxPlus.Factory.CreateShapeObject(MaxPlus.ClassIds.CV_Curve)
-        mainCurve = MaxPlus.Factory.CreateNode(obj)
-        mainCurve.Name = buildName
+        for i, eachSubCurve in enumerate(curveData):
+            closedSubCurve = eachSubCurve['closed']
+            degreeSubCurve = eachSubCurve['degree']
+            points = eachSubCurve['points']
+
+            spline = splineShape.NewSpline()
+
+            if degreeSubCurve == 1:
+                knotType = MaxPlus.SplineKnot.CornerKnot
+                lineType = MaxPlus.SplineKnot.LineLineType
+            else:
+                knotType = MaxPlus.SplineKnot.AutoKnot
+                lineType = MaxPlus.SplineKnot.CurveLineType
+
+            for point in points:
+                point = MaxPlus.Point3(point[0], point[1], point[2])
+                spline.AddKnot(MaxPlus.SplineKnot(knotType, lineType, point, point, point))
+
+            if closedSubCurve:
+                spline.SetClosed(True)
+
+        crvNode = MaxPlus.Factory.CreateNode(obj)
+        crvNode.Name = buildName
 
         if parentNode is not None:
-            mainCurve.SetParent(parentNode)
+            crvNode.SetParent(parentNode)
 
-        # for i, eachSubCurve in enumerate(curvePoints):
-        #     closedSubCurve = curveData[i]["closed"]
-        #     degreeSubCurve = curveData[i]["degree"]
-
-        #     currentSubCurve = pm.curve(per=False,
-        #                                point=curvePoints[i],
-        #                                degree=degreeSubCurve)
-
-        #     if closedSubCurve:
-        #         pm.closeCurve(currentSubCurve,
-        #                       preserveShape=True,
-        #                       replaceOriginal=True)
-
-        #     if mainCurve is None:
-        #         mainCurve = currentSubCurve
-
-        #     if i > 0:
-        #         pm.parent(currentSubCurve.getShape(),
-        #                   mainCurve,
-        #                   relative=True,
-        #                   shape=True)
-
-        #         pm.delete(currentSubCurve)
-
-        dccSceneItem = mainCurve
+        dccSceneItem = crvNode
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -1328,11 +1321,11 @@ class Builder(Builder):
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
         # Set Visibility
-        # visAttr = kSceneItem.getVisibilityAttr()
-        # if visAttr.isConnected() is False and kSceneItem.getVisibility() is False:
-        #     dccSceneItem.visibility.set(False)
+        visAttr = kSceneItem.getVisibilityAttr()
+        if visAttr.isConnected() is False and kSceneItem.getVisibility() is False:
+            dccSceneItem.SetHidden(False)
 
-        # # Set Shape Visibility
+        # Set Shape Visibility
         # shapeVisAttr = kSceneItem.getShapeVisibilityAttr()
         # if shapeVisAttr.isConnected() is False and kSceneItem.getShapeVisibility() is False:
         #     # Get shape node, if it exists, hide it.
@@ -1395,21 +1388,21 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
-        # quat = dt.Quaternion(kSceneItem.xfo.ori.v.x,
-        #                      kSceneItem.xfo.ori.v.y,
-        #                      kSceneItem.xfo.ori.v.z,
-        #                      kSceneItem.xfo.ori.w)
+        dccSceneItem.Rotation = MaxPlus.Quat(
+            kSceneItem.xfo.ori.v.x,
+            kSceneItem.xfo.ori.v.y,
+            kSceneItem.xfo.ori.v.z,
+            kSceneItem.xfo.ori.w)
 
-        # dccSceneItem.setScale(dt.Vector(
-        #     kSceneItem.xfo.sc.x,
-        #     kSceneItem.xfo.sc.y,
-        #     kSceneItem.xfo.sc.z))
+        dccSceneItem.Scaling = MaxPlus.Point3(
+            kSceneItem.xfo.sc.x,
+            kSceneItem.xfo.sc.y,
+            kSceneItem.xfo.sc.z)
 
-        # dccSceneItem.setTranslation(dt.Vector(
-        #     kSceneItem.xfo.tr.x,
-        #     kSceneItem.xfo.tr.y,
-        #     kSceneItem.xfo.tr.z),
-        #     "world")
+        dccSceneItem.Position = MaxPlus.Point3(
+            kSceneItem.xfo.tr.x,
+            kSceneItem.xfo.tr.y,
+            kSceneItem.xfo.tr.z)
 
         # dccSceneItem.setRotation(quat, "world")
 
