@@ -1143,7 +1143,10 @@ class Builder(Builder):
 
                     def connectOutput(src, opObject, dccSceneItem):
                         if isinstance(opObject, Attribute):
+                            locked = dccSceneItem.isLocked()
+                            dccSceneItem.unlock()
                             pm.connectAttr(src, dccSceneItem)
+                            dccSceneItem.setLocked(locked)
                         elif isinstance(opObject, Object3D):
                             decomposeNode = pm.createNode('decomposeMatrix')
                             pm.connectAttr(src,
