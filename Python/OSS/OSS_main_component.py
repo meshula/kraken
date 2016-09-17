@@ -16,6 +16,7 @@ from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
+from kraken.core.objects.control import Curve
 
 from kraken.core.objects.operators.kl_operator import KLOperator
 
@@ -278,6 +279,19 @@ class OSSMainComponentRig(OSSMainComponent):
         self.rootCtrl.lockScale(x=True, y=True, z=True)
         self.rootCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
         self.rootCtrlSpace = self.rootCtrl.insertCtrlSpace()
+        rootMotionBlendAttrGrp = AttributeGroup("______", parent=self.rootCtrl)
+        self.rootCtrl.rootMotionBlendAttr  = ScalarAttribute('rootMotionBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=rootMotionBlendAttrGrp)
+
+        self.autoRootCtrl = Control('auto_root', shape='arrow', parent=self.mainCtrl)
+        self.autoRootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.autoRootCtrl.setColor("gold")
+        self.autoRootCtrl.lockTranslation(x=True, y=True, z=True)
+        self.autoRootCtrl.lockRotation(x=True, y=True, z=True)
+        self.autoRootCtrl.lockScale(x=True, y=True, z=True)
+        self.autoRootCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
+        self.autoRootCtrl.scalePoints(Vec3(0.3, 0.3, 0.3))
+        self.autoRootCtrlSpace = self.autoRootCtrl.insertCtrlSpace()
+        self.autoRootCtrl.getVisibilityAttr().connect(self.rootCtrl.rootMotionBlendAttr, lock=True)
 
         # COG
         self.cogCtrl = FKControl('cog', parent=self.offsetCtrl, shape="circle")
@@ -432,10 +446,17 @@ class OSSMainComponentRig(OSSMainComponent):
             self.cogOutputTgtConstraint = self.cogOutputTgt.constrainTo(self.cogCtrl)
 
 
+        blendTRSOp = gnOp = self.blend_two_xfos(
+            self.rootOutputTgt,
+            self.rootCtrl, self.autoRootCtrl,
+            blend=self.rootCtrl.rootMotionBlendAttr,
+            name= 'RootMotionBlendKLOp')
+
         self.rootDef = Joint('root', parent=self.deformersParent)
         self.rootDef.setComponent(self) # Need an elegant automatic way to do this
-        self.rootDef.constrainTo(self.rootCtrl)
-        self.rootOutputTargetConstraint = self.rootOutputTgt.constrainTo(self.rootCtrl)
+        self.rootDef.constrainTo(self.rootOutputTgt)
+
+
 
         #Set all parents to rootDef since that is the only joint option
         self.rootOutputTgt.parentJoint = self.rootDef
@@ -452,7 +473,6 @@ class OSSMainComponentRig(OSSMainComponent):
         self.masterOutputTgtConstraint.evaluate()
         self.offsetOutputTgtConstraint.evaluate()
         self.cogOutputTgtConstraint.evaluate()
-        self.rootOutputTargetConstraint.evaluate()
 
 
 
