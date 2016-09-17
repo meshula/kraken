@@ -282,7 +282,7 @@ class OSSMainComponentRig(OSSMainComponent):
         rootMotionBlendAttrGrp = AttributeGroup("______", parent=self.rootCtrl)
         self.rootCtrl.rootMotionBlendAttr  = ScalarAttribute('rootMotionBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=rootMotionBlendAttrGrp)
 
-        self.autoRootCtrl = Control('auto_root', shape='arrow', parent=self.mainCtrl)
+        self.autoRootCtrl = Control('auto_root', shape='arrow', parent=self.ctrlCmpGrp)
         self.autoRootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
         self.autoRootCtrl.setColor("gold")
         self.autoRootCtrl.lockTranslation(x=True, y=True, z=True)
