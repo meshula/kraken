@@ -14,7 +14,7 @@ from kraken.log import getLogger
 from kraken.core.kraken_system import ks
 from kraken.core.configs.config import Config
 
-from kraken.core.maths import Vec2, Vec3, Xfo, Mat44, Math_radToDeg, RotationOrder
+from kraken.core.maths import *
 
 from kraken.core.builder import Builder
 from kraken.core.objects.object_3d import Object3D
@@ -37,14 +37,14 @@ class Builder(Builder):
     def deleteBuildElements(self):
         """Clear out all dcc built elements from the scene if exist."""
 
-        for builtElement in self._buildElements:
-            if builtElement['src'].isTypeOf('Attribute'):
-                continue
+        # for builtElement in self._buildElements:
+        #     if builtElement['src'].isTypeOf('Attribute'):
+        #         continue
 
-            node = builtElement['tgt']
-            if node.exists():
-                # pm.delete(node)
-                pass
+        #     node = builtElement['tgt']
+        #     if node.exists():
+        #         # pm.delete(node)
+        #         pass
 
         self._buildElements = []
 
@@ -266,6 +266,8 @@ class Builder(Builder):
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
+        kSceneItem.scalePoints(Vec3(10, 10, 10))
+
         curveData = kSceneItem.getCurveData()
 
         obj = MaxPlus.Factory.CreateShapeObject(MaxPlus.ClassIds.SplineShape)
@@ -320,6 +322,8 @@ class Builder(Builder):
         """
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
+
+        kSceneItem.scalePoints(Vec3(10, 10, 10))
 
         curveData = kSceneItem.getCurveData()
 
@@ -1353,22 +1357,20 @@ class Builder(Builder):
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
         buildColor = self.getBuildColor(kSceneItem)
 
-        # if buildColor is not None:
-        #     dccSceneItem.overrideEnabled.set(True)
-        #     dccSceneItem.overrideRGBColors.set(True)
+        if buildColor is not None:
 
-        #     if type(buildColor) is str:
+            if type(buildColor) is str:
 
-        #         # Color in config is stored as rgb scalar values in a list
-        #         if type(colors[buildColor]) is list:
-        #             dccSceneItem.overrideColorRGB.set(colors[buildColor][0], colors[buildColor][1], colors[buildColor][2])
+                # Color in config is stored as rgb scalar values in a list
+                if type(colors[buildColor]) is list:
+                    dccSceneItem.SetWireColor(MaxPlus.Color(colors[buildColor][0], colors[buildColor][1], colors[buildColor][2]))
 
-        #         # Color in config is stored as a Color object
-        #         elif type(colors[buildColor]).__name__ == 'Color':
-        #             dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
+                # Color in config is stored as a Color object
+                elif type(colors[buildColor]).__name__ == 'Color':
+                    dccSceneItem.SetWireColor(MaxPlus.Color(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b))
 
-        #     elif type(buildColor).__name__ == 'Color':
-        #         dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
+            elif type(buildColor).__name__ == 'Color':
+                dccSceneItem.SetWireColor(MaxPlus.Color(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b))
 
         return True
 
@@ -1388,23 +1390,17 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
-        dccSceneItem.Rotation = MaxPlus.Quat(
-            kSceneItem.xfo.ori.v.x,
-            kSceneItem.xfo.ori.v.y,
-            kSceneItem.xfo.ori.v.z,
-            kSceneItem.xfo.ori.w)
+        krakenMat44 = kSceneItem.xfo.toMat44().transpose()
 
-        dccSceneItem.Scaling = MaxPlus.Point3(
-            kSceneItem.xfo.sc.x,
-            kSceneItem.xfo.sc.y,
-            kSceneItem.xfo.sc.z)
+        mat3 = MaxPlus.Matrix3(
+            MaxPlus.Point3(krakenMat44.row0.x, krakenMat44.row0.y, krakenMat44.row0.z),
+            MaxPlus.Point3(krakenMat44.row1.x, krakenMat44.row1.y, krakenMat44.row1.z),
+            MaxPlus.Point3(krakenMat44.row2.x, krakenMat44.row2.y, krakenMat44.row2.z),
+            MaxPlus.Point3(kSceneItem.xfo.tr.x * 10.0,
+                           kSceneItem.xfo.tr.y * 10.0,
+                           kSceneItem.xfo.tr.z * 10.0))
 
-        dccSceneItem.Position = MaxPlus.Point3(
-            kSceneItem.xfo.tr.x,
-            kSceneItem.xfo.tr.y,
-            kSceneItem.xfo.tr.z)
-
-        # dccSceneItem.setRotation(quat, "world")
+        dccSceneItem.SetWorldTM(mat3)
 
         # # Maya's rotation order enums:
         # # 0 XYZ
