@@ -205,6 +205,8 @@ class Builder(Builder):
 
         """
 
+        parentNode = self.getDCCSceneItem(kSceneItem.getParent())
+
         dccSceneItem = None
 
         bone = pymxs.runtime.boneSys.createBone(rt.Point3(0, 0, 0), rt.Point3(1, 0, 0), rt.Point3(0, 0, 1))
@@ -216,6 +218,9 @@ class Builder(Builder):
         node.BaseObject.ParameterBlock.Length.Value = 10.0
         node.BaseObject.ParameterBlock.Width.Value = kSceneItem.getRadius() * 10
         node.BaseObject.ParameterBlock.Height.Value = kSceneItem.getRadius() * 10
+
+        if parentNode is not None:
+            node.SetParent(parentNode)
 
         dccSceneItem = node
 
@@ -526,14 +531,11 @@ class Builder(Builder):
         if groupName == "implicitAttrGrp":
             return False
 
-        # parentDCCSceneItem.addAttr(groupName,
-        #                            niceName=groupName,
-        #                            attributeType="enum",
-        #                            enumName="-----",
-        #                            keyable=True)
+        attrHolder = MaxPlus.Factory.CreateObjectModifier(MaxPlus.ClassIds.EmptyModifier)
+        attrHolder.SetName(MaxPlus.WStr(groupName))
+        parentDCCSceneItem.AddModifier(attrHolder)
 
-        dccSceneItem = None # parentDCCSceneItem.attr(groupName)
-        # pm.setAttr(parentDCCSceneItem + "." + groupName, lock=True)
+        dccSceneItem = None
 
         self._registerSceneItemPair(kAttributeGroup, dccSceneItem)
 
@@ -1390,15 +1392,20 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
-        krakenMat44 = kSceneItem.xfo.toMat44().transpose()
+        sceneItemXfo = kSceneItem.xfo
+        rotateUpXfo = Xfo()
+        rotateUpXfo.ori = Quat().setFromAxisAndAngle(Vec3(1, 0, 0), Math_degToRad(90))
+        maxXfo = rotateUpXfo * sceneItemXfo
+
+        krakenMat44 = maxXfo.toMat44().transpose()
 
         mat3 = MaxPlus.Matrix3(
             MaxPlus.Point3(krakenMat44.row0.x, krakenMat44.row0.y, krakenMat44.row0.z),
             MaxPlus.Point3(krakenMat44.row1.x, krakenMat44.row1.y, krakenMat44.row1.z),
             MaxPlus.Point3(krakenMat44.row2.x, krakenMat44.row2.y, krakenMat44.row2.z),
-            MaxPlus.Point3(kSceneItem.xfo.tr.x * 10.0,
-                           kSceneItem.xfo.tr.y * 10.0,
-                           kSceneItem.xfo.tr.z * 10.0))
+            MaxPlus.Point3(maxXfo.tr.x * 10.0,
+                           maxXfo.tr.y * 10.0,
+                           maxXfo.tr.z * 10.0))
 
         dccSceneItem.SetWorldTM(mat3)
 
