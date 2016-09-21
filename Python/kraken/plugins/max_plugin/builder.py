@@ -1485,4 +1485,6 @@ class Builder(Builder):
 
         super(Builder, self)._postBuild(kSceneItem)
 
+        MaxPlus.ViewportManager.ForceCompleteRedraw()
+
         return True
