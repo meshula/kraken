@@ -12,18 +12,18 @@ from kraken.ui.kraken_window import KrakenWindow
 from kraken.ui.kraken_splash import KrakenSplash
 
 
+class _GCProtector(object):
+    widgets = []
+
+app = QtGui.QApplication.instance()
+if not app:
+    app = QtGui.QApplication([])
+
 # ===============
 # Menu Callbacks
 # ===============
 def openKrakenEditor():
     print 'Releasing the Kraken!'
-
-    class _GCProtector(object):
-        widgets = []
-
-    app = QtGui.QApplication.instance()
-    if not app:
-        app = QtGui.QApplication([])
 
     splash = KrakenSplash(app)
     splash.show()
