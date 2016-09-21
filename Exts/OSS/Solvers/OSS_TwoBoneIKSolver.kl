@@ -10,7 +10,7 @@ object OSS_TwoBoneIKSolver : KrakenSolver {
 function OSS_TwoBoneIKSolver()
 {
   this.defaultValues["ikBlend"] = 0.5;
-  this.defaultValues["dampingDist"] = 0.0;
+  this.defaultValues["softIK"] = 0.0;
   this.defaultValues["squash"] = 0.0;
   this.defaultValues["stretch"] = 0.0;
   this.defaultValues["root"] = Mat44();
@@ -31,7 +31,7 @@ function KrakenSolverArg[] OSS_TwoBoneIKSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
 
   args.push(KrakenSolverArg('ikBlend', 'In', 'Scalar'));
-  args.push(KrakenSolverArg('dampingDist', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('softIK', 'In', 'Scalar'));
   args.push(KrakenSolverArg('squash', 'In', 'Scalar'));
   args.push(KrakenSolverArg('stretch', 'In', 'Scalar'));
 
@@ -68,7 +68,7 @@ function oss_solve2BoneIK(
 ) {
 
   // goalPosition = position to calculate the two boneIK
-  // realGoalPosition = position of the actual ikGoal (will only be different if using dampingDist value, for exmple)
+  // realGoalPosition = position of the actual ikGoal (will only be different if using softIK value, for exmple)
 
   Vec3 rootToGoal = goalPosition - rootPosition;
   Vec3 rootToUpV = upVPosition - rootPosition;
@@ -107,7 +107,7 @@ function OSS_TwoBoneIKSolver.solve!(
   Boolean drawDebug,
   Scalar rigScale,
   Scalar ikBlend,
-  Scalar dampingDist,
+  Scalar softIK,
   Scalar squash,
   Scalar stretch,
   Mat44 root,
@@ -139,7 +139,7 @@ function OSS_TwoBoneIKSolver.solve!(
 
   Scalar legLength = (bone0LenRigScaled + bone1LenRigScaled);
 
-  Scalar dampingDistRigScaled = dampingDist * rigScale;  //Make sure
+  Scalar softIKRigScaled = softIK * rigScale;  //Make sure
 
   Scalar stretchedRatio = 1.0;  //Delete this
 
@@ -151,7 +151,7 @@ function OSS_TwoBoneIKSolver.solve!(
   Scalar base2goalDistance = base2handleDistance; // May be changed by damping, etc
   Vec3 straightLegGoalPos = bone0FkXfo.tr + (base2handleVec.unit() * legLength);
 
-  Scalar damping = dampingDist * (1.0-squash);  // Turn off damping when squash is on / helps paritally, but not a great solution
+  Scalar damping = softIK * (1.0-squash);  // Turn off damping when squash is on / helps paritally, but not a great solution
 
   if(ikBlend > 0) {
 
@@ -249,7 +249,7 @@ function OSS_TwoBoneIKSolver.solve!(
   Scalar adjustedBone1Length = bone1LenRigScaled.linearInterpolate(ikBone1Length, ikBlend);
 
   bone2Xfo.tr = bone1Xfo.transformVector(adjustedBone1Length * getAxisAsVector(boneAxis));
-  // If we are reoriented bone1 because of dampingDist, bone1Length needs to be lengthened to reach the original goal
+  // If we are reoriented bone1 because of softIK, bone1Length needs to be lengthened to reach the original goal
   // Note, lower limb will be slightly longer than upper, but should be negligible
   //bone2Xfo.tr = bone2Xfo.transformVector((bone2Xfo.tr.distanceTo(ikHandlePos)) * getAxisAsVector(boneAxis));
 
@@ -260,7 +260,7 @@ function OSS_TwoBoneIKSolver.solve!(
 
 
 
-  // dampingDist may pull the foot away from ik goal, put it back
+  // softIK may pull the foot away from ik goal, put it back
   //bone2Xfo.tr = ikHandleXfo.tr;
 
   // Set scaling
