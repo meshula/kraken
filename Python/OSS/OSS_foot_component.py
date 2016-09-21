@@ -54,7 +54,7 @@ class OSSFootComponent(OSS_Component):
         # Declare Output Attrs
         self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=1.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.limbMocap_cmpOutAttr = self.createOutput('limbMocap', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
-        self.dampingDist_cmpOutAttr = self.createOutput('dampingDist', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.softIK_cmpOutAttr = self.createOutput('softIK', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.squash_cmpOutAttr = self.createOutput('squash', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.stretch_cmpOutAttr = self.createOutput('stretch', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
 
@@ -393,8 +393,8 @@ class OSSFootComponentRig(OSSFootComponent):
         #ballTwistAttr = ScalarAttribute('ballTwist', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
         #ballSwivelAttr = ScalarAttribute('ballSwivel', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
 
-        self.dampingDistAttr = ScalarAttribute('dampingDist', value=0.0, minValue=0.0, parent=self.handleCtrlAttrGrp)
-        self.dampingDist_cmpOutAttr.connect(self.dampingDistAttr)
+        self.softIKAttr = ScalarAttribute('softIK', value=0.0, minValue=0.0, parent=self.handleCtrlAttrGrp)
+        self.softIK_cmpOutAttr.connect(self.softIKAttr)
         self.squashAttr = ScalarAttribute('squash', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.squash_cmpOutAttr.connect(self.squashAttr)
         self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)

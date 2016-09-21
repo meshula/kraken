@@ -203,14 +203,14 @@ class OSSLimbComponentGuide(OSSLimbComponent):
             if self.ikgoal_cmpIn is None:
                 self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
                 self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', parent=self.cmpInputAttrGrp)
-                self.dampingDistAttr = self.createInput('dampingDist', dataType='Float', parent=self.cmpInputAttrGrp)
+                self.softIKAttr = self.createInput('softIK', dataType='Float', parent=self.cmpInputAttrGrp)
                 self.squashhAttr = self.createInput('squash', dataType='Float', parent=self.cmpInputAttrGrp)
                 self.stretchAttr = self.createInput('stretch', dataType='Float', parent=self.cmpInputAttrGrp)
         else:
             if self.ikgoal_cmpIn is not None:
                 # self.deleteInput('ikGoalInput', parent=self.inputHrcGrp)
                 # self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
-                # self.deleteInput('dampingDist', parent=self.cmpInputAttrGrp)
+                # self.deleteInput('softIK', parent=self.cmpInputAttrGrp)
                 # self.deleteInput('stretch', parent=self.cmpInputAttrGrp)
                 self.ikgoal_cmpIn = None
 
@@ -356,7 +356,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbFKCtrl = FKControl(self.lolimbName, parent=self.lolimbFKCtrlSpace)
         self.lolimbFKCtrlSpace.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
-        self.lolimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
+        self.lolimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
 
 
         # lolimbIK
@@ -430,13 +430,13 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
             self.limbIKCtrl.constrainTo(self.ikgoal_cmpIn, maintainOffset=True)
             self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', value=1.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
-            self.dampingDistAttr = self.createInput('dampingDist', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
+            self.softIKAttr = self.createInput('softIK', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
             self.squashAttr = self.createInput('squash', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
             self.stretchAttr = self.createInput('stretch', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
         else:
             self.ikgoal_cmpIn = None
             self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
-            self.dampingDistAttr = ScalarAttribute('dampingDist', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
+            self.softIKAttr = ScalarAttribute('softIK', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
             self.squashAttr = ScalarAttribute('squash', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
             self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
 
@@ -505,6 +505,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.lolimbDef = Joint(self.lolimbName, parent=self.uplimbDef)
         self.lolimbDef.setComponent(self)
+        # Don't want to change RO for fbx output right now
+        # self.lolimbDef.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
 
         self.limbendDef = Joint(name+'end', parent=self.lolimbDef)
         self.limbendDef.setComponent(self)
@@ -564,7 +566,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('bone0Len', self.limbBone0LenInputAttr)
         self.limbIKKLOp.setInput('bone1Len', self.limbBone1LenInputAttr)
         self.limbIKKLOp.setInput('ikBlend', self.ikBlendAttr)
-        self.limbIKKLOp.setInput('dampingDist', self.dampingDistAttr)
+        self.limbIKKLOp.setInput('softIK', self.softIKAttr)
         self.limbIKKLOp.setInput('squash', self.squashAttr)
         self.limbIKKLOp.setInput('stretch', self.stretchAttr)
         # Add Xfo Inputs

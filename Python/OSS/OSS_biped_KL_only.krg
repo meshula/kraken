@@ -56,8 +56,8 @@
       "targetIndex": 0
     },
     {
-      "source": "foot:L.dampingDist",
-      "target": "leg:L.dampingDist",
+      "source": "foot:L.softIK",
+      "target": "leg:L.softIK",
       "targetIndex": 0
     },
     {
@@ -121,8 +121,8 @@
       "targetIndex": 0
     },
     {
-      "source": "foot:R.dampingDist",
-      "target": "leg:R.dampingDist",
+      "source": "foot:R.softIK",
+      "target": "leg:R.softIK",
       "targetIndex": 0
     },
     {
@@ -156,8 +156,8 @@
       "targetIndex": 0
     },
     {
-      "source": "hand:R.dampingDist",
-      "target": "arm:R.dampingDist",
+      "source": "hand:R.softIK",
+      "target": "arm:R.softIK",
       "targetIndex": 0
     },
     {
@@ -191,8 +191,8 @@
       "targetIndex": 0
     },
     {
-      "source": "hand:L.dampingDist",
-      "target": "arm:L.dampingDist",
+      "source": "hand:L.softIK",
+      "target": "arm:L.softIK",
       "targetIndex": 0
     },
     {

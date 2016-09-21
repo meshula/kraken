@@ -10,6 +10,7 @@ from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
+
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
