@@ -457,7 +457,6 @@ class OSSMouthRig(OSSMouth):
                 controlsList.append(newCtrl)
 
                 newDef = Joint(defName + "_" + name, parent= self.mouthDef)
-                newDef.setComponent(self)
                 newDef.constrainTo(newCtrl)
 
                 if side:
@@ -667,7 +666,7 @@ class OSSMouthRig(OSSMouth):
         curveLevel1Op.setInput('alignZ', alignZ )
         curveLevel1Op.setInput('keepArcLength', 0.0)
         curveLevel1Op.setInput('compressionAmt', 0.0)
-        curveLevel1Op.setInput('followCurveTangent', 0.75)
+        curveLevel1Op.setInput('followCurveTangent', 0.25)
         curveLevel1Op.setInput('altTangent', Vec3(-1.0,0.0,0.0))
         curveLevel1Op.setInput('parent', parent)
         curveLevel1Op.setInput('useLocalNormal', 1.0)
@@ -706,10 +705,12 @@ class OSSMouthRig(OSSMouth):
 
         # Mouth
         self.mouthDef = Joint('mouth', parent=self.deformersParent)
+        
         self.jawDef = Joint('jaw', parent=self.mouthDef)
-        self.jawDef.setComponent(self)
-        self.mouthDef.setComponent(self)
         self.parentSpaceInputTgt.childJoints.append(self.mouthDef)
+
+        self.lMouthDef = Joint('mouth', parent=self.mouthDef, metaData={"altLocation":"L"})
+        self.rMouthDef = Joint('mouth', parent=self.mouthDef, metaData={"altLocation":"R"})
 
         # =========
         # Controls
@@ -729,7 +730,8 @@ class OSSMouthRig(OSSMouth):
         self.mouthCtrl = Control('mouth', parent=self.mouthCtrlSpace, shape="halfCircle", scale=0.5)
 
         # loLip
-        self.loLipCtrlSpace = CtrlSpace('loLip', parent=self.jawCtrlSpace)
+        self.loLipCtrlSpace = CtrlSpace('loLip', parent=self.jawCtrl)
+        self.loLipRefSpace = CtrlSpace('loLipRef', parent=self.jawCtrl)
         self.loLipCtrl = Control('loLip', parent=self.loLipCtrlSpace, shape="halfCircle")
         self.L_loLipHandleCtrl = CtrlSpace('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"L"})
         self.R_loLipHandleCtrl = CtrlSpace('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"R"})
@@ -805,7 +807,7 @@ class OSSMouthRig(OSSMouth):
 
 
         #Mouth Offset
-        self.offsetOp([self.jawCtrl, self.lipsRefSpace,  self.midMouthRefSpace],
+        self.offsetOp([self.loLipRefSpace, self.lipsRefSpace,  self.midMouthRefSpace],
                       [self.loLipCtrlSpace, self.upLipCtrlSpace, self.midMouthCtrlSpace ],
                        self.mouthCtrl.getParent(), self.mouthCtrl, name="Beta")
 
@@ -877,14 +879,14 @@ class OSSMouthRig(OSSMouth):
         self.blendRightCornerOp.setOutput('result', self.R_MouthCornerLoc)
 
         self.L_MouthCornerDef = Joint('mouthCorner',  parent=self.mouthDef, metaData={"altLocation":"L"})
-        self.L_MouthCornerDef.setComponent(self)
         self.L_MouthCornerDef.constrainTo(self.L_MouthCornerLoc)
 
 
         self.R_MouthCornerDef = Joint('mouthCorner',  parent=self.mouthDef, metaData={"altLocation":"R"})
-        self.R_MouthCornerDef.setComponent(self)
         self.R_MouthCornerDef.constrainTo(self.R_MouthCornerLoc)
 
+        self.lMouthDefPosConstraint = self.lMouthDef.constrainTo(self.L_MouthCornerLoc, constraintType="Position")
+        self.rMouthDefConstraint = self.rMouthDef.constrainTo(self.R_MouthCornerLoc, constraintType="Position")
 
         for ctrl in [self.L_loLipHandleCtrl, self.L_upLipHandleCtrl]:
             ctrl.xfo = data['L_midLipHandleXfo']
@@ -892,7 +894,7 @@ class OSSMouthRig(OSSMouth):
         for ctrl in [self.R_loLipHandleCtrl, self.R_upLipHandleCtrl]:
             ctrl.xfo = data['R_midLipHandleXfo']
 
-        for ctrl in [self.midMouthCtrlSpace, self.lipsRefSpace, self.midMouthRefSpace]:
+        for ctrl in [self.midMouthCtrlSpace, self.lipsRefSpace, self.midMouthRefSpace, self.loLipRefSpace]:
             ctrl.xfo = data['midLipXfo']
 
         for ctrl in [self.jawCtrlSpace, self.jawCtrl, self.jawEndOutputTgt, self.mouthOutputTgt, self.mouthCtrlSpace, self.mouthCtrl, self.mouthDef]:
@@ -941,6 +943,7 @@ class OSSMouthRig(OSSMouth):
                 ctrl.scalePoints(Vec3(Vec3(1,-1,1)))
             except:
                 pass
+
 
         self.loLipCtrl.translatePoints(Vec3(Vec3(0, -0.75,  .5)))
         self.upLipCtrl.translatePoints(Vec3(Vec3(0,  0.75,  .5)))
