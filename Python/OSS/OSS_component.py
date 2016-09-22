@@ -8,6 +8,7 @@ from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.locator import Locator
+from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.maths import *
 
 
@@ -35,7 +36,7 @@ class OSS_Component(BaseExampleComponent):
         else: # Rig
             self.deformersLayer = self.getOrCreateLayer('deformers')
             self.deformersParent = self.deformersLayer
-
+            self.deformersParent.setComponent(self)
 
     def loadData(self, data):
 
@@ -360,3 +361,39 @@ class OSS_Component(BaseExampleComponent):
         offsetOpp.setInput('offsets', [offsetB for o in objects])
         offsetOpp.setOutput('result', targets)
         return offsetOpp
+
+
+    # should 
+    def insertParentSpace(self, ctrl, name=None):
+        """Adds a CtrlSpace object above this object - inserted here to work on Transforms
+
+        Args:
+            name (string): optional name for this CtrlSpace, default is same as
+                this object
+
+        Returns:
+            object: New CtrlSpace object
+
+        """
+
+        if name is None:
+            name = ctrl.getName()
+
+        newCtrlSpace = CtrlSpace(name, parent=ctrl.getParent())
+        if ctrl.getParent() is not None:
+            ctrl.getParent().removeChild(ctrl)
+
+        if ctrl.getMetaDataItem("altLocation"):
+            newCtrlSpace.setMetaDataItem("altLocation", ctrl.getMetaDataItem("altLocation"))
+
+        ctrl.setParent(newCtrlSpace)
+        newCtrlSpace.addChild(ctrl)
+
+        newCtrlSpace.xfo = Xfo(ctrl.xfo)
+
+        # To ensure that names of control spaces don't clash with controls and
+        # if they do, set's the control space's name back to what it was intended
+        if ctrl.getName() == name:
+            newCtrlSpace.setName(name)
+
+        return newCtrlSpace
