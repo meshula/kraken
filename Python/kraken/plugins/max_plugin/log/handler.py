@@ -24,22 +24,22 @@ class DCCHandler(logging.Handler):
         msg = self.format(record)
 
         if record.levelno == logging.CRITICAL:
-            print('CRITICAL ' + msg)
+            MaxPlus.Core.WriteLine('CRITICAL ' + msg)
 
         elif record.levelno == logging.ERROR:
-            print('ERROR ' + msg)
+            MaxPlus.Core.WriteLine('ERROR ' + msg)
 
         elif record.levelno == logging.WARNING:
-            print('WARNING ' + msg)
+            MaxPlus.Core.WriteLine('WARNING ' + msg)
 
         elif record.levelno == logging.INFORM:
-            print('INFORM ' + msg)
+            MaxPlus.Core.WriteLine('INFORM ' + msg)
 
         elif record.levelno == logging.INFO:
-            print('INFO ' + msg)
+            MaxPlus.Core.WriteLine('INFO ' + msg)
 
         elif record.levelno == logging.DEBUG:
-            print('DEBUG ' + msg)
+            MaxPlus.Core.WriteLine('DEBUG ' + msg)
 
         else:
-            print(msg)
+            MaxPlus.Core.WriteLine(msg)
