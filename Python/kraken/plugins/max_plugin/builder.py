@@ -19,6 +19,9 @@ from kraken.core.maths import *
 from kraken.core.builder import Builder
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.attributes.attribute import Attribute
+from kraken.core.objects.attributes.attribute_group import AttributeGroup
+from kraken.core.objects.attributes.bool_attribute import BoolAttribute
+from kraken.core.objects.attributes.string_attribute import StringAttribute
 from kraken.plugins.max_plugin.utils import *
 
 from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
@@ -77,28 +80,25 @@ class Builder(Builder):
 
         dccSceneItem = node
 
+        # ==================================================================
+        # TODO:
+        # Get the Rig Data attribute building!!
+        # TODO:
+        # ==================================================================
+
         if kSceneItem.isTypeOf('Rig'):
-            pass
-        #     krakenRigAttr = dccSceneItem.addAttr('krakenRig',
-        #                                          niceName='krakenRig',
-        #                                          attributeType="bool",
-        #                                          defaultValue=True,
-        #                                          keyable=False)
 
-        #     dccSceneItem.attr('krakenRig').setLocked(True)
+            krakenRigDataAttrGrp = AttributeGroup("KrakenRig_Data", parent=kSceneItem)
+            krakenRigAttr = BoolAttribute('bicepFKCtrlSize', value=True, parent=krakenRigDataAttrGrp)
+            krakenRigAttr.setLock(True)
 
-        #     # Put Rig Data on DCC Item
-        #     metaData = kSceneItem.getMetaData()
-        #     if 'guideData' in metaData:
-        #         pureJSON = metaData['guideData']
+            # Put Rig Data on DCC Item
+            metaData = kSceneItem.getMetaData()
+            if 'guideData' in metaData:
+                pureJSON = metaData['guideData']
 
-        #         krakenRigDataAttr = dccSceneItem.addAttr('krakenRigData',
-        #                                              niceName='krakenRigData',
-        #                                              dataType="string",
-        #                                              keyable=False)
-
-        #         dccSceneItem.attr('krakenRigData').set(json.dumps(pureJSON, indent=2))
-        #         dccSceneItem.attr('krakenRigData').setLocked(True)
+                krakenRigDataAttr = StringAttribute('krakenRigData', value=json.dumps(pureJSON, indent=2), parent=krakenRigDataAttrGrp)
+                krakenRigDataAttr.setLock(True)
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
@@ -384,14 +384,46 @@ class Builder(Builder):
             return False
 
         parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-        # parentDCCSceneItem.addAttr(kAttribute.getName(),
-        #                            niceName=kAttribute.getName(),
-        #                            attributeType="bool",
-        #                            defaultValue=kAttribute.getValue(),
-        #                            keyable=True)
+        parentObject3D = kAttribute.getParent().getParent()
+        parentAttrGroup = kAttribute.getParent()
 
-        dccSceneItem = None # parentDCCSceneItem.attr(kAttribute.getName())
-        # dccSceneItem.setLocked(kAttribute.getLock())
+        MaxPlus.SelectionManager.ClearNodeSelection()
+        parentDCCSceneItem.Select()
+
+        rt.execute('targetObj=$')
+        customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
+
+        if customAttr is None:
+            raise AttributeError('Could not find Attribute Group: {0} on {1}'.format(parentAttrGroup.getName(), parentObject3D.getName()))
+
+        # Get Attribute
+        dataDef = rt.CustAttributes.getDef(customAttr)
+        defSource = dataDef.source
+        defLines = defSource.splitlines()
+        endParamIndex = defLines.index('            -- Param Def End')
+        endRolloutIndex = defLines.index('            -- Rollout Def End')
+
+        # Create param format data
+        formatData = {
+            'padding': '\t\t\t',
+            'paramName': kAttribute.getName(),
+            'initValue': str(kAttribute.getValue()).lower(),
+            'enabled': str(not kAttribute.getLock()).lower()
+        }
+
+        newParamLine = '{padding}{paramName} type: #boolean ui:{paramName} default: {initValue}'
+        defLines.insert(endParamIndex, newParamLine.format(**formatData))
+
+        newRolloutLine = '{padding}checkbox {paramName} "{paramName}" type: #boolean enabled: {enabled}'
+        defLines.insert(endRolloutIndex, newRolloutLine.format(**formatData))
+
+        newDef = '\n'.join(defLines)
+        rt.CustAttributes.redefine(dataDef, newDef)
+
+        parentDCCSceneItem.Deselect()
+
+        dccSceneItem = dataDef
+
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -412,27 +444,52 @@ class Builder(Builder):
             return False
 
         parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-        # parentDCCSceneItem.addAttr(kAttribute.getName(),
-        #                            niceName=kAttribute.getName(),
-        #                            attributeType="float",
-        #                            defaultValue=kAttribute.getValue(),
-        #                            keyable=True)
+        parentObject3D = kAttribute.getParent().getParent()
+        parentAttrGroup = kAttribute.getParent()
 
-        dccSceneItem = None # parentDCCSceneItem.attr(kAttribute.getName())
+        MaxPlus.SelectionManager.ClearNodeSelection()
+        parentDCCSceneItem.Select()
 
-        # if kAttribute.getMin() is not None:
-        #     dccSceneItem.setMin(kAttribute.getMin())
+        rt.execute('targetObj=$')
+        customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
 
-        # if kAttribute.getMax() is not None:
-        #     dccSceneItem.setMax(kAttribute.getMax())
+        if customAttr is None:
+            raise AttributeError('Could not find Attribute Group: {0} on {1}'.format(parentAttrGroup.getName(), parentObject3D.getName()))
 
-        # if kAttribute.getUIMin() is not None:
-        #     dccSceneItem.setSoftMin(kAttribute.getUIMin())
+        # Get Attribute
+        dataDef = rt.CustAttributes.getDef(customAttr)
+        defSource = dataDef.source
+        defLines = defSource.splitlines()
+        endParamIndex = defLines.index('            -- Param Def End')
+        endRolloutIndex = defLines.index('            -- Rollout Def End')
 
-        # if kAttribute.getUIMax() is not None:
-        #     dccSceneItem.setSoftMax(kAttribute.getUIMax())
+        # Create param format data
+        formatData = {
+            'padding': '\t\t\t',
+            'paramName': kAttribute.getName(),
+            'initValue': str(kAttribute.getValue()).lower(),
+            'enabled': str(not kAttribute.getLock()).lower(),
+            'minRange': kAttribute.getMin(),
+            'maxRange': kAttribute.getMax()
+        }
 
-        # dccSceneItem.setLocked(kAttribute.getLock())
+        newParamLine = '{padding}{paramName} type: #float ui:{paramName} default: {initValue}'
+        defLines.insert(endParamIndex, newParamLine.format(**formatData))
+
+        if formatData['minRange'] is not None and formatData['maxRange'] is not None:
+            newRolloutLine = '{padding}spinner {paramName} "{paramName}" type: #float range:[{minRange}, {maxRange}, {initValue}] enabled: {enabled}'
+        else:
+            newRolloutLine = '{padding}spinner {paramName} "{paramName}" type: #float enabled: {enabled}'
+
+        defLines.insert(endRolloutIndex, newRolloutLine.format(**formatData))
+
+        newDef = '\n'.join(defLines)
+        rt.CustAttributes.redefine(dataDef, newDef)
+
+        parentDCCSceneItem.Deselect()
+
+        dccSceneItem = dataDef
+
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -451,32 +508,53 @@ class Builder(Builder):
         if kAttribute.getParent().getName() == 'implicitAttrGrp':
             return False
 
-        mininum = kAttribute.getMin()
-        if mininum == None:
-            mininum = 0
-
-        maximum = kAttribute.getMax()
-        if maximum == None:
-            maximum = kAttribute.getValue() * 2
-
         parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-        # parentDCCSceneItem.addAttr(kAttribute.getName(), niceName=kAttribute.getName(), attributeType="long", defaultValue=kAttribute.getValue(), minValue=mininum, maxValue=maximum, keyable=True)
-        # parentDCCSceneItem.attr(kAttribute.getName())
-        dccSceneItem = None # parentDCCSceneItem.attr(kAttribute.getName())
+        parentObject3D = kAttribute.getParent().getParent()
+        parentAttrGroup = kAttribute.getParent()
 
-        # if kAttribute.getMin() is not None:
-        #     dccSceneItem.setMin(kAttribute.getMin())
+        MaxPlus.SelectionManager.ClearNodeSelection()
+        parentDCCSceneItem.Select()
 
-        # if kAttribute.getMax() is not None:
-        #     dccSceneItem.setMax(kAttribute.getMax())
+        rt.execute('targetObj=$')
+        customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
 
-        # if kAttribute.getUIMin() is not None:
-        #     dccSceneItem.setSoftMin(kAttribute.getUIMin())
+        if customAttr is None:
+            raise AttributeError('Could not find Attribute Group: {0} on {1}'.format(parentAttrGroup.getName(), parentObject3D.getName()))
 
-        # if kAttribute.getUIMax() is not None:
-        #     dccSceneItem.setSoftMax(kAttribute.getUIMax())
+        # Get Attribute
+        dataDef = rt.CustAttributes.getDef(customAttr)
+        defSource = dataDef.source
+        defLines = defSource.splitlines()
+        endParamIndex = defLines.index('            -- Param Def End')
+        endRolloutIndex = defLines.index('            -- Rollout Def End')
 
-        # dccSceneItem.setLocked(kAttribute.getLock())
+        # Create param format data
+        formatData = {
+            'padding': '\t\t\t',
+            'paramName': kAttribute.getName(),
+            'initValue': str(kAttribute.getValue()).lower(),
+            'enabled': str(not kAttribute.getLock()).lower(),
+            'minRange': kAttribute.getMin(),
+            'maxRange': kAttribute.getMax()
+        }
+
+        newParamLine = '{padding}{paramName} type: #integer ui:{paramName} default: {initValue}'
+        defLines.insert(endParamIndex, newParamLine.format(**formatData))
+
+        if formatData['minRange'] is not None and formatData['maxRange'] is not None:
+            newRolloutLine = '{padding}spinner {paramName} "{paramName}" type: #integer range:[{minRange}, {maxRange}, {initValue}] enabled: {enabled}'
+        else:
+            newRolloutLine = '{padding}spinner {paramName} "{paramName}" type: #integer enabled: {enabled}'
+
+        defLines.insert(endRolloutIndex, newRolloutLine.format(**formatData))
+
+        newDef = '\n'.join(defLines)
+        rt.CustAttributes.redefine(dataDef, newDef)
+
+        parentDCCSceneItem.Deselect()
+
+        dccSceneItem = dataDef
+
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -497,13 +575,46 @@ class Builder(Builder):
             return False
 
         parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-        # parentDCCSceneItem.addAttr(kAttribute.getName(),
-        #                            niceName=kAttribute.getName(),
-        #                            dataType="string")
+        parentObject3D = kAttribute.getParent().getParent()
+        parentAttrGroup = kAttribute.getParent()
 
-        dccSceneItem = None # parentDCCSceneItem.attr(kAttribute.getName())
-        # dccSceneItem.set(kAttribute.getValue())
-        # dccSceneItem.setLocked(kAttribute.getLock())
+        MaxPlus.SelectionManager.ClearNodeSelection()
+        parentDCCSceneItem.Select()
+
+        rt.execute('targetObj=$')
+        customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
+
+        if customAttr is None:
+            raise AttributeError('Could not find Attribute Group: {0} on {1}'.format(parentAttrGroup.getName(), parentObject3D.getName()))
+
+        # Get Attribute
+        dataDef = rt.CustAttributes.getDef(customAttr)
+        defSource = dataDef.source
+        defLines = defSource.splitlines()
+        endParamIndex = defLines.index('            -- Param Def End')
+        endRolloutIndex = defLines.index('            -- Rollout Def End')
+
+        # Create param format data
+        formatData = {
+            'padding': '\t\t\t',
+            'paramName': kAttribute.getName(),
+            'initValue': str(kAttribute.getValue()).lower(),
+            'enabled': str(not kAttribute.getLock()).lower()
+        }
+
+        newParamLine = '{padding}{paramName} type: #string ui:{paramName} default: {initValue}'
+        defLines.insert(endParamIndex, newParamLine.format(**formatData))
+
+        newRolloutLine = '{padding}edittext {paramName} "{paramName}" type: #string enabled: {enabled}'
+        defLines.insert(endRolloutIndex, newRolloutLine.format(**formatData))
+
+        newDef = '\n'.join(defLines)
+        rt.CustAttributes.redefine(dataDef, newDef)
+
+        parentDCCSceneItem.Deselect()
+
+        dccSceneItem = dataDef
+
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -531,17 +642,17 @@ class Builder(Builder):
 
         attrDef = """attrGrpDesc=attributes {0}
         (
-            -- Parameter Def Begin
             parameters main rollout:{0}Rollout
             (
-            )
+            -- Param Def Begin
             -- Param Def End
+            )
 
-            -- Rollout Def Begin
             rollout {0}Rollout "{0}"
             (
-            )
+            -- Rollout Def Begin
             -- Rollout Def End
+            )
         )
         """.format(groupName)
 
