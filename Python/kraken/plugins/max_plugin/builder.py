@@ -69,8 +69,7 @@ class Builder(Builder):
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
-        node = MaxPlus.Factory.CreateNode(obj)
-        node.Name = buildName
+        node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
 
         if parentNode is not None:
@@ -121,8 +120,7 @@ class Builder(Builder):
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
-        node = MaxPlus.Factory.CreateNode(obj)
-        node.Name = buildName
+        node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
 
         if parentNode is not None:
@@ -150,8 +148,7 @@ class Builder(Builder):
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
-        node = MaxPlus.Factory.CreateNode(obj)
-        node.Name = buildName
+        node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
 
         if parentNode is not None:
@@ -179,8 +176,7 @@ class Builder(Builder):
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
-        node = MaxPlus.Factory.CreateNode(obj)
-        node.Name = buildName
+        node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
 
         if parentNode is not None:
@@ -216,8 +212,8 @@ class Builder(Builder):
         node = [x for x in MaxPlus.Core.GetRootNode().Children if x.Name == str(rdmHash)][0]
         node.SetName(buildName)
         node.BaseObject.ParameterBlock.Length.Value = 10.0
-        node.BaseObject.ParameterBlock.Width.Value = kSceneItem.getRadius() * 10
-        node.BaseObject.ParameterBlock.Height.Value = kSceneItem.getRadius() * 10
+        node.BaseObject.ParameterBlock.Width.Value = kSceneItem.getRadius() * 2.5
+        node.BaseObject.ParameterBlock.Height.Value = kSceneItem.getRadius() * 2.5
 
         if parentNode is not None:
             node.SetParent(parentNode)
@@ -243,8 +239,7 @@ class Builder(Builder):
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
 
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
-        node = MaxPlus.Factory.CreateNode(obj)
-        node.Name = buildName
+        node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
 
         if parentNode is not None:
@@ -527,15 +522,46 @@ class Builder(Builder):
 
         parentDCCSceneItem = self.getDCCSceneItem(kAttributeGroup.getParent())
 
+        MaxPlus.SelectionManager.ClearNodeSelection()
+        parentDCCSceneItem.Select()
+
         groupName = kAttributeGroup.getName()
         if groupName == "implicitAttrGrp":
             return False
 
-        attrHolder = MaxPlus.Factory.CreateObjectModifier(MaxPlus.ClassIds.EmptyModifier)
-        attrHolder.SetName(MaxPlus.WStr(groupName))
-        parentDCCSceneItem.AddModifier(attrHolder)
+        attrDef = """attrGrpDesc=attributes {0}
+        (
+            -- Parameter Def Begin
+            parameters main rollout:{0}Rollout
+            (
+            )
+            -- Param Def End
 
-        dccSceneItem = None
+            -- Rollout Def Begin
+            rollout {0}Rollout "{0}"
+            (
+            )
+            -- Rollout Def End
+        )
+        """.format(groupName)
+
+        rt.execute('targetObj=$')
+        count = rt.CustAttributes.count(rt.targetObj)
+
+        rt.execute(attrDef)
+        rt.CustAttributes.add(rt.targetObj, rt.attrGrpDesc)
+        rt.CustAttributes.makeUnique(rt.targetObj, count + 1)
+
+        parentDCCSceneItem.Deselect()
+
+        attrCntrs = parentDCCSceneItem.BaseObject.GetCustomAttributeContainer()
+        attrCntr = None
+        for each in attrCntrs:
+            if each.GetName() == groupName:
+                attrCntr = each
+                break
+
+        dccSceneItem = attrCntr
 
         self._registerSceneItemPair(kAttributeGroup, dccSceneItem)
 
