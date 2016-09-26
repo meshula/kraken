@@ -23,14 +23,14 @@ logger = getLogger('kraken')
 class KrakenWindow(QtGui.QMainWindow):
     """Main Kraken Window that loads the UI."""
 
-    def __init__(self, parent=None, ):
+    def __init__(self, parent=None):
         super(KrakenWindow, self).__init__(parent)
         self.setObjectName('KrakenMainWindow')
         self.setWindowTitle('Kraken Editor')
         self.setWindowIcon(QtGui.QIcon(':/images/Kraken_Icon.png'))
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.setFocus()
+        # self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        # self.setFocus()
 
         QtCore.QCoreApplication.setOrganizationName("Kraken")
         QtCore.QCoreApplication.setApplicationName("Kraken Editor")
