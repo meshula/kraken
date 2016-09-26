@@ -19,6 +19,15 @@ app = QtGui.QApplication.instance()
 if not app:
     app = QtGui.QApplication([])
 
+# ================
+# Focus Callbacks
+# ================
+def maxFocusInCallback():
+    MaxPlus.CUI.DisableAccelerators()
+
+def maxFocusOutCallback():
+    MaxPlus.CUI.EnableAccelerators()
+
 # ===============
 # Menu Callbacks
 # ===============
@@ -31,8 +40,12 @@ def openKrakenEditor():
     try:
         MaxPlus.CUI.DisableAccelerators()
         window = KrakenWindow(parent=MaxPlus.GetQMaxWindow())
+        window.addFocusInCallback(maxFocusInCallback)
+        window.addFocusOutCallback(maxFocusOutCallback)
+
         _GCProtector.widgets.append(window)
         window.show()
+
     except Exception, e:
         print e
 
