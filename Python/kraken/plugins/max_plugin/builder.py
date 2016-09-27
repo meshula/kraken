@@ -80,6 +80,8 @@ class Builder(Builder):
 
         dccSceneItem = node
 
+        self._registerSceneItemPair(kSceneItem, dccSceneItem)
+
         # ==================================================================
         # TODO:
         # Get the Rig Data attribute building!!
@@ -89,18 +91,21 @@ class Builder(Builder):
         if kSceneItem.isTypeOf('Rig'):
 
             krakenRigDataAttrGrp = AttributeGroup("KrakenRig_Data", parent=kSceneItem)
-            krakenRigAttr = BoolAttribute('bicepFKCtrlSize', value=True, parent=krakenRigDataAttrGrp)
+            krakenRigAttr = BoolAttribute('krakenRig', value=True, parent=krakenRigDataAttrGrp)
             krakenRigAttr.setLock(True)
+
+            self.buildAttributeGroup(krakenRigDataAttrGrp)
+            self.buildBoolAttribute(krakenRigAttr)
 
             # Put Rig Data on DCC Item
             metaData = kSceneItem.getMetaData()
             if 'guideData' in metaData:
                 pureJSON = metaData['guideData']
 
-                krakenRigDataAttr = StringAttribute('krakenRigData', value=json.dumps(pureJSON, indent=2), parent=krakenRigDataAttrGrp)
+                krakenRigDataAttr = StringAttribute('krakenRigData', value=json.dumps(pureJSON, indent=None).replace('"', '\\"'), parent=krakenRigDataAttrGrp)
                 krakenRigDataAttr.setLock(True)
 
-        self._registerSceneItemPair(kSceneItem, dccSceneItem)
+                self.buildStringAttribute(krakenRigDataAttr)
 
         return dccSceneItem
 
@@ -598,14 +603,14 @@ class Builder(Builder):
         formatData = {
             'padding': '\t\t\t',
             'paramName': kAttribute.getName(),
-            'initValue': str(kAttribute.getValue()).lower(),
+            'initValue': kAttribute.getValue(),
             'enabled': str(not kAttribute.getLock()).lower()
         }
 
-        newParamLine = '{padding}{paramName} type: #string ui:{paramName} default: {initValue}'
+        newParamLine = '{padding}{paramName} type:#string ui:{paramName} default:"{initValue}"'
         defLines.insert(endParamIndex, newParamLine.format(**formatData))
 
-        newRolloutLine = '{padding}edittext {paramName} "{paramName}" type: #string enabled: {enabled}'
+        newRolloutLine = '{padding}edittext {paramName} "{paramName}" type:#string enabled:{enabled}'
         defLines.insert(endRolloutIndex, newRolloutLine.format(**formatData))
 
         newDef = '\n'.join(defLines)
