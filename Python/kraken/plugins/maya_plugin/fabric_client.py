@@ -13,10 +13,9 @@ def getClient():
 
     """
 
-    contextID = cmds.fabricSplice('getClientContextID')
+    contextID = pm.FabricCanvasGetContextID()
     if contextID == '':
-        cmds.fabricSplice('constructClient')
-        contextID = cmds.fabricSplice('getClientContextID')
+        raise ValueError('Kraken Maya could not construct a client!')
 
     options = {
         'contextID': contextID,
