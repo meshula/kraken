@@ -40,14 +40,17 @@ class Builder(Builder):
     def deleteBuildElements(self):
         """Clear out all dcc built elements from the scene if exist."""
 
-        # for builtElement in self._buildElements:
-        #     if builtElement['src'].isTypeOf('Attribute'):
-        #         continue
+        for builtElement in self._buildElements:
+            if builtElement['src'].isOfAnyType(('Attribute', 'AttributeGroup')):
+                continue
 
-        #     node = builtElement['tgt']
-        #     if node.exists():
-        #         # pm.delete(node)
-        #         pass
+            node = builtElement['tgt']
+            if node is None:
+                msg = 'Built object is None: {} : {}'
+                logger.warning(msg.format(builtElement['src'].getPath(),
+                                          builtElement['src'].getTypeName()))
+            else:
+                node.Delete()
 
         self._buildElements = []
 
@@ -82,12 +85,7 @@ class Builder(Builder):
 
         self._registerSceneItemPair(kSceneItem, dccSceneItem)
 
-        # ==================================================================
-        # TODO:
-        # Get the Rig Data attribute building!!
-        # TODO:
-        # ==================================================================
-
+        # Build Attributes for storing meta data on the container object
         if kSceneItem.isTypeOf('Rig'):
 
             krakenRigDataAttrGrp = AttributeGroup("KrakenRig_Data", parent=kSceneItem)
