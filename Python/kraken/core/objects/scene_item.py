@@ -64,6 +64,9 @@ class SceneItem(object):
     def isTypeOf(self, typeName):
         """Returns the class name of this object.
 
+        Arguments:
+            typeName (str): Name to check against.
+
         Returns:
             bool: True if the scene item is of the given type.
 
@@ -77,6 +80,9 @@ class SceneItem(object):
 
     def isOfAnyType(self, typeNames):
         """Returns true if this item has any of the given type names
+
+        Arguments:
+            typeNames (tuple): Type names to check against.
 
         Returns:
             bool: True if the scene item is of the given type.
