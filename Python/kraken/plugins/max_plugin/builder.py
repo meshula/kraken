@@ -726,6 +726,7 @@ class Builder(Builder):
 
         return True
 
+
     # =========================
     # Constraint Build Methods
     # =========================
@@ -741,36 +742,44 @@ class Builder(Builder):
         """
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = None # pm.orientConstraint(
-        #     [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-        #     constraineeDCCSceneItem,
-        #     name=kConstraint.getName() + "_ori_cns",
-        #     maintainOffset=kConstraint.getMaintainOffset())
 
-        # if kConstraint.getMaintainOffset() is True:
+        rotListClassID = MaxPlus.Class_ID(0x4b4b1003, 0x00000000) # Create Rotation List Controller
+        rotListCtrl = MaxPlus.Factory.CreatePositionController(rotListClassID)
 
-        #     # Maya's rotation order enums:
-        #     # 0 XYZ
-        #     # 1 YZX
-        #     # 2 ZXY
-        #     # 3 XZY
-        #     # 4 YXZ <-- 5 in Fabric
-        #     # 5 ZYX <-- 4 in Fabric
-        #     order = kConstraint.getConstrainee().ro.order
-        #     if order == 4:
-        #         order = 5
-        #     elif order == 5:
-        #         order = 4
+        rotCns = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Rotation_Constraint)
+        rotListCtrl.AssignController(rotCns, 0)
 
-        #     offsetXfo = kConstraint.computeOffset()
-        #     offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
-        #         RotationOrder(order))
+        rotCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_XYZ)
+        rotListCtrl.AssignController(rotCtrl, 1)
 
-        #     dccSceneItem.attr('offset').set([offsetAngles.x,
-        #                                      offsetAngles.y,
-        #                                      offsetAngles.z])
+        transform = tgtNode.GetSubAnim(2)
+        transform.AssignController(rotListCtrl, 0)
 
-        # pm.rename(dccSceneItem, buildName)
+        constraineeDCCSceneItem.Select()
+        MaxPlus.Core.EvalMAXScript('constrainee = $')
+        constraineeDCCSceneItem.Deselect()
+
+        for constrainer in kConstraint.getConstrainers():
+
+            constrainer.Select()
+            MaxPlus.Core.EvalMAXScript('constrainer = $')
+            constrainer.Deselect()
+
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[1].appendTarget constrainer 50')
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setName 1 "{}"'.format(buildName))
+
+        if kConstraint.getMaintainOffset() is True:
+            offsetXfo = kConstraint.computeOffset()
+            offsetStr = "{} {} {}".format(offsetAngles.x,
+                                          offsetAngles.y,
+                                          offsetAngles.z)
+
+            # Set offsets on the scale constraint
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setActive 2')
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[2].value = Point3 ' + offsetStr)
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setActive 1')
+
+        dccSceneItem = rotListCtrl
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -788,11 +797,6 @@ class Builder(Builder):
         """
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = None # pm.parentConstraint(
-            # [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            # constraineeDCCSceneItem,
-            # name=buildName,
-            # maintainOffset=kConstraint.getMaintainOffset())
 
         # We need this block of code to replace the pose constraint name with
         # the scale constraint name since we don't have a single pos, rot, scl,
@@ -801,6 +805,89 @@ class Builder(Builder):
         # nameTemplate = config.getNameTemplate()
         # poseCnsName = nameTemplate['types']['PoseConstraint']
         # sclCnsName = nameTemplate['types']['ScaleConstraint']
+
+
+        # ====================
+        # Position Constraint
+        # ====================
+        constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
+
+        posListClassID = MaxPlus.Class_ID(0x4b4b1002, 0x00000000) # Create Position List Controller
+        posListCtrl = MaxPlus.Factory.CreatePositionController(posListClassID)
+
+        posCns = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_Constraint)
+        posListCtrl.AssignController(posCns, 0)
+
+        posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_XYZ)
+        posListCtrl.AssignController(posCtrl, 1)
+
+        transform = tgtNode.GetSubAnim(2)
+        transform.AssignController(posListCtrl, 0)
+
+        constraineeDCCSceneItem.Select()
+        MaxPlus.Core.EvalMAXScript('constrainee = $')
+        constraineeDCCSceneItem.Deselect()
+
+        for constrainer in kConstraint.getConstrainers():
+
+            constrainer.Select()
+            MaxPlus.Core.EvalMAXScript('constrainer = $')
+            constrainer.Deselect()
+
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setName 1 "{}"'.format(buildName))
+
+        if kConstraint.getMaintainOffset() is True:
+            offsetXfo = kConstraint.computeOffset()
+            offsetStr = "{} {} {}".format(offsetXfo.tr.x,
+                                          offsetXfo.tr.y,
+                                          offsetXfo.tr.z)
+
+            # Set offsets on the scale constraint
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setActive 2')
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller[2].value = Point3 ' + offsetStr)
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setActive 1')
+
+
+
+        # =======================
+        # Orientation Constraint
+        # =======================
+        rotListClassID = MaxPlus.Class_ID(0x4b4b1003, 0x00000000) # Create Rotation List Controller
+        rotListCtrl = MaxPlus.Factory.CreatePositionController(rotListClassID)
+
+        rotCns = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Rotation_Constraint)
+        rotListCtrl.AssignController(rotCns, 0)
+
+        rotCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_XYZ)
+        rotListCtrl.AssignController(rotCtrl, 1)
+
+        transform = tgtNode.GetSubAnim(2)
+        transform.AssignController(rotListCtrl, 0)
+
+        constraineeDCCSceneItem.Select()
+        MaxPlus.Core.EvalMAXScript('constrainee = $')
+        constraineeDCCSceneItem.Deselect()
+
+        for constrainer in kConstraint.getConstrainers():
+
+            constrainer.Select()
+            MaxPlus.Core.EvalMAXScript('constrainer = $')
+            constrainer.Deselect()
+
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[1].appendTarget constrainer 50')
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setName 1 "{}"'.format(kConstraint.getName()))
+
+        if kConstraint.getMaintainOffset() is True:
+            offsetXfo = kConstraint.computeOffset()
+            offsetStr = "{} {} {}".format(offsetAngles.x,
+                                          offsetAngles.y,
+                                          offsetAngles.z)
+
+            # Set offsets on the scale constraint
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setActive 2')
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[2].value = Point3 ' + offsetStr)
+            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setActive 1')
 
         # scaleConstraint = pm.scaleConstraint(
         #     [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
@@ -871,19 +958,44 @@ class Builder(Builder):
         """
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = None # pm.pointConstraint(
-            # [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            # constraineeDCCSceneItem,
-            # name=buildName,
-            # maintainOffset=kConstraint.getMaintainOffset())
 
-        # if kConstraint.getMaintainOffset() is True:
-        #     offsetXfo = kConstraint.computeOffset()
+        posListClassID = MaxPlus.Class_ID(0x4b4b1002, 0x00000000) # Create Position List Controller
+        posListCtrl = MaxPlus.Factory.CreatePositionController(posListClassID)
 
-        #     # Set offsets on the scale constraint
-        #     dccSceneItem.offset.set([offsetXfo.tr.x,
-        #                              offsetXfo.tr.y,
-        #                              offsetXfo.tr.z])
+        posCns = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_Constraint)
+        posListCtrl.AssignController(posCns, 0)
+
+        posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_XYZ)
+        posListCtrl.AssignController(posCtrl, 1)
+
+        transform = tgtNode.GetSubAnim(2)
+        transform.AssignController(posListCtrl, 0)
+
+        constraineeDCCSceneItem.Select()
+        MaxPlus.Core.EvalMAXScript('constrainee = $')
+        constraineeDCCSceneItem.Deselect()
+
+        for constrainer in kConstraint.getConstrainers():
+
+            constrainer.Select()
+            MaxPlus.Core.EvalMAXScript('constrainer = $')
+            constrainer.Deselect()
+
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setName 1 "{}"'.format(buildName))
+
+        if kConstraint.getMaintainOffset() is True:
+            offsetXfo = kConstraint.computeOffset()
+            offsetStr = "{} {} {}".format(offsetXfo.tr.x,
+                                          offsetXfo.tr.y,
+                                          offsetXfo.tr.z)
+
+            # Set offsets on the scale constraint
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setActive 2')
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller[2].value = Point3 ' + offsetStr)
+            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setActive 1')
+
+        dccSceneItem = posListCtrl
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
