@@ -7,6 +7,7 @@ Builder -- Component representation.
 
 import json
 import logging
+import math
 import random
 
 from kraken.log import getLogger
@@ -40,8 +41,11 @@ class Builder(Builder):
     def deleteBuildElements(self):
         """Clear out all dcc built elements from the scene if exist."""
 
+
         for builtElement in self._buildElements:
-            if builtElement['src'].isOfAnyType(('Attribute', 'AttributeGroup')):
+            if builtElement['src'].isOfAnyType(('Attribute',
+                                                'AttributeGroup',
+                                                'Constraint')):
                 continue
 
             node = builtElement['tgt']
@@ -50,7 +54,13 @@ class Builder(Builder):
                 logger.warning(msg.format(builtElement['src'].getPath(),
                                           builtElement['src'].getTypeName()))
             else:
-                node.Delete()
+                try:
+                    node.Delete()
+                except Exception, e:
+                    logger.warning(str(e))
+                    msg = "Could not delete built items: {} ({})"
+                    logger.warning(msg.format(builtElement['src'].getPath(),
+                                              builtElement['src'].getTypeName()))
 
         self._buildElements = []
 
@@ -744,40 +754,58 @@ class Builder(Builder):
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
 
         rotListClassID = MaxPlus.Class_ID(0x4b4b1003, 0x00000000) # Create Rotation List Controller
-        rotListCtrl = MaxPlus.Factory.CreatePositionController(rotListClassID)
+        rotListCtrl = MaxPlus.Factory.CreateRotationController(rotListClassID)
 
-        rotCns = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Rotation_Constraint)
+        rotCns = MaxPlus.Factory.CreateRotationController(MaxPlus.ClassIds.Orientation_Constraint)
         rotListCtrl.AssignController(rotCns, 0)
 
-        rotCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_XYZ)
+        rotCtrl = MaxPlus.Factory.CreateRotationController(MaxPlus.ClassIds.Euler_XYZ)
+
+        if kConstraint.getMaintainOffset() is True:
+            # Fabric's rotation order enums:
+            # We need to use the negative rotation order
+            # to calculate propery offset values.
+            #
+            # 0 XYZ
+            # 1 YZX
+            # 2 ZXY
+            # 3 XZY
+            # 4 ZYX
+            # 5 YXZ
+
+            rotOrderRemap = {
+                0: 1,
+                1: 3,
+                2: 5,
+                3: 2,
+                4: 6,
+                5: 4
+            }
+
+            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
+
+            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
+                RotationOrder(order))
+
+            quat = MaxPlus.Quat()
+            quat.SetEuler(math.radians(offsetAngles.x),
+                          math.radians(offsetAngles.y),
+                          math.radians(offsetAngles.z))
+
+            rotCtrl.SetQuatValue(quat)
+
         rotListCtrl.AssignController(rotCtrl, 1)
 
-        transform = tgtNode.GetSubAnim(2)
-        transform.AssignController(rotListCtrl, 0)
+        transform = constraineeDCCSceneItem.GetSubAnim(2)
+        transform.AssignController(rotListCtrl, 1)
 
-        constraineeDCCSceneItem.Select()
-        MaxPlus.Core.EvalMAXScript('constrainee = $')
-        constraineeDCCSceneItem.Deselect()
-
-        for constrainer in kConstraint.getConstrainers():
+        for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
 
             constrainer.Select()
             MaxPlus.Core.EvalMAXScript('constrainer = $')
             constrainer.Deselect()
 
             MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[1].appendTarget constrainer 50')
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setName 1 "{}"'.format(buildName))
-
-        if kConstraint.getMaintainOffset() is True:
-            offsetXfo = kConstraint.computeOffset()
-            offsetStr = "{} {} {}".format(offsetAngles.x,
-                                          offsetAngles.y,
-                                          offsetAngles.z)
-
-            # Set offsets on the scale constraint
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setActive 2')
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[2].value = Point3 ' + offsetStr)
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setActive 1')
 
         dccSceneItem = rotListCtrl
 
@@ -798,14 +826,7 @@ class Builder(Builder):
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
 
-        # We need this block of code to replace the pose constraint name with
-        # the scale constraint name since we don't have a single pos, rot, scl,
-        # constraint in Maya.
-        # config = Config.getInstance()
-        # nameTemplate = config.getNameTemplate()
-        # poseCnsName = nameTemplate['types']['PoseConstraint']
-        # sclCnsName = nameTemplate['types']['ScaleConstraint']
-
+        offsetXfo = kConstraint.computeOffset()
 
         # ====================
         # Position Constraint
@@ -815,132 +836,124 @@ class Builder(Builder):
         posListClassID = MaxPlus.Class_ID(0x4b4b1002, 0x00000000) # Create Position List Controller
         posListCtrl = MaxPlus.Factory.CreatePositionController(posListClassID)
 
-        posCns = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_Constraint)
-        posListCtrl.AssignController(posCns, 0)
+        posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_Constraint)
+        posListCtrl.AssignController(posCtrl, 0)
 
         posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_XYZ)
+
+        if kConstraint.getMaintainOffset() is True:
+            posCtrl.SetPoint3Value(MaxPlus.Point3(offsetXfo.tr.x, offsetXfo.tr.y, offsetXfo.tr.z))
+
         posListCtrl.AssignController(posCtrl, 1)
 
-        transform = tgtNode.GetSubAnim(2)
+        transform = constraineeDCCSceneItem.GetSubAnim(2)
         transform.AssignController(posListCtrl, 0)
 
         constraineeDCCSceneItem.Select()
         MaxPlus.Core.EvalMAXScript('constrainee = $')
         constraineeDCCSceneItem.Deselect()
 
-        for constrainer in kConstraint.getConstrainers():
+        for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
 
             constrainer.Select()
             MaxPlus.Core.EvalMAXScript('constrainer = $')
             constrainer.Deselect()
 
             MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setName 1 "{}"'.format(buildName))
-
-        if kConstraint.getMaintainOffset() is True:
-            offsetXfo = kConstraint.computeOffset()
-            offsetStr = "{} {} {}".format(offsetXfo.tr.x,
-                                          offsetXfo.tr.y,
-                                          offsetXfo.tr.z)
-
-            # Set offsets on the scale constraint
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setActive 2')
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller[2].value = Point3 ' + offsetStr)
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setActive 1')
-
+            # MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setName 1 "{}"'.format(buildName))
 
 
         # =======================
         # Orientation Constraint
         # =======================
         rotListClassID = MaxPlus.Class_ID(0x4b4b1003, 0x00000000) # Create Rotation List Controller
-        rotListCtrl = MaxPlus.Factory.CreatePositionController(rotListClassID)
+        rotListCtrl = MaxPlus.Factory.CreateRotationController(rotListClassID)
 
-        rotCns = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Rotation_Constraint)
+        rotCns = MaxPlus.Factory.CreateRotationController(MaxPlus.ClassIds.Orientation_Constraint)
         rotListCtrl.AssignController(rotCns, 0)
 
-        rotCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_XYZ)
+        rotCtrl = MaxPlus.Factory.CreateRotationController(MaxPlus.ClassIds.Euler_XYZ)
+
+        if kConstraint.getMaintainOffset() is True:
+            # Fabric's rotation order enums:
+            # We need to use the negative rotation order
+            # to calculate propery offset values.
+            #
+            # 0 XYZ
+            # 1 YZX
+            # 2 ZXY
+            # 3 XZY
+            # 4 ZYX
+            # 5 YXZ
+
+            rotOrderRemap = {
+                0: 1,
+                1: 3,
+                2: 5,
+                3: 2,
+                4: 6,
+                5: 4
+            }
+
+            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
+
+            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
+                RotationOrder(order))
+
+            quat = MaxPlus.Quat()
+            quat.SetEuler(math.radians(offsetAngles.x),
+                          math.radians(offsetAngles.y),
+                          math.radians(offsetAngles.z))
+
+            rotCtrl.SetQuatValue(quat)
+
         rotListCtrl.AssignController(rotCtrl, 1)
 
-        transform = tgtNode.GetSubAnim(2)
-        transform.AssignController(rotListCtrl, 0)
+        transform = constraineeDCCSceneItem.GetSubAnim(2)
+        transform.AssignController(rotListCtrl, 1)
 
-        constraineeDCCSceneItem.Select()
-        MaxPlus.Core.EvalMAXScript('constrainee = $')
-        constraineeDCCSceneItem.Deselect()
-
-        for constrainer in kConstraint.getConstrainers():
+        for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
 
             constrainer.Select()
             MaxPlus.Core.EvalMAXScript('constrainer = $')
             constrainer.Deselect()
 
             MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[1].appendTarget constrainer 50')
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setName 1 "{}"'.format(kConstraint.getName()))
 
-        if kConstraint.getMaintainOffset() is True:
-            offsetXfo = kConstraint.computeOffset()
-            offsetStr = "{} {} {}".format(offsetAngles.x,
-                                          offsetAngles.y,
-                                          offsetAngles.z)
+        # ====================
+        # Scale Constraint
+        # ====================
+        # constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
 
-            # Set offsets on the scale constraint
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setActive 2')
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[2].value = Point3 ' + offsetStr)
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller.setActive 1')
+        # sclListClassID = MaxPlus.Class_ID(0x4b4b1004, 0x00000000) # Create Position List Controller
+        # sclListCtrl = MaxPlus.Factory.CreatePositionController(sclListClassID)
 
-        # scaleConstraint = pm.scaleConstraint(
-        #     [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-        #     constraineeDCCSceneItem,
-        #     name=buildName.replace(poseCnsName, sclCnsName),
-        #     maintainOffset=kConstraint.getMaintainOffset())
+        # posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_Constraint)
+        # sclListCtrl.AssignController(posCtrl, 0)
+
+        # posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.ScaleXYZ)
 
         # if kConstraint.getMaintainOffset() is True:
+        #     posCtrl.SetPoint3Value(MaxPlus.Point3(offsetXfo.tr.x, offsetXfo.tr.y, offsetXfo.tr.z))
 
-        #     # Fabric's rotation order enums:
-        #     # We need to use the negative rotation order
-        #     # to calculate propery offset values.
-        #     #
-        #     # 0 XYZ
-        #     # 1 YZX
-        #     # 2 ZXY
-        #     # 3 XZY
-        #     # 4 ZYX
-        #     # 5 YXZ
+        # sclListCtrl.AssignController(posCtrl, 1)
 
-        #     rotOrderRemap = {
-        #         0: 4,
-        #         1: 3,
-        #         2: 5,
-        #         3: 1,
-        #         4: 0,
-        #         5: 2
-        #     }
+        # transform = constraineeDCCSceneItem.GetSubAnim(2)
+        # transform.AssignController(sclListCtrl, 0)
 
-        #     order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
-        #     # if order == 4:
-        #     #     order = 5
-        #     # elif order == 5:
-        #     #     order = 4
+        # constraineeDCCSceneItem.Select()
+        # MaxPlus.Core.EvalMAXScript('constrainee = $')
+        # constraineeDCCSceneItem.Deselect()
 
-        #     offsetXfo = kConstraint.computeOffset()
-        #     offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
-        #         RotationOrder(order))
+        # for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
 
-        #     # Set offsets on parent constraint
-        #     dccSceneItem.target[0].targetOffsetTranslate.set([offsetXfo.tr.x,
-        #                                                       offsetXfo.tr.y,
-        #                                                       offsetXfo.tr.z])
+        #     constrainer.Select()
+        #     MaxPlus.Core.EvalMAXScript('constrainer = $')
+        #     constrainer.Deselect()
 
-        #     dccSceneItem.target[0].targetOffsetRotate.set(
-        #         [Math_radToDeg(offsetAngles.x),
-        #          Math_radToDeg(offsetAngles.y),
-        #          Math_radToDeg(offsetAngles.z)])
+        #     MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
 
-        #     # Set offsets on the scale constraint
-        #     scaleConstraint.offset.set([offsetXfo.sc.x,
-        #                                 offsetXfo.sc.y,
-        #                                 offsetXfo.sc.z])
+        dccSceneItem = posListCtrl
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -1059,6 +1072,8 @@ class Builder(Builder):
 
         connectionTargetDCCSceneItem = self.getDCCSceneItem(connectionTarget)
         targetDCCSceneItem = self.getDCCSceneItem(inputTarget)
+
+        logger.warning('Connecting {} to {}'.format(connectionTargetDCCSceneItem, targetDCCSceneItem))
 
         # pm.connectAttr(connectionTargetDCCSceneItem,
         #                targetDCCSceneItem,
@@ -1492,73 +1507,58 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
+        paramMap = {
+            'lockXTranslation': 1,
+            'lockYTranslation': 2,
+            'lockZTranslation': 3,
+            'lockXRotation': 4,
+            'lockYRotation': 5,
+            'lockZRotation': 6,
+            'lockXScale': 7,
+            'lockYScale': 8,
+            'lockZScale': 9
+        }
+
+        locks = []
+
+
+        # Lock Translation
+        if kSceneItem.testFlag("lockXTranslation") is True:
+            locks.append(1)
+
+        if kSceneItem.testFlag("lockYTranslation") is True:
+            locks.append(2)
+
+        if kSceneItem.testFlag("lockZTranslation") is True:
+            locks.append(3)
+
+
         # Lock Rotation
-        # if kSceneItem.testFlag("lockXRotation") is True:
-        #     pm.setAttr(
-        #         dccSceneItem.longName() + "." + 'rx',
-        #         lock=True,
-        #         keyable=False,
-        #         channelBox=False)
+        if kSceneItem.testFlag("lockXRotation") is True:
+            locks.append(4)
 
-        # if kSceneItem.testFlag("lockYRotation") is True:
-        #     pm.setAttr(
-        #         dccSceneItem.longName() + "." + 'ry',
-        #         lock=True,
-        #         keyable=False,
-        #         channelBox=False)
+        if kSceneItem.testFlag("lockYRotation") is True:
+            locks.append(5)
 
-        # if kSceneItem.testFlag("lockZRotation") is True:
-        #     pm.setAttr(
-        #         dccSceneItem.longName() + "." + 'rz',
-        #         lock=True,
-        #         keyable=False,
-        #         channelBox=False)
+        if kSceneItem.testFlag("lockZRotation") is True:
+            locks.append(6)
 
 
-        # # Lock Scale
-        # if kSceneItem.testFlag("lockXScale") is True:
-        #     pm.setAttr(
-        #         dccSceneItem.longName() + "." + 'sx',
-        #         lock=True,
-        #         keyable=False,
-        #         channelBox=False)
+        # Lock Scale
+        if kSceneItem.testFlag("lockXScale") is True:
+            locks.append(7)
 
-        # if kSceneItem.testFlag("lockYScale") is True:
-        #     pm.setAttr(
-        #         dccSceneItem.longName() + "." + 'sy',
-        #         lock=True,
-        #         keyable=False,
-        #         channelBox=False)
+        if kSceneItem.testFlag("lockYScale") is True:
+            locks.append(8)
 
-        # if kSceneItem.testFlag("lockZScale") is True:
-        #     pm.setAttr(
-        #         dccSceneItem.longName() + "." + 'sz',
-        #         lock=True,
-        #         keyable=False,
-        #         channelBox=False)
+        if kSceneItem.testFlag("lockZScale") is True:
+            locks.append(9)
 
+        lockScript = 'setTransformLockFlags $ #{' + ','.join([str(x) for x in locks]) + '}'
 
-        # # Lock Translation
-        # if kSceneItem.testFlag("lockXTranslation") is True:
-        #     pm.setAttr(
-        #         dccSceneItem.longName() + "." + 'tx',
-        #         lock=True,
-        #         keyable=False,
-        #         channelBox=False)
-
-        # if kSceneItem.testFlag("lockYTranslation") is True:
-        #     pm.setAttr(
-        #         dccSceneItem.longName() + "." + 'ty',
-        #         lock=True,
-        #         keyable=False,
-        #         channelBox=False)
-
-        # if kSceneItem.testFlag("lockZTranslation") is True:
-        #     pm.setAttr(
-        #         dccSceneItem.longName() + "." + 'tz',
-        #         lock=True,
-        #         keyable=False,
-        #         channelBox=False)
+        dccSceneItem.Select()
+        MaxPlus.Core.EvalMAXScript(lockScript)
+        dccSceneItem.Deselect()
 
         return True
 
@@ -1585,11 +1585,6 @@ class Builder(Builder):
 
         # Set Shape Visibility
         # shapeVisAttr = kSceneItem.getShapeVisibilityAttr()
-        # if shapeVisAttr.isConnected() is False and kSceneItem.getShapeVisibility() is False:
-        #     # Get shape node, if it exists, hide it.
-        #     shape = dccSceneItem.getShape()
-        #     if shape is not None:
-        #         shape.visibility.set(False)
 
         return True
 
@@ -1661,23 +1656,22 @@ class Builder(Builder):
 
         dccSceneItem.SetWorldTM(mat3)
 
-        # # Maya's rotation order enums:
-        # # 0 XYZ
-        # # 1 YZX
-        # # 2 ZXY
-        # # 3 XZY
-        # # 4 YXZ <-- 5 in Fabric
-        # # 5 ZYX <-- 4 in Fabric
-        # order = kSceneItem.ro.order
-        # if order == 4:
-        #     order = 5
-        # elif order == 5:
-        #     order = 4
+        rotOrderRemap = {
+                0: 1,
+                1: 3,
+                2: 5,
+                3: 2,
+                4: 6,
+                5: 4
+            }
 
-        # #  Maya api is one off from Maya's own node enum pyMel uses API
-        # dccSceneItem.setRotationOrder(order + 1, False)
+        order = rotOrderRemap[kSceneItem.ro.order]
 
-        # pm.select(clear=True)
+        dccSceneItem.Select()
+        MaxPlus.Core.EvalMAXScript('tgtObj = $')
+        dccSceneItem.Deselect()
+
+        MaxPlus.Core.EvalMAXScript('tgtObj.rotation.controller.axisorder = {}'.format(str(order)))
 
         return True
 
