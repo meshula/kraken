@@ -403,7 +403,7 @@ class Builder(Builder):
         MaxPlus.SelectionManager.ClearNodeSelection()
         parentDCCSceneItem.Select()
 
-        rt.execute('targetObj=$')
+        rt.execute('targetObj = selection[1]')
         customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
 
         if customAttr is None:
@@ -463,7 +463,7 @@ class Builder(Builder):
         MaxPlus.SelectionManager.ClearNodeSelection()
         parentDCCSceneItem.Select()
 
-        rt.execute('targetObj=$')
+        rt.execute('targetObj = selection[1]')
         customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
 
         if customAttr is None:
@@ -528,7 +528,7 @@ class Builder(Builder):
         MaxPlus.SelectionManager.ClearNodeSelection()
         parentDCCSceneItem.Select()
 
-        rt.execute('targetObj=$')
+        rt.execute('targetObj = selection[1]')
         customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
 
         if customAttr is None:
@@ -594,7 +594,7 @@ class Builder(Builder):
         MaxPlus.SelectionManager.ClearNodeSelection()
         parentDCCSceneItem.Select()
 
-        rt.execute('targetObj=$')
+        rt.execute('targetObj = selection[1]')
         customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
 
         if customAttr is None:
@@ -669,7 +669,7 @@ class Builder(Builder):
         )
         """.format(groupName)
 
-        rt.execute('targetObj=$')
+        rt.execute('targetObj = selection[1]')
         count = rt.CustAttributes.count(rt.targetObj)
 
         rt.execute(attrDef)
@@ -703,34 +703,39 @@ class Builder(Builder):
         """
 
         if kAttribute.isConnected() is True:
-            pass
+
             # Detect if driver is visibility attribute and map to correct DCC
             # attribute
-            # driverAttr = kAttribute.getConnection()
-            # if driverAttr.getName() == 'visibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
-            #     dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
-            #     driver = dccItem.attr('visibility')
+            driverAttr = kAttribute.getConnection()
+            if driverAttr.getName() == 'visibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
+                driver = dccItem
+                # driver = dccItem.attr('visibility')
 
-            # elif driverAttr.getName() == 'shapeVisibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
-            #     dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
-            #     shape = dccItem.getShape()
-            #     driver = shape.attr('visibility')
+            elif driverAttr.getName() == 'shapeVisibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
+                # shape = dccItem.getShape()
+                driver = dccItem
+                # driver = shape.attr('visibility')
 
-            # else:
-            #     driver = self.getDCCSceneItem(kAttribute.getConnection())
+            else:
+                driver = self.getDCCSceneItem(kAttribute.getConnection())
 
             # Detect if the driven attribute is a visibility attribute and map
             # to correct DCC attribute
-            # if kAttribute.getName() == 'visibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
-            #     dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-            #     driven = dccItem.attr('visibility')
+            if kAttribute.getName() == 'visibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+                driven = dccItem
+                # driven = dccItem.attr('visibility')
 
-            # elif kAttribute.getName() == 'shapeVisibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
-            #     dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
-            #     shape = dccItem.getShape()
-            #     driven = shape.attr('visibility')
-            # else:
-            #     driven = self.getDCCSceneItem(kAttribute)
+            elif kAttribute.getName() == 'shapeVisibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+                # shape = dccItem.getShape()
+                # driven = shape.attr('visibility')
+            else:
+                driven = self.getDCCSceneItem(kAttribute)
+
+            logger.warning('Connecting {} to {}'.format(connectionTargetDCCSceneItem, targetDCCSceneItem))
 
             # pm.connectAttr(driver, driven, force=True)
 
@@ -802,7 +807,7 @@ class Builder(Builder):
         for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
 
             constrainer.Select()
-            MaxPlus.Core.EvalMAXScript('constrainer = $')
+            MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
             constrainer.Deselect()
 
             MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[1].appendTarget constrainer 50')
@@ -850,13 +855,13 @@ class Builder(Builder):
         transform.AssignController(posListCtrl, 0)
 
         constraineeDCCSceneItem.Select()
-        MaxPlus.Core.EvalMAXScript('constrainee = $')
+        MaxPlus.Core.EvalMAXScript('constrainee = selection[1]')
         constraineeDCCSceneItem.Deselect()
 
         for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
 
             constrainer.Select()
-            MaxPlus.Core.EvalMAXScript('constrainer = $')
+            MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
             constrainer.Deselect()
 
             MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
@@ -915,7 +920,7 @@ class Builder(Builder):
         for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
 
             constrainer.Select()
-            MaxPlus.Core.EvalMAXScript('constrainer = $')
+            MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
             constrainer.Deselect()
 
             MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[1].appendTarget constrainer 50')
@@ -942,13 +947,13 @@ class Builder(Builder):
         # transform.AssignController(sclListCtrl, 0)
 
         # constraineeDCCSceneItem.Select()
-        # MaxPlus.Core.EvalMAXScript('constrainee = $')
+        # MaxPlus.Core.EvalMAXScript('constrainee = selection[1]')
         # constraineeDCCSceneItem.Deselect()
 
         # for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
 
         #     constrainer.Select()
-        #     MaxPlus.Core.EvalMAXScript('constrainer = $')
+        #     MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
         #     constrainer.Deselect()
 
         #     MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
@@ -985,13 +990,13 @@ class Builder(Builder):
         transform.AssignController(posListCtrl, 0)
 
         constraineeDCCSceneItem.Select()
-        MaxPlus.Core.EvalMAXScript('constrainee = $')
+        MaxPlus.Core.EvalMAXScript('constrainee = selection[1]')
         constraineeDCCSceneItem.Deselect()
 
         for constrainer in kConstraint.getConstrainers():
 
             constrainer.Select()
-            MaxPlus.Core.EvalMAXScript('constrainer = $')
+            MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
             constrainer.Deselect()
 
             MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
@@ -1668,7 +1673,7 @@ class Builder(Builder):
         order = rotOrderRemap[kSceneItem.ro.order]
 
         dccSceneItem.Select()
-        MaxPlus.Core.EvalMAXScript('tgtObj = $')
+        MaxPlus.Core.EvalMAXScript('tgtObj = selection[1]')
         dccSceneItem.Deselect()
 
         MaxPlus.Core.EvalMAXScript('tgtObj.rotation.controller.axisorder = {}'.format(str(order)))
