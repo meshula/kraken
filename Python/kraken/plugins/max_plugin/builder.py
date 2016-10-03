@@ -719,7 +719,14 @@ class Builder(Builder):
                 # driver = shape.attr('visibility')
 
             else:
-                driver = self.getDCCSceneItem(kAttribute.getConnection())
+                attrGrp = self.getDCCSceneItem(kAttribute.getConnection().getParent())
+                driver = None
+                paramBlock = attrGrp.GetParameterBlock()
+                for i in xrange(paramBlock.NumParameters):
+                    param = paramBlock.GetItem(i)
+                    if param.GetName() == kAttribute.getConnection().getName():
+                        driver = param
+                        break
 
             # Detect if the driven attribute is a visibility attribute and map
             # to correct DCC attribute
@@ -730,14 +737,38 @@ class Builder(Builder):
 
             elif kAttribute.getName() == 'shapeVisibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
                 dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+                driven = dccItem
                 # shape = dccItem.getShape()
                 # driven = shape.attr('visibility')
             else:
-                driven = self.getDCCSceneItem(kAttribute)
+                attrGrp = self.getDCCSceneItem(kAttribute.getParent())
+                driven = None
+                paramBlock = attrGrp.GetParameterBlock()
+                for i in xrange(paramBlock.NumParameters):
+                    param = paramBlock.GetItem(i)
+                    if param.GetName() == kAttribute.getName():
+                        driven = param
+                        break
 
-            logger.warning('Connecting {} to {}'.format(connectionTargetDCCSceneItem, targetDCCSceneItem))
+            srcAttrGrpParent = self.getDCCSceneItem(kAttribute.getConnection().getParent().getParent())
+            srcAttrGrpParent.Select()
+            MaxPlus.Core.EvalMAXScript('srcAttrGrpParent = selection[1]')
+            srcAttrGrpParent.Deselect()
 
-            # pm.connectAttr(driver, driven, force=True)
+            tgtAttrGrpParent = self.getDCCSceneItem(kAttribute.getParent().getParent())
+            tgtAttrGrpParent.Select()
+            MaxPlus.Core.EvalMAXScript('tgtAttrGrpParent = selection[1]')
+            tgtAttrGrpParent.Deselect()
+
+            srcStr = 'srcAttrGrpParent.baseObject.{}[#{}]'.format(kAttribute.getConnection().getParent().getName(), kAttribute.getConnection().getName())
+            tgtStr = 'tgtAttrGrpParent.baseObject.{}[#{}]'.format(kAttribute.getParent().getName(), kAttribute.getName())
+
+            print 'paramWire.connect ' + srcStr + ' ' + tgtStr + ' "' + kAttribute.getConnection().getName() + '"'
+            MaxPlus.Core.EvalMAXScript('paramWire.connect ' + srcStr + ' ' + tgtStr + ' "' + kAttribute.getConnection().getName() + '"')
+            # logger.warning('Connecting {} to {}'.format(kAttribute.getConnection().getPath(), kAttribute.getPath()))
+            # logger.warning(driver)
+            # logger.warning(driven)
+            # MaxPlus.Core.EvalMAXScript("paramWire.connect srcNode.baseObject.Arm_Settings[#fkik_blend] tgtNode.baseObject.Arm_Settings[#fkik_blend] \"fkik_blend\"")
 
         return True
 
