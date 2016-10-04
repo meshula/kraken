@@ -711,6 +711,7 @@ class Builder(Builder):
             # attribute
             driverAttr = kAttribute.getConnection()
             if driverAttr.getName() == 'visibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+                pass
                 # dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
                 # driver = dccItem.attr('visibility')
 
@@ -718,7 +719,8 @@ class Builder(Builder):
                 # and from visibility!
 
             elif driverAttr.getName() == 'shapeVisibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
-                dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
+                pass
+                # dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
                 # shape = dccItem.getShape()
                 # driver = shape.attr('visibility')
 
@@ -736,6 +738,7 @@ class Builder(Builder):
             # Detect if the driven attribute is a visibility attribute and map
             # to correct DCC attribute
             if kAttribute.getName() == 'visibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                pass
                 # dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
                 # driven = dccItem.attr('visibility')
 
@@ -743,6 +746,7 @@ class Builder(Builder):
                 # and from visibility!
 
             elif kAttribute.getName() == 'shapeVisibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                pass
                 # dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
                 # shape = dccItem.getShape()
                 # driven = shape.attr('visibility')
@@ -1110,376 +1114,190 @@ class Builder(Builder):
 
         """
 
-        # def validatePortValue(rtVal, portName, portDataType):
-        #     """Validate port value type when passing built in Python types.
+        def validatePortValue(rtVal, portName, portDataType):
+            """Validate port value type when passing built in Python types.
 
-        #     Args:
-        #         rtVal (RTVal): rtValue object.
-        #         portName (str): Name of the argument being validated.
-        #         portDataType (str): Type of the argument being validated.
+            Args:
+                rtVal (RTVal): rtValue object.
+                portName (str): Name of the argument being validated.
+                portDataType (str): Type of the argument being validated.
 
-        #     """
+            """
 
-        #     # Validate types when passing a built in Python type
-        #     if type(rtVal) in (bool, str, int, float):
-        #         if portDataType in ('Scalar', 'Float32', 'UInt32'):
-        #             if type(rtVal) not in (float, int):
-        #                 raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
+            # Validate types when passing a built in Python type
+            if type(rtVal) in (bool, str, int, float):
+                if portDataType in ('Scalar', 'Float32', 'UInt32'):
+                    if type(rtVal) not in (float, int):
+                        raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
 
-        #         elif portDataType == 'Boolean':
-        #             if type(rtVal) != bool and not (type(rtVal) == int and (rtVal == 0 or rtVal == 1)):
-        #                 raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
+                elif portDataType == 'Boolean':
+                    if type(rtVal) != bool and not (type(rtVal) == int and (rtVal == 0 or rtVal == 1)):
+                        raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
 
-        #         elif portDataType == 'String':
-        #             if type(rtVal) != str:
-        #                 raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
+                elif portDataType == 'String':
+                    if type(rtVal) != str:
+                        raise TypeError(kOperator.getName() + ".evaluate(): Invalid Argument Value: " + str(rtVal) + " (" + type(rtVal).__name__ + "), for Argument: " + portName + " (" + portDataType + ")")
 
-        # try:
-        #     if isKLBased is False:
-        #         host = ks.getCoreClient().DFG.host
-        #         opBinding = host.createBindingToPreset(kOperator.getPresetPath())
-        #         node = opBinding.getExec()
+        try:
+            if isKLBased is True:
+                ports = kOperator.getSolverArgs()
+                portCount = len(ports)
 
-        #         portTypeMap = {
-        #             0: 'In',
-        #             1: 'IO',
-        #             2: 'Out'
-        #         }
+                def findPortOfType(dataTypes, connectionTypes):
+                        for i in xrange(portCount):
+                            arg = ports[i]
+                            # argName = arg.name.getSimpleType()
+                            argDataType = arg.dataType.getSimpleType()
+                            argConnectionType = arg.connectionType.getSimpleType()
 
-        #     # Create Canvas Operator
-        #     canvasNode = pm.createNode('canvasNode', name=buildName)
-        #     self._registerSceneItemPair(kOperator, pm.PyNode(canvasNode))
+                            if argDataType in dataTypes and argConnectionType in connectionTypes:
+                                return i
 
-        #     config = Config.getInstance()
-        #     nameTemplate = config.getNameTemplate()
-        #     typeTokens = nameTemplate['types']
-        #     opTypeToken = typeTokens.get(type(kOperator).__name__, 'op')
-        #     solverNodeName = '_'.join([kOperator.getName(), opTypeToken])
-        #     solverSolveNodeName = '_'.join([kOperator.getName(), 'solve', opTypeToken])
+                        return -1
 
-        #     if isKLBased is True:
+                # Find operatorOwner to attach Canvas Operator to.
+                ownerOutPortIndex = findPortOfType(['Mat44', 'Mat44[]'], ['Out', 'IO'])
+                if ownerOutPortIndex is -1:
+                    raise Exception("Solver '" + kOperator.getName() + "' has no Mat44 outputs!")
 
-        #         pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
-        #                                   execPath="",
-        #                                   extDep=kOperator.getExtension())
+                ownerArg = ports[ownerOutPortIndex]
+                ownerArgName = ownerArg.name.getSimpleType()
+                ownerArgDataType = ownerArg.dataType.getSimpleType()
+                # ownerArgConnectionType = ownerArg.connectionType.getSimpleType()
 
-        #         solverTypeName = kOperator.getSolverTypeName()
+                if ownerArgDataType == 'Mat44[]':
+                    operatorOwner = self.getDCCSceneItem(kOperator.getOutput(ownerArgName)[0])
+                    ownerArgName = ownerArgName + str(0)
+                else:
+                    operatorOwner = self.getDCCSceneItem(kOperator.getOutput(ownerArgName))
 
-        #         # Create Solver Function Node
-        #         dfgEntry = "dfgEntry {\n  solver = " + solverTypeName + "();\n}"
-        #         solverNodeCode = "{}\n\n{}".format('require ' + kOperator.getExtension() + ';', dfgEntry)
+                operatorOwner.Select()
+                MaxPlus.Core.EvalMAXScript('operatorOwner = selection[1]')
+                operatorOwner.Deselect()
 
-        #         pm.FabricCanvasAddFunc(mayaNode=canvasNode,
-        #                                execPath="",
-        #                                title=solverNodeName,
-        #                                code=solverNodeCode, xPos="-220", yPos="100")
+                MaxPlus.Core.EvalMAXScript('matCtrl = FabricMatrixController()')
+                self._registerSceneItemPair(kOperator, rt.matCtrl)
 
-        #         pm.FabricCanvasAddPort(mayaNode=canvasNode,
-        #                                execPath=solverNodeName,
-        #                                desiredPortName="solver",
-        #                                portType="Out",
-        #                                typeSpec=solverTypeName,
-        #                                connectToPortPath="",
-        #                                extDep=kOperator.getExtension())
+                rt.operatorOwner.controller = rt.matCtrl
 
-        #         solverVarName = pm.FabricCanvasAddVar(mayaNode=canvasNode,
-        #                                               execPath="",
-        #                                               desiredNodeName="solverVar",
-        #                                               xPos="-75",
-        #                                               yPos="100",
-        #                                               type=solverTypeName,
-        #                                               extDep=kOperator.getExtension())
+                config = Config.getInstance()
+                nameTemplate = config.getNameTemplate()
+                typeTokens = nameTemplate['types']
+                opTypeToken = typeTokens.get(type(kOperator).__name__, 'op')
+                solverNodeName = '_'.join([kOperator.getName(), opTypeToken])
+                solverSolveNodeName = '_'.join([kOperator.getName(), 'solve', opTypeToken])
 
-        #         pm.FabricCanvasConnect(mayaNode=canvasNode,
-        #                                execPath="",
-        #                                srcPortPath=solverNodeName + ".solver",
-        #                                dstPortPath=solverVarName + ".value")
+                rt.matCtrl.DFGSetExtDeps(kOperator.getExtension())
 
-        #         # Crate Solver "Solve" Function Node
-        #         pm.FabricCanvasAddFunc(mayaNode=canvasNode,
-        #                                execPath="",
-        #                                title=solverSolveNodeName,
-        #                                code="dfgEntry {}", xPos="100", yPos="100")
+                solverTypeName = kOperator.getSolverTypeName()
 
-        #         pm.FabricCanvasAddPort(mayaNode=canvasNode,
-        #                                execPath=solverSolveNodeName,
-        #                                desiredPortName="solver",
-        #                                portType="IO",
-        #                                typeSpec=solverTypeName,
-        #                                connectToPortPath="",
-        #                                extDep=kOperator.getExtension())
+                # Create Solver Function Node
+                dfgEntry = "dfgEntry {\n  solver = " + solverTypeName + "();\n}"
+                solverNodeCode = "{}\n\n{}".format('require ' + kOperator.getExtension() + ';', dfgEntry)
 
-        #         pm.FabricCanvasConnect(mayaNode=canvasNode,
-        #                                execPath="",
-        #                                srcPortPath=solverVarName + ".value",
-        #                                dstPortPath=solverSolveNodeName + ".solver")
+                rt.matCtrl.DFGAddFunc(solverNodeName,  # title
+                                      solverNodeCode,  # code
+                                      rt.Point2(-220, 100),  # position
+                                      execPath="")
 
-        #         pm.FabricCanvasConnect(mayaNode=canvasNode,
-        #                                execPath="",
-        #                                srcPortPath=solverSolveNodeName + ".solver",
-        #                                dstPortPath="exec")
-        #     else:
-        #         pm.FabricCanvasSetExtDeps(mayaNode=canvasNode,
-        #                                   execPath="",
-        #                                   extDep="Kraken")
+                rt.matCtrl.DFGAddPort("solver",  # desiredPortName
+                                      2,  # portType
+                                      solverTypeName,  # typeSpec
+                                      portToConnect="",
+                                      extDep=kOperator.getExtension(),
+                                      metaData="",
+                                      execPath=solverNodeName)
 
-        #         graphNodeName = pm.FabricCanvasInstPreset(
-        #             mayaNode=canvasNode,
-        #             execPath="",
-        #             presetPath=kOperator.getPresetPath(),
-        #             xPos="100",
-        #             yPos="100")
+                solverVarName = rt.matCtrl.DFGAddVar("solverVar",
+                                     solverTypeName,  # desiredNodeName
+                                     kOperator.getExtension(),  # extDep
+                                     rt.Point2(-75, 100),  # position
+                                     execPath="")
 
-        #     portCount = 0
-        #     if isKLBased is True:
-        #         portCount = len(kOperator.getSolverArgs())
-        #     else:
-        #         portCount = node.getExecPortCount()
+                rt.matCtrl.DFGConnect(solverNodeName + ".solver",  # srcPortPath
+                                      solverVarName + ".value",  # dstPortPath
+                                      execPath="")
 
-        #     for i in xrange(portCount):
+                # Crate Solver "Solve" Function Node
+                rt.matCtrl.DFGAddFunc(solverSolveNodeName,  # title
+                                      "dfgEntry {}",  # code
+                                      rt.Point2(100, 100),  # position
+                                      execPath="")
 
-        #         if isKLBased is True:
-        #             args = kOperator.getSolverArgs()
-        #             arg = args[i]
-        #             portName = arg.name.getSimpleType()
-        #             portConnectionType = arg.connectionType.getSimpleType()
-        #             portDataType = arg.dataType.getSimpleType()
-        #         else:
-        #             portName = node.getExecPortName(i)
-        #             portConnectionType = portTypeMap[node.getExecPortType(i)]
-        #             rtVal = opBinding.getArgValue(portName)
-        #             portDataType = rtVal.getTypeName().getSimpleType()
+                rt.matCtrl.DFGAddPort("solver",  # desiredPortName
+                                      1,  # portType
+                                      solverTypeName,  # typeSpec
+                                      portToConnect="",
+                                      extDep=kOperator.getExtension(),
+                                      metaData="",
+                                      execPath=solverSolveNodeName)
 
-        #         if portConnectionType == 'In':
-        #             if isKLBased is True:
-        #                 pm.FabricCanvasAddPort(mayaNode=canvasNode,
-        #                                        execPath="",
-        #                                        desiredPortName=portName,
-        #                                        portType="In",
-        #                                        typeSpec=portDataType,
-        #                                        connectToPortPath="")
+                rt.matCtrl.DFGConnect(solverVarName + ".value",  # srcPortPath
+                                      solverSolveNodeName + ".solver",  # dstPortPath
+                                      execPath="")
 
-        #                 pm.FabricCanvasAddPort(mayaNode=canvasNode,
-        #                                        execPath=solverSolveNodeName,
-        #                                        desiredPortName=portName,
-        #                                        portType="In",
-        #                                        typeSpec=portDataType,
-        #                                        connectToPortPath="")
+                rt.matCtrl.DFGConnect(solverSolveNodeName + ".solver",  # srcPortPath
+                                      "exec",  # dstPortPath
+                                      execPath="")
+            else:
+                host = ks.getCoreClient().DFG.host
+                opBinding = host.createBindingToPreset(kOperator.getPresetPath())
+                node = opBinding.getExec()
 
-        #                 pm.FabricCanvasConnect(mayaNode=canvasNode,
-        #                                        execPath="",
-        #                                        srcPortPath=portName,
-        #                                        dstPortPath=solverSolveNodeName + "." + portName)
+                portTypeMap = {
+                    0: 'In',
+                    1: 'IO',
+                    2: 'Out'
+                }
 
-        #             else:
-        #                 if portDataType != 'Execute':
-        #                     pm.FabricCanvasAddPort(
-        #                         mayaNode=canvasNode,
-        #                         execPath="",
-        #                         desiredPortName=portName,
-        #                         portType="In",
-        #                         typeSpec=portDataType,
-        #                         connectToPortPath="")
+                ownerOutPortData = {
+                    'name': None,
+                    'typeSpec': None,
+                    'execPortType': None
+                }
 
-        #                 pm.FabricCanvasConnect(
-        #                     mayaNode=canvasNode,
-        #                     execPath="",
-        #                     srcPortPath=portName,
-        #                     dstPortPath=graphNodeName + "." + portName)
+                for i in xrange(node.getExecPortCount()):
+                    portName = node.getExecPortName(i)
+                    portType = node.getExecPortType(i)
+                    rtVal = opBinding.getArgValue(portName)
+                    typeSpec = rtVal.getTypeName().getSimpleType()
 
-        #         elif portConnectionType in ['IO', 'Out']:
+                    if typeSpec in ['Mat44', 'Mat44[]'] and portTypeMap[portType] in ['Out', 'IO']:
+                        ownerOutPortData['name'] = portName
+                        ownerOutPortData['typeSpec'] = typeSpec
+                        ownerOutPortData['execPortType'] = portTypeMap[portType]
+                        break
 
-        #             if portDataType in ('Execute', 'InlineInstance', 'DrawingHandle'):
-        #                 # Don't expose invalid Maya data type InlineInstance, instead connect to exec port
-        #                 dstPortPath = "exec"
-        #             else:
-        #                 dstPortPath = portName
+                # Find operatorOwner to attach Splice Operator to.
+                if ownerOutPortData['name'] is None:
+                    raise Exception("Graph '" + uniqueNodeName + "' has no Mat44 outputs!")
 
-        #             if isKLBased is True:
-        #                 srcPortNode = solverSolveNodeName
-        #                 pm.FabricCanvasAddPort(
-        #                     mayaNode=canvasNode,
-        #                     execPath=solverSolveNodeName,
-        #                     desiredPortName=portName,
-        #                     portType="Out",
-        #                     typeSpec=portDataType,
-        #                     connectToPortPath="")
-        #             else:
-        #                 srcPortNode = graphNodeName
+                ownerOutPortName = ownerOutPortData['name']
+                ownerOutPortDataType = ownerOutPortData['typeSpec']
+                # ownerOutPortConnectionType = ownerOutPortData['execPortType']
 
-        #             if portDataType not in ('Execute', 'InlineInstance', 'DrawingHandle'):
-        #                 pm.FabricCanvasAddPort(
-        #                     mayaNode=canvasNode,
-        #                     execPath="",
-        #                     desiredPortName=portName,
-        #                     portType="Out",
-        #                     typeSpec=portDataType,
-        #                     connectToPortPath="")
+                if ownerOutPortDataType == 'Mat44[]':
+                    operatorOwner = self.getDCCSceneItem(kOperator.getOutput(ownerOutPortName)[0])
+                    ownerOutPortName = ownerOutPortName + str(0)
+                else:
+                    operatorOwner = self.getDCCSceneItem(kOperator.getOutput(ownerOutPortName))
 
-        #             pm.FabricCanvasConnect(
-        #                 mayaNode=canvasNode,
-        #                 execPath="",
-        #                 srcPortPath=srcPortNode + "." + portName,
-        #                 dstPortPath=dstPortPath)
+                operatorOwner.Select()
+                MaxPlus.Core.EvalMAXScript('operatorOwner = selection[1]')
+                operatorOwner.Deselect()
 
-        #         else:
-        #             raise Exception("Invalid connection type:" + portConnectionType)
+                MaxPlus.Core.EvalMAXScript('matCtrl = FabricMatrixController()')
+                self._registerSceneItemPair(kOperator, rt.matCtrl)
 
-        #         if portDataType == 'EvalContext':
-        #             continue
-        #         elif portDataType == 'Execute':
-        #             continue
-        #         elif portDataType == 'DrawingHandle':
-        #             continue
-        #         elif portDataType == 'InlineDebugShape':
-        #             continue
-        #         elif portDataType == 'Execute' and portName == 'exec':
-        #             continue
+                rt.operatorOwner.controller = rt.matCtrl
 
-        #         if portName == 'time':
-        #             pm.expression(o=canvasNode + '.time', s=canvasNode + '.time = time;')
-        #             continue
-        #         if portName == 'frame':
-        #             pm.expression(o=canvasNode + '.frame', s=canvasNode + '.frame = frame;')
-        #             continue
+                rt.matCtrl.DFGSetExtDeps("Kraken")
 
-        #         # Get the port's input from the DCC
-        #         if portConnectionType == 'In':
-        #             connectedObjects = kOperator.getInput(portName)
-        #         elif portConnectionType in ['IO', 'Out']:
-        #             connectedObjects = kOperator.getOutput(portName)
+                rt.matCtrl.DFGInstPreset(kOperator.getPresetPath(),  # presetPath
+                                         rt.Point2(100, 100))  # position
 
-        #         if portDataType.endswith('[]'):
-
-        #             # In CanvasMaya, output arrays are not resized by the system
-        #             # prior to calling into Canvas, so we explicily resize the
-        #             # arrays in the generated operator stub code.
-        #             if connectedObjects is None:
-        #                 connectedObjects = []
-
-        #             connectionTargets = []
-        #             for i in xrange(len(connectedObjects)):
-        #                 opObject = connectedObjects[i]
-        #                 dccSceneItem = self.getDCCSceneItem(opObject)
-
-        #                 if hasattr(opObject, "getName"):
-        #                     # Handle output connections to visibility attributes.
-        #                     if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
-        #                         dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
-        #                         dccSceneItem = dccItem.attr('visibility')
-        #                     elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
-        #                         dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
-        #                         shape = dccItem.getShape()
-        #                         dccSceneItem = shape.attr('visibility')
-
-        #                 connectionTargets.append(
-        #                     {
-        #                         'opObject': opObject,
-        #                         'dccSceneItem': dccSceneItem
-        #                     })
-        #         else:
-        #             if connectedObjects is None:
-        #                 if isKLBased:
-        #                     opType = kOperator.getExtension() + ":" + kOperator.getSolverTypeName()
-        #                 else:
-        #                     opType = kOperator.getPresetPath()
-
-        #                 logger.warning("Operator '" + solverSolveNodeName +
-        #                                "' of type '" + opType +
-        #                                "' port '" + portName + "' not connected.")
-
-        #             opObject = connectedObjects
-        #             dccSceneItem = self.getDCCSceneItem(opObject)
-        #             if hasattr(opObject, "getName"):
-        #                 # Handle output connections to visibility attributes.
-        #                 if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
-        #                     dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
-        #                     dccSceneItem = dccItem.attr('visibility')
-        #                 elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
-        #                     dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
-        #                     shape = dccItem.getShape()
-        #                     dccSceneItem = shape.attr('visibility')
-
-        #             connectionTargets = {
-        #                 'opObject': opObject,
-        #                 'dccSceneItem': dccSceneItem
-        #             }
-
-        #         # Add the Canvas Port for each port.
-        #         if portConnectionType == 'In':
-
-        #             def connectInput(tgt, opObject, dccSceneItem):
-        #                 if isinstance(opObject, Attribute):
-        #                     pm.connectAttr(dccSceneItem, tgt)
-        #                 elif isinstance(opObject, Object3D):
-        #                     pm.connectAttr(dccSceneItem.attr('worldMatrix'), tgt)
-        #                 elif isinstance(opObject, Xfo):
-        #                     self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
-        #                 elif isinstance(opObject, Mat44):
-        #                     self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject)
-        #                 elif isinstance(opObject, Vec2):
-        #                     pm.setAttr(tgt, opObject.x, opObject.y, type="double2")
-        #                 elif isinstance(opObject, Vec3):
-        #                     pm.setAttr(tgt, opObject.x, opObject.y, opObject.z, type="double3")
-        #                 else:
-        #                     validatePortValue(opObject, portName, portDataType)
-
-        #                     pm.setAttr(tgt, opObject)
-
-        #             if portDataType.endswith('[]'):
-        #                 for i in xrange(len(connectionTargets)):
-        #                     connectInput(
-        #                         canvasNode + "." + portName + '[' + str(i) + ']',
-        #                         connectionTargets[i]['opObject'],
-        #                         connectionTargets[i]['dccSceneItem'])
-        #             else:
-        #                 connectInput(
-        #                     canvasNode + "." + portName,
-        #                     connectionTargets['opObject'],
-        #                     connectionTargets['dccSceneItem'])
-
-        #         elif portConnectionType in ['IO', 'Out']:
-
-        #             def connectOutput(src, opObject, dccSceneItem):
-        #                 if isinstance(opObject, Attribute):
-        #                     pm.connectAttr(src, dccSceneItem)
-        #                 elif isinstance(opObject, Object3D):
-        #                     decomposeNode = pm.createNode('decomposeMatrix')
-        #                     pm.connectAttr(src,
-        #                                    decomposeNode.attr("inputMatrix"),
-        #                                    force=True)
-
-        #                     decomposeNode.attr("outputRotate").connect(dccSceneItem.attr("rotate"))
-        #                     decomposeNode.attr("outputScale").connect(dccSceneItem.attr("scale"))
-        #                     decomposeNode.attr("outputTranslate").connect(dccSceneItem.attr("translate"))
-        #                 elif isinstance(opObject, Xfo):
-        #                     raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Xfo outputs types directly!")
-        #                 elif isinstance(opObject, Mat44):
-        #                     raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Mat44 types directly!")
-        #                 else:
-        #                     raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Python built-in types [%s] directly!" % (src, opObject.__class__.__name__))
-
-        #             if portDataType.endswith('[]'):
-        #                 for i in xrange(len(connectionTargets)):
-        #                     connectOutput(
-        #                         str(canvasNode + "." + portName) + '[' + str(i) + ']',
-        #                         connectionTargets[i]['opObject'],
-        #                         connectionTargets[i]['dccSceneItem'])
-        #             else:
-        #                 if connectionTargets['opObject'] is not None:
-        #                     connectOutput(
-        #                         str(canvasNode + "." + portName),
-        #                         connectionTargets['opObject'],
-        #                         connectionTargets['dccSceneItem'])
-
-        #     if isKLBased is True:
-        #         opSourceCode = kOperator.generateSourceCode()
-        #         pm.FabricCanvasSetCode(mayaNode=canvasNode,
-        #                                execPath=solverSolveNodeName,
-        #                                code=opSourceCode)
-
-        # finally:
-        #     pass
+        finally:
+            pass
 
         return True
 
