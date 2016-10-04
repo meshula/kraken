@@ -1293,8 +1293,74 @@ class Builder(Builder):
 
                 rt.matCtrl.DFGSetExtDeps("Kraken")
 
-                rt.matCtrl.DFGInstPreset(kOperator.getPresetPath(),  # presetPath
+                graphNodeName = rt.matCtrl.DFGInstPreset(kOperator.getPresetPath(),  # presetPath
                                          rt.Point2(100, 100))  # position
+
+            portCount = 0
+            if isKLBased is True:
+                portCount = len(kOperator.getSolverArgs())
+            else:
+                portCount = node.getExecPortCount()
+
+            for i in xrange(portCount):
+
+                if isKLBased is True:
+                    args = kOperator.getSolverArgs()
+                    arg = args[i]
+                    portName = arg.name.getSimpleType()
+                    portConnectionType = arg.connectionType.getSimpleType()
+                    portDataType = arg.dataType.getSimpleType()
+                else:
+                    portName = node.getExecPortName(i)
+                    portConnectionType = portTypeMap[node.getExecPortType(i)]
+                    rtVal = opBinding.getArgValue(portName)
+                    portDataType = rtVal.getTypeName().getSimpleType()
+
+                if portConnectionType == 'In':
+                    if isKLBased is True:
+                        rt.matCtrl.DFGAddPort(portName,  # desiredPortName
+                                      0,  # portType
+                                      portDataType,  # typeSpec
+                                      portToConnect="",
+                                      extDep="",
+                                      metaData="",
+                                      execPath="")
+
+                        # pm.FabricCanvasAddPort(mayaNode=canvasNode,
+                        #                        execPath="",
+                        #                        desiredPortName=portName,
+                        #                        portType="In",
+                        #                        typeSpec=portDataType,
+                        #                        connectToPortPath="")
+
+                        # pm.FabricCanvasAddPort(mayaNode=canvasNode,
+                        #                        execPath=solverSolveNodeName,
+                        #                        desiredPortName=portName,
+                        #                        portType="In",
+                        #                        typeSpec=portDataType,
+                        #                        connectToPortPath="")
+
+                        # pm.FabricCanvasConnect(mayaNode=canvasNode,
+                        #                        execPath="",
+                        #                        srcPortPath=portName,
+                        #                        dstPortPath=solverSolveNodeName + "." + portName)
+
+                    else:
+                        pass
+                        # if portDataType != 'Execute':
+                        #     pm.FabricCanvasAddPort(
+                        #         mayaNode=canvasNode,
+                        #         execPath="",
+                        #         desiredPortName=portName,
+                        #         portType="In",
+                        #         typeSpec=portDataType,
+                        #         connectToPortPath="")
+
+                        # pm.FabricCanvasConnect(
+                        #     mayaNode=canvasNode,
+                        #     execPath="",
+                        #     srcPortPath=portName,
+                        #     dstPortPath=graphNodeName + "." + portName)
 
         finally:
             pass
