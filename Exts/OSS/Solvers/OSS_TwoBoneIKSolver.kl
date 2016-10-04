@@ -31,7 +31,7 @@ function KrakenSolverArg[] OSS_TwoBoneIKSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
 
   args.push(KrakenSolverArg('ikBlend', 'In', 'Scalar'));
-  args.push(KrakenSolverArg('softIK', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('softIK', 'In', 'Scalar'));  // 0.25 is a nice value if you want it
   args.push(KrakenSolverArg('squash', 'In', 'Scalar'));
   args.push(KrakenSolverArg('stretch', 'In', 'Scalar'));
 
@@ -62,13 +62,10 @@ function oss_solve2BoneIK(
   in Vec3 rootPosition,
   in Vec3 upVPosition,
   in Vec3 goalPosition,
-  in Vec3 realGoalPosition,
   io Xfo bone0Xfo,
   io Xfo bone1Xfo
 ) {
 
-  // goalPosition = position to calculate the two boneIK
-  // realGoalPosition = position of the actual ikGoal (will only be different if using softIK value, for exmple)
 
   Vec3 rootToGoal = goalPosition - rootPosition;
   Vec3 rootToUpV = upVPosition - rootPosition;
@@ -94,12 +91,45 @@ function oss_solve2BoneIK(
   bone1Xfo.tr = bone0Xfo.tr + bone0Xfo.ori.rotateVector(Vec3(bone0Length, 0.0, 0.0));
   bone1Xfo.ori = bone0Xfo.ori;
 
-  offset.setFrom2Vectors(bone1Xfo.ori.getXaxis(), (realGoalPosition - bone1Xfo.tr).unit());
+  offset.setFrom2Vectors(bone1Xfo.ori.getXaxis(), (goalPosition - bone1Xfo.tr).unit());
   bone1Xfo.ori = offset * bone1Xfo.ori;
+}
+//
+//https://www.desmos.com/calculator/ui3o1qbuer
+inline Scalar diminishByExponent(Scalar input, Scalar x, UInt32 exponent)
+{
+  // For the range of 0 to 1 of x,
+  //  Blend input with x exponentially
+  return input * (1.0-pow(x, exponent))   +   x * pow(x, exponent);
 }
 
 
+inline Scalar softCompression(Scalar inDist, Scalar fullDist, UInt32 exponent, UInt32 diminishIterations)
+{
 
+    Scalar x = 1 - ((fullDist - inDist) / fullDist);
+
+    //report("x: "+x);
+    Scalar strength = exponent;  // Less controls if we just combine these two
+    Scalar z = 1 - x;
+
+    Scalar zexp = pow(z, exponent);
+    //softMult = 1-((zexp*(1.0-zexp)+z*zexp)*(1.0-zexp)+z*zexp);
+    //Scalar softMult = 1-(((z^i)*(1.0-(z^i))+z*(z^i))*(1.0-(z^i))+z*(z^i));
+
+    Scalar softMult = 1-((pow(z, strength)*(1.0-zexp) + z*zexp)*(1.0-zexp)+z*zexp);
+    softMult = pow(z, strength);
+    // Now, let's attenuate this by blending back to x exponentially
+    for(UInt32 i = 0; i < diminishIterations; i++)
+      softMult = diminishByExponent(softMult, z, exponent);
+    softMult = 1-softMult;
+
+    //report("--------------------");
+    //report("softMult: "+softMult);
+
+    return fullDist * softMult;
+
+}
 
 
 // Solve
@@ -139,45 +169,35 @@ function OSS_TwoBoneIKSolver.solve!(
 
   Scalar legLength = (bone0LenRigScaled + bone1LenRigScaled);
 
-  Scalar softIKRigScaled = softIK * rigScale;  //Make sure
-
   Scalar stretchedRatio = 1.0;  //Delete this
 
   Vec3 ikHandlePos = ikHandleXfo.tr;
-  Vec3 ikGoalPos = ikHandlePos;
 
   Vec3 base2handleVec = ikHandleXfo.tr - bone0FkXfo.tr;
   Scalar base2handleDistance = ikHandleXfo.tr.distanceTo(bone0Xfo.tr);
-  Scalar base2goalDistance = base2handleDistance; // May be changed by damping, etc
   Vec3 straightLegGoalPos = bone0FkXfo.tr + (base2handleVec.unit() * legLength);
 
-  Scalar damping = softIK * (1.0-squash);  // Turn off damping when squash is on / helps paritally, but not a great solution
 
   if(ikBlend > 0) {
 
     // Damping distance will change the IK goal position
-    if (damping > 0 && legLength - base2handleDistance < damping) // If ik goal is within damping range...
+
+    if (softIK > 0 && base2handleDistance < legLength)
     {
-      //
-      Scalar hardDist = legLength - damping;
-      base2goalDistance = damping * (1-exp (-(base2handleDistance-hardDist) / damping)) + hardDist;
+      Scalar softRange = softIK / 10.0;
+      Scalar softDist = legLength * softRange;
+      Scalar hardDist = legLength * (1.0 - softRange);
+      Scalar remainder = base2handleDistance - hardDist;
+      if( remainder > 0){
 
-      // Move ik goal position
-      Vec3 base2goalVec = base2handleVec * (base2goalDistance / base2handleDistance);
-      ikGoalPos = bone0FkXfo.tr + base2goalVec;
-
-      Vec3 ikGoalDiff =  ikGoalPos - straightLegGoalPos;
-
-      // If the ik handle is farther away than a straight-leg
-      if (stretch > 0 && base2handleDistance > legLength)
-      {
-        ikGoalPos = ikHandleXfo.tr + ikGoalDiff;
+        Scalar base2goalDistance = hardDist + softCompression(remainder, softDist, 3, 4);
+        Scalar shrinkage = base2handleDistance / base2goalDistance;
+        legLength *= shrinkage;
+        bone0Length *= shrinkage;
+        bone1Length *= shrinkage;
       }
-      //bone0Length *= (newDist / hardDist);
-      //bone1Length *= (newDist / hardDist);
-      //bone0LenRigScaled = bone0Length * rigScale;
-      //bone1LenRigScaled = bone1Length * rigScale;
     }
+
     if (squash > 0)
     {
       if (base2handleDistance < legLength)
@@ -185,8 +205,6 @@ function OSS_TwoBoneIKSolver.solve!(
         Scalar squashedLegLength = (legLength - squash * (legLength - base2handleDistance) );
         bone0Length *= (squashedLegLength / legLength);
         bone1Length *= (squashedLegLength / legLength);
-        bone0LenRigScaled = bone0Length * rigScale;
-        bone1LenRigScaled = bone1Length * rigScale;
         legLength = squashedLegLength;
       }
     }
@@ -199,22 +217,19 @@ function OSS_TwoBoneIKSolver.solve!(
 
         bone0Length *= (stretchedLegLength / legLength);
         bone1Length *= (stretchedLegLength / legLength);
-        bone0LenRigScaled = bone0Length * rigScale;
-        bone1LenRigScaled = bone1Length * rigScale;
         legLength = stretchedLegLength;
       }
 
-    } else
-    {
-      //distance = bone0LenRigScaled + bone1LenRigScaled;
     }
+
+    bone0LenRigScaled = bone0Length * rigScale;
+    bone1LenRigScaled = bone1Length * rigScale;
 
     oss_solve2BoneIK(
       bone0LenRigScaled,
       bone1LenRigScaled,
       root.translation(),
       upV.translation(),
-      ikGoalPos,
       ikHandlePos,
       bone0Xfo,
       bone1Xfo
@@ -240,28 +255,7 @@ function OSS_TwoBoneIKSolver.solve!(
 
   // project bone2 to the end of bone 1
   bone2Xfo = bone1Xfo;
-
-  Scalar blend = stretch;
-  if (base2handleDistance < legLength)  //if
-    blend = 1.0;
-
-  Scalar ikBone1Length = bone1Xfo.tr.distanceTo(straightLegGoalPos.linearInterpolate(ikHandlePos, blend));
-  Scalar adjustedBone1Length = bone1LenRigScaled.linearInterpolate(ikBone1Length, ikBlend);
-
-  bone2Xfo.tr = bone1Xfo.transformVector(adjustedBone1Length * getAxisAsVector(boneAxis));
-  // If we are reoriented bone1 because of softIK, bone1Length needs to be lengthened to reach the original goal
-  // Note, lower limb will be slightly longer than upper, but should be negligible
-  //bone2Xfo.tr = bone2Xfo.transformVector((bone2Xfo.tr.distanceTo(ikHandlePos)) * getAxisAsVector(boneAxis));
-
-  //if (base2handleDistance > legLength)  // If leg is straight
-  //  bone2Xfo.tr = straightLegGoalPos.linearInterpolate(ikHandlePos, stretch);  // Find out if linearInterpolate is optimized at 0,1
-  //else
-  //  bone2Xfo.tr = ikHandlePos;
-
-
-
-  // softIK may pull the foot away from ik goal, put it back
-  //bone2Xfo.tr = ikHandleXfo.tr;
+  bone2Xfo.tr = bone1Xfo.transformVector(bone1LenRigScaled * getAxisAsVector(boneAxis));
 
   // Set scaling
   Vec3 outScaling = Vec3(rigScale, rigScale, rigScale);
@@ -287,7 +281,6 @@ function OSS_TwoBoneIKSolver.solve!(
     //etDrawBone(this.handle.rootTransform, 'debug', ikHandleXfo, 0.2,  0.2, blueColor);
     //etDrawBone(this.handle.rootTransform, 'debug1', debugXfo, 0.2,  0.2, yellowColor);
     etDrawBone(this.handle.rootTransform, 'debug2', Xfo(straightLegGoalPos), 0.2,  0.2, redColor);
-    etDrawBone(this.handle.rootTransform, 'debug3', Xfo(ikGoalPos), 0.2,  0.2, greenColor);
     etDrawBone(this.handle.rootTransform, 'debug4', Xfo(ikHandlePos), 0.1,  0.1, cyanColor);
 
     //etDrawBone(this.handle.rootTransform, 'bone1', bone1Xfo, bone1LenRigScaled, bone1LenRigScaled * 0.15, boneColor);
