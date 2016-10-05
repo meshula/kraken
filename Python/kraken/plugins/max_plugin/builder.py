@@ -437,7 +437,7 @@ class Builder(Builder):
 
         dccSceneItem = dataDef
 
-        self._registerSceneItemPair(kAttribute, dccSceneItem)
+        self._registerSceneItemPair(kAttribute, (parentDCCSceneItem, customAttr, kAttribute.getName()))
 
         return True
 
@@ -503,7 +503,8 @@ class Builder(Builder):
 
         dccSceneItem = dataDef
 
-        self._registerSceneItemPair(kAttribute, dccSceneItem)
+        self._registerSceneItemPair(kAttribute, (parentDCCSceneItem, customAttr, kAttribute.getName()))
+        # self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
 
@@ -568,7 +569,7 @@ class Builder(Builder):
 
         dccSceneItem = dataDef
 
-        self._registerSceneItemPair(kAttribute, dccSceneItem)
+        self._registerSceneItemPair(kAttribute, (parentDCCSceneItem, customAttr, kAttribute.getName()))
 
         return True
 
@@ -628,7 +629,7 @@ class Builder(Builder):
 
         dccSceneItem = dataDef
 
-        self._registerSceneItemPair(kAttribute, dccSceneItem)
+        self._registerSceneItemPair(kAttribute, (parentDCCSceneItem, customAttr, kAttribute.getName()))
 
         return True
 
@@ -711,6 +712,7 @@ class Builder(Builder):
             # attribute
             driverAttr = kAttribute.getConnection()
             if driverAttr.getName() == 'visibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+                logger.warning('Connection to/from visibility is not supported currently!')
                 pass
                 # dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
                 # driver = dccItem.attr('visibility')
@@ -719,6 +721,7 @@ class Builder(Builder):
                 # and from visibility!
 
             elif driverAttr.getName() == 'shapeVisibility' and driverAttr.getParent().getName() == 'implicitAttrGrp':
+                logger.warning('Connection to/from visibility is not supported currently!')
                 pass
                 # dccItem = self.getDCCSceneItem(driverAttr.getParent().getParent())
                 # shape = dccItem.getShape()
@@ -738,6 +741,7 @@ class Builder(Builder):
             # Detect if the driven attribute is a visibility attribute and map
             # to correct DCC attribute
             if kAttribute.getName() == 'visibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                logger.warning('Connection to/from visibility is not supported currently!')
                 pass
                 # dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
                 # driven = dccItem.attr('visibility')
@@ -746,6 +750,7 @@ class Builder(Builder):
                 # and from visibility!
 
             elif kAttribute.getName() == 'shapeVisibility' and kAttribute.getParent().getName() == 'implicitAttrGrp':
+                logger.warning('Connection to/from visibility is not supported currently!')
                 pass
                 # dccItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
                 # shape = dccItem.getShape()
@@ -1319,48 +1324,243 @@ class Builder(Builder):
                 if portConnectionType == 'In':
                     if isKLBased is True:
                         rt.matCtrl.DFGAddPort(portName,  # desiredPortName
-                                      0,  # portType
-                                      portDataType,  # typeSpec
-                                      portToConnect="",
-                                      extDep="",
-                                      metaData="",
-                                      execPath="")
+                                              0,  # portType
+                                              portDataType,  # typeSpec
+                                              portToConnect="",
+                                              extDep="",
+                                              metaData="",
+                                              execPath="")
 
-                        # pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                        #                        execPath="",
-                        #                        desiredPortName=portName,
-                        #                        portType="In",
-                        #                        typeSpec=portDataType,
-                        #                        connectToPortPath="")
+                        rt.matCtrl.DFGAddPort(portName,  # desiredPortName
+                                              0,  # portType
+                                              portDataType,  # typeSpec
+                                              portToConnect="",
+                                              extDep="",
+                                              metaData="",
+                                              execPath=solverSolveNodeName)
 
-                        # pm.FabricCanvasAddPort(mayaNode=canvasNode,
-                        #                        execPath=solverSolveNodeName,
-                        #                        desiredPortName=portName,
-                        #                        portType="In",
-                        #                        typeSpec=portDataType,
-                        #                        connectToPortPath="")
-
-                        # pm.FabricCanvasConnect(mayaNode=canvasNode,
-                        #                        execPath="",
-                        #                        srcPortPath=portName,
-                        #                        dstPortPath=solverSolveNodeName + "." + portName)
+                        rt.matCtrl.DFGConnect(portName,  # srcPortPath
+                                              solverSolveNodeName + "." + portName,  # dstPortPath
+                                              execPath="")
 
                     else:
-                        pass
-                        # if portDataType != 'Execute':
-                        #     pm.FabricCanvasAddPort(
-                        #         mayaNode=canvasNode,
-                        #         execPath="",
-                        #         desiredPortName=portName,
-                        #         portType="In",
-                        #         typeSpec=portDataType,
-                        #         connectToPortPath="")
+                        if portDataType != 'Execute':
+                            rt.matCtrl.DFGAddPort(portName,  # desiredPortName
+                                                  0,  # portType
+                                                  portDataType,  # typeSpec
+                                                  portToConnect="",
+                                                  extDep="",
+                                                  metaData="",
+                                                  execPath="")
 
-                        # pm.FabricCanvasConnect(
-                        #     mayaNode=canvasNode,
-                        #     execPath="",
-                        #     srcPortPath=portName,
-                        #     dstPortPath=graphNodeName + "." + portName)
+                        rt.matCtrl.DFGConnect(portName,  # srcPortPath
+                                              graphNodeName + "." + portName,  # dstPortPath
+                                              execPath="")
+
+                elif portConnectionType in ['IO', 'Out']:
+
+                    if portDataType in ('Execute', 'InlineInstance', 'DrawingHandle'):
+                        # Don't expose invalid Maya data type InlineInstance, instead connect to exec port
+                        dstPortPath = "exec"
+                    else:
+                        dstPortPath = portName
+
+                    if isKLBased is True:
+                        srcPortNode = solverSolveNodeName
+                        rt.matCtrl.DFGAddPort(portName,  # desiredPortName
+                                              2,  # portType
+                                              portDataType,  # typeSpec
+                                              portToConnect="",
+                                              extDep="",
+                                              metaData="",
+                                              execPath=solverSolveNodeName)
+                    else:
+                        srcPortNode = graphNodeName
+
+                    if portDataType not in ('Execute', 'InlineInstance', 'DrawingHandle'):
+                        rt.matCtrl.DFGAddPort(portName,  # desiredPortName
+                                              2,  # portType
+                                              portDataType,  # typeSpec
+                                              portToConnect="",
+                                              extDep="",
+                                              metaData="",
+                                              execPath="")
+
+                    rt.matCtrl.DFGConnect(srcPortNode + "." + portName,  # srcPortPath
+                                          dstPortPath,  # dstPortPath
+                                          execPath="")
+
+                else:
+                    raise Exception("Invalid connection type:" + portConnectionType)
+
+                if portDataType == 'EvalContext':
+                    continue
+                elif portDataType == 'Execute':
+                    continue
+                elif portDataType == 'DrawingHandle':
+                    continue
+                elif portDataType == 'InlineDebugShape':
+                    continue
+                elif portDataType == 'Execute' and portName == 'exec':
+                    continue
+
+                if portName == 'time':
+                    print "Set Expression on 'time' parameter!"
+                    # pm.expression(o=canvasNode + '.time', s=canvasNode + '.time = time;')
+                    continue
+                if portName == 'frame':
+                    print "Set Expression on 'frame' parameter!"
+                    # pm.expression(o=canvasNode + '.frame', s=canvasNode + '.frame = frame;')
+                    continue
+
+                # Get the port's input from the DCC
+                if portConnectionType == 'In':
+                    connectedObjects = kOperator.getInput(portName)
+                elif portConnectionType in ['IO', 'Out']:
+                    connectedObjects = kOperator.getOutput(portName)
+
+                if portDataType.endswith('[]'):
+
+                    # In CanvasMaya, output arrays are not resized by the system
+                    # prior to calling into Canvas, so we explicily resize the
+                    # arrays in the generated operator stub code.
+                    if connectedObjects is None:
+                        connectedObjects = []
+
+                    connectionTargets = []
+                    for i in xrange(len(connectedObjects)):
+                        opObject = connectedObjects[i]
+                        dccSceneItem = self.getDCCSceneItem(opObject)
+
+                        if hasattr(opObject, "getName"):
+                            # Handle output connections to visibility attributes.
+                            if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+                                logger.warning('Connection to/from visibility is not supported currently!')
+                                pass
+                                # dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+                                # dccSceneItem = dccItem.attr('visibility')
+                            elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+                                logger.warning('Connection to/from visibility is not supported currently!')
+                                pass
+                                # dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+                                # shape = dccItem.getShape()
+                                # dccSceneItem = shape.attr('visibility')
+
+                        connectionTargets.append(
+                            {
+                                'opObject': opObject,
+                                'dccSceneItem': dccSceneItem
+                            })
+                else:
+                    if connectedObjects is None:
+                        if isKLBased:
+                            opType = kOperator.getExtension() + ":" + kOperator.getSolverTypeName()
+                        else:
+                            opType = kOperator.getPresetPath()
+
+                        logger.warning("Operator '" + solverSolveNodeName +
+                                       "' of type '" + opType +
+                                       "' port '" + portName + "' not connected.")
+
+                    opObject = connectedObjects
+                    dccSceneItem = self.getDCCSceneItem(opObject)
+                    if hasattr(opObject, "getName"):
+                        # Handle output connections to visibility attributes.
+                        if opObject.getName() == 'visibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+                            logger.warning('Connection to/from visibility is not supported currently!')
+                            pass
+                            # dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+                            # dccSceneItem = dccItem.attr('visibility')
+                        elif opObject.getName() == 'shapeVisibility' and opObject.getParent().getName() == 'implicitAttrGrp':
+                            logger.warning('Connection to/from visibility is not supported currently!')
+                            pass
+                            # dccItem = self.getDCCSceneItem(opObject.getParent().getParent())
+                            # shape = dccItem.getShape()
+                            # dccSceneItem = shape.attr('visibility')
+
+                    connectionTargets = {
+                        'opObject': opObject,
+                        'dccSceneItem': dccSceneItem
+                    }
+
+                # Add the Canvas Port for each port.
+                if portConnectionType == 'In':
+
+                    def connectInput(tgt, opObject, dccSceneItem):
+                        if isinstance(opObject, Attribute):
+
+                            node = dccSceneItem[0]
+                            attributeGrp = dccSceneItem[1].name
+                            attributeName = dccSceneItem[2]
+
+                            node.Select()
+                            MaxPlus.Core.EvalMAXScript('srcAttrParentObj = selection[1]')
+                            node.Deselect()
+
+                            srcStr = 'srcAttrParentObj.baseObject.{}[#{}]'.format(attributeGrp, attributeName)
+                            logger.warning(srcStr)
+
+                            tgtStr = 'operatorOwner.transform.controller[#{}]'.format(tgt)
+                            logger.warning(tgtStr)
+
+                            MaxPlus.Core.EvalMAXScript('paramWire.connect {} {} "{}"'.format(srcStr, tgtStr, attributeName))
+
+                        elif isinstance(opObject, Object3D):
+                            # pm.connectAttr(dccSceneItem.attr('worldMatrix'), tgt)
+
+                            logger.warning("Connecting Object: {} to {}'s world matrix".format(
+                                dccSceneItem, tgt))
+
+                        elif isinstance(opObject, Xfo):
+                            # self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
+
+                            logger.warning("Setting Xfo values: {} to {}".format(
+                                str(opObject.toMat44()), tgt))
+
+                        elif isinstance(opObject, Mat44):
+                            # self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject)
+
+                            logger.warning("Setting Mat44 values: {} to {}".format(
+                                str(opObject), tgt))
+
+                        elif isinstance(opObject, Vec2):
+                            # pm.setAttr(tgt, opObject.x, opObject.y, type="double2")
+
+                            logger.warning("Setting Vec2 values: {} to {}".format(
+                                str((opObject.x, opObject.y)), tgt))
+
+                        elif isinstance(opObject, Vec3):
+                            # pm.setAttr(tgt, opObject.x, opObject.y, opObject.z, type="double3")
+
+                            logger.warning("Setting Vec3 values: {} to {}".format(
+                                str((opObject.x, opObject.y, opObject.z)), tgt))
+
+                        else:  # Set Python value to port
+                            validatePortValue(opObject, portName, portDataType)
+
+                            logger.warning("Setting values: {} to {}".format(
+                                str(opObject), tgt))
+
+                            # pm.setAttr(tgt, opObject)
+
+                    if portDataType.endswith('[]'):
+                        for i in xrange(len(connectionTargets)):
+                            # logger.warning("Connecting Array Input: {}:{}".format(
+                            #     connectionTargets[i]['opObject'],
+                            #     connectionTargets[i]['dccSceneItem']))
+                            connectInput(
+                                portName + '[' + str(i) + ']',
+                                connectionTargets[i]['opObject'],
+                                connectionTargets[i]['dccSceneItem'])
+                    else:
+                        # logger.warning("Connecting Input: {}:{}".format(
+                        #     connectionTargets['opObject'],
+                        #     connectionTargets['dccSceneItem']))
+
+                        connectInput(
+                            portName,
+                            connectionTargets['opObject'],
+                            connectionTargets['dccSceneItem'])
 
         finally:
             pass
