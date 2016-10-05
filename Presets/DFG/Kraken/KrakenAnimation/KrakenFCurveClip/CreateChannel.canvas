@@ -1,0 +1,61 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: KrakenFCurveClip\n  name: String\n  interpolation: UInt32\n  result: KeyframeTrack[]\n"
+    },
+  "title" : "CreateChannel",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "KrakenFCurveClip"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "name",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "String"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiCombo" : "(\"Constant\", \"Linear\", \"Bezier\")"
+        },
+      "name" : "interpolation",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "UInt32" : 2
+        },
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "KeyframeTrack[]"
+      }
+    ],
+  "extDeps" : {
+    "KrakenAnimation" : "*"
+    },
+  "presetGUID" : "128D48CC902F49A75D07968C6B64FD8D",
+  "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = this.createChannel(name, interpolation);
+}
+"
+  }
