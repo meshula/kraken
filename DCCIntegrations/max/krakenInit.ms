@@ -2,8 +2,9 @@
 python.Init()
 
 -- grab current directory and format to krakenHook.py file
-krakeEnvScriptPath = "C:\Users\Eric\Documents\dev\kraken\DCCIntegrations\max\scripts\krakenEnv.py"
-krakeMenuScriptPath = "C:\Users\Eric\Documents\dev\kraken\DCCIntegrations\max\scripts\krakenMenu.py"
+currFilePath = getFilenamePath ( getThisScriptFilename() )
+krakeEnvScriptPath = currFilePath + "scripts\krakenEnv.py"
+krakeMenuScriptPath = currFilePath + "scripts\krakenMenu.py"
 
 -- Execute Python startup modules
 python.ExecuteFile krakeEnvScriptPath
