@@ -1486,7 +1486,7 @@ class Builder(Builder):
                 # Add the Canvas Port for each port.
                 if portConnectionType == 'In':
 
-                    def connectInput(tgt, opObject, dccSceneItem):
+                    def connectInput(tgt, opObject, dccSceneItem, isArrayPort=False):
                         if isinstance(opObject, Attribute):
 
                             node = dccSceneItem[0]
@@ -1498,18 +1498,26 @@ class Builder(Builder):
                             node.Deselect()
 
                             srcStr = 'srcAttrParentObj.baseObject.{}[#{}]'.format(attributeGrp, attributeName)
-                            logger.warning(srcStr)
-
                             tgtStr = 'operatorOwner.transform.controller[#{}]'.format(tgt)
-                            logger.warning(tgtStr)
 
                             MaxPlus.Core.EvalMAXScript('paramWire.connect {} {} "{}"'.format(srcStr, tgtStr, attributeName))
 
                         elif isinstance(opObject, Object3D):
-                            # pm.connectAttr(dccSceneItem.attr('worldMatrix'), tgt)
+                            dccSceneItem.Select()
+                            MaxPlus.Core.EvalMAXScript('srcMatrixObj = selection[1]')
+                            dccSceneItem.Deselect()
 
-                            logger.warning("Connecting Object: {} to {}'s world matrix".format(
-                                dccSceneItem, tgt))
+                            if isArrayPort is True:
+                                # Set port to MaxNode mode to connect object
+                                rt.matCtrl.SetMaxTypeForArg(tgt, 2065)
+
+                                # TODO: Get Array inputs working!
+
+                            else:
+                                # Set port to MaxNode mode to connect object
+                                rt.matCtrl.SetMaxTypeForArg(tgt, 17)
+
+                                setattr(rt.matCtrl, tgt, rt.srcMatrixObj)
 
                         elif isinstance(opObject, Xfo):
                             # self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
@@ -1551,7 +1559,7 @@ class Builder(Builder):
                             connectInput(
                                 portName + '[' + str(i) + ']',
                                 connectionTargets[i]['opObject'],
-                                connectionTargets[i]['dccSceneItem'])
+                                connectionTargets[i]['dccSceneItem'], isArrayPort=True)
                     else:
                         # logger.warning("Connecting Input: {}:{}".format(
                         #     connectionTargets['opObject'],
