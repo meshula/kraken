@@ -1166,15 +1166,15 @@ class Builder(Builder):
                     raise Exception("Solver '" + kOperator.getName() + "' has no Mat44 outputs!")
 
                 ownerArg = ports[ownerOutPortIndex]
-                ownerArgName = ownerArg.name.getSimpleType()
-                ownerArgDataType = ownerArg.dataType.getSimpleType()
+                ownerOutPortName = ownerArg.name.getSimpleType()
+                ownerOutPortDataType = ownerArg.dataType.getSimpleType()
                 # ownerArgConnectionType = ownerArg.connectionType.getSimpleType()
 
-                if ownerArgDataType == 'Mat44[]':
-                    operatorOwner = self.getDCCSceneItem(kOperator.getOutput(ownerArgName)[0])
-                    ownerArgName = ownerArgName + str(0)
+                if ownerOutPortDataType == 'Mat44[]':
+                    operatorOwner = self.getDCCSceneItem(kOperator.getOutput(ownerOutPortName)[0])
+                    ownerOutPortName = ownerOutPortName + str(0)
                 else:
-                    operatorOwner = self.getDCCSceneItem(kOperator.getOutput(ownerArgName))
+                    operatorOwner = self.getDCCSceneItem(kOperator.getOutput(ownerOutPortName))
 
                 operatorOwner.Select()
                 MaxPlus.Core.EvalMAXScript('operatorOwner = selection[1]')
@@ -1244,6 +1244,30 @@ class Builder(Builder):
                 rt.matCtrl.DFGConnect(solverSolveNodeName + ".solver",  # srcPortPath
                                       "exec",  # dstPortPath
                                       execPath="")
+
+                logger.warning("Connecting ownerOutPort: {}".format(ownerOutPortName))
+                logger.warning("           ownerOutPortDataType: {}".format(ownerOutPortDataType))
+                if ownerOutPortDataType.endswith('[]'):
+                    logger.warning("Connecting Array output to 'outputValue'")
+                    arrayGetNodeName = rt.matCtrl.DFGInstPreset("Fabric.Core.Array.Get",
+                                                                rt.Point2(600, 200),
+                                                                execPath="")
+
+                    logger.warning(solverSolveNodeName + "." + ownerOutPortName[:-1] + " > " +
+                                   arrayGetNodeName + ".array")
+
+                    rt.matCtrl.DFGConnect(solverSolveNodeName + "." + ownerOutPortName[:-1],
+                                          arrayGetNodeName + ".array",
+                                          execPath="")
+
+                    rt.matCtrl.DFGConnect(arrayGetNodeName + ".element",
+                                          "outputValue",
+                                          execPath="")
+                else:
+                    rt.matCtrl.DFGConnect(solverSolveNodeName + "." + ownerOutPortName,
+                                          "outputValue",
+                                          execPath="")
+
             else:
                 host = ks.getCoreClient().DFG.host
                 opBinding = host.createBindingToPreset(kOperator.getPresetPath())
@@ -1483,10 +1507,10 @@ class Builder(Builder):
                         'dccSceneItem': dccSceneItem
                     }
 
-                # Add the Canvas Port for each port.
+                # Connect and Set Port Values
                 if portConnectionType == 'In':
 
-                    def connectInput(tgt, opObject, dccSceneItem, isArrayPort=False):
+                    def connectInput(tgt, opObject, dccSceneItem):
                         if isinstance(opObject, Attribute):
 
                             node = dccSceneItem[0]
@@ -1503,72 +1527,87 @@ class Builder(Builder):
                             MaxPlus.Core.EvalMAXScript('paramWire.connect {} {} "{}"'.format(srcStr, tgtStr, attributeName))
 
                         elif isinstance(opObject, Object3D):
-                            dccSceneItem.Select()
-                            MaxPlus.Core.EvalMAXScript('srcMatrixObj = selection[1]')
-                            dccSceneItem.Deselect()
 
-                            if isArrayPort is True:
-                                # Set port to MaxNode mode to connect object
-                                rt.matCtrl.SetMaxTypeForArg(tgt, 2065)
+                            if type(dccSceneItem) is list:
 
-                                # TODO: Get Array inputs working!
+                                maxType = rt.matCtrl.GetPortMetaData(tgt, "MaxType")
+                                if maxType != "2065":
+                                    # Set port to MaxNode mode to connect object
+                                    rt.matCtrl.SetMaxTypeForArg(tgt, 2065)
+
+                                # Build array of objects to set to the input
+                                MaxPlus.Core.EvalMAXScript('srcArrayObjs = #()')
+                                for i in xrange(len(dccSceneItem)):
+                                    dccSceneItem[i].Select()
+                                    MaxPlus.Core.EvalMAXScript('append srcArrayObjs selection[1]')
+                                    dccSceneItem[i].Deselect()
+
+                                script = "operatorOwner.transform.controller.{}".format(tgt)
+                                script += " = srcArrayObjs"
+                                MaxPlus.Core.EvalMAXScript(script)
 
                             else:
+                                dccSceneItem.Select()
+                                MaxPlus.Core.EvalMAXScript('srcMatrixObj = selection[1]')
+                                dccSceneItem.Deselect()
+
                                 # Set port to MaxNode mode to connect object
                                 rt.matCtrl.SetMaxTypeForArg(tgt, 17)
 
-                                setattr(rt.matCtrl, tgt, rt.srcMatrixObj)
+                                script = "operatorOwner.transform.controller.{}".format(tgt)
+                                script += " = srcMatrixObj"
+                                MaxPlus.Core.EvalMAXScript(script)
 
                         elif isinstance(opObject, Xfo):
-                            # self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject.toMat44())
 
-                            logger.warning("Setting Xfo values: {} to {}".format(
-                                str(opObject.toMat44()), tgt))
+                            rt.matCtrl.DFGEditPort(tgt, 0, metaData="{\"uiHidden\": \"true\"}")
+
+                            mat44 = opObject.toMat44()
+                            mat44JSON = mat44.getRTVal().getJSON().getSimpleType()
+
+                            rt.matCtrl.DFGSetArgValue(tgt, mat44JSON)
 
                         elif isinstance(opObject, Mat44):
-                            # self.setMat44Attr(tgt.partition(".")[0], tgt.partition(".")[2], opObject)
 
-                            logger.warning("Setting Mat44 values: {} to {}".format(
-                                str(opObject), tgt))
+                            rt.matCtrl.DFGEditPort(tgt, 0, metaData="{\"uiHidden\": \"true\"}")
+
+                            mat44JSON = opObject.getRTVal().getJSON().getSimpleType()
+                            rt.matCtrl.DFGSetArgValue(tgt, mat44JSON)
 
                         elif isinstance(opObject, Vec2):
-                            # pm.setAttr(tgt, opObject.x, opObject.y, type="double2")
 
-                            logger.warning("Setting Vec2 values: {} to {}".format(
-                                str((opObject.x, opObject.y)), tgt))
+                            rt.matCtrl.DFGEditPort(tgt, 0, metaData="{\"uiHidden\": \"true\"}")
+
+                            vec2JSON = opObject.getRTVal().getJSON().getSimpleType()
+                            rt.matCtrl.DFGSetArgValue(tgt, vec2JSON)
 
                         elif isinstance(opObject, Vec3):
-                            # pm.setAttr(tgt, opObject.x, opObject.y, opObject.z, type="double3")
 
-                            logger.warning("Setting Vec3 values: {} to {}".format(
-                                str((opObject.x, opObject.y, opObject.z)), tgt))
+                            rt.matCtrl.DFGEditPort(tgt, 0, metaData="{\"uiHidden\": \"true\"}")
+
+                            vec3JSON = opObject.getRTVal().getJSON().getSimpleType()
+                            rt.matCtrl.DFGSetArgValue(tgt, vec3JSON)
 
                         else:  # Set Python value to port
+                            rt.matCtrl.DFGEditPort(tgt, 0, metaData="{\"uiHidden\": \"true\"}")
+
                             validatePortValue(opObject, portName, portDataType)
-
-                            logger.warning("Setting values: {} to {}".format(
-                                str(opObject), tgt))
-
-                            # pm.setAttr(tgt, opObject)
+                            rt.matCtrl.DFGSetArgValue(tgt, str(opObject))
+                            # setattr(rt.matCtrl, tgt, opObject)
 
                     if portDataType.endswith('[]'):
-                        for i in xrange(len(connectionTargets)):
-                            # logger.warning("Connecting Array Input: {}:{}".format(
-                            #     connectionTargets[i]['opObject'],
-                            #     connectionTargets[i]['dccSceneItem']))
-                            connectInput(
-                                portName + '[' + str(i) + ']',
-                                connectionTargets[i]['opObject'],
-                                connectionTargets[i]['dccSceneItem'], isArrayPort=True)
+                        # for i in xrange(len(connectionTargets)):
+                        connectInput(portName,
+                                     connectionTargets[0]['opObject'],
+                                     [x['dccSceneItem'] for x in connectionTargets])
                     else:
-                        # logger.warning("Connecting Input: {}:{}".format(
-                        #     connectionTargets['opObject'],
-                        #     connectionTargets['dccSceneItem']))
+                        connectInput(portName,
+                                     connectionTargets['opObject'],
+                                     connectionTargets['dccSceneItem'])
 
-                        connectInput(
-                            portName,
-                            connectionTargets['opObject'],
-                            connectionTargets['dccSceneItem'])
+            if isKLBased is True:
+                opSourceCode = kOperator.generateSourceCode()
+                rt.matCtrl.DFGSetCode(opSourceCode, execPath=solverSolveNodeName)
 
         finally:
             pass
