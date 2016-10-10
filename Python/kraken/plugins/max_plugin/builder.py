@@ -224,9 +224,9 @@ class Builder(Builder):
 
         node = [x for x in MaxPlus.Core.GetRootNode().Children if x.Name == str(rdmHash)][0]
         node.SetName(buildName)
-        node.BaseObject.ParameterBlock.Length.Value = 10.0
-        node.BaseObject.ParameterBlock.Width.Value = kSceneItem.getRadius() * 2.5
-        node.BaseObject.ParameterBlock.Height.Value = kSceneItem.getRadius() * 2.5
+        node.BaseObject.ParameterBlock.Length.Value = 2.0
+        node.BaseObject.ParameterBlock.Width.Value = kSceneItem.getRadius() * 0.5
+        node.BaseObject.ParameterBlock.Height.Value = kSceneItem.getRadius() * 0.5
 
         if parentNode is not None:
             node.SetParent(parentNode)
@@ -278,8 +278,6 @@ class Builder(Builder):
         """
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
-
-        kSceneItem.scalePoints(Vec3(10, 10, 10))
 
         curveData = kSceneItem.getCurveData()
 
@@ -335,8 +333,6 @@ class Builder(Builder):
         """
 
         parentNode = self.getDCCSceneItem(kSceneItem.getParent())
-
-        kSceneItem.scalePoints(Vec3(10, 10, 10))
 
         curveData = kSceneItem.getCurveData()
 
@@ -1245,29 +1241,6 @@ class Builder(Builder):
                                       "exec",  # dstPortPath
                                       execPath="")
 
-                logger.warning("Connecting ownerOutPort: {}".format(ownerOutPortName))
-                logger.warning("           ownerOutPortDataType: {}".format(ownerOutPortDataType))
-                if ownerOutPortDataType.endswith('[]'):
-                    logger.warning("Connecting Array output to 'outputValue'")
-                    arrayGetNodeName = rt.matCtrl.DFGInstPreset("Fabric.Core.Array.Get",
-                                                                rt.Point2(600, 200),
-                                                                execPath="")
-
-                    logger.warning(solverSolveNodeName + "." + ownerOutPortName[:-1] + " > " +
-                                   arrayGetNodeName + ".array")
-
-                    rt.matCtrl.DFGConnect(solverSolveNodeName + "." + ownerOutPortName[:-1],
-                                          arrayGetNodeName + ".array",
-                                          execPath="")
-
-                    rt.matCtrl.DFGConnect(arrayGetNodeName + ".element",
-                                          "outputValue",
-                                          execPath="")
-                else:
-                    rt.matCtrl.DFGConnect(solverSolveNodeName + "." + ownerOutPortName,
-                                          "outputValue",
-                                          execPath="")
-
             else:
                 host = ks.getCoreClient().DFG.host
                 opBinding = host.createBindingToPreset(kOperator.getPresetPath())
@@ -1593,7 +1566,6 @@ class Builder(Builder):
 
                             validatePortValue(opObject, portName, portDataType)
                             rt.matCtrl.DFGSetArgValue(tgt, str(opObject))
-                            # setattr(rt.matCtrl, tgt, opObject)
 
                     if portDataType.endswith('[]'):
                         # for i in xrange(len(connectionTargets)):
@@ -1605,6 +1577,31 @@ class Builder(Builder):
                                      connectionTargets['opObject'],
                                      connectionTargets['dccSceneItem'])
 
+            # =============================================
+            # Connect 'outputValue' port on Max controller
+            # =============================================
+            if ownerOutPortDataType.endswith('[]'):
+                logger.warning("Connecting Array output to 'outputValue'")
+                arrayGetNodeName = rt.matCtrl.DFGInstPreset("Fabric.Core.Array.Get",
+                                                            rt.Point2(600, 200),
+                                                            execPath="")
+
+                logger.warning(solverSolveNodeName + "." + ownerOutPortName[:-1] + " > " +
+                               arrayGetNodeName + ".array")
+
+                rt.matCtrl.DFGConnect(solverSolveNodeName + "." + ownerOutPortName[:-1],
+                                      arrayGetNodeName + ".array",
+                                      execPath="")
+
+                rt.matCtrl.DFGConnect(arrayGetNodeName + ".element",
+                                      "outputValue",
+                                      execPath="")
+            else:
+                rt.matCtrl.DFGConnect(solverSolveNodeName + "." + ownerOutPortName,
+                                      "outputValue",
+                                      execPath="")
+
+            # Set Solver Operator Code
             if isKLBased is True:
                 opSourceCode = kOperator.generateSourceCode()
                 rt.matCtrl.DFGSetCode(opSourceCode, execPath=solverSolveNodeName)
@@ -1773,9 +1770,9 @@ class Builder(Builder):
             MaxPlus.Point3(krakenMat44.row0.x, krakenMat44.row0.y, krakenMat44.row0.z),
             MaxPlus.Point3(krakenMat44.row1.x, krakenMat44.row1.y, krakenMat44.row1.z),
             MaxPlus.Point3(krakenMat44.row2.x, krakenMat44.row2.y, krakenMat44.row2.z),
-            MaxPlus.Point3(maxXfo.tr.x * 10.0,
-                           maxXfo.tr.y * 10.0,
-                           maxXfo.tr.z * 10.0))
+            MaxPlus.Point3(maxXfo.tr.x,
+                           maxXfo.tr.y,
+                           maxXfo.tr.z))
 
         dccSceneItem.SetWorldTM(mat3)
 
