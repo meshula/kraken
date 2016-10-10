@@ -1,0 +1,190 @@
+require Math;
+
+object KrakenFCurveClip : KrakenClip {
+  String names[];
+  UInt32 nameToId[String];
+  KeyframeTrack tracks[][]; // PosX, PosY, PosZ, RotX, RotY, RotZ
+  Integer keyIndex[];
+  KrakenClipLookup lookup;
+};
+
+function KrakenFCurveClip() {
+  this.lookup = null;
+}
+
+/// \dfgPresetCombo interpolation ("Constant", "Linear", "Bezier")
+/// \dfgPresetDefault interpolation 2
+function KeyframeTrack[] KrakenFCurveClip.createChannel!(String name, UInt32 interpolation) {
+  this.lookup = null;
+
+  UInt32 id = this.nameToId.get(name, this.tracks.size());
+  if(id == this.tracks.size()) {
+    this.nameToId[name] = this.tracks.size();
+    this.names.push(name);
+
+    KeyframeTrack tracks[](6);
+    tracks[0] = KeyframeTrack(name+'.PosX', Color(1.0, 0.0, 0.0), 0.0, interpolation);
+    tracks[1] = KeyframeTrack(name+'.PosY', Color(0.0, 1.0, 0.0), 0.0, interpolation);
+    tracks[2] = KeyframeTrack(name+'.PosZ', Color(0.0, 0.0, 1.0), 0.0, interpolation);
+    tracks[3] = KeyframeTrack(name+'.RotX', Color(1.0, 0.0, 0.0), 0.0, interpolation);
+    tracks[4] = KeyframeTrack(name+'.RotY', Color(0.0, 1.0, 0.0), 0.0, interpolation);
+    tracks[5] = KeyframeTrack(name+'.RotZ', Color(0.0, 0.0, 1.0), 0.0, interpolation);
+    this.tracks.push(tracks);
+
+    for(Size i=0;i<tracks.size();i++)
+      this.keyIndex.push(-1);
+
+    return tracks;
+  }
+  return this.tracks[id];
+}
+
+UInt32 KrakenFCurveClip.getChannelCount() {
+  return this.tracks.size();
+}
+
+String KrakenFCurveClip.getChannelName(UInt32 id) {
+  return this.names[id];
+}
+
+UInt32 KrakenFCurveClip.getChannelType(UInt32 id) {
+  return KrakenClipChannel_Xfo;
+}
+
+/// \dfgPresetOmit
+KeyframeTrack[] KrakenFCurveClip.getChannelTracks(String name) {
+  UInt32 id = this.nameToId.get(name, this.tracks.size());
+  if(id != this.tracks.size())
+    return this.tracks[id];
+  KeyframeTrack result[];
+  return result;
+}
+
+Float32 KrakenFCurveClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+  return 0.0;
+}
+
+Xfo KrakenFCurveClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+  Xfo xfo;
+
+  KeyframeTrack tracks[] = this.tracks[id];
+  if(tracks[0].keys.size() > 0)
+    xfo.tr.x = tracks[0].evaluate(Float32(context.time), this.keyIndex[tracks.size() * id + 0]);
+  if(tracks[1].keys.size() > 0)
+    xfo.tr.y = tracks[1].evaluate(Float32(context.time), this.keyIndex[tracks.size() * id + 1]);
+  if(tracks[2].keys.size() > 0)
+    xfo.tr.z = tracks[2].evaluate(Float32(context.time), this.keyIndex[tracks.size() * id + 2]);
+
+  Vec3 angles(0.0, 0.0, 0.0);
+  if(tracks[3].keys.size() > 0)
+    angles.x = tracks[3].evaluate(Float32(context.time), this.keyIndex[tracks.size() * id + 3]);
+  if(tracks[4].keys.size() > 0)
+    angles.y = tracks[4].evaluate(Float32(context.time), this.keyIndex[tracks.size() * id + 4]);
+  if(tracks[5].keys.size() > 0)
+    angles.z = tracks[5].evaluate(Float32(context.time), this.keyIndex[tracks.size() * id + 5]);
+
+  xfo.ori.setFromEulerAngles(angles);
+  return xfo;
+}
+
+function KrakenFCurveClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
+  KrakenFCurveClip clip = this;
+  if(clip.lookup == null)
+    clip.lookup = KrakenClipLookup(rig, clip);
+  clip.lookup.applyClip(rig, clip, context, factor);
+}
+
+function JSONDictValue KrakenFCurveClip.saveToJson!() {
+  JSONArrayValue values();
+  for(Size i=0;i<this.tracks.size();i++) {
+    JSONDictValue value();
+    value.setString('name', this.names[i]);
+    value.setInteger('defaultInterpolation', this.tracks[i][0].defaultInterpolation);
+
+    KeyframeTrack tracks[] = this.tracks[i];
+    JSONArrayValue trackValues();
+    for(Size j=0;j<tracks.size();j++) {
+      JSONDictValue trackValue();
+      trackValue.setString('name', tracks[j].name);
+      trackValue.setScalar('colorR', tracks[j].color.r);
+      trackValue.setScalar('colorG', tracks[j].color.g);
+      trackValue.setScalar('colorB', tracks[j].color.b);
+      trackValue.setScalar('colorA', tracks[j].color.a);
+      trackValue.setScalar('defaultValue', tracks[j].defaultValue);
+      trackValue.setInteger('defaultInterpolation', tracks[j].defaultInterpolation);
+
+      JSONArrayValue keyValues();
+
+      //Keyframe keys[];
+      for(Size k=0;k<tracks[j].keys.size();k++) {
+        JSONDictValue keyValue();
+        keyValue.setScalar('time', tracks[j].keys[k].time);
+        keyValue.setScalar('value', tracks[j].keys[k].value);
+        keyValue.setInteger('interpolation', tracks[j].keys[k].interpolation);
+        keyValue.setScalar('inTangentX', tracks[j].keys[k].inTangent.x);
+        keyValue.setScalar('inTangentY', tracks[j].keys[k].inTangent.y);
+        keyValue.setScalar('outTangentX', tracks[j].keys[k].outTangent.x);
+        keyValue.setScalar('outTangentY', tracks[j].keys[k].outTangent.y);
+        keyValues.add(keyValue);
+      }
+
+      trackValue.set('keys', keyValues);
+      trackValues.add(trackValue);
+    }
+    value.set('tracks', trackValues);
+    values.add(value);
+  }
+  JSONDictValue content();
+  content.set('values', values);
+  return content;
+}
+
+function KrakenFCurveClip.loadFromJson!(JSONDictValue json) {
+  this.names.resize(0);
+  this.nameToId.clear();
+  this.tracks.resize(0);
+  this.keyIndex.resize(0);
+
+  JSONArrayValue values = json.get('values');
+  for(Size i=0;i<values.size();i++) {
+    JSONDictValue value = values.get(i);
+    String name = value.getString('name');
+    Integer defaultInterpolation = value.getInteger('defaultInterpolation');
+
+    KeyframeTrack tracks[] = this.createChannel(name, defaultInterpolation);
+    JSONArrayValue trackValues = value.get('tracks');
+    if(tracks.size() != trackValues.size())
+      continue;
+
+    for(Size j=0;j<trackValues.size();j++) {
+      JSONDictValue trackValue = trackValues.get(j);
+
+      tracks[j].name = trackValue.getString('name');
+      tracks[j].color.r = trackValue.getScalar('colorR');
+      tracks[j].color.g = trackValue.getScalar('colorG');
+      tracks[j].color.b = trackValue.getScalar('colorB');
+      tracks[j].color.a = trackValue.getScalar('colorA');
+      tracks[j].defaultValue = trackValue.getScalar('defaultValue');
+      tracks[j].defaultInterpolation = trackValue.getInteger('defaultInterpolation');
+
+      JSONArrayValue keyValues = trackValue.get('keys');
+      for(Size k=0;k<keyValues.size();k++) {
+        JSONDictValue keyValue = keyValues.get(k);
+        Keyframe key(
+          keyValue.getScalar('time'),
+          keyValue.getScalar('value'),
+          Vec2(
+            keyValue.getScalar('inTangentX'),
+            keyValue.getScalar('inTangentY')
+          ),
+          Vec2(
+            keyValue.getScalar('outTangentX'),
+            keyValue.getScalar('outTangentY')
+          ),
+          keyValue.getInteger('interpolation')
+        );
+        tracks[j].addKey(key);
+      }
+    }
+  }
+}

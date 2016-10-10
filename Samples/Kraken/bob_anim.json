@@ -1,0 +1,77 @@
+{
+  "clipType": "KrakenFCurveClip", 
+  "content": {
+    "values": [
+      {
+        "name": "spine_M_cog_ctrl", 
+        "defaultInterpolation": 2, 
+        "tracks": [
+          {
+            "name": "spine_M_cog_ctrl.PosX", 
+            "colorR": 1.0, 
+            "colorG": 0.0, 
+            "colorB": 0.0, 
+            "colorA": 1.0, 
+            "defaultValue": 0.0, 
+            "defaultInterpolation": 2, 
+            "keys": []
+          }, 
+          {
+            "name": "spine_M_cog_ctrl.PosY", 
+            "colorR": 0.0, 
+            "colorG": 1.0, 
+            "colorB": 0.0, 
+            "colorA": 1.0, 
+            "defaultValue": 0.0, 
+            "defaultInterpolation": 2, 
+            "keys": [
+              {"time": 0.0, "value": 0.0, "interpolation": 2, "inTangentX": 0.0, "inTangentY": 0.0, "outTangentX": 0.45, "outTangentY": 0.0}, 
+              {"time": 1.5, "value": -5.0, "interpolation": 2, "inTangentX": -0.45, "inTangentY": 0.0, "outTangentX": 0.45, "outTangentY": 0.0}, 
+              {"time": 3.0, "value": 0.0, "interpolation": 2, "inTangentX": -0.45, "inTangentY": 0.0, "outTangentX": 0.0, "outTangentY": 0.0}
+            ]
+          }, 
+          {
+            "name": "spine_M_cog_ctrl.PosZ", 
+            "colorR": 0.0, 
+            "colorG": 0.0, 
+            "colorB": 1.0, 
+            "colorA": 1.0, 
+            "defaultValue": 0.0, 
+            "defaultInterpolation": 2, 
+            "keys": []
+          }, 
+          {
+            "name": "spine_M_cog_ctrl.RotX", 
+            "colorR": 1.0, 
+            "colorG": 0.0, 
+            "colorB": 0.0, 
+            "colorA": 1.0, 
+            "defaultValue": 0.0, 
+            "defaultInterpolation": 2, 
+            "keys": []
+          }, 
+          {
+            "name": "spine_M_cog_ctrl.RotY", 
+            "colorR": 0.0, 
+            "colorG": 1.0, 
+            "colorB": 0.0, 
+            "colorA": 1.0, 
+            "defaultValue": 0.0, 
+            "defaultInterpolation": 2, 
+            "keys": []
+          }, 
+          {
+            "name": "spine_M_cog_ctrl.RotZ", 
+            "colorR": 0.0, 
+            "colorG": 0.0, 
+            "colorB": 1.0, 
+            "colorA": 1.0, 
+            "defaultValue": 0.0, 
+            "defaultInterpolation": 2, 
+            "keys": []
+          }
+        ]
+      }
+    ]
+  }
+}
