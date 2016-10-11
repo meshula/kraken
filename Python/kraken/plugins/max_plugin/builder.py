@@ -87,6 +87,9 @@ class Builder(Builder):
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
         node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
+        paramBlock = node.BaseObject.GetParameterBlock()
+        sizeParam = paramBlock.GetParamByName('size')
+        sizeParam.SetValue(1)
 
         if parentNode is not None:
             node.SetParent(parentNode)
@@ -135,6 +138,9 @@ class Builder(Builder):
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
         node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
+        paramBlock = node.BaseObject.GetParameterBlock()
+        sizeParam = paramBlock.GetParamByName('size')
+        sizeParam.SetValue(1)
 
         if parentNode is not None:
             node.SetParent(parentNode)
@@ -163,6 +169,9 @@ class Builder(Builder):
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
         node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
+        paramBlock = node.BaseObject.GetParameterBlock()
+        sizeParam = paramBlock.GetParamByName('size')
+        sizeParam.SetValue(1)
 
         if parentNode is not None:
             node.SetParent(parentNode)
@@ -191,6 +200,9 @@ class Builder(Builder):
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
         node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
+        paramBlock = node.BaseObject.GetParameterBlock()
+        sizeParam = paramBlock.GetParamByName('size')
+        sizeParam.SetValue(1)
 
         if parentNode is not None:
             node.SetParent(parentNode)
@@ -224,7 +236,7 @@ class Builder(Builder):
 
         node = [x for x in MaxPlus.Core.GetRootNode().Children if x.Name == str(rdmHash)][0]
         node.SetName(buildName)
-        node.BaseObject.ParameterBlock.Length.Value = 2.0
+        node.BaseObject.ParameterBlock.Length.Value = 1.0
         node.BaseObject.ParameterBlock.Width.Value = kSceneItem.getRadius() * 0.5
         node.BaseObject.ParameterBlock.Height.Value = kSceneItem.getRadius() * 0.5
 
@@ -254,6 +266,9 @@ class Builder(Builder):
         obj = MaxPlus.Factory.CreateHelperObject(MaxPlus.ClassIds.Point)
         node = MaxPlus.Factory.CreateNode(obj, buildName)
         node.SetHidden(True)
+        paramBlock = node.BaseObject.GetParameterBlock()
+        sizeParam = paramBlock.GetParamByName('size')
+        sizeParam.SetValue(1)
 
         if parentNode is not None:
             node.SetParent(parentNode)
