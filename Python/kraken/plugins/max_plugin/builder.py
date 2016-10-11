@@ -786,65 +786,134 @@ class Builder(Builder):
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
 
-        rotListClassID = MaxPlus.Class_ID(0x4b4b1003, 0x00000000) # Create Rotation List Controller
-        rotListCtrl = MaxPlus.Factory.CreateRotationController(rotListClassID)
-
-        rotCns = MaxPlus.Factory.CreateRotationController(MaxPlus.ClassIds.Orientation_Constraint)
-        rotListCtrl.AssignController(rotCns, 0)
-
-        rotCtrl = MaxPlus.Factory.CreateRotationController(MaxPlus.ClassIds.Euler_XYZ)
-
-        if kConstraint.getMaintainOffset() is True:
-            # Fabric's rotation order enums:
-            # We need to use the negative rotation order
-            # to calculate propery offset values.
-            #
-            # 0 XYZ
-            # 1 YZX
-            # 2 ZXY
-            # 3 XZY
-            # 4 ZYX
-            # 5 YXZ
-
-            rotOrderRemap = {
-                0: 1,
-                1: 3,
-                2: 5,
-                3: 2,
-                4: 6,
-                5: 4
-            }
-
-            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
-
-            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
-                RotationOrder(order))
-
-            quat = MaxPlus.Quat()
-            quat.SetEuler(math.radians(offsetAngles.x),
-                          math.radians(offsetAngles.y),
-                          math.radians(offsetAngles.z))
-
-            rotCtrl.SetQuatValue(quat)
-
-        rotListCtrl.AssignController(rotCtrl, 1)
-
-        transform = constraineeDCCSceneItem.GetSubAnim(2)
-        transform.AssignController(rotListCtrl, 1)
+        offsetXfo = kConstraint.computeOffset()
 
         constraineeDCCSceneItem.Select()
         MaxPlus.Core.EvalMAXScript('constrainee = selection[1]')
         constraineeDCCSceneItem.Deselect()
 
-        for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
+        MaxPlus.Core.EvalMAXScript('oriCns = FabricMatrixController()')
+        rt.constrainee.controller = rt.oriCns
 
+        if len(kConstraint.getConstrainers()) == 1:
+            # Create Ports and Connections
+            rt.oriCns.DFGAddPort("inMatrix",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"MaxType\": \"17\"}",
+                                    execPath="")
+
+            rt.oriCns.DFGAddPort("offsetQuat",  # desiredPortName
+                                    0,  # portType
+                                    "Quat",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"uiHidden\": \"true\"}",
+                                    execPath="")
+
+            matUpperLeftNodeName = rt.oriCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.UpperLeft",  # presetPath
+                rt.Point2(-500, 95))
+
+            quatFromMatNodeName = rt.oriCns.DFGInstPreset(
+                "Fabric.Exts.Math.Quat.SetFromMat33",  # presetPath
+                rt.Point2(-84, 125))
+
+            matMulNodeName = rt.oriCns.DFGInstPreset(
+                "Fabric.Core.Math.Mul",  # presetPath
+                rt.Point2(100, 100))
+
+            matSetRotNodeName = rt.oriCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.SetRotation",  # presetPath
+                rt.Point2(100, 100))
+
+            rt.oriCns.DFGConnect("inMatrix", matUpperLeftNodeName + ".this", execPath="")
+            rt.oriCns.DFGConnect(matUpperLeftNodeName + ".result", quatFromMatNodeName + ".mat", execPath="")
+            rt.oriCns.DFGConnect(quatFromMatNodeName + ".result", matMulNodeName + ".lhs", execPath="")
+            rt.oriCns.DFGConnect("offsetQuat", matMulNodeName + ".rhs", execPath="")
+            rt.oriCns.DFGConnect(matMulNodeName + ".result", matSetRotNodeName + ".q", execPath="")
+            rt.oriCns.DFGConnect(matSetRotNodeName + ".this", "outputValue", execPath="")
+
+            if kConstraint.getMaintainOffset() is True:
+                quat = offsetXfo.ori
+                quatJSON = quat.getRTVal().getJSON().getSimpleType()
+                rt.oriCns.DFGSetArgValue("offsetQuat", quatJSON)
+
+            constrainer = self.getDCCSceneItem(kConstraint.getConstrainers()[0])
             constrainer.Select()
-            MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
+            MaxPlus.Core.EvalMAXScript('constrainerObj = selection[1]')
             constrainer.Deselect()
 
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[1].appendTarget constrainer 50')
+            script = "constrainee.transform.controller.inMatrix = constrainerObj"
+            MaxPlus.Core.EvalMAXScript(script)
 
-        dccSceneItem = rotListCtrl
+        elif len(kConstraint.getConstrainers()) > 1:
+            # Create Ports and Connections
+            rt.oriCns.DFGAddPort("inMatrices",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44[]",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"MaxType\": \"2065\"}",
+                                    execPath="")
+
+            rt.oriCns.DFGAddPort("offsetQuat",  # desiredPortName
+                                    0,  # portType
+                                    "Quat",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"uiHidden\": \"true\"}",
+                                    execPath="")
+
+            arrayAvgNodeName = rt.oriCns.DFGInstPreset(
+                "Fabric.Core.Array.Average",  # presetPath
+                rt.Point2(-560, 30))
+
+            matUpperLeftNodeName = rt.oriCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.UpperLeft",  # presetPath
+                rt.Point2(-310, 55))
+
+            quatFromMatNodeName = rt.oriCns.DFGInstPreset(
+                "Fabric.Exts.Math.Quat.SetFromMat33",  # presetPath
+                rt.Point2(-150, 75))
+
+            matMulNodeName = rt.oriCns.DFGInstPreset(
+                "Fabric.Core.Math.Mul",  # presetPath
+                rt.Point2(55, 100))
+
+            matSetRotNodeName = rt.oriCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.SetRotation",  # presetPath
+                rt.Point2(215, 120))
+
+            rt.oriCns.DFGConnect("inMatrices", arrayAvgNodeName + ".array", execPath="")
+            rt.oriCns.DFGConnect(arrayAvgNodeName + ".result", matUpperLeftNodeName + ".this", execPath="")
+            rt.oriCns.DFGConnect(matUpperLeftNodeName + ".result", quatFromMatNodeName + ".mat", execPath="")
+            rt.oriCns.DFGConnect(quatFromMatNodeName + ".result", matMulNodeName + ".lhs", execPath="")
+            rt.oriCns.DFGConnect("offsetQuat", matMulNodeName + ".rhs", execPath="")
+            rt.oriCns.DFGConnect(matMulNodeName + ".result", matSetRotNodeName + ".q", execPath="")
+            rt.oriCns.DFGConnect(matSetRotNodeName + ".this", "outputValue", execPath="")
+
+            if kConstraint.getMaintainOffset() is True:
+                quat = offsetXfo.ori
+                quatJSON = quat.getRTVal().getJSON().getSimpleType()
+                rt.oriCns.DFGSetArgValue("offsetQuat", quatJSON)
+
+            # Build array of objects to set to the input
+            constrainers = [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]
+            MaxPlus.Core.EvalMAXScript('srcArrayObjs = #()')
+            for i in xrange(len(constrainers)):
+                constrainers[i].Select()
+                MaxPlus.Core.EvalMAXScript('append srcArrayObjs selection[1]')
+                constrainers[i].Deselect()
+
+            script = "constrainee.transform.controller.inMatrices = srcArrayObjs"
+            MaxPlus.Core.EvalMAXScript(script)
+        else:
+            raise ValueError("There are no constrainers in constraint: {}".format(kConstraint.getPath()))
+
+        dccSceneItem = rt.oriCns
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -897,10 +966,10 @@ class Builder(Builder):
             rt.parentCns.DFGConnect("offsetMatrix", matMulNodeName + ".rhs", execPath="")
             rt.parentCns.DFGConnect(matMulNodeName + ".result", "outputValue", execPath="")
 
-            # Set Offset
-            mat44 = offsetXfo.toMat44()
-            mat44JSON = mat44.getRTVal().getJSON().getSimpleType()
-            rt.parentCns.DFGSetArgValue("offsetMatrix", mat44JSON)
+            if kConstraint.getMaintainOffset() is True:
+                mat44 = offsetXfo.toMat44()
+                mat44JSON = mat44.getRTVal().getJSON().getSimpleType()
+                rt.parentCns.DFGSetArgValue("offsetMatrix", mat44JSON)
 
             constrainer = self.getDCCSceneItem(kConstraint.getConstrainers()[0])
             constrainer.Select()
@@ -939,10 +1008,10 @@ class Builder(Builder):
             rt.parentCns.DFGConnect("offsetMatrix", matMulNodeName + ".rhs", execPath="")
             rt.parentCns.DFGConnect(matMulNodeName + ".result", "outputValue", execPath="")
 
-            # Set Offset
-            mat44 = offsetXfo.toMat44()
-            mat44JSON = mat44.getRTVal().getJSON().getSimpleType()
-            rt.parentCns.DFGSetArgValue("offsetMatrix", mat44JSON)
+            if kConstraint.getMaintainOffset() is True:
+                mat44 = offsetXfo.toMat44()
+                mat44JSON = mat44.getRTVal().getJSON().getSimpleType()
+                rt.parentCns.DFGSetArgValue("offsetMatrix", mat44JSON)
 
             # Build array of objects to set to the input
             constrainers = [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]
