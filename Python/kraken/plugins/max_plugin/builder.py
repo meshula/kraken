@@ -872,43 +872,90 @@ class Builder(Builder):
         MaxPlus.Core.EvalMAXScript('parentCns = FabricMatrixController()')
         rt.constrainee.controller = rt.parentCns
 
-        # Create Ports and Connections
-        rt.parentCns.DFGAddPort("inMatrix",  # desiredPortName
-                                0,  # portType
-                                "Mat44",  # typeSpec
-                                portToConnect="",
-                                extDep="",
-                                metaData="{\"MaxType\": \"17\"}",
-                                execPath="")
+        if len(kConstraint.getConstrainers()) == 1:
+            # Create Ports and Connections
+            rt.parentCns.DFGAddPort("inMatrix",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"MaxType\": \"17\"}",
+                                    execPath="")
 
-        rt.parentCns.DFGAddPort("offsetMatrix",  # desiredPortName
-                                0,  # portType
-                                "Mat44",  # typeSpec
-                                portToConnect="",
-                                extDep="",
-                                metaData="{\"uiHidden\": \"true\"}",
-                                execPath="")
+            rt.parentCns.DFGAddPort("offsetMatrix",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"uiHidden\": \"true\"}",
+                                    execPath="")
 
-        matMulNodeName = rt.parentCns.DFGInstPreset("Fabric.Core.Math.Mul",  # presetPath
-                                                    rt.Point2(100, 100))
+            matMulNodeName = rt.parentCns.DFGInstPreset("Fabric.Core.Math.Mul",  # presetPath
+                                                        rt.Point2(100, 100))
 
-        rt.parentCns.DFGConnect("inMatrix", matMulNodeName + ".lhs", execPath="")
-        rt.parentCns.DFGConnect("offsetMatrix", matMulNodeName + ".rhs", execPath="")
-        rt.parentCns.DFGConnect(matMulNodeName + ".result", "outputValue", execPath="")
+            rt.parentCns.DFGConnect("inMatrix", matMulNodeName + ".lhs", execPath="")
+            rt.parentCns.DFGConnect("offsetMatrix", matMulNodeName + ".rhs", execPath="")
+            rt.parentCns.DFGConnect(matMulNodeName + ".result", "outputValue", execPath="")
 
-        # Set Offset
-        mat44 = offsetXfo.toMat44()
-        mat44JSON = mat44.getRTVal().getJSON().getSimpleType()
-        rt.parentCns.DFGSetArgValue("offsetMatrix", mat44JSON)
+            # Set Offset
+            mat44 = offsetXfo.toMat44()
+            mat44JSON = mat44.getRTVal().getJSON().getSimpleType()
+            rt.parentCns.DFGSetArgValue("offsetMatrix", mat44JSON)
 
-        constrainers = [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]
-        if len(constrainers) > 0:
-            # Only use the first constrainer for parent / link constraint
-            constrainers[0].Select()
-            MaxPlus.Core.EvalMAXScript("srcNode = selection[1]")
-            constrainers[0].Deselect()
+            constrainer = self.getDCCSceneItem(kConstraint.getConstrainers()[0])
+            constrainer.Select()
+            MaxPlus.Core.EvalMAXScript('constrainerObj = selection[1]')
+            constrainer.Deselect()
 
-            MaxPlus.Core.EvalMAXScript("constrainee.transform.controller.inMatrix = srcNode")
+            script = "constrainee.transform.controller.inMatrix = constrainerObj"
+            MaxPlus.Core.EvalMAXScript(script)
+
+        elif len(kConstraint.getConstrainers()) > 1:
+            # Create Ports and Connections
+            rt.parentCns.DFGAddPort("inMatrices",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44[]",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"MaxType\": \"2065\"}",
+                                    execPath="")
+
+            rt.parentCns.DFGAddPort("offsetMatrix",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"uiHidden\": \"true\"}",
+                                    execPath="")
+
+            arrayAvgNodeName = rt.parentCns.DFGInstPreset("Fabric.Core.Array.Average",  # presetPath
+                                                        rt.Point2(-126,78))
+
+            matMulNodeName = rt.parentCns.DFGInstPreset("Fabric.Core.Math.Mul",  # presetPath
+                                                        rt.Point2(100, 100))
+
+            rt.parentCns.DFGConnect("inMatrices", arrayAvgNodeName + ".array", execPath="")
+            rt.parentCns.DFGConnect(arrayAvgNodeName + ".result", matMulNodeName + ".lhs", execPath="")
+            rt.parentCns.DFGConnect("offsetMatrix", matMulNodeName + ".rhs", execPath="")
+            rt.parentCns.DFGConnect(matMulNodeName + ".result", "outputValue", execPath="")
+
+            # Set Offset
+            mat44 = offsetXfo.toMat44()
+            mat44JSON = mat44.getRTVal().getJSON().getSimpleType()
+            rt.parentCns.DFGSetArgValue("offsetMatrix", mat44JSON)
+
+            # Build array of objects to set to the input
+            constrainers = [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]
+            MaxPlus.Core.EvalMAXScript('srcArrayObjs = #()')
+            for i in xrange(len(constrainers)):
+                constrainers[i].Select()
+                MaxPlus.Core.EvalMAXScript('append srcArrayObjs selection[1]')
+                constrainers[i].Deselect()
+
+            script = "constrainee.transform.controller.inMatrices = srcArrayObjs"
+            MaxPlus.Core.EvalMAXScript(script)
+        else:
+            raise ValueError("There are no constrainers in constraint: {}".format(kConstraint.getPath()))
 
         dccSceneItem = rt.parentCns
 
