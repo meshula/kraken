@@ -1568,7 +1568,6 @@ class Builder(Builder):
                             rt.matCtrl.DFGSetArgValue(tgt, str(opObject))
 
                     if portDataType.endswith('[]'):
-                        # for i in xrange(len(connectionTargets)):
                         connectInput(portName,
                                      connectionTargets[0]['opObject'],
                                      [x['dccSceneItem'] for x in connectionTargets])
@@ -1577,17 +1576,123 @@ class Builder(Builder):
                                      connectionTargets['opObject'],
                                      connectionTargets['dccSceneItem'])
 
+                elif portConnectionType in ['IO', 'Out']:
+
+                    # ==========================================
+                    # Skip Owner outport as it is handled later
+                    # ==========================================
+                    if portName == ownerOutPortName:
+                        continue
+
+                    def connectOutput(src, opObject, dccSceneItem):
+                        if isinstance(opObject, Attribute):
+                            logger.warning("Connecting Solver Outputs to Attributes is not Implemented!")
+
+                            # logger.warning("Connecting {} > {}".format(src, dccSceneItem))
+                            # node = dccSceneItem[0]
+                            # attributeGrp = dccSceneItem[1].name
+                            # attributeName = dccSceneItem[2]
+
+                            # node.Select()
+                            # MaxPlus.Core.EvalMAXScript('srcAttrParentObj = selection[1]')
+                            # node.Deselect()
+
+                            # srcStr = 'srcAttrParentObj.baseObject.{}[#{}]'.format(attributeGrp, attributeName)
+                            # tgtStr = 'operatorOwner.transform.controller[#{}]'.format(tgt)
+
+                            # MaxPlus.Core.EvalMAXScript('paramWire.connect {} {} "{}"'.format(srcStr, tgtStr, attributeName))
+
+                        elif isinstance(opObject, Object3D):
+
+                            if type(dccSceneItem) is list:
+                                for i in xrange(1, len(dccSceneItem)):
+                                    dccSceneItem[i].Select()
+                                    MaxPlus.Core.EvalMAXScript('tgtOutputObj = selection[1]')
+                                    dccSceneItem[i].Deselect()
+
+                                    MaxPlus.Core.EvalMAXScript('tgtOutputMatCtrl = FabricMatrixController()')
+                                    rt.tgtOutputObj.controller = rt.tgtOutputMatCtrl
+
+                                    rt.tgtOutputMatCtrl.DFGAddPort("index",  # desiredPortName
+                                                                   0,  # portType
+                                                                   "UInt32",  # typeSpec
+                                                                   portToConnect="outputValue",
+                                                                   extDep="",
+                                                                   metaData="{\"uiHidden\": \"true\"}",
+                                                                   execPath="")
+
+                                    rt.tgtOutputMatCtrl.DFGSetArgValue("index", i)
+
+                                    rt.tgtOutputMatCtrl.DFGAddPort("inMatrices",  # desiredPortName
+                                                                   0,  # portType
+                                                                   portDataType,  # typeSpec
+                                                                   portToConnect="",
+                                                                   extDep="",
+                                                                   metaData="",
+                                                                   execPath="")
+
+                                    arrayGetNodeName = rt.tgtOutputMatCtrl.DFGInstPreset("Fabric.Core.Array.Get",
+                                                                      rt.Point2(40, 130),
+                                                                      execPath="")
+
+                                    rt.tgtOutputMatCtrl.DFGConnect("index",
+                                                                   arrayGetNodeName + ".index",
+                                                                   execPath="")
+
+                                    rt.tgtOutputMatCtrl.DFGConnect("inMatrices",
+                                                                   arrayGetNodeName + ".array",
+                                                                   execPath="")
+
+                                    rt.tgtOutputMatCtrl.DFGConnect(arrayGetNodeName + ".element",
+                                                                   "outputValue",
+                                                                   execPath="")
+
+                                    rt.tgtOutputMatCtrl.ConnectArgs("inMatrices", rt.matCtrl, src)
+
+                            else:
+                                dccSceneItem.Select()
+                                MaxPlus.Core.EvalMAXScript('tgtOutputObj = selection[1]')
+                                dccSceneItem.Deselect()
+
+                                MaxPlus.Core.EvalMAXScript('tgtOutputMatCtrl = FabricMatrixController()')
+                                rt.tgtOutputObj.controller = rt.tgtOutputMatCtrl
+
+                                rt.tgtOutputObj.controller = rt.tgtOutputMatCtrl
+
+                                rt.tgtOutputMatCtrl.DFGAddPort("inMatrix",  # desiredPortName
+                                                               0,  # portType
+                                                               portDataType,  # typeSpec
+                                                               portToConnect="outputValue",
+                                                               extDep="",
+                                                               metaData="",
+                                                               execPath="")
+
+                                rt.tgtOutputMatCtrl.ConnectArgs("inMatrix", rt.matCtrl, src)
+
+
+                        elif isinstance(opObject, Xfo):
+                            raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Xfo outputs types directly!")
+                        elif isinstance(opObject, Mat44):
+                            raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Mat44 types directly!")
+                        else:
+                            raise NotImplementedError("Kraken Canvas Operator cannot set object [%s] outputs with Python built-in types [%s] directly!" % (src, opObject.__class__.__name__))
+
+                    if portDataType.endswith('[]'):
+                        connectOutput(portName,
+                                      connectionTargets[0]['opObject'],
+                                      [x['dccSceneItem'] for x in connectionTargets])
+                    else:
+                        connectOutput(portName,
+                                      connectionTargets['opObject'],
+                                      connectionTargets['dccSceneItem'])
+
             # =============================================
             # Connect 'outputValue' port on Max controller
             # =============================================
             if ownerOutPortDataType.endswith('[]'):
-                logger.warning("Connecting Array output to 'outputValue'")
                 arrayGetNodeName = rt.matCtrl.DFGInstPreset("Fabric.Core.Array.Get",
                                                             rt.Point2(600, 200),
                                                             execPath="")
-
-                logger.warning(solverSolveNodeName + "." + ownerOutPortName[:-1] + " > " +
-                               arrayGetNodeName + ".array")
 
                 rt.matCtrl.DFGConnect(solverSolveNodeName + "." + ownerOutPortName[:-1],
                                       arrayGetNodeName + ".array",
