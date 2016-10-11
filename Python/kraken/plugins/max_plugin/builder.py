@@ -1859,7 +1859,7 @@ class Builder(Builder):
 
         """
 
-        pymxs.runtime.disableRefMsgs()
+        # pymxs.runtime.disableRefMsgs()
 
         return True
 
@@ -1877,7 +1877,7 @@ class Builder(Builder):
 
         super(Builder, self)._postBuild(kSceneItem)
 
-        pymxs.runtime.enableRefMsgs()
+        # pymxs.runtime.enableRefMsgs()
         MaxPlus.ViewportManager.ForceCompleteRedraw()
 
         return True
