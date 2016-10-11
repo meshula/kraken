@@ -832,6 +832,10 @@ class Builder(Builder):
         transform = constraineeDCCSceneItem.GetSubAnim(2)
         transform.AssignController(rotListCtrl, 1)
 
+        constraineeDCCSceneItem.Select()
+        MaxPlus.Core.EvalMAXScript('constrainee = selection[1]')
+        constraineeDCCSceneItem.Deselect()
+
         for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
 
             constrainer.Select()
@@ -861,132 +865,52 @@ class Builder(Builder):
 
         offsetXfo = kConstraint.computeOffset()
 
-        # ====================
-        # Position Constraint
-        # ====================
-        constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-
-        posListClassID = MaxPlus.Class_ID(0x4b4b1002, 0x00000000) # Create Position List Controller
-        posListCtrl = MaxPlus.Factory.CreatePositionController(posListClassID)
-
-        posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_Constraint)
-        posListCtrl.AssignController(posCtrl, 0)
-
-        posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_XYZ)
-
-        if kConstraint.getMaintainOffset() is True:
-            posCtrl.SetPoint3Value(MaxPlus.Point3(offsetXfo.tr.x, offsetXfo.tr.y, offsetXfo.tr.z))
-
-        posListCtrl.AssignController(posCtrl, 1)
-
-        transform = constraineeDCCSceneItem.GetSubAnim(2)
-        transform.AssignController(posListCtrl, 0)
-
         constraineeDCCSceneItem.Select()
         MaxPlus.Core.EvalMAXScript('constrainee = selection[1]')
         constraineeDCCSceneItem.Deselect()
 
-        for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
+        MaxPlus.Core.EvalMAXScript('parentCns = FabricMatrixController()')
+        rt.constrainee.controller = rt.parentCns
 
-            constrainer.Select()
-            MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
-            constrainer.Deselect()
+        # Create Ports and Connections
+        rt.parentCns.DFGAddPort("inMatrix",  # desiredPortName
+                                0,  # portType
+                                "Mat44",  # typeSpec
+                                portToConnect="",
+                                extDep="",
+                                metaData="{\"MaxType\": \"17\"}",
+                                execPath="")
 
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
-            # MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setName 1 "{}"'.format(buildName))
+        rt.parentCns.DFGAddPort("offsetMatrix",  # desiredPortName
+                                0,  # portType
+                                "Mat44",  # typeSpec
+                                portToConnect="",
+                                extDep="",
+                                metaData="{\"uiHidden\": \"true\"}",
+                                execPath="")
 
+        matMulNodeName = rt.parentCns.DFGInstPreset("Fabric.Core.Math.Mul",  # presetPath
+                                                    rt.Point2(100, 100))
 
-        # =======================
-        # Orientation Constraint
-        # =======================
-        rotListClassID = MaxPlus.Class_ID(0x4b4b1003, 0x00000000) # Create Rotation List Controller
-        rotListCtrl = MaxPlus.Factory.CreateRotationController(rotListClassID)
+        rt.parentCns.DFGConnect("inMatrix", matMulNodeName + ".lhs", execPath="")
+        rt.parentCns.DFGConnect("offsetMatrix", matMulNodeName + ".rhs", execPath="")
+        rt.parentCns.DFGConnect(matMulNodeName + ".result", "outputValue", execPath="")
 
-        rotCns = MaxPlus.Factory.CreateRotationController(MaxPlus.ClassIds.Orientation_Constraint)
-        rotListCtrl.AssignController(rotCns, 0)
+        # Set Offset
+        mat44 = offsetXfo.toMat44()
+        mat44JSON = mat44.getRTVal().getJSON().getSimpleType()
+        rt.parentCns.DFGSetArgValue("offsetMatrix", mat44JSON)
 
-        rotCtrl = MaxPlus.Factory.CreateRotationController(MaxPlus.ClassIds.Euler_XYZ)
+        constrainers = [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]
+        if len(constrainers) > 0:
+            # Only use the first constrainer for parent / link constraint
+            constrainers[0].Select()
+            MaxPlus.Core.EvalMAXScript("srcNode = selection[1]")
+            constrainers[0].Deselect()
 
-        if kConstraint.getMaintainOffset() is True:
-            # Fabric's rotation order enums:
-            # We need to use the negative rotation order
-            # to calculate propery offset values.
-            #
-            # 0 XYZ
-            # 1 YZX
-            # 2 ZXY
-            # 3 XZY
-            # 4 ZYX
-            # 5 YXZ
+            MaxPlus.Core.EvalMAXScript("constrainee.transform.controller.inMatrix = srcNode")
 
-            rotOrderRemap = {
-                0: 1,
-                1: 3,
-                2: 5,
-                3: 2,
-                4: 6,
-                5: 4
-            }
-
-            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
-
-            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
-                RotationOrder(order))
-
-            quat = MaxPlus.Quat()
-            quat.SetEuler(math.radians(offsetAngles.x),
-                          math.radians(offsetAngles.y),
-                          math.radians(offsetAngles.z))
-
-            rotCtrl.SetQuatValue(quat)
-
-        rotListCtrl.AssignController(rotCtrl, 1)
-
-        transform = constraineeDCCSceneItem.GetSubAnim(2)
-        transform.AssignController(rotListCtrl, 1)
-
-        for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
-
-            constrainer.Select()
-            MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
-            constrainer.Deselect()
-
-            MaxPlus.Core.EvalMAXScript('constrainee.rotation.controller[1].appendTarget constrainer 50')
-
-        # ====================
-        # Scale Constraint
-        # ====================
-        # constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-
-        # sclListClassID = MaxPlus.Class_ID(0x4b4b1004, 0x00000000) # Create Position List Controller
-        # sclListCtrl = MaxPlus.Factory.CreatePositionController(sclListClassID)
-
-        # posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_Constraint)
-        # sclListCtrl.AssignController(posCtrl, 0)
-
-        # posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.ScaleXYZ)
-
-        # if kConstraint.getMaintainOffset() is True:
-        #     posCtrl.SetPoint3Value(MaxPlus.Point3(offsetXfo.tr.x, offsetXfo.tr.y, offsetXfo.tr.z))
-
-        # sclListCtrl.AssignController(posCtrl, 1)
-
-        # transform = constraineeDCCSceneItem.GetSubAnim(2)
-        # transform.AssignController(sclListCtrl, 0)
-
-        # constraineeDCCSceneItem.Select()
-        # MaxPlus.Core.EvalMAXScript('constrainee = selection[1]')
-        # constraineeDCCSceneItem.Deselect()
-
-        # for constrainer in [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]:
-
-        #     constrainer.Select()
-        #     MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
-        #     constrainer.Deselect()
-
-        #     MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
-
-        dccSceneItem = posListCtrl
+        dccSceneItem = rt.parentCns
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -1532,6 +1456,7 @@ class Builder(Builder):
                                 MaxPlus.Core.EvalMAXScript(script)
 
                         elif isinstance(opObject, Xfo):
+                            self.setMat44Attr(dccSceneItemName, attr, mat44)
 
                             rt.matCtrl.DFGEditPort(tgt, 0, metaData="{\"uiHidden\": \"true\"}")
 
@@ -1916,13 +1841,7 @@ class Builder(Builder):
 
         """
 
-        # mat44 = mat44.transpose()
-        # matrix = []
-        # rows = [mat44.row0, mat44.row1, mat44.row2, mat44.row3]
-        # for row in rows:
-        #     matrix.extend([row.x, row.y, row.z, row.t])
-
-        # cmds.setAttr(dccSceneItemName + "." + attr, matrix, type="matrix")
+        raise NotImplementedError("'setMat44Attr' is not used in Kraken for 3dsMax")
 
         return True
 
@@ -1940,7 +1859,7 @@ class Builder(Builder):
 
         """
 
-        # pymxs.runtime.disableRefMsgs()
+        pymxs.runtime.disableRefMsgs()
 
         return True
 
@@ -1958,7 +1877,7 @@ class Builder(Builder):
 
         super(Builder, self)._postBuild(kSceneItem)
 
-        # pymxs.runtime.enableRefMsgs()
+        pymxs.runtime.enableRefMsgs()
         MaxPlus.ViewportManager.ForceCompleteRedraw()
 
         return True
