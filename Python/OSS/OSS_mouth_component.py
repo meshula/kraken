@@ -56,6 +56,8 @@ class OSSMouth(OSS_Component):
         self.mouthOutputTgt    = self.createOutput('mouth', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.lMouthCornerOutputTgt = self.createOutput('L_MouthCorner', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.rMouthCornerOutputTgt = self.createOutput('R_MouthCorner', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.upLipMidOutputTgt = self.createOutput('upLipMid', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        self.loLipMidOutputTgt = self.createOutput('loLipMid', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.jawEndOutputTgt = self.createOutput('jawEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
 
         # Declare Input Attrs
@@ -79,7 +81,8 @@ class OSSMouthGuide(OSSMouth):
         self.lipsCtrl.setColor("green")
 
         self.lipCtrlNames = StringAttribute('lipCtrlNames', value="1 Sneer", parent=self.guideSettingsAttrGrp)
-        self.numSpansAttr = IntegerAttribute('numSpans', value=13, minValue=0, maxValue=20,  parent=self.guideSettingsAttrGrp)
+        self.lipDefParams = StringAttribute('lipDefParams', value="1 0.94 0.86 0.79 0.72 0.653 0.583 0.5 0.417 0.347 0.28 0.21 0.14 0.06 0", parent=self.guideSettingsAttrGrp)
+        # self.numSpansAttr = IntegerAttribute('numSpans', value=13, minValue=0, maxValue=20,  parent=self.guideSettingsAttrGrp)
 
         self.alignXAttr = IntegerAttribute('alignX', value=2, minValue=-3, maxValue=3,  parent=self.guideSettingsAttrGrp)
         self.alignYAttr = IntegerAttribute('alignY', value=-1, minValue=-3, maxValue=3,  parent=self.guideSettingsAttrGrp)
@@ -438,10 +441,11 @@ class OSSMouthRig(OSSMouth):
 
 
         if ctrlType == "deformers":
-
+            # length of controls minus ends
+            numNames = len(names)-2
             parent = Transform(name + 'Deformers', parent=self.ctrlCmpGrp)
             #Build Deformer Names
-            half = int(math.floor(int(names)/2))
+            half = int(math.floor(numNames/2))
             for i in range(half):
                 lSideControls.append(str(half-i))
                 rSideControls.append(str(i+1))
@@ -467,7 +471,7 @@ class OSSMouthRig(OSSMouth):
             for defCtrlName in rSideControls:
                 creatDefControl(defCtrlName, side="R")
 
-            if not int(names) % 2 == 0:
+            if not numNames % 2 == 0:
                 creatDefControl("Mid")
 
             for defCtrlName in lSideControls:
@@ -496,7 +500,7 @@ class OSSMouthRig(OSSMouth):
                 newCtrl.xfo = parent.xfo
                 controlsList.append(newCtrl)
                 newCtrl.lockRotation(x=False, y=True, z=True)
-                newCtrl.lockScale(x=True, y=True, z=True)
+                # newCtrl.lockScale(x=True, y=True, z=True)
                 if side:
                     newCtrl.setMetaDataItem("altLocation", side)
                 try:
@@ -565,13 +569,13 @@ class OSSMouthRig(OSSMouth):
             for i in range(numCtrls):
                 ctrl = controls[i]
                 ctrl.setColor("goldenrod")
-                ctrlUberParent = self.insertCtrlSpace(ctrl, name= ctrl.getName() + 'Driven')
+                ctrlGrandParent = self.insertCtrlSpace(ctrl, name= ctrl.getName() + 'Driven')
                 ctrlParent     = self.insertCtrlSpace(ctrl)
                 # if i < (half-1):
                 #     ctrlParent.constrainTo(self.upLipCtrls[i+1], maintainOffset=True)
                 # if (half+1) < i:
                 #     ctrlParent.constrainTo(self.upLipCtrls[i-1], maintainOffset=True)
-                controlParents.append(ctrlUberParent)
+                controlParents.append(ctrlGrandParent)
         return controlParents
 
 
@@ -595,7 +599,7 @@ class OSSMouthRig(OSSMouth):
         rigOutputs = self.insertParentSpaces(Level1Ctrls)
 
         Level1Outputs = []
-        Level1Outputs  = [lDefCorner] + self.createGuideControls(name, "deformers", Level1Outputs, data["numSpans"]) + [rDefCorner]
+        Level1Outputs  = [lDefCorner] + self.createGuideControls(name, "deformers", Level1Outputs, lLevel0Params) + [rDefCorner]
 
         # - - - - - - - - - - - - - -
         # Rig OP
@@ -609,21 +613,27 @@ class OSSMouthRig(OSSMouth):
         #need to eliminate this fix-up
         Level0CtrlsAligns[3] = Vec3(-1,2,-3)
         Level0CtrlsAligns[4] = Vec3(-1,2,3)
-
+        altTangent = Vec3(-1.0,0.0,0.0)
 
         curveLevel0Op = KLOperator(name+ 'Level0Op', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(curveLevel0Op)
 
+        if name == 'upLip':
+            curveLevel0Op.setInput('alignX', -alignX )
+            curveLevel0Op.setInput('alignY', alignY )
+            curveLevel0Op.setInput('alignZ', -alignZ )
+        else:
+            curveLevel0Op.setInput('alignX', alignX )
+            curveLevel0Op.setInput('alignY', alignY )
+            curveLevel0Op.setInput('alignZ', alignZ )
+
         curveLevel0Op.setInput('drawDebug', self.drawDebugInputAttr)
         curveLevel0Op.setInput('rigScale', 1.0)
         curveLevel0Op.setInput('degree', 4)
-        curveLevel0Op.setInput('alignX', alignX )
-        curveLevel0Op.setInput('alignY', alignY )
-        curveLevel0Op.setInput('alignZ', alignZ )
         curveLevel0Op.setInput('keepArcLength', 0.0)
         curveLevel0Op.setInput('compressionAmt', 0.0)
         curveLevel0Op.setInput('followCurveTangent', 1)
-        curveLevel0Op.setInput('altTangent', Vec3(-1.0,0.0,0.0))
+        curveLevel0Op.setInput('altTangent', altTangent)
         curveLevel0Op.setInput('parent', parent)
         curveLevel0Op.setInput('useLocalNormal', 1.0)
         curveLevel0Op.setInput('followCurveNormal', 1.0)
@@ -649,8 +659,8 @@ class OSSMouthRig(OSSMouth):
 
 
         for c in Level1CtrlsRot:
-           Level1CtrlsAligns.append(Vec3(1,2,3))
-           Level1CtrlsRest.append(c.xfo)
+            Level1CtrlsAligns.append(Vec3(1,2,3))
+            Level1CtrlsRest.append(c.xfo)
         
         Level1CtrlsAligns[-1] = Vec3(-1,2,3)
 
@@ -661,13 +671,18 @@ class OSSMouthRig(OSSMouth):
         curveLevel1Op.setInput('drawDebug', self.drawDebugInputAttr)
         curveLevel1Op.setInput('rigScale', 1.0)
         curveLevel1Op.setInput('degree', 3)
-        curveLevel1Op.setInput('alignX', alignX )
-        curveLevel1Op.setInput('alignY', alignY )
-        curveLevel1Op.setInput('alignZ', alignZ )
+        if name == 'upLip':
+            curveLevel1Op.setInput('alignX', alignX )
+            curveLevel1Op.setInput('alignY', alignY )
+            curveLevel1Op.setInput('alignZ', alignZ )
+        else:
+            curveLevel1Op.setInput('alignX', alignX )
+            curveLevel1Op.setInput('alignY', alignY )
+            curveLevel1Op.setInput('alignZ', alignZ )
         curveLevel1Op.setInput('keepArcLength', 0.0)
         curveLevel1Op.setInput('compressionAmt', 0.0)
         curveLevel1Op.setInput('followCurveTangent', 0.25)
-        curveLevel1Op.setInput('altTangent', Vec3(-1.0,0.0,0.0))
+        curveLevel1Op.setInput('altTangent', altTangent)
         curveLevel1Op.setInput('parent', parent)
         curveLevel1Op.setInput('useLocalNormal', 1.0)
         curveLevel1Op.setInput('followCurveNormal', 1.0)
@@ -700,6 +715,8 @@ class OSSMouthRig(OSSMouth):
         # Deformers
         # ==========
 
+
+        globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
         self.parentSpaceInputTgt.childJoints = []
 
@@ -780,8 +797,8 @@ class OSSMouthRig(OSSMouth):
         self.offset    = Vec3(0,0.05,0.45)
         self.rigParams = [0, 0.05,0.25,0.5,0.75,0.95, 1]
         #these should be generated during the guide rig creation (hardcoded for now)
-        self.lLevel0Params = [1, 0.94, 0.86, 0.79, 0.72, 0.653, 0.583, 0.5, 0.417, 0.347, 0.28, 0.21, 0.14, 0.06, 0]
 
+        self.lLevel0Params = self.convertToScalarList(data["lipDefParams"])
         # upLip
         self.upLipControls   = [self.L_MouthCtrl, self.L_upLipHandleCtrl, self.upLipCtrl, self.R_upLipHandleCtrl, self.R_MouthCtrl]
 
@@ -888,6 +905,11 @@ class OSSMouthRig(OSSMouth):
         self.lMouthDefPosConstraint = self.lMouthDef.constrainTo(self.L_MouthCornerLoc, constraintType="Position")
         self.rMouthDefConstraint = self.rMouthDef.constrainTo(self.R_MouthCornerLoc, constraintType="Position")
 
+        # global ControlScaling before moving them into position
+        for ctrl in self.getHierarchyNodes(classType="Control"):
+            ctrl.scalePoints(globalScale)
+
+        # move controls into position
         for ctrl in [self.L_loLipHandleCtrl, self.L_upLipHandleCtrl]:
             ctrl.xfo = data['L_midLipHandleXfo']
 
@@ -904,9 +926,6 @@ class OSSMouthRig(OSSMouth):
         for ctrl in [self.mouthCtrlSpace, self.mouthCtrl]:
             ctrl.xfo = data['mouthXfo']
 
-        self.jawCtrl.rotatePoints(-90.0, 0.0, 0.0)
-        self.jawCtrl.xfo = data['jawXfo']
-        self.jawCtrl.translatePoints(data['jawEndXfo'].tr - data['jawXfo'].tr)
 
         for ctrl in [self.L_MouthCtrlSpace, self.L_MouthCtrl, self.L_MouthCornerCtrlSpace, self.L_MouthCornerCtrl, self.L_MouthRefSpace]:
             ctrl.xfo = data['L_MouthXfo']
@@ -949,22 +968,24 @@ class OSSMouthRig(OSSMouth):
         self.upLipCtrl.translatePoints(Vec3(Vec3(0,  0.75,  .5)))
 
 
-        globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
-        for ctrl in self.getHierarchyNodes(classType="Control"):
-            ctrl.scalePoints(globalScale)
 
 
+        self.jawCtrl.rotatePoints(-90.0, 0.0, 0.0)
+        self.jawCtrl.xfo = data['jawXfo']
+        self.jawCtrl.translatePoints((data['jawEndXfo'].tr - data['jawXfo'].tr))
 
 
-        # update the positions of the lip controls to match their uberparents
-        # after we eval the operators and get the uber positions
+        # update the positions of the lip controls to match their grandparents
+        # after we eval the operators and get the grand positions
+        self.upLipLevel0Op.setInput('followCurveTangent', .25)
+        self.loLipLevel0Op.setInput('followCurveTangent', .25)
         self.upLipLevel0Op.evaluate()
         self.loLipLevel0Op.evaluate()
 
             
 
         uplipCtrlOffset = Vec3(0,0,.5)
-        lolipCtrlOffset = Vec3(0,0,.5)
+        lolipCtrlOffset = Vec3(0,0,-.5)
         uplipOffset = Vec3(0,0.75,0)
         lolipOffset = Vec3(0,-0.75,0)
         #should do this up front - why does hierarchy not get evaluated?
@@ -972,12 +993,13 @@ class OSSMouthRig(OSSMouth):
         for l in xrange(len(lips)):
             for ctrl in lips[l]:
                 if ctrl not in [self.L_MouthCtrl, self.R_MouthCtrl, self.R_MouthCornerCtrl, self.L_MouthCornerCtrl]:
-                    uberParentXfo = ctrl.getParent().getParent().xfo
-                    downAxis = Vec3(-1,-1,-1)*uberParentXfo.ori.getYaxis()
-                    ctrl.getParent().xfo = xfo.xfoFromDirAndUpV(Vec3(0,0,0), downAxis, uberParentXfo.ori.getZaxis())
-                    ctrl.getParent().xfo.tr = uberParentXfo.tr
+                    grandParentXfo = ctrl.getParent().getParent().xfo
+                    downAxis = Vec3(-1,-1,-1)*grandParentXfo.ori.getYaxis()
+                    ctrl.getParent().xfo = xfo.xfoFromDirAndUpV(Vec3(0,0,0), downAxis, grandParentXfo.ori.getZaxis())
+                    ctrl.getParent().xfo.tr = grandParentXfo.tr
                     ctrl.xfo = ctrl.getParent().xfo
                     ctrl.getChildren()[0].xfo = ctrl.getParent().xfo
+
                     # need to find a proper way of detecting controls of type curve
                     try:
                         if l:
@@ -994,24 +1016,27 @@ class OSSMouthRig(OSSMouth):
                         pass
 
 
-        self.upLipLevel0Op.setInput('followCurveTangent', .25)
-        self.loLipLevel0Op.setInput('followCurveTangent', .25)
 
         self.upLipControlsRest = []
         self.loLipControlsRest = []
 
         self.evalOperators()
         for i in range(len(self.loLipLevel1Ctrls)):
-            print self.loLipLevel1Ctrls[i].xfo
             self.loLipControlsRest.append(Xfo(self.loLipLevel1Ctrls[i].xfo))
         for i in range(len(self.upLipLevel1Ctrls)):
-            self.upLipControlsRest.append(self.upLipLevel1Ctrls[i].xfo)
+            self.upLipControlsRest.append(Xfo(self.upLipLevel1Ctrls[i].xfo))
 
         self.loLipLevel1Op.setInput('controlsRest', self.loLipControlsRest)
         self.upLipLevel1Op.setInput('controlsRest', self.upLipControlsRest)
+        
+
+        controlLen = len(self.upLipLevel1Outputs)
+        half = int(math.floor(controlLen/2))
+        self.upLipMidOutputTgtConstraint = self.upLipMidOutputTgt.constrainTo(self.upLipLevel1Outputs[half], maintainOffset=False)
+        self.lopLipMidOutputTgtConstraint = self.loLipMidOutputTgt.constrainTo(self.upLipLevel1Outputs[half], maintainOffset=False)
+
+
         self.evalOperators()
-
-
         #self.lipOutputTgtConstraint.evaluate()
         self.mouthOutputTgtConstraint.evaluate()
         self.jawEndOutputTgtConstraint.evaluate()

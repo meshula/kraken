@@ -7,6 +7,7 @@ from kraken.core.objects.components.base_example_component import BaseExampleCom
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
+from kraken.core.objects.attributes.string_attribute import StringAttribute
 
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 
@@ -52,7 +53,6 @@ class OSSMainComponent(OSS_Component):
         self.offsetOutputTgt = self.createOutput('offset', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.cogOutputTgt = self.createOutput('cog', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.rootOutputTgt = self.createOutput('root', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-
         # Declare Input Attrs
 
         # Declare Output Attrs
@@ -75,15 +75,23 @@ class OSSMainComponentGuide(OSSMainComponent):
 
         # Guide Settings
         #self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
-
+        self.rootMotionBlendDefault = ScalarAttribute('rootMotionBlendDefault', value=1.0, minValue=0.0, maxValue=1.0, parent=self.guideSettingsAttrGrp)
+        self.createCogControl = BoolAttribute('createCogControl', value=True, parent=self.guideSettingsAttrGrp)
+        self.createOffsetControl = BoolAttribute('createOffsetControl', value=True, parent=self.guideSettingsAttrGrp)
+        self.createRootControl = BoolAttribute('createRootControl', value=True, parent=self.guideSettingsAttrGrp)
+        self.createCogJoint = BoolAttribute('createCogJoint', value=False, parent=self.guideSettingsAttrGrp)
+        self.mainCtrlShape = StringAttribute('mainCtrlShape', value="MASTER_SHAPE", parent=self.guideSettingsAttrGrp)
         # =========
         # Controls
         # =========
 
         # Guide Controls
         self.mainCtrl = Control('master', shape='circle', parent=self.ctrlCmpGrp)
-        if "oss_master" not in Config.getInstance().getControlShapes().keys():
+        if self.mainCtrlShape not in Config.getInstance().getControlShapes().keys():
             self.mainCtrl.setCurveData(MASTER_SHAPE) #Why does this not work for guide controls?
+        else:
+            self.mainCtrl.setShape(self.mainCtrlShape) #Why does this not work for guide controls?
+
 
         self.cogCtrl = Control('cogPosition', parent=self.ctrlCmpGrp, shape="circle")
         self.cogCtrl.scalePoints(Vec3(2, 2, 2))
@@ -252,36 +260,79 @@ class OSSMainComponentRig(OSSMainComponent):
         Profiler.getInstance().push("Construct Main Rig Component:" + name)
         super(OSSMainComponentRig, self).__init__(name, parent)
 
+
+        Profiler.getInstance().pop()
+
+
+    def loadData(self, data=None):
+        """Load a saved guide representation from persisted data.
+
+        Arguments:
+        data -- object, The JSON data object.
+
+        Return:
+        True if successful.
+
+        """
+
+        super(OSSMainComponentRig, self).loadData(data)
+
+        self.mocap = bool(data["mocap"])
+
         self.mocap = False
 
         # =========
         # Controls
         # =========
         # Add Controls
+        self.mainCtrlShape = str(data['mainCtrlShape']) 
         self.mainCtrl = FKControl('master', shape='circle', parent=self.ctrlCmpGrp)
-        if "oss_master" not in Config.getInstance().getControlShapes():
-            self.mainCtrl.setCurveData(MASTER_SHAPE)
+
+        if self.mainCtrlShape not in Config.getInstance().getControlShapes():
+            self.mainCtrl.setCurveData(MASTER_SHAPE) #Why does this not work for guide controls?
+        else:
+            self.mainCtrl.setShape(self.mainCtrlShape) #Why does this not work for guide controls?
+
         self.mainCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
         self.mainCtrl.setColor("lightsalmon")
         self.mainCtrl.lockScale(x=True, y=True, z=True)
         self.mainCtrlSpace = self.mainCtrl.insertCtrlSpace()
 
-        self.offsetCtrl = FKControl('offset', shape='circle', parent=self.mainCtrl)
-        if "oss_master" not in Config.getInstance().getControlShapes():
-            self.offsetCtrl.setCurveData(MASTER_SHAPE)
-        self.offsetCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
-        self.offsetCtrl.setColor("steelblue")
-        self.offsetCtrl.lockScale(x=True, y=True, z=True)
-        self.offsetCtrlSpace = self.offsetCtrl.insertCtrlSpace()
+        # COG
+        self.createOffsetControl = bool(data['createOffsetControl']) 
 
-        self.rootCtrl = FKControl('root', shape='arrow', parent=self.mainCtrl)
+        if self.createOffsetControl:
+            self.offsetCtrl = FKControl('offset', shape='circle', parent=self.mainCtrl)
+            self.offsetCtrl.setColor("steelblue")
+            if "oss_master" not in Config.getInstance().getControlShapes():
+                self.offsetCtrl.setCurveData(MASTER_SHAPE)
+            self.offsetCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
+        else:
+            self.offsetCtrl = Transform('cog', parent=self.mainCtrl)
+
+        self.offsetCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.offsetCtrl.lockScale(x=True, y=True, z=True)
+        self.offsetCtrlSpace = self.insertParentSpace(self.offsetCtrl)
+
+
+        self.createRootControl = bool(data['createRootControl']) 
+        if self.createRootControl:
+            self.rootCtrl = FKControl('root', shape='arrow', parent=self.mainCtrl)
+            self.rootCtrl.setColor("gold")
+            self.rootCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
+            self.rootCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
+        else:
+            self.rootCtrl = Transform('root', parent=self.mainCtrl)
+
+
         self.rootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
-        self.rootCtrl.setColor("gold")
         self.rootCtrl.lockScale(x=True, y=True, z=True)
-        self.rootCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
-        self.rootCtrlSpace = self.rootCtrl.insertCtrlSpace()
+        self.rootCtrlSpace = self.insertParentSpace(self.rootCtrl)
         rootMotionBlendAttrGrp = AttributeGroup("______", parent=self.rootCtrl)
-        self.rootCtrl.rootMotionBlendAttr  = ScalarAttribute('rootMotionBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=rootMotionBlendAttrGrp)
+
+
+        self.rootMotionBlendDefault = data['rootMotionBlendDefault']
+        self.rootCtrl.rootMotionBlendAttr  = ScalarAttribute('rootMotionBlend', value=self.rootMotionBlendDefault, minValue=0.0, maxValue=1.0, parent=rootMotionBlendAttrGrp)
 
         self.autoRootCtrl = Control('auto_root', shape='arrow', parent=self.ctrlCmpGrp)
         self.autoRootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
@@ -295,11 +346,20 @@ class OSSMainComponentRig(OSSMainComponent):
         self.autoRootCtrl.getVisibilityAttr().connect(self.rootCtrl.rootMotionBlendAttr, lock=True)
 
         # COG
-        self.cogCtrl = FKControl('cog', parent=self.offsetCtrl, shape="circle")
+        self.createCogControl = bool(data['createCogControl']) 
+
+        if self.createCogControl:
+            self.cogCtrl = FKControl('cog', parent=self.offsetCtrl, shape="circle")
+            self.cogCtrl.scalePoints(Vec3(10.0, 10.0, 10.0))
+            self.cogCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
+            self.cogCtrl.setColor("orange")
+
+        else:
+            self.cogCtrl = Transform('cog', parent=self.offsetCtrl)
+
+
         self.cogCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
-        self.cogCtrl.scalePoints(Vec3(10.0, 10.0, 10.0))
-        self.cogCtrl.setColor("orange")
-        self.cogCtrlSpace = self.cogCtrl.insertCtrlSpace()
+        self.cogCtrlSpace = self.insertParentSpace(self.cogCtrl)
 
         # VIS
         self.visIconCtrl = Control('vis', parent=self.ctrlCmpGrp)
@@ -355,31 +415,11 @@ class OSSMainComponentRig(OSSMainComponent):
         self.rigScaleKLOp.setOutput('target', self.mainCtrlSpace)
 
 
-        Profiler.getInstance().pop()
-
-
-    def loadData(self, data=None):
-        """Load a saved guide representation from persisted data.
-
-        Arguments:
-        data -- object, The JSON data object.
-
-        Return:
-        True if successful.
-
-        """
-
-        super(OSSMainComponentRig, self).loadData(data)
-
-        self.mocap = bool(data["mocap"])
 
         # ================
         # Resize Controls
         # ================
-        self.mainCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], 1.0, data["globalComponentCtrlSize"]))
-        self.offsetCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
-        self.rootCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
-        self.cogCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
+        self.mainCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], data["globalComponentCtrlSize"], data["globalComponentCtrlSize"]))
 
         # =======================
         # Set Control Transforms
@@ -458,6 +498,11 @@ class OSSMainComponentRig(OSSMainComponent):
         self.rootDef.constrainTo(self.rootOutputTgt)
 
 
+        # COG
+        self.createCogJoint = bool(data['createCogJoint']) 
+        if self.createCogJoint:
+            self.cogDef = Joint('cog', parent=self.rootDef)
+            self.cogDef.constrainTo(self.cogCtrl, maintainOffset=False)
 
         #Set all parents to rootDef since that is the only joint option
         self.rootOutputTgt.parentJoint = self.rootDef

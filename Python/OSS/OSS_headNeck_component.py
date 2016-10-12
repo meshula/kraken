@@ -629,7 +629,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         self.headCtrl.rotatePoints(-90, 0, 0)
         self.headCtrl.scalePoints(Vec3(1, -1, 1))
-        self.headCtrl.translatePoints(Vec3(0.0, 2.5, 0.0))
+        self.headCtrl.translatePoints(Vec3(0.0, 2.25, 0.0))
         self.neckCtrl.translatePoints(Vec3(0.0, 1.0, 0.0))
         self.neckCtrl.scalePoints(globalScale)
         self.headCtrl.scalePoints(globalScale)

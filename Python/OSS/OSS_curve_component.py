@@ -42,6 +42,7 @@ class OSSCurveComponent(OSS_Component):
         # Declare IO
         # ===========
 
+        self.contstrainFirstControl_cmpIn = None
         # Declare Output Xfos
         self.curveBaseOutputTgt = self.createOutput('curveBase', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
         self.CurveEndOutputTgt = self.createOutput('CurveEnd', dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -62,7 +63,6 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         # Declare IO
         # ===========
         # Declare Inputs Xfos
-        self.contstrainFirstControl_cmpIn = None
         # =========
         # Controls
         # ========
@@ -192,9 +192,9 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         if contstrainFirstControl:
             if self.contstrainFirstControl_cmpIn is None:
                 print "Constraining First Control"
-                self.firstControlInput = self.createInput('firstControlXfo', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+                self.contstrainFirstControl_cmpIn = self.createInput('firstControlXfo', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         else:
-            if self.contstrainFirstControl_cmpIn is None:
+            if self.contstrainFirstControl_cmpIn is not None:
                 print "NOT constraining First Control"
                 # self.deleteInput('firstControlXfo', parent=self.inputHrcGrp)
                 # self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
@@ -490,6 +490,9 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.CurveEndOutputConstraint  =  self.CurveEndOutputTgt.constrainTo(self.curveOutputs[-1])
 
 
+        if data["contstrainFirstControl"]:
+            self.contstrainFirstControl_cmpIn = self.createInput('firstControlXfo', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+            self.controlInputs[0].constrainTo(self.contstrainFirstControl_cmpIn, maintainOffset=True)
 
         # # ====================
         # # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
