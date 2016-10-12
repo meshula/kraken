@@ -8,7 +8,26 @@ object OSS_FootRockerSystem : KrakenSolver {
 // Default Constructor
 function OSS_FootRockerSystem()
 {
-
+  this.defaultValues["footRocker"] = 0.0;
+  this.defaultValues["ballBreak"] = 0.0;
+  this.defaultValues["footBend"] = 0.0;
+  this.defaultValues["footTilt"] = 0.0;
+  this.defaultValues["footSwivel"] = 0.0;
+  this.defaultValues["ballBend"] = 0.0;
+  this.defaultValues["ballTwist"] = 0.0;
+  this.defaultValues["ballSwivel"] = 0.0;
+  this.defaultValues["pivot"] = Mat44();
+  this.defaultValues["pivotSpace"] = Mat44();
+  this.defaultValues["heelIK"] = Mat44();
+  this.defaultValues["heelIKSpace"] = Mat44();
+  this.defaultValues["ikCtrl"] = Mat44();
+  this.defaultValues["heelPivot"] = Mat44();
+  this.defaultValues["ballPivot"] = Mat44();
+  this.defaultValues["tipPivot"] = Mat44();
+  this.defaultValues["footJointLoc"] = Mat44();
+  this.defaultValues["ballJointLoc"] = Mat44();
+  this.defaultValues["innerPivotLoc"] = Mat44();
+  this.defaultValues["outerPivotLoc"] = Mat44();
 }
 
 function OSS_FootRockerSystem(
