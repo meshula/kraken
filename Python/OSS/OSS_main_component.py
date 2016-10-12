@@ -327,23 +327,38 @@ class OSSMainComponentRig(OSSMainComponent):
 
         self.rootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
         self.rootCtrl.lockScale(x=True, y=True, z=True)
-        self.rootCtrlSpace = self.insertParentSpace(self.rootCtrl)
+        self.rootCtrlSpace = self.rootCtrl.insertCtrlSpace()
         rootMotionBlendAttrGrp = AttributeGroup("______", parent=self.rootCtrl)
 
 
         self.rootMotionBlendDefault = data['rootMotionBlendDefault']
         self.rootCtrl.rootMotionBlendAttr  = ScalarAttribute('rootMotionBlend', value=self.rootMotionBlendDefault, minValue=0.0, maxValue=1.0, parent=rootMotionBlendAttrGrp)
+        self.rootCtrlSpace = self.rootCtrl.insertCtrlSpace()
 
-        self.autoRootCtrl = Control('auto_root', shape='arrow', parent=self.ctrlCmpGrp)
-        self.autoRootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
-        self.autoRootCtrl.setColor("gold")
+
+        # Just for visibility, so animators can see where joint control is
+        self.rootMotionCtrl = Control('root_motion', shape='arrow', parent=self.ctrlCmpGrp)
+        self.rootMotionCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XYZ"])  #Match root joint so Euler values are same for debugging
+        self.rootMotionCtrl.setColor("gray")
+        self.rootMotionCtrl.lockTranslation(x=True, y=True, z=True)
+        self.rootMotionCtrl.lockRotation(x=True, y=True, z=True)
+        self.rootMotionCtrl.lockScale(x=True, y=True, z=True)
+        self.rootMotionCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
+        self.rootMotionCtrl.scalePoints(Vec3(0.3, 0.3, 0.3))
+        self.rootMotionCtrlSpace = self.rootMotionCtrl.insertCtrlSpace()
+
+        # Just for visibility, so animators can see where auto root is
+        self.autoRootCtrl = Control('auto_root', shape='arrow', parent=self.mainCtrl)
+
+        self.autoRootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #MUST be ZXY to match aim in Z axis and Y-up from COG ori constraint
+        self.autoRootCtrl.setColor("gray")
         self.autoRootCtrl.lockTranslation(x=True, y=True, z=True)
         self.autoRootCtrl.lockRotation(x=True, y=True, z=True)
         self.autoRootCtrl.lockScale(x=True, y=True, z=True)
         self.autoRootCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
-        self.autoRootCtrl.scalePoints(Vec3(0.3, 0.3, 0.3))
+        self.autoRootCtrl.scalePoints(Vec3(0.95, 0.95, 0.99))
         self.autoRootCtrlSpace = self.autoRootCtrl.insertCtrlSpace()
-        self.autoRootCtrl.getVisibilityAttr().connect(self.rootCtrl.rootMotionBlendAttr, lock=True)
+
 
         # COG
         self.createCogControl = bool(data['createCogControl']) 
@@ -360,6 +375,7 @@ class OSSMainComponentRig(OSSMainComponent):
 
         self.cogCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
         self.cogCtrlSpace = self.insertParentSpace(self.cogCtrl)
+        self.cog_root_offset = Transform('cog_root_offset', parent=self.cogCtrl)
 
         # VIS
         self.visIconCtrl = Control('vis', parent=self.ctrlCmpGrp)
@@ -420,6 +436,9 @@ class OSSMainComponentRig(OSSMainComponent):
         # Resize Controls
         # ================
         self.mainCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"], data["globalComponentCtrlSize"], data["globalComponentCtrlSize"]))
+        self.rootMotionCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
+        self.autoRootCtrl.scalePoints(Vec3(data["globalComponentCtrlSize"] * 0.6, 1.0, data["globalComponentCtrlSize"] * 0.6))  # fix this scale issue
+
 
         # =======================
         # Set Control Transforms
@@ -432,6 +451,11 @@ class OSSMainComponentRig(OSSMainComponent):
 
         self.cogCtrlSpace.xfo.tr = data["cogPosition"]
         self.cogCtrl.xfo.tr = data["cogPosition"]
+
+        self.cog_root_offset.xfo.tr = data["cogPosition"]
+        self.cog_root_offset.xfo.tr.x = 0  # reset to zero for root motion
+        self.cog_root_offset.xfo.tr.z = 0 # reset to zero for root motion
+
 
 
         self.visIconCtrl.xfo = data['visIconXfo']
@@ -493,11 +517,11 @@ class OSSMainComponentRig(OSSMainComponent):
             blend=self.rootCtrl.rootMotionBlendAttr,
             name= 'RootMotionBlendKLOp')
 
+        self.rootMotionCtrl.constrainTo(self.rootOutputTgt)
+
         self.rootDef = Joint('root', parent=self.deformersParent)
         self.rootDef.setComponent(self) # Need an elegant automatic way to do this
         self.rootDef.constrainTo(self.rootOutputTgt)
-
-
         # COG
         self.createCogJoint = bool(data['createCogJoint']) 
         if self.createCogJoint:
@@ -519,7 +543,6 @@ class OSSMainComponentRig(OSSMainComponent):
         self.masterOutputTgtConstraint.evaluate()
         self.offsetOutputTgtConstraint.evaluate()
         self.cogOutputTgtConstraint.evaluate()
-
 
 
 VIS_SHAPE = [
