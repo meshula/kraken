@@ -1060,43 +1060,164 @@ class Builder(Builder):
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
 
-        posListClassID = MaxPlus.Class_ID(0x4b4b1002, 0x00000000) # Create Position List Controller
-        posListCtrl = MaxPlus.Factory.CreatePositionController(posListClassID)
-
-        posCns = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_Constraint)
-        posListCtrl.AssignController(posCns, 0)
-
-        posCtrl = MaxPlus.Factory.CreatePositionController(MaxPlus.ClassIds.Position_XYZ)
-        posListCtrl.AssignController(posCtrl, 1)
-
-        transform = tgtNode.GetSubAnim(2)
-        transform.AssignController(posListCtrl, 0)
+        offsetXfo = kConstraint.computeOffset()
 
         constraineeDCCSceneItem.Select()
         MaxPlus.Core.EvalMAXScript('constrainee = selection[1]')
         constraineeDCCSceneItem.Deselect()
 
-        for constrainer in kConstraint.getConstrainers():
+        MaxPlus.Core.EvalMAXScript('posCns = FabricMatrixController()')
+        rt.constrainee.controller = rt.posCns
 
+        if len(kConstraint.getConstrainers()) == 1:
+            # Create Ports and Connections
+            rt.posCns.DFGAddPort("inMatrix",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"MaxType\": \"17\"}",
+                                    execPath="")
+
+            rt.posCns.DFGAddPort("offsetVec",  # desiredPortName
+                                    0,  # portType
+                                    "Vec3",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"uiHidden\": \"true\"}",
+                                    execPath="")
+
+            matTransNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.Translation",  # presetPath
+                rt.Point2(-40, 106))
+
+            addNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Core.Math.Add",  # presetPath
+                rt.Point2(300, 152))
+
+            matSetTransNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.SetTranslation",  # presetPath
+                rt.Point2(430, 175))
+
+            degToRadNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Func.Math_degToRad",  # presetPath
+                rt.Point2(-380, 242))
+
+            rt.posCns.DFGSetPortDefaultValue(degToRadNodeName + ".val", "90.0")
+
+            quatSetFromAxisNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Quat.SetFromAxisAndAngle",  # presetPath
+                rt.Point2(-190, 242))
+
+            axisVecJSON = Vec3(1, 0, 0).getRTVal().getJSON().getSimpleType()
+            rt.posCns.DFGSetPortDefaultValue(quatSetFromAxisNodeName + ".axis", axisVecJSON)
+
+            quatRotVecNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Quat.RotateVector",  # presetPath
+                rt.Point2(40, 286))
+
+            rt.posCns.DFGConnect("inMatrix", matTransNodeName + ".this", execPath="")
+            rt.posCns.DFGConnect(matTransNodeName + ".result", addNodeName + ".lhs", execPath="")
+            rt.posCns.DFGConnect(degToRadNodeName + ".result", quatSetFromAxisNodeName + ".angle", execPath="")
+            rt.posCns.DFGConnect(quatSetFromAxisNodeName + ".result", quatRotVecNodeName + ".this", execPath="")
+            rt.posCns.DFGConnect("offsetVec", quatRotVecNodeName + ".v", execPath="")
+            rt.posCns.DFGConnect(quatRotVecNodeName + ".result", addNodeName + ".rhs", execPath="")
+            rt.posCns.DFGConnect(addNodeName + ".result", matSetTransNodeName + ".tr", execPath="")
+            rt.posCns.DFGConnect(matSetTransNodeName + ".this", "outputValue", execPath="")
+
+            if kConstraint.getMaintainOffset() is True:
+                tr = offsetXfo.tr
+                trJSON = tr.getRTVal().getJSON().getSimpleType()
+                rt.posCns.DFGSetArgValue("offsetVec", trJSON)
+
+            constrainer = self.getDCCSceneItem(kConstraint.getConstrainers()[0])
             constrainer.Select()
-            MaxPlus.Core.EvalMAXScript('constrainer = selection[1]')
+            MaxPlus.Core.EvalMAXScript('constrainerObj = selection[1]')
             constrainer.Deselect()
 
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller[1].appendTarget constrainer 50')
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setName 1 "{}"'.format(buildName))
+            script = "constrainee.transform.controller.inMatrix = constrainerObj"
+            MaxPlus.Core.EvalMAXScript(script)
 
-        if kConstraint.getMaintainOffset() is True:
-            offsetXfo = kConstraint.computeOffset()
-            offsetStr = "{} {} {}".format(offsetXfo.tr.x,
-                                          offsetXfo.tr.y,
-                                          offsetXfo.tr.z)
+        elif len(kConstraint.getConstrainers()) > 1:
+            # Create Ports and Connections
+            rt.posCns.DFGAddPort("inMatrices",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44[]",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"MaxType\": \"2065\"}",
+                                    execPath="")
 
-            # Set offsets on the scale constraint
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setActive 2')
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller[2].value = Point3 ' + offsetStr)
-            MaxPlus.Core.EvalMAXScript('constrainee.position.controller.setActive 1')
+            rt.posCns.DFGAddPort("offsetVec",  # desiredPortName
+                                    0,  # portType
+                                    "Vec3",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"uiHidden\": \"true\"}",
+                                    execPath="")
 
-        dccSceneItem = posListCtrl
+            matTransArrayNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.TranslationArray",  # presetPath
+                rt.Point2(-40, 106))
+
+            arrayAvgNodeNameName = rt.posCns.DFGInstPreset(
+                "Fabric.Core.Array.Average",  # presetPath
+                rt.Point2(-160, 130))
+
+            addNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Core.Math.Add",  # presetPath
+                rt.Point2(300, 152))
+
+            matSetTransNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.SetTranslation",  # presetPath
+                rt.Point2(430, 175))
+
+            degToRadNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Func.Math_degToRad",  # presetPath
+                rt.Point2(-380, 242))
+
+            rt.posCns.DFGSetPortDefaultValue(degToRadNodeName + ".val", "90.0")
+
+            quatSetFromAxisNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Quat.SetFromAxisAndAngle",  # presetPath
+                rt.Point2(-190, 242))
+
+            axisVecJSON = Vec3(1, 0, 0).getRTVal().getJSON().getSimpleType()
+            rt.posCns.DFGSetPortDefaultValue(quatSetFromAxisNodeName + ".axis", axisVecJSON)
+
+            quatRotVecNodeName = rt.posCns.DFGInstPreset(
+                "Fabric.Exts.Math.Quat.RotateVector",  # presetPath
+                rt.Point2(40, 286))
+
+            rt.posCns.DFGConnect("inMatrices", matTransArrayNodeName + ".this", execPath="")
+            rt.posCns.DFGConnect(matTransArrayNodeName + ".result", arrayAvgNodeNameName + ".array", execPath="")
+            rt.posCns.DFGConnect(arrayAvgNodeNameName + ".result", addNodeName + ".lhs", execPath="")
+            rt.posCns.DFGConnect(degToRadNodeName + ".result", quatSetFromAxisNodeName + ".angle", execPath="")
+            rt.posCns.DFGConnect(quatSetFromAxisNodeName + ".result", quatRotVecNodeName + ".this", execPath="")
+            rt.posCns.DFGConnect("offsetVec", quatRotVecNodeName + ".v", execPath="")
+            rt.posCns.DFGConnect(quatRotVecNodeName + ".result", addNodeName + ".rhs", execPath="")
+            rt.posCns.DFGConnect(addNodeName + ".result", matSetTransNodeName + ".tr", execPath="")
+            rt.posCns.DFGConnect(matSetTransNodeName + ".this", "outputValue", execPath="")
+
+            if kConstraint.getMaintainOffset() is True:
+                tr = offsetXfo.tr
+                trJSON = tr.getRTVal().getJSON().getSimpleType()
+                rt.posCns.DFGSetArgValue("offsetVec", trJSON)
+
+            # Build array of objects to set to the input
+            constrainers = [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]
+            MaxPlus.Core.EvalMAXScript('srcArrayObjs = #()')
+            for i in xrange(len(constrainers)):
+                constrainers[i].Select()
+                MaxPlus.Core.EvalMAXScript('append srcArrayObjs selection[1]')
+                constrainers[i].Deselect()
+
+            script = "constrainee.transform.controller.inMatrices = srcArrayObjs"
+            MaxPlus.Core.EvalMAXScript(script)
+        else:
+            raise ValueError("There are no constrainers in constraint: {}".format(kConstraint.getPath()))
+
+        dccSceneItem = rt.posCns
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -1114,19 +1235,130 @@ class Builder(Builder):
         """
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = None # pm.scaleConstraint(
-        #     [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-        #     constraineeDCCSceneItem,
-        #     name=buildName,
-        #     maintainOffset=kConstraint.getMaintainOffset())
 
-        # if kConstraint.getMaintainOffset() is True:
-        #     offsetXfo = kConstraint.computeOffset()
+        offsetXfo = kConstraint.computeOffset()
 
-        #     # Set offsets on the scale constraint
-        #     dccSceneItem.offset.set([offsetXfo.sc.x,
-        #                              offsetXfo.sc.y,
-        #                              offsetXfo.sc.z])
+        constraineeDCCSceneItem.Select()
+        MaxPlus.Core.EvalMAXScript('constrainee = selection[1]')
+        constraineeDCCSceneItem.Deselect()
+
+        MaxPlus.Core.EvalMAXScript('sclCns = FabricMatrixController()')
+        rt.constrainee.controller = rt.sclCns
+
+        if len(kConstraint.getConstrainers()) == 1:
+            # Create Ports and Connections
+            rt.sclCns.DFGAddPort("inMatrix",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"MaxType\": \"17\"}",
+                                    execPath="")
+
+            rt.sclCns.DFGAddPort("offsetVec",  # desiredPortName
+                                    0,  # portType
+                                    "Vec3",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"uiHidden\": \"true\"}",
+                                    execPath="")
+
+            matDecompNodeName = rt.sclCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.Decompose",  # presetPath
+                rt.Point2(-40, 106))
+
+            mulNodeName = rt.sclCns.DFGInstPreset(
+                "Fabric.Core.Math.Mul",  # presetPath
+                rt.Point2(300, 152))
+
+            matSetSclNodeName = rt.sclCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.SetScaling",  # presetPath
+                rt.Point2(430, 175))
+
+            rt.sclCns.DFGConnect("inMatrix", matDecompNodeName + ".this", execPath="")
+            rt.sclCns.DFGConnect(matDecompNodeName + ".scaling", mulNodeName + ".lhs", execPath="")
+            rt.sclCns.DFGConnect("offsetVec", mulNodeName + ".rhs", execPath="")
+            rt.sclCns.DFGConnect(mulNodeName + ".result", matSetSclNodeName + ".v", execPath="")
+            rt.sclCns.DFGConnect(matSetSclNodeName + ".this", "outputValue", execPath="")
+
+            if kConstraint.getMaintainOffset() is True:
+                sc = offsetXfo.sc
+                scJSON = sc.getRTVal().getJSON().getSimpleType()
+                rt.sclCns.DFGSetArgValue("offsetVec", scJSON)
+
+            constrainer = self.getDCCSceneItem(kConstraint.getConstrainers()[0])
+            constrainer.Select()
+            MaxPlus.Core.EvalMAXScript('constrainerObj = selection[1]')
+            constrainer.Deselect()
+
+            script = "constrainee.transform.controller.inMatrix = constrainerObj"
+            MaxPlus.Core.EvalMAXScript(script)
+
+        elif len(kConstraint.getConstrainers()) > 1:
+            # Create Ports and Connections
+            rt.sclCns.DFGAddPort("inMatrices",  # desiredPortName
+                                    0,  # portType
+                                    "Mat44[]",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"MaxType\": \"2065\"}",
+                                    execPath="")
+
+            rt.sclCns.DFGAddPort("offsetVec",  # desiredPortName
+                                    0,  # portType
+                                    "Vec3",  # typeSpec
+                                    portToConnect="",
+                                    extDep="",
+                                    metaData="{\"uiHidden\": \"true\"}",
+                                    execPath="")
+
+
+            matDecompArrayNodeName = rt.sclCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.DecomposeArray",  # presetPath
+                rt.Point2(-40, 106))
+
+            arrayAvgNodeNameName = rt.sclCns.DFGInstPreset(
+                "Fabric.Core.Array.Average",  # presetPath
+                rt.Point2(-160, 130))
+
+            mulNodeName = rt.sclCns.DFGInstPreset(
+                "Fabric.Core.Math.Mul",  # presetPath
+                rt.Point2(300, 152))
+
+            matSetSclNodeName = rt.sclCns.DFGInstPreset(
+                "Fabric.Exts.Math.Mat44.SetScaling",  # presetPath
+                rt.Point2(430, 175))
+
+            quatRotVecNodeName = rt.sclCns.DFGInstPreset(
+                "Fabric.Exts.Math.Quat.RotateVector",  # presetPath
+                rt.Point2(40, 286))
+
+            rt.sclCns.DFGConnect("inMatrices", matDecompArrayNodeName + ".this", execPath="")
+            rt.sclCns.DFGConnect(matDecompArrayNodeName + ".scaling", arrayAvgNodeNameName + ".average", execPath="")
+            rt.sclCns.DFGConnect(arrayAvgNodeNameName + ".result", mulNodeName + ".lhs", execPath="")
+            rt.sclCns.DFGConnect("offsetVec", mulNodeName + ".rhs", execPath="")
+            rt.sclCns.DFGConnect(mulNodeName + ".result", matSetSclNodeName + ".v", execPath="")
+            rt.sclCns.DFGConnect(matSetSclNodeName + ".this", "outputValue", execPath="")
+
+            if kConstraint.getMaintainOffset() is True:
+                sc = offsetXfo.sc
+                scJSON = sc.getRTVal().getJSON().getSimpleType()
+                rt.sclCns.DFGSetArgValue("offsetVec", scJSON)
+
+            # Build array of objects to set to the input
+            constrainers = [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]
+            MaxPlus.Core.EvalMAXScript('srcArrayObjs = #()')
+            for i in xrange(len(constrainers)):
+                constrainers[i].Select()
+                MaxPlus.Core.EvalMAXScript('append srcArrayObjs selection[1]')
+                constrainers[i].Deselect()
+
+            script = "constrainee.transform.controller.inMatrices = srcArrayObjs"
+            MaxPlus.Core.EvalMAXScript(script)
+        else:
+            raise ValueError("There are no constrainers in constraint: {}".format(kConstraint.getPath()))
+
+        dccSceneItem = rt.sclCns
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -1746,6 +1978,9 @@ class Builder(Builder):
             # Connect 'outputValue' port on Max controller
             # =============================================
             if ownerOutPortDataType.endswith('[]'):
+                if isKLBased is False:
+                    solverSolveNodeName = graphNodeName
+
                 arrayGetNodeName = rt.matCtrl.DFGInstPreset("Fabric.Core.Array.Get",
                                                             rt.Point2(600, 200),
                                                             execPath="")
@@ -1757,7 +1992,11 @@ class Builder(Builder):
                 rt.matCtrl.DFGConnect(arrayGetNodeName + ".element",
                                       "outputValue",
                                       execPath="")
+
             else:
+                if isKLBased is False:
+                    solverSolveNodeName = graphNodeName
+
                 rt.matCtrl.DFGConnect(solverSolveNodeName + "." + ownerOutPortName,
                                       "outputValue",
                                       execPath="")
