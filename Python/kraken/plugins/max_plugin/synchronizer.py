@@ -120,7 +120,7 @@ class Synchronizer(Synchronizer):
         """
 
         if kObject.isOfAnyType(('Rig', 'Container', 'Layer', 'HierarchyGroup', 'ComponentInput', 'ComponentOutput')):
-            logger.warning("SyncXfo: Skipping '" + kObject.getName() + "'!")
+            logger.debug("SyncXfo: Skipping '" + kObject.getName() + "'!")
             return False
 
         hrcMap = self.getHierarchyMap()
@@ -134,8 +134,6 @@ class Synchronizer(Synchronizer):
         if dccItem is None:
             logger.warning("SyncXfo: No DCC Item for :" + kObject.getPath())
             return False
-
-        logger.warning("Getting Xfo data from: {}".format(dccItem))
 
         dccPos = dccItem.GetWorldPosition()
         dccQuat = dccItem.GetWorldRotation()
@@ -188,12 +186,7 @@ class Synchronizer(Synchronizer):
             logger.warning("SyncAttribute: No DCC Item for :" + kObject.getPath())
             return
 
-
-        # ===========================
-        # TODO: GET ATTRS SYNCING!!!
-        # ===========================
-
-        # kObject.setValue(dccItem.get())
+        kObject.setValue(dccItem.Value)
 
         return True
 
