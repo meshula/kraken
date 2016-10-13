@@ -1,0 +1,27 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: RadialBasisSolver\n"
+    },
+  "title" : "ClearPairs",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "RadialBasisSolver"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "presetGUID" : "216CD7EF4411F26E4744F862032B48B4",
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  this.clearPairs();
+}
+"
+  }

@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: RadialBasisArray\n  result: Float32[]\n"
+    },
+  "title" : "ToFloat32",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "RadialBasisArray"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Float32[]"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "presetGUID" : "8EBCD5EDDB3CC54D03BE872AED8076B1",
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  result = this.toFloat32();
+}
+"
+  }

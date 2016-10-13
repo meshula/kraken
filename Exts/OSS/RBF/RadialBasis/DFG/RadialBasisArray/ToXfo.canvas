@@ -1,0 +1,37 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: RadialBasisArray\n  result: Xfo[]\n"
+    },
+  "title" : "ToXfo",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "RadialBasisArray"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "presetGUID" : "D414F13E085ED1C12383EDA67496A3DB",
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  result = this.toXfo();
+}
+"
+  }

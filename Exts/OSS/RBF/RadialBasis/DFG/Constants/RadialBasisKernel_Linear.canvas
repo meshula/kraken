@@ -1,0 +1,24 @@
+// Created by kl2dfg (processConstant)
+{
+  "objectType" : "Func",
+  "title" : "RadialBasisKernel_Linear",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "value",
+      "execPortType" : "Out",
+      "typeSpec" : "RadialBasisKernel"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "presetGUID" : "D79B0DFDCD0D096C6CF22811CD919A69",
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  value = RadialBasisKernel_Linear;
+}
+"
+  }

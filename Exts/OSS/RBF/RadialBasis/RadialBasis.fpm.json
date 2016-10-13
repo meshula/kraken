@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "code": [
+    "Math.kl",
+    "RadialBasisArray.kl",
+    "Conversion.kl",
+    "RadialBasisMatrix.kl",
+    "RadialBasisSolver.kl"  ],
+  "dfgPresets": {
+    "dir": "DFG",
+    "presetPath": "Fabric.Exts.RadialBasis"
+    }
+}

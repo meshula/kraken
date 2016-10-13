@@ -1,0 +1,37 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: RadialBasisArray\n  values: Quat[]\n"
+    },
+  "title" : "SetFromQuat",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "RadialBasisArray"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "values",
+      "execPortType" : "In",
+      "typeSpec" : "Quat[]"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "presetGUID" : "586842C70DA850D39F9FDF3E73D332CB",
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  this.setFromQuat(values);
+}
+"
+  }

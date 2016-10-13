@@ -1,0 +1,37 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: RadialBasisArray\n  values: Vec2[]\n"
+    },
+  "title" : "SetFromVec2",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "RadialBasisArray"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "values",
+      "execPortType" : "In",
+      "typeSpec" : "Vec2[]"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "presetGUID" : "ACB9ADD7115B084F554999A9259124BC",
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  this.setFromVec2(values);
+}
+"
+  }

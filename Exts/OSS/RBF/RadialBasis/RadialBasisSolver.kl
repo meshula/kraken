@@ -1,0 +1,487 @@
+
+//
+// Copyright (c) 2010-2016, Fabric Software Inc. All rights reserved.
+//
+
+alias UInt32 RadialBasisKernel;
+const RadialBasisKernel RadialBasisKernel_Multiquadric = 0;
+const RadialBasisKernel RadialBasisKernel_Inverse = 1;
+const RadialBasisKernel RadialBasisKernel_Gaussian = 2;
+const RadialBasisKernel RadialBasisKernel_Linear = 3;
+const RadialBasisKernel RadialBasisKernel_Cubic = 4;
+const RadialBasisKernel RadialBasisKernel_Quintic = 5;
+const RadialBasisKernel RadialBasisKernel_ThinPlate = 6;
+
+object RadialBasisSolver
+{
+  /// \internal
+  private RadialBasisKernel kernel;
+  /// \internal
+  private UInt32 keyCols;
+  /// \internal
+  private UInt32 valueCols;
+  /// \internal
+  private Float32 epsilon;
+  /// \internal
+  private Boolean epsilonProvided;
+  /// \internal
+  private Boolean successfullyInitialized;
+
+  /// \internal
+  RadialBasisMatrix aM;
+  /// \internal
+  RadialBasisMatrix pM;
+  /// \internal
+  RadialBasisMatrix fM;
+
+  /// \internal
+  RadialBasisArray tempR;
+  /// \internal
+  RadialBasisArray tempV;
+  /// \internal
+  RadialBasisArray tempFi[];
+};
+
+/// \dfgPresetOmit
+inline RadialBasisSolver()
+{
+  this.kernel = RadialBasisKernel_Multiquadric;
+  this.keyCols = 1;
+  this.valueCols = 1;
+  this.epsilonProvided = false;
+
+  this.aM = null;
+  this.pM = RadialBasisMatrix();
+  this.fM = RadialBasisMatrix();
+
+  this.invalidate();
+}
+
+/// \dfgPresetCombo keyType ("Float32", "Vec2", "Vec3", "Quat / Color", "Xfo")
+/// \dfgPresetCombo valueType ("Float32", "Vec2", "Vec3", "Quat / Color", "Xfo")
+/// \dfgPresetCombo kernel ("multiquadric", "inverse", "gaussian", "linear", "cubic", "quintic", "thin_plate")
+/// \dfgPresetDefault kernel 2
+/// \dfgPresetDefault epsilon -1.0
+inline RadialBasisSolver(RadialBasisKernel kernel, UInt32 keyType, UInt32 valueType, Float32 epsilon)
+{
+  UInt32 keyCols = 0;
+  UInt32 valueCols = 0;
+  switch(keyType)
+  {
+    case 0:
+    {
+      keyCols = 1;
+      break;
+    }
+    case 1:
+    {
+      keyCols = 2;
+      break;
+    }
+    case 2:
+    {
+      keyCols = 3;
+      break;
+    }
+    case 3:
+    {
+      keyCols = 4;
+      break;
+    }
+    case 4:
+    {
+      keyCols = 10;
+      break;
+    }
+    default:
+    {
+      keyCols = 0;
+      break;
+    }
+  }
+  switch(valueType)
+  {
+    case 0:
+    {
+      valueCols = 1;
+      break;
+    }
+    case 1:
+    {
+      valueCols = 2;
+      break;
+    }
+    case 2:
+    {
+      valueCols = 3;
+      break;
+    }
+    case 3:
+    {
+      valueCols = 4;
+      break;
+    }
+    case 4:
+    {
+      valueCols = 10;
+      break;
+    }
+    default:
+    {
+      valueCols = 0;
+      break;
+    }
+  }
+
+  this.kernel = kernel;
+  this.keyCols = keyCols;
+  this.valueCols = valueCols;
+  this.epsilon = epsilon;
+  this.epsilonProvided = epsilon >= 0.0;
+
+  this.aM = null;
+  this.pM = RadialBasisMatrix(0, this.keyCols);
+  this.fM = RadialBasisMatrix(0, this.valueCols);
+
+  this.invalidate();
+}
+
+function RadialBasisSolver.pushPairs!(RadialBasisArray keys, RadialBasisArray values) {
+  if(keys.size() % this.keyCols > 0) {
+    report('keys size has to be a multiple of '+this.keyCols);
+    return;
+  }
+  if(values.size() % this.valueCols > 0) {
+    report('values size has to be a multiple of '+this.valueCols);
+    return;
+  }
+
+  this.pM.pushRowArray(keys);
+  this.fM.pushRowArray(values);
+  this.invalidate();
+}
+
+function RadialBasisSolver.setPairs!(RadialBasisArray keys, RadialBasisArray values) {
+  if(this.pM.matrix.size() == 0) {
+    this.pushPairs(keys, values);
+  } else {
+    if(keys.size() != this.pM.matrix.size()) {
+      report('keys size has to be '+this.pM.matrix.size());
+      return;
+    }
+    if(values.size() != this.fM.matrix.size()) {
+      report('values size has to be '+this.fM.matrix.size());
+      return;
+    }
+
+    this.pM.matrix = keys;
+    this.fM.matrix = values;
+    this.invalidate();
+  }
+}
+
+function RadialBasisSolver.clearPairs!() {
+  this.aM = null;
+  this.pM = RadialBasisMatrix(0, this.keyCols);
+  this.fM = RadialBasisMatrix(0, this.valueCols);
+  this.invalidate();
+}
+
+function RadialBasisArray RadialBasisSolver.solve!(RadialBasisArray keys) {
+  if(keys.size() % this.keyCols > 0) {
+    report('keys size has to be a multiple of '+this.keyCols);
+    return RadialBasisArray();
+  }
+
+  RadialBasisMatrix pM(keys.size() / this.keyCols, this.keyCols, keys);
+  RadialBasisMatrix resultM = this.interpolate(pM);
+
+  return resultM.matrix;
+}
+
+
+function RadialBasisArray RadialBasisSolver.solveWeights!(RadialBasisArray keys) {
+  if(keys.size() % this.keyCols > 0) {
+    report('keys size has to be a multiple of '+this.keyCols);
+    return RadialBasisArray();
+  }
+
+  RadialBasisMatrix pM(keys.size() / this.keyCols, this.keyCols, keys);
+  RadialBasisMatrix resultM = this.interpolateWeights(pM);
+
+  return resultM.matrix;
+}
+
+
+private function Float32 RadialBasisSolver.g(Float32 t_squared)
+{
+  return sqrt(log10(t_squared + 1.0f));
+}
+
+private function Float32 RadialBasisSolver.multiquadric(Float32 r, Float32 epsilon) {
+  return sqrt(pow(r / epsilon, 2) + 1);
+}
+
+private function Float32 RadialBasisSolver.inverse(Float32 r, Float32 epsilon) {
+  return 1.0 / sqrt(pow(r / epsilon, 2) + 1);
+}
+
+private function Float32 RadialBasisSolver.gaussian(Float32 r, Float32 epsilon) {
+  return exp(- pow(r / epsilon, 2));
+}
+
+private function Float32 RadialBasisSolver.linear(Float32 r) {
+  return r;
+}
+
+private function Float32 RadialBasisSolver.cubic(Float32 r) {
+  return pow(r, 3);
+}
+
+private function Float32 RadialBasisSolver.quintic(Float32 r) {
+  return pow(r, 5);
+}
+
+private function Float32 RadialBasisSolver.thinPlate(Float32 r) {
+  if(r == 0.0)
+    return 0.0;
+  return pow(r, 2) * log(r);
+}
+
+/// \dfgPresetOmit
+function Float32 RadialBasisSolver.distance(Float32 r) {
+  Float32 distance;
+  switch(this.kernel)
+  {
+  case 0:
+    distance = this.multiquadric(r, this.epsilon);
+    break;
+  case 1:
+    distance = this.inverse(r, this.epsilon);
+    break;
+  case 2:
+    distance = this.gaussian(r, this.epsilon);
+    break;
+  case 3:
+    distance = this.linear(r);
+    break;
+  case 4:
+    distance = this.cubic(r);
+    break;
+  case 5:
+    distance = this.quintic(r);
+    break;
+  case 6:
+    distance = this.thinPlate(r);
+    break;
+  default:
+    distance = this.multiquadric(r, this.epsilon);
+    break;
+  }
+  return distance;
+}
+
+//  Automaticaly compute the best epsilon
+private function RadialBasisSolver.computeEpsilon!()
+{
+  if(this.epsilon > 0)
+    return;
+
+  UInt32 N = this.pM.rows;
+  RadialBasisArray min = this.pM.getColsMin();
+  RadialBasisArray max = this.pM.getColsMax();
+  Float32 prod = 1.0;
+  UInt32 size;
+  for(UInt32 i = 0; i < this.pM.cols; i++) {
+    Float32 edge = max.f[i] - min.f[i];
+    if(edge != 0)
+    {
+      prod *= edge;
+      size++;
+    }
+  }
+  this.epsilon = Float32(pow(prod / N, 1.0 / size));
+}
+
+private function RadialBasisSolver.invalidate!()
+{
+  this.successfullyInitialized = false;
+  if(!this.epsilonProvided)
+    this.epsilon = -1.0;
+}
+
+private function RadialBasisSolver.init!()
+{
+  if(this.successfullyInitialized)
+    return;
+
+  if(this.pM.rows != this.fM.rows)
+  {
+    report('RadialBasisSolver: cannot solve - number of keys does not match number of values.');
+    return;
+  }
+
+  this.computeEpsilon();
+
+  UInt32 pointCount = this.pM.rows;
+  UInt32 d = this.pM.cols;
+  RadialBasisArray r(pointCount);
+
+  RadialBasisMatrix aM(pointCount, pointCount);
+  for(UInt32 i = 0; i < pointCount; i++)
+  {
+    for(UInt32 j = 0; j < pointCount; j++)
+    {
+      r.f[j] = 0.0;
+      for(UInt32 k = 0; k < d; k++)
+        r.f[j] += pow(this.pM.get(i, k) - this.pM.get(j, k), 2);
+      r.f[j] = sqrt(r.f[j]);
+      aM.set(i, j, this.distance(r.f[j]));
+    }
+  }
+
+  //Solve for the weights.
+  this.aM = aM.inverse();
+  this.successfullyInitialized = true;
+}
+
+operator RadialBasisSolver_InterpolateTask(
+  Index index,
+  io RadialBasisSolver this,
+  Size ni,
+  RadialBasisMatrix xd,
+  RadialBasisMatrix xi,
+  UInt32 nd,
+  UInt32 m
+) {
+  Index i = index % ni;
+  Index col = index / ni;
+  Index offset = index * nd;
+
+  for(UInt32 j = 0; j < nd; j++) {
+    this.tempR.f[offset + j] = 0.0;
+    for(UInt32 k = 0; k < m; k++)
+      this.tempR.f[offset + j] += pow(xi.get(i, k) - xd.get(j, k), 2);
+    this.tempR.f[offset + j] = sqrt(this.tempR.f[offset + j]);
+    this.tempV.f[offset + j] = this.distance(this.tempR.f[offset + j]);
+  }
+
+  // todo: this could be optimized to read the values directly from the FM matrix.
+  this.tempFi[col].f[i] = this.tempV.getDotProductsSum((this.aM * this.fM.getCol(col)).matrix, offset, nd);
+}
+
+operator RadialBasisSolver_InterpolatedWeightsTask(
+  Index index,
+  io RadialBasisSolver this,
+  Size ni,
+  RadialBasisMatrix xd,
+  RadialBasisMatrix xi,
+  UInt32 nd,
+  UInt32 m
+) {
+
+  Index i = index % ni;
+  Index col = index ;
+
+  for(UInt32 j = 0; j < nd; j++) {
+    this.tempFi[col].f[j] = 0.0;
+    for(UInt32 k = 0; k < m; k++)
+      this.tempFi[col].f[j] += pow(xi.get(index, k) - xd.get(j, k), 2);
+
+    if(Math_badDivisor(this.tempFi[col].f[j]))
+      this.tempFi[col].f[j] = BIGSCALAR_POSITIVE;
+    else
+      this.tempFi[col].f[j] = 1.0/this.tempFi[col].f[j];
+  }
+
+  Float32 sum = this.tempFi[col].f.sum();
+  for(UInt32 L = 0; L < nd; L++)
+    this.tempFi[col].f[L] /= sum;
+}
+
+
+private function RadialBasisMatrix RadialBasisSolver.interpolate!(RadialBasisMatrix coords) {
+//    Inputs
+//      xd[posesCount * dimensions], the data points:
+//      pnt 0: [x, y, ....]
+//      pnt 1: [x, y, ....]
+//      pnt 2: [x, y, ....]
+//
+//      coords[pntCount * dimensions], the interpolation points:
+//
+//    Output:
+//      an array of interpolated values per coords points.
+  this.init();
+  if(!this.successfullyInitialized)
+    return RadialBasisMatrix();
+
+  RadialBasisMatrix result(coords.rows, this.fM.cols);
+  UInt32 nd = this.pM.rows;
+  UInt32 m = this.pM.cols;
+  UInt32 ni = coords.rows;
+  this.tempFi.resize(this.fM.cols);
+  for(UInt32 col = 0; col < this.fM.cols; col++)
+    this.tempFi[col].resize(ni);
+
+  this.tempR.resize(this.fM.cols * ni * nd);
+  this.tempV.resize(this.fM.cols * ni * nd);
+
+  RadialBasisSolver self = this;
+  RadialBasisSolver_InterpolateTask<<<this.fM.cols * ni>>>(
+    self,
+    ni,
+    this.pM,
+    coords,
+    nd,
+    m
+  );
+
+  for(UInt32 col = 0; col < this.fM.cols; col++)
+    result.setCol(col, this.tempFi[col]);
+
+  return result;
+}
+
+
+private function RadialBasisMatrix RadialBasisSolver.interpolateWeights!(RadialBasisMatrix coords) {
+//    Inputs
+//      xd[posesCount * dimensions], the data points:
+//      pnt 0: [x, y, ....]
+//      pnt 1: [x, y, ....]
+//      pnt 2: [x, y, ....]
+//
+//      coords[pntCount * dimensions], the interpolation points:
+//
+//    Output:
+//      an array of interpolated values per coords points.
+  this.init();
+  if(!this.successfullyInitialized)
+    return RadialBasisMatrix();
+
+  RadialBasisMatrix result(coords.rows, this.pM.rows);
+
+  UInt32 nd = this.pM.rows;
+  UInt32 m = this.pM.cols;
+  UInt32 ni = coords.rows;
+
+  this.tempFi.resize(ni);
+  for(UInt32 col = 0; col < ni; col++)
+    this.tempFi[col].resize(nd);
+
+
+  RadialBasisSolver self = this;
+
+  RadialBasisSolver_InterpolatedWeightsTask<<<ni>>>(
+    self,
+    ni,
+    this.pM,
+    coords,
+    nd,
+    m
+  );
+
+  for(UInt32 col = 0; col < ni; col++)
+    result.setRow(col, this.tempFi[col]);
+
+  return result;
+}

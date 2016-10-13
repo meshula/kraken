@@ -1,0 +1,40 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: RadialBasisSolver\n  keys: RadialBasisArray\n  result: RadialBasisArray\n"
+    },
+  "title" : "SolveWeights",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "RadialBasisSolver"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "keys",
+      "execPortType" : "In",
+      "typeSpec" : "RadialBasisArray"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "RadialBasisArray"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  result = this.solveWeights(keys);
+}
+"
+  }
