@@ -2232,6 +2232,7 @@ class Builder(Builder):
         """
 
         # pymxs.runtime.disableRefMsgs()
+        MaxPlus.ViewportManager.DisableSceneRedraw()
         MaxPlus.SelectionManager.ClearNodeSelection()
 
         return True
@@ -2251,6 +2252,7 @@ class Builder(Builder):
         super(Builder, self)._postBuild(kSceneItem)
 
         # pymxs.runtime.enableRefMsgs()
+        MaxPlus.ViewportManager.EnableSceneRedraw()
         MaxPlus.ViewportManager.ForceCompleteRedraw()
 
         return True
