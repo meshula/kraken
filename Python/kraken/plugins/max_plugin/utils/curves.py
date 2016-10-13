@@ -1,4 +1,11 @@
+
+import logging
+
 from kraken.plugins.max_plugin.utils import *
+
+from kraken.log import getLogger
+
+logger = getLogger('kraken')
 
 
 def curveToKraken(curve):
@@ -25,4 +32,7 @@ def curveToKraken(curve):
     #     data.append(subCurveData)
 
     # return data
-    pass
+
+    logger.warning("'curveToKraken' not implemented for 3dsMax yet!")
+
+    return None
