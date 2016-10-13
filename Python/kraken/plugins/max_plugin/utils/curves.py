@@ -19,20 +19,20 @@ def curveToKraken(curve):
 
     """
 
-    # shapes = pm.listRelatives(curve, shapes=True)
+    splineShape = MaxPlus.SplineShape__CastFrom(curve.BaseObject)
+    shape = splineShape.GetShape()
 
-    # data = []
-    # for eachShape in shapes:
-    #     subCurveData = {
-    #         'points': [[round(y, 3) for y in [x.x, x.y, x.z]] for x in eachShape.getCVs()],
-    #         'degree': eachShape.degree(),
-    #         'closed': eachShape.form() == 'closed'
-    #     }
+    data = []
+    for i in xrange(shape.GetNumSplines()):
+        subCrv = shape.GetSpline(i)
+        lineType = subCrv.GetLineType(0)
+        knotPoints = [subCrv.GetKnotPoint(x) for x in xrange(subCrv.KnotCount())]
+        subCurveData = {
+            'points': [[round(y, 3) for y in [x.X, x.Y, x.Z]] for x in knotPoints],
+            'degree': 1 if lineType == 1 else 3,
+            'closed': subCrv.Closed()
+        }
 
-    #     data.append(subCurveData)
+        data.append(subCurveData)
 
-    # return data
-
-    logger.warning("'curveToKraken' not implemented for 3dsMax yet!")
-
-    return None
+    return data
