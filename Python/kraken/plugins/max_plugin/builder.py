@@ -45,7 +45,8 @@ class Builder(Builder):
         for builtElement in self._buildElements:
             if builtElement['src'].isOfAnyType(('Attribute',
                                                 'AttributeGroup',
-                                                'Constraint')):
+                                                'Constraint',
+                                                'Operator')):
                 continue
 
             node = builtElement['tgt']
@@ -61,6 +62,7 @@ class Builder(Builder):
                     msg = "Could not delete built items: {} ({})"
                     logger.warning(msg.format(builtElement['src'].getPath(),
                                               builtElement['src'].getTypeName()))
+                    continue
 
         self._buildElements = []
 
@@ -2230,6 +2232,7 @@ class Builder(Builder):
         """
 
         # pymxs.runtime.disableRefMsgs()
+        MaxPlus.SelectionManager.ClearNodeSelection()
 
         return True
 
