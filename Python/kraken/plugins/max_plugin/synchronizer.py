@@ -1,8 +1,15 @@
-from kraken.core.maths import Xfo, Vec3, Quat
+
+import logging
+
+from kraken.core.maths import Xfo, Vec3, Quat, Math_degToRad
+
+from kraken.log import getLogger
 
 from kraken.core.synchronizer import Synchronizer
 from kraken.plugins.max_plugin.utils import *
 from kraken.plugins.max_plugin.utils.curves import curveToKraken
+
+logger = getLogger('kraken')
 
 
 class Synchronizer(Synchronizer):
@@ -27,41 +34,78 @@ class Synchronizer(Synchronizer):
 
         """
 
-        # path = kObject.getPath()
-        # pathSections = path.split('.')
-        # pathObj = kObject
-        # mayaPath = ''
-        # index = len(pathSections) - 1
-        # for pathSection in reversed(pathSections):
+        foundItem = None
+        path = kObject.getPath()
+        pathSections = path.split('.')
+        pathObj = kObject
+        maxPath = ''
+        index = len(pathSections) - 1
+        for pathSection in reversed(pathSections):
 
-        #     if pathObj is None:
-        #         raise Exception("parent not specified for object, so a full path cannot be resolved to a maya object:" + path)
+            if pathObj is None:
+                raise Exception("parent not specified for object, so a full path cannot be resolved to a maya object:" + path)
 
-        #     if pathObj.isTypeOf('AttributeGroup'):
-        #         # We don't build an attribute group in Maya, so skip this object
-        #         pass
+            if pathObj.isTypeOf('AttributeGroup'):
+                maxPath = ':baseObject:' + pathObj.getName() + maxPath
 
-        #     elif pathObj.isTypeOf('Attribute'):
-        #         # The attribute object requires a '.' seperator in the Maya path.
-        #         mayaPath = '.' + pathObj.getName()
+            elif pathObj.isTypeOf('Attribute'):
+                # The attribute object requires a '.' seperator in the Maya path.
+                maxPath = ':' + pathObj.getName()
 
-        #     else:
-        #         if index > 0:
-        #             mayaPath = '|' + pathObj.getBuildName() + mayaPath
-        #         else:
-        #             mayaPath = pathObj.getBuildName() + mayaPath
+            else:
+                if index > 0:
+                    maxPath = '/' + pathObj.getBuildName() + maxPath
+                else:
+                    maxPath = pathObj.getBuildName() + maxPath
 
-        #     pathObj = pathObj.getParent()
-        #     index -= 1
+            pathObj = pathObj.getParent()
+            index -= 1
 
-        # try:
-        #     foundItem = pm.PyNode(mayaPath)
-        # except:
-        #     return None
+        # Find and select object
+        objPath = maxPath.split(":", 1)
+        MaxPlus.Core.EvalMAXScript("obj = $" + objPath[0])
+        if rt.obj is None:
+            return foundItem
 
-        # return foundItem
+        rt.select(rt.obj)
+        node = MaxPlus.SelectionManager.GetNodes()[0]
+        foundItem = node
 
-        pass
+        logger.debug("ObjPath: {}".format(objPath[0]))
+
+        if kObject.isTypeOf('AttributeGroup'):
+            logger.debug("AttributeGroup: {}".format(kObject.getName()))
+            foundItem = None
+            customAttrContainers = node.BaseObject.GetCustomAttributeContainer()
+            if str(customAttrContainers) != "None":
+                for i in xrange(len(customAttrContainers)):
+                    attrCntr = node.BaseObject.GetCustomAttributeContainer()[i]
+                    if attrCntr.GetName() == kObject.getName():
+                        foundItem = attrCntr
+
+        elif kObject.isTypeOf('Attribute'):
+            attrGrp = None
+            customAttrContainers = node.BaseObject.GetCustomAttributeContainer()
+            if str(customAttrContainers) != "None":
+                for i in xrange(len(customAttrContainers)):
+                    attrCntr = node.BaseObject.GetCustomAttributeContainer()[i]
+                    if attrCntr.GetName() == kObject.getParent().getName():
+                        attrGrp = attrCntr
+
+                if attrGrp is not None:
+                    logger.debug("AttributeGroup: {}".format(kObject.getParent().getName()))
+                    logger.debug("Attribute: {}".format(kObject.getName()))
+                    foundItem = None
+                    paramBlock = attrGrp.GetParameterBlock()
+                    for i in xrange(paramBlock.NumParameters):
+                        param = paramBlock.GetItem(i)
+                        paramName = param.GetName()
+                        if paramName == kObject.getName():
+                            foundItem = param
+
+        logger.debug("foundItem: " + str(foundItem))
+
+        return foundItem
 
 
     def syncXfo(self, kObject):
@@ -75,34 +119,43 @@ class Synchronizer(Synchronizer):
 
         """
 
-        # hrcMap = self.getHierarchyMap()
+        if kObject.isOfAnyType(('Rig', 'Container', 'Layer', 'HierarchyGroup', 'ComponentInput', 'ComponentOutput')):
+            logger.warning("SyncXfo: Skipping '" + kObject.getName() + "'!")
+            return False
 
-        # if kObject not in hrcMap.keys():
-        #     print "Warning! 3D Object '" + kObject.getName() + "' was not found in the mapping!"
-        #     return False
+        hrcMap = self.getHierarchyMap()
 
-        # dccItem = hrcMap[kObject]['dccItem']
+        if kObject not in hrcMap.keys():
+            logger.warning("SyncXfo: 3D Object '" + kObject.getName() + "' was not found in the mapping!")
+            return False
 
-        # if dccItem is None:
-        #     print "Warning Syncing. No DCC Item for :" + kObject.getPath()
-        #     return False
+        dccItem = hrcMap[kObject]['dccItem']
 
-        # dccPos = dccItem.getTranslation(space='world')
-        # dccQuat = dccItem.getRotation(space='world', quaternion=True).get()
-        # dccScl = dccItem.getScale()
+        if dccItem is None:
+            logger.warning("SyncXfo: No DCC Item for :" + kObject.getPath())
+            return False
 
-        # pos = Vec3(x=dccPos[0], y=dccPos[1], z=dccPos[2])
-        # quat = Quat(v=Vec3(dccQuat[0], dccQuat[1], dccQuat[2]), w=dccQuat[3])
+        logger.warning("Getting Xfo data from: {}".format(dccItem))
 
-        # # If flag is set, pass the DCC Scale values.
-        # if kObject.testFlag('SYNC_SCALE') is True:
-        #     scl = Vec3(x=dccScl[0], y=dccScl[1], z=dccScl[2])
-        # else:
-        #     scl = Vec3(1.0, 1.0, 1.0)
+        dccPos = dccItem.GetWorldPosition()
+        dccQuat = dccItem.GetWorldRotation()
+        dccScl = dccItem.GetWorldScale()
 
-        # newXfo = Xfo(tr=pos, ori=quat, sc=scl)
+        pos = Vec3(x=dccPos.X, y=dccPos.Y, z=dccPos.Z)
+        quat = Quat(v=Vec3(dccQuat.X, dccQuat.Y, dccQuat.Z), w=dccQuat.W)
 
-        # kObject.xfo = newXfo
+        # If flag is set, pass the DCC Scale values.
+        if kObject.testFlag('SYNC_SCALE') is True:
+            scl = Vec3(x=dccScl.X, y=dccScl.Y, z=dccScl.Z)
+        else:
+            scl = Vec3(1.0, 1.0, 1.0)
+
+        newXfo = Xfo(tr=pos, ori=quat, sc=scl)
+        rotateUpXfo = Xfo()
+        rotateUpXfo.ori = Quat().setFromAxisAndAngle(Vec3(1, 0, 0), Math_degToRad(-90))
+        newXfo = rotateUpXfo * newXfo
+
+        kObject.xfo = newXfo
 
         return True
 
@@ -126,16 +179,21 @@ class Synchronizer(Synchronizer):
         hrcMap = self.getHierarchyMap()
 
         if kObject not in hrcMap.keys():
-            print "Warning! Attribute '" + kObject.getName() + "' was not found in the mapping!"
+            logger.warning("SyncAttribute: Attribute '" + kObject.getName() + "' was not found in the mapping!")
             return False
 
         dccItem = hrcMap[kObject]['dccItem']
 
         if dccItem is None:
-            print "Warning Syncing. No DCC Item for :" + kObject.getPath()
+            logger.warning("SyncAttribute: No DCC Item for :" + kObject.getPath())
             return
 
-        kObject.setValue(dccItem.get())
+
+        # ===========================
+        # TODO: GET ATTRS SYNCING!!!
+        # ===========================
+
+        # kObject.setValue(dccItem.get())
 
         return True
 
@@ -154,17 +212,22 @@ class Synchronizer(Synchronizer):
         hrcMap = self.getHierarchyMap()
 
         if kObject not in hrcMap.keys():
-            print "Warning! 3D Object '" + kObject.getName() + "' was not found in the mapping!"
+            logger.warning("SyncCurveData: 3D Object '" + kObject.getName() + "' was not found in the mapping!")
             return False
 
         dccItem = hrcMap[kObject]['dccItem']
 
         if dccItem is None:
-            print "Warning Syncing. No DCC Item for :" + kObject.getPath()
+            logger.warning("SyncCurveData: No DCC Item for :" + kObject.getPath())
             return
 
-        # Get Curve Data from Softimage Curve
+        # Get Curve Data from 3dsMax Curve
         data = curveToKraken(dccItem)
-        kObject.setCurveData(data)
+
+        # ===================================
+        # TODO: GET CURVE SYNCING WORKING!!!
+        # ===================================
+
+        # kObject.setCurveData(data)
 
         return True
