@@ -1,0 +1,52 @@
+
+//
+// Copyright (c) 2010-2016, Fabric Software Inc. All rights reserved.
+//
+
+/// returns positive or negative 1 depending on the sign
+inline Integer Integer.getSign()
+{
+  return (this < 0 ? -1 : 1);
+}
+
+/// returns the source value with the sign provided by signed
+inline Integer copySign(Integer source, Integer signed)
+{
+  if(source.getSign() == signed.getSign())
+    return source;
+  return abs(source) * signed.getSign();
+}
+
+/// returns positive or negative 1 depending on the sign
+inline Float32 Float32.getSign()
+{
+  return (this < 0 ? -1 : 1);
+}
+
+/// returns the source value with the sign provided by signed
+inline Float32 copySign(Float32 source, Float32 signed)
+{
+  if(source.getSign() == signed.getSign())
+    return source;
+  return abs(source) * signed.getSign();
+}
+
+/// returns the hypothenuse of an orthoganal
+/// triangle with side length a and b
+function Float32 pythag(Float32 a, Float32 b)
+{
+    Float32 at = abs(a), bt = abs(b), ct, result;
+    if (at > bt)       { ct = bt / at; result = at * sqrt(1.0 + ct * ct); }
+    else if (bt > 0.0) { ct = at / bt; result = bt * sqrt(1.0 + ct * ct); }
+    else result = 0.0;
+    return result;
+}
+
+// Should go in Math lib
+inline Float32 Float32Array.sum!()
+{
+  Float32 result;
+  for (UInt32 i = 0; i < this.size(); i++)
+      result += this[i];
+  return result;
+}

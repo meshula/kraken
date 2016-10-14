@@ -202,7 +202,7 @@ function OSS_TwoBoneIKSolver.solve!(
     {
       if (base2handleDistance < legLength)
       {
-        Scalar squashedLegLength = (legLength - squash * (legLength - base2handleDistance) );
+        Scalar squashedLegLength = (legLength - Math_clamp(squash, 0.0,1.0) * (legLength - base2handleDistance) );
         bone0Length *= (squashedLegLength / legLength);
         bone1Length *= (squashedLegLength / legLength);
         legLength = squashedLegLength;
@@ -213,7 +213,7 @@ function OSS_TwoBoneIKSolver.solve!(
     {
       if (base2handleDistance > legLength)
       {
-        Scalar stretchedLegLength = (stretch * (base2handleDistance - legLength)) + legLength;
+        Scalar stretchedLegLength = (Math_clamp(stretch, 0.0,1.0) * (base2handleDistance - legLength)) + legLength;
 
         bone0Length *= (stretchedLegLength / legLength);
         bone1Length *= (stretchedLegLength / legLength);
@@ -248,9 +248,9 @@ function OSS_TwoBoneIKSolver.solve!(
     setCorrectAxes(bone2Xfo, boneAxis, upAxisInt, bone2Xfo);
 
     // Blend orientation of IK solution to FK
-    bone0Xfo.ori = bone0FkXfo.ori.sphericalLinearInterpolate(bone0Xfo.ori, ikBlend);
+    bone0Xfo.ori = bone0FkXfo.ori.sphericalLinearInterpolate(bone0Xfo.ori, Math_clamp(ikBlend, 0.0,1.0));
     bone1Xfo.tr = bone0Xfo.transformVector((stretchedRatio * bone0Length) * getAxisAsVector(boneAxis) );
-    bone1Xfo.ori = bone1FkXfo.ori.sphericalLinearInterpolate(bone1Xfo.ori, ikBlend);
+    bone1Xfo.ori = bone1FkXfo.ori.sphericalLinearInterpolate(bone1Xfo.ori, Math_clamp(ikBlend, 0.0,1.0));
   }
 
   // project bone2 to the end of bone 1

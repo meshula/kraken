@@ -1,0 +1,31 @@
+// Created by kl2dfg (processComposeFunction)
+{
+  "objectType" : "Func",
+  "title" : "-> RadialBasisArray",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "f",
+      "execPortType" : "In",
+      "typeSpec" : "Float32[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "RadialBasisArray"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "presetGUID" : "24F2B14AB38A4592AFAA54D9F46DAAC7",
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  result.f = f;
+}
+"
+  }

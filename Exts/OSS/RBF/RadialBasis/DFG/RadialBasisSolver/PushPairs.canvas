@@ -1,0 +1,41 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: RadialBasisSolver\n  keys: RadialBasisArray\n  values: RadialBasisArray\n"
+    },
+  "title" : "PushPairs",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "RadialBasisSolver"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "keys",
+      "execPortType" : "In",
+      "typeSpec" : "RadialBasisArray"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "values",
+      "execPortType" : "In",
+      "typeSpec" : "RadialBasisArray"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "presetGUID" : "650A690ADFDE327E5F629BAB446A37D4",
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  this.pushPairs(keys, values);
+}
+"
+  }

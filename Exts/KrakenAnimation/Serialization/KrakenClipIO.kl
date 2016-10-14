@@ -18,6 +18,8 @@ function KrakenClip KrakenClip_getFromTypeName(String typeName) {
   switch(typeName) {
     case "KrakenStaticClip":
       return KrakenStaticClip();
+    case "KrakenFCurveClip":
+      return KrakenFCurveClip();
     case "KrakenAbcClip":
       return KrakenAbcClip();
     case "KrakenClipStack":

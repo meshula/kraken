@@ -1,0 +1,152 @@
+
+//
+// Copyright (c) 2010-2016, Fabric Software Inc. All rights reserved.
+//
+
+function RadialBasisArray.setFromFloat32!(Float32 values[]) {
+  this.f = values.clone();
+}
+
+function RadialBasisArray.setFromVec2!(Vec2 values[]) {
+  this.resize(values.size() * 2);
+  Index offset = 0;
+  for(Size i=0;i<values.size();i++) {
+    this.f[offset++] = values[i].x;
+    this.f[offset++] = values[i].y;
+  }
+}
+
+function RadialBasisArray.setFromVec3!(Vec3 values[]) {
+  this.resize(values.size() * 3);
+  Index offset = 0;
+  for(Size i=0;i<values.size();i++) {
+    this.f[offset++] = values[i].x;
+    this.f[offset++] = values[i].y;
+    this.f[offset++] = values[i].z;
+  }
+}
+
+function RadialBasisArray.setFromQuat!(Quat values[]) {
+  this.resize(values.size() * 4);
+  Index offset = 0;
+  for(Size i=0;i<values.size();i++) {
+    this.f[offset++] = values[i].v.x;
+    this.f[offset++] = values[i].v.y;
+    this.f[offset++] = values[i].v.z;
+    this.f[offset++] = values[i].w;
+  }
+}
+
+function RadialBasisArray.setFromColor!(Color values[]) {
+  this.resize(values.size() * 4);
+  Index offset = 0;
+  for(Size i=0;i<values.size();i++) {
+    this.f[offset++] = values[i].r;
+    this.f[offset++] = values[i].g;
+    this.f[offset++] = values[i].b;
+    this.f[offset++] = values[i].a;
+  }
+}
+
+function RadialBasisArray.setFromPoses!(UInt32 numPoses) {
+  this.resize(numPoses * numPoses);
+  Index offset = 0;
+  for(Size i=0;i<numPoses;i++) {
+    for(Size j=0;j<numPoses;j++) {
+      Float32 val = 0.0;
+      if( i == j)
+        val = 1.0;
+      this.f[i*numPoses+j] = val;
+    }
+  }
+}
+
+function RadialBasisArray.setFromXfo!(Xfo values[]) {
+  this.resize(values.size() * 10);
+  Index offset = 0;
+  for(Size i=0;i<values.size();i++) {
+    this.f[offset++] = values[i].sc.x;
+    this.f[offset++] = values[i].sc.y;
+    this.f[offset++] = values[i].sc.z;
+    this.f[offset++] = values[i].ori.v.x;
+    this.f[offset++] = values[i].ori.v.y;
+    this.f[offset++] = values[i].ori.v.z;
+    this.f[offset++] = values[i].ori.w;
+    this.f[offset++] = values[i].tr.x;
+    this.f[offset++] = values[i].tr.y;
+    this.f[offset++] = values[i].tr.z;
+  }
+}
+
+function Float32[] RadialBasisArray.toFloat32() {
+  return this.f.clone();
+}
+
+function Vec2[] RadialBasisArray.toVec2() {
+  Vec2 result[];
+  result.resize(this.size() / 2);
+  Index offset = 0;
+  for(Size i=0;i<result.size();i++) {
+    result[i].x = this.f[offset++];
+    result[i].y = this.f[offset++];
+  }
+  return result;
+}
+
+function Vec3[] RadialBasisArray.toVec3() {
+  Vec3 result[];
+  result.resize(this.size() / 3);
+  Index offset = 0;
+  for(Size i=0;i<result.size();i++) {
+    result[i].x = this.f[offset++];
+    result[i].y = this.f[offset++];
+    result[i].z = this.f[offset++];
+  }
+  return result;
+}
+
+function Quat[] RadialBasisArray.toQuat() {
+  Quat result[];
+  result.resize(this.size() / 4);
+  Index offset = 0;
+  for(Size i=0;i<result.size();i++) {
+    result[i].v.x = this.f[offset++];
+    result[i].v.y = this.f[offset++];
+    result[i].v.z = this.f[offset++];
+    result[i].w = this.f[offset++];
+  }
+  return result;
+}
+
+function Color[] RadialBasisArray.toColor() {
+  Color result[];
+  result.resize(this.size() / 4);
+  Index offset = 0;
+  for(Size i=0;i<result.size();i++) {
+    result[i].r = this.f[offset++];
+    result[i].g = this.f[offset++];
+    result[i].b = this.f[offset++];
+    result[i].a = this.f[offset++];
+  }
+  return result;
+}
+
+function Xfo[] RadialBasisArray.toXfo() {
+  Xfo result[];
+  result.resize(this.size() / 10);
+  Index offset = 0;
+  for(Size i=0;i<result.size();i++) {
+    result[i].sc.x = this.f[offset++];
+    result[i].sc.y = this.f[offset++];
+    result[i].sc.z = this.f[offset++];
+    result[i].ori.v.x = this.f[offset++];
+    result[i].ori.v.y = this.f[offset++];
+    result[i].ori.v.z = this.f[offset++];
+    result[i].ori.w = this.f[offset++];
+    result[i].ori.setUnit();
+    result[i].tr.x = this.f[offset++];
+    result[i].tr.y = this.f[offset++];
+    result[i].tr.z = this.f[offset++];
+  }
+  return result;
+}

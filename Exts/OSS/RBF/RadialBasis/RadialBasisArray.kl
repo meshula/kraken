@@ -1,0 +1,147 @@
+
+//
+// Copyright (c) 2010-2016, Fabric Software Inc. All rights reserved.
+//
+
+require Math;
+
+struct RadialBasisArray {
+  Float32 f[];
+};
+
+/// \dfgPresetOmit
+inline RadialBasisArray(Float32 v[]) {
+  this.setFromFloat32(v);
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray(Vec2 v[]) {
+  this.setFromVec2(v);
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray(Vec3 v[]) {
+  this.setFromVec3(v);
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray(Quat v[]) {
+  this.setFromQuat(v);
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray(Color v[]) {
+  this.setFromColor(v);
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray(UInt32 size) {
+  this.f.resize(size);
+}
+
+/// \dfgPresetOmit
+inline Size RadialBasisArray.size() {
+  return this.f.size();
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray.resize!(Size size) {
+  this.f.resize(size);
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray.push!(Float32 v) {
+  this.f.push(v);
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray RadialBasisArray.getTail(UInt32 n)
+{
+  RadialBasisArray tail;
+  UInt32 j = 0;
+  tail.resize(this.size() - n);
+  for (UInt32 i = n; i < this.size(); i++)
+  {
+    tail.f[j] = this.f[i];
+    j++;
+  }
+  return tail;
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray RadialBasisArray.getHead(UInt32 n)
+{
+  RadialBasisArray head;
+  head.f = this.f.clone();
+  head.resize(n);
+  return head;
+}
+
+/// \dfgPresetOmit
+inline RadialBasisArray.setAbs!()
+{
+  for (UInt32 i = 0; i < this.size(); i++)
+    this.f[i] = abs(this.f[i]);
+}
+
+/// \dfgPresetOmit
+inline Float32 RadialBasisArray.getMaxIndex(io Index index )
+{
+  Float32 val = this.f[0];
+  index = 0;
+  for (UInt32 i = 0; i < this.size(); i++)
+    if (this.f[i] > val)
+    {
+      index = i;
+      val = this.f[i];
+    }
+  return val;
+}
+
+/// \dfgPresetOmit
+inline Float32 RadialBasisArray.getMaxNorm()
+{
+  Float32 val = abs(this.f[0]);
+  for (UInt32 i = 0; i < this.size(); i++)
+    if (abs(this.f[i]) > val)
+      val = abs(this.f[i]);
+  return val;
+}
+
+/// \dfgPresetOmit
+inline Float32 RadialBasisArray.getDotProductsSum(RadialBasisArray other, Index offset, Index size)
+{
+  Float32 val = 0.0;
+  for (UInt32 i = 0; i < size; i++)
+    if (abs(this.f[i+offset]) > val)
+      val += this.f[i+offset] * other.f[i];
+  return val;
+}
+
+/// \dfgPresetOmit
+inline Float32 RadialBasisArray.getDotProductsSum(RadialBasisArray other)
+{
+  return this.getDotProductsSum(other, 0, this.size());
+}
+
+/// \dfgPresetOmit
+inline Float32 RadialBasisArray.getMinimum()
+{
+  Float32 smallest = this.f[0];
+  for (Integer i = 0; i < this.size(); i++) {
+    if (this.f[i] < smallest)
+      smallest = this.f[i];
+  }
+  return smallest;
+}
+
+/// \dfgPresetOmit
+inline Float32 RadialBasisArray.getMaximum()
+{
+  Float32 biggest = this.f[0];
+  for (Integer i = 0; i < this.size(); i++) {
+    if (this.f[i] > biggest)
+      biggest = this.f[i];
+  }
+  return biggest;
+}
