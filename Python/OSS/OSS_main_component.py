@@ -327,13 +327,10 @@ class OSSMainComponentRig(OSSMainComponent):
 
         self.rootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
         self.rootCtrl.lockScale(x=True, y=True, z=True)
-        self.rootCtrlSpace = self.rootCtrl.insertCtrlSpace()
         rootMotionBlendAttrGrp = AttributeGroup("______", parent=self.rootCtrl)
-
-
         self.rootMotionBlendDefault = data['rootMotionBlendDefault']
         self.rootCtrl.rootMotionBlendAttr  = ScalarAttribute('rootMotionBlend', value=self.rootMotionBlendDefault, minValue=0.0, maxValue=1.0, parent=rootMotionBlendAttrGrp)
-        self.rootCtrlSpace = self.rootCtrl.insertCtrlSpace()
+        self.rootCtrlSpace = self.insertParentSpace(self.rootCtrl)
 
 
         # Just for visibility, so animators can see where joint control is
