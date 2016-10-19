@@ -69,7 +69,8 @@ function OSS_IKFootBlendSolver.solve!
   // Set debugging visibility.
   this.setDebug(drawDebug);
   if(this.drawDebug){
-
+    if(!this.handle)
+      this.handle = DrawingHandle();
     drawXfo(this.handle.rootTransform, "footXfo", resultFootXfo);
     drawXfo(this.handle.rootTransform, "ballXfo", resultBallXfo);
   }
