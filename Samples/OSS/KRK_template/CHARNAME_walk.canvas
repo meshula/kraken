@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "1000",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9721564650535584,\n    \"y\" : 0.03744828328490257,\n    \"z\" : -0.231320396065712,\n    \"t\" : 4.267084121704102\n    },\n  \"row1\" : {\n    \"x\" : 2.177429905714234e-06,\n    \"y\" : 0.9870433211326599,\n    \"z\" : 0.1598390936851502,\n    \"t\" : 54.64072799682617\n    },\n  \"row2\" : {\n    \"x\" : 0.2343282699584961,\n    \"y\" : -0.1553706973791122,\n    \"z\" : 0.9596763253211975,\n    \"t\" : 37.44723510742188\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.8454053401947022,\n    \"y\" : -0.04296207800507546,\n    \"z\" : 0.5324022173881531,\n    \"t\" : 86.97329711914063\n    },\n  \"row1\" : {\n    \"x\" : 2.248211558253388e-06,\n    \"y\" : 0.996657133102417,\n    \"z\" : 0.08044057339429855,\n    \"t\" : 88.49478149414063\n    },\n  \"row2\" : {\n    \"x\" : -0.5341242551803589,\n    \"y\" : -0.06799564510583878,\n    \"z\" : 0.8426799774169922,\n    \"t\" : 104.2435760498047\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "uiGraphZoom" : "{\n  \"value\" : 0.7438120245933533\n  }",
     "timeline_loopMode" : "1",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "66.40547943115234",
+    "camera_focalDistance" : "126.4977722167969",
     "timeline_current" : "13",
     "timeline_end" : "461",
-    "uiGraphPan" : "{\n  \"x\" : -851.9323123104553,\n  \"y\" : -54.04695412363918\n  }"
+    "uiGraphPan" : "{\n  \"x\" : -725.9323120117188,\n  \"y\" : -56.04695129394531\n  }"
     },
   "title" : "",
   "ports" : [
@@ -2641,7 +2641,6 @@ dfgEntry {
       "Convert_2.val"
       ],
     "GetAllXfos_1.result" : [
-      "DrawAxesInstances_1.transforms",
       "GetArray_1.array"
       ],
     "OffsetAnim.result" : [
@@ -2687,7 +2686,8 @@ dfgEntry {
       "GetArray_2.indices"
       ],
     "GetArray_1.elements" : [
-      "DrawLabels_1.xfos"
+      "DrawLabels_1.xfos",
+      "DrawAxesInstances_1.transforms"
       ],
     "GetArray_2.elements" : [
       "DrawLabels_1.labels"
@@ -8905,7 +8905,7 @@ dfgEntry {
       },
     {
       "type" : "String",
-      "value" : ".*"
+      "value" : ".*ead.*"
       }
     ]
   }
