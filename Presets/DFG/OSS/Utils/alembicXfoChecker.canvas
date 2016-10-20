@@ -664,7 +664,7 @@ dfgEntry {
           "name" : "regex",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "String" : ""
+            "String" : ".*"
             },
           "execPortType" : "In"
           },
@@ -1607,15 +1607,15 @@ if(draw)
       dhandle.setActive(true);
   }
 
-return(pixels);    
+return(pixels);
 }
 
 dfgEntry {
   if(xfos.size() != labels.size())
     return;
-    
+
   Xfo shifts[SInt32];
-    
+
   Xfo offset;
   offset.ori.setFromAxisAndAngle(Vec3(1, 0, 0), HALF_PI);
   offset.sc *= scale * 0.1;
@@ -1626,19 +1626,19 @@ dfgEntry {
      xfo.tr = xfos[i].tr;
    else
      xfo = xfos[i];
-     
+
     xfo = xfo * offset;
-    
+
     Vec3 v = xfo.tr;
     SInt32 hash = SInt32(v.x * 100.0) * 17 + SInt32(v.y * 100.0) * 219 + SInt32(v.z * 100.0) * 3;
     Xfo shift = shifts.get(hash, Xfo());
-    
+
     xfo = xfo * shift;
-    
+
     shift.tr.z += 1.0;
-    
+
     maCTextLocal(labels[i]+i, handle, labels[i], xfo, color, instance, true);
-    
+
     shifts[hash] = shift;
   }
 }
