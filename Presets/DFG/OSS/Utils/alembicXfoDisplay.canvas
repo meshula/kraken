@@ -1,6 +1,10 @@
 {
   "objectType" : "Graph",
-  "title" : "alembicXfoChecker",
+  "metadata" : {
+    "uiGraphZoom" : "{\n  \"value\" : 0.7365182042121887\n  }",
+    "uiGraphPan" : "{\n  \"x\" : -1044.102783203125,\n  \"y\" : 184.9752502441406\n  }"
+    },
+  "title" : "alembicXfoDisplay",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -14,19 +18,30 @@
       },
     {
       "objectType" : "ExecPort",
-      "name" : "abcFile",
+      "metadata" : {},
+      "name" : "show",
       "nodePortType" : "Out",
       "defaultValues" : {
-        "String" : ""
+        "Boolean" : false
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "drawLabels",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Boolean" : false
         },
       "execPortType" : "In"
       },
     {
       "objectType" : "ExecPort",
-      "name" : "timeline",
+      "name" : "abcFile",
       "nodePortType" : "Out",
       "defaultValues" : {
-        "Float32" : 0
+        "String" : ""
         },
       "execPortType" : "In"
       },
@@ -41,16 +56,16 @@
       },
     {
       "objectType" : "ExecPort",
-      "name" : "drawLabels",
+      "name" : "timeline",
       "nodePortType" : "Out",
       "defaultValues" : {
-        "Boolean" : false
+        "Float32" : 0
         },
       "execPortType" : "In"
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "3789982AAA108F68D76FC5BBA4D92B21",
+  "presetGUID" : "11A1D00421F0880C11ADD191814FF0D5",
   "nodes" : [
     {
       "objectType" : "Inst",
@@ -76,7 +91,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":2840.85676575,\"y\":-95.89863586430001}"
+        "uiGraphPos" : "{\"x\":2899.23688745,\"y\":-75.532553196}"
         },
       "name" : "DrawAxesInstances_1",
       "ports" : [
@@ -491,13 +506,57 @@ dfgEntry {
           "nodePortType" : "Out"
           }
         ],
-      "executable" : "Fabric.Core.Array.GetArray",
-      "presetGUID" : "C21F9395E0F49C52AF8A50DE78B256F4"
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "GetArray[]",
+        "ports" : [
+          {
+            "objectType" : "ExecPort",
+            "name" : "exec",
+            "nodePortType" : "IO",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "array",
+            "nodePortType" : "Out",
+            "execPortType" : "In",
+            "typeSpec" : "$TYPE$[]"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "indices",
+            "nodePortType" : "Out",
+            "execPortType" : "In",
+            "typeSpec" : "SInt32[]"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "elements",
+            "nodePortType" : "In",
+            "execPortType" : "Out",
+            "typeSpec" : "$TYPE$[]"
+            }
+          ],
+        "extDeps" : {},
+        "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
+        "code" : "
+dfgEntry {
+  elements.resize(indices.size());
+  for(Size i=0;i<indices.size();i++)
+  {
+    if(indices[i] < array.size())
+      elements[i] = array[indices[i]];
+  }
+}
+"
+        }
       },
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":2288.68983853,\"y\":-255.696361423}"
+        "uiGraphPos" : "{\"x\":2283.56577063,\"y\":36.8096120358}"
         },
       "name" : "GetArray_2",
       "ports" : [
@@ -522,8 +581,52 @@ dfgEntry {
           "nodePortType" : "Out"
           }
         ],
-      "executable" : "Fabric.Core.Array.GetArray",
-      "presetGUID" : "C21F9395E0F49C52AF8A50DE78B256F4"
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "GetArray[]",
+        "ports" : [
+          {
+            "objectType" : "ExecPort",
+            "name" : "exec",
+            "nodePortType" : "IO",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "array",
+            "nodePortType" : "Out",
+            "execPortType" : "In",
+            "typeSpec" : "$TYPE$[]"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "indices",
+            "nodePortType" : "Out",
+            "execPortType" : "In",
+            "typeSpec" : "SInt32[]"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "elements",
+            "nodePortType" : "In",
+            "execPortType" : "Out",
+            "typeSpec" : "$TYPE$[]"
+            }
+          ],
+        "extDeps" : {},
+        "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
+        "code" : "
+dfgEntry {
+  elements.resize(indices.size());
+  for(Size i=0;i<indices.size();i++)
+  {
+    if(indices[i] < array.size())
+      elements[i] = array[indices[i]];
+  }
+}
+"
+        }
       },
     {
       "objectType" : "Inst",
@@ -560,27 +663,67 @@ dfgEntry {
         ],
       "executable" : "Fabric.Core.Control.If",
       "presetGUID" : "3182A478A21643455D549E483D35F831"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":3221.12955046,\"y\":-5.97796344757}"
+        },
+      "name" : "If_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "cond",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "if_true",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "if_false",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "Fabric.Core.Control.If",
+      "presetGUID" : "3182A478A21643455D549E483D35F831"
       }
     ],
   "connections" : {
-    "abcFile" : [
-      "Load_1.filePath"
-      ],
-    "timeline" : [
-      "FrameToTime_1.frame"
-      ],
-    "regex" : [
-      "Regex_2.format"
+    "show" : [
+      "If_2.cond"
       ],
     "drawLabels" : [
       "If_1.cond"
       ],
+    "abcFile" : [
+      "Load_1.filePath"
+      ],
+    "regex" : [
+      "Regex_2.format"
+      ],
+    "timeline" : [
+      "FrameToTime_1.frame"
+      ],
     "EmptyDrawingHandle_1.handle" : [
       "DrawLabels_1.handle",
-      "If_1.if_false"
+      "If_1.if_false",
+      "If_2.if_false"
       ],
     "DrawAxesInstances_1.this" : [
-      "exec"
+      "If_2.if_true"
       ],
     "DrawLabels_1.handle" : [
       "If_1.if_true"
@@ -624,12 +767,19 @@ dfgEntry {
       ],
     "If_1.result" : [
       "DrawAxesInstances_1.this"
+      ],
+    "If_2.result" : [
+      "exec"
       ]
     },
   "requiredPresets" : {
-    "OSS.alembicXfoChecker" : {
+    "OSS.alembicXfoDisplay" : {
       "objectType" : "Graph",
-      "title" : "alembicXfoChecker",
+      "metadata" : {
+        "uiGraphZoom" : "{\n  \"value\" : 0.7365182042121887\n  }",
+        "uiGraphPan" : "{\n  \"x\" : -1044.102783203125,\n  \"y\" : 184.9752502441406\n  }"
+        },
+      "title" : "alembicXfoDisplay",
       "ports" : [
         {
           "objectType" : "ExecPort",
@@ -643,7 +793,36 @@ dfgEntry {
           },
         {
           "objectType" : "ExecPort",
+          "metadata" : {},
+          "name" : "show",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawLabels",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "ExecPort",
           "name" : "abcFile",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "String" : ""
+            },
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "regex",
           "nodePortType" : "Out",
           "defaultValues" : {
             "String" : ""
@@ -658,28 +837,10 @@ dfgEntry {
             "Float32" : 0
             },
           "execPortType" : "In"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "regex",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "String" : ".*"
-            },
-          "execPortType" : "In"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "drawLabels",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Boolean" : false
-            },
-          "execPortType" : "In"
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "3789982AAA108F68D76FC5BBA4D92B21",
+      "presetGUID" : "11A1D00421F0880C11ADD191814FF0D5",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -705,7 +866,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":2840.85676575,\"y\":-95.89863586430001}"
+            "uiGraphPos" : "{\"x\":2899.23688745,\"y\":-75.532553196}"
             },
           "name" : "DrawAxesInstances_1",
           "ports" : [
@@ -1120,13 +1281,57 @@ dfgEntry {
               "nodePortType" : "Out"
               }
             ],
-          "executable" : "Fabric.Core.Array.GetArray",
-          "presetGUID" : "C21F9395E0F49C52AF8A50DE78B256F4"
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "GetArray[]",
+            "ports" : [
+              {
+                "objectType" : "ExecPort",
+                "name" : "exec",
+                "nodePortType" : "IO",
+                "execPortType" : "IO",
+                "typeSpec" : "Execute"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "array",
+                "nodePortType" : "Out",
+                "execPortType" : "In",
+                "typeSpec" : "$TYPE$[]"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "indices",
+                "nodePortType" : "Out",
+                "execPortType" : "In",
+                "typeSpec" : "SInt32[]"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "elements",
+                "nodePortType" : "In",
+                "execPortType" : "Out",
+                "typeSpec" : "$TYPE$[]"
+                }
+              ],
+            "extDeps" : {},
+            "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
+            "code" : "
+dfgEntry {
+  elements.resize(indices.size());
+  for(Size i=0;i<indices.size();i++)
+  {
+    if(indices[i] < array.size())
+      elements[i] = array[indices[i]];
+  }
+}
+"
+            }
           },
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":2288.68983853,\"y\":-255.696361423}"
+            "uiGraphPos" : "{\"x\":2283.56577063,\"y\":36.8096120358}"
             },
           "name" : "GetArray_2",
           "ports" : [
@@ -1151,8 +1356,52 @@ dfgEntry {
               "nodePortType" : "Out"
               }
             ],
-          "executable" : "Fabric.Core.Array.GetArray",
-          "presetGUID" : "C21F9395E0F49C52AF8A50DE78B256F4"
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "GetArray[]",
+            "ports" : [
+              {
+                "objectType" : "ExecPort",
+                "name" : "exec",
+                "nodePortType" : "IO",
+                "execPortType" : "IO",
+                "typeSpec" : "Execute"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "array",
+                "nodePortType" : "Out",
+                "execPortType" : "In",
+                "typeSpec" : "$TYPE$[]"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "indices",
+                "nodePortType" : "Out",
+                "execPortType" : "In",
+                "typeSpec" : "SInt32[]"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "elements",
+                "nodePortType" : "In",
+                "execPortType" : "Out",
+                "typeSpec" : "$TYPE$[]"
+                }
+              ],
+            "extDeps" : {},
+            "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
+            "code" : "
+dfgEntry {
+  elements.resize(indices.size());
+  for(Size i=0;i<indices.size();i++)
+  {
+    if(indices[i] < array.size())
+      elements[i] = array[indices[i]];
+  }
+}
+"
+            }
           },
         {
           "objectType" : "Inst",
@@ -1189,27 +1438,67 @@ dfgEntry {
             ],
           "executable" : "Fabric.Core.Control.If",
           "presetGUID" : "3182A478A21643455D549E483D35F831"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":3221.12955046,\"y\":-5.97796344757}"
+            },
+          "name" : "If_2",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "cond",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "if_true",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "if_false",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Fabric.Core.Control.If",
+          "presetGUID" : "3182A478A21643455D549E483D35F831"
           }
         ],
       "connections" : {
-        "abcFile" : [
-          "Load_1.filePath"
-          ],
-        "timeline" : [
-          "FrameToTime_1.frame"
-          ],
-        "regex" : [
-          "Regex_2.format"
+        "show" : [
+          "If_2.cond"
           ],
         "drawLabels" : [
           "If_1.cond"
           ],
+        "abcFile" : [
+          "Load_1.filePath"
+          ],
+        "regex" : [
+          "Regex_2.format"
+          ],
+        "timeline" : [
+          "FrameToTime_1.frame"
+          ],
         "EmptyDrawingHandle_1.handle" : [
           "DrawLabels_1.handle",
-          "If_1.if_false"
+          "If_1.if_false",
+          "If_2.if_false"
           ],
         "DrawAxesInstances_1.this" : [
-          "exec"
+          "If_2.if_true"
           ],
         "DrawLabels_1.handle" : [
           "If_1.if_true"
@@ -1253,6 +1542,9 @@ dfgEntry {
           ],
         "If_1.result" : [
           "DrawAxesInstances_1.this"
+          ],
+        "If_2.result" : [
+          "exec"
           ]
         }
       },
@@ -1607,15 +1899,15 @@ if(draw)
       dhandle.setActive(true);
   }
 
-return(pixels);
+return(pixels);    
 }
 
 dfgEntry {
   if(xfos.size() != labels.size())
     return;
-
+    
   Xfo shifts[SInt32];
-
+    
   Xfo offset;
   offset.ori.setFromAxisAndAngle(Vec3(1, 0, 0), HALF_PI);
   offset.sc *= scale * 0.1;
@@ -1626,19 +1918,19 @@ dfgEntry {
      xfo.tr = xfos[i].tr;
    else
      xfo = xfos[i];
-
+     
     xfo = xfo * offset;
-
+    
     Vec3 v = xfo.tr;
     SInt32 hash = SInt32(v.x * 100.0) * 17 + SInt32(v.y * 100.0) * 219 + SInt32(v.z * 100.0) * 3;
     Xfo shift = shifts.get(hash, Xfo());
-
+    
     xfo = xfo * shift;
-
+    
     shift.tr.z += 1.0;
-
+    
     maCTextLocal(labels[i]+i, handle, labels[i], xfo, color, instance, true);
-
+    
     shifts[hash] = shift;
   }
 }
@@ -5589,59 +5881,6 @@ dfgEntry {
 
 dfgEntry {
   result = Regex(format);
-}
-"
-      },
-    "Fabric.Core.Array.GetArray" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
-        },
-      "title" : "GetArray",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "defaultValues" : {
-            "Execute" : {}
-            },
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "array",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "$TYPE$[]"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "indices",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "$INTTYPE$[]"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "elements",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "$TYPE$[]"
-          }
-        ],
-      "extDeps" : {},
-      "presetGUID" : "C21F9395E0F49C52AF8A50DE78B256F4",
-      "code" : "
-dfgEntry {
-  elements.resize(indices.size());
-  for(Size i=0;i<indices.size();i++)
-  {
-    if(indices[i] < array.size())
-      elements[i] = array[indices[i]];
-  }
 }
 "
       }
