@@ -1,0 +1,6185 @@
+{
+  "objectType" : "Graph",
+  "metadata" : {
+    "timeline_timerFps" : "1000",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9637883305549622,\n    \"y\" : 0.09709024429321289,\n    \"z\" : -0.2497389614582062,\n    \"t\" : -51.0333251953125\n    },\n  \"row1\" : {\n    \"x\" : 2.098436198139098e-05,\n    \"y\" : 0.931820273399353,\n    \"z\" : 0.3627066612243652,\n    \"t\" : 159.5267181396484\n    },\n  \"row2\" : {\n    \"x\" : 0.2679618299007416,\n    \"y\" : -0.3492810726165772,\n    \"z\" : 0.8982170224189758,\n    \"t\" : 230.4948425292969\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "timeline_start" : "101",
+    "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
+    "timeline_loopMode" : "1",
+    "timeline_simMode" : "0",
+    "camera_focalDistance" : "274.9232788085938",
+    "timeline_current" : "479",
+    "timeline_end" : "46100",
+    "uiGraphPan" : "{\n  \"x\" : 1981.981201171875,\n  \"y\" : -192.5914916992188\n  }"
+    },
+  "title" : "",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "exec",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "this",
+      "execPortType" : "Out",
+      "typeSpec" : "DrawingHandle"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "timeline",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "drawSkel",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "drawABC",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "drawJointXfos",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true",
+        "uiCombo" : "(\"${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc\", \"${FABRIC_CHARNAME_DIR}/CHARNAME_locomotion.abc\")"
+        },
+      "nodePortType" : "Out",
+      "name" : "AlembicPath",
+      "execPortType" : "In",
+      "typeSpec" : "String"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true",
+        "uiHardRange" : "(0, 1)"
+        },
+      "nodePortType" : "Out",
+      "name" : "Walk_Blend",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true",
+        "uiHardRange" : "(0, 1)"
+        },
+      "nodePortType" : "Out",
+      "name" : "LookAt_Blend",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true",
+        "uiHardRange" : "(0, 1)"
+        },
+      "nodePortType" : "Out",
+      "name" : "Offset_Blend",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "hips",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "chest",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "dummyResult",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "chestRot",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true",
+        "uiHardRange" : "(0, 1)"
+        },
+      "nodePortType" : "Out",
+      "name" : "Hand_IK_Blend",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "l_hand",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "r_hand",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "nodePortType" : "Out",
+      "name" : "wireFrame",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      }
+    ],
+  "extDeps" : {},
+  "nodes" : [
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-462.90128231,\"y\":-22.6923398972}"
+        },
+      "name" : "FbxCharacter",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME.fbx"
+            },
+          "name" : "filePath"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.FbxHelpers.FbxCharacter.FbxCharacter",
+      "presetGUID" : "44271B1C32345FA5677CEB1A06E4F4FD"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-184.228613853,\"y\":-24.3462400436}"
+        },
+      "name" : "ToCharacter",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.FbxHelpers.FbxCharacter.ToCharacter",
+      "presetGUID" : "D8AC4D744C2C887B5A9DB075639FB2A9"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-306.740210533,\"y\":-4.97290992737}"
+        },
+      "name" : "Cache",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":923.227633238,\"y\":-157.524274111}"
+        },
+      "name" : "EmptyDrawingHandle",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "handle"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle",
+      "presetGUID" : "2440020BA6A1CAB1CEB690A198F99C70"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-506.907836914,\"y\":191.051286817}"
+        },
+      "name" : "Create_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Kraken.KLRigs.KRK_CHARNAME.Create"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-251.883208394,\"y\":293.052103162}"
+        },
+      "name" : "SetClip_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "rig"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "clip"
+          }
+        ],
+      "executable" : "Kraken.KLRigs.KRK_CHARNAME.SetClip"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-198.587947845,\"y\":-224.855203629}"
+        },
+      "name" : "KrakenClipContext_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "time"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenClipContext.KrakenClipContext",
+      "presetGUID" : "9FC45304BFA28700E3FA1BF0BD7C02C8"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-355.685253143,\"y\":-238.098688126}"
+        },
+      "name" : "FrameToTime_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "frame"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Float64" : 30
+            },
+          "name" : "fps"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "time"
+          }
+        ],
+      "executable" : "Fabric.Compounds.Math.FrameToTime",
+      "presetGUID" : "FC97B76DD3597484D4308A5490FD1853"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":191.44504118,\"y\":244.081240892}"
+        },
+      "name" : "KrakenKLRigPoseAdaptor_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "rig"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "character"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenKLRigPoseAdaptor.KrakenKLRigPoseAdaptor",
+      "presetGUID" : "C1940FF079F6781CDD6B9A6859FB4B47"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-130.236373663,\"y\":329.287936568}"
+        },
+      "name" : "Convert_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "val"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Core.Math.Convert",
+      "presetGUID" : "EDD7FFDA6D856BB47F953A1ACA8E77B6"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":494.035861492,\"y\":248.208972216}"
+        },
+      "name" : "UpdateFromRig_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "context"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "rig"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "character"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenKLRigPoseAdaptor.UpdateFromRig",
+      "presetGUID" : "4ABD5BFE8BAF229093433E6A09B489F8"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1712.32701659,\"y\":172.455288172}",
+        "uiCollapsedState" : "1"
+        },
+      "name" : "DrawAxesInstances_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "axes"
+            },
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "transforms"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "dummyResult"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "instance"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances",
+      "presetGUID" : "A2DAC55CB1CE7426981A13F213257B7A"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":945.188814878,\"y\":-78.3343250751}"
+        },
+      "name" : "GetJointXfos_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenKLRig.GetJointXfos",
+      "presetGUID" : "212271BFF41DCFD4629BC1FCD44423C1"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-393.938656211,\"y\":248.747324824}"
+        },
+      "name" : "ResetPose_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "rig"
+          }
+        ],
+      "executable" : "Kraken.KLRigs.KRK_CHARNAME.ResetPose"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-703.616987824,\"y\":222.502862096}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "Convert_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "val"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Core.Math.Convert",
+      "presetGUID" : "EDD7FFDA6D856BB47F953A1ACA8E77B6"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1867.95933402,\"y\":-69.8429325819}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "KrakenClipStack_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenClipStack.KrakenClipStack",
+      "presetGUID" : "9A396B2AB3A30AB7913A8A1D56EE2E6E"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1608.56883109,\"y\":-44.2195843458}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "AddClip_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "clip"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "weight"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenClipStack.AddClip",
+      "presetGUID" : "D91DF2CDCDCE03FD688609D028B24A1B"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1372.30967581,\"y\":107.425492406}"
+        },
+      "name" : "OffsetAnim",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "hips"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : -0.1000000014901161,
+              "z" : 0
+              }
+            },
+          "name" : "chest"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "chestRot"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Graph",
+        "metadata" : {
+          "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
+          "uiGraphPan" : "{\n  \"x\" : 2857.218505859375,\n  \"y\" : 219.5442504882813\n  }"
+          },
+        "title" : "OffsetAnim",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Vec3" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                }
+              },
+            "name" : "hips",
+            "execPortType" : "In",
+            "typeSpec" : "Vec3"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Vec3" : {
+                "x" : 0,
+                "y" : 6.400000095367432,
+                "z" : 0
+                }
+              },
+            "name" : "chest",
+            "execPortType" : "In",
+            "typeSpec" : "Vec3"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Vec3" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                }
+              },
+            "name" : "chestRot",
+            "execPortType" : "In",
+            "typeSpec" : "Vec3"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-2455.13768315,\"y\":-137.529495239}"
+              },
+            "name" : "KrakenStaticClip_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.KrakenStaticClip",
+            "presetGUID" : "7F433535354A63134659FCC20583EAE5"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-2271.63330078,\"y\":-46.9744644165}"
+              },
+            "name" : "SetXfo_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "M_hips_fk"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Xfo" : {
+                    "ori" : {
+                      "v" : {
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0
+                        },
+                      "w" : 1
+                      },
+                    "tr" : {
+                      "x" : 0,
+                      "y" : 0,
+                      "z" : 0
+                      },
+                    "sc" : {
+                      "x" : 1,
+                      "y" : 1,
+                      "z" : 1
+                      }
+                    }
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetXfo",
+            "presetGUID" : "CE6C588D1B4AD82E4B7719B4817F658D"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1828.29925752,\"y\":-44.6516194344}"
+              },
+            "name" : "Convert_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "val"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Core.Math.Convert",
+            "presetGUID" : "EDD7FFDA6D856BB47F953A1ACA8E77B6"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-2430.64086914,\"y\":55.4410324097}",
+              "uiCollapsedState" : "1"
+              },
+            "name" : "Xfo_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "ori"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Vec3" : {
+                    "x" : 0,
+                    "y" : 0,
+                    "z" : 0
+                    }
+                  },
+                "name" : "tr"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "sc"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Xfo.Xfo",
+            "presetGUID" : "A0F6CD63A2069530481F214C62A069AA"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-2136.65161133,\"y\":-44.199420929}"
+              },
+            "name" : "SetXfo_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "M_chest_fk"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Xfo" : {
+                    "ori" : {
+                      "v" : {
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0
+                        },
+                      "w" : 1
+                      },
+                    "tr" : {
+                      "x" : 0,
+                      "y" : 0,
+                      "z" : 0
+                      },
+                    "sc" : {
+                      "x" : 1,
+                      "y" : 1,
+                      "z" : 1
+                      }
+                    }
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetXfo",
+            "presetGUID" : "CE6C588D1B4AD82E4B7719B4817F658D"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-2265.95629883,\"y\":58.1473464966}",
+              "uiCollapsedState" : "0"
+              },
+            "name" : "Xfo_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "ori"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Vec3" : {
+                    "x" : 0,
+                    "y" : 6.400000095367432,
+                    "z" : 0
+                    }
+                  },
+                "name" : "tr"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "sc"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Xfo.Xfo",
+            "presetGUID" : "A0F6CD63A2069530481F214C62A069AA"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1990.97094727,\"y\":-6.93909835815}"
+              },
+            "name" : "SetXfo_4",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "M_cog_fk"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Xfo" : {
+                    "ori" : {
+                      "v" : {
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0
+                        },
+                      "w" : 1
+                      },
+                    "tr" : {
+                      "x" : 0,
+                      "y" : 0,
+                      "z" : 0
+                      },
+                    "sc" : {
+                      "x" : 1,
+                      "y" : 1,
+                      "z" : 1
+                      }
+                    }
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetXfo",
+            "presetGUID" : "CE6C588D1B4AD82E4B7719B4817F658D"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-2116.21850586,\"y\":92.45574951170001}",
+              "uiCollapsedState" : "0"
+              },
+            "name" : "Xfo_4",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "ori"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Vec3" : {
+                    "x" : 0,
+                    "y" : 0,
+                    "z" : 0
+                    }
+                  },
+                "name" : "tr"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "sc"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Xfo.Xfo",
+            "presetGUID" : "A0F6CD63A2069530481F214C62A069AA"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-2467.21850586,\"y\":202.455749512}"
+              },
+            "name" : "SetFromEulerAngles_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "eulerX"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "eulerY"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "eulerZ"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "ro"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Quat.SetFromEulerAngles",
+            "presetGUID" : "484500331FDDF2C0A03D2B6A42B182BF"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-2629.21850586,\"y\":189.455749512}"
+              },
+            "name" : "DecomposeVec3_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "value"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "x"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "y"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "z"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Vec3.DecomposeVec3",
+            "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6"
+            }
+          ],
+        "connections" : {
+          "hips" : [
+            "Xfo_1.tr"
+            ],
+          "chest" : [
+            "Xfo_3.tr"
+            ],
+          "chestRot" : [
+            "DecomposeVec3_1.value"
+            ],
+          "KrakenStaticClip_1.result" : [
+            "SetXfo_1.this"
+            ],
+          "SetXfo_1.this" : [
+            "SetXfo_3.this"
+            ],
+          "Convert_3.result" : [
+            "result"
+            ],
+          "Xfo_1.result" : [
+            "SetXfo_1.value"
+            ],
+          "SetXfo_3.this" : [
+            "SetXfo_4.this",
+            "Convert_3.val"
+            ],
+          "Xfo_3.result" : [
+            "SetXfo_3.value"
+            ],
+          "Xfo_4.result" : [
+            "SetXfo_4.value"
+            ],
+          "SetFromEulerAngles_1.result" : [
+            "Xfo_4.ori",
+            "Xfo_3.ori"
+            ],
+          "DecomposeVec3_1.x" : [
+            "SetFromEulerAngles_1.eulerX"
+            ],
+          "DecomposeVec3_1.y" : [
+            "SetFromEulerAngles_1.eulerY"
+            ],
+          "DecomposeVec3_1.z" : [
+            "SetFromEulerAngles_1.eulerZ"
+            ]
+          }
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1866.12534964,\"y\":29.0689707994}",
+        "uiCollapsedState" : "1"
+        },
+      "name" : "AlembicAnim",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "value"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+            },
+          "name" : "filePath"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Graph",
+        "metadata" : {
+          "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
+          "uiGraphPan" : "{\n  \"x\" : 2217.464599609375,\n  \"y\" : 378.6000061035156\n  }"
+          },
+        "title" : "AlembicAnim",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "value",
+            "execPortType" : "Out"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+              },
+            "name" : "filePath",
+            "execPortType" : "In",
+            "typeSpec" : "String"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1666.8067627,\"y\":-167.100006104}",
+              "uiCollapsedState" : "0"
+              },
+            "name" : "KrakenAbcClip_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+                  },
+                "name" : "filePath"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenAbcClip.KrakenAbcClip",
+            "presetGUID" : "F2D5796F8FE29C4DE81027B80DF4CBE8"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1308.122314453125,\"y\":-127.1358947753906}",
+              "uiCollapsedState" : "0"
+              },
+            "name" : "Cache_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "value"
+                }
+              ],
+            "executable" : "Fabric.Core.Data.Cache",
+            "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+            }
+          ],
+        "connections" : {
+          "filePath" : [
+            "KrakenAbcClip_1.filePath"
+            ],
+          "KrakenAbcClip_1.result" : [
+            "Cache_1.value"
+            ],
+          "Cache_1.value" : [
+            "value"
+            ]
+          }
+        }
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "Animation Graph",
+        "uiGraphPos" : "{\"x\":-1942.47583008,\"y\":-98.56414794920001}",
+        "uiNodeColor" : "{\n  \"r\" : 52,\n  \"g\" : 143,\n  \"b\" : 47\n  }",
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiGraphSize" : "{\"w\":1403.96435547,\"h\":556.316894531}"
+        },
+      "name" : "backDrop",
+      "ports" : []
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "Encapsulated KL Only Rig",
+        "uiGraphPos" : "{\"x\":-528.335876465,\"y\":151.552978516}",
+        "uiNodeColor" : "{\n  \"r\" : 64,\n  \"g\" : 105,\n  \"b\" : 143\n  }",
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiGraphSize" : "{\"w\":546.524414062,\"h\":306.590393066}"
+        },
+      "name" : "backDrop_2",
+      "ports" : []
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "FBX Skeleton",
+        "uiGraphPos" : "{\"x\":-524.979376793,\"y\":-95.2508993149}",
+        "uiNodeColor" : "{\n  \"r\" : 110,\n  \"g\" : 128,\n  \"b\" : 143\n  }",
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiGraphSize" : "{\"w\":545.866149902,\"h\":227.528656006}"
+        },
+      "name" : "backDrop_3",
+      "ports" : []
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "Debug Drawing",
+        "uiGraphPos" : "{\"x\":863.940951109,\"y\":-186.917660952}",
+        "uiNodeColor" : "{\n  \"r\" : 143,\n  \"g\" : 133,\n  \"b\" : 119\n  }",
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiGraphSize" : "{\"w\":1441.05822754,\"h\":650.011535645}"
+        },
+      "name" : "backDrop_4",
+      "ports" : []
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "Combining Pose with FBX Skeleton",
+        "uiGraphPos" : "{\"x\":108.212481976,\"y\":158.130481005}",
+        "uiNodeColor" : "{\n  \"r\" : 130,\n  \"g\" : 59,\n  \"b\" : 143\n  }",
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiGraphSize" : "{\"w\":562.70654296875,\"h\":300.1843872070313}"
+        },
+      "name" : "backDrop_5",
+      "ports" : []
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1962.54819059,\"y\":116.533579588}",
+        "uiCollapsedState" : "1"
+        },
+      "name" : "If_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "cond"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "if_true"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "if_false"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Core.Control.If",
+      "presetGUID" : "3182A478A21643455D549E483D35F831"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":940.473116636,\"y\":122.288805723}"
+        },
+      "name" : "GetDeformedMeshes",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "meshes"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "indices"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "xfos"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+          "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0/HTML/KLExtensionsGuide/Characters/Character.html",
+          "uiTooltip" : "Returns a deformed copy of one of the meshes stored in the character.\n\n Supported by Character"
+          },
+        "title" : "GetDeformedMesh",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "Character"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+              },
+            "nodePortType" : "In",
+            "name" : "meshes",
+            "execPortType" : "Out",
+            "typeSpec" : "PolygonMesh[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "indices",
+            "execPortType" : "Out",
+            "typeSpec" : "UInt32[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "xfos",
+            "execPortType" : "Out",
+            "typeSpec" : "Xfo[]"
+            }
+          ],
+        "extDeps" : {
+          "Characters" : "*"
+          },
+        "origPresetGUID" : "CF6EF478CDD7AE27250EDD6837C01125",
+        "code" : "require Characters;
+
+dfgEntry {
+
+  UInt32 count = this.getNumGeometries();
+
+  indices.resize(count);
+  meshes.resize(count);
+  xfos.resize(count);
+
+  for(UInt32 i=0; i<count; i++)
+  {
+    indices[i] = i;
+    meshes[i] = this.getDeformedMesh(i);
+    xfos[i] = Xfo();
+  }
+  //report(indices);
+}
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1191.82486224,\"y\":105.670572996}",
+        "uiCollapsedState" : "2"
+        },
+      "name" : "Cache_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1694.77317679,\"y\":75.0390330553}",
+        "uiCollapsedState" : "2"
+        },
+      "name" : "KrakenClip_saveToFile_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "clipRef"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "filePath"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenClip.KrakenClip_saveToFile",
+      "presetGUID" : "B262B649A6706BC23CD71DC2372D6317"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-516.075634003,\"y\":-269.648202896}"
+        },
+      "name" : "loop",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 101
+            },
+          "name" : "rangeIn"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 136
+            },
+          "name" : "rangeOut"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 136
+            },
+          "name" : "frame"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "loop",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "rangeIn",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "rangeOut",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "frame",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "Scalar"
+            }
+          ],
+        "extDeps" : {
+          "Math" : "*"
+          },
+        "code" : "dfgEntry {
+  Scalar range = rangeOut-rangeIn;
+  result = frame + ceil((rangeIn-frame)/range)*range;
+}
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":369.731536388,\"y\":-47.3155500889}"
+        },
+      "name" : "SetMat_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "index"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "m"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenClipContext.SetMat",
+      "presetGUID" : "CA9CBDAE54A3FA656D7F7EF635DFECC0"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":2037.69751251,\"y\":309.718288422}",
+        "uiCollapsedState" : "1"
+        },
+      "name" : "DrawAxes_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "target"
+            },
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "transform"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "dummyResult"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "instance"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxes",
+      "presetGUID" : "7830EDE4D404DB2AE6B73F5DBA42EFED"
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "Look At",
+        "uiGraphPos" : "{\"x\":-1350.24721909,\"y\":253.205798149}",
+        "uiGraphSize" : "{\"w\":324.972015381,\"h\":169.191375732}"
+        },
+      "name" : "backDrop_6",
+      "ports" : []
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "Look At Target",
+        "uiGraphPos" : "{\"x\":111.574935436,\"y\":-102.384123087}",
+        "uiNodeColor" : "{\n  \"r\" : 255,\n  \"g\" : 255,\n  \"b\" : 0\n  }",
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiGraphSize" : "{\"w\":566.358825684,\"h\":232.512985229}"
+        },
+      "name" : "backDrop_7",
+      "ports" : []
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "Time",
+        "uiGraphPos" : "{\"x\":-542.056255341,\"y\":-306.05591774}",
+        "uiGraphSize" : "{\"w\":552.796875,\"h\":186.294052124}"
+        },
+      "name" : "backDrop_8",
+      "ports" : []
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1365.19676077,\"y\":-38.2680130005}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "DrawTexturedKyle",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "character"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "Meshes"
+            },
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "${FABRIC_CHARNAME_DIR}/tx/textures.json"
+            },
+          "name" : "texturePath"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Color" : {
+              "r" : 0.08235294371843338,
+              "g" : 0.08235294371843338,
+              "b" : 0.08235294371843338,
+              "a" : 1
+              }
+            },
+          "name" : "specular"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Float32" : 20.32999992370606
+            },
+          "name" : "specFactor"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "masters"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "transforms"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Index[]" : [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+              ]
+            },
+          "name" : "indices"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "name" : "wireFrame"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "name" : "doubleSided"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Color" : {
+              "r" : 0.5,
+              "g" : 0.5,
+              "b" : 0.5,
+              "a" : 1
+              }
+            },
+          "name" : "ambient"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "dummyResult"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "instance"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+          "uiTooltip" : "Helper function for the InlineDrawing DrawingHandle data type\nto draw a list of objects given an index table and a list of\ntransforms.\n\nSupported types:\n  this: DrawingHandle\n  name: String\n  color: Color\n  specular: Color\n  specFactor: Float32\n  masters: PolygonMesh[]\n  transforms: Xfo[]\n  indices: Index[]\n  wireFrame: Boolean\n  doubleSided: Boolean\n  dummyResult: Vec3\n  instance: InlineInstance\n"
+          },
+        "title" : "DrawPolygonMeshArray",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "DrawingHandle"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "character",
+            "execPortType" : "In",
+            "typeSpec" : "FbxCharacter"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "name",
+            "execPortType" : "In",
+            "typeSpec" : "String"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "texturePath",
+            "execPortType" : "In",
+            "typeSpec" : "String"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
+              },
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Color" : {
+                "r" : 0.2000000029802322,
+                "g" : 0.2000000029802322,
+                "b" : 0.2000000029802322,
+                "a" : 1
+                }
+              },
+            "name" : "specular",
+            "execPortType" : "In",
+            "typeSpec" : "Color"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Float32" : 16
+              },
+            "name" : "specFactor",
+            "execPortType" : "In",
+            "typeSpec" : "Float32"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+              },
+            "nodePortType" : "Out",
+            "name" : "masters",
+            "execPortType" : "In",
+            "typeSpec" : "PolygonMesh[]"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+              },
+            "nodePortType" : "Out",
+            "name" : "transforms",
+            "execPortType" : "In",
+            "typeSpec" : "Xfo[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "indices",
+            "execPortType" : "In",
+            "typeSpec" : "Index[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "wireFrame",
+            "execPortType" : "In",
+            "typeSpec" : "Boolean"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "doubleSided",
+            "execPortType" : "In",
+            "typeSpec" : "Boolean"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "ambient",
+            "execPortType" : "In",
+            "typeSpec" : "Color"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+              },
+            "nodePortType" : "In",
+            "name" : "dummyResult",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "instance",
+            "execPortType" : "Out",
+            "typeSpec" : "InlineInstance"
+            }
+          ],
+        "extDeps" : {
+          "InlineDrawing" : "*",
+          "FabricInterfaces" : "*",
+          "JSON" : "*",
+          "FileIO" : "*",
+          "FbxHelpers" : "*"
+          },
+        "origPresetGUID" : "C5D3967A103CAE41AF99EA35D2D636A8",
+        "code" : "require InlineDrawing;
+require JSON;
+require FileIO;
+require FbxHelpers;
+
+dfgEntry {
+
+  FilePath path = texturePath;
+  path = path.expandEnvVars();
+  String finalPath = path.string();
+  
+  TextReader reader(finalPath);
+  String json = reader.readAll();
+  
+  JSONDoc doc();
+  doc.parse(json);
+
+  Xfo transformsPerIndex[Index][];
+  if(indices.size() == 0) {
+    for(Size i=0;i<masters.size();i++) {
+      Xfo xfos[](1);
+      if(i < transforms.size())
+        xfos[0] = transforms[i];
+      transformsPerIndex[i] = xfos;
+    }
+   } else {
+    for(Size i=0;i<indices.size();i++) {
+      Index idx = indices[i];
+      if(i >= transforms.size())
+        break;
+      Xfo xfos[];
+      xfos = transformsPerIndex.get(idx, xfos);
+      xfos.push(transforms[i]);
+      transformsPerIndex[idx] = xfos;
+    }
+  }
+
+  /// draw each one of the groups
+  for(idx in transformsPerIndex) {
+
+    if(idx >= masters.size())
+      continue;
+
+    Xfo xfos[] = transformsPerIndex[idx];
+    String uniqueName = name;
+    PolygonMesh master = masters[idx];
+    if(master.getDebugName())
+      uniqueName += '_' + master.getDebugName();
+      
+    String meshName = character.skinMeshIdentifiers[idx].name;
+      
+    String texPath = '';
+    if(doc.root.has(meshName))
+      texPath = 
+      doc.root.getString(meshName);
+    if(texPath) {
+      path = '${FABRIC_CHARNAME_DIR}/tx/'+texPath;
+      path = path.expandEnvVars();
+      texPath = path.string();
+    }
+    
+    // FE-6278
+    // Be sure we add the uid in the name so uniqueName is really unique.
+    uniqueName += '_' + master.uid();
+    
+    if(texPath)
+      this.drawTexturedPolygonMeshInstances(uniqueName, texPath, specular, specFactor, ambient, xfos, master, wireFrame, doubleSided, dummyResult, instance);
+    else
+      this.drawPolygonMeshInstances(uniqueName, Color(0.8, 0.8, 0.8), specular, specFactor, xfos, master, wireFrame, doubleSided, dummyResult, instance);
+  }
+}
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":173.91334486,\"y\":-12.2218163013}"
+        },
+      "name" : "ToMat44_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Xfo.ToMat44",
+      "presetGUID" : "3EB232DB6FF4BEE162E1D62ABFBE8C3A"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1015.9264586,\"y\":292.151372433}"
+        },
+      "name" : "GetControlXfos",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenKLRig.GetControlXfos",
+      "presetGUID" : "7DF3E904AB1882A7AC20E03E23116A6F"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1308.94534564,\"y\":-145.457974672}"
+        },
+      "name" : "EmptyDrawingHandle_3",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "handle"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle",
+      "presetGUID" : "2440020BA6A1CAB1CEB690A198F99C70"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-870.745553732,\"y\":172.391842365}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "AddClip_4",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "clip"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "weight"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenClipStack.AddClip",
+      "presetGUID" : "D91DF2CDCDCE03FD688609D028B24A1B"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1273.98864746,\"y\":286.627349854}"
+        },
+      "name" : "OffsetAnim_4",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "M_eyeTracker_an"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "Eye_Blend"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Graph",
+        "metadata" : {
+          "uiGraphZoom" : "{\n  \"value\" : 0.9466149210929871\n  }",
+          "uiGraphPan" : "{\n  \"x\" : 2050.74951171875,\n  \"y\" : 184.2632751464844\n  }"
+          },
+        "title" : "OffsetAnim",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Vec3" : {
+                "x" : -248.1000061035156,
+                "y" : -18.89999961853027,
+                "z" : -80.69999694824219
+                }
+              },
+            "name" : "M_eyeTracker_an",
+            "execPortType" : "In",
+            "typeSpec" : "Vec3"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Float32" : 1
+              },
+            "name" : "Eye_Blend",
+            "execPortType" : "In",
+            "typeSpec" : "Float32"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1539.99487376,\"y\":-152.127151489}"
+              },
+            "name" : "KrakenStaticClip_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.KrakenStaticClip",
+            "presetGUID" : "7F433535354A63134659FCC20583EAE5"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1126.09033275,\"y\":41.8549118042}"
+              },
+            "name" : "Convert_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "val"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Core.Math.Convert",
+            "presetGUID" : "EDD7FFDA6D856BB47F953A1ACA8E77B6"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1299.31689525,\"y\":97.66023254389999}"
+              },
+            "name" : "SetXfo_4",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "M_eyeTracker_an"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Xfo" : {
+                    "ori" : {
+                      "v" : {
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0
+                        },
+                      "w" : 1
+                      },
+                    "tr" : {
+                      "x" : 6.5,
+                      "y" : -32,
+                      "z" : 0
+                      },
+                    "sc" : {
+                      "x" : 1,
+                      "y" : 1,
+                      "z" : 1
+                      }
+                    }
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetXfo",
+            "presetGUID" : "CE6C588D1B4AD82E4B7719B4817F658D"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1475.18859863,\"y\":181.072921753}",
+              "uiCollapsedState" : "1"
+              },
+            "name" : "Xfo_4",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "ori"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Vec3" : {
+                    "x" : -248.1000061035156,
+                    "y" : -18.89999961853027,
+                    "z" : -80.69999694824219
+                    }
+                  },
+                "name" : "tr"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "sc"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Xfo.Xfo",
+            "presetGUID" : "A0F6CD63A2069530481F214C62A069AA"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1474.51855469,\"y\":-50.7616577148}"
+              },
+            "name" : "SetFloat32_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "M_R_Eye_fk_an.R_EyeFKIK"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Float32" : 1
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetFloat32",
+            "presetGUID" : "96C404B53BD148ACA0EC1F430148354E"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1479.51855469,\"y\":52.2383422852}"
+              },
+            "name" : "SetFloat32_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "M_L_Eye_fk_an.L_EyeFKIK"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Float32" : 1
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetFloat32",
+            "presetGUID" : "96C404B53BD148ACA0EC1F430148354E"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1665.67175221,\"y\":-127.045646667}"
+              },
+            "name" : "Sub_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Float32" : 1
+                  },
+                "name" : "lhs"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "rhs"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Core.Math.Sub",
+            "presetGUID" : "F9754B19F43BC017056B8BA291E7B8B4"
+            }
+          ],
+        "connections" : {
+          "M_eyeTracker_an" : [
+            "Xfo_4.tr"
+            ],
+          "Eye_Blend" : [
+            "Sub_1.rhs"
+            ],
+          "KrakenStaticClip_1.result" : [
+            "SetFloat32_2.this"
+            ],
+          "Convert_3.result" : [
+            "result"
+            ],
+          "SetXfo_4.this" : [
+            "Convert_3.val"
+            ],
+          "Xfo_4.result" : [
+            "SetXfo_4.value"
+            ],
+          "SetFloat32_2.this" : [
+            "SetFloat32_3.this"
+            ],
+          "SetFloat32_3.this" : [
+            "SetXfo_4.this"
+            ],
+          "Sub_1.result" : [
+            "SetFloat32_2.value",
+            "SetFloat32_3.value"
+            ]
+          }
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":2179.58352041,\"y\":382.624584913}",
+        "uiCollapsedState" : "2"
+        },
+      "name" : "DrawAxes_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "target"
+            },
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "transform"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "dummyResult"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "instance"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxes",
+      "presetGUID" : "7830EDE4D404DB2AE6B73F5DBA42EFED"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1849.46665823,\"y\":301.610055089}"
+        },
+      "name" : "Xfo_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "ori"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : -30,
+              "y" : 0,
+              "z" : 50
+              }
+            },
+          "name" : "tr"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 5,
+              "y" : 5,
+              "z" : 5
+              }
+            },
+          "name" : "sc"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Xfo.Xfo",
+      "presetGUID" : "A0F6CD63A2069530481F214C62A069AA"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1568.14292777,\"y\":296.313302159}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "DecomposeXfo_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "ori"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "tr"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "sc"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Xfo.DecomposeXfo",
+      "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1626.3187753,\"y\":-91.18800354}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "If_3",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "cond"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "if_true"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "if_false"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Core.Control.If",
+      "presetGUID" : "3182A478A21643455D549E483D35F831"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1202.06443655,\"y\":102.605668187}"
+        },
+      "name" : "AddClip_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "clip"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "weight"
+          }
+        ],
+      "executable" : "DFG.Kraken.KrakenAnimation.KrakenClipStack.AddClip",
+      "presetGUID" : "D91DF2CDCDCE03FD688609D028B24A1B"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1597.03123343,\"y\":113.268250585}"
+        },
+      "name" : "IK_Hands",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "ikBlend"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "l_hand"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "r_hand"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Graph",
+        "metadata" : {
+          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+          "uiGraphZoom" : "{\n  \"value\" : 0.8029589653015137\n  }",
+          "uiGraphPan" : "{\n  \"x\" : 1615.733617755086,\n  \"y\" : 268.1494029863563\n  }"
+          },
+        "title" : "OffsetAnim",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Float32" : 1
+              },
+            "name" : "ikBlend",
+            "execPortType" : "In",
+            "typeSpec" : "Float32"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Vec3" : {
+                "x" : 150,
+                "y" : -18.89999961853027,
+                "z" : 101.5999984741211
+                }
+              },
+            "name" : "l_hand",
+            "execPortType" : "In",
+            "typeSpec" : "Vec3"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Vec3" : {
+                "x" : -248.1000061035156,
+                "y" : -18.89999961853027,
+                "z" : -80.69999694824219
+                }
+              },
+            "name" : "r_hand",
+            "execPortType" : "In",
+            "typeSpec" : "Vec3"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\n  \"x\" : -2196.548145651817,\n  \"y\" : -222.4666548967362\n  }"
+              },
+            "name" : "KrakenStaticClip_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.KrakenStaticClip",
+            "presetGUID" : "7F433535354A63134659FCC20583EAE5"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\n  \"x\" : -1893.286692738533,\n  \"y\" : -20.43010175228119\n  }"
+              },
+            "name" : "SetFloat32_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "L_hand_ik.ikBlend"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Float32" : 1
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetFloat32",
+            "presetGUID" : "96C404B53BD148ACA0EC1F430148354E"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\n  \"x\" : -1136.203125,\n  \"y\" : 104.8549153804779\n  }"
+              },
+            "name" : "Convert_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "val"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Core.Math.Convert",
+            "presetGUID" : "EDD7FFDA6D856BB47F953A1ACA8E77B6"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\n  \"x\" : -1689.851492881775,\n  \"y\" : -16.13347351551056\n  }"
+              },
+            "name" : "SetXfo_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "L_hand_ik"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Xfo" : {
+                    "ori" : {
+                      "v" : {
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0
+                        },
+                      "w" : 1
+                      },
+                    "tr" : {
+                      "x" : 6.5,
+                      "y" : -32,
+                      "z" : 0
+                      },
+                    "sc" : {
+                      "x" : 1,
+                      "y" : 1,
+                      "z" : 1
+                      }
+                    }
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetXfo",
+            "presetGUID" : "CE6C588D1B4AD82E4B7719B4817F658D"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\n  \"x\" : -1863.808856606484,\n  \"y\" : 113.4123635292053\n  }",
+              "uiCollapsedState" : "1"
+              },
+            "name" : "Xfo_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "ori"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Vec3" : {
+                    "x" : 150,
+                    "y" : -18.89999961853027,
+                    "z" : 101.5999984741211
+                    }
+                  },
+                "name" : "tr"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "sc"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Xfo.Xfo",
+            "presetGUID" : "A0F6CD63A2069530481F214C62A069AA"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\n  \"x\" : -1497.457153320313,\n  \"y\" : 40.53645980358124\n  }"
+              },
+            "name" : "SetFloat32_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "R_hand_ik.ikBlend"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Float32" : 1
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetFloat32",
+            "presetGUID" : "96C404B53BD148ACA0EC1F430148354E"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\n  \"x\" : -1315.373291015625,\n  \"y\" : 88.87002921104431\n  }"
+              },
+            "name" : "SetXfo_4",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "R_hand_ik"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Xfo" : {
+                    "ori" : {
+                      "v" : {
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0
+                        },
+                      "w" : 1
+                      },
+                    "tr" : {
+                      "x" : 6.5,
+                      "y" : -32,
+                      "z" : 0
+                      },
+                    "sc" : {
+                      "x" : 1,
+                      "y" : 1,
+                      "z" : 1
+                      }
+                    }
+                  },
+                "name" : "value"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.SetXfo",
+            "presetGUID" : "CE6C588D1B4AD82E4B7719B4817F658D"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\n  \"x\" : -1451.188437104225,\n  \"y\" : 185.0728985071182\n  }",
+              "uiCollapsedState" : "1"
+              },
+            "name" : "Xfo_4",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "ori"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Vec3" : {
+                    "x" : -248.1000061035156,
+                    "y" : -18.89999961853027,
+                    "z" : -80.69999694824219
+                    }
+                  },
+                "name" : "tr"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "sc"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Xfo.Xfo",
+            "presetGUID" : "A0F6CD63A2069530481F214C62A069AA"
+            }
+          ],
+        "connections" : {
+          "ikBlend" : [
+            "SetFloat32_1.value"
+            ],
+          "l_hand" : [
+            "Xfo_2.tr"
+            ],
+          "r_hand" : [
+            "Xfo_4.tr"
+            ],
+          "KrakenStaticClip_1.result" : [
+            "SetFloat32_1.this"
+            ],
+          "SetFloat32_1.this" : [
+            "SetXfo_2.this"
+            ],
+          "SetFloat32_1.value" : [
+            "SetFloat32_2.value"
+            ],
+          "Convert_3.result" : [
+            "result"
+            ],
+          "SetXfo_2.this" : [
+            "SetFloat32_2.this"
+            ],
+          "Xfo_2.result" : [
+            "SetXfo_2.value"
+            ],
+          "SetFloat32_2.this" : [
+            "SetXfo_4.this"
+            ],
+          "SetXfo_4.this" : [
+            "Convert_3.val"
+            ],
+          "Xfo_4.result" : [
+            "SetXfo_4.value"
+            ]
+          }
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1319.40391409,\"y\":-41.1034611464}"
+        },
+      "name" : "AddClip_5",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "clip"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "weight"
+          }
+        ],
+      "executable" : "DFG.Kraken.KrakenAnimation.KrakenClipStack.AddClip",
+      "presetGUID" : "D91DF2CDCDCE03FD688609D028B24A1B"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1259.1812582,\"y\":1217.12293172}"
+        },
+      "name" : "LookAtFailed",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "tr"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "LookAt_Blend"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Graph",
+        "title" : "LookAtFailed",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "tr",
+            "execPortType" : "In"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "this",
+            "execPortType" : "In"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "LookAt_Blend",
+            "execPortType" : "In"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1719.59125257,\"y\":246.339543819}",
+              "uiCollapsedState" : "0"
+              },
+            "name" : "KrakenLookAtClip_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Index" : 0
+                  },
+                "name" : "matrixIndex"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "childClip"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "Out",
+                "name" : "result"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenLookAtClip.KrakenLookAtClip",
+            "presetGUID" : "1A2CAD33C1E30D79159CCCD91D5913F1"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1487.04150391,\"y\":339.95669055}"
+              },
+            "name" : "DefineLookAt_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "String" : "M_head_fk"
+                  },
+                "name" : "name"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Vec3" : {
+                    "x" : 0,
+                    "y" : 0,
+                    "z" : 1
+                    }
+                  },
+                "name" : "target"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Vec3" : {
+                    "x" : 0,
+                    "y" : 1,
+                    "z" : 0
+                    }
+                  },
+                "name" : "axis"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Boolean" : false
+                  },
+                "name" : "locked"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Float32" : 0
+                  },
+                "name" : "amount"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenLookAtClip.DefineLookAt",
+            "presetGUID" : "35CE3504C0CF360BB46A409A941D6025"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":-1404.8918457,\"y\":257.487086058}",
+              "uiCollapsedState" : "0"
+              },
+            "name" : "AddClip_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "exec"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "IO",
+                "name" : "this"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "name" : "clip"
+                },
+              {
+                "objectType" : "InstPort",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Float32" : 1
+                  },
+                "name" : "weight"
+                }
+              ],
+            "executable" : "Kraken.KrakenAnimation.KrakenClipStack.AddClip",
+            "presetGUID" : "D91DF2CDCDCE03FD688609D028B24A1B"
+            }
+          ],
+        "connections" : {
+          "tr" : [
+            "DefineLookAt_3.target"
+            ],
+          "this" : [
+            "AddClip_3.this"
+            ],
+          "LookAt_Blend" : [
+            "AddClip_3.weight"
+            ],
+          "KrakenLookAtClip_1.result" : [
+            "DefineLookAt_3.this",
+            "AddClip_3.clip"
+            ]
+          }
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1801.74708855,\"y\":23.0092219114}",
+        "uiCollapsedState" : "0"
+        },
+      "name" : "If_4",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "cond"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "if_true"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "if_false"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Core.Control.If",
+      "presetGUID" : "3182A478A21643455D549E483D35F831"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1589.10142159,\"y\":38.4743509293}",
+        "uiCollapsedState" : "1"
+        },
+      "name" : "DrawAxesInstances_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "axes"
+            },
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "transforms"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "dummyResult"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "instance"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances",
+      "presetGUID" : "A2DAC55CB1CE7426981A13F213257B7A"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1249.28283691,\"y\":478.407653809}"
+        },
+      "name" : "KrakenStaticClip_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Kraken.KrakenAnimation.KrakenStaticClip.KrakenStaticClip",
+      "presetGUID" : "7F433535354A63134659FCC20583EAE5"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-985.334411621,\"y\":498.057678223}"
+        },
+      "name" : "SetXfo_4",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "M_head_fk"
+            },
+          "name" : "name"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Xfo" : {
+              "ori" : {
+                "v" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0
+                  },
+                "w" : 1
+                },
+              "tr" : {
+                "x" : 6.5,
+                "y" : -32,
+                "z" : 0
+                },
+              "sc" : {
+                "x" : 1,
+                "y" : 1,
+                "z" : 1
+                }
+              }
+            },
+          "name" : "value"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiTooltip" : "Supported types:\n  this: KrakenStaticClip\n  name: String\n  value: Xfo\n"
+          },
+        "title" : "SetXfo",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "exec",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "IO",
+            "name" : "this",
+            "execPortType" : "IO",
+            "typeSpec" : "KrakenStaticClip"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "name",
+            "execPortType" : "In",
+            "typeSpec" : "String"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+              },
+            "nodePortType" : "Out",
+            "name" : "value",
+            "execPortType" : "In",
+            "typeSpec" : "Xfo"
+            }
+          ],
+        "extDeps" : {
+          "KrakenAnimation" : "*"
+          },
+        "origPresetGUID" : "CE6C588D1B4AD82E4B7719B4817F658D",
+        "code" : "require KrakenAnimation;
+
+dfgEntry {
+  this.setXfo(name, value);
+}
+"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1204.2310791,\"y\":545.591491699}"
+        },
+      "name" : "Xfo_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "IO",
+          "name" : "exec"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "ori"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : -11.80000019073486,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "tr"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "sc"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Math.Xfo.Xfo",
+      "presetGUID" : "A0F6CD63A2069530481F214C62A069AA"
+      }
+    ],
+  "connections" : {
+    "timeline" : [
+      "loop.frame"
+      ],
+    "drawSkel" : [
+      "If_1.cond"
+      ],
+    "drawABC" : [
+      "If_3.cond"
+      ],
+    "drawJointXfos" : [
+      "If_4.cond"
+      ],
+    "AlembicPath" : [
+      "AlembicAnim.filePath"
+      ],
+    "Walk_Blend" : [
+      "AddClip_1.weight"
+      ],
+    "LookAt_Blend" : [
+      "OffsetAnim_4.Eye_Blend"
+      ],
+    "Offset_Blend" : [
+      "AddClip_2.weight"
+      ],
+    "hips" : [
+      "OffsetAnim.hips"
+      ],
+    "chest" : [
+      "OffsetAnim.chest"
+      ],
+    "chestRot" : [
+      "OffsetAnim.chestRot"
+      ],
+    "Hand_IK_Blend" : [
+      "AddClip_5.weight"
+      ],
+    "l_hand" : [
+      "IK_Hands.l_hand"
+      ],
+    "r_hand" : [
+      "IK_Hands.r_hand"
+      ],
+    "wireFrame" : [
+      "DrawTexturedKyle.wireFrame"
+      ],
+    "FbxCharacter.result" : [
+      "Cache.value"
+      ],
+    "ToCharacter.result" : [
+      "KrakenKLRigPoseAdaptor_1.character"
+      ],
+    "Cache.value" : [
+      "ToCharacter.this",
+      "DrawTexturedKyle.character"
+      ],
+    "EmptyDrawingHandle.handle" : [
+      "DrawTexturedKyle.this"
+      ],
+    "Create_1.result" : [
+      "ResetPose_1.rig"
+      ],
+    "SetClip_1.rig" : [
+      "Convert_1.val"
+      ],
+    "KrakenClipContext_1.result" : [
+      "SetMat_1.this"
+      ],
+    "FrameToTime_1.time" : [
+      "KrakenClipContext_1.time"
+      ],
+    "KrakenKLRigPoseAdaptor_1.result" : [
+      "UpdateFromRig_1.this"
+      ],
+    "Convert_1.result" : [
+      "KrakenKLRigPoseAdaptor_1.rig"
+      ],
+    "UpdateFromRig_1.rig" : [
+      "GetJointXfos_1.this",
+      "GetControlXfos.this"
+      ],
+    "UpdateFromRig_1.character" : [
+      "GetDeformedMeshes.this"
+      ],
+    "DrawAxesInstances_1.this" : [
+      "If_1.if_true"
+      ],
+    "GetJointXfos_1.result" : [
+      "DrawAxesInstances_2.transforms"
+      ],
+    "ResetPose_1.rig" : [
+      "SetClip_1.rig"
+      ],
+    "Convert_2.result" : [
+      "SetClip_1.clip"
+      ],
+    "KrakenClipStack_1.result" : [
+      "AddClip_1.this"
+      ],
+    "AddClip_1.this" : [
+      "AddClip_5.this"
+      ],
+    "OffsetAnim.result" : [
+      "AddClip_2.clip"
+      ],
+    "AlembicAnim.value" : [
+      "AddClip_1.clip",
+      "KrakenClip_saveToFile_1.clipRef"
+      ],
+    "If_1.result" : [
+      "DrawAxes_1.this",
+      "this"
+      ],
+    "GetDeformedMeshes.meshes" : [
+      "Cache_1.value"
+      ],
+    "GetDeformedMeshes.indices" : [
+      "DrawTexturedKyle.indices"
+      ],
+    "GetDeformedMeshes.xfos" : [
+      "DrawTexturedKyle.transforms"
+      ],
+    "Cache_1.value" : [
+      "DrawTexturedKyle.masters"
+      ],
+    "loop.result" : [
+      "FrameToTime_1.frame"
+      ],
+    "SetMat_1.this" : [
+      "UpdateFromRig_1.context"
+      ],
+    "DrawAxes_1.this" : [
+      "DrawAxes_2.this"
+      ],
+    "DrawTexturedKyle.this" : [
+      "If_3.if_true"
+      ],
+    "DrawTexturedKyle.dummyResult" : [
+      "dummyResult"
+      ],
+    "ToMat44_1.result" : [
+      "SetMat_1.m"
+      ],
+    "GetControlXfos.result" : [
+      "DrawAxesInstances_1.transforms"
+      ],
+    "EmptyDrawingHandle_3.handle" : [
+      "DrawAxesInstances_1.this",
+      "If_3.if_false",
+      "DrawAxesInstances_2.this"
+      ],
+    "Xfo_2.result" : [
+      "DrawAxes_2.transform",
+      "DecomposeXfo_2.value",
+      "DrawAxes_1.transform",
+      "ToMat44_1.this"
+      ],
+    "DecomposeXfo_2.tr" : [
+      "OffsetAnim_4.M_eyeTracker_an"
+      ],
+    "If_3.result" : [
+      "If_4.if_false"
+      ],
+    "AddClip_2.this" : [
+      "AddClip_4.this"
+      ],
+    "IK_Hands.result" : [
+      "AddClip_5.clip"
+      ],
+    "AddClip_5.this" : [
+      "AddClip_2.this"
+      ],
+    "If_4.result" : [
+      "If_1.if_false"
+      ],
+    "DrawAxesInstances_2.this" : [
+      "If_4.if_true"
+      ],
+    "KrakenStaticClip_1.result" : [
+      "SetXfo_4.this"
+      ],
+    "SetXfo_4.this" : [
+      "AddClip_4.clip",
+      "Convert_2.val"
+      ],
+    "Xfo_1.result" : [
+      "SetXfo_4.value"
+      ]
+    },
+  "requiredPresets" : {
+    "Fabric.Exts.FbxHelpers.FbxCharacter.FbxCharacter" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/FbxHelpers/FbxCharacter.html",
+        "uiTooltip" : "Constructor taking a file path to load the fbx file on disk\n\n Supported by FbxCharacter"
+        },
+      "title" : "FbxCharacter",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "filePath",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "FbxCharacter"
+          }
+        ],
+      "extDeps" : {
+        "FbxHelpers" : "*"
+        },
+      "presetGUID" : "44271B1C32345FA5677CEB1A06E4F4FD",
+      "code" : "require FbxHelpers;
+
+dfgEntry {
+  result = FbxCharacter(filePath);
+}
+"
+      },
+    "Fabric.Exts.FbxHelpers.FbxCharacter.ToCharacter" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/FbxHelpers/FbxCharacter.html",
+        "uiTooltip" : "returns this FBXCharacter as a character\n\n Supported by FbxCharacter"
+        },
+      "title" : "ToCharacter",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "FbxCharacter"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Character"
+          }
+        ],
+      "extDeps" : {
+        "FbxHelpers" : "*"
+        },
+      "presetGUID" : "D8AC4D744C2C887B5A9DB075639FB2A9",
+      "code" : "require FbxHelpers;
+
+dfgEntry {
+  result = this.toCharacter();
+}
+"
+      },
+    "Fabric.Core.Data.Cache" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 214,\n  \"g\" : 191,\n  \"b\" : 103\n  }",
+        "uiAlwaysShowDaisyChainPorts" : "true",
+        "uiHeaderColor" : "{\n  \"r\" : 188,\n  \"g\" : 129,\n  \"b\" : 83\n  }"
+        },
+      "title" : "Cache",
+      "cacheRule" : "always",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60",
+      "code" : "dfgEntry {
+}
+"
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.EmptyDrawingHandle" : {
+      "objectType" : "Graph",
+      "title" : "EmptyDrawingHandle",
+      "cacheRule" : "never",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "handle",
+          "execPortType" : "Out",
+          "typeSpec" : "DrawingHandle"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "2440020BA6A1CAB1CEB690A198F99C70",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 894, \"y\": 100}"
+            },
+          "name" : "Clear",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "this"
+              }
+            ],
+          "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.Clear",
+          "presetGUID" : "39E8D81FA7C7C4A825877F16EFE3564F",
+          "cacheRule" : "never"
+          },
+        {
+          "objectType" : "Var",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":567.0,\"y\":56.0}",
+            "uiCollapsedState" : "0"
+            },
+          "name" : "handleVar",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "nodePortType" : "IO",
+              "name" : "value"
+              }
+            ],
+          "dataType" : "DrawingHandle",
+          "extDep" : "InlineDrawing:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":287.0,\"y\":56.0}"
+            },
+          "name" : "CreateDrawingHandle",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "handle"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "Create DrawingHandle",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "IO",
+                "name" : "exec",
+                "execPortType" : "IO",
+                "typeSpec" : "Execute"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "handle",
+                "execPortType" : "Out",
+                "typeSpec" : "DrawingHandle"
+                }
+              ],
+            "extDeps" : {
+              "InlineDrawing" : "*"
+              },
+            "code" : "dfgEntry {
+  handle = DrawingHandle();
+}
+"
+            }
+          }
+        ],
+      "connections" : {
+        "Clear.this" : [
+          "handle"
+          ],
+        "handleVar.value" : [
+          "Clear.this"
+          ],
+        "CreateDrawingHandle.handle" : [
+          "handleVar.value"
+          ]
+        }
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.Clear" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiTooltip" : "removes all contents from the DrawingHandle\n\n Supported by DrawingHandle"
+        },
+      "title" : "Clear",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "DrawingHandle"
+          }
+        ],
+      "extDeps" : {
+        "InlineDrawing" : "*"
+        },
+      "presetGUID" : "39E8D81FA7C7C4A825877F16EFE3564F",
+      "code" : "require InlineDrawing;
+
+dfgEntry {
+  this.clear();
+}
+"
+      },
+    "Kraken.KLRigs.KRK_CHARNAME.Create" : {
+      "objectType" : "Graph",
+      "title" : "Create",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out"
+          }
+        ],
+      "extDeps" : {
+        "KRK_CHARNAME" : "*"
+        },
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "rig",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "nodePortType" : "IO",
+              "name" : "value"
+              }
+            ],
+          "dataType" : "KRK_CHARNAME",
+          "extDep" : "KRK_CHARNAME:*"
+          },
+        {
+          "objectType" : "Inst",
+          "name" : "constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "constructor",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "IO",
+                "name" : "exec",
+                "execPortType" : "IO",
+                "typeSpec" : "Execute"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "result",
+                "execPortType" : "Out",
+                "typeSpec" : "KRK_CHARNAME"
+                }
+              ],
+            "extDeps" : {
+              "KRK_CHARNAME" : "*"
+              },
+            "code" : "dfgEntry {
+  result = KRK_CHARNAME();
+}
+"
+            }
+          }
+        ],
+      "connections" : {
+        "rig.value" : [
+          "result"
+          ],
+        "constructor.result" : [
+          "rig.value"
+          ]
+        }
+      },
+    "Kraken.KLRigs.KRK_CHARNAME.SetClip" : {
+      "objectType" : "Func",
+      "title" : "SetClip",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "rig",
+          "execPortType" : "IO",
+          "typeSpec" : "KRK_CHARNAME"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "clip",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenClip"
+          }
+        ],
+      "extDeps" : {
+        "KRK_CHARNAME" : "*"
+        },
+      "code" : "dfgEntry {
+  rig.setClip(clip);
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenClipContext.KrakenClipContext" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  time: Float64\n  result: KrakenClipContext\n"
+        },
+      "title" : "KrakenClipContext",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "time",
+          "execPortType" : "In",
+          "typeSpec" : "Float64"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "KrakenClipContext"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "9FC45304BFA28700E3FA1BF0BD7C02C8",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = KrakenClipContext(time);
+}
+"
+      },
+    "Fabric.Compounds.Math.FrameToTime" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTooltip" : "converts the input frame and framerate into time (in seconds)",
+        "uiGraphPan" : "{\"x\": 88, \"y\": -23}"
+        },
+      "title" : "FrameToTime",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiRange" : "(0, 100)"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float64" : 0
+            },
+          "name" : "frame",
+          "execPortType" : "In",
+          "typeSpec" : "Float64"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiRange" : "(1, 50)"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float64" : 24
+            },
+          "name" : "fps",
+          "execPortType" : "In",
+          "typeSpec" : "Float64"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "time",
+          "execPortType" : "Out",
+          "typeSpec" : "Float64"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "FC97B76DD3597484D4308A5490FD1853",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 273, \"y\": 124}",
+            "uiCollapsedState" : "2"
+            },
+          "name" : "MathMax",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "val1"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Float64" : 0.001000000047497451
+                },
+              "name" : "val2"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.Math.Func.Math_max",
+          "presetGUID" : "2BA355E40799979F7BA995D89A07F1A5"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 415, \"y\": 51}"
+            },
+          "name" : "Div",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "exec"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "lhs"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "rhs"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Core.Math.Div",
+          "presetGUID" : "695E8145F8F42293FBC88BD348869892"
+          }
+        ],
+      "connections" : {
+        "frame" : [
+          "Div.lhs"
+          ],
+        "fps" : [
+          "MathMax.val1"
+          ],
+        "MathMax.result" : [
+          "Div.rhs"
+          ],
+        "Div.result" : [
+          "time"
+          ]
+        }
+      },
+    "Fabric.Exts.Math.Func.Math_max" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiTooltip" : "Returns the maximum of two scalar values\n\n Supported by Scalar,Float64"
+        },
+      "title" : "Math_max",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "val1",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "val2",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "2BA355E40799979F7BA995D89A07F1A5",
+      "code" : "require Math;
+
+dfgEntry {
+  result = Math_max(val1, val2);
+}
+"
+      },
+    "Fabric.Core.Math.Div" : {
+      "objectType" : "Func",
+      "title" : "Div",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "lhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "rhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "695E8145F8F42293FBC88BD348869892",
+      "code" : "
+dfgEntry {
+	result = lhs / rhs;
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenKLRigPoseAdaptor.KrakenKLRigPoseAdaptor" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  rig: KrakenKLRig\n  character: Character\n  result: KrakenKLRigPoseAdaptor\n"
+        },
+      "title" : "KrakenKLRigPoseAdaptor",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "rig",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenKLRig"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "character",
+          "execPortType" : "In",
+          "typeSpec" : "Character"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "KrakenKLRigPoseAdaptor"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "C1940FF079F6781CDD6B9A6859FB4B47",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = KrakenKLRigPoseAdaptor(rig, character);
+}
+"
+      },
+    "Fabric.Core.Math.Convert" : {
+      "objectType" : "Func",
+      "title" : "Convert",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "val",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPEIN$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPEOUT$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "EDD7FFDA6D856BB47F953A1ACA8E77B6",
+      "code" : "
+dfgEntry {
+	result = val;
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenKLRigPoseAdaptor.UpdateFromRig" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenKLRigPoseAdaptor\n  context: KrakenClipContext\n  rig: KrakenKLRig\n  character: Character\n"
+        },
+      "title" : "UpdateFromRig",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "KrakenKLRigPoseAdaptor"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "context",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenClipContext"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "rig",
+          "execPortType" : "Out",
+          "typeSpec" : "KrakenKLRig"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "character",
+          "execPortType" : "Out",
+          "typeSpec" : "Character"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "4ABD5BFE8BAF229093433E6A09B489F8",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  this.updateFromRig(context, rig, character);
+}
+"
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiTooltip" : "helper function to draw axes at given transforms\n\n Supported by DrawingHandle"
+        },
+      "title" : "DrawAxesInstances",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "DrawingHandle"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "name",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "transforms",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo[]"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "dummyResult",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "instance",
+          "execPortType" : "Out",
+          "typeSpec" : "InlineInstance"
+          }
+        ],
+      "extDeps" : {
+        "InlineDrawing" : "*",
+        "FabricInterfaces" : "*"
+        },
+      "presetGUID" : "A2DAC55CB1CE7426981A13F213257B7A",
+      "code" : "require InlineDrawing;
+
+dfgEntry {
+  this.drawAxesInstances(name, transforms, dummyResult, instance);
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenKLRig.GetJointXfos" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenKLRig\n  result: Xfo[]\n"
+        },
+      "title" : "GetJointXfos",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenKLRig"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[]"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "212271BFF41DCFD4629BC1FCD44423C1",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = this.getJointXfos();
+}
+"
+      },
+    "Kraken.KLRigs.KRK_CHARNAME.ResetPose" : {
+      "objectType" : "Func",
+      "title" : "ResetPose",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "rig",
+          "execPortType" : "IO",
+          "typeSpec" : "KRK_CHARNAME"
+          }
+        ],
+      "extDeps" : {
+        "KRK_CHARNAME" : "*"
+        },
+      "code" : "dfgEntry {
+  rig.resetPose();
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenClipStack.KrakenClipStack" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  result: KrakenClipStack\n"
+        },
+      "title" : "KrakenClipStack",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "KrakenClipStack"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "9A396B2AB3A30AB7913A8A1D56EE2E6E",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = KrakenClipStack();
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenClipStack.AddClip" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenClipStack\n  clip: KrakenClip\n  weight: Float32\n"
+        },
+      "title" : "AddClip",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "KrakenClipStack"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "clip",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenClip"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "weight",
+          "execPortType" : "In",
+          "typeSpec" : "Float32"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "D91DF2CDCDCE03FD688609D028B24A1B",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  this.addClip(clip, weight);
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenStaticClip.KrakenStaticClip" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  result: KrakenStaticClip\n"
+        },
+      "title" : "KrakenStaticClip",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "KrakenStaticClip"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "7F433535354A63134659FCC20583EAE5",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = KrakenStaticClip();
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenStaticClip.SetXfo" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenStaticClip\n  name: String\n  value: Xfo\n"
+        },
+      "title" : "SetXfo",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "KrakenStaticClip"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "name",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "CE6C588D1B4AD82E4B7719B4817F658D",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  this.setXfo(name, value);
+}
+"
+      },
+    "Fabric.Exts.Math.Xfo.Xfo" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiTooltip" : "Constructor from the orientation, translation and scaling\n\n Supported by Xfo"
+        },
+      "title" : "Xfo",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "ori",
+          "execPortType" : "In",
+          "typeSpec" : "Quat"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "tr",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 1,
+              "y" : 1,
+              "z" : 1
+              }
+            },
+          "name" : "sc",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "A0F6CD63A2069530481F214C62A069AA",
+      "code" : "require Math;
+
+dfgEntry {
+  result = Xfo(ori, tr, sc);
+}
+"
+      },
+    "Fabric.Exts.Math.Quat.SetFromEulerAngles" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Math/Quat.html",
+        "uiTooltip" : "Set this quat to a given angles vector (in radians) and a rotation order\n\n Supported by Quat"
+        },
+      "title" : "SetFromEulerAngles",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiRange" : "(-3.14, 3.14)"
+            },
+          "nodePortType" : "Out",
+          "name" : "eulerX",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiRange" : "(-3.14, 3.14)"
+            },
+          "nodePortType" : "Out",
+          "name" : "eulerY",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiRange" : "(-3.14, 3.14)"
+            },
+          "nodePortType" : "Out",
+          "name" : "eulerZ",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "ro",
+          "execPortType" : "In",
+          "typeSpec" : "RotationOrder"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Quat"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "484500331FDDF2C0A03D2B6A42B182BF",
+      "code" : "require Math;
+
+dfgEntry {
+  result.setFromEulerAngles(eulerX, eulerY, eulerZ, ro);
+}
+"
+      },
+    "Fabric.Exts.Math.Vec3.DecomposeVec3" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Math/Vec3.html"
+        },
+      "title" : "Vec3 ->",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "x",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "y",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "z",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6",
+      "code" : "require Math;
+
+dfgEntry {
+  x = value.x;
+  y = value.y;
+  z = value.z;
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenAbcClip.KrakenAbcClip" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  filePath: String\n  result: KrakenAbcClip\n"
+        },
+      "title" : "KrakenAbcClip",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "filePath",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "KrakenAbcClip"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "F2D5796F8FE29C4DE81027B80DF4CBE8",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = KrakenAbcClip(filePath);
+}
+"
+      },
+    "Fabric.Core.Control.If" : {
+      "objectType" : "Func",
+      "title" : "If",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "cond",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "if_true",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "if_false",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "3182A478A21643455D549E483D35F831",
+      "code" : "
+dfgEntry {
+	result = cond ? if_true : if_false;
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenClip.KrakenClip_saveToFile" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  clipRef: Ref<KrakenClip>\n  filePath: String\n  result: Boolean\n"
+        },
+      "title" : "KrakenClip_saveToFile",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "clipRef",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenClip"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "filePath",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Boolean"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "B262B649A6706BC23CD71DC2372D6317",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  Ref<KrakenClip> clipRef_ref = clipRef;
+  result = KrakenClip_saveToFile(clipRef_ref, filePath);
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenClipContext.SetMat" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenClipContext\n  index: Index\n  m: Mat44\n"
+        },
+      "title" : "SetMat",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "KrakenClipContext"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "index",
+          "execPortType" : "In",
+          "typeSpec" : "Index"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "m",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "CA9CBDAE54A3FA656D7F7EF635DFECC0",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  this.setMat(index, m);
+}
+"
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxes" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiTooltip" : "helper function to draw a single axes\n\n Supported by DrawingHandle"
+        },
+      "title" : "DrawAxes",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "DrawingHandle"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "name",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "transform",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "dummyResult",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "instance",
+          "execPortType" : "Out",
+          "typeSpec" : "InlineInstance"
+          }
+        ],
+      "extDeps" : {
+        "InlineDrawing" : "*",
+        "FabricInterfaces" : "*"
+        },
+      "presetGUID" : "7830EDE4D404DB2AE6B73F5DBA42EFED",
+      "code" : "require InlineDrawing;
+
+dfgEntry {
+  this.drawAxes(name, transform, dummyResult, instance);
+}
+"
+      },
+    "Fabric.Exts.Math.Xfo.ToMat44" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Math/Xfo.html",
+        "uiTooltip" : "Returns this xfo as a Mat44\n\n Supported by Xfo"
+        },
+      "title" : "ToMat44",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "3EB232DB6FF4BEE162E1D62ABFBE8C3A",
+      "code" : "require Math;
+
+dfgEntry {
+  result = this.toMat44();
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenKLRig.GetControlXfos" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiTooltip" : "Supported types:\n  this: KrakenKLRig\n  result: Xfo[]\n"
+        },
+      "title" : "GetControlXfos",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiPersistValue" : "true"
+            },
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiPersistValue" : "true"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "KrakenKLRig" : null
+            },
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenKLRig"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiPersistValue" : "true",
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Xfo[]" : []
+            },
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[]"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "7DF3E904AB1882A7AC20E03E23116A6F",
+      "code" : "dfgEntry {
+  KrakenControl controls<>(this.getControls());
+  Size controlCount = controls.size();
+  result.resize(controlCount);
+  for(Size i=0;i<controlCount;i++)
+    result[i] = controls[i].global;
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenStaticClip.SetFloat32" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenStaticClip\n  name: String\n  value: Float32\n"
+        },
+      "title" : "SetFloat32",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "KrakenStaticClip"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "name",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "Float32"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "96C404B53BD148ACA0EC1F430148354E",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  this.setFloat32(name, value);
+}
+"
+      },
+    "Fabric.Core.Math.Sub" : {
+      "objectType" : "Func",
+      "title" : "Sub",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "lhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "rhs",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "F9754B19F43BC017056B8BA291E7B8B4",
+      "code" : "
+dfgEntry {
+	result = lhs - rhs;
+}
+"
+      },
+    "Fabric.Exts.Math.Xfo.DecomposeXfo" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.2.0/HTML/KLExtensionsGuide/Math/Xfo.html"
+        },
+      "title" : "Xfo ->",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Xfo" : {
+              "ori" : {
+                "v" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0
+                  },
+                "w" : 1
+                },
+              "tr" : {
+                "x" : 0,
+                "y" : 0,
+                "z" : 0
+                },
+              "sc" : {
+                "x" : 1,
+                "y" : 1,
+                "z" : 1
+                }
+              }
+            },
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "ori",
+          "execPortType" : "Out",
+          "typeSpec" : "Quat"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "tr",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "sc",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          }
+        ],
+      "extDeps" : {
+        "Math" : "*"
+        },
+      "presetGUID" : "F1CE36998E153872EE926747BEB0E7A6",
+      "code" : "require Math;
+
+dfgEntry {
+  ori = value.ori;
+  tr = value.tr;
+  sc = value.sc;
+}
+"
+      },
+    "DFG.Kraken.KrakenAnimation.KrakenClipStack.AddClip" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenClipStack\n  clip: KrakenClip\n  weight: Float32\n"
+        },
+      "title" : "AddClip",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "KrakenClipStack"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "clip",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenClip"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "weight",
+          "execPortType" : "In",
+          "typeSpec" : "Float32"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "D91DF2CDCDCE03FD688609D028B24A1B",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  this.addClip(clip, weight);
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenLookAtClip.KrakenLookAtClip" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  matrixIndex: Index\n  childClip: KrakenClip\n  result: KrakenLookAtClip\n"
+        },
+      "title" : "KrakenLookAtClip",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "matrixIndex",
+          "execPortType" : "In",
+          "typeSpec" : "Index"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "childClip",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenClip"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "KrakenLookAtClip"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "1A2CAD33C1E30D79159CCCD91D5913F1",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = KrakenLookAtClip(matrixIndex, childClip);
+}
+"
+      },
+    "Kraken.KrakenAnimation.KrakenLookAtClip.DefineLookAt" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenLookAtClip\n  name: String\n  target: Vec3\n  axis: Vec3\n  locked: Boolean\n  amount: Float32\n"
+        },
+      "title" : "DefineLookAt",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "exec",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "this",
+          "execPortType" : "IO",
+          "typeSpec" : "KrakenLookAtClip"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "name",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 1,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "name" : "target",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 1,
+              "z" : 0
+              }
+            },
+          "name" : "axis",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : true
+            },
+          "name" : "locked",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiRange" : "(0.0, 1.0)"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 1
+            },
+          "name" : "amount",
+          "execPortType" : "In",
+          "typeSpec" : "Float32"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "35CE3504C0CF360BB46A409A941D6025",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  this.defineLookAt(name, target, axis, locked, amount);
+}
+"
+      }
+    },
+  "args" : [
+    {
+      "type" : "DrawingHandle",
+      "value" : null,
+      "ext" : "InlineDrawing"
+      },
+    {
+      "type" : "Float32",
+      "value" : 479
+      },
+    {
+      "type" : "Boolean",
+      "value" : true
+      },
+    {
+      "type" : "Boolean",
+      "value" : false
+      },
+    {
+      "type" : "Boolean",
+      "value" : false
+      },
+    {
+      "type" : "String",
+      "value" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+      },
+    {
+      "type" : "Float32",
+      "value" : 1
+      },
+    {
+      "type" : "Float32",
+      "value" : 0
+      },
+    {
+      "type" : "Float32",
+      "value" : 0
+      },
+    {
+      "type" : "Vec3",
+      "value" : {
+        "x" : 0,
+        "y" : 0,
+        "z" : 0
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Vec3",
+      "value" : {
+        "x" : 0,
+        "y" : 0,
+        "z" : 0
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Vec3",
+      "value" : null,
+      "ext" : "Math"
+      },
+    {
+      "type" : "Vec3",
+      "value" : {
+        "x" : 0,
+        "y" : 0.6999999284744263,
+        "z" : 0
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Float32",
+      "value" : 0
+      },
+    {
+      "type" : "Vec3",
+      "value" : {
+        "x" : 0,
+        "y" : 0,
+        "z" : 0
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Vec3",
+      "value" : {
+        "x" : 16.79999732971191,
+        "y" : -4.90000057220459,
+        "z" : 6.700000762939453
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Boolean",
+      "value" : true
+      }
+    ]
+  }
