@@ -661,7 +661,7 @@ class OSSMouthRig(OSSMouth):
         for c in Level1CtrlsRot:
             Level1CtrlsAligns.append(Vec3(1,2,3))
             Level1CtrlsRest.append(c.xfo)
-        
+
         Level1CtrlsAligns[-1] = Vec3(-1,2,3)
 
         # Add lowLip Debug Canvas Op
@@ -722,7 +722,7 @@ class OSSMouthRig(OSSMouth):
 
         # Mouth
         self.mouthDef = Joint('mouth', parent=self.deformersParent)
-        
+
         self.jawDef = Joint('jaw', parent=self.mouthDef)
         self.parentSpaceInputTgt.childJoints.append(self.mouthDef)
 
@@ -864,7 +864,6 @@ class OSSMouthRig(OSSMouth):
         self.blendLeftCornerOp.setInput('blendTranslate', 0.0)
         self.blendLeftCornerOp.setInput('blendRotate', 0.5)
         self.blendLeftCornerOp.setInput('blendScale', 0.5)
-        self.blendLeftCornerOp.setInput('parentSpace', self.ctrlCmpGrp)
         self.blendLeftCornerOp.setInput('constrainerTranslateA', lSourceA)
         self.blendLeftCornerOp.setInput('constrainerTranslateB', rSourceB)
         self.blendLeftCornerOp.setInput('constrainerRotateA', self.loLipLevel1Outputs[-2])
@@ -886,7 +885,6 @@ class OSSMouthRig(OSSMouth):
         self.blendRightCornerOp.setInput('blendTranslate', 0)
         self.blendRightCornerOp.setInput('blendRotate', 0.5)
         self.blendRightCornerOp.setInput('blendScale',  0.5)
-        self.blendRightCornerOp.setInput('parentSpace', self.ctrlCmpGrp)
         self.blendRightCornerOp.setInput('constrainerTranslateA', rSourceA)
         self.blendRightCornerOp.setInput('constrainerTranslateB', rSourceB)
         self.blendRightCornerOp.setInput('constrainerRotateA', self.loLipLevel1Outputs[1])
@@ -982,7 +980,7 @@ class OSSMouthRig(OSSMouth):
         self.upLipLevel0Op.evaluate()
         self.loLipLevel0Op.evaluate()
 
-            
+
 
         uplipCtrlOffset = Vec3(0,0,.5)
         lolipCtrlOffset = Vec3(0,0,-.5)
@@ -1007,12 +1005,12 @@ class OSSMouthRig(OSSMouth):
                             ctrl.xfo.tr -= uplipOffset
                             ctrl.translatePoints(uplipCtrlOffset)
                             ctrl.translatePoints(uplipOffset)
-                        else: 
+                        else:
                             ctrl.getParent().xfo.tr -= lolipOffset
                             ctrl.xfo.tr -= Vec3(lolipOffset)
                             ctrl.translatePoints(lolipCtrlOffset)
                             ctrl.translatePoints(lolipOffset)
-                    except: 
+                    except:
                         pass
 
 
@@ -1028,7 +1026,7 @@ class OSSMouthRig(OSSMouth):
 
         self.loLipLevel1Op.setInput('controlsRest', self.loLipControlsRest)
         self.upLipLevel1Op.setInput('controlsRest', self.upLipControlsRest)
-        
+
 
         controlLen = len(self.upLipLevel1Outputs)
         half = int(math.floor(controlLen/2))

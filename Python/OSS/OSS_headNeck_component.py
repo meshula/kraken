@@ -256,7 +256,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Head Aim
         self.headSpace = CtrlSpace('head', parent=self.globalSRTInputTgt)
         self.headWorldRef  = CtrlSpace('headWorldRef', parent=self.ctrlCmpGrp)
-        self.headFKToWorldRef  = CtrlSpace('FKToWorldRef', parent=self.neckCtrl)
+        self.headFKToWorldRef  = CtrlSpace('FKToWorldRef', parent=self.ctrlCmpGrp)
         self.headFKRef  = CtrlSpace('headFKRef', parent=self.neckCtrl)
         self.headIKRef = CtrlSpace('headIKRef', parent=self.neckCtrl)
         self.headIKCtrlSpace = CtrlSpace('headIK', parent=self.ctrlCmpGrp)
@@ -368,17 +368,15 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.alignHeadToWorldOp = self.blend_two_xfos(
             self.headFKToWorldRef,
             self.headFKRef, self.headWorldRef,
-            parentSpace = self.neckCtrl,
             blendTranslate=0,
             blendRotate=self.headAlignToWorldSpaceAttr,
             blendScale=0,
             name= 'alignHeadToWorldOp')
 
-
+        self.headCtrlSpace.setParent(self.ctrlCmpGrp)
         self.alignHeadToIKOp = self.blend_two_xfos(
             self.headCtrlSpace,
             self.headFKToWorldRef, self.headIKRef,
-            parentSpace = self.neckCtrl,
             blendTranslate=0,
             blendRotate=self.HeadAlignIkSpaceAttr,
             blendScale=0,

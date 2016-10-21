@@ -253,7 +253,7 @@ class OSS_Component(BaseExampleComponent):
         return NURBSCurveKLOp
 
 
-    def blend_two_xfos(self, target, sourceA, sourceB, blend=0, blendTranslate=None, blendRotate=None, blendScale=None, parentSpace=None, name=None):
+    def blend_two_xfos(self, target, sourceA, sourceB, blend=0, blendTranslate=None, blendRotate=None, blendScale=None, name=None):
         """Constrain target to a blend between two source Xfos
         Simplifies OSS_BlendTRSConstraintSolver for many cases
 
@@ -278,9 +278,6 @@ class OSS_Component(BaseExampleComponent):
         blendTRSConstraint = KLOperator(name, 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
         self.addOperator(blendTRSConstraint)
 
-        if parentSpace is None:
-            parentSpace = self.ctrlCmpGrp
-
         if blendTranslate is None:
              blendTranslate = blend
 
@@ -293,7 +290,6 @@ class OSS_Component(BaseExampleComponent):
         blendTRSConstraint.setInput('blendTranslate', blendTranslate)
         blendTRSConstraint.setInput('blendRotate', blendRotate)
         blendTRSConstraint.setInput('blendScale', blendScale)
-        blendTRSConstraint.setInput('parentSpace', parentSpace)
         blendTRSConstraint.setInput('constrainerTranslateA', sourceA)
         blendTRSConstraint.setInput('constrainerTranslateB', sourceB)
         blendTRSConstraint.setInput('constrainerRotateA', sourceA)
@@ -342,7 +338,7 @@ class OSS_Component(BaseExampleComponent):
 
         Args:
             objects (Mat44): objects that provide source Mat44
-            targets (Mat44): targets after offset 
+            targets (Mat44): targets after offset
             offsetA (Mat44): First Value for Delta
             offsetB (Mat44): Second Value for Delta
         Returns:
@@ -363,7 +359,7 @@ class OSS_Component(BaseExampleComponent):
         return offsetOpp
 
 
-    # should 
+    # should
     def insertParentSpace(self, ctrl, name=None):
         """Adds a CtrlSpace object above this object - inserted here to work on Transforms
 
