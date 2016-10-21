@@ -1,0 +1,535 @@
+Canvas WARNING: GUID 71D752FBE0D8BCB82780D8C3D31FBFF4 for preset 'Kraken.KrakenForCanvas.Attributes.GetBoolValue' is already used by preset 'Kraken.Attributes.GetBoolValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID CF7D347B905985CEE98A93D41F1B69D8 for preset 'Kraken.KrakenForCanvas.Attributes.GetColorValue' is already used by preset 'Kraken.Attributes.GetColorValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 994CF9469DC6E3009365CCB646449C70 for preset 'Kraken.KrakenForCanvas.Attributes.GetIntegerValue' is already used by preset 'Kraken.Attributes.GetIntegerValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID EA832C68F256A9C370C29B77186A1C14 for preset 'Kraken.KrakenForCanvas.Attributes.GetScalarValue' is already used by preset 'Kraken.Attributes.GetScalarValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 96FFDB061EF536A59FB3D2104E895411 for preset 'Kraken.KrakenForCanvas.Attributes.GetStringValue' is already used by preset 'Kraken.Attributes.GetStringValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 5ABD2967D361E9291D73A642E9082D49 for preset 'Kraken.KrakenForCanvas.Attributes.KrakenBoolAttribute' is already used by preset 'Kraken.Attributes.KrakenBoolAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID EA86F6CCE9CFA28016A59E1C8DF61847 for preset 'Kraken.KrakenForCanvas.Attributes.KrakenColorAttribute' is already used by preset 'Kraken.Attributes.KrakenColorAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 8DE92A72D26E57803D1BD9E0004D3078 for preset 'Kraken.KrakenForCanvas.Attributes.KrakenIntegerAttribute' is already used by preset 'Kraken.Attributes.KrakenIntegerAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 59D916C5F3F26B8C6A3C6CA98A837DE1 for preset 'Kraken.KrakenForCanvas.Attributes.KrakenScalarAttribute' is already used by preset 'Kraken.Attributes.KrakenScalarAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 15AED015BB18F8706B1BCD289FA665CD for preset 'Kraken.KrakenForCanvas.Attributes.KrakenStringAttribute' is already used by preset 'Kraken.Attributes.KrakenStringAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 69D31321C2E17BC5B93B5D5621433F5E for preset 'Kraken.KrakenForCanvas.Constraints.AddConstrainer' is already used by preset 'Kraken.Constraints.AddConstrainer'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 794A600ABB4898185C42B1EAAAECAF49 for preset 'Kraken.KrakenForCanvas.Constraints.Compute' is already used by preset 'Kraken.Constraints.Compute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 40AB98914CA1110AE8A9BD0E92816968 for preset 'Kraken.KrakenForCanvas.Constraints.ComputeKrakenOrientationConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenOrientationConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 555B23D50555352B89A867A9149283A7 for preset 'Kraken.KrakenForCanvas.Constraints.ComputeKrakenPoseConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenPoseConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 50FD2F5B792F8972FB977F43A1B3496F for preset 'Kraken.KrakenForCanvas.Constraints.ComputeKrakenPositionConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenPositionConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 0E2B89232B49917D6806E1843E6E38D3 for preset 'Kraken.KrakenForCanvas.Constraints.ComputeKrakenScaleConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenScaleConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 0F658F0FA99F27D8A5586993AA98B556 for preset 'Kraken.KrakenForCanvas.Constraints.ComputeOffset' is already used by preset 'Kraken.Constraints.ComputeOffset'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7AFA9058751FDF6B8A63BAA83904AC56 for preset 'Kraken.KrakenForCanvas.Constraints.ComputeOffsetSimple' is already used by preset 'Kraken.Constraints.ComputeOffsetSimple'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 2960C6DAB93364FCAE76D109DEBFB909 for preset 'Kraken.KrakenForCanvas.Constraints.ComputeSimple' is already used by preset 'Kraken.Constraints.ComputeSimple'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID D3BAB9E5B5E7D5950C0BC7594D54D4ED for preset 'Kraken.KrakenForCanvas.Constraints.KrakenOrientationConstraint' is already used by preset 'Kraken.Constraints.KrakenOrientationConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9AE1D3D74A2600FA7CEDAAA5FF684622 for preset 'Kraken.KrakenForCanvas.Constraints.KrakenPoseConstraint' is already used by preset 'Kraken.Constraints.KrakenPoseConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID C32B0B23BA26101A01EE2C2051136FE0 for preset 'Kraken.KrakenForCanvas.Constraints.KrakenPositionConstraint' is already used by preset 'Kraken.Constraints.KrakenPositionConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID DBDE6F56E279B2288BB4234BAF19C46C for preset 'Kraken.KrakenForCanvas.Constraints.KrakenScaleConstraint' is already used by preset 'Kraken.Constraints.KrakenScaleConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID C754DE2DF41B8615AE6B89B08594EF54 for preset 'Kraken.KrakenForCanvas.Constructors.GetXfo' is already used by preset 'Kraken.Constructors.GetXfo'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 019BE4749457DC783485FE9DC1A5FD14 for preset 'Kraken.KrakenForCanvas.Constructors.KrakenComponentGroup' is already used by preset 'Kraken.Constructors.KrakenComponentGroup'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID DDB132F30B44F6583E57E4C664469053 for preset 'Kraken.KrakenForCanvas.Constructors.KrakenContainer' is already used by preset 'Kraken.Constructors.KrakenContainer'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 169FAC59F7F2D5B53ADC4470A4A0270F for preset 'Kraken.KrakenForCanvas.Constructors.KrakenControl' is already used by preset 'Kraken.Constructors.KrakenControl'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 50EA7935FE6209F35DA4289D382EE020 for preset 'Kraken.KrakenForCanvas.Constructors.KrakenCtrlSpace' is already used by preset 'Kraken.Constructors.KrakenCtrlSpace'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID FECED62777F8E8D107E1A9204FE2AEE3 for preset 'Kraken.KrakenForCanvas.Constructors.KrakenCurve' is already used by preset 'Kraken.Constructors.KrakenCurve'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A21CFCB626CD1A73E2CB3075F6DDAAC4 for preset 'Kraken.KrakenForCanvas.Constructors.KrakenHierarchyGroup' is already used by preset 'Kraken.Constructors.KrakenHierarchyGroup'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9888D88C1DE5D6492F7A1FDD5ED341BE for preset 'Kraken.KrakenForCanvas.Constructors.KrakenJoint' is already used by preset 'Kraken.Constructors.KrakenJoint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A3C3D238471B31D0133434AF9CBCC5C9 for preset 'Kraken.KrakenForCanvas.Constructors.KrakenLayer' is already used by preset 'Kraken.Constructors.KrakenLayer'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7EA015DEB891FCED38E4B704E610DCEE for preset 'Kraken.KrakenForCanvas.Constructors.KrakenLocator' is already used by preset 'Kraken.Constructors.KrakenLocator'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID EC3E2E7A87DCA2F765ED5BFD44C23AED for preset 'Kraken.KrakenForCanvas.Constructors.KrakenRig' is already used by preset 'Kraken.Constructors.KrakenRig'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID E8C41010E7E378D42AFEA93E2E4768AA for preset 'Kraken.KrakenForCanvas.Constructors.KrakenTransform' is already used by preset 'Kraken.Constructors.KrakenTransform'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 2C8447662DD26D43148320E36317DD60 for preset 'Kraken.KrakenForCanvas.DebugDrawing.DefineCurve' is already used by preset 'Kraken.DebugDrawing.DefineCurve'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID AE9ED40D1EACF5E6310BE667C5ED171A for preset 'Kraken.KrakenForCanvas.DebugDrawing.DrawIntoLinesObject' is already used by preset 'Kraken.DebugDrawing.DrawIntoLinesObject'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 59E42F0184CA0433FD7C622ACBE7E342 for preset 'Kraken.KrakenForCanvas.DebugDrawing.DrawIntoLinesObjectForControl' is already used by preset 'Kraken.DebugDrawing.DrawIntoLinesObjectForControl'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A983756A1C04DDB57EC947700505B8B7 for preset 'Kraken.KrakenForCanvas.DebugDrawing.KrakenCurveDict' is already used by preset 'Kraken.DebugDrawing.KrakenCurveDict'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 535CCC81680704B8FD8E9D20169B20DF for preset 'Kraken.KrakenForCanvas.Dictionaries.Float32Dict.Get' is already used by preset 'Kraken.Dictionaries.Float32Dict.Get'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 68CF824A19BB0A921510E0A9EBF13E89 for preset 'Kraken.KrakenForCanvas.Dictionaries.Float32Dict.Keys' is already used by preset 'Kraken.Dictionaries.Float32Dict.Keys'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 4F997A8AB6B85994977EF0F18E18CDC1 for preset 'Kraken.KrakenForCanvas.Dictionaries.Float32Dict.Set' is already used by preset 'Kraken.Dictionaries.Float32Dict.Set'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7D28B3909EDB1FC2C67D8F6DBECF4FBB for preset 'Kraken.KrakenForCanvas.Dictionaries.Float32Dict.Values' is already used by preset 'Kraken.Dictionaries.Float32Dict.Values'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 6435B01EAEB9B2A0E5208E2688E87FB9 for preset 'Kraken.KrakenForCanvas.Dictionaries.XfoDict.Get' is already used by preset 'Kraken.Dictionaries.XfoDict.Get'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 87C9191881B378B523F7EE6E7FEA7366 for preset 'Kraken.KrakenForCanvas.Dictionaries.XfoDict.Keys' is already used by preset 'Kraken.Dictionaries.XfoDict.Keys'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID F8D1126EC1BF6E8228F5B8AC140286AB for preset 'Kraken.KrakenForCanvas.Dictionaries.XfoDict.Set' is already used by preset 'Kraken.Dictionaries.XfoDict.Set'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID BC433049061BF4367E685E62932415DF for preset 'Kraken.KrakenForCanvas.Dictionaries.XfoDict.Values' is already used by preset 'Kraken.Dictionaries.XfoDict.Values'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A39945E3A1AEE7F4E51293D8A50D3850 for preset 'Kraken.Solvers.Biped.BipedFootPivotSolver' is already used by preset 'Kraken.Solvers.BipedFootPivotSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 5AFCBC68840E7C9438B05876778F925D for preset 'Kraken.Solvers.Biped.BipedFootSolver' is already used by preset 'Kraken.Solvers.BipedFootSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 71D752FBE0D8BCB82780D8C3D31FBFF4 for preset 'DFG.Kraken.Attributes.GetBoolValue' is already used by preset 'Kraken.Attributes.GetBoolValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID CF7D347B905985CEE98A93D41F1B69D8 for preset 'DFG.Kraken.Attributes.GetColorValue' is already used by preset 'Kraken.Attributes.GetColorValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 994CF9469DC6E3009365CCB646449C70 for preset 'DFG.Kraken.Attributes.GetIntegerValue' is already used by preset 'Kraken.Attributes.GetIntegerValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID EA832C68F256A9C370C29B77186A1C14 for preset 'DFG.Kraken.Attributes.GetScalarValue' is already used by preset 'Kraken.Attributes.GetScalarValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 96FFDB061EF536A59FB3D2104E895411 for preset 'DFG.Kraken.Attributes.GetStringValue' is already used by preset 'Kraken.Attributes.GetStringValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 5ABD2967D361E9291D73A642E9082D49 for preset 'DFG.Kraken.Attributes.KrakenBoolAttribute' is already used by preset 'Kraken.Attributes.KrakenBoolAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID EA86F6CCE9CFA28016A59E1C8DF61847 for preset 'DFG.Kraken.Attributes.KrakenColorAttribute' is already used by preset 'Kraken.Attributes.KrakenColorAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 8DE92A72D26E57803D1BD9E0004D3078 for preset 'DFG.Kraken.Attributes.KrakenIntegerAttribute' is already used by preset 'Kraken.Attributes.KrakenIntegerAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 59D916C5F3F26B8C6A3C6CA98A837DE1 for preset 'DFG.Kraken.Attributes.KrakenScalarAttribute' is already used by preset 'Kraken.Attributes.KrakenScalarAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 15AED015BB18F8706B1BCD289FA665CD for preset 'DFG.Kraken.Attributes.KrakenStringAttribute' is already used by preset 'Kraken.Attributes.KrakenStringAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 69D31321C2E17BC5B93B5D5621433F5E for preset 'DFG.Kraken.Constraints.AddConstrainer' is already used by preset 'Kraken.Constraints.AddConstrainer'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 794A600ABB4898185C42B1EAAAECAF49 for preset 'DFG.Kraken.Constraints.Compute' is already used by preset 'Kraken.Constraints.Compute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 40AB98914CA1110AE8A9BD0E92816968 for preset 'DFG.Kraken.Constraints.ComputeKrakenOrientationConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenOrientationConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 555B23D50555352B89A867A9149283A7 for preset 'DFG.Kraken.Constraints.ComputeKrakenPoseConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenPoseConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 50FD2F5B792F8972FB977F43A1B3496F for preset 'DFG.Kraken.Constraints.ComputeKrakenPositionConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenPositionConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 0E2B89232B49917D6806E1843E6E38D3 for preset 'DFG.Kraken.Constraints.ComputeKrakenScaleConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenScaleConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 0F658F0FA99F27D8A5586993AA98B556 for preset 'DFG.Kraken.Constraints.ComputeOffset' is already used by preset 'Kraken.Constraints.ComputeOffset'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7AFA9058751FDF6B8A63BAA83904AC56 for preset 'DFG.Kraken.Constraints.ComputeOffsetSimple' is already used by preset 'Kraken.Constraints.ComputeOffsetSimple'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 2960C6DAB93364FCAE76D109DEBFB909 for preset 'DFG.Kraken.Constraints.ComputeSimple' is already used by preset 'Kraken.Constraints.ComputeSimple'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID D3BAB9E5B5E7D5950C0BC7594D54D4ED for preset 'DFG.Kraken.Constraints.KrakenOrientationConstraint' is already used by preset 'Kraken.Constraints.KrakenOrientationConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9AE1D3D74A2600FA7CEDAAA5FF684622 for preset 'DFG.Kraken.Constraints.KrakenPoseConstraint' is already used by preset 'Kraken.Constraints.KrakenPoseConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID C32B0B23BA26101A01EE2C2051136FE0 for preset 'DFG.Kraken.Constraints.KrakenPositionConstraint' is already used by preset 'Kraken.Constraints.KrakenPositionConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID DBDE6F56E279B2288BB4234BAF19C46C for preset 'DFG.Kraken.Constraints.KrakenScaleConstraint' is already used by preset 'Kraken.Constraints.KrakenScaleConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID C754DE2DF41B8615AE6B89B08594EF54 for preset 'DFG.Kraken.Constructors.GetXfo' is already used by preset 'Kraken.Constructors.GetXfo'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 019BE4749457DC783485FE9DC1A5FD14 for preset 'DFG.Kraken.Constructors.KrakenComponentGroup' is already used by preset 'Kraken.Constructors.KrakenComponentGroup'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID DDB132F30B44F6583E57E4C664469053 for preset 'DFG.Kraken.Constructors.KrakenContainer' is already used by preset 'Kraken.Constructors.KrakenContainer'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 169FAC59F7F2D5B53ADC4470A4A0270F for preset 'DFG.Kraken.Constructors.KrakenControl' is already used by preset 'Kraken.Constructors.KrakenControl'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 50EA7935FE6209F35DA4289D382EE020 for preset 'DFG.Kraken.Constructors.KrakenCtrlSpace' is already used by preset 'Kraken.Constructors.KrakenCtrlSpace'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID FECED62777F8E8D107E1A9204FE2AEE3 for preset 'DFG.Kraken.Constructors.KrakenCurve' is already used by preset 'Kraken.Constructors.KrakenCurve'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A21CFCB626CD1A73E2CB3075F6DDAAC4 for preset 'DFG.Kraken.Constructors.KrakenHierarchyGroup' is already used by preset 'Kraken.Constructors.KrakenHierarchyGroup'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9888D88C1DE5D6492F7A1FDD5ED341BE for preset 'DFG.Kraken.Constructors.KrakenJoint' is already used by preset 'Kraken.Constructors.KrakenJoint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A3C3D238471B31D0133434AF9CBCC5C9 for preset 'DFG.Kraken.Constructors.KrakenLayer' is already used by preset 'Kraken.Constructors.KrakenLayer'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7EA015DEB891FCED38E4B704E610DCEE for preset 'DFG.Kraken.Constructors.KrakenLocator' is already used by preset 'Kraken.Constructors.KrakenLocator'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID EC3E2E7A87DCA2F765ED5BFD44C23AED for preset 'DFG.Kraken.Constructors.KrakenRig' is already used by preset 'Kraken.Constructors.KrakenRig'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID E8C41010E7E378D42AFEA93E2E4768AA for preset 'DFG.Kraken.Constructors.KrakenTransform' is already used by preset 'Kraken.Constructors.KrakenTransform'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 2C8447662DD26D43148320E36317DD60 for preset 'DFG.Kraken.DebugDrawing.DefineCurve' is already used by preset 'Kraken.DebugDrawing.DefineCurve'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID AE9ED40D1EACF5E6310BE667C5ED171A for preset 'DFG.Kraken.DebugDrawing.DrawIntoLinesObject' is already used by preset 'Kraken.DebugDrawing.DrawIntoLinesObject'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 59E42F0184CA0433FD7C622ACBE7E342 for preset 'DFG.Kraken.DebugDrawing.DrawIntoLinesObjectForControl' is already used by preset 'Kraken.DebugDrawing.DrawIntoLinesObjectForControl'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A983756A1C04DDB57EC947700505B8B7 for preset 'DFG.Kraken.DebugDrawing.KrakenCurveDict' is already used by preset 'Kraken.DebugDrawing.KrakenCurveDict'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 535CCC81680704B8FD8E9D20169B20DF for preset 'DFG.Kraken.Dictionaries.Float32Dict.Get' is already used by preset 'Kraken.Dictionaries.Float32Dict.Get'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 68CF824A19BB0A921510E0A9EBF13E89 for preset 'DFG.Kraken.Dictionaries.Float32Dict.Keys' is already used by preset 'Kraken.Dictionaries.Float32Dict.Keys'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 4F997A8AB6B85994977EF0F18E18CDC1 for preset 'DFG.Kraken.Dictionaries.Float32Dict.Set' is already used by preset 'Kraken.Dictionaries.Float32Dict.Set'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7D28B3909EDB1FC2C67D8F6DBECF4FBB for preset 'DFG.Kraken.Dictionaries.Float32Dict.Values' is already used by preset 'Kraken.Dictionaries.Float32Dict.Values'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 6435B01EAEB9B2A0E5208E2688E87FB9 for preset 'DFG.Kraken.Dictionaries.XfoDict.Get' is already used by preset 'Kraken.Dictionaries.XfoDict.Get'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 87C9191881B378B523F7EE6E7FEA7366 for preset 'DFG.Kraken.Dictionaries.XfoDict.Keys' is already used by preset 'Kraken.Dictionaries.XfoDict.Keys'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID F8D1126EC1BF6E8228F5B8AC140286AB for preset 'DFG.Kraken.Dictionaries.XfoDict.Set' is already used by preset 'Kraken.Dictionaries.XfoDict.Set'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID BC433049061BF4367E685E62932415DF for preset 'DFG.Kraken.Dictionaries.XfoDict.Values' is already used by preset 'Kraken.Dictionaries.XfoDict.Values'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID F2D5796F8FE29C4DE81027B80DF4CBE8 for preset 'DFG.Kraken.KrakenAnimation.KrakenAbcClip.KrakenAbcClip' is already used by preset 'Kraken.KrakenAnimation.KrakenAbcClip.KrakenAbcClip'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 4EEFA9370C2D99751A6D4428FA31D573 for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.Apply' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.Apply'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 947F4653E5AF1BF534EE1128067492EC for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.EvaluateFloat32' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.EvaluateFloat32'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 5D0B079841D8AC623C322DD0B20DE988 for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.EvaluateXfo' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.EvaluateXfo'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID B220653FD65C011F7EC23E282C489F15 for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.GetChannelCount' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.GetChannelCount'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID AFAE6F9859171C8B5A6C506B83F6C900 for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.GetChannelName' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.GetChannelName'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 36D4F8DAA2BCAD1FF1410FF557DCBC2F for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.GetChannelType' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.GetChannelType'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 46951708AD18960D02BBB087C631087E for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.KrakenClip_getFromTypeName' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.KrakenClip_getFromTypeName'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 63A93441EA8E7328ADEE86589DFE489F for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.KrakenClip_loadFromFile' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.KrakenClip_loadFromFile'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID B262B649A6706BC23CD71DC2372D6317 for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.KrakenClip_saveToFile' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.KrakenClip_saveToFile'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID FE0ED3571AC226E963564DDBB204D145 for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.LoadFromJson' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.LoadFromJson'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 420B66C4059234C5CA5DC34DAF2CE865 for preset 'DFG.Kraken.KrakenAnimation.KrakenClip.SaveToJson' is already used by preset 'Kraken.KrakenAnimation.KrakenClip.SaveToJson'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 05B616F2F10502A0C00469438810B36F for preset 'DFG.Kraken.KrakenAnimation.KrakenClipContext.ComposeKrakenClipContext' is already used by preset 'Kraken.KrakenAnimation.KrakenClipContext.ComposeKrakenClipContext'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 2967ABA5FEC1C6A2F3431E41C83A21B1 for preset 'DFG.Kraken.KrakenAnimation.KrakenClipContext.DecomposeKrakenClipContext' is already used by preset 'Kraken.KrakenAnimation.KrakenClipContext.DecomposeKrakenClipContext'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9FC45304BFA28700E3FA1BF0BD7C02C8 for preset 'DFG.Kraken.KrakenAnimation.KrakenClipContext.KrakenClipContext' is already used by preset 'Kraken.KrakenAnimation.KrakenClipContext.KrakenClipContext'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 3F0A3E2A898B1978672DB89F7A2B2CE4 for preset 'DFG.Kraken.KrakenAnimation.KrakenClipContext.SetChannel' is already used by preset 'Kraken.KrakenAnimation.KrakenClipContext.SetChannel'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID CA9CBDAE54A3FA656D7F7EF635DFECC0 for preset 'DFG.Kraken.KrakenAnimation.KrakenClipContext.SetMat' is already used by preset 'Kraken.KrakenAnimation.KrakenClipContext.SetMat'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID D91DF2CDCDCE03FD688609D028B24A1B for preset 'DFG.Kraken.KrakenAnimation.KrakenClipStack.AddClip' is already used by preset 'Kraken.KrakenAnimation.KrakenClipStack.AddClip'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 290FDA09F0419683BF59B8CFA6AC1DCC for preset 'DFG.Kraken.KrakenAnimation.KrakenClipStack.BlendClip' is already used by preset 'Kraken.KrakenAnimation.KrakenClipStack.BlendClip'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 02388191EAA0A037E64B68FD3E8EAAC2 for preset 'DFG.Kraken.KrakenAnimation.KrakenClipStack.GetClip' is already used by preset 'Kraken.KrakenAnimation.KrakenClipStack.GetClip'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 0D9A0848F8495FA721ED832B57897346 for preset 'DFG.Kraken.KrakenAnimation.KrakenClipStack.GetClipCount' is already used by preset 'Kraken.KrakenAnimation.KrakenClipStack.GetClipCount'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9A396B2AB3A30AB7913A8A1D56EE2E6E for preset 'DFG.Kraken.KrakenAnimation.KrakenClipStack.KrakenClipStack' is already used by preset 'Kraken.KrakenAnimation.KrakenClipStack.KrakenClipStack'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID BCAF0B54CDCADA57921E90FF2BDF6DB8 for preset 'DFG.Kraken.KrakenAnimation.KrakenClipStack.SetClipWeight' is already used by preset 'Kraken.KrakenAnimation.KrakenClipStack.SetClipWeight'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 128D48CC902F49A75D07968C6B64FD8D for preset 'DFG.Kraken.KrakenAnimation.KrakenFCurveClip.CreateChannel' is already used by preset 'Kraken.KrakenAnimation.KrakenFCurveClip.CreateChannel'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 3A0639878CE49F692064B3E9C1E5F4D0 for preset 'DFG.Kraken.KrakenAnimation.KrakenFCurveClip.KrakenFCurveClip' is already used by preset 'Kraken.KrakenAnimation.KrakenFCurveClip.KrakenFCurveClip'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 030B3FE12068819D9E83B1F7D6C51A49 for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.Evaluate' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.Evaluate'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 71D2AA4310F94E2F26274DF4ED9E9A1E for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.GetAllNames' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.GetAllNames'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 21789CEECFA8CC42F7FB52FDBF390731 for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.GetAllXfos' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.GetAllXfos'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7DF3E904AB1882A7AC20E03E23116A6F for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.GetControlXfos' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.GetControlXfos'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 65B90BD248787801AB64782391C92B0D for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.GetJointNames' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.GetJointNames'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 212271BFF41DCFD4629BC1FCD44423C1 for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.GetJointXfos' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.GetJointXfos'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 5A33F49150CF1A3F152C5170058A02EA for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.Init' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.Init'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A3064907C849965B8E6617FDD728BED3 for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.ResetPose' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.ResetPose'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 6F83F2753B01D87706198E81E2DB74E5 for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.SetClip' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.SetClip'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7E764D65BEFDD87D64B65084038DF9AB for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRig.Solve' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRig.Solve'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID C1940FF079F6781CDD6B9A6859FB4B47 for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRigPoseAdaptor.KrakenKLRigPoseAdaptor' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRigPoseAdaptor.KrakenKLRigPoseAdaptor'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 4ABD5BFE8BAF229093433E6A09B489F8 for preset 'DFG.Kraken.KrakenAnimation.KrakenKLRigPoseAdaptor.UpdateFromRig' is already used by preset 'Kraken.KrakenAnimation.KrakenKLRigPoseAdaptor.UpdateFromRig'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 35CE3504C0CF360BB46A409A941D6025 for preset 'DFG.Kraken.KrakenAnimation.KrakenLookAtClip.DefineLookAt' is already used by preset 'Kraken.KrakenAnimation.KrakenLookAtClip.DefineLookAt'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 1A2CAD33C1E30D79159CCCD91D5913F1 for preset 'DFG.Kraken.KrakenAnimation.KrakenLookAtClip.KrakenLookAtClip' is already used by preset 'Kraken.KrakenAnimation.KrakenLookAtClip.KrakenLookAtClip'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID B586E8AA16B8C33D1551310751AC5836 for preset 'DFG.Kraken.KrakenAnimation.KrakenRotationWaveClip.DefineWave' is already used by preset 'Kraken.KrakenAnimation.KrakenRotationWaveClip.DefineWave'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A824FB6D68B6DEFA3729DB2C318F6FD9 for preset 'DFG.Kraken.KrakenAnimation.KrakenRotationWaveClip.KrakenRotationWaveClip' is already used by preset 'Kraken.KrakenAnimation.KrakenRotationWaveClip.KrakenRotationWaveClip'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7F433535354A63134659FCC20583EAE5 for preset 'DFG.Kraken.KrakenAnimation.KrakenStaticClip.KrakenStaticClip' is already used by preset 'Kraken.KrakenAnimation.KrakenStaticClip.KrakenStaticClip'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 96C404B53BD148ACA0EC1F430148354E for preset 'DFG.Kraken.KrakenAnimation.KrakenStaticClip.SetFloat32' is already used by preset 'Kraken.KrakenAnimation.KrakenStaticClip.SetFloat32'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID CE6C588D1B4AD82E4B7719B4817F658D for preset 'DFG.Kraken.KrakenAnimation.KrakenStaticClip.SetXfo' is already used by preset 'Kraken.KrakenAnimation.KrakenStaticClip.SetXfo'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 71D752FBE0D8BCB82780D8C3D31FBFF4 for preset 'DFG.Kraken.KrakenForCanvas.Attributes.GetBoolValue' is already used by preset 'Kraken.Attributes.GetBoolValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID CF7D347B905985CEE98A93D41F1B69D8 for preset 'DFG.Kraken.KrakenForCanvas.Attributes.GetColorValue' is already used by preset 'Kraken.Attributes.GetColorValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 994CF9469DC6E3009365CCB646449C70 for preset 'DFG.Kraken.KrakenForCanvas.Attributes.GetIntegerValue' is already used by preset 'Kraken.Attributes.GetIntegerValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID EA832C68F256A9C370C29B77186A1C14 for preset 'DFG.Kraken.KrakenForCanvas.Attributes.GetScalarValue' is already used by preset 'Kraken.Attributes.GetScalarValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 96FFDB061EF536A59FB3D2104E895411 for preset 'DFG.Kraken.KrakenForCanvas.Attributes.GetStringValue' is already used by preset 'Kraken.Attributes.GetStringValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 5ABD2967D361E9291D73A642E9082D49 for preset 'DFG.Kraken.KrakenForCanvas.Attributes.KrakenBoolAttribute' is already used by preset 'Kraken.Attributes.KrakenBoolAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID EA86F6CCE9CFA28016A59E1C8DF61847 for preset 'DFG.Kraken.KrakenForCanvas.Attributes.KrakenColorAttribute' is already used by preset 'Kraken.Attributes.KrakenColorAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 8DE92A72D26E57803D1BD9E0004D3078 for preset 'DFG.Kraken.KrakenForCanvas.Attributes.KrakenIntegerAttribute' is already used by preset 'Kraken.Attributes.KrakenIntegerAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 59D916C5F3F26B8C6A3C6CA98A837DE1 for preset 'DFG.Kraken.KrakenForCanvas.Attributes.KrakenScalarAttribute' is already used by preset 'Kraken.Attributes.KrakenScalarAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 15AED015BB18F8706B1BCD289FA665CD for preset 'DFG.Kraken.KrakenForCanvas.Attributes.KrakenStringAttribute' is already used by preset 'Kraken.Attributes.KrakenStringAttribute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 69D31321C2E17BC5B93B5D5621433F5E for preset 'DFG.Kraken.KrakenForCanvas.Constraints.AddConstrainer' is already used by preset 'Kraken.Constraints.AddConstrainer'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 794A600ABB4898185C42B1EAAAECAF49 for preset 'DFG.Kraken.KrakenForCanvas.Constraints.Compute' is already used by preset 'Kraken.Constraints.Compute'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 40AB98914CA1110AE8A9BD0E92816968 for preset 'DFG.Kraken.KrakenForCanvas.Constraints.ComputeKrakenOrientationConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenOrientationConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 555B23D50555352B89A867A9149283A7 for preset 'DFG.Kraken.KrakenForCanvas.Constraints.ComputeKrakenPoseConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenPoseConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 50FD2F5B792F8972FB977F43A1B3496F for preset 'DFG.Kraken.KrakenForCanvas.Constraints.ComputeKrakenPositionConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenPositionConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 0E2B89232B49917D6806E1843E6E38D3 for preset 'DFG.Kraken.KrakenForCanvas.Constraints.ComputeKrakenScaleConstraint' is already used by preset 'Kraken.Constraints.ComputeKrakenScaleConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 0F658F0FA99F27D8A5586993AA98B556 for preset 'DFG.Kraken.KrakenForCanvas.Constraints.ComputeOffset' is already used by preset 'Kraken.Constraints.ComputeOffset'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7AFA9058751FDF6B8A63BAA83904AC56 for preset 'DFG.Kraken.KrakenForCanvas.Constraints.ComputeOffsetSimple' is already used by preset 'Kraken.Constraints.ComputeOffsetSimple'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 2960C6DAB93364FCAE76D109DEBFB909 for preset 'DFG.Kraken.KrakenForCanvas.Constraints.ComputeSimple' is already used by preset 'Kraken.Constraints.ComputeSimple'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID D3BAB9E5B5E7D5950C0BC7594D54D4ED for preset 'DFG.Kraken.KrakenForCanvas.Constraints.KrakenOrientationConstraint' is already used by preset 'Kraken.Constraints.KrakenOrientationConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9AE1D3D74A2600FA7CEDAAA5FF684622 for preset 'DFG.Kraken.KrakenForCanvas.Constraints.KrakenPoseConstraint' is already used by preset 'Kraken.Constraints.KrakenPoseConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID C32B0B23BA26101A01EE2C2051136FE0 for preset 'DFG.Kraken.KrakenForCanvas.Constraints.KrakenPositionConstraint' is already used by preset 'Kraken.Constraints.KrakenPositionConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID DBDE6F56E279B2288BB4234BAF19C46C for preset 'DFG.Kraken.KrakenForCanvas.Constraints.KrakenScaleConstraint' is already used by preset 'Kraken.Constraints.KrakenScaleConstraint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID C754DE2DF41B8615AE6B89B08594EF54 for preset 'DFG.Kraken.KrakenForCanvas.Constructors.GetXfo' is already used by preset 'Kraken.Constructors.GetXfo'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 019BE4749457DC783485FE9DC1A5FD14 for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenComponentGroup' is already used by preset 'Kraken.Constructors.KrakenComponentGroup'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID DDB132F30B44F6583E57E4C664469053 for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenContainer' is already used by preset 'Kraken.Constructors.KrakenContainer'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 169FAC59F7F2D5B53ADC4470A4A0270F for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenControl' is already used by preset 'Kraken.Constructors.KrakenControl'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 50EA7935FE6209F35DA4289D382EE020 for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenCtrlSpace' is already used by preset 'Kraken.Constructors.KrakenCtrlSpace'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID FECED62777F8E8D107E1A9204FE2AEE3 for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenCurve' is already used by preset 'Kraken.Constructors.KrakenCurve'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A21CFCB626CD1A73E2CB3075F6DDAAC4 for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenHierarchyGroup' is already used by preset 'Kraken.Constructors.KrakenHierarchyGroup'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9888D88C1DE5D6492F7A1FDD5ED341BE for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenJoint' is already used by preset 'Kraken.Constructors.KrakenJoint'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A3C3D238471B31D0133434AF9CBCC5C9 for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenLayer' is already used by preset 'Kraken.Constructors.KrakenLayer'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7EA015DEB891FCED38E4B704E610DCEE for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenLocator' is already used by preset 'Kraken.Constructors.KrakenLocator'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID EC3E2E7A87DCA2F765ED5BFD44C23AED for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenRig' is already used by preset 'Kraken.Constructors.KrakenRig'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID E8C41010E7E378D42AFEA93E2E4768AA for preset 'DFG.Kraken.KrakenForCanvas.Constructors.KrakenTransform' is already used by preset 'Kraken.Constructors.KrakenTransform'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 2C8447662DD26D43148320E36317DD60 for preset 'DFG.Kraken.KrakenForCanvas.DebugDrawing.DefineCurve' is already used by preset 'Kraken.DebugDrawing.DefineCurve'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID AE9ED40D1EACF5E6310BE667C5ED171A for preset 'DFG.Kraken.KrakenForCanvas.DebugDrawing.DrawIntoLinesObject' is already used by preset 'Kraken.DebugDrawing.DrawIntoLinesObject'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 59E42F0184CA0433FD7C622ACBE7E342 for preset 'DFG.Kraken.KrakenForCanvas.DebugDrawing.DrawIntoLinesObjectForControl' is already used by preset 'Kraken.DebugDrawing.DrawIntoLinesObjectForControl'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A983756A1C04DDB57EC947700505B8B7 for preset 'DFG.Kraken.KrakenForCanvas.DebugDrawing.KrakenCurveDict' is already used by preset 'Kraken.DebugDrawing.KrakenCurveDict'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 535CCC81680704B8FD8E9D20169B20DF for preset 'DFG.Kraken.KrakenForCanvas.Dictionaries.Float32Dict.Get' is already used by preset 'Kraken.Dictionaries.Float32Dict.Get'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 68CF824A19BB0A921510E0A9EBF13E89 for preset 'DFG.Kraken.KrakenForCanvas.Dictionaries.Float32Dict.Keys' is already used by preset 'Kraken.Dictionaries.Float32Dict.Keys'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 4F997A8AB6B85994977EF0F18E18CDC1 for preset 'DFG.Kraken.KrakenForCanvas.Dictionaries.Float32Dict.Set' is already used by preset 'Kraken.Dictionaries.Float32Dict.Set'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7D28B3909EDB1FC2C67D8F6DBECF4FBB for preset 'DFG.Kraken.KrakenForCanvas.Dictionaries.Float32Dict.Values' is already used by preset 'Kraken.Dictionaries.Float32Dict.Values'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 6435B01EAEB9B2A0E5208E2688E87FB9 for preset 'DFG.Kraken.KrakenForCanvas.Dictionaries.XfoDict.Get' is already used by preset 'Kraken.Dictionaries.XfoDict.Get'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 87C9191881B378B523F7EE6E7FEA7366 for preset 'DFG.Kraken.KrakenForCanvas.Dictionaries.XfoDict.Keys' is already used by preset 'Kraken.Dictionaries.XfoDict.Keys'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID F8D1126EC1BF6E8228F5B8AC140286AB for preset 'DFG.Kraken.KrakenForCanvas.Dictionaries.XfoDict.Set' is already used by preset 'Kraken.Dictionaries.XfoDict.Set'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID BC433049061BF4367E685E62932415DF for preset 'DFG.Kraken.KrakenForCanvas.Dictionaries.XfoDict.Values' is already used by preset 'Kraken.Dictionaries.XfoDict.Values'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A39945E3A1AEE7F4E51293D8A50D3850 for preset 'DFG.Kraken.Solvers.BipedFootPivotSolver' is already used by preset 'Kraken.Solvers.BipedFootPivotSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 5AFCBC68840E7C9438B05876778F925D for preset 'DFG.Kraken.Solvers.BipedFootSolver' is already used by preset 'Kraken.Solvers.BipedFootSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 470A0A15C6C4BFB26566CBB1943B65D8 for preset 'DFG.Kraken.Solvers.CollideChainSolver' is already used by preset 'Kraken.Solvers.CollideChainSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 7CA3C89284C11CF21B616C075C007AE4 for preset 'DFG.Kraken.Solvers.DirectionConstraintSolver' is already used by preset 'Kraken.Solvers.DirectionConstraintSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9DB8AF31A6F0DB1CFC602812AEEE0AED for preset 'DFG.Kraken.Solvers.SpringOffsetSolver' is already used by preset 'Kraken.Solvers.SpringOffsetSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 136ACF7A9D415E6927A21C0863AD90BF for preset 'DFG.Kraken.Solvers.Biped.BipedFingerGuideSolver' is already used by preset 'Kraken.Solvers.Biped.BipedFingerGuideSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A39945E3A1AEE7F4E51293D8A50D3850 for preset 'DFG.Kraken.Solvers.Biped.BipedFootPivotSolver' is already used by preset 'Kraken.Solvers.BipedFootPivotSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 5AFCBC68840E7C9438B05876778F925D for preset 'DFG.Kraken.Solvers.Biped.BipedFootSolver' is already used by preset 'Kraken.Solvers.BipedFootSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 90148BF4348F04328D60DDAC5A4EA829 for preset 'DFG.Kraken.Util.DrawLabels' is already used by preset 'Kraken.Util.DrawLabels'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 8FDACB5AFF30F5A6D3AE1B74FD25A4CA for preset 'DFG.Kraken.Util.TwoPlaneIntersection' is already used by preset 'Kraken.Util.TwoPlaneIntersection'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 3B764F96EDB21F1ED1F7075E5E1E6C62 for preset 'DFG.MJCG.Solvers.mjEyelidConstraintSolver' is already used by preset 'MJCG.Solvers.mjEyelidConstraintSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 3A53F2F2B9317DA50483632426B6CA25 for preset 'DFG.MJCG.Solvers.mjEyelidDebugSolver' is already used by preset 'MJCG.Solvers.mjEyelidDebugSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID FDDE9C9D1F38AFE8C4A35DA1D0AD7679 for preset 'DFG.OSS.Components.FootRocker' is already used by preset 'OSS.Components.FootRocker'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 73285517535B8D2926BCAC8F0EFB321E for preset 'DFG.OSS.Math.binarySearchArray' is already used by preset 'OSS.Math.binarySearchArray'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 283105393A20B40716A60ABCD108A6E8 for preset 'DFG.OSS.Math.blendMat44' is already used by preset 'OSS.Math.blendMat44'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 41045A9B5744BD3D01E891084F574220 for preset 'DFG.OSS.Math.getArrayValue' is already used by preset 'OSS.Math.getArrayValue'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID B060177C592CAB2F7D72B32527F6D9D3 for preset 'DFG.OSS.Math.normalizeScalarArray' is already used by preset 'OSS.Math.normalizeScalarArray'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 53A2FC56A2BACEC95035D5ED3610B859 for preset 'DFG.OSS.Math.orientXfo' is already used by preset 'OSS.Math.orientXfo'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 3CD516F1ECA79145EFD79D24801EFA01 for preset 'DFG.OSS.Math.remapScalar' is already used by preset 'OSS.Math.remapScalar'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID E774C00B05595BDDF44042B4FEDEF07E for preset 'DFG.OSS.Math.swapAxesViaAlignArray' is already used by preset 'OSS.Math.swapAxesViaAlignArray'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID BCB40492A9195FB8CE191231E5EBEDE5 for preset 'DFG.OSS.Math.toArray' is already used by preset 'OSS.Math.toArray'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 41065F32CEAB11D9FA78002904891488 for preset 'DFG.OSS.Math.weightedAverageMat44' is already used by preset 'OSS.Math.weightedAverageMat44'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID A66657E4E41148CD34CC3B351034EB42 for preset 'DFG.OSS.Math.weightedAverageQuaterions' is already used by preset 'OSS.Math.weightedAverageQuaterions'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 8FEF4604E2CB59EC14EEF05EB6B2DDD6 for preset 'DFG.OSS.Math.weightedAverageVec3' is already used by preset 'OSS.Math.weightedAverageVec3'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID C5A4D5FF4A2671F4FCBFBB7365238CC6 for preset 'DFG.OSS.Solvers.AlignSolver' is already used by preset 'OSS.Solvers.AlignSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 284C4C675C5C2188783F48C33C06AC9C for preset 'DFG.OSS.Solvers.blendMat44ArraySolver' is already used by preset 'OSS.Solvers.blendMat44ArraySolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID FCA20F4FF91C7460FFB3ACF2A52052DD for preset 'DFG.OSS.Solvers.EyeSolver' is already used by preset 'OSS.Solvers.EyeSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 5C5A640D786BDDA7006A7FADBFDFB741 for preset 'DFG.OSS.Solvers.NURBSCurveGuideSolver' is already used by preset 'OSS.Solvers.NURBSCurveGuideSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 91E03140201B022208C7766CC0F77386 for preset 'DFG.OSS.Solvers.NURBSCurveSolver' is already used by preset 'OSS.Solvers.NURBSCurveSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 0C3AA5E49AC16C32BFF0CAD93AAAAF52 for preset 'DFG.OSS.Solvers.NURBSCurveXfoSolver' is already used by preset 'OSS.Solvers.NURBSCurveXfoSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 3EB580DC5FE6BB7703F9C02CDEDECEA3 for preset 'DFG.OSS.Solvers.NURBSDebug' is already used by preset 'OSS.Solvers.NURBSDebug'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 355D1A22A533C67091881034BC277863 for preset 'DFG.OSS.Solvers.NURBSFeatureSolver' is already used by preset 'OSS.Solvers.NURBSFeatureSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID D864BAFA52FC87E7912B253F327125AC for preset 'DFG.OSS.Solvers.NURBSSpineSolver' is already used by preset 'OSS.Solvers.NURBSSpineSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID C3468D88C0F28D1F56DFB74802051B42 for preset 'DFG.OSS.Solvers.reflectMat44Solver' is already used by preset 'OSS.Solvers.reflectMat44Solver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 90E12AF90BCA77175BDF8E0D5A9006D3 for preset 'DFG.OSS.Solvers.WeightedMat44BlendSolver' is already used by preset 'OSS.Solvers.WeightedMat44BlendSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 415DC404D47D8F7B8A91E3BDDE0ABB39 for preset 'DFG.OSS.Solvers.ZSplineNeckSolver' is already used by preset 'OSS.Solvers.ZSplineNeckSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID E1DEA372D3D8A26A3D2ACC43592D4D1A for preset 'DFG.OSS.Solvers.ZSplineSpineSolver' is already used by preset 'OSS.Solvers.ZSplineSpineSolver'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 11A1D00421F0880C11ADD191814FF0D5 for preset 'DFG.OSS.Utils.alembicXfoDisplay' is already used by preset 'OSS.Utils.alembicXfoDisplay'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 9A87998E0ED64C835D9A3027C1D95E62 for preset 'DFG.OSS.Xfo.swapAxis' is already used by preset 'OSS.Xfo.swapAxis'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID E1164D964BDEA30B70834059C1F151C7 for preset 'DFG.OSS.Xfo.XfoDebugDisplayAxis' is already used by preset 'OSS.Xfo.XfoDebugDisplayAxis'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 847124C8814713E9E5FCB454829F4F36 for preset 'DFG.OSS.Xfo.XfoRotateAroundPivot' is already used by preset 'OSS.Xfo.XfoRotateAroundPivot'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+Canvas WARNING: GUID 1C361EADD731E7ACEC93EBB680094120 for preset 'Fabric.Exts.RadialBasis.RadialBasisArray.SetFromPoses' is already used by preset 'Fabric.Exts.RadialBasis.RadialBasisArray.SetFromColor'.  In a future version this will cause preset lookups to break!  Note: canvasGUIDReplace can change the GUID for you.
+KRK_CHARNAME.evaluate: duration=1.12140 ms
+  KRK_CHARNAME.solve: duration=1.12135 ms
+    rig pose solve: duration=1.12131 ms
+      CHARNAME.main:M.rigScaleKLOp: duration=0.0011 ms
+        _RigScaleSolverKRK_CHARNAME_main_M_rigScaleKLOp.solve: duration=0.0007 ms
+      CHARNAME.spine:M.NURBSSpineKLOp: duration=0.0391 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_spine_M_NURBSSpineKLOp.solve: duration=0.0370 ms
+      CHARNAME.foot:L.footFootRockerSystem: duration=0.0057 ms
+        _OSS_FootRockerSystemKRK_CHARNAME_foot_L_footFootRockerSystem.solve: duration=0.0049 ms
+      CHARNAME.leg:L.upLegBlendKLOp: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_L_upLegBlendKLOp.solve: duration=0.0008 ms
+      CHARNAME.leg:L.LlegUpVSpace_HierBlendSolver: duration=0.0017 ms
+        _OSS_HierBlendSolverKRK_CHARNAME_leg_L_LlegUpVSpace_HierBlendSolver.solve: duration=0.0012 ms
+      CHARNAME.leg:L.LlegIKFKTwoBoneIKSolver: duration=0.0305 ms
+        _OSS_TwoBoneIKSolverKRK_CHARNAME_leg_L_LlegIKFKTwoBoneIKSolver.solve: duration=0.0300 ms
+      CHARNAME.foot:L.footIKFootBlendSolver: duration=0.0028 ms
+        _OSS_IKFootBlendSolverKRK_CHARNAME_foot_L_footIKFootBlendSolver.solve: duration=0.0022 ms
+      CHARNAME.leg:L.LlegOSS_UntwistSolver: duration=0.0013 ms
+        _OSS_UntwistSolverKRK_CHARNAME_leg_L_LlegOSS_UntwistSolver.solve: duration=0.0009 ms
+      CHARNAME.leg:L.upLegMidBlendOp: duration=0.0016 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_L_upLegMidBlendOp.solve: duration=0.0011 ms
+      CHARNAME.leg:L.upLeg_twistTwistNURBSCurveKLOp: duration=0.0305 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_leg_L_upLeg_twistTwistNURBSCurveKLOp.solve: duration=0.0290 ms
+      CHARNAME.leg:L.loLegMidBlendOp: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_L_loLegMidBlendOp.solve: duration=0.0008 ms
+      CHARNAME.leg:L.loLeg_twistTwistNURBSCurveKLOp: duration=0.0284 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_leg_L_loLeg_twistTwistNURBSCurveKLOp.solve: duration=0.0270 ms
+      CHARNAME.main:M.RootMotionBlendKLOp: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_main_M_RootMotionBlendKLOp.solve: duration=0.0008 ms
+      CHARNAME.leg:L.upLeg_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0016 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_L_upLeg_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0010 ms
+      CHARNAME.leg:L.loLeg_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0017 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_L_loLeg_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0011 ms
+      CHARNAME.leg:R.upLegBlendKLOp: duration=0.0011 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_R_upLegBlendKLOp.solve: duration=0.0006 ms
+      CHARNAME.foot:R.footFootRockerSystem: duration=0.0051 ms
+        _OSS_FootRockerSystemKRK_CHARNAME_foot_R_footFootRockerSystem.solve: duration=0.0044 ms
+      CHARNAME.leg:R.RlegUpVSpace_HierBlendSolver: duration=0.0016 ms
+        _OSS_HierBlendSolverKRK_CHARNAME_leg_R_RlegUpVSpace_HierBlendSolver.solve: duration=0.0010 ms
+      CHARNAME.leg:R.RlegIKFKTwoBoneIKSolver: duration=0.0255 ms
+        _OSS_TwoBoneIKSolverKRK_CHARNAME_leg_R_RlegIKFKTwoBoneIKSolver.solve: duration=0.0250 ms
+      CHARNAME.foot:R.footIKFootBlendSolver: duration=0.0028 ms
+        _OSS_IKFootBlendSolverKRK_CHARNAME_foot_R_footIKFootBlendSolver.solve: duration=0.0023 ms
+      CHARNAME.leg:R.RlegOSS_UntwistSolver: duration=0.0012 ms
+        _OSS_UntwistSolverKRK_CHARNAME_leg_R_RlegOSS_UntwistSolver.solve: duration=0.0008 ms
+      CHARNAME.leg:R.upLegMidBlendOp: duration=0.0015 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_R_upLegMidBlendOp.solve: duration=0.0010 ms
+      CHARNAME.leg:R.upLeg_twistTwistNURBSCurveKLOp: duration=0.0314 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_leg_R_upLeg_twistTwistNURBSCurveKLOp.solve: duration=0.0284 ms
+      CHARNAME.leg:R.loLegMidBlendOp: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_R_loLegMidBlendOp.solve: duration=0.0008 ms
+      CHARNAME.leg:R.loLeg_twistTwistNURBSCurveKLOp: duration=0.0280 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_leg_R_loLeg_twistTwistNURBSCurveKLOp.solve: duration=0.0267 ms
+      CHARNAME.leg:R.upLeg_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0016 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_R_upLeg_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0010 ms
+      CHARNAME.leg:R.loLeg_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0016 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_leg_R_loLeg_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0011 ms
+      CHARNAME.arm:R.upArmBlendKLOp: duration=0.0012 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_R_upArmBlendKLOp.solve: duration=0.0007 ms
+      CHARNAME.arm:R.RarmUpVSpace_HierBlendSolver: duration=0.0013 ms
+        _OSS_HierBlendSolverKRK_CHARNAME_arm_R_RarmUpVSpace_HierBlendSolver.solve: duration=0.0008 ms
+      CHARNAME.arm:R.RarmIKFKTwoBoneIKSolver: duration=0.0247 ms
+        _OSS_TwoBoneIKSolverKRK_CHARNAME_arm_R_RarmIKFKTwoBoneIKSolver.solve: duration=0.0242 ms
+      CHARNAME.hand:R.MhandIKHandBlendKLOp: duration=0.0028 ms
+        _OSS_IKFootBlendSolverKRK_CHARNAME_hand_R_MhandIKHandBlendKLOp.solve: duration=0.0023 ms
+      CHARNAME.arm:R.RarmOSS_UntwistSolver: duration=0.0013 ms
+        _OSS_UntwistSolverKRK_CHARNAME_arm_R_RarmOSS_UntwistSolver.solve: duration=0.0009 ms
+      CHARNAME.arm:R.upArmMidBlendOp: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_R_upArmMidBlendOp.solve: duration=0.0009 ms
+      CHARNAME.arm:R.upArm_twistTwistNURBSCurveKLOp: duration=0.0293 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_arm_R_upArm_twistTwistNURBSCurveKLOp.solve: duration=0.0279 ms
+      CHARNAME.arm:R.loArmMidBlendOp: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_R_loArmMidBlendOp.solve: duration=0.0009 ms
+      CHARNAME.arm:R.loArm_twistTwistNURBSCurveKLOp: duration=0.0279 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_arm_R_loArm_twistTwistNURBSCurveKLOp.solve: duration=0.0265 ms
+      CHARNAME.arm:R.upArm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0016 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_R_upArm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0010 ms
+      CHARNAME.arm:R.loArm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0018 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_R_loArm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0013 ms
+      CHARNAME.arm:L.upArmBlendKLOp: duration=0.0012 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_L_upArmBlendKLOp.solve: duration=0.0007 ms
+      CHARNAME.arm:L.LarmUpVSpace_HierBlendSolver: duration=0.0013 ms
+        _OSS_HierBlendSolverKRK_CHARNAME_arm_L_LarmUpVSpace_HierBlendSolver.solve: duration=0.0008 ms
+      CHARNAME.arm:L.LarmIKFKTwoBoneIKSolver: duration=0.0244 ms
+        _OSS_TwoBoneIKSolverKRK_CHARNAME_arm_L_LarmIKFKTwoBoneIKSolver.solve: duration=0.0239 ms
+      CHARNAME.hand:L.MhandIKHandBlendKLOp: duration=0.0030 ms
+        _OSS_IKFootBlendSolverKRK_CHARNAME_hand_L_MhandIKHandBlendKLOp.solve: duration=0.0025 ms
+      CHARNAME.arm:L.LarmOSS_UntwistSolver: duration=0.0013 ms
+        _OSS_UntwistSolverKRK_CHARNAME_arm_L_LarmOSS_UntwistSolver.solve: duration=0.0008 ms
+      CHARNAME.arm:L.upArmMidBlendOp: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_L_upArmMidBlendOp.solve: duration=0.0009 ms
+      CHARNAME.arm:L.upArm_twistTwistNURBSCurveKLOp: duration=0.0296 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_arm_L_upArm_twistTwistNURBSCurveKLOp.solve: duration=0.0282 ms
+      CHARNAME.arm:L.loArmMidBlendOp: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_L_loArmMidBlendOp.solve: duration=0.0009 ms
+      CHARNAME.arm:L.loArm_twistTwistNURBSCurveKLOp: duration=0.0315 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_arm_L_loArm_twistTwistNURBSCurveKLOp.solve: duration=0.0301 ms
+      CHARNAME.arm:L.upArm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0016 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_L_upArm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0011 ms
+      CHARNAME.arm:L.loArm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0016 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_arm_L_loArm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0011 ms
+      CHARNAME.hand:L.index_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0017 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_index_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0011 ms
+      CHARNAME.hand:L.index_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_index_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:L.index_mid_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_index_mid_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:L.index_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_index_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:L.middle_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_middle_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0010 ms
+      CHARNAME.hand:L.middle_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_middle_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:L.middle_mid_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_middle_mid_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:L.middle_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_middle_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:L.ring_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_ring_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:L.ring_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_ring_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:L.ring_mid_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_ring_mid_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:L.ring_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_ring_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:L.pinky_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_pinky_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:L.pinky_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_pinky_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:L.pinky_mid_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_pinky_mid_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:L.pinky_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_pinky_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:L.thumb_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_thumb_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:L.thumb_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_thumb_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:L.thumb_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_L_thumb_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.index_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0015 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_index_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.index_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0015 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_index_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.index_mid_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_index_mid_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:R.index_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_index_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.middle_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_middle_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:R.middle_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0015 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_middle_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.middle_mid_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_middle_mid_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.middle_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_middle_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:R.ring_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0015 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_ring_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.ring_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_ring_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.ring_mid_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_ring_mid_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:R.ring_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0014 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_ring_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.pinky_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_pinky_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:R.pinky_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0015 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_pinky_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.pinky_mid_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_pinky_mid_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:R.pinky_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_pinky_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0009 ms
+      CHARNAME.hand:R.thumb_palm_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0012 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_thumb_palm_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.hand:R.thumb_base_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0022 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_thumb_base_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0016 ms
+      CHARNAME.hand:R.thumb_tip_partpartial_OSS_BlendTRSConstraintSolver: duration=0.0013 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_hand_R_thumb_tip_partpartial_OSS_BlendTRSConstraintSolver.solve: duration=0.0008 ms
+      CHARNAME.headNeck:M.alignHeadToWorldOp: duration=0.0012 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_headNeck_M_alignHeadToWorldOp.solve: duration=0.0007 ms
+      CHARNAME.headNeck:M.HeadAimKLOp: duration=0.0016 ms
+        _OSS_AimKLSolverKRK_CHARNAME_headNeck_M_HeadAimKLOp.solve: duration=0.0011 ms
+      CHARNAME.headNeck:M.alignHeadToIKOp: duration=0.0011 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_headNeck_M_alignHeadToIKOp.solve: duration=0.0006 ms
+      CHARNAME.headNeck:M.NURBSNeckKLOp: duration=0.0286 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_headNeck_M_NURBSNeckKLOp.solve: duration=0.0268 ms
+      CHARNAME.eyes:M.EyeAutoAimKLOp: duration=0.0018 ms
+        _OSS_AimKLSolverKRK_CHARNAME_eyes_M_EyeAutoAimKLOp.solve: duration=0.0012 ms
+      CHARNAME.eyes:M.EyeIkFkBlendKLOp_Eye_L: duration=0.0012 ms
+        _OSS_AimKLSolverKRK_CHARNAME_eyes_M_EyeIkFkBlendKLOp_Eye_L.solve: duration=0.0008 ms
+      CHARNAME.eyes:M.EyeIkFkBlendKLOp_Eye_R: duration=0.0012 ms
+        _OSS_AimKLSolverKRK_CHARNAME_eyes_M_EyeIkFkBlendKLOp_Eye_R.solve: duration=0.0007 ms
+      CHARNAME.mouth01:M.blendMidMouthLevel0Op: duration=0.0019 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_mouth01_M_blendMidMouthLevel0Op.solve: duration=0.0013 ms
+      CHARNAME.mouth01:M.Beta: duration=0.0104 ms
+        _OSS_offsetSolverKRK_CHARNAME_mouth01_M_Beta.solve: duration=0.0097 ms
+      CHARNAME.mouth01:M.upLipLevel0Op: duration=0.0417 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_mouth01_M_upLipLevel0Op.solve: duration=0.0409 ms
+      CHARNAME.mouth01:M.upLipLevel1Op: duration=0.0788 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_mouth01_M_upLipLevel1Op.solve: duration=0.0764 ms
+      CHARNAME.mouth01:M.loLipLevel0Op: duration=0.0402 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_mouth01_M_loLipLevel0Op.solve: duration=0.0394 ms
+      CHARNAME.mouth01:M.loLipLevel1Op: duration=0.0787 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_mouth01_M_loLipLevel1Op.solve: duration=0.0764 ms
+      CHARNAME.mouth01:M.blendLeftCornerOpMidBlendOp: duration=0.0017 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_mouth01_M_blendLeftCornerOpMidBlendOp.solve: duration=0.0011 ms
+      CHARNAME.mouth01:M.blendRightCornerOp: duration=0.0017 ms
+        _OSS_BlendTRSConstraintSolverKRK_CHARNAME_mouth01_M_blendRightCornerOp.solve: duration=0.0012 ms
+      CHARNAME.cheek:L.NURBSCurveKLOp: duration=0.0120 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_cheek_L_NURBSCurveKLOp.solve: duration=0.0105 ms
+      CHARNAME.cheek:R.NURBSCurveKLOp: duration=0.0111 ms
+        _OSS_NURBSCurveXfoKLSolverKRK_CHARNAME_cheek_R_NURBSCurveKLOp.solve: duration=0.0098 ms
+      CHARNAME.leg:L.inputs_ikBlend_2_upLeg_visibility_RemapScalarValueSolver: duration=0.0011 ms
+        _OSS_ReverseSolverKRK_CHARNAME_leg_L_inputs_ikBlend_2_upLeg_visibility_RemapScalarValueSolver.solve: duration=0.0003 ms
+      CHARNAME.leg:L.inputs_ikBlend_2_loLeg_visibility_RemapScalarValueSolver: duration=0.0008 ms
+        _OSS_ReverseSolverKRK_CHARNAME_leg_L_inputs_ikBlend_2_loLeg_visibility_RemapScalarValueSolver.solve: duration=0.0004 ms
+      CHARNAME.foot:L.foot_footIK_2_foot_visibility_RemapScalarValueSolver: duration=0.0007 ms
+        _OSS_ReverseSolverKRK_CHARNAME_foot_L_foot_footIK_2_foot_visibility_RemapScalarValueSolver.solve: duration=0.0002 ms
+      CHARNAME.foot:L.foot_footIK_2_ball_visibility_RemapScalarValueSolver: duration=0.0007 ms
+        _OSS_ReverseSolverKRK_CHARNAME_foot_L_foot_footIK_2_ball_visibility_RemapScalarValueSolver.solve: duration=0.0002 ms
+      CHARNAME.foot:R.foot_footIK_2_foot_visibility_RemapScalarValueSolver: duration=0.0008 ms
+        _OSS_ReverseSolverKRK_CHARNAME_foot_R_foot_footIK_2_foot_visibility_RemapScalarValueSolver.solve: duration=0.0004 ms
+      CHARNAME.foot:R.foot_footIK_2_ball_visibility_RemapScalarValueSolver: duration=0.0007 ms
+        _OSS_ReverseSolverKRK_CHARNAME_foot_R_foot_footIK_2_ball_visibility_RemapScalarValueSolver.solve: duration=0.0002 ms
+      CHARNAME.leg:R.inputs_ikBlend_2_upLeg_visibility_RemapScalarValueSolver: duration=0.0007 ms
+        _OSS_ReverseSolverKRK_CHARNAME_leg_R_inputs_ikBlend_2_upLeg_visibility_RemapScalarValueSolver.solve: duration=0.0002 ms
+      CHARNAME.leg:R.inputs_ikBlend_2_loLeg_visibility_RemapScalarValueSolver: duration=0.0007 ms
+        _OSS_ReverseSolverKRK_CHARNAME_leg_R_inputs_ikBlend_2_loLeg_visibility_RemapScalarValueSolver.solve: duration=0.0004 ms
+      CHARNAME.arm:R.inputs_ikBlend_2_upArm_visibility_RemapScalarValueSolver: duration=0.0007 ms
+        _OSS_ReverseSolverKRK_CHARNAME_arm_R_inputs_ikBlend_2_upArm_visibility_RemapScalarValueSolver.solve: duration=0.0002 ms
+      CHARNAME.arm:R.inputs_ikBlend_2_loArm_visibility_RemapScalarValueSolver: duration=0.0006 ms
+        _OSS_ReverseSolverKRK_CHARNAME_arm_R_inputs_ikBlend_2_loArm_visibility_RemapScalarValueSolver.solve: duration=0.0002 ms
+      CHARNAME.arm:L.inputs_ikBlend_2_upArm_visibility_RemapScalarValueSolver: duration=0.0007 ms
+        _OSS_ReverseSolverKRK_CHARNAME_arm_L_inputs_ikBlend_2_upArm_visibility_RemapScalarValueSolver.solve: duration=0.0004 ms
+      CHARNAME.arm:L.inputs_ikBlend_2_loArm_visibility_RemapScalarValueSolver: duration=0.0006 ms
+        _OSS_ReverseSolverKRK_CHARNAME_arm_L_inputs_ikBlend_2_loArm_visibility_RemapScalarValueSolver.solve: duration=0.0002 ms
+      CHARNAME.hand:L.hand_handIK_2_hand_visibility_RemapScalarValueSolver: duration=0.0006 ms
+        _OSS_ReverseSolverKRK_CHARNAME_hand_L_hand_handIK_2_hand_visibility_RemapScalarValueSolver.solve: duration=0.0002 ms
+      CHARNAME.hand:R.hand_handIK_2_hand_visibility_RemapScalarValueSolver: duration=0.0007 ms
+        _OSS_ReverseSolverKRK_CHARNAME_hand_R_hand_handIK_2_hand_visibility_RemapScalarValueSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfaceBrowInnGetLocalTranslateSolver: duration=0.0012 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfaceBrowInnGetLocalTranslateSolver.solve: duration=0.0007 ms
+      CHARNAME.face:M.LfaceBrowMidGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfaceBrowMidGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfaceBrowOutGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfaceBrowOutGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfaceBrowInnGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfaceBrowInnGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfaceBrowMidGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfaceBrowMidGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfaceBrowOutGetLocalTranslateSolver: duration=0.0009 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfaceBrowOutGetLocalTranslateSolver.solve: duration=0.0005 ms
+      CHARNAME.face:M.Mface2RemapScalarValueSolverKLOp: duration=0.0008 ms
+        _OSS_RemapScalarValueSolverKRK_CHARNAME_face_M_Mface2RemapScalarValueSolverKLOp.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfaceloLidInnGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfaceloLidInnGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfaceloLidMidGetLocalTranslateSolver: duration=0.0009 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfaceloLidMidGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfaceloLidOutGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfaceloLidOutGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfaceupLidInnGetLocalTranslateSolver: duration=0.0007 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfaceupLidInnGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfaceupLidMidGetLocalTranslateSolver: duration=0.0009 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfaceupLidMidGetLocalTranslateSolver.solve: duration=0.0005 ms
+      CHARNAME.face:M.LfaceupLidOutGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfaceupLidOutGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfacesquintInnGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfacesquintInnGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfacesquintMidGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfacesquintMidGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfacesquintOutGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfacesquintOutGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfacelidCreaseInnGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfacelidCreaseInnGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.LfacelidCreaseMidGetLocalTranslateSolver: duration=0.0009 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfacelidCreaseMidGetLocalTranslateSolver.solve: duration=0.0005 ms
+      CHARNAME.face:M.LfacelidCreaseOutGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_LfacelidCreaseOutGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfaceloLidInnGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfaceloLidInnGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfaceloLidMidGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfaceloLidMidGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfaceloLidOutGetLocalTranslateSolver: duration=0.0007 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfaceloLidOutGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfaceupLidInnGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfaceupLidInnGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfaceupLidMidGetLocalTranslateSolver: duration=0.0009 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfaceupLidMidGetLocalTranslateSolver.solve: duration=0.0005 ms
+      CHARNAME.face:M.RfaceupLidOutGetLocalTranslateSolver: duration=0.0009 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfaceupLidOutGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfacesquintInnGetLocalTranslateSolver: duration=0.0007 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfacesquintInnGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfacesquintMidGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfacesquintMidGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfacesquintOutGetLocalTranslateSolver: duration=0.0007 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfacesquintOutGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfacelidCreaseInnGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfacelidCreaseInnGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.RfacelidCreaseMidGetLocalTranslateSolver: duration=0.0009 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfacelidCreaseMidGetLocalTranslateSolver.solve: duration=0.0005 ms
+      CHARNAME.face:M.RfacelidCreaseOutGetLocalTranslateSolver: duration=0.0008 ms
+        _OSS_GetLocalTranslateSolverKRK_CHARNAME_face_M_RfacelidCreaseOutGetLocalTranslateSolver.solve: duration=0.0004 ms
+      CHARNAME.face:M.Mface1RemapScalarValueSolverKLOp: duration=0.0007 ms
+        _OSS_RemapScalarValueSolverKRK_CHARNAME_face_M_Mface1RemapScalarValueSolverKLOp.solve: duration=0.0003 ms
+
+
+Z:\shows\wolvesProto01\source\assets\CHARNAME\_staged\KRK_CHARNAME>

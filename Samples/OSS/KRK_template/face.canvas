@@ -69,7 +69,7 @@
       "objectType" : "Port",
       "metadata" : {
         "uiPersistValue" : "true",
-        "uiCombo" : "(\"${FABRIC_CHARNAME_DIR}/CHARNAME_face.abc\", \"${FABRIC_CHARNAME_DIR}/CHARNAME_locomotion.abc\")"
+        "uiCombo" : "(\"${FABRIC_CHARNAME_DIR}/face.abc\", \"${FABRIC_CHARNAME_DIR}/locomotion.abc\")"
         },
       "nodePortType" : "Out",
       "name" : "AlembicPath",
@@ -155,7 +155,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME.fbx"
+            "String" : "${FABRIC_CHARNAME_DIR}/../ue/CHARNAME.fbx"
             },
           "name" : "filePath"
           },
@@ -1542,7 +1542,7 @@ dfgEntry {
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_face.abc"
+            "String" : "${FABRIC_CHARNAME_DIR}/face.abc"
             },
           "name" : "filePath"
           }
@@ -1572,7 +1572,7 @@ dfgEntry {
             "objectType" : "Port",
             "nodePortType" : "Out",
             "defaultValues" : {
-              "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_face.abc"
+              "String" : "${FABRIC_CHARNAME_DIR}/face.abc"
               },
             "name" : "filePath",
             "execPortType" : "In",
@@ -1598,7 +1598,7 @@ dfgEntry {
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "defaultValues" : {
-                  "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_face.abc"
+                  "String" : "${FABRIC_CHARNAME_DIR}/face.abc"
                   },
                 "name" : "filePath"
                 },
@@ -5114,7 +5114,7 @@ dfgEntry {
       },
     {
       "type" : "String",
-      "value" : "${FABRIC_CHARNAME_DIR}/CHARNAME_face.abc"
+      "value" : "${FABRIC_CHARNAME_DIR}/face.abc"
       },
     {
       "type" : "Float32",

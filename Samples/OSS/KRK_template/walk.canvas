@@ -121,7 +121,7 @@
           "name" : "filePath",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "Z:/shows/wolvesProto01/source/assets/CHARNAME/_staged/KRK_CHARNAME/CHARNAME.fbx"
+            "String" : "Z:/shows/wolvesProto01/source/assets/CHARNAME/_staged/ue/CHARNAME.fbx"
             }
           },
         {
@@ -1504,7 +1504,7 @@ dfgEntry {
           "name" : "filePath",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "Z:/shows/wolvesProto01/source/assets/CHARNAME/_staged/KRK_CHARNAME/CHARNAME_walk.abc"
+            "String" : "Z:/shows/wolvesProto01/source/assets/CHARNAME/_staged/KRK_CHARNAME/auto/walk.abc"
             }
           }
         ],
@@ -1534,7 +1534,7 @@ dfgEntry {
             "name" : "filePath",
             "nodePortType" : "Out",
             "defaultValues" : {
-              "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+              "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
               },
             "execPortType" : "In",
             "typeSpec" : "String"
@@ -1560,7 +1560,7 @@ dfgEntry {
                 "name" : "filePath",
                 "nodePortType" : "In",
                 "defaultValues" : {
-                  "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+                  "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
                   }
                 },
               {
@@ -4587,7 +4587,7 @@ dfgEntry {
               "name" : "filePath",
               "nodePortType" : "In",
               "defaultValues" : {
-                "String" : "${KRAKEN_PATH}/Samples/OSS/CHARNAME/CHARNAME_face.abc"
+                "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_face.abc"
                 }
               },
             {
@@ -5245,15 +5245,15 @@ if(draw)
       dhandle.setActive(true);
   }
 
-return(pixels);    
+return(pixels);
 }
 
 dfgEntry {
   if(xfos.size() != labels.size())
     return;
-    
+
   Xfo shifts[SInt32];
-    
+
   Xfo offset;
   offset.ori.setFromAxisAndAngle(Vec3(1, 0, 0), HALF_PI);
   offset.sc *= scale * 0.1;
@@ -5264,19 +5264,19 @@ dfgEntry {
      xfo.tr = xfos[i].tr;
    else
      xfo = xfos[i];
-     
+
     xfo = xfo * offset;
-    
+
     Vec3 v = xfo.tr;
     SInt32 hash = SInt32(v.x * 100.0) * 17 + SInt32(v.y * 100.0) * 219 + SInt32(v.z * 100.0) * 3;
     Xfo shift = shifts.get(hash, Xfo());
-    
+
     xfo = xfo * shift;
-    
+
     shift.tr.z += 1.0;
-    
+
     maCTextLocal(labels[i]+i, handle, labels[i], xfo, color, instance, true);
-    
+
     shifts[hash] = shift;
   }
 }
@@ -8992,7 +8992,7 @@ dfgEntry {
       },
     {
       "type" : "String",
-      "value" : "Z:/shows/wolvesProto01/source/assets/CHARNAME/_staged/KRK_CHARNAME/CHARNAME_walk.abc"
+      "value" : "Z:/shows/wolvesProto01/source/assets/CHARNAME/_staged/KRK_CHARNAME/walk.abc"
       },
     {
       "type" : "String",

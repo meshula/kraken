@@ -1467,7 +1467,7 @@ dfgEntry {
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+            "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
             },
           "name" : "filePath"
           }
@@ -1497,7 +1497,7 @@ dfgEntry {
             "objectType" : "Port",
             "nodePortType" : "Out",
             "defaultValues" : {
-              "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+              "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
               },
             "name" : "filePath",
             "execPortType" : "In",
@@ -1523,7 +1523,7 @@ dfgEntry {
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "defaultValues" : {
-                  "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+                  "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
                   },
                 "name" : "filePath"
                 },

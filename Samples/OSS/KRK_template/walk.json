@@ -1,4 +1,4 @@
 {
-  "clipType": "KrakenAbcClip", 
-  "content": {"filePath": "${KRAKEN_PATH}/Samples/OSS/CHARNAME/CHARNAME_walk.abc"}
+  "clipType": "KrakenAbcClip",
+  "content": {"filePath": "${FABRIC_CHARNAME_DIR}/walk.abc"}
 }

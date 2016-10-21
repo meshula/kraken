@@ -72,7 +72,7 @@
       "objectType" : "Port",
       "metadata" : {
         "uiPersistValue" : "true",
-        "uiCombo" : "(\"${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc\", \"${FABRIC_CHARNAME_DIR}/CHARNAME_locomotion.abc\")"
+        "uiCombo" : "(\"${FABRIC_CHARNAME_DIR}/walk.abc\", \"${FABRIC_CHARNAME_DIR}/locomotion.abc\")"
         },
       "nodePortType" : "Out",
       "name" : "AlembicPath",
@@ -1271,7 +1271,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+            "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
             },
           "name" : "filePath"
           }
@@ -1301,7 +1301,7 @@
             "objectType" : "Port",
             "nodePortType" : "Out",
             "defaultValues" : {
-              "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+              "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
               },
             "name" : "filePath",
             "execPortType" : "In",
@@ -1327,7 +1327,7 @@
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "defaultValues" : {
-                  "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+                  "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
                   },
                 "name" : "filePath"
                 },
@@ -6109,7 +6109,7 @@ dfgEntry {
       },
     {
       "type" : "String",
-      "value" : "${FABRIC_CHARNAME_DIR}/CHARNAME_walk.abc"
+      "value" : "${FABRIC_CHARNAME_DIR}/walk.abc"
       },
     {
       "type" : "Float32",
