@@ -1,4 +1,4 @@
-call CHARNAME_environment.bat
+call environment.bat
 
 cd /d %KRAKEN_PATH%
 

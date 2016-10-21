@@ -1,4 +1,4 @@
-call CHARNAME_environment.bat
+call environment.bat
 
 ::set FABRIC_LOG_LEVEL=0
 
