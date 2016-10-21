@@ -72,7 +72,7 @@
       "objectType" : "Port",
       "metadata" : {
         "uiPersistValue" : "true",
-        "uiCombo" : "(\"${FABRIC_CHARNAME_DIR}/walk.abc\", \"${FABRIC_CHARNAME_DIR}/locomotion.abc\")"
+        "uiCombo" : "(\"./walk.abc\", \"./locomotion.abc\")"
         },
       "nodePortType" : "Out",
       "name" : "AlembicPath",
@@ -209,7 +209,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME.fbx"
+            "String" : "./CHARNAME.fbx"
             },
           "name" : "filePath"
           },
@@ -1271,7 +1271,7 @@
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
+            "String" : "./walk.abc"
             },
           "name" : "filePath"
           }
@@ -1301,7 +1301,7 @@
             "objectType" : "Port",
             "nodePortType" : "Out",
             "defaultValues" : {
-              "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
+              "String" : "./walk.abc"
               },
             "name" : "filePath",
             "execPortType" : "In",
@@ -1327,7 +1327,7 @@
                 "objectType" : "InstPort",
                 "nodePortType" : "In",
                 "defaultValues" : {
-                  "String" : "${FABRIC_CHARNAME_DIR}/walk.abc"
+                  "String" : "./walk.abc"
                   },
                 "name" : "filePath"
                 },
@@ -1869,7 +1869,7 @@ dfgEntry {
           "objectType" : "InstPort",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${FABRIC_CHARNAME_DIR}/tx/textures.json"
+            "String" : "./tx/textures.json"
             },
           "name" : "texturePath"
           },
@@ -2167,7 +2167,7 @@ dfgEntry {
       texPath = 
       doc.root.getString(meshName);
     if(texPath) {
-      path = '${FABRIC_CHARNAME_DIR}/tx/'+texPath;
+      path = './tx/'+texPath;
       path = path.expandEnvVars();
       texPath = path.string();
     }
@@ -6109,7 +6109,7 @@ dfgEntry {
       },
     {
       "type" : "String",
-      "value" : "${FABRIC_CHARNAME_DIR}/walk.abc"
+      "value" : "./walk.abc"
       },
     {
       "type" : "Float32",

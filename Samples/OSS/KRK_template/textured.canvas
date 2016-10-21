@@ -85,7 +85,7 @@
           "name" : "filePath",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${FABRIC_CHARNAME_DIR}/CHARNAME.fbx"
+            "String" : "./CHARNAME.fbx"
             }
           },
         {
@@ -1561,7 +1561,7 @@ dfgEntry {
           "name" : "texturePath",
           "nodePortType" : "In",
           "defaultValues" : {
-            "String" : "${FABRIC_CHARNAME_DIR}/tx/textures.json"
+            "String" : "./tx/textures.json"
             }
           },
         {
@@ -1847,7 +1847,7 @@ dfgEntry {
       texPath = 
       doc.root.getString(meshName);
     if(texPath) {
-      path = '${FABRIC_CHARNAME_DIR}/tx/'+texPath;
+      path = './tx/'+texPath;
       path = path.expandEnvVars();
       texPath = path.string();
     }

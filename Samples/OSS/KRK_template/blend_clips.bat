@@ -1,5 +1,5 @@
 call environment.bat
 
-python %FABRIC_DIR%/bin/canvas.py "%FABRIC_CHARNAME_DIR%/blend_clips.canvas"
+python %FABRIC_DIR%/bin/canvas.py "./blend_clips.canvas"
 
 ::PAUSE

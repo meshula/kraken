@@ -2,6 +2,8 @@ call environment.bat
 
 set FABRIC_LOG_LEVEL=3
 
-cd /d %FABRIC_CHARNAME_DIR%
+kl.exe test.kl --opt --unguarded > test_results.txt
 
-cmd /k kl.exe %FABRIC_CHARNAME_DIR%/test.kl --opt --unguarded > test_results.txt
+echo results in %~dp0\test_results.txt
+@ECHO OFF
+PAUSE
