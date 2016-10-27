@@ -191,11 +191,9 @@ class OSSCurveComponentGuide(OSSCurveComponent):
 
         if contstrainFirstControl:
             if self.contstrainFirstControl_cmpIn is None:
-                print "Constraining First Control"
                 self.contstrainFirstControl_cmpIn = self.createInput('firstControlXfo', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
         else:
             if self.contstrainFirstControl_cmpIn is not None:
-                print "NOT constraining First Control"
                 # self.deleteInput('firstControlXfo', parent=self.inputHrcGrp)
                 # self.deleteInput('ikBlend', parent=self.cmpInputAttrGrp)
                 # self.ikgoal_cmpIn = None
@@ -368,10 +366,8 @@ class OSSCurveComponentRig(OSSCurveComponent):
             ratio = float(i) / float(numDefs-1)
             params.append((1.0-ratio)*minVal + ratio*maxVal)
         if popFirst and (len(params) > 1):
-            print "popping first"
             del params[0]
         if popLast and (len(params) > 1):
-            print "popping last"
             del params[-1]
         return params
 
@@ -388,8 +384,6 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.popFirst = bool(data['popFirst'])  #This should be a simple method instead
         self.popLast = bool(data['popLast'])  #This should be a simple method instead
 
-        print "First %s"%(self.popFirst)
-        print "Last %s"%(self.popLast)
         self.params = self.fillValues(numDeformers, minVal=0.0, maxVal=1.0, popFirst=self.popFirst, popLast=self.popLast)
 
 
@@ -438,7 +432,6 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.controlInputs = self.createControls("curveControls", self.controlInputs, data["curveCtrlNames"], data)
 
 
-
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers, data)
 
@@ -447,7 +440,6 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # ==============
         # Constraint inputs
         self.firstCurveCtrl = self.controlInputs[0].getParent()
-        print "First Control: %s"%(self.firstCurveCtrl.getDecoratedName())
 
         for i in xrange(len(self.controlInputs)):
             self.controlRestInputs.append(self.controlInputs[i].xfo)
@@ -474,7 +466,6 @@ class OSSCurveComponentRig(OSSCurveComponent):
         self.evalOperators()
         self.NURBSCurveKLOp.evaluate()
 
-        print len(self.curveOutputs)
         for i in xrange(len(self.curveOutputs)):
             constraint = self.deformerJoints[i].constrainTo(self.curveOutputs[i])
             constraint.evaluate()

@@ -102,7 +102,6 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         True if successful.
 
         """
-        print "Updating Controls"
         self.controlXforms = []
 
         globalScale = 1.0
