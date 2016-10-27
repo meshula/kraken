@@ -257,7 +257,7 @@ class OSSMouthGuide(OSSMouth):
         self.addOperator(self.reflectionOp)
 
         self.reflectionOp.setInput('inputs',   self.lSideObjs)
-        self.reflectionOp.setInput('inputParents',  self.lSideParentObjs)
+        self.reflectionOp.setInput('inputParents', self.lSideParentObjs)
         self.reflectionOp.setOutput('results', self.rSideObjs)
 
         self.loadData(data)
@@ -826,7 +826,7 @@ class OSSMouthRig(OSSMouth):
         #Mouth Offset
         self.offsetOp([self.loLipRefSpace, self.lipsRefSpace,  self.midMouthRefSpace],
                       [self.loLipCtrlSpace, self.upLipCtrlSpace, self.midMouthCtrlSpace ],
-                       self.mouthCtrl.getParent(), self.mouthCtrl, name="Beta")
+                       self.mouthCtrl.getParent(), self.mouthCtrl, name="offsetOp")
 
 
         for Level1Op, ctrls in [(self.loLipLevel1Op, self.loLipLevel1Ctrls), (self.upLipLevel1Op, self.upLipLevel1Ctrls)]:
