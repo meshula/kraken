@@ -74,12 +74,14 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         # Guide Settings
         self.untwistUplimb = BoolAttribute('untwistUplimb', value=False, parent=self.guideSettingsAttrGrp)
         self.addPartialJoints = BoolAttribute('addPartialJoints', value=False, parent=self.guideSettingsAttrGrp)
-        self.addTwistJoints = BoolAttribute('addTwistJoints', value=False, parent=self.guideSettingsAttrGrp)
         self.addMidControlsInput = BoolAttribute('addMidControls', value=True, parent=self.guideSettingsAttrGrp)
         self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=True, parent=self.guideSettingsAttrGrp)
         self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=self.guideSettingsAttrGrp)
         self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=self.guideSettingsAttrGrp)
         self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=self.guideSettingsAttrGrp)
+        self.addTwistJoints = BoolAttribute('addTwistJoints', value=False, parent=self.guideSettingsAttrGrp)
+        self.uplimbNumTwistJoints = IntegerAttribute('uplimbNumTwistJoints', value=5, minValue=2, maxValue=20, parent=self.guideSettingsAttrGrp)
+        self.lolimbNumTwistJoints = IntegerAttribute('lolimbNumTwistJoints', value=5, minValue=2, maxValue=20, parent=self.guideSettingsAttrGrp)
 
 
         # Guide Controls
@@ -327,7 +329,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.addPartialJoints = bool(data['addPartialJoints'])  #This should be a simple method instead
         self.addTwistJoints = bool(data['addTwistJoints'])  #This should be a simple method instead
         self.addMidControls = bool(data['addMidControls'])  #This should be a simple method instead
-
         self.addTwistJointsORaddMidControls = bool(data['addTwistJoints']) or bool(data['addMidControls'])
 
         # =========
@@ -368,8 +369,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbIKCtrl.lockRotation(x=True, y=True, z=True)
         self.lolimbIKCtrl.lockScale(x=True, y=True, z=True)
         self.lolimbIKCtrl.rotatePoints(0, 0, 90)
-
-        print globalScale
 
         # MidCtrls (Bend/Bow) Creation - may need to make this an option
         # uplimbMid
@@ -578,7 +577,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('upAxis', AXIS_NAME_TO_INT_MAP[self.upAxisStr])
         self.limbIKKLOp.setInput('ikHandle', self.limbIKCtrl)
 
-        # Add loLimb IK
+        # Add lolimb IK
         self.limbIKKLOp.setOutput('bone0Out', self.uplimb_cmpOut)
         self.limbIKKLOp.setOutput('bone1Out', self.lolimbIKCtrlSpace)
         self.limbIKKLOp.setOutput('bone2Out', self.endlimb_cmpOut)
@@ -665,7 +664,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
 
 
-        # Add loLimb IK Constrain
+        # Add lolimb IK Constrain
         self.lolimb_cmpOut.constrainTo(self.lolimbIKCtrl).evaluate()
 
         # Add Deformer Joint Constrain
@@ -777,7 +776,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
                 self.uplimbName+"_twist",
                 self.uplimbDef,
                 self.uplimbTwInputs,
-                numDeformers=5,
+                numDeformers=int(data['uplimbNumTwistJoints']),
                 #skipStart=True,
                 aimAxisStr=self.boneAxisStr,  #This would be an offset to the ctrlAxis
                 sideAxisStr=self.upAxisStr.replace("POS", "NEG"),
@@ -789,7 +788,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
                 self.lolimbName+"_twist",
                 self.lolimbDef,
                 self.lolimbTwInputs,
-                numDeformers=5,
+                numDeformers=int(data['lolimbNumTwistJoints']),
                 #skipStart=True,
                 aimAxisStr=self.boneAxisStr,  #This would be an offset to the ctrlAxis
                 sideAxisStr=self.upAxisStr.replace("POS", "NEG"),
