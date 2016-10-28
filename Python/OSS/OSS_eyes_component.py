@@ -73,6 +73,8 @@ class OSSEyesComponentGuide(OSSEyesComponent):
 
         self.eyesCtrls = []
 
+        self.globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
+        self.globalScaleVec = Vec3(self.globalScale, self.globalScale, self.globalScale)
 
         data = {
                 "name": name,
@@ -104,7 +106,6 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         """
         self.controlXforms = []
 
-        globalScale = 1.0
 
         # Store current values if guide controls already exist
         current = 0
@@ -156,7 +157,7 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                     newCtrl.setColor("yellow")
                     newCtrl.rotatePoints(90,0,0)
                     newCtrl.translatePoints(Vec3(0,0,1))
-                    newCtrl.scalePoints(Vec3(1,1,self.EyeRadius.getValue()))
+                    newCtrl.scalePoints(Vec3(self.globalScale,self.globalScale,self.EyeRadius.getValue()))
                     newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(sideIdx*offset, 0, 0)))
                     parent = newCtrl
 
@@ -172,6 +173,7 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                     newCtrl.lockRotation(x=True, y=True, z=True)
                     newCtrl.lockScale(x=True, y=True, z=True)
                     newCtrl.scalePoints(Vec3(.5,.5,.5))
+
                     newCtrl.rotatePoints(90,0,0)
                     newCtrl.translatePoints(Vec3(0,0,10))
                     newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(0, 0, 0)))
@@ -405,7 +407,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     fkCtrl.lockTranslation(x=True, y=True, z=True)
                     fkCtrl.rotatePoints(90,0,0)
                     fkCtrl.translatePoints(Vec3(0,0,1))
-                    fkCtrl.scalePoints(Vec3(1,1,data['EyeRadius']))
+                    fkCtrl.scalePoints(Vec3(self.globalScale,self.globalScale,data['EyeRadius']))
                     newCtrlSpace = fkCtrl.insertCtrlSpace()
                     # newCtrls.append(fkCtrl)
                     newRef = Joint(handleName, parent=self.deformersParent, metaData={"altLocation": side, "altType":"RefJoint"})
@@ -511,6 +513,9 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.eyeTrackerSpace.xfo = data['eyesEndXfo']
         self.eyeTracker.xfo = data['eyesEndXfo']
         self.eyeTrackerIKSpace.xfo = data['eyesEndXfo']
+
+        self.globalScale = data['globalComponentCtrlSize'] 
+        self.globalScaleVec = Vec3(self.globalScale, self.globalScale, self.globalScale)
 
         self.createControls(data["EyeName"], data)
 

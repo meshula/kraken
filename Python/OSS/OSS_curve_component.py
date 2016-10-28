@@ -73,6 +73,8 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         self.popFirst = BoolAttribute('popLast', value=False, parent=self.guideSettingsAttrGrp)
         self.exposeControls = BoolAttribute('exposeControls', value=True, parent=self.guideSettingsAttrGrp)
         self.tweakControls = BoolAttribute('tweakControls', value=False, parent=self.guideSettingsAttrGrp)
+        self.controlSizeTaper = ScalarAttribute('controlSizeTaper', 0.0, maxValue=1.0, minValue=-1.0, parent=self.guideSettingsAttrGrp)
+        self.controlHierarchy = BoolAttribute('controlHierarchy', value=True, parent=self.guideSettingsAttrGrp)
         self.contstrainFirstControlInput = BoolAttribute('contstrainFirstControl', value=False, parent=self.guideSettingsAttrGrp)
         self.removeFirstControlInput = BoolAttribute('removeFirstControl', value=False, parent=self.guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
@@ -84,7 +86,8 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         self.contstrainFirstControlInput.setValueChangeCallback(self.updateContstrainFirstControl)
         # self.removeFirstControlInput.setValueChangeCallback(self.removeFirstControl)
 
-
+        globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
+        self.globalScaleVec = Vec3(globalScale, globalScale, globalScale)
 
         data = {
                 "name": name,
@@ -104,7 +107,6 @@ class OSSCurveComponentGuide(OSSCurveComponent):
             ctrl.getParent().removeChild(ctrl)
         del controlsList[:]
 
-
         if ctrlType == "curveControls":
             parent = self.ctrlCmpGrp
             defControlNameList =[]
@@ -116,11 +118,11 @@ class OSSCurveComponentGuide(OSSCurveComponent):
                 return True
 
 
-
             for i, defName in enumerate(defControlNameList):
                 newCtrl = Control(defName, parent=parent, shape="circle")
                 newCtrl.setColor("brown")
                 newCtrl.xfo = parent.xfo.multiply(Xfo(tr=Vec3(0, i, 0)))
+                newCtrl.scalePoints(self.globalScaleVec)
                 controlsList.append(newCtrl)
         return True
 
@@ -164,6 +166,8 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         True if successful.
 
         """
+        # get global Scale and create Vec3 for uniform control scaling
+
         #Reset all shapes, but really we should just recreate all controls from loadData instead of init
         for ctrl in self.getHierarchyNodes(classType="Control"):
             ctrl.setShape(ctrl.getShape())
@@ -173,13 +177,11 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         existing_data.update(data)
         data = existing_data
 
+
         super(OSSCurveComponentGuide, self).loadData( data )
 
         self.loadAllObjectData(data, "Control")
         self.loadAllObjectData(data, "Transform")
-
-        globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
-        globalScaleVec = Vec3(globalScale, globalScale, globalScale)
 
         return True
 
@@ -314,9 +316,10 @@ class OSSCurveComponentRig(OSSCurveComponent):
         del controlsList[:]
 
         parent = self.ctrlCmpGrp
-
         self.exposeControls = bool(data['exposeControls'])  #This should be a simple method instead
         self.tweakControls = bool(data['tweakControls'])  #This should be a simple method instead
+        self.controlHierarchy = bool(data['controlHierarchy'])  #This should be a simple method instead
+
 
         if ctrlType == "curveDeformers":
             defControlNameList = []
@@ -345,6 +348,9 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 return True
 
             for i, defName in enumerate(defControlNameList):
+
+                if self.controlHierarchy and len(controlsList):
+                    parent = controlsList[-1]
 
                 if self.exposeControls:
                     newCtrl = Control(self.name + defName, parent=parent, shape="squarePointed")
@@ -431,6 +437,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
         self.controlInputs = self.createControls("curveControls", self.controlInputs, data["curveCtrlNames"], data)
 
+        self.globalScaleVec = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers, data)
@@ -448,16 +455,19 @@ class OSSCurveComponentRig(OSSCurveComponent):
         if self.controlInputs:
             # build control hierarchy
             numCtrls = len(self.controlInputs)
-
+            taperRatio = float(data['controlSizeTaper'])/(numCtrls-1)
             for i in range(numCtrls):
                 ctrl = self.controlInputs[i]
+                ctrl.scalePoints(self.globalScaleVec)
+                ctrl.scalePoints(Vec3(1 - i*taperRatio, 1 - i*taperRatio, 1 - i*taperRatio))
                 ctrl.setColor("gold")
                 if ctrl.getTypeName() != "Transform":
                     ctrlParent = ctrl.insertCtrlSpace()
                 else: 
                     ctrlParent = ctrl
                 #this is for a curve only solution
-                ctrlParent.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+                if not self.controlHierarchy or i ==0:
+                    ctrlParent.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
                 self.rigControlAligns.append(Vec3(1,2,3))
         # ==============
         # Constrain I/O

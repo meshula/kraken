@@ -94,7 +94,7 @@ class OSSHandComponentGuide(OSSHandComponent):
         self.palmCtrl.setShapeVisibility(False)  # For now, until this is an option
         self.palmCtrl.lockRotation(True, True, True)
         self.palmCtrl.lockScale(True, True, True)
-        self.palmCtrl.lockTranslation(True, True, True)
+        # self.palmCtrl.lockTranslation(True, True, True)
         self.palmTipCtrl = Control('palmTip', parent=self.ctrlCmpGrp, shape="sphere")
         self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="jack")
 
@@ -269,12 +269,12 @@ class OSSHandComponentGuide(OSSHandComponent):
 
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
-        globalScaleVec =Vec3(globalScale, globalScale, globalScale)
+        self.globalScaleVec =Vec3(globalScale, globalScale, globalScale)
 
-        self.handCtrl.scalePoints(globalScaleVec)
-        self.palmCtrl.scalePoints(globalScaleVec)
-        self.palmTipCtrl.scalePoints(globalScaleVec)
-        self.handleCtrl.scalePoints(globalScaleVec)
+        self.handCtrl.scalePoints(self.globalScaleVec)
+        self.palmCtrl.scalePoints(self.globalScaleVec)
+        self.palmTipCtrl.scalePoints(self.globalScaleVec)
+        self.handleCtrl.scalePoints(self.globalScaleVec)
 
         self.handleCtrl.scalePoints(Vec3(data["ikHandleSize"], data["ikHandleSize"], data["ikHandleSize"]))
 
@@ -284,6 +284,7 @@ class OSSHandComponentGuide(OSSHandComponent):
                 for i in xrange(len(data[ctrlListName+"Xfos"])):
                     if i < len(ctrls):
                         ctrls[i].xfo = data[ctrlListName+"Xfos"][i]
+                        ctrls[i].scalePoints(self.globalScaleVec)
         return True
 
 
