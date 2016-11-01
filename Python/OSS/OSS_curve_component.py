@@ -458,10 +458,10 @@ class OSSCurveComponentRig(OSSCurveComponent):
             taperRatio = float(data['controlSizeTaper'])/(numCtrls-1)
             for i in range(numCtrls):
                 ctrl = self.controlInputs[i]
-                ctrl.scalePoints(self.globalScaleVec)
-                ctrl.scalePoints(Vec3(1 - i*taperRatio, 1 - i*taperRatio, 1 - i*taperRatio))
-                ctrl.setColor("gold")
                 if ctrl.getTypeName() != "Transform":
+                    ctrl.scalePoints(self.globalScaleVec)
+                    ctrl.scalePoints(Vec3(1 - i*taperRatio, 1 - i*taperRatio, 1 - i*taperRatio))
+                    ctrl.setColor("gold")
                     ctrlParent = ctrl.insertCtrlSpace()
                 else: 
                     ctrlParent = ctrl

@@ -282,18 +282,20 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         self.shldrOutputTgt.parentJoint = self.shldrDef
         self.shldrEndOutputTgt.parentJoint = self.shldrDef # only one joint option
 
-
+        self.globalScale = data['globalComponentCtrlSize']
+        self.globalScaleVec = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
         self.shldrCtrlSpace.xfo = data['shldrXfo']
         self.shldrCtrl.xfo = data['shldrXfo']
-        xoffset = 2
-        yoffset = -5.0
+        xoffset = 2*self.globalScale
+        yoffset = -5.0*self.globalScale
+        shldrWidth = 4.0*self.globalScale
         if self.getLocation() == 'R':
             xoffset *= -1
             yoffset *= -1
 
         self.shldrCtrl.alignOnXAxis(self.getLocation() == 'R')
-        self.shldrCtrl.scalePoints(Vec3(data['shldrLen'], 4, 4))
+        self.shldrCtrl.scalePoints(Vec3(data['shldrLen'], shldrWidth, shldrWidth))
         self.shldrCtrl.translatePoints(Vec3(xoffset, yoffset, 0.0))
         self.shldrEndCtrlSpace.xfo = data['shldrEndXfo']
 
