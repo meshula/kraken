@@ -58,18 +58,19 @@ function OSS_IKFootBlendSolver.solve!
   // Copy the position (fkFoot will always have the right position because the FK controls for the foot
   //  are constrained to the output of the IK solver )
   resultFootXfo.tr = fkFootXfo.tr;
-  resultFootXfo.ori = fkFootXfo.ori.sphericalLinearInterpolate(resultFootXfo.ori, blend);
+  resultFootXfo.ori = fkFootXfo.ori.sphericalLinearInterpolate(resultFootXfo.ori, Math_clamp(blend, 0.0,1.0));
   foot = resultFootXfo.toMat44();
 
   //Ball
   Xfo resultBallXfo =  resultFootXfo * ikFootXfo.inverse() * ikBallXfo;
-  resultBallXfo.ori = fkBallXfo.ori.sphericalLinearInterpolate(resultBallXfo.ori, blend);
+  resultBallXfo.ori = fkBallXfo.ori.sphericalLinearInterpolate(resultBallXfo.ori, Math_clamp(blend, 0.0,1.0));
   ball = resultBallXfo.toMat44();
 
   // Set debugging visibility.
   this.setDebug(drawDebug);
   if(this.drawDebug){
-
+    if(!this.handle)
+      this.handle = DrawingHandle();
     drawXfo(this.handle.rootTransform, "footXfo", resultFootXfo);
     drawXfo(this.handle.rootTransform, "ballXfo", resultBallXfo);
   }

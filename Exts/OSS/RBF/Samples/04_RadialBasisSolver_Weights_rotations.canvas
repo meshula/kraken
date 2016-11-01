@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "0",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : -0.05602889880537987,\n    \"y\" : -0.3990143835544586,\n    \"z\" : 0.9174063801765442,\n    \"t\" : 6.89267110824585\n    },\n  \"row1\" : {\n    \"x\" : -7.81161361373961e-06,\n    \"y\" : 0.916531503200531,\n    \"z\" : 0.4006468057632446,\n    \"t\" : 3.474809646606445\n    },\n  \"row2\" : {\n    \"x\" : -1.000781893730164,\n    \"y\" : 0.02233171463012695,\n    \"z\" : -0.0513642281293869,\n    \"t\" : 1.199779033660889\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9566534161567688,\n    \"y\" : -0.06557098031044006,\n    \"z\" : 0.2923787832260132,\n    \"t\" : 2.373215913772583\n    },\n  \"row1\" : {\n    \"x\" : -8.107741450658068e-06,\n    \"y\" : 0.9755053520202637,\n    \"z\" : 0.2199676334857941,\n    \"t\" : 1.99315881729126\n    },\n  \"row2\" : {\n    \"x\" : -0.2996664643287659,\n    \"y\" : -0.2093547880649567,\n    \"z\" : 0.9333822727203369,\n    \"t\" : 7.888878345489502\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "0",
     "timeline_loopMode" : "1",
-    "uiGraphZoom" : "{\n  \"value\" : 0.5728914141654968\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.9109946489334106\n  }",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "7.808166980743408",
-    "timeline_current" : "6",
+    "camera_focalDistance" : "8.083539009094238",
+    "timeline_current" : "0",
     "timeline_end" : "50",
-    "uiGraphPan" : "{\n  \"x\" : 1387.18896484375,\n  \"y\" : 497.0855712890625\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 1211.286743164063,\n  \"y\" : 376.404052734375\n  }"
     },
   "title" : "",
   "ports" : [
@@ -100,16 +100,6 @@
       "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "Xfo"
-      },
-    {
-      "objectType" : "ExecPort",
-      "metadata" : {
-        "uiPersistValue" : "true"
-        },
-      "name" : "posA",
-      "nodePortType" : "Out",
-      "execPortType" : "In",
-      "typeSpec" : "Vec3"
       },
     {
       "objectType" : "ExecPort",
@@ -230,7 +220,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-350.953535795,\"y\":-195.933099151}"
+        "uiGraphPos" : "{\"x\":-350.953308105,\"y\":-255.209037304}"
         },
       "name" : "SetFromColor_1",
       "ports" : [
@@ -363,7 +353,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":258.808393359,\"y\":-394.748483539}"
+        "uiGraphPos" : "{\"x\":262.971385837,\"y\":-394.748474121}"
         },
       "name" : "Solve_3",
       "ports" : [
@@ -712,7 +702,7 @@
       "objectType" : "Inst",
       "metadata" : {
         "uiComment" : "Get Input(s)",
-        "uiGraphPos" : "{\"x\":-1748.57229042,\"y\":-685.6521825790001}",
+        "uiGraphPos" : "{\"x\":-1745.9054656,\"y\":-653.65080452}",
         "uiCollapsedState" : "2",
         "uiCommentExpanded" : "true"
         },
@@ -761,7 +751,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1444.83133221,\"y\":-653.395918369}",
+        "uiGraphPos" : "{\"x\":-1458.16497684,\"y\":-645.39566493}",
         "uiCollapsedState" : "1"
         },
       "name" : "GetTransformArray_2",
@@ -803,7 +793,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-875.506573677,\"y\":-762.647608995}",
+        "uiGraphPos" : "{\"x\":-850.528252363,\"y\":-766.81068027}",
         "uiCollapsedState" : "1"
         },
       "name" : "DrawAxesInstances_2",
@@ -848,7 +838,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1191.58059156,\"y\":-713.177748799}",
+        "uiGraphPos" : "{\"x\":-1184.64215004,\"y\":-721.503766775}",
         "uiCollapsedState" : "2"
         },
       "name" : "ExtendArray",
@@ -1969,7 +1959,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-833.1024609800001,\"y\":-227.107991099}"
+        "uiGraphPos" : "{\"x\":-901.6888371710001,\"y\":-172.756253839}"
         },
       "name" : "ColorArray_1",
       "ports" : [
@@ -2016,7 +2006,7 @@ dfgEntry {
               0,
               1,
               0,
-              1
+              0
               ]
             }
           },
@@ -2046,7 +2036,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1216.90588641,\"y\":-320.05379653}",
+        "uiGraphPos" : "{\"x\":-1210.2390058,\"y\":-326.72074151}",
         "uiCollapsedState" : "0"
         },
       "name" : "getPositionsFromXfos_2",
@@ -3134,7 +3124,8 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1616.19664431,\"y\":-674.425032377}"
+        "uiGraphPos" : "{\"x\":-1598.8627851,\"y\":-629.089764595}",
+        "uiCollapsedState" : "2"
         },
       "name" : "getFirstN",
       "ports" : [
@@ -3268,207 +3259,6 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1721.76432467,\"y\":-100.687038422}"
-        },
-      "name" : "AddOrientationSphericalManip_2",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "name" : "exec",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "this",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "name",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "String" : "rot3"
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "mesh",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "xfo",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "color",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0.1843137294054031,
-              "g" : 0.2156862765550613,
-              "b" : 0.2431372553110123,
-              "a" : 1
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "size",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Float32" : 1
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "tolerance",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "parentInstance",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "portToDrive",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "String" : "OriXfo"
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "instance",
-          "nodePortType" : "Out"
-          }
-        ],
-      "executable" : "Fabric.Exts.Manipulation.ManipHandle.AddOrientationSphericalManip",
-      "presetGUID" : "D4497B070C9C0AEF1BA82725F58C7C45"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":-1930.97562838,\"y\":-93.8293266296}"
-        },
-      "name" : "EmptyManipHandle_3",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "name" : "exec",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "value",
-          "nodePortType" : "Out"
-          }
-        ],
-      "executable" : "Fabric.Exts.Manipulation.ManipHandle.EmptyManipHandle",
-      "presetGUID" : "55DA0D5962E79ACD27363B59D84F94C0"
-      },
-    {
-      "objectType" : "Var",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":-1930.98905611,\"y\":-27.1972007751}"
-        },
-      "name" : "Orientation",
-      "ports" : [
-        {
-          "objectType" : "VarPort",
-          "name" : "value",
-          "nodePortType" : "IO"
-          }
-        ],
-      "dataType" : "Xfo"
-      },
-    {
-      "objectType" : "Set",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":-1942.06889009,\"y\":118.112186432}"
-        },
-      "name" : "set",
-      "ports" : [
-        {
-          "objectType" : "SetPort",
-          "name" : "value",
-          "nodePortType" : "IO"
-          }
-        ],
-      "varPath" : "Orientation"
-      },
-    {
-      "objectType" : "Get",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":-1942.6338315,\"y\":43.6031684875}"
-        },
-      "name" : "get_2",
-      "ports" : [
-        {
-          "objectType" : "GetPort",
-          "name" : "value",
-          "nodePortType" : "Out"
-          }
-        ],
-      "varPath" : "Orientation"
-      },
-    {
-      "objectType" : "Var",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":-1415.12603164,\"y\":-144.406493902}"
-        },
-      "name" : "manipulation_2",
-      "ports" : [
-        {
-          "objectType" : "VarPort",
-          "name" : "value",
-          "nodePortType" : "IO"
-          }
-        ],
-      "dataType" : "ManipHandle",
-      "extDep" : "Manipulation:*"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":-1208.25679386,\"y\":-71.34318315980001}"
-        },
-      "name" : "DecomposeXfo_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "name" : "exec",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "value",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "ori",
-          "nodePortType" : "Out"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "tr",
-          "nodePortType" : "Out"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "sc",
-          "nodePortType" : "Out"
-          }
-        ],
-      "executable" : "Fabric.Exts.Math.Xfo.DecomposeXfo",
-      "presetGUID" : "B107519BBF556653A095030A4CC02DBC"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
         "uiGraphPos" : "{\"x\":-914.99451226,\"y\":-511.270425618}"
         },
       "name" : "getOrisFromXfos",
@@ -3561,7 +3351,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-81.3123497963,\"y\":-90.35763072970001}"
+        "uiGraphPos" : "{\"x\":-82.70002615449999,\"y\":-86.19458401200001}"
         },
       "name" : "SetFromQuat_2",
       "ports" : [
@@ -3587,9 +3377,10 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-491.606853485,\"y\":-36.6218986511}"
+        "uiGraphPos" : "{\"x\":-1197.74110126,\"y\":-456.671232224}",
+        "uiCollapsedState" : "0"
         },
-      "name" : "Push_1",
+      "name" : "getOrisFromXfos_3",
       "ports" : [
         {
           "objectType" : "InstPort",
@@ -3598,35 +3389,62 @@ dfgEntry {
           },
         {
           "objectType" : "InstPort",
-          "name" : "array",
-          "nodePortType" : "IO"
+          "name" : "Xfos",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "name" : "element",
-          "nodePortType" : "In"
+          "name" : "result",
+          "nodePortType" : "Out"
           }
         ],
-      "executable" : "Fabric.Core.Array.Push",
-      "presetGUID" : "572880BF96ACC34D6987BE3333715F52"
-      },
-    {
-      "objectType" : "User",
-      "metadata" : {
-        "uiTitle" : "Manipulation Setup",
-        "uiGraphPos" : "{\"x\":-1996.78153658,\"y\":-142.56583786}",
-        "uiNodeColor" : "{\n  \"r\" : 0,\n  \"g\" : 213,\n  \"b\" : 255,\n  \"a\" : 115\n  }",
-        "uiGraphSize" : "{\"w\":801.204833984,\"h\":325.940643311}"
-        },
-      "name" : "uiBackDropManipulation0",
-      "ports" : []
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+          },
+        "title" : "getPositionsFromXfos",
+        "ports" : [
+          {
+            "objectType" : "ExecPort",
+            "name" : "exec",
+            "nodePortType" : "IO",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "Xfos",
+            "nodePortType" : "Out",
+            "execPortType" : "In",
+            "typeSpec" : "Xfo[]"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "result",
+            "nodePortType" : "In",
+            "execPortType" : "Out",
+            "typeSpec" : "Quat[]"
+            }
+          ],
+        "extDeps" : {},
+        "code" : "dfgEntry {
+  result.resize(Xfos.size());
+  for(UInt32 i; i<Xfos.size(); i++)
+  {
+    result[i] = Xfos[i].ori;
+  }
+}
+"
+        }
       },
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-1018.28361773,\"y\":-703.545206547}"
+        "uiGraphPos" : "{\"x\":-678.753923655,\"y\":-638.008289337}"
         },
-      "name" : "Push_2",
+      "name" : "Get_1",
       "ports" : [
         {
           "objectType" : "InstPort",
@@ -3636,16 +3454,21 @@ dfgEntry {
         {
           "objectType" : "InstPort",
           "name" : "array",
-          "nodePortType" : "IO"
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "index",
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
           "name" : "element",
-          "nodePortType" : "In"
+          "nodePortType" : "Out"
           }
         ],
-      "executable" : "Fabric.Core.Array.Push",
-      "presetGUID" : "572880BF96ACC34D6987BE3333715F52"
+      "executable" : "Fabric.Core.Array.Get",
+      "presetGUID" : "880D755392299678EEB93260424986E2"
       }
     ],
   "connections" : {
@@ -3663,9 +3486,6 @@ dfgEntry {
       ],
     "timeline" : [
       "FrameToTime_1.frame"
-      ],
-    "OriXfo" : [
-      "set.value"
       ],
     "EmptyDrawingHandle_1.handle" : [
       "DrawPoints_1.this"
@@ -3728,13 +3548,15 @@ dfgEntry {
     "GetTransformArray_2.xfos" : [
       "ExtendArray.rhs",
       "getPositionsFromXfos_2.Xfos",
-      "Size_1.array"
+      "Size_1.array",
+      "getOrisFromXfos_3.Xfos",
+      "Get_1.array"
       ],
     "DrawAxesInstances_2.this" : [
       "exec"
       ],
     "ExtendArray.result" : [
-      "Push_2.array"
+      "DrawAxesInstances_2.transforms"
       ],
     "getPositionsFromXfos.result" : [
       "SetFromVec3_1.values",
@@ -3768,26 +3590,6 @@ dfgEntry {
     "SolveWeights_1.result" : [
       "ToFloat32_3.this"
       ],
-    "AddOrientationSphericalManip_2.this" : [
-      "manipulation_2.value"
-      ],
-    "EmptyManipHandle_3.value" : [
-      "AddOrientationSphericalManip_2.this"
-      ],
-    "set.value" : [
-      "DecomposeXfo_1.value",
-      "value",
-      "Push_2.element"
-      ],
-    "get_2.value" : [
-      "AddOrientationSphericalManip_2.xfo"
-      ],
-    "manipulation_2.value" : [
-      "exec"
-      ],
-    "DecomposeXfo_1.ori" : [
-      "Push_1.element"
-      ],
     "getOrisFromXfos.result" : [
       "SetFromQuat_1.values",
       "result"
@@ -3799,11 +3601,11 @@ dfgEntry {
       "SolveWeights_1.keys",
       "Solve_3.keys"
       ],
-    "Push_1.array" : [
+    "getOrisFromXfos_3.result" : [
       "SetFromQuat_2.values"
       ],
-    "Push_2.array" : [
-      "DrawAxesInstances_2.transforms"
+    "Get_1.element" : [
+      "value"
       ]
     },
   "requiredPresets" : {
@@ -9736,389 +9538,6 @@ dfgEntry {
 }
 "
       },
-    "Fabric.Exts.Manipulation.ManipHandle.AddOrientationSphericalManip" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Manipulation/ManipHandle.html",
-        "uiTooltip" : "Registers a single position manipulator if it doesn't exist yet\n\n Supported by ManipHandle"
-        },
-      "title" : "AddOrientationSphericalManip",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "this",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "ManipHandle"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "name",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "String" : "rot"
-            },
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
-            },
-          "name" : "mesh",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "PolygonMesh"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "name" : "xfo",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Xfo"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "name" : "color",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0,
-              "g" : 1,
-              "b" : 0,
-              "a" : 1
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "size",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Scalar" : 1
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "tolerance",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Float32" : 0.001000000047497451
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Float32"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "parentInstance",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "InlineInstance"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "portToDrive",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "instance",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "InlineInstance"
-          }
-        ],
-      "extDeps" : {
-        "Manipulation" : "*"
-        },
-      "presetGUID" : "D4497B070C9C0AEF1BA82725F58C7C45",
-      "code" : "require Manipulation;
-
-dfgEntry {
-  this.addOrientationSphericalManip(name, mesh, xfo, color, size, tolerance, parentInstance, portToDrive, instance);
-}
-"
-      },
-    "Fabric.Exts.Manipulation.ManipHandle.EmptyManipHandle" : {
-      "objectType" : "Graph",
-      "title" : "Empty ManipHandle",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "value",
-          "nodePortType" : "In",
-          "execPortType" : "Out"
-          }
-        ],
-      "extDeps" : {},
-      "presetGUID" : "55DA0D5962E79ACD27363B59D84F94C0",
-      "nodes" : [
-        {
-          "objectType" : "Inst",
-          "name" : "ManipHandle",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "name" : "exec",
-              "nodePortType" : "IO"
-              },
-            {
-              "objectType" : "InstPort",
-              "name" : "name",
-              "nodePortType" : "In"
-              },
-            {
-              "objectType" : "InstPort",
-              "name" : "result",
-              "nodePortType" : "Out"
-              }
-            ],
-          "executable" : "Fabric.Exts.Manipulation.ManipHandle.ManipHandle",
-          "presetGUID" : "1CEFFB4634DAD0A4AAFA9AB4BAEA908C"
-          },
-        {
-          "objectType" : "Var",
-          "name" : "handle",
-          "ports" : [
-            {
-              "objectType" : "VarPort",
-              "name" : "value",
-              "nodePortType" : "IO"
-              }
-            ],
-          "dataType" : "ManipHandle",
-          "extDep" : "Manipulation:*"
-          },
-        {
-          "objectType" : "Inst",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\": 657, \"y\": 180}"
-            },
-          "name" : "Clear",
-          "ports" : [
-            {
-              "objectType" : "InstPort",
-              "name" : "exec",
-              "nodePortType" : "IO"
-              },
-            {
-              "objectType" : "InstPort",
-              "name" : "this",
-              "nodePortType" : "IO"
-              }
-            ],
-          "executable" : "Fabric.Exts.Manipulation.ManipHandle.Clear",
-          "presetGUID" : "AE7BCC3342A7E192E9C40F7E9D086652"
-          }
-        ],
-      "connections" : {
-        "ManipHandle.result" : [
-          "handle.value"
-          ],
-        "handle.value" : [
-          "Clear.this"
-          ],
-        "Clear.this" : [
-          "value"
-          ]
-        }
-      },
-    "Fabric.Exts.Manipulation.ManipHandle.ManipHandle" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Manipulation/ManipHandle.html",
-        "uiTooltip" : "constructor taking a name\n\n Supported by ManipHandle"
-        },
-      "title" : "ManipHandle",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "name",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "String" : "Manipulation"
-            },
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "result",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "ManipHandle"
-          }
-        ],
-      "extDeps" : {
-        "Manipulation" : "*"
-        },
-      "presetGUID" : "1CEFFB4634DAD0A4AAFA9AB4BAEA908C",
-      "code" : "require Manipulation;
-
-dfgEntry {
-  result = ManipHandle(name);
-}
-"
-      },
-    "Fabric.Exts.Manipulation.ManipHandle.Clear" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Manipulation/ManipHandle.html",
-        "uiTooltip" : "clears the content of the ManipHandle\n\n Supported by ManipHandle"
-        },
-      "title" : "Clear",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "this",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "ManipHandle"
-          }
-        ],
-      "extDeps" : {
-        "Manipulation" : "*"
-        },
-      "presetGUID" : "AE7BCC3342A7E192E9C40F7E9D086652",
-      "code" : "require Manipulation;
-
-dfgEntry {
-  this.clear();
-}
-"
-      },
-    "Fabric.Exts.Math.Xfo.DecomposeXfo" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Xfo.html"
-        },
-      "title" : "Xfo ->",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "name" : "value",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Xfo" : {
-              "ori" : {
-                "v" : {
-                  "x" : 0,
-                  "y" : 0,
-                  "z" : 0
-                  },
-                "w" : 1
-                },
-              "tr" : {
-                "x" : 0,
-                "y" : 0,
-                "z" : 0
-                },
-              "sc" : {
-                "x" : 1,
-                "y" : 1,
-                "z" : 1
-                }
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Xfo"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
-            },
-          "name" : "ori",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "Quat"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "tr",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "sc",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec3"
-          }
-        ],
-      "extDeps" : {
-        "Math" : "*"
-        },
-      "presetGUID" : "B107519BBF556653A095030A4CC02DBC",
-      "code" : "require Math;
-
-dfgEntry {
-  ori = value.ori;
-  tr = value.tr;
-  sc = value.sc;
-}
-"
-      },
     "Fabric.Exts.RadialBasis.RadialBasisArray.SetFromQuat" : {
       "objectType" : "Func",
       "metadata" : {
@@ -10159,6 +9578,47 @@ dfgEntry {
 
 dfgEntry {
   this.setFromQuat(values);
+}
+"
+      },
+    "Fabric.Core.Array.Get" : {
+      "objectType" : "Func",
+      "title" : "Get[]",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "array",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "index",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "UInt32"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "element",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "880D755392299678EEB93260424986E2",
+      "code" : "
+dfgEntry {
+	element = array[index];
 }
 "
       }
@@ -10219,15 +9679,6 @@ dfgEntry {
           "y" : 1,
           "z" : 1
           }
-        },
-      "ext" : "Math"
-      },
-    {
-      "type" : "Vec3",
-      "value" : {
-        "x" : 0.9612321853637695,
-        "y" : 0.108673095703125,
-        "z" : 2.240246772766113
         },
       "ext" : "Math"
       },

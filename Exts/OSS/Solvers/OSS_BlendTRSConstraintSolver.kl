@@ -16,7 +16,6 @@ function OSS_BlendTRSConstraintSolver()
   this.defaultValues["blendTranslate"] = 0;
   this.defaultValues["blendRotate"] = 0;
   this.defaultValues["blendScale"] = 0;
-  this.defaultValues["parentSpace"] = Mat44();
   this.defaultValues["constrainerTranslateA"] = Mat44();
   this.defaultValues["constrainerTranslateB"] = Mat44();
   this.defaultValues["constrainerRotateA"] = Mat44();
@@ -33,7 +32,6 @@ function KrakenSolverArg[] OSS_BlendTRSConstraintSolver.getArguments(){
   args.push(KrakenSolverArg('blendTranslate', 'In', 'Scalar'));
   args.push(KrakenSolverArg('blendRotate', 'In', 'Scalar'));
   args.push(KrakenSolverArg('blendScale', 'In', 'Scalar'));
-  args.push(KrakenSolverArg('parentSpace', 'In', 'Mat44'));
   args.push(KrakenSolverArg('constrainerTranslateA', 'In', 'Mat44'));
   args.push(KrakenSolverArg('constrainerTranslateB', 'In', 'Mat44'));
   args.push(KrakenSolverArg('constrainerRotateA', 'In', 'Mat44'));
@@ -54,7 +52,6 @@ function OSS_BlendTRSConstraintSolver.solve!
   in Scalar blendTranslate,
   in Scalar blendRotate,
   in Scalar blendScale,
-  in Mat44 parentSpace,
   in Mat44 constrainerTranslateA,
   in Mat44 constrainerTranslateB,
   in Mat44 constrainerRotateA,
@@ -110,9 +107,6 @@ function OSS_BlendTRSConstraintSolver.solve!
   {
     result.setScaling(Xfo(constrainerScaleA).sc.linearInterpolate(Xfo(constrainerScaleB).sc, blendScale));
   }
-
-  // Would it be faster to check for parentSpace is indenity first and not do this?
-  result = parentSpace.inverse() * result;
 
   // Set debugging visibility.
   this.setDebug(this.drawDebug);
