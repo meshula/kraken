@@ -306,7 +306,7 @@ class OSS_Component(BaseExampleComponent):
         sourceObject = sourceAttribute.getParent().getParent()
         destObject = destAttribute.getParent().getParent()
 
-        name = sourceObject.getName()+"_"+sourceAttribute.getName()+"_2_"+destObject.getName()+"_"+destAttribute.getName()+'_RemapScalarValueSolver'
+        name = sourceObject.getName()+"_"+sourceAttribute.getName()+"_2_"+destObject.getName()+"_"+destAttribute.getName()+'_ReverseSolver'
         attrGrp = AttributeGroup("Reversed", parent=destObject)
         if destAttribute.isTypeOf("BoolAttribute"):  #Can't pass bool to kl solver so create an intermediate float attribute
             parent = destAttribute.getParent()
