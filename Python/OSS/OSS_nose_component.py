@@ -288,7 +288,7 @@ class OSSNoseComponentRig(OSSNoseComponent):
         self.noseMidCtrlSpace.xfo = noseMidXfo
         self.noseMidCtrlSpaceRest.xfo = noseMidXfo
         # self.noseMidCtrlAlignSpace.xfo = noseMidXfo
-        
+
         self.noseTipCtrlSpace.xfo = noseTipXfo
         self.noseTipCtrl.xfo = noseTipXfo
         self.noseTipCtrlSpaceRest.xfo = noseTipXfo
@@ -321,7 +321,7 @@ class OSSNoseComponentRig(OSSNoseComponent):
         self.noseTopAimKLOP.setInput('rest', self.noseTopAlignSpaceRest)
         self.noseTopAimKLOP.setInput('ik', self.midLipSpace)
         # Add Xfo Inputs
-        self.noseTopAimKLOP.setInput('up', self.noseUpCtrl)    
+        self.noseTopAimKLOP.setInput('up', self.noseUpCtrl)
         self.noseTopAimKLOP.setOutput('result', self.noseTopAlignSpace)
 
 
@@ -330,7 +330,6 @@ class OSSNoseComponentRig(OSSNoseComponent):
         self.alignNoseToLipOp = self.blend_two_xfos(
             self.noseTopBlendSpace,
             self.noseTopFKSpace, self.noseTopAlignSpace,
-            parentSpace = self.ctrlCmpGrp,
             blendTranslate=0,
             blendRotate=self.alignToLip,
             blendScale=0,
