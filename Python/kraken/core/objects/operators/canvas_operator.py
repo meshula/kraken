@@ -6,6 +6,7 @@ CanvasOperator - Canvas operator object.
 """
 
 import pprint
+import re
 
 from kraken.core.maths import MathObject, Mat44, Vec2, Vec3, Xfo
 from kraken.core.objects.object_3d import Object3D
@@ -20,8 +21,10 @@ logger = getLogger('kraken')
 class CanvasOperator(Operator):
     """Canvas Operator representation."""
 
-    def __init__(self, name, canvasPresetPath):
-        super(CanvasOperator, self).__init__(name)
+    def __init__(self, name, canvasPresetPath, metaData=None, addCanvasPresetToName=True):
+        if addCanvasPresetToName:
+            name += "_"+re.sub(r'\W+', '', canvasPresetPath)
+        super(CanvasOperator, self).__init__(name, metaData=metaData)
 
         self.canvasPresetPath = canvasPresetPath
 
