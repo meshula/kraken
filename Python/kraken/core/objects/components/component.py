@@ -717,12 +717,13 @@ class Component(Object3D):
             bool: True if successful.
 
         """
+        operator.setParent(self)
 
-        if operator.getName() in [x.getName() for x in self._operators]:
-            raise IndexError("Operator with " + operator.getName() + " already exists as a operator.")
+        if operator.getBuildName() in [x.getBuildName() for x in self._operators]:
+            raise IndexError("Operator with " + operator.getBuildName() + " already exists as a operator.")
 
         self._operators.append(operator)
-        operator.setParent(self)
+
 
         return True
 
