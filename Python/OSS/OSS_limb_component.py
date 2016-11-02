@@ -441,7 +441,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.limbBone0LenInputAttr = ScalarAttribute('bone0Len', value=1.0, parent=limbSettingsAttrGrp)
         self.limbBone1LenInputAttr = ScalarAttribute('bone1Len', value=1.0, parent=limbSettingsAttrGrp)
-        self.limbDrawDebugAttr = BoolAttribute('drawDebug', value=True, parent=limbSettingsAttrGrp)
+        self.limbDrawDebugAttr = BoolAttribute('drawDebug', value=False, parent=limbSettingsAttrGrp)
 
         self.drawDebugInputAttr.connect(self.limbDrawDebugAttr)
 
@@ -709,7 +709,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.createControls(data)
 
-        self.drawDebugInputAttr.setValue(True)
+        self.drawDebugInputAttr.setValue(False)
 
         if self.getLocation() == "R":
             pass
