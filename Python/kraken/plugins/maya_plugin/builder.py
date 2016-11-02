@@ -1185,6 +1185,9 @@ class Builder(Builder):
                                        execPath=solverSolveNodeName,
                                        code=opSourceCode)
 
+            if kOperator.testFlag('disableParallelEval') is False:
+                pm.FabricCanvasSetExecuteShared(mayaNode=canvasNode, enable=True)
+
         finally:
             pass
 

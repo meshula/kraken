@@ -252,7 +252,6 @@ class SceneItem(object):
 
         return True
 
-
     def removeSource(self, source):
         """Removes a source from this object.
 
@@ -265,7 +264,6 @@ class SceneItem(object):
             return False
 
         self._sources[:] = [s for s in self._sources if s != source]
-
 
     def setSource(self, index, source):
         """Sets the source of this object.
@@ -308,6 +306,60 @@ class SceneItem(object):
 
         return True
 
+    # =============
+    # Flag Methods
+    # =============
+    def setFlag(self, name):
+        """Sets the flag of the specified name.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._flags[name] = True
+
+        return True
+
+    def testFlag(self, name):
+        """Tests if the specified flag is set.
+
+        Args:
+            name (str): Name of the flag to test.
+
+        Returns:
+            bool: True if flag is set.
+
+        """
+
+        return name in self._flags
+
+    def clearFlag(self, name):
+        """Clears the flag of the specified name.
+
+        Args:
+            name (str): Name of the flag to clear.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if name in self._flags:
+            del self._flags[name]
+            return True
+
+        return False
+
+    def getFlags(self):
+        """Returns all flags set on this object.
+
+        Returns:
+            list: Flags set on this object.
+
+        """
+
+        return self._flags.keys()
 
     # ==========
     # Meta Data
