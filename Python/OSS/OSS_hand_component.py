@@ -473,7 +473,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
         # Wait, can this be a hier blend op?
         # Add Hand Blend KL Op
-        self.IKHandBlendKLOp = KLOperator(self.getLocation()+self.getName()+'IKHandBlendKLOp', 'OSS_IKFootBlendSolver', 'OSS_Kraken')
+        self.IKHandBlendKLOp = KLOperator(self.getName(), 'OSS_IKFootBlendSolver', 'OSS_Kraken')
         self.addOperator(self.IKHandBlendKLOp)
         # Add Att Inputs
         self.IKHandBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)

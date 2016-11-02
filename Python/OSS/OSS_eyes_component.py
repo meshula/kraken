@@ -357,7 +357,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
         # Add Fabric Ops
         # ===============
         # Add Spine Canvas Op
-        self.EyeAutoAimKLOp = KLOperator('EyeAutoAimKLOp', 'OSS_AimKLSolver', 'OSS_Kraken')
+        self.EyeAutoAimKLOp = KLOperator('EyeAutoAim', 'OSS_AimKLSolver', 'OSS_Kraken')
         self.addOperator(self.EyeAutoAimKLOp)
 
         # Add Att Inputs
@@ -514,7 +514,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
         self.eyeTracker.xfo = data['eyesEndXfo']
         self.eyeTrackerIKSpace.xfo = data['eyesEndXfo']
 
-        self.globalScale = data['globalComponentCtrlSize'] 
+        self.globalScale = data['globalComponentCtrlSize']
         self.globalScaleVec = Vec3(self.globalScale, self.globalScale, self.globalScale)
 
         self.createControls(data["EyeName"], data)

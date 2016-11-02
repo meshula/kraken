@@ -279,7 +279,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # ===============
         # Add Curve Canvas Op
 
-        self.NURBSCurveKLOp = KLOperator('NURBSCurveKLOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
+        self.NURBSCurveKLOp = KLOperator('curve', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(self.NURBSCurveKLOp)
 
         self.NURBSCurveKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -355,7 +355,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
                 if self.exposeControls:
                     newCtrl = Control(self.name + defName, parent=parent, shape="squarePointed")
                     newCtrl.setColor("red")
-                else: 
+                else:
                     newCtrl = Transform(self.name + defName, parent=parent)
 
                 newCtrl.xfo = data[defName + "Xfo"]
@@ -463,7 +463,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
                     ctrl.scalePoints(Vec3(1 - i*taperRatio, 1 - i*taperRatio, 1 - i*taperRatio))
                     ctrl.setColor("gold")
                     ctrlParent = ctrl.insertCtrlSpace()
-                else: 
+                else:
                     ctrlParent = ctrl
                 #this is for a curve only solution
                 if not self.controlHierarchy or i ==0:

@@ -523,7 +523,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.uplimbWorldSpaceConstraint      = self.uplimbWorldSpace.constrainTo(self.ctrlCmpGrp, maintainOffset=True)
 
         # Blend the Spaces (should make this a sub proc)
-        self.limbUpVSpaceHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'UpVSpace_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+        self.limbUpVSpaceHierBlendSolver = KLOperator(self.getName()+'UpVSpace', 'OSS_HierBlendSolver', 'OSS_Kraken')
         self.addOperator(self.limbUpVSpaceHierBlendSolver)
         self.limbUpVSpaceHierBlendSolver.setInput('blend', upVSpaceBlendInputAttr)
         upVSpaceBlendInputAttr.setValue(0.0)
@@ -557,7 +557,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             name= self.uplimbName + 'BlendKLOp')
 
         # Add FK/IK Blend Limb KL Op
-        self.limbIKKLOp = KLOperator(self.getLocation()+self.getName()+'IKFKTwoBoneIKSolver', 'OSS_TwoBoneIKSolver', 'OSS_Kraken')
+        self.limbIKKLOp = KLOperator(self.getName()+'IKFK', 'OSS_TwoBoneIKSolver', 'OSS_Kraken')
         self.addOperator(self.limbIKKLOp)
         # Add Att Inputs
         self.limbIKKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -588,7 +588,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if self.addMidControls:
             sourceA = self.uplimb_cmpOut
             sourceB = self.lolimbIKCtrl
-            self.uplimbMidCtrlRigOp = KLOperator(self.uplimbName + "MidBlendOp", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+            self.uplimbMidCtrlRigOp = KLOperator(self.uplimbName + "Mid", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
             self.addOperator(self.uplimbMidCtrlRigOp)
             self.uplimbMidCtrlRigOp.setInput('blendTranslate', 0.5)
             self.uplimbMidCtrlRigOp.setInput('blendRotate', 0)
@@ -603,7 +603,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
             sourceA = self.lolimbIKCtrl
             sourceB = self.endlimb_cmpOut
-            self.lolimbMidCtrlRigOp = KLOperator(self.lolimbName + "MidBlendOp", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+            self.lolimbMidCtrlRigOp = KLOperator(self.lolimbName + "Mid", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
             self.addOperator(self.lolimbMidCtrlRigOp)
             self.lolimbMidCtrlRigOp.setInput('blendTranslate', 0.5)
             self.lolimbMidCtrlRigOp.setInput('blendRotate', 0)
@@ -629,7 +629,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.limbIKKLOp.setOutput('bone2Out', self.limbIKKLOp_bone2_out)
 
             # Add Limb HierBlend Solver for Mocap
-            self.limbMocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'limbMocapHierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.limbMocapHierBlendSolver = KLOperator(self.getName()+'limbMocap', 'OSS_HierBlendSolver', 'OSS_Kraken')
             self.addOperator(self.limbMocapHierBlendSolver)
             self.limbMocapHierBlendSolver.setInput('blend', self.limbMocapInputAttr)
             self.limbMocapHierBlendSolver.setInput('parentIndexes', [-1, 0, 1])
@@ -650,7 +650,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             uplimbSolverOut = self.createOutput(self.uplimbName+"uplimbSolverOut", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
             self.limbIKKLOp.setOutput('bone0Out', uplimbSolverOut)
 
-            self.untwistKLOp = KLOperator(self.getLocation()+self.getName()+'OSS_UntwistSolver', 'OSS_UntwistSolver', 'OSS_Kraken')
+            self.untwistKLOp = KLOperator(self.getName(), 'OSS_UntwistSolver', 'OSS_Kraken')
             self.addOperator(self.untwistKLOp)
             self.untwistKLOp.setInput('drawDebug', self.drawDebugInputAttr)
             self.untwistKLOp.setInput('rigScale', self.rigScaleInputAttr)

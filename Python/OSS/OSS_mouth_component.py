@@ -859,7 +859,7 @@ class OSSMouthRig(OSSMouth):
         lSourceA = self.loLipLevel1Outputs[-1]
         rSourceB = self.upLipLevel1Outputs[-1]
 
-        self.blendLeftCornerOp = KLOperator("blendLeftCornerOp" + "MidBlendOp", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+        self.blendLeftCornerOp = KLOperator("blendLeftCorner", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
         self.addOperator(self.blendLeftCornerOp)
         self.blendLeftCornerOp.setInput('blendTranslate', 0.0)
         self.blendLeftCornerOp.setInput('blendRotate', 0.5)
@@ -880,7 +880,7 @@ class OSSMouthRig(OSSMouth):
         rSourceA = self.loLipLevel1Outputs[0]
         rSourceB = self.upLipLevel1Outputs[0]
 
-        self.blendRightCornerOp = KLOperator("blendRightCornerOp", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+        self.blendRightCornerOp = KLOperator("blendRightCorner", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
         self.addOperator(self.blendRightCornerOp)
         self.blendRightCornerOp.setInput('blendTranslate', 0)
         self.blendRightCornerOp.setInput('blendRotate', 0.5)
