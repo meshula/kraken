@@ -1,0 +1,38 @@
+{
+  "objectType" : "Func",
+  "title" : "SetClip",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rig",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "KRK_kyle"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "clip",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "KrakenClip"
+      }
+    ],
+  "extDeps" : {
+    "KRK_kyle" : "*"
+    },
+  "code" : "dfgEntry {
+  rig.setClip(clip);
+}
+",
+  "args" : [
+    null,
+    null
+    ]
+  }
