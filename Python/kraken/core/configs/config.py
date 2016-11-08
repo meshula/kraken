@@ -326,7 +326,7 @@ class Config(object):
                     "Layer": ["container", "sep", "name"],
                     "ComponentGroup": ["name", "sep", "location", "sep", "type"],
                     "default": ["component", "sep", "location", "sep", "name", "sep", "type"],
-                    "KLOperator": ["component", "sep", "location", "sep", "name", "sep", "solverSource", "solverName", "sep", "type"],
+                    "KLOperator": ["component", "sep", "location", "sep", "name", "sep", "solverSource", "sep", "solverName", "sep", "type"],
                     "CanvasOperator": ["component", "sep", "location", "sep", "name", "sep", "solverSource", "sep", "solverName", "sep", "type"]
             }
         }
