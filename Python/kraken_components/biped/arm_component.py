@@ -154,6 +154,8 @@ class ArmComponentGuide(ArmComponent):
         guideOpName = ''.join([self.getName().split('GuideKLOp')[0], self.getLocation(), 'GuideKLOp'])
         self.armGuideKLOp.setName(guideOpName)
 
+        self.armGuideKLOp.evaluate()
+
         return True
 
 

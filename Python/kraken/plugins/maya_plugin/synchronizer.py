@@ -1,8 +1,15 @@
+
+import logging
+
 from kraken.core.maths import Xfo, Vec3, Quat
+
+from kraken.log import getLogger
 
 from kraken.core.synchronizer import Synchronizer
 from kraken.plugins.maya_plugin.utils import *
 from kraken.plugins.maya_plugin.utils.curves import curveToKraken
+
+logger = getLogger('kraken')
 
 
 class Synchronizer(Synchronizer):
@@ -76,13 +83,13 @@ class Synchronizer(Synchronizer):
         hrcMap = self.getHierarchyMap()
 
         if kObject not in hrcMap.keys():
-            print "Warning! 3D Object '" + kObject.getName() + "' was not found in the mapping!"
+            ogger.warning("SyncXfo: 3D Object '" + kObject.getName() + "' was not found in the mapping!")
             return False
 
         dccItem = hrcMap[kObject]['dccItem']
 
         if dccItem is None:
-            print "Warning Syncing. No DCC Item for :" + kObject.getPath()
+            ogger.warning("SyncXfo: Syncing. No DCC Item for :" + kObject.getPath())
             return False
 
         dccPos = dccItem.getTranslation(space='world')
@@ -124,13 +131,13 @@ class Synchronizer(Synchronizer):
         hrcMap = self.getHierarchyMap()
 
         if kObject not in hrcMap.keys():
-            print "Warning! Attribute '" + kObject.getName() + "' was not found in the mapping!"
+            logger.warning("SyncAttribute: Attribute '" + kObject.getName() + "' was not found in the mapping!")
             return False
 
         dccItem = hrcMap[kObject]['dccItem']
 
         if dccItem is None:
-            print "Warning Syncing. No DCC Item for :" + kObject.getPath()
+            logger.warning("SyncAttribute: Syncing. No DCC Item for :" + kObject.getPath())
             return
 
         kObject.setValue(dccItem.get())
@@ -152,16 +159,16 @@ class Synchronizer(Synchronizer):
         hrcMap = self.getHierarchyMap()
 
         if kObject not in hrcMap.keys():
-            print "Warning! 3D Object '" + kObject.getName() + "' was not found in the mapping!"
+            logger.warning("SyncCurveData: 3D Object '" + kObject.getName() + "' was not found in the mapping!")
             return False
 
         dccItem = hrcMap[kObject]['dccItem']
 
         if dccItem is None:
-            print "Warning Syncing. No DCC Item for :" + kObject.getPath()
+            logger.warning("SyncCurveData: No DCC Item for :" + kObject.getPath())
             return
 
-        # Get Curve Data from Softimage Curve
+        # Get Curve Data from Maya Curve
         data = curveToKraken(dccItem)
         kObject.setCurveData(data)
 

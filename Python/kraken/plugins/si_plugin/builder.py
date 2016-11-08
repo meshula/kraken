@@ -762,38 +762,6 @@ class Builder(Builder):
 
         return dccSceneItem
 
-    # ========================
-    # Component Build Methods
-    # ========================
-    def buildAttributeConnection(self, connectionInput):
-        """Builds the link between the target and connection target.
-
-        Args:
-            connectionInput (object): kraken component input to build
-                connections for.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        if connectionInput.isConnected() is False:
-            return False
-
-        connection = connectionInput.getConnection()
-        connectionTarget = connection.getTarget()
-        inputTarget = connectionInput.getTarget()
-
-        if connection.getDataType().endswith('[]'):
-            connectionTarget = connection.getTarget()[connectionInput.getIndex()]
-        else:
-            connectionTarget = connection.getTarget()
-
-        connectionTargetDCCSceneItem = self.getDCCSceneItem(connectionTarget)
-        targetDCCSceneItem = self.getDCCSceneItem(inputTarget)
-        targetDCCSceneItem.AddExpression(connectionTargetDCCSceneItem.FullName)
-
-        return True
 
     # =========================
     # Operator Builder Methods

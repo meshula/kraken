@@ -27,3 +27,7 @@ logging.basicConfig(format='[KRAKEN] %(levelname)s: %(message)s', level=logging.
 logging.INFORM = 25
 logging.addLevelName(logging.INFORM, 'INFORM')
 logging.Logger.inform = lambda inst, msg, *args, **kwargs: inst.log(logging.INFORM, msg, *args, **kwargs)
+
+
+def release():
+    print "RELEASE THE KRAKEN!!!!"

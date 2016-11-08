@@ -44,6 +44,8 @@ class ContextualNodeList(QtGui.QWidget):
 
     def __init__(self, parent):
         super(ContextualNodeList, self).__init__(parent)
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.setFocus()
 
         self.setFixedSize(250, 200)
 

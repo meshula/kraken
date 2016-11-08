@@ -427,26 +427,6 @@ class Builder(object):
 
         return dccSceneItem
 
-    # ========================
-    # Component Build Methods
-    # ========================
-    def buildAttributeConnection(self, componentInput):
-        """Builds the link between the target and connection target.
-
-        Note:
-            Implement in DCC Plugins.
-
-        Args:
-            componentInput (object): kraken connection to build.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        logger.info("buildAttributeConnection: " + componentInput.getPath())
-
-        return True
 
     # =========================
     # Operator Builder Methods

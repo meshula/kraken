@@ -1,8 +1,15 @@
+
+import logging
+
 from kraken.core.maths import Xfo, Vec3, Quat
+
+from kraken.log import getLogger
 
 from kraken.core.synchronizer import Synchronizer
 from kraken.plugins.si_plugin.utils import *
 from kraken.plugins.si_plugin.utils.curves import curveToKraken
+
+logger = getLogger('kraken')
 
 
 class Synchronizer(Synchronizer):
@@ -72,13 +79,13 @@ class Synchronizer(Synchronizer):
         hrcMap = self.getHierarchyMap()
 
         if kObject not in hrcMap.keys():
-            log("Warning! 3D Object '" + kObject.getName() + "' was not found in the mapping!", 8)
+            logger.warning("SyncXfo: 3D Object '" + kObject.getName() + "' was not found in the mapping!")
             return False
 
         dccItem = hrcMap[kObject]['dccItem']
 
         if dccItem is None:
-            log("Warning Syncing. No DCC Item for :" + kObject.getPath(), 8)
+            logger.warning("SyncXfo: No DCC Item for :" + kObject.getPath())
             return False
 
         dccXfo = dccItem.Kinematics.Global.GetTransform2(None)
@@ -91,9 +98,9 @@ class Synchronizer(Synchronizer):
 
         # If flag is set, pass the DCC Scale values.
         if kObject.testFlag('SYNC_SCALE') is True:
-            scl = Vec3(1.0, 1.0, 1.0)
-        else:
             scl = Vec3(x=dccScl[0], y=dccScl[1], z=dccScl[2])
+        else:
+            scl = Vec3(1.0, 1.0, 1.0)
 
         newXfo = Xfo(tr=pos, ori=quat, sc=scl)
 
@@ -121,13 +128,13 @@ class Synchronizer(Synchronizer):
         hrcMap = self.getHierarchyMap()
 
         if kObject not in hrcMap.keys():
-            log("Warning! Attribute '" + kObject.getName() + "' was not found in the mapping!", 8)
+            logger.warning("SyncAttribute: Attribute '" + kObject.getName() + "' was not found in the mapping!")
             return False
 
         dccItem = hrcMap[kObject]['dccItem']
 
         if dccItem is None:
-            log("Warning Syncing. No DCC Item for :" + kObject.getPath(), 8)
+            logger.warning("SyncAttribute: No DCC Item for :" + kObject.getPath())
             return
 
         kObject.setValue(dccItem.Value)
@@ -149,13 +156,13 @@ class Synchronizer(Synchronizer):
         hrcMap = self.getHierarchyMap()
 
         if kObject not in hrcMap.keys():
-            log("Warning! 3D Object '" + kObject.getName() + "' was not found in the mapping!", 8)
+            logger.warning("SyncCurveData: 3D Object '" + kObject.getName() + "' was not found in the mapping!")
             return False
 
         dccItem = hrcMap[kObject]['dccItem']
 
         if dccItem is None:
-            log("Warning Syncing. No DCC Item for :" + kObject.getPath(), 8)
+            logger.warning("SyncCurveData: No DCC Item for :" + kObject.getPath())
             return
 
         # Get Curve Data from Softimage Curve
