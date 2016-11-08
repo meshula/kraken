@@ -93,7 +93,7 @@ class Constraint(SceneItem):
                     skipSep = True
                     continue
 
-                builtName += self.getParent().getName()
+                builtName += self.getParent().getComponent().getName()
 
             elif token is 'container':
                 if self.getContainer() is None:
