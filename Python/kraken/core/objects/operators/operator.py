@@ -118,7 +118,8 @@ class Operator(SceneItem):
                 if self.isTypeOf("KLOperator"):
                     builtName += self.extension
                 else:
-                    builtName += self.canvasPresetPath.rpartition('.')[0].replace('.', '')
+                    builtName += re.sub("[\W\d]", "", self.canvasPresetPath.rpartition('.')[0])
+
 
             else:
                 raise ValueError("Unresolvabled token '" + token +
