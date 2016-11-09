@@ -16,8 +16,8 @@ from kraken.core.objects.components.base_example_component import BaseExampleCom
 class Container(Object3D):
     """Container object."""
 
-    def __init__(self, name):
-        super(Container, self).__init__(name, None)
+    def __init__(self, name, metaData=None):
+        super(Container, self).__init__(name, None, metaData=metaData)
 
         self.setShapeVisibility(False)
         self.lockRotation(x=True, y=True, z=True)

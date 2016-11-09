@@ -31,9 +31,9 @@ logger = getLogger('kraken')
 class Component(Object3D):
     """Kraken Component object."""
 
-    def __init__(self, name, parent=None, location='M'):
+    def __init__(self, name, parent=None, location='M', metaData=None):
         self.location = StringAttribute('location', value=location)
-        super(Component, self).__init__(name, parent)
+        super(Component, self).__init__(name, parent, metaData=metaData)
         self._color = (154, 205, 50, 255)
         self._inputs = []
         self._outputs = []
@@ -1020,6 +1020,8 @@ class Component(Object3D):
         """
         for obj in objectList:
             objName = obj.getName()
+            if obj.getMetaDataItem("altLocation") is not None:
+                objName = obj.getMetaDataItem("altLocation") + "_" + objName
             data[objName + "Xfo"] = obj.xfo
             if obj.isTypeOf("Curve"):
                 data[objName + "CurveData"] = obj.getCurveData()
@@ -1060,6 +1062,9 @@ class Component(Object3D):
              # this should probably live in the GuideClase
         for obj in objectList:
             objName = obj.getName()
+            if obj.getMetaDataItem("altLocation") is not None:
+                objName = obj.getMetaDataItem("altLocation") + "_" + objName
+
             if (objName + "Xfo") in data:
                 obj.xfo = data[objName + "Xfo"]
 

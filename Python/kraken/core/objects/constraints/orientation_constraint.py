@@ -13,5 +13,5 @@ from kraken.core.maths.quat import Quat
 class OrientationConstraint(Constraint):
     """Orientation Constraint."""
 
-    def __init__(self, name):
-        super(OrientationConstraint, self).__init__(name)
+    def __init__(self, name, metaData=None):
+        super(OrientationConstraint, self).__init__(name, metaData=metaData)
