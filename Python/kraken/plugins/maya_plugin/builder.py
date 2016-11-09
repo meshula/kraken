@@ -817,6 +817,12 @@ class Builder(Builder):
             canvasNode = pm.createNode('canvasNode', name=buildName)
             self._registerSceneItemPair(kOperator, pm.PyNode(canvasNode))
 
+            try:
+              # disable the eval context
+              pm.setAttr('%s.enableEvalContext' % canvasNode, False)
+            except:
+              pass
+
             config = Config.getInstance()
             nameTemplate = config.getNameTemplate()
             typeTokens = nameTemplate['types']
