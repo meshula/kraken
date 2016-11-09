@@ -5,6 +5,7 @@ Operator - Base operator object.
 
 """
 
+import re
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
 
