@@ -14,6 +14,6 @@ from kraken.core.maths.quat import Quat
 class PoseConstraint(Constraint):
     """Pose Constraint."""
 
-    def __init__(self, name):
-        super(PoseConstraint, self).__init__(name)
+    def __init__(self, name, metaData=None):
+        super(PoseConstraint, self).__init__(name, metaData=metaData)
 

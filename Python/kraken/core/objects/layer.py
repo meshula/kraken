@@ -11,8 +11,8 @@ from kraken.core.objects.object_3d import Object3D
 class Layer(Object3D):
     """Layer object."""
 
-    def __init__(self, name, parent=None):
-        super(Layer, self).__init__(name, parent=parent)
+    def __init__(self, name, parent=None, metaData=None):
+        super(Layer, self).__init__(name, parent=parent, metaData=metaData)
 
         self.setShapeVisibility(False)
         self.lockRotation(x=True, y=True, z=True)

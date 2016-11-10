@@ -11,7 +11,7 @@ class SceneItem(object):
 
     __maxId = 0
 
-    def __init__(self, name, parent=None):
+    def __init__(self, name, parent=None, metaData=None):
         super(SceneItem, self).__init__()
         self._parent = parent
         self._name = name
@@ -19,6 +19,8 @@ class SceneItem(object):
         self._sources = []
         self._id = SceneItem.__maxId
         self._metaData = {}
+        if metaData is not None:
+            self._metaData = metaData
 
         SceneItem.__maxId = SceneItem.__maxId + 1
 
