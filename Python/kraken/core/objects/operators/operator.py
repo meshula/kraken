@@ -251,7 +251,6 @@ class Operator(SceneItem):
                             ".\nValid inputs are:\n" +
                             "\n".join(self.inputs.keys()))
 
-
         if self.inputs[name] is None and self.getInputType(name).endswith('[]'):
             self.inputs[name] = []
 
@@ -292,7 +291,6 @@ class Operator(SceneItem):
                             self.getName() + ".")
 
         return self.inputs[name]
-
 
     def getInputType(self, name):
         """Returns the type of input with the specified name."""
@@ -392,13 +390,14 @@ class Operator(SceneItem):
                             "' was not found in operator: " + self.getName() +
                             ".")
 
-        return self.outputs[name]
+        if self.outputs[name] is None and self.getOutputType(name).endswith('[]'):
+            self.outputs[name] = []
 
+        return self.outputs[name]
 
     def getOutputType(self, name):
         """Returns the type of input with the specified name."""
         pass
-
 
     def getOutputNames(self):
         """Returns the names of all outputs.
