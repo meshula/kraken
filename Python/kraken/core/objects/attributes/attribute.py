@@ -230,7 +230,6 @@ class Attribute(SceneItem):
         return self._connection
 
     def connect(self, attribute, lock=False):
-    def connect(self, attribute):
         """Connects this attribute with another..
 
         Args:
@@ -246,6 +245,8 @@ class Attribute(SceneItem):
         self.addSource(attribute)
 
         if lock:  # only lock if true, otherwise don't change # Currently is not working for visibility attr
+            self.setLock(lock)
+
         return True
 
     def disconnect(self):
@@ -258,7 +259,6 @@ class Attribute(SceneItem):
 
         self._connection = None
 
-            self.setLock(lock)
         return True
 
     # ====================
