@@ -55,6 +55,7 @@ class Builder(Builder):
     __names = None
     __pathToId = None
     __idToName = None
+    __itemByUniqueId = None
     __klMembers = None
     __klMaxUniqueId = None
     __klObjects = None
@@ -69,7 +70,6 @@ class Builder(Builder):
     __krkItems = None
     __krkAttributes = None
     __krkDeformers = None
-    __krkVisitedObjects = None
     __krkShapes = None
 
     def __init__(self):
@@ -221,36 +221,35 @@ class Builder(Builder):
     def getKLExtensionName(self):
         return "KRK_" + self.__rigTitle.replace(' ', '')
 
-    def __visitKLObjectOrAttribute(self, item, indent=""):
+    def __visitItem(self, item, indent=""):
 
-        kl = []
         #if item is None:
         #    print("Why is this item None?  This happens a few times, how?"
         if item is None or item.get('visited', False):
-            return kl
+            return
         item['visited'] = True
 
         member = item['member']
         name = self.getUniqueName(item['sceneItem'])
         sources = item['sceneItem'].getSources()
 
-        if item['sceneItem'].isTypeOf("Attribute"):
+        if isinstance(item['sceneItem'], Attribute):
             #print "attribute  " + item['member']
             for source in sources:
                 if source.isTypeOf("Attribute"):
                     sourceAttr = self.findKLAttribute(source)
-                    kl += self.__visitKLObjectOrAttribute(sourceAttr)
-                    kl += ["  this.%s.value = this.%s.value;" % (item['member'], sourceAttr['member'])]
-                    self.__krkVisitedObjects.append(item);
-                    return kl
+                    sourceId = self.getUniqueId(sourceAttr['sceneItem'])
+                    item['sourceIds'] += [sourceId]
+                    item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(sourceAttr['sceneItem']))]
+                    item['solveCode'] += ["this.%s.value = this.%s.value;" % (item['member'], sourceAttr['member'])]
 
-        else:
+        elif isinstance(item['sceneItem'], Object3D):
+
             #print "object  " + item['member']
             if not sources:
-                kl += ["", "  // solving global transform %s" % name]
-                kl += ["  this.%s.global = this.%s.local;" % (member, member)]
-                self.__krkVisitedObjects.append(item);
-                return kl
+                item['solveCode'] += ["", "// solving global transform %s" % name]
+                item['solveCode'] += ["this.%s.global = this.%s.local;" % (member, member)]
+                return
 
             # If a 3D object is a source, it is a parent
             objects = [self.findKLObjectForSI(obj) for obj in sources if self.findKLObjectForSI(obj)]
@@ -272,43 +271,29 @@ class Builder(Builder):
 
             if len(objects) and needParentConstraint:
                 parent = objects[-1]
-                kl += self.__visitKLObjectOrAttribute(parent, indent=indent+"  ")
-                kl += ["", "  // solving parent child constraint %s" % name]
+                sourceId = self.getUniqueId(parent['sceneItem'])
+                item['sourceIds'] += [sourceId]
+                item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(parent['sceneItem']))]
+                item['solveCode'] += ["", "// solving parent child constraint %s" % name]
                 if self.__debugMode:
-                    kl += ["  report(\"solving parent child constraint %s\");" % name]
-                kl += ["  this.%s.global = this.%s.global * this.%s.local;" % (member, parent['member'], member)]
+                    item['solveCode'] += ["report(\"solving parent child constraint %s\");" % name]
+                item['solveCode'] += ["this.%s.global = this.%s.global * this.%s.local;" % (member, parent['member'], member)]
 
             constraints = [self.findKLConstraint(constraint) for constraint in sources if self.findKLConstraint(constraint)]
             for sourceConstraint in constraints:
+                if not sourceConstraint:
+                    continue
 
-                if sourceConstraint:
-                    sourceMember = sourceConstraint['member']
-                    sourceName = self.getUniqueName(sourceConstraint['sceneItem'])
-                    constraint = sourceConstraint['sceneItem']
-                    for i in range(len(constraint.getConstrainers())):
-                        constrainer = constraint.getConstrainers()[i]
-                        constrainerObj = self.findKLObjectForSI(constrainer)
-                        kl += self.__visitKLObjectOrAttribute(constrainerObj, indent=indent+"  ")
+                sourceMember = sourceConstraint['member']
+                sourceId = self.getUniqueId(sourceConstraint['sceneItem'])
+                item['sourceIds'] += [sourceId]
+                item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(sourceConstraint['sceneItem']))]
+                item['solveCode'] += ['this.%s.global = this.%s.compute(this.%s.global);' % (member, sourceMember, member)]
 
-                    kl += ["", "  // solving %s constraint %s" % (sourceConstraint['sceneItem'].__class__.__name__, sourceName)]
-                    if self.__debugMode:
-                        kl += ["  report(\"solving %s constraint %s\");" % (sourceConstraint['sceneItem'].__class__.__name__, sourceName)]
-                    for i in range(len(constraint.getConstrainers())):
-                        constrainer = constraint.getConstrainers()[i]
-                        constrainerObj = self.findKLObjectForSI(constrainer)
-                        kl += ['  this.%s.constrainers[%d] = this.%s.global;' % (sourceMember, i, constrainerObj['member'])]
-
-                    constrainee = constraint.getConstrainee()
-                    constraineeObj = self.findKLObjectForSI(constrainee)
-
-                    kl += ['  this.%s.global = this.%s.compute(this.%s.global);' % (constraineeObj['member'], sourceMember, constraineeObj['member'])]
-                    self.__krkVisitedObjects.append(sourceConstraint);
-
-
-        solvers = [self.findKLSolver(solver) for solver in sources if self.findKLSolver(solver)]
-        for sourceSolver in solvers:
-
-            if sourceSolver:
+            solvers = [self.findKLSolver(solver) for solver in sources if self.findKLSolver(solver)]
+            for sourceSolver in solvers:
+                if not sourceSolver:
+                    continue
 
                 kOperator = sourceSolver['sceneItem']
                 sourceMember = sourceSolver['member']
@@ -316,130 +301,6 @@ class Builder(Builder):
                 eventSolverName = sourceMember.replace('[', '').replace(']', '')
                 args = kOperator.getSolverArgs()
 
-                if not sourceSolver.get('visited', False):
-                    if self.__debugMode:
-                        logger.debug(indent+"sourceSolver: %s for item %s" % (sourceSolver['member'], item['member']))
-                    solver_kl = []  #Wait until all connected are visited before printing solver for clarity
-                    sourceSolver['visited'] = True
-
-                    solver_kl += ["", "  // solving KLSolver %s" % (sourceName)]
-                    if self.__debugMode:
-                        solver_kl += ["  report(\"solving KLSolver %s\");" % (sourceName)]
-                    if self.__profilingFrames > 0:
-                        solver_kl += ["  { AutoProfilingEvent solverEvent_%s(\"%s\");" % (eventSolverName, kOperator.getDecoratedPath())]
-
-                    # first let's find all args which are arrays and prepare storage
-                    for i in xrange(len(args)):
-                        arg = args[i]
-                        argName = arg.name.getSimpleType()
-                        argDataType = arg.dataType.getSimpleType()
-                        argConnectionType = arg.connectionType.getSimpleType()
-                        connectedObjects = None
-                        argMember = self.getUniqueArgMember(kOperator, argName, argDataType)
-                        isArray = argDataType.endswith('[]')
-
-                        if argConnectionType == 'In':
-                            connectedObjects = kOperator.getInput(argName)
-                        elif argConnectionType in ['IO', 'Out']:
-                            connectedObjects = kOperator.getOutput(argName)
-
-                        if isArray:
-                            solver_kl += ["  this.%s.resize(%d);" % (argMember, len(connectedObjects))]
-                            if argConnectionType == 'Out':
-                                continue
-                            for j in xrange(len(connectedObjects)):
-                                connected = connectedObjects[j]
-                                if connected is None:
-                                  continue
-
-                                if isinstance(connected, Attribute):
-                                    connectedObj = self.findKLAttribute(connected)
-                                    kl += self.__visitKLObjectOrAttribute(connectedObj, indent=indent+"  ")
-                                    solver_kl += ["  this.%s[%d] = this.%s.value;" % (argMember, j, connectedObj['member'])]
-                                    continue
-                                elif isinstance(connected, SceneItem):
-                                    connectedObj = self.findKLObjectForSI(connected)
-                                    kl += self.__visitKLObjectOrAttribute(connectedObj, indent=indent+"  ")
-                                    solver_kl += ["  this.%s[%d] = this.%s.global;" % (argMember, j, connectedObj['member'])]
-                                elif isinstance(connected, Xfo):
-                                    if argDataType == "Mat44[]":
-                                        solver_kl += ["  this.%s[%d] = %s.toMat44();" % (argMember, j, self.__getXfoAsStr(connected))]
-                                    else:
-                                        solver_kl += ["  this.%s[%d] = %s;" % (argMember, j, self.__getXfoAsStr(connected))]
-                                elif isinstance(connected, str):
-                                    solver_kl += ["  this.%s[%d] = \"%s\";" % (argMember, j, connected)]
-                                else:
-                                    solver_kl += ["  this.%s[%d] = %s;" % (argMember, j, str(connected))]
-
-                            continue
-
-                        if argConnectionType == 'Out':
-                            continue
-
-                        connected = connectedObjects
-                        if connected is None:
-                          continue
-
-                        elif isinstance(connected, Attribute):
-                            connectedObj = self.findKLAttribute(connected)
-                            solver_kl += ["  this.%s = this.%s.value;" % (argMember, connectedObj['member'])]
-
-                        elif isinstance(connected, SceneItem):
-                            connectedObj = self.findKLObjectForSI(connected)
-                            kl += self.__visitKLObjectOrAttribute(connectedObj, indent=indent+"  ")
-                            solver_kl += ["  this.%s = this.%s.global;" % (argMember, connectedObj['member'])]
-
-                        elif isinstance(connected, Xfo):
-                            if argDataType == "Mat44":
-                                solver_kl += ["  this.%s = %s.toMat44();" % (argMember, self.__getXfoAsStr(connected))]
-                            else:
-                                solver_kl += ["  this.%s = %s;" % (argMember, self.__getXfoAsStr(connected))]
-                        elif isinstance(connected, str):
-                            solver_kl += ["  this.%s = \"%s\";" % (argMember, connected)]
-                        elif isinstance(connected, bool):
-                            solver_kl += ["  this.%s = %s;" % (argMember, str(connected).lower())]
-                        else:
-                            solver_kl += ["  this.%s = %s;" % (argMember, str(connected))]
-
-                    # perform the solve
-                    if self.__debugMode:
-                        for i in xrange(len(args)):
-                            arg = args[i]
-                            argName = arg.name.getSimpleType()
-                            argDataType = arg.dataType.getSimpleType()
-                            argConnectionType = arg.connectionType.getSimpleType()
-                            if argConnectionType != 'In':
-                                continue
-                            solver_kl += ["  report(\"arg %s \" + this.%s);" % (argName, argMember)]
-
-                    if self.__profilingFrames > 0:
-                        solver_kl += ["  { AutoProfilingEvent scopedEvent(\"%s.solve\");" % (eventSolverName)]
-
-                    solver_kl += ["  this.%s.solve(" % sourceMember]
-                    for i in xrange(len(args)):
-                        arg = args[i]
-                        argName = arg.name.getSimpleType()
-                        argDataType = arg.dataType.getSimpleType()
-                        argMember = self.getUniqueArgMember(kOperator, argName, argDataType)
-                        comma = ""
-                        if i < len(args) - 1:
-                            comma = ","
-                        solver_kl += ["    this.%s%s" % (argMember, comma)]
-
-                    solver_kl += ["  );"]
-
-                    if self.__profilingFrames > 0:
-                        solver_kl += ["  }"]
-
-                    self.__krkVisitedObjects.append(sourceSolver);
-
-                    if self.__profilingFrames > 0:
-                        solver_kl += ["  }"]
-
-                    kl += solver_kl
-                else:
-                    logger.debug(indent+"sourceSolver: %s" % sourceSolver['member'])
-                output_kl = []
                 # output to the results!
                 for i in xrange(len(args)):
                     arg = args[i]
@@ -459,52 +320,212 @@ class Builder(Builder):
                           continue
 
                         if connected.getDecoratedPath() == item['sceneItem'].getDecoratedPath():
-                            output_kl += ["", "  // retrieving value for %s from solver %s of data type %s" % (member, sourceName, argDataType)]
+                            sourceId = self.getUniqueId(sourceSolver['sceneItem'])
+                            item['sourceIds'] += [sourceId]
+                            item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(sourceSolver['sceneItem']))]
+                            item['solveCode'] += ["", "// retrieving value for %s from solver %s of data type %s" % (member, sourceName, argDataType)]
                             if argDataType.endswith('[]'):
                                 if argDataType == 'Mat44[]':
-                                    output_kl += ["  this.%s.global = this.%s[%d];" % (member, argMember, j)]
+                                    item['solveCode'] += ["this.%s.global = this.%s[%d];" % (member, argMember, j)]
                                 elif argDataType == 'Xfo[]':
-                                    output_kl += ["  this.%s.global = this.%s[%d].toMat44();" % (member, argMember, j)]
+                                    item['solveCode'] += ["this.%s.global = this.%s[%d].toMat44();" % (member, argMember, j)]
                                 else:
-                                    output_kl += ["  this.%s.value = this.%s[%d];" % (member, argMember, j)]
+                                    item['solveCode'] += ["this.%s.value = this.%s[%d];" % (member, argMember, j)]
                             else:
                                 if argDataType == 'Mat44':
-                                    output_kl += ["  this.%s.global = this.%s;" % (member, argMember)]
+                                    item['solveCode'] += ["this.%s.global = this.%s;" % (member, argMember)]
                                 elif argDataType == 'Xfo':
-                                    output_kl += ["  this.%s.global = this.%s.toMat44();" % (member, argMember)]
+                                    item['solveCode'] += ["this.%s.global = this.%s.toMat44();" % (member, argMember)]
                                 else:
-                                    output_kl += ["  this.%s.value = this.%s;" % (member, argMember)]
+                                    item['solveCode'] += ["this.%s.value = this.%s;" % (member, argMember)]
 
-                        else:
+
+        elif isinstance(item['sceneItem'], Constraint):
+
+            constraint = item['sceneItem']
+            item['solveCode'] += ["", "// solving inputs for %s constraint %s" % (constraint.__class__.__name__, self.getUniqueName(constraint))]
+            if self.__debugMode:
+                item['solveCode'] += ["report(\"solving %s constraint %s\");" % (constraint.__class__.__name__, self.getUniqueName(constraint))]
+            for i in range(len(constraint.getConstrainers())):
+                constrainer = constraint.getConstrainers()[i]
+                constrainerObj = self.findKLObjectForSI(constrainer)
+                sourceId = self.getUniqueId(constrainerObj['sceneItem'])
+                item['sourceIds'] += [sourceId]
+                item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(constrainerObj['sceneItem']))]
+                item['solveCode'] += ['this.%s.constrainers[%d] = this.%s.global;' % (member, i, constrainerObj['member'])]
+
+        elif isinstance(item['sceneItem'], KLOperator):
+
+            sourceSolver = item
+            kOperator = sourceSolver['sceneItem']
+            sourceMember = sourceSolver['member']
+            sourceName = self.getUniqueName(kOperator)
+            eventSolverName = sourceMember.replace('[', '').replace(']', '')
+            args = kOperator.getSolverArgs()
+
+            if self.__debugMode:
+                logger.debug(indent+"sourceSolver: %s for item %s" % (sourceSolver['member'], item['member']))
+            sourceSolver['visited'] = True
+
+            item['solveCode'] += ["", "// solving KLSolver %s" % (sourceName)]
+            if self.__debugMode:
+                item['solveCode'] += ["report(\"solving KLSolver %s\");" % (sourceName)]
+            if self.__profilingFrames > 0:
+                item['solveCode'] += ["{ AutoProfilingEvent solverEvent_%s(\"%s\");" % (eventSolverName, kOperator.getDecoratedPath())]
+
+            # first let's find all args which are arrays and prepare storage
+            for i in xrange(len(args)):
+                arg = args[i]
+                argName = arg.name.getSimpleType()
+                argDataType = arg.dataType.getSimpleType()
+                argConnectionType = arg.connectionType.getSimpleType()
+                connectedObjects = None
+                argMember = self.getUniqueArgMember(kOperator, argName, argDataType)
+                isArray = argDataType.endswith('[]')
+
+                if argConnectionType == 'In':
+                    connectedObjects = kOperator.getInput(argName)
+                elif argConnectionType in ['IO', 'Out']:
+                    connectedObjects = kOperator.getOutput(argName)
+
+                if isArray:
+                    item['solveCode'] += ["  this.%s.resize(%d);" % (argMember, len(connectedObjects))]
+                    if argConnectionType == 'Out':
+                        continue
+                    for j in xrange(len(connectedObjects)):
+                        connected = connectedObjects[j]
+                        if connected is None:
+                          continue
+
+                        sourceId = self.getUniqueId(connected)
+                        item['sourceIds'] += [sourceId]
+                        item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(connected))]
+
+                        if isinstance(connected, Attribute):
+                            connectedObj = self.findKLAttribute(connected)
+                            item['solveCode'] += ["this.%s[%d] = this.%s.value;" % (argMember, j, connectedObj['member'])]
+                            continue
+                        elif isinstance(connected, SceneItem):
                             connectedObj = self.findKLObjectForSI(connected)
-                            kl += self.__visitKLObjectOrAttribute(connectedObj, indent=indent+"  ")
+                            item['solveCode'] += ["this.%s[%d] = this.%s.global;" % (argMember, j, connectedObj['member'])]
+                        elif isinstance(connected, Xfo):
+                            if argDataType == "Mat44[]":
+                                item['solveCode'] += ["this.%s[%d] = %s.toMat44();" % (argMember, j, self.__getXfoAsStr(connected))]
+                            else:
+                                item['solveCode'] += ["this.%s[%d] = %s;" % (argMember, j, self.__getXfoAsStr(connected))]
+                        elif isinstance(connected, str):
+                            item['solveCode'] += ["this.%s[%d] = \"%s\";" % (argMember, j, connected)]
+                        else:
+                            item['solveCode'] += ["this.%s[%d] = %s;" % (argMember, j, str(connected))]
 
-                kl += output_kl
+                    continue
 
+                if argConnectionType == 'Out':
+                    continue
 
+                connected = connectedObjects
+                if connected is None:
+                  continue
 
-        canvases = [self.findKLCanvasOp(canvas) for canvas in sources if self.findKLCanvasOp(canvas)]
-        for sourceCanvasOp in canvases:
+                sourceId = self.getUniqueId(connected)
+                item['sourceIds'] += [sourceId]
+                item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(connected))]
 
-            sourceMember = sourceCanvasOp['member']
-            kOperator = sourceCanvasOp['sceneItem']
+                if isinstance(connected, Attribute):
+                    connectedObj = self.findKLAttribute(connected)
+                    item['solveCode'] += ["this.%s = this.%s.value;" % (argMember, connectedObj['member'])]
 
-            # todo...
-            # if not sourceCanvasOp.get('visited', False):
-            #     sourceCanvasOp['visited'] = True
-            #     kl += ["", "  // TODO: Canvas solver %s missing!" % sourceMember]
+                elif isinstance(connected, SceneItem):
+                    connectedObj = self.findKLObjectForSI(connected)
+                    item['solveCode'] += ["this.%s = this.%s.global;" % (argMember, connectedObj['member'])]
 
-            # todo: canvas operators
+                elif isinstance(connected, Xfo):
+                    if argDataType == "Mat44":
+                        item['solveCode'] += ["this.%s = %s.toMat44();" % (argMember, self.__getXfoAsStr(connected))]
+                    else:
+                        item['solveCode'] += ["this.%s = %s;" % (argMember, self.__getXfoAsStr(connected))]
+                elif isinstance(connected, str):
+                    item['solveCode'] += ["this.%s = \"%s\";" % (argMember, connected)]
+                elif isinstance(connected, bool):
+                    item['solveCode'] += ["this.%s = %s;" % (argMember, str(connected).lower())]
+                else:
+                    item['solveCode'] += ["this.%s = %s;" % (argMember, str(connected))]
 
-        self.__krkVisitedObjects.append(item)
-        return kl
+            # perform the solve
+            if self.__debugMode:
+                for i in xrange(len(args)):
+                    arg = args[i]
+                    argName = arg.name.getSimpleType()
+                    argDataType = arg.dataType.getSimpleType()
+                    argConnectionType = arg.connectionType.getSimpleType()
+                    if argConnectionType != 'In':
+                        continue
+                    item['solveCode'] += ["report(\"arg %s \" + this.%s);" % (argName, argMember)]
+
+            if self.__profilingFrames > 0:
+                item['solveCode'] += ["{ AutoProfilingEvent scopedEvent(\"%s.solve\");" % (eventSolverName)]
+
+            item['solveCode'] += ["this.%s.solve(" % sourceMember]
+            for i in xrange(len(args)):
+                arg = args[i]
+                argName = arg.name.getSimpleType()
+                argDataType = arg.dataType.getSimpleType()
+                argMember = self.getUniqueArgMember(kOperator, argName, argDataType)
+                comma = ""
+                if i < len(args) - 1:
+                    comma = ","
+                item['solveCode'] += ["  this.%s%s" % (argMember, comma)]
+
+            item['solveCode'] += [");"]
+
+            if self.__profilingFrames > 0:
+                item['solveCode'] += ["}", "}"]
+
+        else:
+            raise Exception('Item is of unsupported type: '+str(item['sceneItem']))
+
+        # canvases = [self.findKLCanvasOp(canvas) for canvas in sources if self.findKLCanvasOp(canvas)]
+        # for sourceCanvasOp in canvases:
+
+        #     sourceMember = sourceCanvasOp['member']
+        #     kOperator = sourceCanvasOp['sceneItem']
+
+        #     # todo...
+        #     # if not sourceCanvasOp.get('visited', False):
+        #     #     sourceCanvasOp['visited'] = True
+        #     #     kl += ["", "  // TODO: Canvas solver %s missing!" % sourceMember]
+
+        #     # todo: canvas operators
 
 
     def generateKLCode(self):
 
         # ensure to generate a unique id for everything
-        for item in self.__klObjects + self.__klConstraints + self.__klSolvers + self.__klCanvasOps + self.__klAttributes:
-          self.getUniqueId(item['sceneItem'])
+        allItems = self.__klObjects + self.__klConstraints + self.__klSolvers + self.__klCanvasOps + self.__klAttributes
+        self.__itemByUniqueId = {}
+        for item in allItems:
+            self.__itemByUniqueId[self.getUniqueId(item['sceneItem'])] = item
+            item['targetIds'] = []
+            item['sourceIds'] = []
+
+        for item in allItems:
+            item['visited'] = False
+            item['solveCode'] = []
+            item['solveSources'] = []
+            item['solveTargets'] = []
+
+        for item in allItems:
+            self.__visitItem(item)
+
+        # create a map of all of the target / source relation ships
+        for id in self.__itemByUniqueId:
+            item = self.__itemByUniqueId[id]
+            for sourceId in item['sourceIds']:
+                if not self.__itemByUniqueId.has_key(sourceId):
+                    continue
+                if self.__debugMode:
+                    print '%s (%d) is driven by %s (%d)' % (self.getUniqueName(item['sceneItem']), id, self.getUniqueName(self.__itemByUniqueId[sourceId]['sceneItem']), sourceId)
+                self.__itemByUniqueId[sourceId]['targetIds'] += [id]
 
         controls = []
         for obj in self.__klObjects:
@@ -586,25 +607,12 @@ class Builder(Builder):
 
         kl += self.__klPreCode
 
-        for obj in self.__klObjects:
-            obj['visited'] = False
-        for solver in self.__klSolvers:
-            solver['visited'] = False
-        for attr in self.__klAttributes:
-            attr['visited'] = False
-        for canvasOp in self.__klCanvasOps:
-            canvasOp['visited'] = False
-
-        # Sets all the attributes in dependency of one another, but not objects... :(
-        #for attr in self.__klAttributes:
-        #    kl += self.__visitKLAttribute(attr)
-
         if self.__profilingFrames > 0:
             kl += ["  {  AutoProfilingEvent visitKLObjectsEvent(\"rig pose solve\");"]
-        self.__krkVisitedObjects = []
-        klObjectsAndAttributes = self.__klAttributes + self.__klObjects
-        for obj in klObjectsAndAttributes:
-            kl += self.__visitKLObjectOrAttribute(obj)
+
+        for krkDef in self.__krkDeformers:
+            kl += ["    this.solveItem(%d); // %s" % (self.getUniqueId(krkDef['sceneItem']), self.getUniqueName(krkDef['sceneItem']))]
+
         if self.__profilingFrames > 0:
             kl += ["  }"]
 
@@ -642,24 +650,35 @@ class Builder(Builder):
         kl += ["  }"]
         kl += ["  this.solve(context);"]
         if len(self.__krkDeformers) > 0:
-          kl += ["  {"]
-          if self.__profilingFrames > 0:
-              kl += ["    AutoProfilingEvent scopedEvent(\"%s.transferingJoints\");" % self.getKLExtensionName()]
-          kl += ["    for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
-          kl += ["      joints[i] = this._KrakenJoint[i].global;"]
-          kl += ["  }"]
+            kl += ["  {"]
+            if self.__profilingFrames > 0:
+                kl += ["    AutoProfilingEvent scopedEvent(\"%s.transferingJoints\");" % self.getKLExtensionName()]
+            kl += ["    for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
+            kl += ["      joints[i] = this._KrakenJoint[i].global;"]
+            kl += ["  }"]
         kl += ["  this.evalVersion++;"]
         if self.__profilingFrames > 0:
             kl += ["  this.processProfiling();"]
         kl += ["}", ""]
 
-        kl += ["function %s.dirtyItem!(Index index) {" % self.getKLExtensionName()]
-        kl += ["  this.isItemDirty[index] = true;"]
-        # todo: we need to build up cases to find all dependencies!
+        kl += ["function %s.dirtyItem!(Index uniqueId) {" % self.getKLExtensionName()]
+        kl += ["  if(this.isItemDirty[uniqueId])"]
+        kl += ["    return;"]
+        kl += ["  this.isItemDirty[uniqueId] = true;"]
+        kl += ["  switch(uniqueId) {"]
+        for item in allItems:
+            if len(item['targetIds']) == 0:
+              continue
+            kl += ["    case %d: { // %s" % (self.getUniqueId(item['sceneItem']), self.getUniqueName(item['sceneItem']))]
+            for targetId in item['targetIds']:
+                kl += ["      this.dirtyItem(%d); // %s" % (targetId, self.getUniqueName(self.__itemByUniqueId[targetId]['sceneItem']))]
+            kl += ["      break;"]
+            kl += ["    }"]
+        kl += ["  }"]
         kl += ["}", ""]
 
-        kl += ["function %s.cleanItem!(Index index) {" % self.getKLExtensionName()]
-        kl += ["  this.isItemDirty[index] = false;"]
+        kl += ["function %s.cleanItem!(Index uniqueId) {" % self.getKLExtensionName()]
+        kl += ["  this.isItemDirty[uniqueId] = false;"]
         kl += ["}", ""]
 
         kl += ["function %s.dirtyAllItems!() {" % self.getKLExtensionName()]
@@ -688,6 +707,28 @@ class Builder(Builder):
         kl += ["function %s.setScalarAttribute!(Index index, Scalar value) {" % self.getKLExtensionName()]
         kl += ["  this._KrakenScalarAttribute[index].value = value;"]
         kl += ["  this.dirtyItem(this._KrakenScalarAttribute[index].uniqueId);"]
+        kl += ["}", ""]
+
+        kl += ["function %s.solveItem!(Index uniqueId) {" % self.getKLExtensionName()]
+        kl += ["  if(!this.isItemDirty[uniqueId]) {"]
+        if self.__debugMode:
+            kl += ["    report(\"skipping solve of \"+uniqueId);"]
+        kl += ["    return;"]
+        kl += ["  }"]
+        kl += ["  this.isItemDirty[uniqueId] = false;"]
+        if self.__debugMode:
+            kl += ["  report(\"solving \"+uniqueId);"]
+        kl += ["  switch(uniqueId) {"]
+        for item in allItems:
+            solveCode = item['solveCode']
+            if len(solveCode) == 0:
+              continue
+            kl += ["    case %d: { // %s" % (self.getUniqueId(item['sceneItem']), self.getUniqueName(item['sceneItem']))]
+            for solveCodeLine in solveCode:
+              kl += ["      " + solveCodeLine]
+            kl += ["      break;"]
+            kl += ["    }"]
+        kl += ["  }"]
         kl += ["}", ""]
 
         kl += ["function %s.init!() {" % self.getKLExtensionName()]
@@ -1019,6 +1060,7 @@ class Builder(Builder):
         if self.__profilingFrames > 0:
             kl += ["  for(SInt32 i=0;i<%d;i++) {" % self.__profilingFrames]
             kl += ["    context.time = 1.0;"]
+            kl += ["    rig.dirtyAllItems();"]
             kl += ["    rig.evaluate(context);"]
             kl += ["  };"]
         else:
@@ -1837,6 +1879,7 @@ class Builder(Builder):
         self.__names = {}
         self.__pathToId = {}
         self.__idToName = {}
+        self.__itemByUniqueId = None
         self.__klExtensions = []
         self.__klMembers = {'members': {}, 'lookup': {}}
         self.__klMaxUniqueId = 0
@@ -1852,7 +1895,6 @@ class Builder(Builder):
         self.__krkItems = {}
         self.__krkAttributes = {}
         self.__krkDeformers = []
-        self.__krkVisitedObjects = []
         self.__krkShapes = []
 
         return True
