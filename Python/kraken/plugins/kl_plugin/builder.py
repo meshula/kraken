@@ -53,8 +53,10 @@ class Builder(Builder):
     __rigTitle = None
     __canvasGraph = None
     __names = None
-    __pathToName = None
+    __pathToId = None
+    __idToName = None
     __klMembers = None
+    __klMaxUniqueId = None
     __klObjects = None
     __klAttributes = None
     __klConstraints = None
@@ -63,7 +65,6 @@ class Builder(Builder):
     __klPreCode = None
     __klConstants = None
     __klExtExecuted = None
-    __klEvalID = None
     __klArgs = None
     __krkItems = None
     __krkAttributes = None
@@ -92,10 +93,20 @@ class Builder(Builder):
     # ========================
     # KL related Methods
     # ========================
+    def getUniqueId(self, item, earlyExit = False):
+        key = item.getDecoratedPath()
+        if self.__pathToId.has_key(key):
+          return self.__pathToId[key]
+        if earlyExit:
+          return None
+        self.__pathToId[key] = self.__klMaxUniqueId
+        self.__klMaxUniqueId = self.__klMaxUniqueId + 1
+        return self.__pathToId[key]
 
     def getUniqueName(self, item, earlyExit = False):
-        if self.__pathToName.has_key(item.getDecoratedPath()):
-            return self.__pathToName[item.getDecoratedPath()]
+        uid = self.getUniqueId(item)
+        if self.__idToName.has_key(uid):
+            return self.__idToName[uid]
         name = None
         if isinstance(item, AttributeGroup):
             name = self.getUniqueName(item.getParent(), earlyExit = True) + '_' + item.getName()
@@ -140,7 +151,7 @@ class Builder(Builder):
             name = namePrefix + str(nameSuffix)
 
         self.__names[name] = item.getDecoratedPath()
-        self.__pathToName[item.getDecoratedPath()] = name
+        self.__idToName[uid] = name
 
         return name
 
@@ -192,12 +203,6 @@ class Builder(Builder):
 
         return member
 
-    def __registerEvalID(self, obj):
-        key = obj['member']
-        if not self.__klEvalID.has_key(key):
-          self.__klEvalID[key] = len(self.__klEvalID)
-        return ["  if(context.maxEvalID == %d) return;" % self.__klEvalID[key]]
-
     def __getXfoAsStr(self, xfo):
         valueStr = "Xfo(Vec3(%.4f, %.4f, %.4f), Quat(%.4f, %.4f, %.4f, %.4f), Vec3(%.4f, %.4f, %.4f))" % (
             round(xfo.tr.x, 4),
@@ -244,7 +249,6 @@ class Builder(Builder):
             if not sources:
                 kl += ["", "  // solving global transform %s" % name]
                 kl += ["  this.%s.global = this.%s.local;" % (member, member)]
-                kl += self.__registerEvalID(item)
                 self.__krkVisitedObjects.append(item);
                 return kl
 
@@ -273,8 +277,6 @@ class Builder(Builder):
                 if self.__debugMode:
                     kl += ["  report(\"solving parent child constraint %s\");" % name]
                 kl += ["  this.%s.global = this.%s.global * this.%s.local;" % (member, parent['member'], member)]
-                if not hasConstraints:
-                    kl += self.__registerEvalID(item)
 
             constraints = [self.findKLConstraint(constraint) for constraint in sources if self.findKLConstraint(constraint)]
             for sourceConstraint in constraints:
@@ -301,7 +303,6 @@ class Builder(Builder):
 
                     kl += ['  this.%s.global = this.%s.compute(this.%s.global);' % (constraineeObj['member'], sourceMember, constraineeObj['member'])]
                     self.__krkVisitedObjects.append(sourceConstraint);
-                    kl += self.__registerEvalID(item)
 
 
         solvers = [self.findKLSolver(solver) for solver in sources if self.findKLSolver(solver)]
@@ -474,7 +475,6 @@ class Builder(Builder):
                                 else:
                                     output_kl += ["  this.%s.value = this.%s;" % (member, argMember)]
 
-                            output_kl += self.__registerEvalID(item)
                         else:
                             connectedObj = self.findKLObjectForSI(connected)
                             kl += self.__visitKLObjectOrAttribute(connectedObj, indent=indent+"  ")
@@ -597,7 +597,7 @@ class Builder(Builder):
         if self.__profilingFrames > 0:
             kl += ["  {  AutoProfilingEvent visitKLObjectsEvent(\"rig pose solve\");"]
         self.__krkVisitedObjects = []
-        klObjectsAndAttributes = self.__klObjects + self.__klAttributes
+        klObjectsAndAttributes = self.__klAttributes + self.__klObjects
         for obj in klObjectsAndAttributes:
             kl += self.__visitKLObjectOrAttribute(obj)
         if self.__profilingFrames > 0:
@@ -655,9 +655,8 @@ class Builder(Builder):
             kl += ["  // build 3D objects"]
         for obj in self.__klObjects:
             memberName = obj['member']
-            self.__registerEvalID(obj)
+            kl += ["  this.%s.uniqueId = %d;" % (memberName, self.getUniqueId(obj['sceneItem']))]
             kl += ["  this.%s.name = \"%s\";" % (memberName, obj['sceneItem'].getBuildName())]
-            kl += ["  this.%s.evalID = %d;" % (memberName, self.__klEvalID[memberName])]
             if self.__debugMode:
                 kl += ["  this.%s.buildName = \"%s\";" % (memberName, obj['buildName'])]
                 kl += ["  this.%s.path = \"%s\";" % (memberName, obj['path'])]
@@ -670,6 +669,7 @@ class Builder(Builder):
         kl += ["", "  // build constraints"]
         for constraint in self.__klConstraints:
             memberName = constraint['member']
+            kl += ["  this.%s.uniqueId = %d;" % (memberName, self.getUniqueId(constraint['sceneItem']))]
             if constraint['sceneItem'].getMaintainOffset():
                 kl += ["  this.%s.offset = %s.toMat44();" % (memberName, self.__getXfoAsStr(constraint['sceneItem'].computeOffset()))]
             kl += ["  this.%s.constrainers.resize(%d);" % (memberName, len(constraint['constrainers']))]
@@ -678,6 +678,7 @@ class Builder(Builder):
         for solver in self.__klSolvers:
             memberName = solver['member']
             kl += ["  this.%s = %s();" % (memberName, solver['type'])]
+            kl += ["  this.%s.uniqueId = %d;" % (memberName, self.getUniqueId(solver['sceneItem']))]
 
         kl += ["", "  // build kl canvas ops"]
         for canvasOp in self.__klCanvasOps:
@@ -753,6 +754,7 @@ class Builder(Builder):
                     Boolean(attr['animatable']),
                     attr['value']
                 )]
+            kl += ["  this.%s.uniqueId = %d;" % (memberName, self.getUniqueId(attr['sceneItem']))]
 
         if self.__profilingFrames > 0:
             kl += ["", "  this.profilingFrame = 0;"]
@@ -1789,14 +1791,15 @@ class Builder(Builder):
         self.__canvasGraph = GraphManager()
         self.__debugMode = False
         self.__names = {}
-        self.__pathToName = {}
+        self.__pathToId = {}
+        self.__idToName = {}
         self.__klExtensions = []
         self.__klMembers = {'members': {}, 'lookup': {}}
+        self.__klMaxUniqueId = 0
         self.__klObjects = []
         self.__klAttributes = []
         self.__klConstraints = []
         self.__klSolvers = []
-        self.__klEvalID = {}
         self.__klCanvasOps = []
         self.__klConstants = {}
         self.__klExtExecuted = False

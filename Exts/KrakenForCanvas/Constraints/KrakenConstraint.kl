@@ -1,6 +1,6 @@
 require Kraken;
 
-struct KrakenConstraint {
+struct KrakenConstraint : KrakenItem {
   Mat44 constrainers[];
   Mat44 offset;
 };
