@@ -35,8 +35,8 @@ class Preferences(object):
                 'type': 'bool',
                 'nice_name': 'Zoom with Alt+RMB',
                 'description': 'Allows users to zoom with the right mouse button while holding down the ALT key.',
-                'default_value': True,
-                'value': True
+                'default_value': False,
+                'value': False
             },
             'delete_existing_rigs': {
                 'type': 'bool',
