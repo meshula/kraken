@@ -608,25 +608,28 @@ class Builder(Builder):
         """
 
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = pm.parentConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName,
-            maintainOffset=kConstraint.getMaintainOffset())
+        constrainers = [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()]
 
-        # We need this block of code to replace the pose constraint name with
-        # the scale constraint name since we don't have a single pos, rot, scl,
-        # constraint in Maya.
-        config = Config.getInstance()
-        nameTemplate = config.getNameTemplate()
-        poseCnsName = nameTemplate['types']['PoseConstraint']
-        sclCnsName = nameTemplate['types']['ScaleConstraint']
+        with TemporarilyUnlockXfo(constraineeDCCSceneItem): # Perhaps all locks should happend at end of build?
+            dccSceneItem = pm.parentConstraint(
+                constrainers,
+                constraineeDCCSceneItem,
+                name=buildName,
+                maintainOffset=kConstraint.getMaintainOffset())
 
-        scaleConstraint = pm.scaleConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName.replace(poseCnsName, sclCnsName),
-            maintainOffset=kConstraint.getMaintainOffset())
+            # We need this block of code to replace the pose constraint name with
+            # the scale constraint name since we don't have a single pos, rot, scl,
+            # constraint in Maya.
+            config = Config.getInstance()
+            nameTemplate = config.getNameTemplate()
+            poseCnsName = nameTemplate['types']['PoseConstraint']
+            sclCnsName = nameTemplate['types']['ScaleConstraint']
+
+            scaleConstraint = pm.scaleConstraint(
+                [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+                constraineeDCCSceneItem,
+                name=buildName.replace(poseCnsName, sclCnsName),
+                maintainOffset=kConstraint.getMaintainOffset())
 
         if kConstraint.getMaintainOffset() is True:
 
@@ -1057,7 +1060,7 @@ class Builder(Builder):
                         else:
                             opType = kOperator.getPresetPath()
 
-                        logger.warning("Operator '" + solverSolveNodeName +
+                        logger.debug("Operator '" + solverSolveNodeName +
                                        "' of type '" + opType +
                                        "' port '" + portName + "' not connected.")
 
