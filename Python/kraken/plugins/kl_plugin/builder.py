@@ -502,6 +502,10 @@ class Builder(Builder):
 
     def generateKLCode(self):
 
+        # ensure to generate a unique id for everything
+        for item in self.__klObjects + self.__klConstraints + self.__klSolvers + self.__klCanvasOps + self.__klAttributes:
+          self.getUniqueId(item['sceneItem'])
+
         controls = []
         for obj in self.__klObjects:
             if obj['sceneItem'].isTypeOf('Control'):
@@ -539,6 +543,7 @@ class Builder(Builder):
         kl += [""]
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  UInt64 evalVersion;"]
+        kl += ["  Boolean isItemDirty[%d];" % self.__klMaxUniqueId]
         if self.__profilingFrames > 0:
             kl += ["  SInt32 profilingFrame;"]
         kl += ["  KrakenClip clip; // the default clip of the rig"]
@@ -648,6 +653,43 @@ class Builder(Builder):
             kl += ["  this.processProfiling();"]
         kl += ["}", ""]
 
+        kl += ["function %s.dirtyItem!(Index index) {" % self.getKLExtensionName()]
+        kl += ["  this.isItemDirty[index] = true;"]
+        # todo: we need to build up cases to find all dependencies!
+        kl += ["}", ""]
+
+        kl += ["function %s.cleanItem!(Index index) {" % self.getKLExtensionName()]
+        kl += ["  this.isItemDirty[index] = false;"]
+        kl += ["}", ""]
+
+        kl += ["function %s.dirtyAllItems!() {" % self.getKLExtensionName()]
+        kl += ["  for(Size i=0;i<%d;i++)" % self.__klMaxUniqueId]
+        kl += ["    this.isItemDirty[i] = true;"]
+        kl += ["}", ""]
+
+        kl += ["function %s.cleanAllItems!() {" % self.getKLExtensionName()]
+        kl += ["  for(Size i=0;i<%d;i++)" % self.__klMaxUniqueId]
+        kl += ["    this.isItemDirty[i] = false;"]
+        kl += ["}", ""]
+
+        kl += ["function Mat44 %s.getControlLocalMat44(Index index) {" % self.getKLExtensionName()]
+        kl += ["  return this._KrakenControl[index].local;"]
+        kl += ["}", ""]
+
+        kl += ["function %s.setControlLocalMat44!(Index index, Mat44 value) {" % self.getKLExtensionName()]
+        kl += ["  this._KrakenControl[index].local = value;"]
+        kl += ["  this.dirtyItem(this._KrakenControl[index].uniqueId);"]
+        kl += ["}", ""]
+
+        kl += ["function Scalar %s.getScalarAttribute(Index index) {" % self.getKLExtensionName()]
+        kl += ["  return this._KrakenScalarAttribute[index].value;"]
+        kl += ["}", ""]
+
+        kl += ["function %s.setScalarAttribute!(Index index, Scalar value) {" % self.getKLExtensionName()]
+        kl += ["  this._KrakenScalarAttribute[index].value = value;"]
+        kl += ["  this.dirtyItem(this._KrakenScalarAttribute[index].uniqueId);"]
+        kl += ["}", ""]
+
         kl += ["function %s.init!() {" % self.getKLExtensionName()]
         kl += ["  Float32 floatAnimation[String];"]
         kl += [""]
@@ -664,7 +706,6 @@ class Builder(Builder):
                 kl += ["  this.%s.component = \"%s\";" % (memberName, obj.get('component', ''))]
                 kl += ["  this.%s.visibility = %s;" % (memberName, Boolean(obj.get('visibility', False)))]
                 kl += ["  this.%s.color = %s;" % (memberName, obj.get('color', 'Color(0.0, 0.0, 0.0, 1.0)'))]
-        kl += ["  this.resetPose();"]
 
         kl += ["", "  // build constraints"]
         for constraint in self.__klConstraints:
@@ -755,6 +796,9 @@ class Builder(Builder):
                     attr['value']
                 )]
             kl += ["  this.%s.uniqueId = %d;" % (memberName, self.getUniqueId(attr['sceneItem']))]
+
+        kl += ["  this.resetPose();"]
+        kl += ["  this.dirtyAllItems();"]
 
         if self.__profilingFrames > 0:
             kl += ["", "  this.profilingFrame = 0;"]
