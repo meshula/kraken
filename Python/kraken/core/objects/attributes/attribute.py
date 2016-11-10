@@ -216,6 +216,7 @@ class Attribute(SceneItem):
         if self._connection is None:
             return False
 
+
         return True
 
     def getConnection(self):
@@ -243,6 +244,7 @@ class Attribute(SceneItem):
         self._connection = attribute
         self.addSource(attribute)
 
+        if lock:  # only lock if true, otherwise don't change # Currently is not working for visibility attr
         return True
 
     def disconnect(self):
@@ -255,6 +257,7 @@ class Attribute(SceneItem):
 
         self._connection = None
 
+            self.setLock(lock)
         return True
 
     # ====================
