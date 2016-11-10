@@ -229,6 +229,7 @@ class Attribute(SceneItem):
 
         return self._connection
 
+    def connect(self, attribute, lock=False):
     def connect(self, attribute):
         """Connects this attribute with another..
 
