@@ -17,6 +17,7 @@ class SceneItem(object):
         self._name = name
         self._component = None
         self._sources = []
+        self._depends = []
         self._id = SceneItem.__maxId
         self._metaData = {}
         if metaData is not None:
@@ -248,6 +249,9 @@ class SceneItem(object):
 
         self._sources.append(source)
 
+        if self not in source._depends:
+            source._depends.append(self)
+
         return True
 
     def removeSource(self, source):
@@ -263,6 +267,9 @@ class SceneItem(object):
 
         self._sources[:] = [s for s in self._sources if s != source]
 
+        if self not in source._depends:
+            source._depends[:] = [s for s in self._depends if s != self]
+
     def setSource(self, index, source):
         """Sets the source of this object.
 
@@ -275,6 +282,16 @@ class SceneItem(object):
         self._sources[index] = source
 
         return True
+
+    def getDepends(self):
+        """Returns the objects that depend on this object.
+
+        Returns:
+            list: All depending objects of this object.
+
+        """
+
+        return self._depends
 
     # ==================
     # Component Methods
