@@ -940,6 +940,8 @@ class Builder(object):
 
     def checkEvaluatedConstraints(self, kSceneItem, invalidConstraints):
         """Recursively checks for constraints that haven't been evaluated.
+        Don't include leaf nodes or nodes that are simply parents as these don't
+        need to be evaluated in the python graph, they can wait for the DCC
 
         Args:
             kSceneItem (Object3D): Object to recursively check for invalid ops.
