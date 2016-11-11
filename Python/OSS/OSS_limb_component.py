@@ -842,6 +842,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.connectReverse(self.ikBlendAttr, self.uplimbFKCtrl.getVisibilityAttr())
         self.connectReverse(self.ikBlendAttr, self.lolimbFKCtrl.getVisibilityAttr())
 
+        self.evalOperators()
+
 
 
 

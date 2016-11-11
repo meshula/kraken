@@ -592,7 +592,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         self.createControls(2, data.get("an2DNames", ""), data)
         self.createControls(1, data.get("an1DNames", ""), data)
         # Eval Operators
-        # self.evalOperators()
+        self.evalOperators()
         self.RemapScalarValueSolverKLOp.evaluate()
 
 
