@@ -8,6 +8,7 @@ interface IKrakenSolver {
 /// \dfgPresetOmitl
 object KrakenSolver : IKrakenSolver {
 
+    UInt32 uniqueId;
     RTVal defaultValues[String];
 
     Boolean drawDebug;
