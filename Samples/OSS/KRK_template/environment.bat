@@ -5,8 +5,8 @@ set FABRIC_DIR=Z:\dist\fabric\releases\published
 set PATH=%FABRIC_DIR%\bin;%PATH%
 
 set FABRIC_LOG_LEVEL=0
-::set KRAKEN_PATH=Z:\dist\fabric\Kraken
-set KRAKEN_PATH=V:\fabric\Kraken
+set KRAKEN_PATH=Z:\dist\fabric\Kraken
+::set KRAKEN_PATH=V:\oculusstorystudio\kraken
 :: Set the kraken path based on where this script lives
 :: We really need to have a proper environment setup eventually -TT
 @setlocal enableextensions enabledelayedexpansion
