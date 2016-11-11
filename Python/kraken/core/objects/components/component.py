@@ -676,8 +676,10 @@ class Component(Object3D):
     # =================
     # Operator Methods
     # =================
-    def evalOperators(self):
+    def evalOperators(self, force=False):
         """Evaluates all component operators in order they were created.
+        Args:
+            force (bool): Force evaluation even if object is flagged as having been evaluated already
 
         Returns:
             bool: True if no errors during evaluation.
@@ -685,7 +687,8 @@ class Component(Object3D):
         """
 
         for op in self._operators:
-            op.evaluate()
+            if not op.testFlag('HAS_EVALUATED') or force:
+                op.evaluate()
 
         return True
 
