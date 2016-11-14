@@ -267,7 +267,6 @@ class OSSNoseComponentRig(OSSNoseComponent):
         """
 
         super(OSSNoseComponentRig, self).loadData( data )
-        print data
         noseTopXfo = data['noseTopXfo']
         noseMidXfo = data['noseMidXfo']
         noseTipXfo = data['noseTipXfo']
