@@ -29,17 +29,17 @@ function KrakenClipLookup(Ref<KrakenKLRig> rig, Ref<KrakenClip> clip) {
 
 /// \dfgPresetOmit
 function KrakenClipLookup.applyClip(io KrakenKLRig rig, Ref<KrakenClip> clipRef, KrakenClipContext context, Float32 factor) {
-  Ref<KrakenClip> mutableRef = clipRef;
+  KrakenClip clip = clipRef;
 
   for(Size i=0;i<this.channelToControl.size();i++) {
     if(this.channelToControl[i] != -1) {
       Xfo xfo = rig.getControlLocalMat44(this.channelToControl[i]);
-      xfo = xfo.linearInterpolate(mutableRef.evaluateXfo(i, rig, context), factor);
+      xfo = xfo.linearInterpolate(clip.evaluateXfo(i, rig, context), factor);
       rig.setControlLocalMat44(this.channelToControl[i], xfo.toMat44());
     }
     if(this.channelToScalarAttribute[i] != -1) {
       Float32 value = rig.getScalarAttribute(this.channelToScalarAttribute[i]);
-      value = Math_linearInterpolate(value, mutableRef.evaluateFloat32(i, rig, context), factor);
+      value = Math_linearInterpolate(value, clip.evaluateFloat32(i, rig, context), factor);
       rig.setScalarAttribute(this.channelToScalarAttribute[i], value);
     }
   }
