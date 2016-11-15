@@ -91,8 +91,8 @@ class OSSConfig(Config):
                                    "Pivot"           : ["location", "sep", "name", "sep", "type"],
                                    "Joint"           : ["location", "sep", "name", "sep", "type"],
                                    "Transform"       : ["location", "sep", "name", "sep", "type"],
-                                   #"KLOperator"      : ["location", "sep", "name", "sep", "type"],
-                                   #"CanvasOperator"  : ["location", "sep", "name", "sep", "type"]
+                                   "KLOperator"      : ["location", "sep", "name", "sep", "solverName", "sep", "type"],
+                                   "CanvasOperator"  : ["location", "sep", "name", "sep", "solverName", "sep", "type"]
                                   }
                        }
 

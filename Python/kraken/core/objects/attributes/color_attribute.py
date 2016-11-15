@@ -12,8 +12,8 @@ from kraken.core.kraken_system import ks
 class ColorAttribute(Attribute):
     """Color Attribute. Implemented value type checking."""
 
-    def __init__(self, name, value=None, parent=None):
-        super(ColorAttribute, self).__init__(name, value=value, parent=parent)
+    def __init__(self, name, value=None, parent=None, metaData=None):
+        super(ColorAttribute, self).__init__(name, value=value, parent=parent, metaData=metaData)
 
         if value is None:
             value = {

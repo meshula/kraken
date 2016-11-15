@@ -321,7 +321,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
             self.shdlrEndMocapSpaceCtrl = CtrlSpace('shdlrEnd', parent=self.shldrMocapCtrl)
             self.shdlrEndMocapSpaceCtrl.xfo = data['shldrEndXfo']
 
-            self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocap_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.mocapHierBlendSolver = KLOperator(self.getName()+'mocap', 'OSS_HierBlendSolver', 'OSS_Kraken')
             self.addOperator(self.mocapHierBlendSolver)
             self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)  # connect this to attr
             # Add Att Inputs

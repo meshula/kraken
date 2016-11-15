@@ -309,7 +309,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # ===============
         # Add Spine Canvas Op
 
-        self.NURBSSpineKLOp = KLOperator('NURBSSpineKLOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
+        self.NURBSSpineKLOp = KLOperator('spine', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(self.NURBSSpineKLOp)
 
         self.NURBSSpineKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -509,7 +509,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
             # Constraint inputs
 
             # Blend anim and mocap together
-            self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocap_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.mocapHierBlendSolver = KLOperator(self.getName()+'mocap', 'OSS_HierBlendSolver', 'OSS_Kraken')
             self.addOperator(self.mocapHierBlendSolver)
             self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)  # connect this to attr
             # Add Att Inputs

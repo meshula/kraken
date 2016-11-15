@@ -222,7 +222,7 @@ class OSSSingleFKRig(OSSSingleFK):
 
 
         # Add Spine Canvas Op
-        self.alignSpacesKLOp = KLOperator('headAlignKLOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
+        self.alignSpacesKLOp = KLOperator('headAlign', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
         self.addOperator(self.alignSpacesKLOp)
 
         self.alignSpaces = []
@@ -230,7 +230,7 @@ class OSSSingleFKRig(OSSSingleFK):
         # Add Att Inputs
         self.alignSpacesKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.alignSpacesKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        
+
         self.alignSpacesKLOp.setInput('mats', self.alignSpaces)
         self.alignSpacesKLOp.setInput('matWeights', self.alignWeights)
         self.alignSpacesKLOp.setInput('translationAmt',  0)

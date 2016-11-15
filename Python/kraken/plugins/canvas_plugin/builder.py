@@ -877,41 +877,6 @@ class Builder(Builder):
 
         return self.buildNodesFromConstraint(kConstraint)
 
-    # ========================
-    # Component Build Methods
-    # ========================
-
-    def buildAttributeConnection(self, connectionInput):
-        """Builds the connection between the attribute and the connection.
-
-        Args:
-            connectionInput (Object): Kraken connection to build.
-
-        Return:
-            bool: True if successful.
-
-        """
-
-        if not connectionInput.isConnected():
-            return True
-
-        connection = connectionInput.getConnection()
-        connectionTarget = connection.getTarget()
-        inputTarget = connectionInput.getTarget()
-
-        if connection.getDataType().endswith('[]'):
-            connectionTarget = connection.getTarget()[connectionInput.getIndex()]
-        else:
-            connectionTarget = connection.getTarget()
-
-        (nodeA, portA) = self.rigGraph.getNodeAndPortSI(inputTarget, asInput=False)
-        (nodeB, portB) = self.rigGraph.getNodeAndPortSI(connectionTarget, asInput=True)
-        if nodeA is None or nodeB is None:
-            return False
-
-        self.rigGraph.connectNodes(nodeA, portA, nodeB, portB)
-
-        return False
 
     # =========================
     # Operator Builder Methods

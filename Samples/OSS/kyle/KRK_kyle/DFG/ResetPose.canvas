@@ -1,0 +1,30 @@
+{
+  "objectType" : "Func",
+  "title" : "ResetPose",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rig",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "KRK_kyle"
+      }
+    ],
+  "extDeps" : {
+    "KRK_kyle" : "*"
+    },
+  "code" : "dfgEntry {
+  rig.resetPose();
+}
+",
+  "args" : [
+    null
+    ]
+  }

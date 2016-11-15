@@ -742,40 +742,6 @@ class Builder(Builder):
 
         return dccSceneItem
 
-    # ========================
-    # Component Build Methods
-    # ========================
-    def buildAttributeConnection(self, connectionInput):
-        """Builds the connection between the attribute and the connection.
-
-        Args:
-            connectionInput (Object): Kraken connection to build.
-
-        Return:
-            bool: True if successful.
-
-        """
-
-        if connectionInput.isConnected() is False:
-            return False
-
-        connection = connectionInput.getConnection()
-        connectionTarget = connection.getTarget()
-        inputTarget = connectionInput.getTarget()
-
-        if connection.getDataType().endswith('[]'):
-            connectionTarget = connection.getTarget()[connectionInput.getIndex()]
-        else:
-            connectionTarget = connection.getTarget()
-
-        connectionTargetDCCSceneItem = self.getDCCSceneItem(connectionTarget)
-        targetDCCSceneItem = self.getDCCSceneItem(inputTarget)
-
-        pm.connectAttr(connectionTargetDCCSceneItem,
-                       targetDCCSceneItem,
-                       force=True)
-
-        return True
 
     # =========================
     # Operator Builder Methods
@@ -853,6 +819,12 @@ class Builder(Builder):
             # Create Canvas Operator
             canvasNode = pm.createNode('canvasNode', name=buildName)
             self._registerSceneItemPair(kOperator, pm.PyNode(canvasNode))
+
+            try:
+              # disable the eval context
+              pm.setAttr('%s.enableEvalContext' % canvasNode, False)
+            except:
+              pass
 
             config = Config.getInstance()
             nameTemplate = config.getNameTemplate()
@@ -1184,6 +1156,9 @@ class Builder(Builder):
                 pm.FabricCanvasSetCode(mayaNode=canvasNode,
                                        execPath=solverSolveNodeName,
                                        code=opSourceCode)
+
+            if kOperator.testFlag('disableParallelEval') is False:
+                pm.FabricCanvasSetExecuteShared(mayaNode=canvasNode, enable=True)
 
         finally:
             pass

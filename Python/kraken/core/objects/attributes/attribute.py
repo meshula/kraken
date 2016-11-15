@@ -216,6 +216,7 @@ class Attribute(SceneItem):
         if self._connection is None:
             return False
 
+
         return True
 
     def getConnection(self):

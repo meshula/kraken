@@ -427,26 +427,6 @@ class Builder(object):
 
         return dccSceneItem
 
-    # ========================
-    # Component Build Methods
-    # ========================
-    def buildAttributeConnection(self, componentInput):
-        """Builds the link between the target and connection target.
-
-        Note:
-            Implement in DCC Plugins.
-
-        Args:
-            componentInput (object): kraken connection to build.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        logger.info("buildAttributeConnection: " + componentInput.getPath())
-
-        return True
 
     # =========================
     # Operator Builder Methods
@@ -925,14 +905,14 @@ class Builder(object):
 
             if len(invalidOps) > 0:
                 logger.warn("Non-evaluated Operators:")
-                logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() for x in invalidOps]))
+                logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() + ' --  ('+x.getBuildName()+')' for x in invalidOps]))
 
             invalidConstraints = []
             self.checkEvaluatedConstraints(kSceneItem, invalidConstraints)
 
             if len(invalidConstraints) > 0:
                 logger.warn("Non-evaluated Constraints:")
-                logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() for x in invalidConstraints]))
+                logger.warn('\n'.join([x.getTypeName() + ': ' + x.getPath() + ' --  ('+x.getBuildName()+')' for x in invalidConstraints]))
 
         return True
 
@@ -991,6 +971,8 @@ class Builder(object):
 
     def checkEvaluatedConstraints(self, kSceneItem, invalidConstraints):
         """Recursively checks for constraints that haven't been evaluated.
+        Don't include leaf nodes or nodes that are simply parents as these don't
+        need to be evaluated in the python graph, they can wait for the DCC
 
         Args:
             kSceneItem (Object3D): Object to recursively check for invalid ops.
@@ -1006,7 +988,11 @@ class Builder(object):
                 constraint = kSceneItem.getConstraintByIndex(i)
                 if constraint.testFlag('HAS_EVALUATED') is False:
                     constrainee = constraint.getConstrainee()
-                    if constrainee.getTypeName() != 'ComponentInput':
+                    depends = [obj for obj in constrainee.getDepends()
+                            if obj.isTypeOf("Object3D") and obj not in constrainee.getChildren()
+                            ]
+
+                    if depends and constrainee.getTypeName() != 'ComponentInput':
                         invalidConstraints.append(constraint)
 
         for each in kSceneItem.getChildren():

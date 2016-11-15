@@ -285,7 +285,7 @@ class OSSMainComponentRig(OSSMainComponent):
         # Controls
         # =========
         # Add Controls
-        self.mainCtrlShape = str(data['mainCtrlShape']) 
+        self.mainCtrlShape = str(data['mainCtrlShape'])
         self.mainCtrl = FKControl('master', shape='circle', parent=self.ctrlCmpGrp)
 
         if self.mainCtrlShape not in Config.getInstance().getControlShapes():
@@ -299,7 +299,7 @@ class OSSMainComponentRig(OSSMainComponent):
         self.mainCtrlSpace = self.mainCtrl.insertCtrlSpace()
 
         # COG
-        self.createOffsetControl = bool(data['createOffsetControl']) 
+        self.createOffsetControl = bool(data['createOffsetControl'])
 
         if self.createOffsetControl:
             self.offsetCtrl = FKControl('offset', shape='circle', parent=self.mainCtrl)
@@ -315,7 +315,7 @@ class OSSMainComponentRig(OSSMainComponent):
         self.offsetCtrlSpace = self.insertParentSpace(self.offsetCtrl)
 
 
-        self.createRootControl = bool(data['createRootControl']) 
+        self.createRootControl = bool(data['createRootControl'])
         if self.createRootControl:
             self.rootCtrl = FKControl('root', shape='arrow', parent=self.mainCtrl)
             self.rootCtrl.setColor("gold")
@@ -358,7 +358,7 @@ class OSSMainComponentRig(OSSMainComponent):
 
 
         # COG
-        self.createCogControl = bool(data['createCogControl']) 
+        self.createCogControl = bool(data['createCogControl'])
 
         if self.createCogControl:
             self.cogCtrl = FKControl('cog', parent=self.offsetCtrl, shape="circle")
@@ -415,7 +415,7 @@ class OSSMainComponentRig(OSSMainComponent):
         # Add Splice Ops
         # ===============
         #Add Rig Scale Splice Op
-        self.rigScaleKLOp = KLOperator('rigScaleKLOp', 'RigScaleSolver', 'Kraken')
+        self.rigScaleKLOp = KLOperator('scale', 'RigScaleSolver', 'Kraken')
         self.addOperator(self.rigScaleKLOp)
 
         # Add Att Inputs
@@ -488,7 +488,7 @@ class OSSMainComponentRig(OSSMainComponent):
             #Maybe we should add an aditional master mc offset?
 
              # Blend anim and mocap together
-            self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocap_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.mocapHierBlendSolver = KLOperator(self.getName()+'mocap', 'OSS_HierBlendSolver', 'OSS_Kraken')
             self.addOperator(self.mocapHierBlendSolver)
             self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)  # connect this to attr
             # Add Att Inputs
@@ -520,7 +520,7 @@ class OSSMainComponentRig(OSSMainComponent):
         self.rootDef.setComponent(self) # Need an elegant automatic way to do this
         self.rootDef.constrainTo(self.rootOutputTgt)
         # COG
-        self.createCogJoint = bool(data['createCogJoint']) 
+        self.createCogJoint = bool(data['createCogJoint'])
         if self.createCogJoint:
             self.cogDef = Joint('cog', parent=self.rootDef)
             self.cogDef.constrainTo(self.cogCtrl, maintainOffset=False)

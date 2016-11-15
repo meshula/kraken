@@ -29,11 +29,17 @@ class KrakenWindow(QtGui.QMainWindow):
         self.setWindowTitle('Kraken Editor')
         self.setWindowIcon(QtGui.QIcon(':/images/Kraken_Icon.png'))
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.installEventFilter(self)
+        # self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        # self.setFocus()
 
         QtCore.QCoreApplication.setOrganizationName("Kraken")
         QtCore.QCoreApplication.setApplicationName("Kraken Editor")
         self.settings = QtCore.QSettings("Kraken", "Kraken Editor")
         self.preferences = Preferences()
+
+        self._focusInCallbacks = []
+        self._focusOutCallbacks = []
 
         cssPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                'kraken_ui.css')
@@ -80,17 +86,29 @@ class KrakenWindow(QtGui.QMainWindow):
 
         self.readSettings()
 
-
     def createConnections(self):
         self.statusBar.outputLogButton.clicked.connect(self.showOutputDialog)
         self.krakenUI.graphViewWidget.rigLoaded.connect(self.krakenMenu.buildRecentFilesMenu)
         self.krakenUI.graphViewWidget.rigLoadedConfig.connect(self.krakenMenu.setCurrentConfigByName)
         self.krakenUI.graphViewWidget.rigNameChanged.connect(self.krakenMenu.updateRigNameLabel)
 
+    def eventFilter(self, source, event):
+        if event.type()== QtCore.QEvent.WindowActivate:
+            for focusInCb in self._focusInCallbacks:
+                focusInCb()
+
+            return True
+
+        if event.type()== QtCore.QEvent.WindowDeactivate:
+            for focusOutCb in self._focusOutCallbacks:
+                focusOutCb()
+
+            return True
+
+        return QtGui.QMainWindow.eventFilter(self, source, event)
 
     def getKrakenUI(self):
         return self.krakenUI
-
 
     def center(self):
         qr = self.frameGeometry()
@@ -127,6 +145,16 @@ class KrakenWindow(QtGui.QMainWindow):
     # =======
     # Events
     # =======
+    def addFocusInCallback(self, method):
+        """Adds a callback to the focus in event."""
+
+        self._focusInCallbacks.append(method)
+
+    def addFocusOutCallback(self, method):
+        """Adds a callbak to the focus out event."""
+
+        self._focusOutCallbacks.append(method)
+
     def closeEvent(self, event):
 
         msgBox = QtGui.QMessageBox(self)

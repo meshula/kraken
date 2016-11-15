@@ -533,7 +533,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.headHandleMocapCtrlSpace.xfo.tr = headHandlePosition
 
             # Blend anim and mocap together
-            self.mocapHierBlendSolver = KLOperator(self.getLocation()+self.getName()+'mocap_HierBlendSolver', 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.mocapHierBlendSolver = KLOperator(self.getName()+'mocap_', 'OSS_HierBlendSolver', 'OSS_Kraken')
             self.addOperator(self.mocapHierBlendSolver)
             self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)  # connect this to attr
             # Add Att Inputs

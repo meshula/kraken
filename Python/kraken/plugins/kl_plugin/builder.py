@@ -1583,23 +1583,6 @@ class Builder(Builder):
         """
         return self.buildKLConstraint(kConstraint)
 
-    # ========================
-    # Component Build Methods
-    # ========================
-
-    def buildAttributeConnection(self, connectionInput):
-        """Builds the connection between the attribute and the connection.
-
-        Args:
-            connectionInput (Object): Kraken connection to build.
-
-        Return:
-            bool: True if successful.
-
-        """
-
-        # we reply completely on the SceneItem getCurrentSource mechanism for this
-        return True
 
     # =========================
     # Operator Builder Methods

@@ -267,7 +267,6 @@ class OSSNoseComponentRig(OSSNoseComponent):
         """
 
         super(OSSNoseComponentRig, self).loadData( data )
-        print data
         noseTopXfo = data['noseTopXfo']
         noseMidXfo = data['noseMidXfo']
         noseTipXfo = data['noseTipXfo']
@@ -312,7 +311,7 @@ class OSSNoseComponentRig(OSSNoseComponent):
         # Add Fabric Ops
         # ===============
         # Add Spine Canvas Op
-        self.noseTopAimKLOP = KLOperator('noseTopAimKLOP', 'OSS_AimKLSolver', 'OSS_Kraken')
+        self.noseTopAimKLOP = KLOperator('noseTop', 'OSS_AimKLSolver', 'OSS_Kraken')
         self.addOperator(self.noseTopAimKLOP)
         # Add Att Inputs
         self.noseTopAimKLOP.setInput('drawDebug', self.drawDebugInputAttr)

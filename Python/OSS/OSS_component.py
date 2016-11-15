@@ -130,7 +130,7 @@ class OSS_Component(BaseExampleComponent):
         partialJointDef.xfo = Xfo(joint.xfo)
 
         # Should make an orient solver, too or add flags to this one?
-        partialBlendSolver = KLOperator(name+'partial_OSS_BlendTRSConstraintSolver', 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+        partialBlendSolver = KLOperator(name+'partial', 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
         self.addOperator(partialBlendSolver)
         partialBlendSolver.setInput('blendTranslate', blendTranslate)
         partialBlendSolver.setInput('blendRotate', blendRotate)
@@ -224,7 +224,7 @@ class OSS_Component(BaseExampleComponent):
             curveDef.constrainTo(curveOutput)
 
 
-        NURBSCurveKLOp = KLOperator(basename+'TwistNURBSCurveKLOp', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
+        NURBSCurveKLOp = KLOperator(basename, 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(NURBSCurveKLOp)
 
         NURBSCurveKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -273,7 +273,7 @@ class OSS_Component(BaseExampleComponent):
         """
 
         if not name:
-            name = target.getName()+"_blendTRSConstraint"
+            name = target.getName()
 
         blendTRSConstraint = KLOperator(name, 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
         self.addOperator(blendTRSConstraint)
@@ -306,7 +306,7 @@ class OSS_Component(BaseExampleComponent):
         sourceObject = sourceAttribute.getParent().getParent()
         destObject = destAttribute.getParent().getParent()
 
-        name = sourceObject.getName()+"_"+sourceAttribute.getName()+"_2_"+destObject.getName()+"_"+destAttribute.getName()+'_ReverseSolver'
+        name = sourceObject.getName()+"_"+sourceAttribute.getName()+"_2_"+destObject.getName()+"_"+destAttribute.getName()
         attrGrp = AttributeGroup("Reversed", parent=destObject)
         if destAttribute.isTypeOf("BoolAttribute"):  #Can't pass bool to kl solver so create an intermediate float attribute
             parent = destAttribute.getParent()

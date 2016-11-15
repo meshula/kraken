@@ -1,0 +1,91 @@
+{
+  "objectType" : "Graph",
+  "title" : "Create",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out"
+      }
+    ],
+  "extDeps" : {
+    "KRK_kyle" : "*"
+    },
+  "nodes" : [
+    {
+      "objectType" : "Var",
+      "name" : "rig",
+      "ports" : [
+        {
+          "objectType" : "VarPort",
+          "name" : "value",
+          "nodePortType" : "IO"
+          }
+        ],
+      "dataType" : "KRK_kyle",
+      "extDep" : "KRK_kyle:*"
+      },
+    {
+      "objectType" : "Inst",
+      "name" : "constructor",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "constructor",
+        "ports" : [
+          {
+            "objectType" : "ExecPort",
+            "name" : "exec",
+            "nodePortType" : "IO",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "result",
+            "nodePortType" : "In",
+            "execPortType" : "Out",
+            "typeSpec" : "KRK_kyle"
+            }
+          ],
+        "extDeps" : {
+          "KRK_kyle" : "*"
+          },
+        "code" : "dfgEntry {
+  result = KRK_kyle();
+}
+"
+        }
+      }
+    ],
+  "connections" : {
+    "rig.value" : [
+      "result"
+      ],
+    "constructor.result" : [
+      "rig.value"
+      ]
+    },
+  "args" : [
+    null
+    ]
+  }

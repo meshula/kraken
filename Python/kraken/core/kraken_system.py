@@ -382,8 +382,7 @@ class KrakenSystem(object):
             return isSuccessful
 
 
-        # find the kraken examples module in the same folder as the kraken module.
-        print os.environ.get('KRAKEN_PATH')
+        # Find the kraken examples module in the same folder as the kraken module.
         default_component_path = os.path.normpath(os.path.join(os.environ.get('KRAKEN_PATH'), 'Python', 'kraken_components'))
         isSuccessful = __importDirRecursive(default_component_path)
 

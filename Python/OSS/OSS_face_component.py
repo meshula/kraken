@@ -412,8 +412,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
         globalScale = data['globalComponentCtrlSize']
 
-
-        self.RemapScalarValueSolverKLOp = KLOperator(self.getLocation()+self.getName()+str(anCtrlType)+'RemapScalarValueSolverKLOp', 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
+        self.RemapScalarValueSolverKLOp = KLOperator(self.getName()+str(anCtrlType), 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
         self.addOperator(self.RemapScalarValueSolverKLOp)
         self.RemapScalarValueSolverKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
@@ -484,7 +483,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
                             location = side
                         if location+"_"+handleName in shapesToControlDict.keys():
 
-                            LTOp = KLOperator(location+self.getName()+handleName+'GetLocalTranslateSolver', 'OSS_GetLocalTranslateSolver', 'OSS_Kraken')
+                            LTOp = KLOperator(self.getName()+handleName, 'OSS_GetLocalTranslateSolver', 'OSS_Kraken', metaData={"altLocation":side})
                             self.addOperator(LTOp)
                             LTOp.setInput('drawDebug', self.drawDebugInputAttr)
                             LTOp.setInput('rigScale', self.rigScaleInputAttr)
@@ -550,7 +549,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
                             newCtrl.xfo = data[ctrlListName+"Xfos"][index]
 
             # Add Deformer Joint Constrain
-            #self.outputsToDeformersKLOp     = KLOperator(self.getLocation()+self.getName()+handleName+'DeformerJointsKLOp', 'MultiPoseConstraintSolver', 'Kraken')
+            #self.outputsToDeformersKLOp     = KLOperator(self.getName()+handleName, 'MultiPoseConstraintSolver', 'Kraken')
             #self.addOperator(self.outputsToDeformersKLOp)
 
             # Add Att Inputs
@@ -593,7 +592,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         self.createControls(2, data.get("an2DNames", ""), data)
         self.createControls(1, data.get("an1DNames", ""), data)
         # Eval Operators
-        # self.evalOperators()
+        self.evalOperators()
         self.RemapScalarValueSolverKLOp.evaluate()
 
 

@@ -467,7 +467,7 @@ class FKChainComponentRig(FKChainComponent):
         # =============
 
         # ====================
-        # Evaluate Splice Ops
+        # Evaluate Canvas Ops
         # ====================
         # Eval Outputs to Controls Op to evaulate with new outputs and controls
         self.outputsToControlsKLOp.evaluate()
@@ -478,6 +478,7 @@ class FKChainComponentRig(FKChainComponent):
         # evaluate the constraints to ensure the outputs are now in the correct location.
         self.rootInputConstraint.evaluate()
         self.chainEndXfoOutputConstraint.evaluate()
+        self.chainEndPosOutputConstraint.evaluate()
 
 
 from kraken.core.kraken_system import KrakenSystem
