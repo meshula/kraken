@@ -94,7 +94,7 @@ UInt32 KrakenLookAtClip.getChannelType(UInt32 id) {
   return KrakenClipChannel_Xfo;
 }
 
-Float32 KrakenLookAtClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Float32 KrakenLookAtClip.evaluateFloat32!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   return Float32();
 }
 
@@ -115,7 +115,7 @@ Xfo[] KrakenLookAtClip.solveHierarchy()
   return hierOutXfos;
 }
 */
-Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
 
   if(rig == null)
     return Xfo();
@@ -173,7 +173,7 @@ Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipConte
   return  parentXfo.ori.inverse() * controlXfo; 
 }
 
-function KrakenLookAtClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
+function KrakenLookAtClip.apply(io Ref<KrakenKLRig> rig, KrakenClipContext context, Float32 factor) {
   if(this.childClip)
     this.childClip.apply(rig, context, factor);
 
