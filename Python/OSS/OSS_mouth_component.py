@@ -677,7 +677,7 @@ class OSSMouthRig(OSSMouth):
             curveLevel1Op.setInput('alignZ', alignZ )
         else:
             curveLevel1Op.setInput('alignX', alignX )
-            curveLevel1Op.setInput('alignY', alignY )
+            curveLevel1Op.setInput('alignY', -alignY )
             curveLevel1Op.setInput('alignZ', alignZ )
         curveLevel1Op.setInput('keepArcLength', 0.0)
         curveLevel1Op.setInput('compressionAmt', 0.0)
@@ -856,20 +856,20 @@ class OSSMouthRig(OSSMouth):
         self.L_MouthCornerLoc = Locator('mouthCorner', parent=self.ctrlCmpGrp, metaData={"altLocation":"L"})
         self.L_MouthCornerLoc.setShapeVisibility(False)
 
-        lSourceA = self.loLipLevel1Outputs[-1]
-        rSourceB = self.upLipLevel1Outputs[-1]
-
-        self.blendLeftCornerOp = KLOperator("blendLeftCornerOp" + "MidBlendOp", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+        self.blendLeftCornerOp = KLOperator('blendLeftCornerOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
         self.addOperator(self.blendLeftCornerOp)
-        self.blendLeftCornerOp.setInput('blendTranslate', 0.0)
-        self.blendLeftCornerOp.setInput('blendRotate', 0.5)
-        self.blendLeftCornerOp.setInput('blendScale', 0.5)
-        self.blendLeftCornerOp.setInput('constrainerTranslateA', lSourceA)
-        self.blendLeftCornerOp.setInput('constrainerTranslateB', rSourceB)
-        self.blendLeftCornerOp.setInput('constrainerRotateA', self.loLipLevel1Outputs[-2])
-        self.blendLeftCornerOp.setInput('constrainerRotateB', self.upLipLevel1Outputs[-2])
-        self.blendLeftCornerOp.setInput('constrainerScaleA', lSourceA)
-        self.blendLeftCornerOp.setInput('constrainerScaleB', rSourceB)
+
+        self.LMouthAlignSpaces = [self.loLipLevel1Outputs[-1], self.upLipLevel1Outputs[-1]]
+        self.LMouthAlignWeights = [0.5,0.5]
+
+        # Add Att Inputs
+        self.blendLeftCornerOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.blendLeftCornerOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.blendLeftCornerOp.setInput('mats', self.LMouthAlignSpaces)
+        self.blendLeftCornerOp.setInput('matWeights', self.LMouthAlignWeights)
+        self.blendLeftCornerOp.setInput('translationAmt',  0)
+        self.blendLeftCornerOp.setInput('scaleAmt',  0)
+        self.blendLeftCornerOp.setInput('rotationAmt',  1)
         self.blendLeftCornerOp.setOutput('result', self.L_MouthCornerLoc)
 
 
@@ -877,25 +877,25 @@ class OSSMouthRig(OSSMouth):
         self.R_MouthCornerLoc = Locator('mouthCorner', parent=self.ctrlCmpGrp, metaData={"altLocation":"R"})
         self.R_MouthCornerLoc.setShapeVisibility(False)
 
-        rSourceA = self.loLipLevel1Outputs[0]
-        rSourceB = self.upLipLevel1Outputs[0]
-
-        self.blendRightCornerOp = KLOperator("blendRightCornerOp", 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
+        self.blendRightCornerOp = KLOperator('blendRightCornerOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
         self.addOperator(self.blendRightCornerOp)
-        self.blendRightCornerOp.setInput('blendTranslate', 0)
-        self.blendRightCornerOp.setInput('blendRotate', 0.5)
-        self.blendRightCornerOp.setInput('blendScale',  0.5)
-        self.blendRightCornerOp.setInput('constrainerTranslateA', rSourceA)
-        self.blendRightCornerOp.setInput('constrainerTranslateB', rSourceB)
-        self.blendRightCornerOp.setInput('constrainerRotateA', self.loLipLevel1Outputs[1])
-        self.blendRightCornerOp.setInput('constrainerRotateB', self.upLipLevel1Outputs[1])
-        self.blendRightCornerOp.setInput('constrainerScaleA', rSourceA)
-        self.blendRightCornerOp.setInput('constrainerScaleB', rSourceB)
+
+        self.RMouthAlignSpaces = [self.loLipLevel1Outputs[0], self.upLipLevel1Outputs[0]]
+        self.RMouthAlignWeights = [0.5,0.5]
+        
+        # Add Att Inputs
+        self.blendRightCornerOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.blendRightCornerOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.blendRightCornerOp.setInput('mats', self.RMouthAlignSpaces)
+        self.blendRightCornerOp.setInput('matWeights', self.RMouthAlignWeights)
+        self.blendRightCornerOp.setInput('translationAmt',  0)
+        self.blendRightCornerOp.setInput('scaleAmt',  0)
+        self.blendRightCornerOp.setInput('rotationAmt',  1)
         self.blendRightCornerOp.setOutput('result', self.R_MouthCornerLoc)
 
+        # Add Att Inputs
         self.L_MouthCornerDef = Joint('mouthCorner',  parent=self.mouthDef, metaData={"altLocation":"L"})
         self.L_MouthCornerDef.constrainTo(self.L_MouthCornerLoc)
-
 
         self.R_MouthCornerDef = Joint('mouthCorner',  parent=self.mouthDef, metaData={"altLocation":"R"})
         self.R_MouthCornerDef.constrainTo(self.R_MouthCornerLoc)
@@ -1006,6 +1006,7 @@ class OSSMouthRig(OSSMouth):
                             ctrl.translatePoints(uplipCtrlOffset)
                             ctrl.translatePoints(uplipOffset)
                         else:
+                            ctrl.getParent().xfo = ctrl.getParent().xfo.multiply(Xfo(sc=Vec3(-1,1,-1))) 
                             ctrl.getParent().xfo.tr -= lolipOffset
                             ctrl.xfo.tr -= Vec3(lolipOffset)
                             ctrl.translatePoints(lolipCtrlOffset)
@@ -1030,7 +1031,7 @@ class OSSMouthRig(OSSMouth):
 
         controlLen = len(self.upLipLevel1Outputs)
         half = int(math.floor(controlLen/2))
-        self.upLipMidOutputTgtConstraint = self.upLipMidOutputTgt.constrainTo(self.upLipLevel1Outputs[half], maintainOffset=False)
+        self.upLipMidOutputTgtConstraint  = self.upLipMidOutputTgt.constrainTo(self.upLipLevel1Outputs[half], maintainOffset=False)
         self.lopLipMidOutputTgtConstraint = self.loLipMidOutputTgt.constrainTo(self.upLipLevel1Outputs[half], maintainOffset=False)
 
 
