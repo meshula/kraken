@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "1000",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.7959603667259216,\n    \"y\" : 0.01849334500730038,\n    \"z\" : -0.60509192943573,\n    \"t\" : -144.2478179931641\n    },\n  \"row1\" : {\n    \"x\" : 6.943078460608376e-06,\n    \"y\" : 0.9993970394134522,\n    \"z\" : 0.03056343831121922,\n    \"t\" : 96.78257751464844\n    },\n  \"row2\" : {\n    \"x\" : 0.6053650975227356,\n    \"y\" : -0.02432731725275517,\n    \"z\" : 0.7956008315086365,\n    \"t\" : 201.8072967529297\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.8959580063819885,\n    \"y\" : 0.1229670494794846,\n    \"z\" : -0.4267918765544891,\n    \"t\" : -66.56415557861328\n    },\n  \"row1\" : {\n    \"x\" : 6.340483196254354e-06,\n    \"y\" : 0.9607649445533752,\n    \"z\" : 0.2769148647785187,\n    \"t\" : 124.7270660400391\n    },\n  \"row2\" : {\n    \"x\" : 0.4441526532173157,\n    \"y\" : -0.2480665147304535,\n    \"z\" : 0.8609334826469421,\n    \"t\" : 200.3427276611328\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
-    "uiGraphZoom" : "{\n  \"value\" : 0.4700950682163239\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.8551176190376282\n  }",
     "timeline_loopMode" : "1",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "257.0285339355469",
-    "timeline_current" : "1",
+    "camera_focalDistance" : "260.0073547363281",
+    "timeline_current" : "264",
     "timeline_end" : "461",
-    "uiGraphPan" : "{\n  \"x\" : 795.5486681497354,\n  \"y\" : -38.02373927125404\n  }"
+    "uiGraphPan" : "{\n  \"x\" : -156.5260513306571,\n  \"y\" : -221.5112290378423\n  }"
     },
   "title" : "",
   "ports" : [
@@ -517,7 +517,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":2468.53102446,\"y\":199.43607378}"
+        "uiGraphPos" : "{\"x\":2461.2225827,\"y\":201.524341345}"
         },
       "name" : "DrawAxesInstances_1",
       "ports" : [
@@ -2078,7 +2078,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":667.488399029,\"y\":668.885941148}"
+        "uiGraphPos" : "{\"x\":714.265529633,\"y\":624.4475364690001}"
         },
       "name" : "alembicXfoDisplay_1",
       "ports" : [
@@ -2120,10 +2120,15 @@ dfgEntry {
           "objectType" : "InstPort",
           "name" : "timeline",
           "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "scale",
+          "nodePortType" : "In"
           }
         ],
       "executable" : "OSS.Utils.alembicXfoDisplay",
-      "presetGUID" : "11A1D00421F0880C11ADD191814FF0D5"
+      "presetGUID" : "BDDB42C600C4F2ED2FF3F418A6632D70"
       },
     {
       "objectType" : "Inst",
@@ -2423,7 +2428,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1204.38678598,\"y\":438.235325813}"
+        "uiGraphPos" : "{\"x\":1182.3033278,\"y\":386.181369662}"
         },
       "name" : "GetAllNames_1",
       "ports" : [
@@ -2648,6 +2653,58 @@ dfgEntry {
 }
 "
         }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1048.34579325,\"y\":565.6022949220001}"
+        },
+      "name" : "GetJointXfos_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "this",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "DFG.Kraken.KrakenAnimation.KrakenKLRig.GetJointXfos",
+      "presetGUID" : "212271BFF41DCFD4629BC1FCD44423C1"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":1038.30335963,\"y\":472.536209702}"
+        },
+      "name" : "GetJointNames_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "this",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "DFG.Kraken.KrakenAnimation.KrakenKLRig.GetJointNames",
+      "presetGUID" : "65B90BD248787801AB64782391C92B0D"
       }
     ],
   "connections" : {
@@ -2680,7 +2737,8 @@ dfgEntry {
       ],
     "scale" : [
       "scaleXfos.scale",
-      "DrawLabels_1.scale"
+      "DrawLabels_1.scale",
+      "alembicXfoDisplay_1.scale"
       ],
     "FbxCharacter.result" : [
       "Cache.value"
@@ -2719,7 +2777,9 @@ dfgEntry {
     "UpdateFromRig_1.rig" : [
       "GetAllXfos_1.this",
       "GetJointXfos_1.this",
-      "GetAllNames_1.this"
+      "GetAllNames_1.this",
+      "GetJointXfos_2.this",
+      "GetJointNames_1.this"
       ],
     "UpdateFromRig_1.character" : [
       "GetDeformedMesh.this",
@@ -2742,9 +2802,6 @@ dfgEntry {
       ],
     "AddClip_2.this" : [
       "Convert_2.val"
-      ],
-    "GetAllXfos_1.result" : [
-      "GetArray_1.array"
       ],
     "OffsetAnim.result" : [
       "AddClip_2.clip"
@@ -2795,9 +2852,6 @@ dfgEntry {
     "GetArray_2.elements" : [
       "DrawLabels_1.labels"
       ],
-    "GetAllNames_1.result" : [
-      "Cache_3.value"
-      ],
     "Cache_3.value" : [
       "getMatchingIndices.strings",
       "GetArray_2.array"
@@ -2815,6 +2869,12 @@ dfgEntry {
       ],
     "scaleXfos.result" : [
       "DrawAxesInstances_1.transforms"
+      ],
+    "GetJointXfos_2.result" : [
+      "GetArray_1.array"
+      ],
+    "GetJointNames_1.result" : [
+      "Cache_3.value"
       ]
     },
   "requiredPresets" : {
@@ -4360,8 +4420,8 @@ dfgEntry {
     "OSS.Utils.alembicXfoDisplay" : {
       "objectType" : "Graph",
       "metadata" : {
-        "uiGraphZoom" : "{\n  \"value\" : 0.7365182042121887\n  }",
-        "uiGraphPan" : "{\n  \"x\" : -1044.102783203125,\n  \"y\" : 184.9752502441406\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 0.9126917123794556\n  }",
+        "uiGraphPan" : "{\n  \"x\" : -1478.580350760203,\n  \"y\" : 238.3603575290356\n  }"
         },
       "title" : "alembicXfoDisplay",
       "ports" : [
@@ -4380,7 +4440,7 @@ dfgEntry {
           "name" : "show",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "Boolean" : false
+            "Boolean" : true
             },
           "execPortType" : "In",
           "typeSpec" : "Boolean"
@@ -4390,7 +4450,7 @@ dfgEntry {
           "name" : "drawLabels",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "Boolean" : false
+            "Boolean" : true
             },
           "execPortType" : "In"
           },
@@ -4408,7 +4468,7 @@ dfgEntry {
           "name" : "regex",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "String" : ""
+            "String" : ".*"
             },
           "execPortType" : "In"
           },
@@ -4420,10 +4480,23 @@ dfgEntry {
             "Float32" : 0
             },
           "execPortType" : "In"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiHardRange" : "(0.0001, 1)"
+            },
+          "name" : "scale",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "11A1D00421F0880C11ADD191814FF0D5",
+      "presetGUID" : "BDDB42C600C4F2ED2FF3F418A6632D70",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -4449,7 +4522,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":2899.23688745,\"y\":-75.532553196}"
+            "uiGraphPos" : "{\"x\":3059.44400907,\"y\":-82.75995779039999}"
             },
           "name" : "DrawAxesInstances_1",
           "ports" : [
@@ -4493,7 +4566,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":2495.35958862,\"y\":-1.91156005859}"
+            "uiGraphPos" : "{\"x\":2718.20601487,\"y\":39.0437240601}"
             },
           "name" : "DrawLabels_1",
           "ports" : [
@@ -4610,7 +4683,7 @@ dfgEntry {
               }
             ],
           "executable" : "Fabric.Compounds.IO.Alembic.Load",
-          "presetGUID" : "4297E867013C119E57DE2317CBB1375D"
+          "presetGUID" : "E80219EC596B80E2C7494A8DC44E4533"
           },
         {
           "objectType" : "Inst",
@@ -4898,7 +4971,6 @@ dfgEntry {
                 }
               ],
             "extDeps" : {},
-            "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
             "code" : "
 dfgEntry {
   elements.resize(indices.size());
@@ -4973,7 +5045,6 @@ dfgEntry {
                 }
               ],
             "extDeps" : {},
-            "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
             "code" : "
 dfgEntry {
   elements.resize(indices.size());
@@ -4989,7 +5060,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":2664.60632324,\"y\":-141.142807007}"
+            "uiGraphPos" : "{\"x\":2866.97348976,\"y\":-139.938255072}"
             },
           "name" : "If_1",
           "ports" : [
@@ -5025,7 +5096,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":3221.12955046,\"y\":-5.97796344757}"
+            "uiGraphPos" : "{\"x\":3360.86040974,\"y\":-2.36426186562}"
             },
           "name" : "If_2",
           "ports" : [
@@ -5057,6 +5128,82 @@ dfgEntry {
             ],
           "executable" : "Fabric.Core.Control.If",
           "presetGUID" : "3182A478A21643455D549E483D35F831"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":2492.89270139,\"y\":165.931056499}"
+            },
+          "name" : "scaleXfos",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "Xfos",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "scale",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Scalar" : 1
+                }
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "scaleXfos",
+            "ports" : [
+              {
+                "objectType" : "ExecPort",
+                "name" : "exec",
+                "nodePortType" : "IO",
+                "execPortType" : "IO",
+                "typeSpec" : "Execute"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "Xfos",
+                "nodePortType" : "Out",
+                "execPortType" : "In",
+                "typeSpec" : "Xfo[]"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "result",
+                "nodePortType" : "In",
+                "execPortType" : "Out",
+                "typeSpec" : "Xfo[]"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "scale",
+                "nodePortType" : "Out",
+                "execPortType" : "In",
+                "typeSpec" : "Scalar"
+                }
+              ],
+            "extDeps" : {},
+            "code" : "dfgEntry {
+  result.resize(Xfos.size());
+  for(UInt32 i=0; i<Xfos.size(); i++)
+  {
+    result[i] = Xfo(Xfos[i]);
+    result[i].sc = result[i].sc * scale;
+   }
+}
+"
+            }
           }
         ],
       "connections" : {
@@ -5074,6 +5221,10 @@ dfgEntry {
           ],
         "timeline" : [
           "FrameToTime_1.frame"
+          ],
+        "scale" : [
+          "scaleXfos.scale",
+          "DrawLabels_1.scale"
           ],
         "EmptyDrawingHandle_1.handle" : [
           "DrawLabels_1.handle",
@@ -5117,8 +5268,7 @@ dfgEntry {
           "GetArray_1.indices"
           ],
         "GetArray_1.elements" : [
-          "DrawAxesInstances_1.transforms",
-          "DrawLabels_1.xfos"
+          "scaleXfos.Xfos"
           ],
         "GetArray_2.elements" : [
           "DrawLabels_1.labels"
@@ -5128,6 +5278,10 @@ dfgEntry {
           ],
         "If_2.result" : [
           "exec"
+          ],
+        "scaleXfos.result" : [
+          "DrawLabels_1.xfos",
+          "DrawAxesInstances_1.transforms"
           ]
         }
       },
@@ -5258,15 +5412,15 @@ if(draw)
       dhandle.setActive(true);
   }
 
-return(pixels);
+return(pixels);    
 }
 
 dfgEntry {
   if(xfos.size() != labels.size())
     return;
-
+    
   Xfo shifts[SInt32];
-
+    
   Xfo offset;
   offset.ori.setFromAxisAndAngle(Vec3(1, 0, 0), HALF_PI);
   offset.sc *= scale * 0.1;
@@ -5277,19 +5431,19 @@ dfgEntry {
      xfo.tr = xfos[i].tr;
    else
      xfo = xfos[i];
-
+     
     xfo = xfo * offset;
-
+    
     Vec3 v = xfo.tr;
     SInt32 hash = SInt32(v.x * 100.0) * 17 + SInt32(v.y * 100.0) * 219 + SInt32(v.z * 100.0) * 3;
     Xfo shift = shifts.get(hash, Xfo());
-
+    
     xfo = xfo * shift;
-
+    
     shift.tr.z += 1.0;
-
+    
     maCTextLocal(labels[i]+i, handle, labels[i], xfo, color, instance, true);
-
+    
     shifts[hash] = shift;
   }
 }
@@ -6886,8 +7040,9 @@ dfgEntry {
       "metadata" : {
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiNodeColor" : "{\n  \"r\" : 170,\n  \"g\" : 130,\n  \"b\" : 100\n  }",
+        "uiGraphZoom" : "{\n  \"value\" : 0.9191978573799133\n  }",
         "uiTooltip" : "Opens an Alembic file and provides access to its contents. Use this in conjunction with an Alembic.GetPaths node to get access to the table of contents of an Alembic file.",
-        "uiGraphPan" : "{\n  \"x\" : 324.0,\n  \"y\" : -92.0\n  }"
+        "uiGraphPan" : "{\n  \"x\" : 134.6165001690388,\n  \"y\" : 162.2389444261789\n  }"
         },
       "title" : "Load",
       "ports" : [
@@ -6895,6 +7050,9 @@ dfgEntry {
           "objectType" : "ExecPort",
           "name" : "exec",
           "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
@@ -6902,6 +7060,9 @@ dfgEntry {
           "objectType" : "ExecPort",
           "name" : "filePath",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "String" : ""
+            },
           "execPortType" : "In",
           "typeSpec" : "String"
           },
@@ -6909,17 +7070,22 @@ dfgEntry {
           "objectType" : "ExecPort",
           "name" : "archive",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "AlembicArchiveReader" : null
+            },
           "execPortType" : "Out",
           "typeSpec" : "AlembicArchiveReader"
           }
         ],
-      "extDeps" : {},
-      "presetGUID" : "4297E867013C119E57DE2317CBB1375D",
+      "extDeps" : {
+        "AlembicWrapper" : "*"
+        },
+      "presetGUID" : "E80219EC596B80E2C7494A8DC44E4533",
       "nodes" : [
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":823.0,\"y\":254.0}"
+            "uiGraphPos" : "{\"x\":1037.0,\"y\":48.0}"
             },
           "name" : "AlembicArchiveReader_1",
           "ports" : [
@@ -6945,7 +7111,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":484.0,\"y\":181.0}"
+            "uiGraphPos" : "{\"x\":348.0,\"y\":23.0}"
             },
           "name" : "Exists_1",
           "ports" : [
@@ -6971,7 +7137,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1133.0,\"y\":203.0}"
+            "uiGraphPos" : "{\"x\":1353.0,\"y\":35.0}"
             },
           "name" : "If_1",
           "ports" : [
@@ -7007,7 +7173,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":664.0,\"y\":262.0}"
+            "uiGraphPos" : "{\"x\":548.0,\"y\":12.0}"
             },
           "name" : "String_1",
           "ports" : [
@@ -7033,7 +7199,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":303.0,\"y\":173.0}"
+            "uiGraphPos" : "{\"x\":109.0,\"y\":23.0}"
             },
           "name" : "ExpandEnvVars_1",
           "ports" : [
@@ -7059,7 +7225,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1301.0,\"y\":244.0}"
+            "uiGraphPos" : "{\"x\":1525.87892842,\"y\":129.582306147}"
             },
           "name" : "Cache_1",
           "ports" : [
@@ -7080,7 +7246,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":59.0,\"y\":243.0}"
+            "uiGraphPos" : "{\"x\":-61.0,\"y\":25.0}"
             },
           "name" : "FilePath_1",
           "ports" : [
@@ -7102,6 +7268,92 @@ dfgEntry {
             ],
           "executable" : "Fabric.Exts.FileIO.FilePath.FilePath",
           "presetGUID" : "99F8F257D7FABE2353B3E7A635249DF8"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":494.5,\"y\":198.5}"
+            },
+          "name" : "Not_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "value",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Fabric.Core.Logic.Not",
+          "presetGUID" : "B8FE3CDCF84BBE1B3A07C80E724FB147"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":688.5,\"y\":175.5}"
+            },
+          "name" : "Concat_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "String" : "File does not exist : "
+                }
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "other",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Fabric.Exts.Util.String.Concat",
+          "presetGUID" : "4B178940781A931CA14F10DA3FA75E26"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":848.982944012,\"y\":210.793624878}"
+            },
+          "name" : "RaiseErrorIf_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "condition",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "message",
+              "nodePortType" : "In"
+              }
+            ],
+          "executable" : "Fabric.Compounds.Debug.RaiseErrorIf",
+          "presetGUID" : "692367692FF1DF56BFDD920BD3A74F6F"
           }
         ],
       "connections" : {
@@ -7115,13 +7367,15 @@ dfgEntry {
           "String_1.this"
           ],
         "Exists_1.result" : [
-          "If_1.cond"
+          "If_1.cond",
+          "Not_1.value"
           ],
         "If_1.result" : [
           "Cache_1.value"
           ],
         "String_1.result" : [
-          "AlembicArchiveReader_1.fileName"
+          "AlembicArchiveReader_1.fileName",
+          "Concat_1.other"
           ],
         "ExpandEnvVars_1.result" : [
           "Exists_1.this"
@@ -7131,6 +7385,15 @@ dfgEntry {
           ],
         "FilePath_1.result" : [
           "ExpandEnvVars_1.this"
+          ],
+        "Not_1.result" : [
+          "RaiseErrorIf_1.condition"
+          ],
+        "Concat_1.result" : [
+          "RaiseErrorIf_1.message"
+          ],
+        "RaiseErrorIf_1.exec" : [
+          "Cache_1.exec"
           ]
         }
       },
@@ -7336,6 +7599,134 @@ dfgEntry {
 
 dfgEntry {
   result = FilePath(value);
+}
+"
+      },
+    "Fabric.Core.Logic.Not" : {
+      "objectType" : "Func",
+      "title" : "Not !",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "value",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Boolean"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "B8FE3CDCF84BBE1B3A07C80E724FB147",
+      "code" : "
+dfgEntry {
+	result = !value;
+}
+"
+      },
+    "Fabric.Exts.Util.String.Concat" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "returns this + other\n\nSupported types:\n  this: String\n  other: String\n  result: String\n"
+        },
+      "title" : "Concat",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "this",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "other",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "String"
+          }
+        ],
+      "extDeps" : {
+        "Util" : "*"
+        },
+      "presetGUID" : "4B178940781A931CA14F10DA3FA75E26",
+      "code" : "require Util;
+
+dfgEntry {
+  result = this.concat(other);
+}
+"
+      },
+    "Fabric.Compounds.Debug.RaiseErrorIf" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiTooltip" : "Will report an error with the given message, if the given condition is true."
+        },
+      "title" : "RaiseErrorIf",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "condition",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "message",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "String" : ""
+            },
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "692367692FF1DF56BFDD920BD3A74F6F",
+      "code" : "dfgEntry {
+  if( condition ) { setError( message ); }
 }
 "
       },
@@ -8743,12 +9134,95 @@ dfgEntry {
   result = this.getAllNames();
 }
 "
+      },
+    "DFG.Kraken.KrakenAnimation.KrakenKLRig.GetJointXfos" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenKLRig\n  result: Xfo[]\n"
+        },
+      "title" : "GetJointXfos",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "this",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenKLRig"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[]"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "212271BFF41DCFD4629BC1FCD44423C1",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = this.getJointXfos();
+}
+"
+      },
+    "DFG.Kraken.KrakenAnimation.KrakenKLRig.GetJointNames" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: KrakenKLRig\n  result: String[]\n"
+        },
+      "title" : "GetJointNames",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "this",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "KrakenKLRig"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "String[]"
+          }
+        ],
+      "extDeps" : {
+        "KrakenAnimation" : "*"
+        },
+      "presetGUID" : "65B90BD248787801AB64782391C92B0D",
+      "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = this.getJointNames();
+}
+"
       }
     },
   "args" : [
     {
       "type" : "Float32",
-      "value" : 1
+      "value" : 264
       },
     {
       "type" : "String",
@@ -8760,15 +9234,15 @@ dfgEntry {
       },
     {
       "type" : "Boolean",
-      "value" : true
-      },
-    {
-      "type" : "Boolean",
-      "value" : true
+      "value" : false
       },
     {
       "type" : "Boolean",
       "value" : false
+      },
+    {
+      "type" : "Boolean",
+      "value" : true
       },
     {
       "type" : "Boolean",
@@ -8780,7 +9254,7 @@ dfgEntry {
       },
     {
       "type" : "Scalar",
-      "value" : 4.5
+      "value" : 5.400000095367432
       }
     ]
   }
