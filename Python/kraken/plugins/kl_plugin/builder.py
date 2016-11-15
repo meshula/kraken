@@ -32,8 +32,10 @@ from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.maths.vec3 import Vec3
+from kraken.core.maths.quat import Quat
 from kraken.core.maths.color import Color
 from kraken.core.maths.xfo import Xfo
+from kraken.core.maths.mat44 import Mat44
 
 from kraken.plugins.canvas_plugin.graph_manager import GraphManager
 
@@ -53,8 +55,8 @@ class Builder(Builder):
     __rigTitle = None
     __canvasGraph = None
     __names = None
-    __pathToId = None
-    __idToName = None
+    __objectIdToUid = None
+    __uidToName = None
     __itemByUniqueId = None
     __klMembers = None
     __klMaxUniqueId = None
@@ -94,19 +96,19 @@ class Builder(Builder):
     # KL related Methods
     # ========================
     def getUniqueId(self, item, earlyExit = False):
-        key = item.getDecoratedPath()
-        if self.__pathToId.has_key(key):
-          return self.__pathToId[key]
+        objectId = id(item)
+        if self.__objectIdToUid.has_key(objectId):
+          return self.__objectIdToUid[objectId]
         if earlyExit:
           return None
-        self.__pathToId[key] = self.__klMaxUniqueId
+        self.__objectIdToUid[objectId] = self.__klMaxUniqueId
         self.__klMaxUniqueId = self.__klMaxUniqueId + 1
-        return self.__pathToId[key]
+        return self.__objectIdToUid[objectId]
 
     def getUniqueName(self, item, earlyExit = False):
         uid = self.getUniqueId(item)
-        if self.__idToName.has_key(uid):
-            return self.__idToName[uid]
+        if self.__uidToName.has_key(uid):
+            return self.__uidToName[uid]
         name = None
         if isinstance(item, AttributeGroup):
             name = self.getUniqueName(item.getParent(), earlyExit = True) + '_' + item.getName()
@@ -151,7 +153,7 @@ class Builder(Builder):
             name = namePrefix + str(nameSuffix)
 
         self.__names[name] = item.getDecoratedPath()
-        self.__idToName[uid] = name
+        self.__uidToName[uid] = name
 
         return name
 
@@ -373,6 +375,46 @@ class Builder(Builder):
             if self.__profilingFrames > 0:
                 item['solveCode'] += ["{ AutoProfilingEvent solverEvent_%s(\"%s\");" % (eventSolverName, kOperator.getDecoratedPath())]
 
+            def getSolveCodeForConstantValue(argMember, argDataType, value):
+                code = []
+                if isinstance(value, (float, int)):
+                    code += ["this.%s = %f;" % (argMember, value)]
+                elif isinstance(value, str):
+                    code += ["this.%s = '%s';" % (argMember, value)]
+                elif isinstance(value, bool):
+                    if value:
+                        code += ["this.%s = true;" % (argMember, j)]
+                    else:
+                        code += ["this.%s = false;" % (argMember, j)]
+                elif isinstance(value, Vec3):
+                    code += ["this.%s = Vec3(%f, %f, %f);" % (argMember, value.x, value.y, value.z)]
+                elif isinstance(value, Quat):
+                    code += ["this.%s = Quat(%f, %f, %f, %f);" % (argMember, value.v.x, value.v.y, value.v.z, value.w)]
+                elif isinstance(value, Color):
+                    code += ["this.%s = Color(%f, %f, %f, %f);" % (argMember, value.r, value.g, value.b, value.a)]
+                elif isinstance(value, Xfo):
+                    valueStr = 'Xfo(Vec3(%f, %f, %f), Quat(%f, %f, %f, %f), Vec3(%f, %f, %f))' % (
+                        value.tr.x, value.tr.y, value.tr.z,
+                        value.ori.v.x, value.ori.v.y, value.ori.v.z, value.ori.w,
+                        value.sc.x, value.sc.y, value.sc.z                      
+                        )
+                    if argDataType.startswith('Mat44'):
+                        code += ["this.%s = %s.toMat44();" % (argMember, valueStr)]
+                    else:
+                        code += ["this.%s = %s;" % (argMember, valueStr)]
+                elif isinstance(value, Mat44):
+                    valueStr = 'Mat44(Vec4(%f, %f, %f, %f), Vec4(%f, %f, %f, %f), Vec4(%f, %f, %f, %f), Vec4(%f, %f, %f, %f))' % (
+                        value.row0.x, value.row0.y, value.row0.z, value.row0.t,
+                        value.row1.x, value.row1.y, value.row1.z, value.row1.t,
+                        value.row2.x, value.row2.y, value.row2.z, value.row2.t,
+                        value.row3.x, value.row3.y, value.row3.z, value.row3.t
+                        )
+                    code += ['this.%s = %s;' % (argMember, valueStr)]
+                else:
+                    raise Exception("Constantt value has an unsupported type: %s" % value)
+
+                return code
+
             # first let's find all args which are arrays and prepare storage
             for i in xrange(len(args)):
                 arg = args[i]
@@ -389,13 +431,17 @@ class Builder(Builder):
                     connectedObjects = kOperator.getOutput(argName)
 
                 if isArray:
-                    item['solveCode'] += ["  this.%s.resize(%d);" % (argMember, len(connectedObjects))]
+                    item['solveCode'] += ["this.%s.resize(%d);" % (argMember, len(connectedObjects))]
                     if argConnectionType == 'Out':
                         continue
                     for j in xrange(len(connectedObjects)):
                         connected = connectedObjects[j]
                         if connected is None:
-                          continue
+                            continue
+
+                        if not isinstance(connected, SceneItem):
+                            item['solveCode'] += getSolveCodeForConstantValue('%s[%d]' % (argMember, j), argDataType, connected)
+                            continue
 
                         sourceId = self.getUniqueId(connected)
                         item['sourceIds'] += [sourceId]
@@ -425,7 +471,11 @@ class Builder(Builder):
 
                 connected = connectedObjects
                 if connected is None:
-                  continue
+                    continue
+
+                if not isinstance(connected, SceneItem):
+                    item['solveCode'] += getSolveCodeForConstantValue(argMember, argDataType, connected)
+                    continue
 
                 sourceId = self.getUniqueId(connected)
                 item['sourceIds'] += [sourceId]
@@ -474,6 +524,7 @@ class Builder(Builder):
                 comma = ""
                 if i < len(args) - 1:
                     comma = ","
+
                 item['solveCode'] += ["  this.%s%s" % (argMember, comma)]
 
             item['solveCode'] += [");"]
@@ -1693,7 +1744,7 @@ class Builder(Builder):
         solver = {
           "sceneItem": kOperator,
           "name": kOperator.getName(),
-          "member": self.getUniqueObjectMember(kOperator, kOperator.getSolverTypeName()),
+          "member": self.getUniqueObjectMember(kOperator, solverTypeName),
           "path": kOperator.getDecoratedPath(),
           "type": kOperator.getSolverTypeName(),
           "buildName": buildName
@@ -1877,8 +1928,8 @@ class Builder(Builder):
         self.__canvasGraph = GraphManager()
         self.__debugMode = False
         self.__names = {}
-        self.__pathToId = {}
-        self.__idToName = {}
+        self.__objectIdToUid = {}
+        self.__uidToName = {}
         self.__itemByUniqueId = None
         self.__klExtensions = []
         self.__klMembers = {'members': {}, 'lookup': {}}
