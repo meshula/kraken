@@ -53,11 +53,11 @@ UInt32 KrakenStaticClip.getChannelType(UInt32 id) {
   return this.types[id];
 }
 
-Float32 KrakenStaticClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Float32 KrakenStaticClip.evaluateFloat32!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   return this.values[id].tr.x;
 }
 
-Xfo KrakenStaticClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Xfo KrakenStaticClip.evaluateXfo!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   return this.values[id];
 }
 
@@ -66,7 +66,7 @@ Xfo KrakenStaticClip.evaluateXfo!(String name) {
   return this.values[id];
 }
 
-function KrakenStaticClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
+function KrakenStaticClip.apply(io Ref<KrakenKLRig> rig, KrakenClipContext context, Float32 factor) {
   KrakenStaticClip clip = this;
   if(clip.lookup == null)
     clip.lookup = KrakenClipLookup(rig, clip);
