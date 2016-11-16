@@ -1134,8 +1134,9 @@ class Builder(Builder):
         kl += ["  KrakenClipContext context;"]
         if self.__profilingFrames > 0:
             kl += ["  for(SInt32 i=0;i<%d;i++) {" % self.__profilingFrames]
+            kl += ["    AutoProfilingEvent scopedEvent('%s');" % self.getKLExtensionName()]
             kl += ["    context.time = 1.0;"]
-            kl += ["    rig.dirtyAllItems();"]
+            kl += ["    rig.dirtyItem(0);"]
             kl += ["    rig.evaluate(context);"]
             kl += ["  };"]
         else:
