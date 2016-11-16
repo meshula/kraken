@@ -1,8 +1,8 @@
 {
   "objectType" : "Graph",
   "metadata" : {
-    "uiGraphZoom" : "{\n  \"value\" : 0.9126917123794556\n  }",
-    "uiGraphPan" : "{\n  \"x\" : -1478.580350760203,\n  \"y\" : 238.3603575290356\n  }"
+    "uiGraphZoom" : "{\n  \"value\" : 0.8219338059425354\n  }",
+    "uiGraphPan" : "{\n  \"x\" : -713.4365234375,\n  \"y\" : 157.2837829589844\n  }"
     },
   "title" : "alembicXfoDisplay",
   "ports" : [
@@ -74,10 +74,23 @@
         },
       "execPortType" : "In",
       "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiRange" : "(1, 50)"
+        },
+      "name" : "fps",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float64" : 30
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Float64"
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "BDDB42C600C4F2ED2FF3F418A6632D70",
+  "presetGUID" : "DA63597C3B7C4807E8E097D905DD850A",
   "nodes" : [
     {
       "objectType" : "Inst",
@@ -353,7 +366,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1588.946694850922,\"y\":82.28701829910278}"
+        "uiGraphPos" : "{\"x\":1536.63132596,\"y\":105.40324831}"
         },
       "name" : "FrameToTime_1",
       "ports" : [
@@ -807,6 +820,9 @@ dfgEntry {
       "scaleXfos.scale",
       "DrawLabels_1.scale"
       ],
+    "fps" : [
+      "FrameToTime_1.fps"
+      ],
     "EmptyDrawingHandle_1.handle" : [
       "DrawLabels_1.handle",
       "If_1.if_false",
@@ -866,13 +882,13 @@ dfgEntry {
       ]
     },
   "requiredPresets" : {
-    "OSS.Utils.alembicXfoDisplay_1" : {
+    "OSS.Utils.alembicXfoDisplay" : {
       "objectType" : "Graph",
       "metadata" : {
-        "uiGraphZoom" : "{\n  \"value\" : 0.9126917123794556\n  }",
-        "uiGraphPan" : "{\n  \"x\" : -1478.580350760203,\n  \"y\" : 238.3603575290356\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 0.8219338059425354\n  }",
+        "uiGraphPan" : "{\n  \"x\" : -713.4365234375,\n  \"y\" : 157.2837829589844\n  }"
         },
-      "title" : "alembicXfoDisplay_1",
+      "title" : "alembicXfoDisplay",
       "ports" : [
         {
           "objectType" : "ExecPort",
@@ -942,10 +958,23 @@ dfgEntry {
             },
           "execPortType" : "In",
           "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiRange" : "(1, 50)"
+            },
+          "name" : "fps",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float64" : 30
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Float64"
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "BDDB42C600C4F2ED2FF3F418A6632D70",
+      "presetGUID" : "DA63597C3B7C4807E8E097D905DD850A",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -1221,7 +1250,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1588.946694850922,\"y\":82.28701829910278}"
+            "uiGraphPos" : "{\"x\":1536.63132596,\"y\":105.40324831}"
             },
           "name" : "FrameToTime_1",
           "ports" : [
@@ -1675,6 +1704,9 @@ dfgEntry {
           "scaleXfos.scale",
           "DrawLabels_1.scale"
           ],
+        "fps" : [
+          "FrameToTime_1.fps"
+          ],
         "EmptyDrawingHandle_1.handle" : [
           "DrawLabels_1.handle",
           "If_1.if_false",
@@ -2085,15 +2117,15 @@ if(draw)
       dhandle.setActive(true);
   }
 
-return(pixels);
+return(pixels);    
 }
 
 dfgEntry {
   if(xfos.size() != labels.size())
     return;
-
+    
   Xfo shifts[SInt32];
-
+    
   Xfo offset;
   offset.ori.setFromAxisAndAngle(Vec3(1, 0, 0), HALF_PI);
   offset.sc *= scale * 0.1;
@@ -2104,19 +2136,19 @@ dfgEntry {
      xfo.tr = xfos[i].tr;
    else
      xfo = xfos[i];
-
+     
     xfo = xfo * offset;
-
+    
     Vec3 v = xfo.tr;
     SInt32 hash = SInt32(v.x * 100.0) * 17 + SInt32(v.y * 100.0) * 219 + SInt32(v.z * 100.0) * 3;
     Xfo shift = shifts.get(hash, Xfo());
-
+    
     xfo = xfo * shift;
-
+    
     shift.tr.z += 1.0;
-
+    
     maCTextLocal(labels[i]+i, handle, labels[i], xfo, color, instance, true);
-
+    
     shifts[hash] = shift;
   }
 }
@@ -3571,7 +3603,7 @@ dfgEntry {
       "presetGUID" : "3182A478A21643455D549E483D35F831",
       "code" : "
 dfgEntry {
-  result = cond ? if_true : if_false;
+	result = cond ? if_true : if_false;
 }
 "
       },
@@ -3640,7 +3672,7 @@ dfgEntry {
       "presetGUID" : "EE5CD58CD54E7460D6011FA855D8C6EB",
       "code" : "
 dfgEntry {
-  result = lhs == rhs;
+	result = lhs == rhs;
 }
 "
       },
@@ -3681,7 +3713,7 @@ dfgEntry {
       "presetGUID" : "8146B3E77857E24CAE33F8B5284585E7",
       "code" : "
 dfgEntry {
-  result = lhs + rhs;
+	result = lhs + rhs;
 }
 "
       },
@@ -4384,7 +4416,7 @@ dfgEntry {
       "presetGUID" : "B8FE3CDCF84BBE1B3A07C80E724FB147",
       "code" : "
 dfgEntry {
-  result = !value;
+	result = !value;
 }
 "
       },
@@ -5246,7 +5278,7 @@ dfgEntry {
       "presetGUID" : "572880BF96ACC34D6987BE3333715F52",
       "code" : "
 dfgEntry {
-  array.push(element);
+	array.push(element);
 }
 "
       },
@@ -5647,7 +5679,7 @@ dfgEntry {
       "presetGUID" : "C3E84342DB046C048BABD41DF1B5E3ED",
       "code" : "
 dfgEntry {
-  result = value;
+	result = value;
 }
 "
       },
@@ -5839,7 +5871,7 @@ dfgEntry {
           "name" : "fps",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "Float64" : 24
+            "Float64" : 30
             },
           "execPortType" : "In",
           "typeSpec" : "Float64"
@@ -6022,7 +6054,7 @@ dfgEntry {
       "presetGUID" : "695E8145F8F42293FBC88BD348869892",
       "code" : "
 dfgEntry {
-  result = lhs / rhs;
+	result = lhs / rhs;
 }
 "
       },
