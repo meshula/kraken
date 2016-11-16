@@ -735,11 +735,22 @@ class Builder(Builder):
         kl += ["  this.isItemDirty[uniqueId] = true;"]
         kl += ["  switch(uniqueId) {"]
         for item in allItems:
+            # only do this for controls or attributes - we don't need to dirty anything else
+            if not isinstance(item['sceneItem'], (Control, Attribute)):
+                continue
             if len(item['targetIds']) == 0:
-              continue
+                continue
             kl += ["    case %d: { // %s" % (self.getUniqueId(item['sceneItem']), self.getUniqueName(item['sceneItem']))]
-            for targetId in item['targetIds']:
-                kl += ["      this.dirtyItem(%d); // %s" % (targetId, self.getUniqueName(self.__itemByUniqueId[targetId]['sceneItem']))]
+            uidsToDirty = item['targetIds']
+            for uidToDirty in uidsToDirty:
+                targetItem = self.__itemByUniqueId[uidToDirty]
+                kl += ["      this.isItemDirty[%d] = true; // %s" % (uidToDirty, self.getUniqueName(targetItem['sceneItem']))]
+                targetIds = targetItem['targetIds']
+                for targetId in targetIds:
+                    if targetId in uidsToDirty:
+                        continue
+                    uidsToDirty += [targetId]
+
             kl += ["      break;"]
             kl += ["    }"]
         kl += ["  }"]
@@ -1134,9 +1145,11 @@ class Builder(Builder):
         kl += ["  KrakenClipContext context;"]
         if self.__profilingFrames > 0:
             kl += ["  for(SInt32 i=0;i<%d;i++) {" % self.__profilingFrames]
-            kl += ["    AutoProfilingEvent scopedEvent('%s');" % self.getKLExtensionName()]
             kl += ["    context.time = 1.0;"]
-            kl += ["    rig.dirtyItem(0);"]
+            for obj in self.__klObjects:
+                if obj['sceneItem'].isTypeOf('Control'):
+                    kl += ["    rig.dirtyItem(%d);" % self.getUniqueId(obj['sceneItem'])]
+                    break
             kl += ["    rig.evaluate(context);"]
             kl += ["  };"]
         else:
