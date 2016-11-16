@@ -205,8 +205,11 @@ class Builder(Builder):
 
         return member
 
+    def getSolveMethodName(self, item):
+        return 'solve_%s' % (self.getUniqueName(item))
+
     def __getXfoAsStr(self, xfo):
-        valueStr = "Xfo(Vec3(%.4f, %.4f, %.4f), Quat(%.4f, %.4f, %.4f, %.4f), Vec3(%.4f, %.4f, %.4f))" % (
+        valueStr = "Xfo(Vec3(%.4g, %.4g, %.4g), Quat(%.4g, %.4g, %.4g, %.4g), Vec3(%.4g, %.4g, %.4g))" % (
             round(xfo.tr.x, 4),
             round(xfo.tr.y, 4),
             round(xfo.tr.z, 4),
@@ -240,9 +243,11 @@ class Builder(Builder):
             for source in sources:
                 if source.isTypeOf("Attribute"):
                     sourceAttr = self.findKLAttribute(source)
+                    self.__visitItem(sourceAttr)
                     sourceId = self.getUniqueId(sourceAttr['sceneItem'])
                     item['sourceIds'] += [sourceId]
-                    item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(sourceAttr['sceneItem']))]
+                    if len(sourceAttr['solveCode']) > 0:
+                        item['solveCode'] += ["this.%s();" % (self.getSolveMethodName(sourceAttr['sceneItem']))]
                     item['solveCode'] += ["this.%s.value = this.%s.value;" % (item['member'], sourceAttr['member'])]
 
         elif isinstance(item['sceneItem'], Object3D):
@@ -273,9 +278,11 @@ class Builder(Builder):
 
             if len(objects) and needParentConstraint:
                 parent = objects[-1]
+                self.__visitItem(parent)
                 sourceId = self.getUniqueId(parent['sceneItem'])
                 item['sourceIds'] += [sourceId]
-                item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(parent['sceneItem']))]
+                if len(parent['solveCode']) > 0:
+                    item['solveCode'] += ["this.%s();" % (self.getSolveMethodName(parent['sceneItem']))]
                 item['solveCode'] += ["", "// solving parent child constraint %s" % name]
                 if self.__debugMode:
                     item['solveCode'] += ["report(\"solving parent child constraint %s\");" % name]
@@ -286,10 +293,12 @@ class Builder(Builder):
                 if not sourceConstraint:
                     continue
 
+                self.__visitItem(sourceConstraint)
                 sourceMember = sourceConstraint['member']
                 sourceId = self.getUniqueId(sourceConstraint['sceneItem'])
                 item['sourceIds'] += [sourceId]
-                item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(sourceConstraint['sceneItem']))]
+                if len(sourceConstraint['solveCode']) > 0:
+                    item['solveCode'] += ["this.%s();" % (self.getSolveMethodName(sourceConstraint['sceneItem']))]
                 item['solveCode'] += ['this.%s.global = this.%s.compute(this.%s.global);' % (member, sourceMember, member)]
 
             solvers = [self.findKLSolver(solver) for solver in sources if self.findKLSolver(solver)]
@@ -297,6 +306,7 @@ class Builder(Builder):
                 if not sourceSolver:
                     continue
 
+                self.__visitItem(sourceSolver)
                 kOperator = sourceSolver['sceneItem']
                 sourceMember = sourceSolver['member']
                 sourceName = self.getUniqueName(kOperator)
@@ -324,7 +334,8 @@ class Builder(Builder):
                         if connected.getDecoratedPath() == item['sceneItem'].getDecoratedPath():
                             sourceId = self.getUniqueId(sourceSolver['sceneItem'])
                             item['sourceIds'] += [sourceId]
-                            item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(sourceSolver['sceneItem']))]
+                            if len(sourceSolver['solveCode']) > 0:
+                                item['solveCode'] += ["this.%s();" % (self.getSolveMethodName(sourceSolver['sceneItem']))]
                             item['solveCode'] += ["", "// retrieving value for %s from solver %s of data type %s" % (member, sourceName, argDataType)]
                             if argDataType.endswith('[]'):
                                 if argDataType == 'Mat44[]':
@@ -351,9 +362,11 @@ class Builder(Builder):
             for i in range(len(constraint.getConstrainers())):
                 constrainer = constraint.getConstrainers()[i]
                 constrainerObj = self.findKLObjectForSI(constrainer)
+                self.__visitItem(constrainerObj)
                 sourceId = self.getUniqueId(constrainerObj['sceneItem'])
                 item['sourceIds'] += [sourceId]
-                item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(constrainerObj['sceneItem']))]
+                if len(constrainerObj['solveCode']) > 0:
+                    item['solveCode'] += ["this.%s();" % (self.getSolveMethodName(constrainerObj['sceneItem']))]
                 item['solveCode'] += ['this.%s.constrainers[%d] = this.%s.global;' % (member, i, constrainerObj['member'])]
 
         elif isinstance(item['sceneItem'], KLOperator):
@@ -378,7 +391,7 @@ class Builder(Builder):
             def getSolveCodeForConstantValue(argMember, argDataType, value):
                 code = []
                 if isinstance(value, (float, int)):
-                    code += ["this.%s = %f;" % (argMember, value)]
+                    code += ["this.%s = %.4g;" % (argMember, value)]
                 elif isinstance(value, str):
                     code += ["this.%s = '%s';" % (argMember, value)]
                 elif isinstance(value, bool):
@@ -387,13 +400,13 @@ class Builder(Builder):
                     else:
                         code += ["this.%s = false;" % (argMember, j)]
                 elif isinstance(value, Vec3):
-                    code += ["this.%s = Vec3(%f, %f, %f);" % (argMember, value.x, value.y, value.z)]
+                    code += ["this.%s = Vec3(%.4g, %.4g, %.4g);" % (argMember, value.x, value.y, value.z)]
                 elif isinstance(value, Quat):
-                    code += ["this.%s = Quat(%f, %f, %f, %f);" % (argMember, value.v.x, value.v.y, value.v.z, value.w)]
+                    code += ["this.%s = Quat(%.4g, %.4g, %.4g, %.4g);" % (argMember, value.v.x, value.v.y, value.v.z, value.w)]
                 elif isinstance(value, Color):
-                    code += ["this.%s = Color(%f, %f, %f, %f);" % (argMember, value.r, value.g, value.b, value.a)]
+                    code += ["this.%s = Color(%.4g, %.4g, %.4g, %.4g);" % (argMember, value.r, value.g, value.b, value.a)]
                 elif isinstance(value, Xfo):
-                    valueStr = 'Xfo(Vec3(%f, %f, %f), Quat(%f, %f, %f, %f), Vec3(%f, %f, %f))' % (
+                    valueStr = 'Xfo(Vec3(%.4g, %.4g, %.4g), Quat(%.4g, %.4g, %.4g, %.4g), Vec3(%.4g, %.4g, %.4g))' % (
                         value.tr.x, value.tr.y, value.tr.z,
                         value.ori.v.x, value.ori.v.y, value.ori.v.z, value.ori.w,
                         value.sc.x, value.sc.y, value.sc.z                      
@@ -403,7 +416,7 @@ class Builder(Builder):
                     else:
                         code += ["this.%s = %s;" % (argMember, valueStr)]
                 elif isinstance(value, Mat44):
-                    valueStr = 'Mat44(Vec4(%f, %f, %f, %f), Vec4(%f, %f, %f, %f), Vec4(%f, %f, %f, %f), Vec4(%f, %f, %f, %f))' % (
+                    valueStr = 'Mat44(Vec4(%.4g, %.4g, %.4g, %.4g), Vec4(%.4g, %.4g, %.4g, %.4g), Vec4(%.4g, %.4g, %.4g, %.4g), Vec4(%.4g, %.4g, %.4g, %.4g))' % (
                         value.row0.x, value.row0.y, value.row0.z, value.row0.t,
                         value.row1.x, value.row1.y, value.row1.z, value.row1.t,
                         value.row2.x, value.row2.y, value.row2.z, value.row2.t,
@@ -443,9 +456,11 @@ class Builder(Builder):
                             item['solveCode'] += getSolveCodeForConstantValue('%s[%d]' % (argMember, j), argDataType, connected)
                             continue
 
+                        self.__visitItem(self.findDictForSI(connected))
                         sourceId = self.getUniqueId(connected)
                         item['sourceIds'] += [sourceId]
-                        item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(connected))]
+                        if len(self.findDictForSI(connected)['solveCode']) > 0:
+                            item['solveCode'] += ["this.%s();" % (self.getSolveMethodName(connected))]
 
                         if isinstance(connected, Attribute):
                             connectedObj = self.findKLAttribute(connected)
@@ -477,9 +492,11 @@ class Builder(Builder):
                     item['solveCode'] += getSolveCodeForConstantValue(argMember, argDataType, connected)
                     continue
 
+                self.__visitItem(self.findDictForSI(connected))
                 sourceId = self.getUniqueId(connected)
                 item['sourceIds'] += [sourceId]
-                item['solveCode'] += ["this.solveItem(%d); // %s" %(sourceId, self.getUniqueName(connected))]
+                if len(self.findDictForSI(connected)['solveCode']) > 0:
+                    item['solveCode'] += ["this.%s();" % (self.getSolveMethodName(connected))]
 
                 if isinstance(connected, Attribute):
                     connectedObj = self.findKLAttribute(connected)
@@ -634,25 +651,25 @@ class Builder(Builder):
 
         kl += ["};"]
         kl += [""]
-        kl += ["function %s() {" % self.getKLExtensionName()]
+        kl += ["inline function %s() {" % self.getKLExtensionName()]
         kl += ["  this.init();"]
         kl += ["}", ""]
 
         kl += [""]
-        kl += ["function UInt64 %s.getEvalVersion() {" % self.getKLExtensionName()]
+        kl += ["inline function UInt64 %s.getEvalVersion() {" % self.getKLExtensionName()]
         kl += ["  return this.evalVersion;"]
         kl += ["}", ""]
 
-        kl += ["function %s.resetPose!() {" % self.getKLExtensionName()]
+        kl += ["inline function %s.resetPose!() {" % self.getKLExtensionName()]
         kl += ["  // reset objects"]
         for obj in self.__klObjects:
             kl += ["  this.%s.local = %s.toMat44();" % (obj['member'], self.__getXfoAsStr(obj['sceneItem'].localXfo))]
         kl += ["  // reset attributes"]
         for attr in scalarAttributes:
-            kl += ["  this.%s.value = %f;" % (attr['member'], attr['value'])]
+            kl += ["  this.%s.value = %.4g;" % (attr['member'], attr['value'])]
         kl += ["}", ""]
 
-        kl += ["function %s.solve!(KrakenClipContext context) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.solve!(KrakenClipContext context) {" % self.getKLExtensionName()]
         if self.__profilingFrames > 0:
             kl += ["  AutoProfilingEvent methodEvent(\"%s.solve\");" % self.getKLExtensionName()]
 
@@ -662,14 +679,14 @@ class Builder(Builder):
             kl += ["  {  AutoProfilingEvent visitKLObjectsEvent(\"rig pose solve\");"]
 
         for krkDef in self.__krkDeformers:
-            kl += ["    this.solveItem(%d); // %s" % (self.getUniqueId(krkDef['sceneItem']), self.getUniqueName(krkDef['sceneItem']))]
+            kl += ["    this.%s();" % (self.getSolveMethodName(krkDef['sceneItem']))]
 
         if self.__profilingFrames > 0:
             kl += ["  }"]
 
         kl += ["}", ""]
 
-        kl += ["function %s.evaluate!(KrakenClipContext context) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.evaluate!(KrakenClipContext context) {" % self.getKLExtensionName()]
         if self.__profilingFrames > 0:
             kl += ["  if(this.profilingFrame >= 0)"]
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
@@ -686,7 +703,7 @@ class Builder(Builder):
             kl += ["  this.processProfiling();"]
         kl += ["}", ""]
 
-        kl += ["function %s.evaluate!(KrakenClipContext context, io Mat44 joints<>) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.evaluate!(KrakenClipContext context, io Mat44 joints<>) {" % self.getKLExtensionName()]
         if self.__profilingFrames > 0:
             kl += ["  if(this.profilingFrame >= 0)"]
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
@@ -712,7 +729,7 @@ class Builder(Builder):
             kl += ["  this.processProfiling();"]
         kl += ["}", ""]
 
-        kl += ["function %s.dirtyItem!(Index uniqueId) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.dirtyItem!(Index uniqueId) {" % self.getKLExtensionName()]
         kl += ["  if(this.isItemDirty[uniqueId])"]
         kl += ["    return;"]
         kl += ["  this.isItemDirty[uniqueId] = true;"]
@@ -728,61 +745,68 @@ class Builder(Builder):
         kl += ["  }"]
         kl += ["}", ""]
 
-        kl += ["function %s.cleanItem!(Index uniqueId) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.cleanItem!(Index uniqueId) {" % self.getKLExtensionName()]
         kl += ["  this.isItemDirty[uniqueId] = false;"]
         kl += ["}", ""]
 
-        kl += ["function %s.dirtyAllItems!() {" % self.getKLExtensionName()]
+        kl += ["inline function %s.dirtyAllItems!() {" % self.getKLExtensionName()]
         kl += ["  for(Size i=0;i<%d;i++)" % self.__klMaxUniqueId]
         kl += ["    this.isItemDirty[i] = true;"]
         kl += ["}", ""]
 
-        kl += ["function %s.cleanAllItems!() {" % self.getKLExtensionName()]
+        kl += ["inline function %s.cleanAllItems!() {" % self.getKLExtensionName()]
         kl += ["  for(Size i=0;i<%d;i++)" % self.__klMaxUniqueId]
         kl += ["    this.isItemDirty[i] = false;"]
         kl += ["}", ""]
 
-        kl += ["function Mat44 %s.getControlLocalMat44(Index index) {" % self.getKLExtensionName()]
+        kl += ["inline function Mat44 %s.getControlLocalMat44(Index index) {" % self.getKLExtensionName()]
         kl += ["  return this._KrakenControl[index].local;"]
         kl += ["}", ""]
 
-        kl += ["function %s.setControlLocalMat44!(Index index, Mat44 value) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.setControlLocalMat44!(Index index, Mat44 value) {" % self.getKLExtensionName()]
         kl += ["  this._KrakenControl[index].local = value;"]
         kl += ["  this.dirtyItem(this._KrakenControl[index].uniqueId);"]
         kl += ["}", ""]
 
-        kl += ["function Scalar %s.getScalarAttribute(Index index) {" % self.getKLExtensionName()]
+        kl += ["inline function Scalar %s.getScalarAttribute(Index index) {" % self.getKLExtensionName()]
         kl += ["  return this._KrakenScalarAttribute[index].value;"]
         kl += ["}", ""]
 
-        kl += ["function %s.setScalarAttribute!(Index index, Scalar value) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.setScalarAttribute!(Index index, Scalar value) {" % self.getKLExtensionName()]
         kl += ["  this._KrakenScalarAttribute[index].value = value;"]
         kl += ["  this.dirtyItem(this._KrakenScalarAttribute[index].uniqueId);"]
         kl += ["}", ""]
 
-        kl += ["function %s.solveItem!(Index uniqueId) {" % self.getKLExtensionName()]
-        kl += ["  if(!this.isItemDirty[uniqueId]) {"]
-        if self.__debugMode:
-            kl += ["    report(\"skipping solve of \"+uniqueId);"]
+        # todo: inject all of the functions!
+        for item in allItems:
+            if len(item['solveCode']) == 0:
+              continue
+            sceneItem = item['sceneItem']
+            kl += ["inline function %s.%s!() {" % (self.getKLExtensionName(), self.getSolveMethodName(sceneItem))]
+            kl += ["  if(!this.isItemDirty[%d])" % self.getUniqueId(sceneItem)]
+            kl += ["    return;"]
+            kl += ["  this.isItemDirty[%d] = false;" % self.getUniqueId(sceneItem)]
+            if self.__debugMode:
+                kl += ["  report(\"solving %s\ (%d)\");" % (self.getUniqueName(sceneItem), self.getUniqueId(sceneItem))]
+            for solveLine in item['solveCode']:
+                kl += ["  " + solveLine]
+            kl += ["}", ""]
+
+        kl += ["inline function %s.solveItem!(Index uniqueId) {" % self.getKLExtensionName()]
+        kl += ["  if(!this.isItemDirty[uniqueId])"]
         kl += ["    return;"]
-        kl += ["  }"]
-        kl += ["  this.isItemDirty[uniqueId] = false;"]
-        if self.__debugMode:
-            kl += ["  report(\"solving \"+uniqueId);"]
         kl += ["  switch(uniqueId) {"]
         for item in allItems:
-            solveCode = item['solveCode']
-            if len(solveCode) == 0:
-              continue
-            kl += ["    case %d: { // %s" % (self.getUniqueId(item['sceneItem']), self.getUniqueName(item['sceneItem']))]
-            for solveCodeLine in solveCode:
-              kl += ["      " + solveCodeLine]
+            if len(item['solveCode']) == 0:
+                continue
+            kl += ["    case %d: {" % self.getUniqueId(item['sceneItem'])]
+            kl += ["      this.%s();" % self.getSolveMethodName(item['sceneItem'])]
             kl += ["      break;"]
             kl += ["    }"]
         kl += ["  }"]
         kl += ["}", ""]
 
-        kl += ["function %s.init!() {" % self.getKLExtensionName()]
+        kl += ["inline function %s.init!() {" % self.getKLExtensionName()]
         kl += ["  Float32 floatAnimation[String];"]
         kl += [""]
         if self.__debugMode:
@@ -846,7 +870,7 @@ class Builder(Builder):
                     path,
                     Boolean(attr['keyable']),
                     Boolean(attr['animatable']),
-                    "Color(%f, %f, %f, %f)" % (
+                    "Color(%.4g, %.4g, %.4g, %.4g)" % (
                         attr['value'].r,
                         attr['value'].g,
                         attr['value'].b,
@@ -866,7 +890,7 @@ class Builder(Builder):
                     attr['value']
                 )]
             elif attr['cls'] == "ScalarAttribute":
-                kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s, %s, %f, floatAnimation);" % (
+                kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s, %s, %.4g, floatAnimation);" % (
                     attr['member'],
                     attr['cls'],
                     name,
@@ -898,7 +922,7 @@ class Builder(Builder):
 
         kl += ["}", ""]
 
-        kl += ["function Xfo[] %s.getJointXfos() {" % self.getKLExtensionName()]
+        kl += ["inline function Xfo[] %s.getJointXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(self.__krkDeformers)]
         if len(self.__krkDeformers) > 0:
             kl += ["  for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
@@ -906,7 +930,7 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function String[] %s.getJointNames() {" % self.getKLExtensionName()]
+        kl += ["inline function String[] %s.getJointNames() {" % self.getKLExtensionName()]
         kl += ["  String result[](%d);" % len(self.__krkDeformers)]
         if len(self.__krkDeformers) > 0:
             kl += ["  for(Size i=0;i<%d;i++)" % len(self.__krkDeformers)]
@@ -914,14 +938,14 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function Xfo[] %s.getAllXfos() {" % self.getKLExtensionName()]
+        kl += ["inline function Xfo[] %s.getAllXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(self.__klObjects)]
         for i in range(len(self.__klObjects)):
             kl += ["  result[%d] = this.%s.global;" % (i, self.__klObjects[i]['member'])]
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function Xfo[] %s.getAllParentXfos() {" % self.getKLExtensionName()]
+        kl += ["inline function Xfo[] %s.getAllParentXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(self.__klObjects)]
         for i in range(len(self.__klObjects)):
             objParent = self.__klObjects[i]['sceneItem'].getParent()
@@ -932,7 +956,7 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function String[] %s.getAllNames() {" % self.getKLExtensionName()]
+        kl += ["inline function String[] %s.getAllNames() {" % self.getKLExtensionName()]
         kl += ["  String result[](%d);" % len(self.__klObjects)]
         for i in range(len(self.__klObjects)):
             kl += ["  result[%d] = \"%s\";" % (i, self.__klObjects[i]['sceneItem'].getBuildName())]
@@ -942,14 +966,14 @@ class Builder(Builder):
         # To have scalar attributes drive blendShapes in the KL build,
         # assign a "blendShapeName" metaData string to the driver attribute and the kl builder will pick it up
         if self.__krkShapes:
-            kl += ["function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
+            kl += ["inline function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
             kl += ["  String result[](%d);" % len(self.__krkShapes)]
             for i in range(len(self.__krkShapes)):
                 kl += ["  result[%d] = \"%s\";" % (i, self.__krkShapes[i]['sceneItem'].getMetaDataItem("blendShapeName"))]
             kl += ["  return result;"]
             kl += ["}", ""]
 
-            kl += ["function %s.getShapeWeights(io Float32 weights<>) {" % self.getKLExtensionName()]
+            kl += ["inline function %s.getShapeWeights(io Float32 weights<>) {" % self.getKLExtensionName()]
             kl += ["  if(weights.size() != %d)" % len(self.__krkShapes)]
             kl += ["    return;"]
             for i in range(len(self.__krkShapes)):
@@ -957,14 +981,14 @@ class Builder(Builder):
             #kl += ["  weights[0] = 1.0;"]
             kl += ["}", ""]
         else:
-            kl += ["function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
+            kl += ["inline function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
             kl += ["  String result[](%d);" % len(self.__krkShapes)]
             kl += ["  return result;"]
             kl += ["}", ""]
-            kl += ["function %s.getShapeWeights(io Float32 weights<>) {" % self.getKLExtensionName()]
+            kl += ["inline function %s.getShapeWeights(io Float32 weights<>) {" % self.getKLExtensionName()]
             kl += ["}", ""]
 
-        kl += ["function KrakenScalarAttribute<> %s.getScalarAttributes() {" % self.getKLExtensionName()]
+        kl += ["inline function KrakenScalarAttribute<> %s.getScalarAttributes() {" % self.getKLExtensionName()]
         if len(scalarAttributes) == 0:
           kl += ["  KrakenScalarAttribute result<>;"]
         else:
@@ -972,7 +996,7 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function KrakenControl<> %s.getControls() {" % self.getKLExtensionName()]
+        kl += ["inline function KrakenControl<> %s.getControls() {" % self.getKLExtensionName()]
         if len(controls) == 0:
           kl += ["  KrakenControl result<>;"]
         else:
@@ -980,7 +1004,7 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function Xfo[] %s.getControlXfos() {" % self.getKLExtensionName()]
+        kl += ["inline function Xfo[] %s.getControlXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(controls)]
         if len(controls) > 0:
           kl += ["  KrakenControl controls<>(this._KrakenControl);"]
@@ -989,15 +1013,15 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["function %s.setClip!(KrakenClip clip) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.setClip!(KrakenClip clip) {" % self.getKLExtensionName()]
         kl += ["  this.clip = clip;"]
         kl += ["}", ""]
 
-        kl += ["function %s.loadClipFromFile!(String filePath) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.loadClipFromFile!(String filePath) {" % self.getKLExtensionName()]
         kl += ["  this.clip = KrakenClip_loadFromFile(filePath);"]
         kl += ["}", ""]
 
-        # kl += ["function %s.evaluateClip!(KrakenClipContext context, Ref<KrakenClip> clip) {" % self.getKLExtensionName()]
+        # kl += ["inline function %s.evaluateClip!(KrakenClipContext context, Ref<KrakenClip> clip) {" % self.getKLExtensionName()]
         # kl += ["  if(!clip)", "    return;"]
         # kl += ["  KrakenClip mutableClip = clip;"]
         # kl += ["  for(UInt32 i=0;i<mutableClip.getChannelCount();i++) {"]
@@ -1030,7 +1054,7 @@ class Builder(Builder):
         # kl += ["  }"]
         # kl += ["}", ""]
 
-        # kl += ["function %s.evaluateJointsForUnreal!(KrakenClipContext context, io Float32 result<>) {" % self.getKLExtensionName()]
+        # kl += ["inline function %s.evaluateJointsForUnreal!(KrakenClipContext context, io Float32 result<>) {" % self.getKLExtensionName()]
         # kl += ["  Xfo xfos[];"]
         # kl += ["  this.evaluateJoints(context, xfos);"]
         # kl += ["  if(xfos.dataSize() != result.dataSize())"]
@@ -1053,7 +1077,7 @@ class Builder(Builder):
         # kl += ["}", ""]
 
         if self.__profilingFrames > 0:
-            kl += ["function %s.processProfiling!() {" % self.getKLExtensionName()]
+            kl += ["inline function %s.processProfiling!() {" % self.getKLExtensionName()]
             kl += ["  if(this.profilingFrame != %s)" % self.__profilingFrames]
             kl += ["    return;"]
             kl += ["  this.profilingFrame = -1;"]
@@ -1286,6 +1310,15 @@ class Builder(Builder):
         dfgExec.setCode("dfgEntry {\n  %s = %s.getAllNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
+
+    def findDictForSI(self, kSceneItem):
+        if isinstance(kSceneItem, Attribute):
+          return self.findKLAttribute(kSceneItem)
+        if isinstance(kSceneItem, Constraint):
+          return self.findKLConstraint(kSceneItem)
+        if isinstance(kSceneItem, Operator):
+          return self.findKLSolver(kSceneItem)
+        return self.findKLObjectForSI(kSceneItem)
 
     def findKLObjectForSI(self, kSceneItem):
         member = self.getUniqueObjectMember(kSceneItem, None)
@@ -1867,7 +1900,7 @@ class Builder(Builder):
         if value is None:
           return True
 
-        valueStr = "Color(%f, %f, %f, %f)" % (
+        valueStr = "Color(%.4g, %.4g, %.4g, %.4g)" % (
             value.r,
             value.g,
             value.b,
