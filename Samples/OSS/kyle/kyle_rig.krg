@@ -397,6 +397,16 @@
     },
     {
       "source": "headNeck:M.head",
+      "target": "cheek:L.parentSpace",
+      "targetIndex": 0
+    },
+    {
+      "source": "mouth01:M.L_MouthCorner",
+      "target": "cheek:L.firstControlXfo",
+      "targetIndex": 0
+    },
+    {
+      "source": "headNeck:M.head",
       "target": "cheek:R.parentSpace",
       "targetIndex": 0
     },
@@ -752,67 +762,11 @@
         "x": -204.4072723388672,
         "__mathObjectClass__": "Vec2"
       },
-      "addTwistJoints": true,
-      "uplimbName": "upLeg",
-      "name": "leg",
-      "location": "L",
-      "ShapeVisibility": false,
-      "ikHandleName": "footIK",
-      "useOtherIKGoal": true,
-      "visibility": true,
-      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide",
-      "untwistUplimb": true,
-      "uplimbXfo": {
-        "sc": {
-          "y": 1.0,
-          "x": 1.0,
-          "__mathObjectClass__": "Vec3",
-          "z": 1.0
-        },
-        "__mathObjectClass__": "Xfo",
-        "tr": {
-          "y": 67.3301010131836,
-          "x": 4.3470001220703125,
-          "__mathObjectClass__": "Vec3",
-          "z": -0.03185676410794258
-        },
-        "ori": {
-          "__mathObjectClass__": "Quat",
-          "w": 1.0,
-          "v": {
-            "y": 0.0,
-            "x": 0.0,
-            "__mathObjectClass__": "Vec3",
-            "z": 0.0
-          }
-        }
-      },
-      "handleXfo": {
-        "sc": {
-          "y": 1.0,
-          "x": 1.0,
-          "__mathObjectClass__": "Vec3",
-          "z": 1.0
-        },
-        "__mathObjectClass__": "Xfo",
-        "tr": {
-          "y": 3.5091447830200195,
-          "x": 4.3732686042785645,
-          "__mathObjectClass__": "Vec3",
-          "z": -0.9773626327514648
-        },
-        "ori": {
-          "__mathObjectClass__": "Quat",
-          "w": 1.0,
-          "v": {
-            "y": 0.0,
-            "x": 0.0,
-            "__mathObjectClass__": "Vec3",
-            "z": 0.0
-          }
-        }
-      },
+      "addMidControls": true,
+      "lolimbNumTwistJoints": 5,
       "lolimbName": "loLeg",
+      "addTwistJoints": true,
+      "untwistUplimb": true,
       "lolimbXfo": {
         "sc": {
           "y": 1.0,
@@ -838,11 +792,69 @@
           }
         }
       },
-      "mocap": false,
-      "globalComponentCtrlSize": 7.0,
-      "addPartialJoints": true,
+      "location": "L",
+      "uplimbName": "upLeg",
+      "uplimbNumTwistJoints": 5,
       "SingleDeformerGroup": true,
-      "addMidControls": true
+      "visibility": true,
+      "handleXfo": {
+        "sc": {
+          "y": 1.0,
+          "x": 1.0,
+          "__mathObjectClass__": "Vec3",
+          "z": 1.0
+        },
+        "__mathObjectClass__": "Xfo",
+        "tr": {
+          "y": 3.5091447830200195,
+          "x": 4.3732686042785645,
+          "__mathObjectClass__": "Vec3",
+          "z": -0.9773626327514648
+        },
+        "ori": {
+          "__mathObjectClass__": "Quat",
+          "w": 1.0,
+          "v": {
+            "y": 0.0,
+            "x": 0.0,
+            "__mathObjectClass__": "Vec3",
+            "z": 0.0
+          }
+        }
+      },
+      "globalComponentCtrlSize": 7.0,
+      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide",
+      "mocap": false,
+      "name": "leg",
+      "ShapeVisibility": false,
+      "ikHandleName": "footIK",
+      "uplimbXfo": {
+        "sc": {
+          "y": 1.0,
+          "x": 1.0,
+          "__mathObjectClass__": "Vec3",
+          "z": 1.0
+        },
+        "__mathObjectClass__": "Xfo",
+        "tr": {
+          "y": 67.3301010131836,
+          "x": 4.3470001220703125,
+          "__mathObjectClass__": "Vec3",
+          "z": -0.03185676410794258
+        },
+        "ori": {
+          "__mathObjectClass__": "Quat",
+          "w": 1.0,
+          "v": {
+            "y": 0.0,
+            "x": 0.0,
+            "__mathObjectClass__": "Vec3",
+            "z": 0.0
+          }
+        }
+      },
+      "useOtherIKGoal": true,
+      "addPartialJoints": true
     },
     {
       "mocap": false,
@@ -1332,67 +1344,11 @@
         "x": -1574.9552001953125,
         "__mathObjectClass__": "Vec2"
       },
-      "addTwistJoints": true,
-      "uplimbName": "upLeg",
-      "name": "leg",
-      "location": "R",
-      "ShapeVisibility": false,
-      "ikHandleName": "footIK",
-      "useOtherIKGoal": true,
-      "visibility": true,
-      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide",
-      "untwistUplimb": true,
-      "uplimbXfo": {
-        "sc": {
-          "y": 1.0,
-          "x": 1.0,
-          "__mathObjectClass__": "Vec3",
-          "z": 1.0
-        },
-        "__mathObjectClass__": "Xfo",
-        "tr": {
-          "y": 67.3301010131836,
-          "x": -4.3470001220703125,
-          "__mathObjectClass__": "Vec3",
-          "z": -0.03185676410794258
-        },
-        "ori": {
-          "__mathObjectClass__": "Quat",
-          "w": 6.123234262925839e-17,
-          "v": {
-            "y": 1.0,
-            "x": 0.0,
-            "__mathObjectClass__": "Vec3",
-            "z": 0.0
-          }
-        }
-      },
-      "handleXfo": {
-        "sc": {
-          "y": 1.0,
-          "x": 1.0,
-          "__mathObjectClass__": "Vec3",
-          "z": 1.0
-        },
-        "__mathObjectClass__": "Xfo",
-        "tr": {
-          "y": 3.5091447830200195,
-          "x": -4.3470001220703125,
-          "__mathObjectClass__": "Vec3",
-          "z": -0.9726361632347107
-        },
-        "ori": {
-          "__mathObjectClass__": "Quat",
-          "w": 6.123234262925839e-17,
-          "v": {
-            "y": 1.0,
-            "x": 0.0,
-            "__mathObjectClass__": "Vec3",
-            "z": 0.0
-          }
-        }
-      },
+      "addMidControls": true,
+      "lolimbNumTwistJoints": 5,
       "lolimbName": "loLeg",
+      "addTwistJoints": true,
+      "untwistUplimb": true,
       "lolimbXfo": {
         "sc": {
           "y": 1.0,
@@ -1418,29 +1374,12 @@
           }
         }
       },
-      "mocap": false,
-      "globalComponentCtrlSize": 7.0,
-      "addPartialJoints": true,
-      "SingleDeformerGroup": true,
-      "addMidControls": true
-    },
-    {
-      "graphPos": {
-        "y": -389.3177490234375,
-        "x": -1729.2667236328125,
-        "__mathObjectClass__": "Vec2"
-      },
-      "addTwistJoints": true,
-      "uplimbName": "upArm",
-      "name": "arm",
       "location": "R",
-      "ShapeVisibility": false,
-      "ikHandleName": "handIK",
-      "useOtherIKGoal": true,
+      "uplimbName": "upLeg",
+      "uplimbNumTwistJoints": 5,
+      "SingleDeformerGroup": true,
       "visibility": true,
-      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide",
-      "untwistUplimb": true,
-      "uplimbXfo": {
+      "handleXfo": {
         "sc": {
           "y": 1.0,
           "x": 1.0,
@@ -1449,10 +1388,10 @@
         },
         "__mathObjectClass__": "Xfo",
         "tr": {
-          "y": 99.15480041503906,
-          "x": -8.60851001739502,
+          "y": 3.5091447830200195,
+          "x": -4.3470001220703125,
           "__mathObjectClass__": "Vec3",
-          "z": -1.8677599430084229
+          "z": -0.9726361632347107
         },
         "ori": {
           "__mathObjectClass__": "Quat",
@@ -1465,7 +1404,13 @@
           }
         }
       },
-      "handleXfo": {
+      "globalComponentCtrlSize": 7.0,
+      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide",
+      "mocap": false,
+      "name": "leg",
+      "ShapeVisibility": false,
+      "ikHandleName": "footIK",
+      "uplimbXfo": {
         "sc": {
           "y": 1.0,
           "x": 1.0,
@@ -1474,23 +1419,36 @@
         },
         "__mathObjectClass__": "Xfo",
         "tr": {
-          "y": 99.15479278564453,
-          "x": -48.72071838378906,
+          "y": 67.3301010131836,
+          "x": -4.3470001220703125,
           "__mathObjectClass__": "Vec3",
-          "z": -1.8677555322647095
+          "z": -0.03185676410794258
         },
         "ori": {
           "__mathObjectClass__": "Quat",
-          "w": 1.0,
+          "w": 6.123234262925839e-17,
           "v": {
-            "y": 0.0,
+            "y": 1.0,
             "x": 0.0,
             "__mathObjectClass__": "Vec3",
             "z": 0.0
           }
         }
       },
+      "useOtherIKGoal": true,
+      "addPartialJoints": true
+    },
+    {
+      "graphPos": {
+        "y": -389.3177490234375,
+        "x": -1729.2667236328125,
+        "__mathObjectClass__": "Vec2"
+      },
+      "addMidControls": true,
+      "lolimbNumTwistJoints": 5,
       "lolimbName": "loArm",
+      "addTwistJoints": true,
+      "untwistUplimb": true,
       "lolimbXfo": {
         "sc": {
           "y": 1.0,
@@ -1516,53 +1474,11 @@
           }
         }
       },
-      "mocap": false,
-      "globalComponentCtrlSize": 8.0,
-      "addPartialJoints": true,
-      "SingleDeformerGroup": true,
-      "addMidControls": true
-    },
-    {
-      "graphPos": {
-        "y": -406.8414001464844,
-        "x": -18.636314392089844,
-        "__mathObjectClass__": "Vec2"
-      },
-      "addTwistJoints": true,
+      "location": "R",
       "uplimbName": "upArm",
-      "name": "arm",
-      "location": "L",
-      "ShapeVisibility": false,
-      "ikHandleName": "handIK",
-      "useOtherIKGoal": true,
+      "uplimbNumTwistJoints": 5,
+      "SingleDeformerGroup": true,
       "visibility": true,
-      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide",
-      "untwistUplimb": true,
-      "uplimbXfo": {
-        "sc": {
-          "y": 1.0,
-          "x": 1.0,
-          "__mathObjectClass__": "Vec3",
-          "z": 1.0
-        },
-        "__mathObjectClass__": "Xfo",
-        "tr": {
-          "y": 99.15479278564453,
-          "x": 8.608514785766602,
-          "__mathObjectClass__": "Vec3",
-          "z": -1.8677555322647095
-        },
-        "ori": {
-          "__mathObjectClass__": "Quat",
-          "w": 1.0,
-          "v": {
-            "y": 0.0,
-            "x": 0.0,
-            "__mathObjectClass__": "Vec3",
-            "z": 0.0
-          }
-        }
-      },
       "handleXfo": {
         "sc": {
           "y": 1.0,
@@ -1573,7 +1489,7 @@
         "__mathObjectClass__": "Xfo",
         "tr": {
           "y": 99.15479278564453,
-          "x": 48.72071838378906,
+          "x": -48.72071838378906,
           "__mathObjectClass__": "Vec3",
           "z": -1.8677555322647095
         },
@@ -1588,7 +1504,51 @@
           }
         }
       },
+      "globalComponentCtrlSize": 8.0,
+      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide",
+      "mocap": false,
+      "name": "arm",
+      "ShapeVisibility": false,
+      "ikHandleName": "handIK",
+      "uplimbXfo": {
+        "sc": {
+          "y": 1.0,
+          "x": 1.0,
+          "__mathObjectClass__": "Vec3",
+          "z": 1.0
+        },
+        "__mathObjectClass__": "Xfo",
+        "tr": {
+          "y": 99.15480041503906,
+          "x": -8.60851001739502,
+          "__mathObjectClass__": "Vec3",
+          "z": -1.8677599430084229
+        },
+        "ori": {
+          "__mathObjectClass__": "Quat",
+          "w": 6.123234262925839e-17,
+          "v": {
+            "y": 1.0,
+            "x": 0.0,
+            "__mathObjectClass__": "Vec3",
+            "z": 0.0
+          }
+        }
+      },
+      "useOtherIKGoal": true,
+      "addPartialJoints": true
+    },
+    {
+      "graphPos": {
+        "y": -406.8414001464844,
+        "x": -18.636314392089844,
+        "__mathObjectClass__": "Vec2"
+      },
+      "addMidControls": true,
+      "lolimbNumTwistJoints": 5,
       "lolimbName": "loArm",
+      "addTwistJoints": true,
+      "untwistUplimb": true,
       "lolimbXfo": {
         "sc": {
           "y": 1.0,
@@ -1614,11 +1574,69 @@
           }
         }
       },
-      "mocap": false,
-      "globalComponentCtrlSize": 8.0,
-      "addPartialJoints": true,
+      "location": "L",
+      "uplimbName": "upArm",
+      "uplimbNumTwistJoints": 5,
       "SingleDeformerGroup": true,
-      "addMidControls": true
+      "visibility": true,
+      "handleXfo": {
+        "sc": {
+          "y": 1.0,
+          "x": 1.0,
+          "__mathObjectClass__": "Vec3",
+          "z": 1.0
+        },
+        "__mathObjectClass__": "Xfo",
+        "tr": {
+          "y": 99.15479278564453,
+          "x": 48.72071838378906,
+          "__mathObjectClass__": "Vec3",
+          "z": -1.8677555322647095
+        },
+        "ori": {
+          "__mathObjectClass__": "Quat",
+          "w": 1.0,
+          "v": {
+            "y": 0.0,
+            "x": 0.0,
+            "__mathObjectClass__": "Vec3",
+            "z": 0.0
+          }
+        }
+      },
+      "globalComponentCtrlSize": 8.0,
+      "class": "OSS.OSS_limb_component.OSSLimbComponentGuide",
+      "mocap": false,
+      "name": "arm",
+      "ShapeVisibility": false,
+      "ikHandleName": "handIK",
+      "uplimbXfo": {
+        "sc": {
+          "y": 1.0,
+          "x": 1.0,
+          "__mathObjectClass__": "Vec3",
+          "z": 1.0
+        },
+        "__mathObjectClass__": "Xfo",
+        "tr": {
+          "y": 99.15479278564453,
+          "x": 8.608514785766602,
+          "__mathObjectClass__": "Vec3",
+          "z": -1.8677555322647095
+        },
+        "ori": {
+          "__mathObjectClass__": "Quat",
+          "w": 1.0,
+          "v": {
+            "y": 0.0,
+            "x": 0.0,
+            "__mathObjectClass__": "Vec3",
+            "z": 0.0
+          }
+        }
+      },
+      "useOtherIKGoal": true,
+      "addPartialJoints": true
     },
     {
       "mocap": false,
@@ -7032,8 +7050,8 @@
     },
     {
       "graphPos": {
-        "y": -669.0578002929688,
-        "x": -664.8268432617188,
+        "y": -671.2124633789062,
+        "x": -398.420166015625,
         "__mathObjectClass__": "Vec2"
       },
       "mouthCornerCurveData": [
@@ -7146,6 +7164,7 @@
           "degree": 1
         }
       ],
+      "controlSizeTaper": 0.0,
       "contstrainFirstControl": true,
       "location": "L",
       "CheekBoneCurveData": [
@@ -7283,14 +7302,15 @@
       "tweakControls": true,
       "popFirst": false,
       "class": "OSS.OSS_curve_component.OSSCurveComponentGuide",
-      "mocap": false,
       "name": "cheek",
-      "ShapeVisibility": false
+      "mocap": false,
+      "ShapeVisibility": false,
+      "controlHierarchy": true
     },
     {
       "graphPos": {
-        "y": -701.9700317382812,
-        "x": -1094.432861328125,
+        "y": -378.72515869140625,
+        "x": -501.4244384765625,
         "__mathObjectClass__": "Vec2"
       },
       "mouthCornerCurveData": [
@@ -7403,6 +7423,7 @@
           "degree": 1
         }
       ],
+      "controlSizeTaper": 0.0,
       "contstrainFirstControl": true,
       "location": "R",
       "CheekBoneCurveData": [
@@ -7540,9 +7561,10 @@
       "tweakControls": true,
       "popFirst": false,
       "class": "OSS.OSS_curve_component.OSSCurveComponentGuide",
-      "mocap": false,
       "name": "cheek",
-      "ShapeVisibility": false
+      "mocap": false,
+      "ShapeVisibility": false,
+      "controlHierarchy": true
     },
     {
       "graphPos": {
