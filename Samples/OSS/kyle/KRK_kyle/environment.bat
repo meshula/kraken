@@ -5,8 +5,8 @@ set FABRIC_DIR=Z:\dist\fabric\releases\published
 set PATH=%FABRIC_DIR%\bin;%PATH%
 
 set FABRIC_LOG_LEVEL=0
-::set KRAKEN_PATH=Z:\dist\fabric\Kraken
-set KRAKEN_PATH=V:\oculusstorystudio\kraken
+set KRAKEN_PATH=Z:\dist\fabric\Kraken
+::set KRAKEN_PATH=V:\oculusstorystudio\kraken
 
 echo %KRAKEN_PATH%
 echo on
