@@ -4,6 +4,20 @@ require Kraken;
 object OSS_WeightedAverageMat44KLSolver : KrakenSolver {
 };
 
+// Default Constructor
+function OSS_WeightedAverageMat44KLSolver()
+{
+  Mat44 mats[];
+  Scalar matWeights[];
+  this.defaultValues["mats"] = mats;
+  this.defaultValues["matWeights"] = matWeights;
+  this.defaultValues["ikBlend"] = 0.5;
+  this.defaultValues["translationAmt"] = 0.0;
+  this.defaultValues["rotationAmt"] = 0.0;
+  this.defaultValues["scaleAmt"] = 0.0;
+  this.defaultValues["parent"] = Mat44();
+}
+
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_WeightedAverageMat44KLSolver.getArguments() {
   KrakenSolverArg args[] = this.parent.getArguments();
@@ -23,14 +37,14 @@ function Scalar[].normalizeScalarArray!()  {
   Boolean takeFirstIfInvalid = true;
   UInt32 count = this.size();
   Scalar sum;
-  
+
   for( Size i = 0; i < this.size(); ++i )
     sum += this[i];
-    
+
   if( sum > 0.0001 ) {
     for( Size i = 0; i < count; ++i )
       this[i] = this[i]/sum;
-  
+
   } else if(count) {
     //Just put equal weights; ensures sum is 1.0
     for( Size i = 0; i < count; ++i )
@@ -48,15 +62,15 @@ function Quat weightedAverageQuat(in Scalar[] quatWeights, io Quat[] quats) {
   UInt32 numQuats = quatWeights.size();
   Quat cumQuat = Quat()*0;
   quats.resize(numQuats);
- 
+
   for (UInt32 i=0; i<numQuats; i++)
-  { 
+  {
     Quat wQuat = quats[i]*quatWeights[i];
-    
+
     //Before we add the new rotation to the average (mean), we have to check whether the quaternion has to be inverted. Because
     //q and -q are the same rotation, but cannot be averaged, we have to make sure they are all the same.
     if (wQuat.almostEqual(cumQuat)){
-        wQuat.unit_safe().conjugate(); 
+        wQuat.unit_safe().conjugate();
     }
     cumQuat += wQuat;
   }
@@ -69,9 +83,9 @@ function Vec3 weightedAverageVec3 (in Scalar[] vecWeights, io Vec3[] vectors) {
   UInt32 numVecs = vecWeights.size();
   Vec3 cumVec = Vec3()*0;
   vectors.resize(numVecs);
- 
+
   for (UInt32 i=0; i<numVecs; i++)
-  { 
+  {
     Vec3 wVec = vectors[i]*vecWeights[i];
     result += wVec;
   }
@@ -95,7 +109,7 @@ function OSS_WeightedAverageMat44KLSolver.solve!
   // get Original Transform
   Xfo origXfo = mats[0];
   Xfo resultXfo;
-  
+
   Xfo xfos[];
   xfos.resize(mats.size());
   for (UInt32 i = 0; i<xfos.size(); i++){
@@ -110,37 +124,37 @@ function OSS_WeightedAverageMat44KLSolver.solve!
   normMatWeights.normalizeScalarArray();
 
   UInt32 s = xfos.size();
-  
+
   Quat ori[];
   Vec3 tr[];
   Vec3 sc[];
-  
+
   ori.resize(s);
   tr.resize(s);
   sc.resize(s);
-  
+
   for (UInt32 i =0; i<xfos.size(); i++)
   {
     ori[i]= xfos[i].ori;
     tr[i] = xfos[i].tr;
     sc[i] = xfos[i].sc;
   }
-  
+
   Quat averageRotation    = weightedAverageQuat(normMatWeights, ori);
   Vec3 averageTranslation = weightedAverageVec3(normMatWeights, tr);
   Vec3 averageScale       = weightedAverageVec3(normMatWeights, sc);
-  
+
   for (UInt32 i =0; i<xfos.size(); i++)
   {
     ori[i]= xfos[i].ori;
     tr[i] = xfos[i].tr;
     sc[i] = xfos[i].sc;
   }
-  
+
   resultXfo.ori = origXfo.ori.sphericalLinearInterpolate(averageRotation, rotationAmt);
   resultXfo.tr = origXfo.tr.linearInterpolate(averageTranslation, translationAmt);
   resultXfo.sc = origXfo.sc.linearInterpolate(averageScale, scaleAmt);
-  
+
   resultXfo = parent.inverse()*resultXfo;
   result = resultXfo.toMat44();
 }
