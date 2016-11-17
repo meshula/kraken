@@ -868,6 +868,8 @@ class Object3D(SceneItem):
         if self.checkConstraintIndex(index) is not True:
             return False
 
+        sourceIndex = self._sources.index(self._constraints[index])
+        del self._sources[sourceIndex]
         del self._constraints[index]
 
         return True
@@ -904,7 +906,8 @@ class Object3D(SceneItem):
 
         """
 
-        del self._constraints[:]
+        while len(self._constraints) > 0:
+            self.removeConstraintByIndex(0)
 
         return True
 
