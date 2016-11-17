@@ -2,7 +2,7 @@ import os
 import sys
 import json
 
-from PySide import QtGui
+from kraken.ui.Qt import QtWidgets
 
 import types
 
@@ -15,11 +15,9 @@ import maya.OpenMayaMPx as OpenMayaMPx
 import pymel.core as pm
 
 try:
-    # Maya 2013 with custom pyside build
-    import PySide.shiboken as shiboken
+    from shiboken import wrapInstance
 except:
-    # Maya 2014 and higher
-    import shiboken
+    from shiboken2 import wrapInstance
 
 import kraken
 from kraken import plugins
@@ -36,7 +34,7 @@ os.environ['KRAKEN_DCC'] = 'Maya'
 
 def getMayaWindow():
     ptr = OpenMayaUI.MQtUtil.mainWindow()
-    return shiboken.wrapInstance(long(ptr), QtGui.QWidget)
+    return wrapInstance(long(ptr), QtWidgets.QWidget)
 
 
 # =========
@@ -49,9 +47,9 @@ class OpenKrakenEditorCmd(OpenMayaMPx.MPxCommand):
     # Invoked when the command is run.
     def doIt(self, args):
 
-        app = QtGui.QApplication.instance()
+        app = QtWidgets.QApplication.instance()
         if not app:
-            app = QtGui.QApplication([])
+            app = QtWidgets.QApplication([])
 
         for widget in app.topLevelWidgets():
             if widget.objectName() == 'KrakenMainWindow':
