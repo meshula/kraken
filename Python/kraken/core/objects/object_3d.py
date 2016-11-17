@@ -842,6 +842,11 @@ class Object3D(SceneItem):
             raise IndexError("Constraint with name '" + constraint.getName() +
                              "'' already exists as a constraint.")
 
+        for x in self._constraints:
+            if x.isTypeOf(constraint.getTypeName()):
+                raise IndexError("Constraint with type '" + constraint.getTypeName() +
+                                 "'' already exists on object.")
+
         self._constraints.append(constraint)
 
         constraint.setParent(self)
