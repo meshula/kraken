@@ -607,6 +607,8 @@ class Builder(Builder):
             if kConstraint.getConstrainee().isTypeOf('Joint'):
                 parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
                 pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
+            else:
+                pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
 
             if kConstraint.getMaintainOffset() is True:
                 offsetXfo = kConstraint.computeOffset()
@@ -713,6 +715,8 @@ class Builder(Builder):
             if kConstraint.getConstrainee().isTypeOf('Joint'):
                 parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
                 pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
+            else:
+                pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
 
             if kConstraint.getMaintainOffset() is True:
                 offsetXfo = kConstraint.computeOffset()
@@ -764,6 +768,8 @@ class Builder(Builder):
             if kConstraint.getConstrainee().isTypeOf('Joint'):
                 parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
                 pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
+            else:
+                pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
 
             if kConstraint.getMaintainOffset() is True:
                 offsetXfo = kConstraint.computeOffset()
@@ -815,6 +821,8 @@ class Builder(Builder):
             if kConstraint.getConstrainee().isTypeOf('Joint'):
                 parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
                 pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
+            else:
+                pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
 
             if kConstraint.getMaintainOffset() is True:
                 offsetXfo = kConstraint.computeOffset()
