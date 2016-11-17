@@ -1,6 +1,6 @@
 require Math;
 
-struct KrakenAttribute {
+struct KrakenAttribute : KrakenItem{
   String name;
   String path;
   Boolean keyable;
