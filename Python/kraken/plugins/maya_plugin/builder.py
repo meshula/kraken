@@ -603,7 +603,10 @@ class Builder(Builder):
             pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
             pm.connectAttr('%s.rotate' % dccSceneItem, '%s.rotate' % constraineeDCCSceneItem)
             pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
-            pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
+
+            if kConstraint.getConstrainee().isTypeOf('Joint'):
+                parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
+                pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
 
             if kConstraint.getMaintainOffset() is True:
                 offsetXfo = kConstraint.computeOffset()
@@ -707,7 +710,9 @@ class Builder(Builder):
             pm.connectAttr('%s.rotate' % dccSceneItem, '%s.rotate' % constraineeDCCSceneItem)
             pm.connectAttr('%s.scale' % dccSceneItem, '%s.scale' % constraineeDCCSceneItem)
             pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
-            pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
+            if kConstraint.getConstrainee().isTypeOf('Joint'):
+                parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
+                pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
 
             if kConstraint.getMaintainOffset() is True:
                 offsetXfo = kConstraint.computeOffset()
@@ -756,7 +761,9 @@ class Builder(Builder):
             pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
             pm.connectAttr('%s.translate' % dccSceneItem, '%s.translate' % constraineeDCCSceneItem)
             pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
-            pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
+            if kConstraint.getConstrainee().isTypeOf('Joint'):
+                parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
+                pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
 
             if kConstraint.getMaintainOffset() is True:
                 offsetXfo = kConstraint.computeOffset()
@@ -805,7 +812,9 @@ class Builder(Builder):
             pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
             pm.connectAttr('%s.scale' % dccSceneItem, '%s.scale' % constraineeDCCSceneItem)
             pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
-            pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
+            if kConstraint.getConstrainee().isTypeOf('Joint'):
+                parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
+                pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
 
             if kConstraint.getMaintainOffset() is True:
                 offsetXfo = kConstraint.computeOffset()
