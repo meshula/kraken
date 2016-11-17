@@ -565,6 +565,16 @@ class Builder(Builder):
 
         if self.getConfig().getMetaData('UseMayaNativeConstraints', False):
 
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
+
             dccSceneItem = pm.orientConstraint(
                         [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
                         constraineeDCCSceneItem,
@@ -635,6 +645,16 @@ class Builder(Builder):
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
 
         if self.getConfig().getMetaData('UseMayaNativeConstraints', False):
+
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
 
             dccSceneItem = pm.parentConstraint(
                 [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
@@ -744,6 +764,16 @@ class Builder(Builder):
 
         if self.getConfig().getMetaData('UseMayaNativeConstraints', False):
 
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
+
             dccSceneItem = pm.pointConstraint(
                 [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
                 constraineeDCCSceneItem,
@@ -796,6 +826,16 @@ class Builder(Builder):
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
 
         if self.getConfig().getMetaData('UseMayaNativeConstraints', False):
+
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
 
             dccSceneItem = pm.scaleConstraint(
                 [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
