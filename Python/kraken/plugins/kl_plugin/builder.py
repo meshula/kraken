@@ -224,7 +224,7 @@ class Builder(Builder):
         return valueStr
 
     def getKLExtensionName(self):
-        return "KRK_" + self.__rigTitle.replace(' ', '')
+        return self.getConfig().getMetaData('ExtensionName')
 
     def __visitItem(self, item, indent=""):
 
@@ -1372,7 +1372,8 @@ class Builder(Builder):
     def buildKLSceneItem(self, kSceneItem, buildName):
 
         if isinstance(kSceneItem, Rig):
-            self.__rigTitle = kSceneItem.getName()
+            if self.getConfig().getMetaData('RigTitle', None) is None:
+                self.__rigTitle = kSceneItem.getName()
 
         cls = kSceneItem.__class__.__name__
 
@@ -1969,6 +1970,7 @@ class Builder(Builder):
         """
 
         self.__rigTitle = self.getConfig().getMetaData('RigTitle', 'Rig')
+        self.getConfig().setMetaData('ExtensionName', "KRK_" + self.__rigTitle.replace(' ', ''))
         self.__useRigConstants = self.getConfig().getMetaData('UseRigConstants', False)
         self.__profilingFrames = self.getConfig().getMetaData('ProfilingFrames', 0)
         self.__profilingLogFile = self.getConfig().getMetaData('ProfilingLogFile', None)
