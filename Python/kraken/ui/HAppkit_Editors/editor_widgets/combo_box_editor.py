@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -14,15 +14,15 @@ class ComboBoxEditor(BaseValueEditor):
         self.__name = valueController.getName()
         self._items = []
 
-        hbox = QtGui.QHBoxLayout()
+        hbox = QtWidgets.QHBoxLayout()
 
-        self._editor = QtGui.QComboBox(self)
+        self._editor = QtWidgets.QComboBox(self)
         hbox.addWidget(self._editor, 1)
 
         hbox.addStretch(0)
         hbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(hbox)
-        self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
 
         items = valueController.getOption('combo')
         if items is not None:

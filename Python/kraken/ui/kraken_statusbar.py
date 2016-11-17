@@ -1,12 +1,12 @@
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 
 from kraken.log import getLogger
 
 logger = getLogger('kraken')
 
 
-class KrakenStatusBar(QtGui.QStatusBar):
+class KrakenStatusBar(QtWidgets.QStatusBar):
     """Custom status bar widget for Kraken."""
 
     def __init__(self, parent=None):
@@ -20,7 +20,7 @@ class KrakenStatusBar(QtGui.QStatusBar):
         self.createLayout()
 
     def createLayout(self):
-        self.outputLogButton = QtGui.QPushButton('Log', self)
+        self.outputLogButton = QtWidgets.QPushButton('Log', self)
         self.outputLogButton.setObjectName('outputLog_button')
         self.insertPermanentWidget(0, self.outputLogButton)
 
@@ -65,7 +65,7 @@ class KrakenStatusBar(QtGui.QStatusBar):
         timeOut = messageConfig[level]['timeout']
 
         # Remove current labels
-        currentLabels = self.findChildren(QtGui.QLabel)
+        currentLabels = self.findChildren(QtWidgets.QLabel)
         for label in currentLabels:
             self.removeWidget(label)
 
@@ -78,7 +78,7 @@ class KrakenStatusBar(QtGui.QStatusBar):
             else:
                 msg = msg[:120]
 
-            messageLabel = QtGui.QLabel(' ' + msg)
+            messageLabel = QtWidgets.QLabel(' ' + msg)
             messageLabel.setStyleSheet("QLabel { border-radius: 3px; background-color: " + messageConfig[level]['background-color'] + "; color: " + messageConfig[level]['color'] + "}")
 
             def addMessage():

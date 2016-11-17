@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -18,17 +18,17 @@ class ScalarSliderEditor(BaseSliderEditor):
     def __init__(self, valueController, parent=None):
         super(ScalarSliderEditor, self).__init__(valueController, parent=parent)
 
-        hbox = QtGui.QHBoxLayout()
+        hbox = QtWidgets.QHBoxLayout()
 
         validator = QtGui.QDoubleValidator(self)
         validator.setRange(self._range['min'], self._range['max'], 4)
 
         self._editEditor.setValidator(validator)
-        self._editEditor.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        self._editEditor.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
 
         self._sliderEditor.setMinimum(self._range['min'] * 1000)
         self._sliderEditor.setMaximum(self._range['max'] * 1000)
-        self._sliderEditor.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
+        self._sliderEditor.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         self._sliderEditor.setTickInterval(1000)
 
         self._editEditor.setMinimumWidth(50)

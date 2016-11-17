@@ -4,18 +4,18 @@
 
 import difflib
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from kraken.core.maths import Vec2
 from kraken.core.kraken_system import KrakenSystem
 from knode import KNode
 
 
-class NodeList(QtGui.QListWidget):
+class NodeList(QtWidgets.QListWidget):
 
     def __init__(self, parent):
         # constructors of base classes
-        QtGui.QListWidget.__init__(self, parent)
+        QtWidgets.QListWidget.__init__(self, parent)
         self.setObjectName('contextNodeList')
         self.installEventFilter(self)
 
@@ -31,7 +31,7 @@ class NodeList(QtGui.QListWidget):
         return False
 
 
-class SearchLineEdit(QtGui.QLineEdit):
+class SearchLineEdit(QtWidgets.QLineEdit):
 
     def __init__(self, parent):
         super(SearchLineEdit, self).__init__(parent)
@@ -40,7 +40,7 @@ class SearchLineEdit(QtGui.QLineEdit):
         self.parent().close()
 
 
-class ContextualNodeList(QtGui.QWidget):
+class ContextualNodeList(QtWidgets.QWidget):
 
     def __init__(self, parent):
         super(ContextualNodeList, self).__init__(parent)
@@ -73,7 +73,7 @@ class ContextualNodeList(QtGui.QWidget):
 
         self.setIndex(0)
 
-        grid = QtGui.QGridLayout()
+        grid = QtWidgets.QGridLayout()
         grid.addWidget(self.searchLineEdit, 0, 0)
         grid.addWidget(self.nodesList, 1, 0)
         self.setLayout(grid)
@@ -117,7 +117,7 @@ class ContextualNodeList(QtGui.QWidget):
                 if fuzzyText.lower() not in shortName.lower():
                     continue
 
-            item = QtGui.QListWidgetItem(shortName)
+            item = QtWidgets.QListWidgetItem(shortName)
             item.setData(QtCore.Qt.UserRole, componentClassName)
             self.nodesList.addItem(item)
 

@@ -5,7 +5,7 @@
 import copy
 import math
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from node import Node
 from connection import Connection
@@ -18,7 +18,7 @@ MANIP_MODE_PAN = 2
 MANIP_MODE_MOVE = 3
 MANIP_MODE_ZOOM = 4
 
-class GraphView(QtGui.QGraphicsView):
+class GraphView(QtWidgets.QGraphicsView):
 
     nodeAdded = QtCore.Signal(Node)
     nodeRemoved = QtCore.Signal(Node)
@@ -84,7 +84,7 @@ class GraphView(QtGui.QGraphicsView):
     ################################################
     ## Graph
     def reset(self):
-        self.setScene(QtGui.QGraphicsScene())
+        self.setScene(QtWidgets.QGraphicsScene())
 
         self.__connections = set()
         self.__nodes = {}
@@ -422,7 +422,7 @@ class GraphView(QtGui.QGraphicsView):
             super(GraphView, self).mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        modifiers = QtGui.QApplication.keyboardModifiers()
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
 
         if self._manipulationMode == MANIP_MODE_SELECT:
             dragPoint = self.mapToScene(event.pos())

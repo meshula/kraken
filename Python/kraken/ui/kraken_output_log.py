@@ -1,13 +1,12 @@
 
-from PySide import QtGui, QtCore
-
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 from kraken.ui import images_rc
 from kraken.log import getLogger
 
 logger = getLogger('kraken')
 
 
-class OutputLogDialog(QtGui.QDialog):
+class OutputLogDialog(QtWidgets.QDialog):
     """Output Dialog"""
 
     def __init__(self, parent=None):
@@ -27,12 +26,12 @@ class OutputLogDialog(QtGui.QDialog):
     def createLayout(self):
         """Sets up the layout for the dialog."""
 
-        self.textWidget = QtGui.QTextEdit(self)
-        self.textWidget.setLineWrapMode(QtGui.QTextEdit.NoWrap)
+        self.textWidget = QtWidgets.QTextEdit(self)
+        self.textWidget.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
         self.textWidget.setReadOnly(True)
         self.textWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 
-        self.outputLogLayout = QtGui.QVBoxLayout(self)
+        self.outputLogLayout = QtWidgets.QVBoxLayout(self)
         self.outputLogLayout.addWidget(self.textWidget)
 
         self.setLayout(self.outputLogLayout)
@@ -72,7 +71,7 @@ class OutputLogDialog(QtGui.QDialog):
     # Context Menu
     # =============
     def createContextMenu(self):
-        self.contextMenu = QtGui.QMenu(self)
+        self.contextMenu = QtWidgets.QMenu(self)
         selectAllAction = self.contextMenu.addAction("Select All")
         copyAction = self.contextMenu.addAction("Copy")
         self.contextMenu.addSeparator()

@@ -5,10 +5,11 @@
 
 import math
 import json
-from PySide import QtGui, QtCore
+
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 from port import InputPort, OutputPort, IOPort
 
-class NodeTitle(QtGui.QGraphicsWidget):
+class NodeTitle(QtWidgets.QGraphicsWidget):
 
     __color = QtGui.QColor(25, 25, 25)
     __font = QtGui.QFont('Decorative', 14)
@@ -18,9 +19,9 @@ class NodeTitle(QtGui.QGraphicsWidget):
     def __init__(self, text, parent=None):
         super(NodeTitle, self).__init__(parent)
 
-        self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))
 
-        self.__textItem = QtGui.QGraphicsTextItem(text, self)
+        self.__textItem = QtWidgets.QGraphicsTextItem(text, self)
         self.__textItem.setDefaultTextColor(self.__color)
         self.__textItem.setFont(self.__font)
         self.__textItem.setPos(0, -2)
@@ -48,14 +49,14 @@ class NodeTitle(QtGui.QGraphicsWidget):
     #     painter.drawRect(self.windowFrameRect())
 
 
-class NodeHeader(QtGui.QGraphicsWidget):
+class NodeHeader(QtWidgets.QGraphicsWidget):
 
     def __init__(self, text, parent=None):
         super(NodeHeader, self).__init__(parent)
 
-        self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
 
-        layout = QtGui.QGraphicsLinearLayout()
+        layout = QtWidgets.QGraphicsLinearLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(3)
         layout.setOrientation(QtCore.Qt.Horizontal)
@@ -75,10 +76,10 @@ class NodeHeader(QtGui.QGraphicsWidget):
     #     painter.drawRect(self.windowFrameRect())
 
 
-class PortList(QtGui.QGraphicsWidget):
+class PortList(QtWidgets.QGraphicsWidget):
     def __init__(self, parent):
         super(PortList, self).__init__(parent)
-        layout = QtGui.QGraphicsLinearLayout()
+        layout = QtWidgets.QGraphicsLinearLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(7)
         layout.setOrientation(QtCore.Qt.Vertical)
@@ -96,7 +97,7 @@ class PortList(QtGui.QGraphicsWidget):
     #     painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 0)))
     #     painter.drawRect(self.windowFrameRect())
 
-class Node(QtGui.QGraphicsWidget):
+class Node(QtWidgets.QGraphicsWidget):
 
     nameChanged = QtCore.Signal(str, str)
 
@@ -123,9 +124,9 @@ class Node(QtGui.QGraphicsWidget):
 
         self.setMinimumWidth(60)
         self.setMinimumHeight(20)
-        self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
 
-        layout = QtGui.QGraphicsLinearLayout()
+        layout = QtWidgets.QGraphicsLinearLayout()
         layout.setContentsMargins(5, 0, 5, 7)
         layout.setSpacing(7)
         layout.setOrientation(QtCore.Qt.Vertical)

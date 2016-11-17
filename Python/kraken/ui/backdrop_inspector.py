@@ -3,12 +3,12 @@
 # Copyright 2010-2014 Fabric Technologies Inc. All rights reserved.
 #
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 
 from kraken.ui.color_widget import KColorWidget
 
 
-class BackdropInspector(QtGui.QDialog):
+class BackdropInspector(QtWidgets.QDialog):
     """A widget providing the ability to nest """
 
     def __init__(self, parent=None, nodeItem=None):
@@ -29,15 +29,15 @@ class BackdropInspector(QtGui.QDialog):
 
 
     def createLayout(self):
-        self._mainLayout = QtGui.QVBoxLayout()
+        self._mainLayout = QtWidgets.QVBoxLayout()
         self._mainLayout.setContentsMargins(10, 10, 10, 10)
 
-        self._commentTextEdit = QtGui.QTextEdit(self)
+        self._commentTextEdit = QtWidgets.QTextEdit(self)
         self._commentTextEdit.setText(self.nodeItem.getComment())
         self._commentTextEdit.setMinimumHeight(20)
         self._commentTextEdit.setMaximumHeight(40)
 
-        self._settingsLayout = QtGui.QGridLayout()
+        self._settingsLayout = QtWidgets.QGridLayout()
         self._settingsLayout.setContentsMargins(10, 10, 10, 10)
         self._settingsLayout.setSpacing(3)
         self._settingsLayout.setColumnMinimumWidth(0, 75)
@@ -45,9 +45,9 @@ class BackdropInspector(QtGui.QDialog):
         self._settingsLayout.setColumnStretch(1, 1)
 
         # Settings widgets
-        self._colorLabel = QtGui.QLabel('Color', self)
+        self._colorLabel = QtWidgets.QLabel('Color', self)
         self._colorLabel.setObjectName('color_label')
-        self._colorLabel.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
+        self._colorLabel.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         self._colorLabel.setMinimumWidth(75)
         self._colorWidget = KColorWidget(self, self.nodeItem.getColor())
 
@@ -55,8 +55,8 @@ class BackdropInspector(QtGui.QDialog):
         self._settingsLayout.addWidget(self._colorWidget, 0, 1, 1, 1, alignment=QtCore.Qt.AlignLeft)
 
         # OK and Cancel buttons
-        self.buttons = QtGui.QDialogButtonBox(
-            QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel,
+        self.buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
             QtCore.Qt.Horizontal, self)
 
         self._mainLayout.addWidget(self._commentTextEdit)

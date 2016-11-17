@@ -5,7 +5,7 @@ import os
 import re
 import traceback
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from kbackdrop import KBackdrop
 from contextual_node_list import ContextualNodeList
@@ -63,13 +63,13 @@ class KGraphViewWidget(GraphViewWidget):
         # Setup hotkeys for the following actions.
         # =========================================
 
-        undoShortcut = QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Z), self)
+        undoShortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Z), self)
         undoShortcut.activated.connect(self.undo)
 
-        redoShortcut = QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Y), self)
+        redoShortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Y), self)
         redoShortcut.activated.connect(self.redo)
 
-        openContextualNodeListShortcut = QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Tab), self)
+        openContextualNodeListShortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Tab), self)
         openContextualNodeListShortcut.activated.connect(self.openContextualNodeList)
 
         self.newRigPreset()
@@ -79,7 +79,7 @@ class KGraphViewWidget(GraphViewWidget):
     # Rig Methods
     # ============
     def editRigName(self):
-        dialog = QtGui.QInputDialog(self)
+        dialog = QtWidgets.QInputDialog(self)
         dialog.setObjectName('RigNameDialog')
         text, ok = dialog.getText(self, 'Edit Rig Name', 'New Rig Name', text=self.guideRig.getName())
 
@@ -135,15 +135,15 @@ class KGraphViewWidget(GraphViewWidget):
                 if not os.path.isdir(filePathDir):
                     filePathDir = GetKrakenPath()
 
-                fileDialog = QtGui.QFileDialog(self)
-                fileDialog.setOption(QtGui.QFileDialog.DontUseNativeDialog, on=True)
+                fileDialog = QtWidgets.QFileDialog(self)
+                fileDialog.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, on=True)
                 fileDialog.setWindowTitle('Save Rig Preset As')
                 fileDialog.setDirectory(os.path.abspath(filePathDir))
-                fileDialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
+                fileDialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
                 fileDialog.setNameFilter('Kraken Rig (*.krg)')
                 fileDialog.setDefaultSuffix('krg')
 
-                if fileDialog.exec_() == QtGui.QFileDialog.Accepted:
+                if fileDialog.exec_() == QtWidgets.QFileDialog.Accepted:
                     filePath = fileDialog.selectedFiles()[0]
                 else:
                     return False
@@ -217,14 +217,14 @@ class KGraphViewWidget(GraphViewWidget):
             if not lastFilePath:
                 lastFilePath = GetKrakenPath()
 
-            fileDialog = QtGui.QFileDialog(self)
-            fileDialog.setOption(QtGui.QFileDialog.DontUseNativeDialog, on=True)
+            fileDialog = QtWidgets.QFileDialog(self)
+            fileDialog.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, on=True)
             fileDialog.setWindowTitle('Open Rig Preset')
             fileDialog.setDirectory(os.path.dirname(os.path.abspath(lastFilePath)))
-            fileDialog.setAcceptMode(QtGui.QFileDialog.AcceptOpen)
+            fileDialog.setAcceptMode(QtWidgets.QFileDialog.AcceptOpen)
             fileDialog.setNameFilter('Kraken Rig (*.krg)')
 
-            if fileDialog.exec_() == QtGui.QFileDialog.Accepted:
+            if fileDialog.exec_() == QtWidgets.QFileDialog.Accepted:
                 filePath = fileDialog.selectedFiles()[0]
                 self.loadRigPreset(filePath)
 
