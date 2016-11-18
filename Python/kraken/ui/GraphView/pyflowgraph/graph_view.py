@@ -588,13 +588,14 @@ class GraphView(QtWidgets.QGraphicsView):
         # Zoom in (QGraphicsView auto-centers!)
         self.scale(zoomFactor, zoomFactor)
 
-         # Translate scene back to align original mouse presss
+        # Translate scene back to align original mouse press
         sceneCenter = self.sceneRect().center()
         scenePoint = self.mapToScene(event.pos())
         posFromSceneCenter = scenePoint - sceneCenter
 
         rect = self.sceneRect()
-        rect.translate(-1 * posFromSceneCenter)
+        posFromSceneCenter *= -1.0
+        rect.translate(posFromSceneCenter)
         self.setSceneRect(rect)
 
 
