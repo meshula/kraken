@@ -77,11 +77,12 @@ class NodeHeader(QtWidgets.QGraphicsWidget):
 
 
 class PortList(QtWidgets.QGraphicsWidget):
+
     def __init__(self, parent):
         super(PortList, self).__init__(parent)
         layout = QtWidgets.QGraphicsLinearLayout()
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(7)
+        layout.setSpacing(4)
         layout.setOrientation(QtCore.Qt.Vertical)
         self.setLayout(layout)
 
@@ -127,8 +128,8 @@ class Node(QtWidgets.QGraphicsWidget):
         self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
 
         layout = QtWidgets.QGraphicsLinearLayout()
-        layout.setContentsMargins(5, 0, 5, 7)
-        layout.setSpacing(7)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         layout.setOrientation(QtCore.Qt.Vertical)
         self.setLayout(layout)
 
