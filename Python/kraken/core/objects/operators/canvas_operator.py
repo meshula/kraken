@@ -262,8 +262,8 @@ class CanvasOperator(Operator):
                         rtVal = getRTVal(self.inputs[portName])
 
                     validateArg(rtVal, portName, portDataType)
-
-                    self.binding.setArgValue(portName, rtVal, False)
+                    if rtVal is not None:
+                        self.binding.setArgValue(portName, rtVal, False)
             else:
                 if str(portDataType).endswith('[]'):
                     if not len(self.outputs[portName]):
@@ -290,7 +290,8 @@ class CanvasOperator(Operator):
                         rtVal = getRTVal(self.outputs[portName], asInput=False)
 
                     validateArg(rtVal, portName, portDataType)
-                    self.binding.setArgValue(portName, rtVal, False)
+                    if rtVal is not None:
+                        self.binding.setArgValue(portName, rtVal, False)
 
             portDebug = {
                 portName: [
