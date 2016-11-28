@@ -560,7 +560,7 @@ class Builder(Builder):
             'padding': '\t\t\t',
             'paramName': kAttribute.getName(),
             'initValue': str(kAttribute.getValue()).lower(),
-            'enabled': str(not kAttribute.getLock()).lower(),
+            'enabled': "true",  # str(not kAttribute.getLock()).lower(),
             'minRange': kAttribute.getMin(),
             'maxRange': kAttribute.getMax()
         }
@@ -2014,13 +2014,58 @@ class Builder(Builder):
         return True
 
     # ==================
-    # Parameter Methods
+    # Attribute Methods
     # ==================
-    def lockParameters(self, kSceneItem):
-        """Locks flagged SRT parameters.
+    def lockAttribute(self, kSceneItem):
+        """Locks attributes.
 
         Args:
-            kSceneItem (Object): Kraken object to lock the SRT parameters on.
+            kSceneItem (object): kraken attributes to lock.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        dccSceneItem = self.getDCCSceneItem(kSceneItem)
+
+        if kAttribute.getParent().getName() == 'implicitAttrGrp':
+            return False
+
+        parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+        parentObject3D = kAttribute.getParent().getParent()
+        parentAttrGroup = kAttribute.getParent()
+
+        MaxPlus.SelectionManager.ClearNodeSelection()
+        parentDCCSceneItem.Select()
+
+        rt.execute('targetObj = selection[1]')
+        customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
+
+        if customAttr is None:
+            raise AttributeError('Could not find Attribute Group: {0} on {1}'.format(parentAttrGroup.getName(), parentObject3D.getName()))
+
+        # Get Attribute
+        dataDef = rt.CustAttributes.getDef(customAttr)
+        defSource = dataDef.source
+        defLines = defSource.splitlines()
+        endParamIndex = defLines.index('            -- Param Def End')
+        endRolloutIndex = defLines.index('            -- Rollout Def End')
+
+        # TODO: INSERT CODE TO LOCK ATTRIBUTE HERE
+
+        # newDef = '\n'.join(defLines)
+        # rt.CustAttributes.redefine(dataDef, newDef)
+
+        parentDCCSceneItem.Deselect()
+
+        return True
+
+    def lockTransformAttrs(self, kSceneItem):
+        """Locks flagged SRT attributes.
+
+        Args:
+            kSceneItem (Object): Kraken object to lock the SRT attributes on.
 
         Return:
             bool: True if successful.
@@ -2042,7 +2087,6 @@ class Builder(Builder):
         }
 
         locks = []
-
 
         # Lock Translation
         if kSceneItem.testFlag("lockXTranslation") is True:
