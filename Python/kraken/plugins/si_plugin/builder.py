@@ -1234,13 +1234,42 @@ class Builder(Builder):
         return True
 
     # ==================
-    # Parameter Methods
+    # Attribute Methods
     # ==================
-    def lockParameters(self, kSceneItem):
-        """Locks flagged SRT parameters.
+    def lockAttribute(self, kAttribute):
+        """Locks attributes.
 
         Args:
-            kSceneItem (object): kraken object to lock the SRT parameters on.
+            kAttribute (object): kraken attributes to lock.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if kAttribute.getName() in ('visibility', 'ShapeVisibility'):
+            dccSceneItem = self.getDCCSceneItem(kAttribute.getParent())
+
+            if kAttribute.getName() == 'visibility':
+                visAttr = dccSceneItem.Properties("Visibility").Parameters("viewvis")
+                visAttr.SetLock(constants.siLockLevelManipulation)
+            elif kAttribute.getName() == 'ShapeVisibility':
+                visAttr = dccSceneItem.Properties("Visibility").Parameters("viewvis")
+                visAttr.SetLock(constants.siLockLevelManipulation)
+            else:
+                pass
+
+        else:
+            dccSceneItem = self.getDCCSceneItem(kAttribute)
+            dccSceneItem.SetLock(constants.siLockLevelManipulation)
+
+        return True
+
+    def lockTransformAttrs(self, kSceneItem):
+        """Locks flagged SRT attributes.
+
+        Args:
+            kSceneItem (object): kraken object to lock the SRT attributes on.
 
         Returns:
             bool: True if successful.

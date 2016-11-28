@@ -43,6 +43,8 @@ class Builder(object):
     _buildPhase_3DObjectsAttributes = 0
     _buildPhase_AttributeConnections = 1
     _buildPhase_ConstraintsOperators = 2
+    _buildPhase_lockAttributes = 3
+    _buildPhase_lockTransformAttrs = 4
 
     def __init__(self, debugMode=False):
         super(Builder, self).__init__()
@@ -637,12 +639,21 @@ class Builder(object):
             dccSceneItem = self._sceneItemsById.get(kObject.getId(), None)
 
         if dccSceneItem is not None and isinstance(kObject, Object3D) and \
-                phase == self._buildPhase_ConstraintsOperators:
+            phase == self._buildPhase_ConstraintsOperators:
 
             self.setTransform(kObject)
-            self.lockParameters(kObject)
             self.setVisibility(kObject)
             self.setObjectColor(kObject)
+
+        if dccSceneItem is not None and kObject.isTypeOf("Attribute") is True and \
+            phase == self._buildPhase_lockAttributes:
+
+            self.lockAttribute(kObject)
+
+        if dccSceneItem is not None and isinstance(kObject, Object3D) and \
+            phase == self._buildPhase_lockTransformAttrs:
+
+            self.lockTransformAttrs(kObject)
 
         return dccSceneItem
 
@@ -717,6 +728,14 @@ class Builder(object):
             self.__buildSceneItemList(traverser.items,
                                       self._buildPhase_ConstraintsOperators)
 
+            # lock parameters
+            self.__buildSceneItemList(attributes,
+                                      self._buildPhase_lockAttributes)
+
+            # lock parameters
+            self.__buildSceneItemList(traverser.items,
+                                      self._buildPhase_lockTransformAttrs)
+
         finally:
             self._postBuild(kSceneItem)
 
@@ -728,13 +747,13 @@ class Builder(object):
         return self.getDCCSceneItem(kSceneItem)
 
     # ==================
-    # Parameter Methods
+    # Attribute Methods
     # ==================
-    def lockParameters(self, kSceneItem):
-        """Locks flagged SRT parameters.
+    def lockAttribute(self, kAttribute):
+        """Locks attributes.
 
         Args:
-            kSceneItem (object): kraken object to lock the SRT parameters on.
+            kAttribute (object): kraken attributes to lock.
 
         Returns:
             bool: True if successful.
@@ -742,6 +761,20 @@ class Builder(object):
         """
 
         return True
+
+    def lockTransformAttrs(self, kSceneItem):
+        """Locks the transform attributes on an object.
+
+        Args:
+            kSceneItem (object): kraken object to lock the SRT attributes on.
+
+        Returns:
+            Type: True if successful.
+
+        """
+
+        return True
+
 
     # ===================
     # Visibility Methods
