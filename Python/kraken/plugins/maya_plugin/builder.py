@@ -1305,13 +1305,13 @@ class Builder(Builder):
         """
 
         if kAttribute.getName() in ('visibility', 'ShapeVisibility'):
-            dccSceneItem = self.getDCCSceneItem(kAttribute.getParent())
+            dccSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
 
             if kAttribute.getName() == 'visibility':
                 visAttr = dccSceneItem.attr('visibility')
                 visAttr.setLocked(kAttribute.getLock())
             elif kAttribute.getName() == 'ShapeVisibility':
-                shapeNodes = pm.listRelatives(sel, shapes=True)
+                shapeNodes = pm.listRelatives(dccSceneItem, shapes=True)
                 for shape in shapeNodes:
                     visAttr = shape.attr('visibility')
                     visAttr.setLocked(kAttribute.getLock())
@@ -1430,7 +1430,7 @@ class Builder(Builder):
         shapeVisAttr = kSceneItem.getShapeVisibilityAttr()
         if shapeVisAttr.isConnected() is False and kSceneItem.getShapeVisibility() is False:
             # Get shape node, if it exists, hide it.
-            shapeNodes = pm.listRelatives(sel, shapes=True)
+            shapeNodes = pm.listRelatives(dccSceneItem, shapes=True)
             for shape in shapeNodes:
                 visAttr = shape.attr('visibility')
                 visAttr.set(False)
