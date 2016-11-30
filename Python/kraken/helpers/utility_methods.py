@@ -83,7 +83,14 @@ def prepareToSave(jsonData):
 def __mirrorData(jsonData, plane):
 
     if isinstance(jsonData, Vec3):
-        return jsonData
+        newVec3 = Vec3(jsonData)
+        if plane == 0:
+            newVec3.x = -newVec3.x
+        elif plane == 1:
+            newVec3.y = -newVec3.y
+        elif plane == 2:
+            newVec3.z = -newVec3.z
+        return newVec3
 
     if isinstance(jsonData, Quat):
         newQuat = Quat(jsonData)

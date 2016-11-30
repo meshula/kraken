@@ -142,7 +142,7 @@ private KrakenAbcClip.getSampleInfo(Vec2 range, Size numSamples, Float64 time, o
   }
 }
 
-Float32 KrakenAbcClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Float32 KrakenAbcClip.evaluateFloat32!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   if(this.types[id] != KrakenClipChannel_Float32)
     return Float32();
 
@@ -164,7 +164,7 @@ Float32 KrakenAbcClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClip
   return Math_linearInterpolate(this.scalars[propId][a], this.scalars[propId][b], t);
 }
 
-Xfo KrakenAbcClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Xfo KrakenAbcClip.evaluateXfo!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   if(this.xfos[id].size() == 0)
     return Xfo();
 
@@ -182,7 +182,7 @@ Xfo KrakenAbcClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext 
   return this.xfos[id][a].linearInterpolate(this.xfos[id][b], t);
 }
 
-function KrakenAbcClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
+function KrakenAbcClip.apply(io Ref<KrakenKLRig> rig, KrakenClipContext context, Float32 factor) {
   KrakenAbcClip clip = this;
   if(clip.lookup == null)
     clip.lookup = KrakenClipLookup(rig, clip);

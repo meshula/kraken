@@ -60,11 +60,11 @@ KeyframeTrack[] KrakenFCurveClip.getChannelTracks(String name) {
   return result;
 }
 
-Float32 KrakenFCurveClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Float32 KrakenFCurveClip.evaluateFloat32!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   return 0.0;
 }
 
-Xfo KrakenFCurveClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Xfo KrakenFCurveClip.evaluateXfo!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   Xfo xfo;
 
   KeyframeTrack tracks[] = this.tracks[id];
@@ -87,7 +87,7 @@ Xfo KrakenFCurveClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipConte
   return xfo;
 }
 
-function KrakenFCurveClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
+function KrakenFCurveClip.apply(io Ref<KrakenKLRig> rig, KrakenClipContext context, Float32 factor) {
   KrakenFCurveClip clip = this;
   if(clip.lookup == null)
     clip.lookup = KrakenClipLookup(rig, clip);

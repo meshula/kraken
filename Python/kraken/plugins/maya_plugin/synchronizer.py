@@ -89,7 +89,7 @@ class Synchronizer(Synchronizer):
         dccItem = hrcMap[kObject]['dccItem']
 
         if dccItem is None:
-            ogger.warning("SyncXfo: Syncing. No DCC Item for :" + kObject.getPath())
+            logger.warning("SyncXfo: Syncing. No DCC Item for :" + kObject.getPath())
             return False
 
         dccPos = dccItem.getTranslation(space='world')

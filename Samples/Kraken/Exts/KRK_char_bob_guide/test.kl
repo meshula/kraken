@@ -1,0 +1,9 @@
+require KRK_char_bob_guide;
+
+operator entry() {
+  KRK_char_bob_guide rig();
+  KrakenClipContext context;
+  context.time = 1.0;
+  rig.setClip(KrakenClip_loadFromFile('${KRAKEN_PATH}/Samples/Kraken/bob_anim.json'));
+  rig.evaluate(context);
+}
