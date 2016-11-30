@@ -608,7 +608,7 @@ class Builder(Builder):
             dccSceneItem = pm.PyNode(pm.createNode('fabricConstraint'))
             pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
             pm.connectAttr('%s.rotate' % dccSceneItem, '%s.rotate' % constraineeDCCSceneItem)
-            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem) + 1)
+            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
 
             if kConstraint.getConstrainee().isTypeOf('Joint'):
                 parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
@@ -727,7 +727,7 @@ class Builder(Builder):
             pm.connectAttr('%s.translate' % dccSceneItem, '%s.translate' % constraineeDCCSceneItem)
             pm.connectAttr('%s.rotate' % dccSceneItem, '%s.rotate' % constraineeDCCSceneItem)
             pm.connectAttr('%s.scale' % dccSceneItem, '%s.scale' % constraineeDCCSceneItem)
-            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem) + 1)
+            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
             if kConstraint.getConstrainee().isTypeOf('Joint'):
                 parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
                 pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
@@ -790,7 +790,7 @@ class Builder(Builder):
             dccSceneItem = pm.PyNode(pm.createNode('fabricConstraint'))
             pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
             pm.connectAttr('%s.translate' % dccSceneItem, '%s.translate' % constraineeDCCSceneItem)
-            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem) + 1)
+            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
             if kConstraint.getConstrainee().isTypeOf('Joint'):
                 parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
                 pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
@@ -853,7 +853,7 @@ class Builder(Builder):
             dccSceneItem = pm.PyNode(pm.createNode('fabricConstraint'))
             pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
             pm.connectAttr('%s.scale' % dccSceneItem, '%s.scale' % constraineeDCCSceneItem)
-            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem) + 1)
+            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
             if kConstraint.getConstrainee().isTypeOf('Joint'):
                 parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
                 pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
