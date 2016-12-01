@@ -699,10 +699,10 @@ class Builder(Builder):
                 }
 
                 order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
-                # if order == 4:
-                #     order = 5
-                # elif order == 5:
-                #     order = 4
+                if order == 4:
+                    order = 5
+                elif order == 5:
+                    order = 4
 
                 offsetXfo = kConstraint.computeOffset()
                 offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
