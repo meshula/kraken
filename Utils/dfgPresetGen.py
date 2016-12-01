@@ -223,23 +223,9 @@ def main():
         shutil.copytree(krakenStageDFGPath, krakenDFGPath)
         shutil.rmtree(krakenStageDFGPath)
 
-        print "=========================="
-        print "Replacing GUIDs #1"
-        print "=========================="
         replacePresetGUIDs(presetGUIDs)
-
-        print "=========================="
-        print "Creating Solver Presets"
-        print "=========================="
         createSolverPresets()
-
-        print "=========================="
-        print "Replacing GUIDs #2"
-        print "=========================="
-        try:
-            replacePresetGUIDs(presetGUIDs)
-        except:
-            traceback.print_exc()
+        replacePresetGUIDs(presetGUIDs)
 
     except:
         if os.path.exists(krakenStageDFGPath):
