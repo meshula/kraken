@@ -6,7 +6,7 @@ struct KrakenClipContext {
   Float64 time;
   Float64 delta;
   SInt32 maxEvalID;
-  Mat44 matrices[16];
+  Mat44 matrices[300];
   Float32 channels[16];
 };
 

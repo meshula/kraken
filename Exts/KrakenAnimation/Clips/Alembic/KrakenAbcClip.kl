@@ -92,7 +92,7 @@ private function KrakenAbcClip.construct!(String filePath) {
         continue;
 
       String channelName = name.reversePartition('/')[2].reversePartition(':')[2];
-      channelName += '.'+propKeys[j].reversePartition('/')[2]; 
+      channelName += '.'+propKeys[j].reversePartition('/')[2];
       this.nameToId[channelName] = this.scalars.size();
       this.names.push(channelName);
       this.types.push(KrakenClipChannel_Float32);
@@ -196,6 +196,7 @@ function JSONDictValue KrakenAbcClip.saveToJson!() {
 }
 
 function KrakenAbcClip.loadFromJson!(JSONDictValue json) {
+  report("TTPrint: KrakenAbcClip.loadFromJson");
   String filePath = json.getString('filePath');
   this.construct(filePath);
 }

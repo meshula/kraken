@@ -28,6 +28,8 @@ function KrakenClip KrakenClip_getFromTypeName(String typeName) {
       return KrakenRotationWaveClip();
     case "KrakenLookAtClip":
       return KrakenLookAtClip();
+    case "KrakenGlueClip":
+      return KrakenGlueClip();
   }
   return null;
 }
