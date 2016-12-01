@@ -971,7 +971,7 @@ class Builder(Builder):
                                           execPath="",
                                           extDep=kOperator.getExtension())
 
-                solverTypeName = kOperator.getSolverTypeName()
+                solverTypeName = '%s::%s' % (kOperator.getExtension(), kOperator.getSolverTypeName())
 
                 # Create Solver Function Node
                 dfgEntry = "dfgEntry {\n  solver = " + solverTypeName + "();\n}"
