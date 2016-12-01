@@ -6,7 +6,6 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "TwoBoneIKSolver",
-  "presetGUID" : "54B45E520A31F5139998ACE2F244D9A8",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -124,6 +123,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "54B45E520A31F5139998ACE2F244D9A8",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -313,6 +313,321 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken.Exts.Solvers.TwoBoneIKSolver.TwoBoneIKSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "TwoBoneIKSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rightSide",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ikblend",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "root",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "bone0FK",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "bone1FK",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ikHandle",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "upV",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "bone0Len",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "bone1Len",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "bone0Out",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "bone1Out",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "bone2Out",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "midJointOut",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "54B45E520A31F5139998ACE2F244D9A8",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "TwoBoneIKSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "TwoBoneIKSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.TwoBoneIKSolver.TwoBoneIKSolver_Constructor",
+          "presetGUID" : "EFC1688471A2D86E1A5E10B47E36EAAF"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "TwoBoneIKSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rightSide",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "ikblend",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "root",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "bone0FK",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "bone1FK",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "ikHandle",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "upV",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "bone0Len",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "bone1Len",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "bone0Out",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "bone1Out",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "bone2Out",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "midJointOut",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.TwoBoneIKSolver.TwoBoneIKSolver_Solve",
+          "presetGUID" : "0DA97E05EB5D78099CCC9AB24D601D26"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "TwoBoneIKSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "TwoBoneIKSolver_Solve.rigScale"
+          ],
+        "rightSide" : [
+          "TwoBoneIKSolver_Solve.rightSide"
+          ],
+        "ikblend" : [
+          "TwoBoneIKSolver_Solve.ikblend"
+          ],
+        "root" : [
+          "TwoBoneIKSolver_Solve.root"
+          ],
+        "bone0FK" : [
+          "TwoBoneIKSolver_Solve.bone0FK"
+          ],
+        "bone1FK" : [
+          "TwoBoneIKSolver_Solve.bone1FK"
+          ],
+        "ikHandle" : [
+          "TwoBoneIKSolver_Solve.ikHandle"
+          ],
+        "upV" : [
+          "TwoBoneIKSolver_Solve.upV"
+          ],
+        "bone0Len" : [
+          "TwoBoneIKSolver_Solve.bone0Len"
+          ],
+        "bone1Len" : [
+          "TwoBoneIKSolver_Solve.bone1Len"
+          ],
+        "solver.value" : [
+          "TwoBoneIKSolver_Solve.this"
+          ],
+        "TwoBoneIKSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "TwoBoneIKSolver_Solve.this" : [
+          "exec"
+          ],
+        "TwoBoneIKSolver_Solve.bone0Out" : [
+          "bone0Out"
+          ],
+        "TwoBoneIKSolver_Solve.bone1Out" : [
+          "bone1Out"
+          ],
+        "TwoBoneIKSolver_Solve.bone2Out" : [
+          "bone2Out"
+          ],
+        "TwoBoneIKSolver_Solve.midJointOut" : [
+          "midJointOut"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.TwoBoneIKSolver.TwoBoneIKSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {

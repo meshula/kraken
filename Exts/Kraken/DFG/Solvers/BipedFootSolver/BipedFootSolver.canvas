@@ -6,7 +6,6 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "BipedFootSolver",
-  "presetGUID" : "0761E35C0080B870BFD37C74330AD2F2",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -103,6 +102,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "0761E35C0080B870BFD37C74330AD2F2",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -268,6 +268,276 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken.Exts.Solvers.BipedFootSolver.BipedFootSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "BipedFootSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ikBlend",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ankleLen",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "toeLen",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "legEnd",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ankleIK",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "toeIK",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ankleFK",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "toeFK",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ankle_result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "toe_result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "0761E35C0080B870BFD37C74330AD2F2",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "BipedFootSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "BipedFootSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.BipedFootSolver.BipedFootSolver_Constructor",
+          "presetGUID" : "B2E13E2E6AA7D4B0137A89AA834F3064"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "BipedFootSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "ikBlend",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "ankleLen",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "toeLen",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "legEnd",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "ankleIK",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "toeIK",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "ankleFK",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "toeFK",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "ankle_result",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "toe_result",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.BipedFootSolver.BipedFootSolver_Solve",
+          "presetGUID" : "A9AF02CB076F1F495B718D678C9BF7CF"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "BipedFootSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "BipedFootSolver_Solve.rigScale"
+          ],
+        "ikBlend" : [
+          "BipedFootSolver_Solve.ikBlend"
+          ],
+        "ankleLen" : [
+          "BipedFootSolver_Solve.ankleLen"
+          ],
+        "toeLen" : [
+          "BipedFootSolver_Solve.toeLen"
+          ],
+        "legEnd" : [
+          "BipedFootSolver_Solve.legEnd"
+          ],
+        "ankleIK" : [
+          "BipedFootSolver_Solve.ankleIK"
+          ],
+        "toeIK" : [
+          "BipedFootSolver_Solve.toeIK"
+          ],
+        "ankleFK" : [
+          "BipedFootSolver_Solve.ankleFK"
+          ],
+        "toeFK" : [
+          "BipedFootSolver_Solve.toeFK"
+          ],
+        "solver.value" : [
+          "BipedFootSolver_Solve.this"
+          ],
+        "BipedFootSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "BipedFootSolver_Solve.this" : [
+          "exec"
+          ],
+        "BipedFootSolver_Solve.ankle_result" : [
+          "ankle_result"
+          ],
+        "BipedFootSolver_Solve.toe_result" : [
+          "toe_result"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.BipedFootSolver.BipedFootSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {

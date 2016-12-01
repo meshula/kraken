@@ -6,7 +6,6 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "TwistSolver",
-  "presetGUID" : "216D149C5C1686072B77335BE79873A3",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -75,6 +74,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "216D149C5C1686072B77335BE79873A3",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -208,6 +208,216 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken.Exts.Solvers.TwistSolver.TwistSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "TwistSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "blendBias",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "origin",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "originUpV",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "insert",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "insertUpV",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "pose",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44[]"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "216D149C5C1686072B77335BE79873A3",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "TwistSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "TwistSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.TwistSolver.TwistSolver_Constructor",
+          "presetGUID" : "DB531AA099F6F18721977C0C3A4DD4FC"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "TwistSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "blendBias",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "origin",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "originUpV",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "insert",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "insertUpV",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "pose",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.TwistSolver.TwistSolver_Solve",
+          "presetGUID" : "64346A289B3B92EBE75C0E6A4D668C7F"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "TwistSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "TwistSolver_Solve.rigScale"
+          ],
+        "blendBias" : [
+          "TwistSolver_Solve.blendBias"
+          ],
+        "origin" : [
+          "TwistSolver_Solve.origin"
+          ],
+        "originUpV" : [
+          "TwistSolver_Solve.originUpV"
+          ],
+        "insert" : [
+          "TwistSolver_Solve.insert"
+          ],
+        "insertUpV" : [
+          "TwistSolver_Solve.insertUpV"
+          ],
+        "solver.value" : [
+          "TwistSolver_Solve.this"
+          ],
+        "TwistSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "TwistSolver_Solve.this" : [
+          "exec"
+          ],
+        "TwistSolver_Solve.pose" : [
+          "pose"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.TwistSolver.TwistSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {

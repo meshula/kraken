@@ -6,7 +6,6 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "DirectionConstraintSolver",
-  "presetGUID" : "66398ECE886F67A6584C58B1127ED80D",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -61,6 +60,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "66398ECE886F67A6584C58B1127ED80D",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -178,6 +178,186 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken.Exts.Solvers.DirectionConstraintSolver.DirectionConstraintSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "DirectionConstraintSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "position",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "upVector",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "atVector",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "constrainee",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "66398ECE886F67A6584C58B1127ED80D",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "DirectionConstraintSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "DirectionConstraintSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.DirectionConstraintSolver.DirectionConstraintSolver_Constructor",
+          "presetGUID" : "A29A3B5AE8246CA6ED6627C3AF42CCEB"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "DirectionConstraintSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "position",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "upVector",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "atVector",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "constrainee",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.DirectionConstraintSolver.DirectionConstraintSolver_Solve",
+          "presetGUID" : "EC4399E2DC4B0D27C8E21F0ACAB52F24"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "DirectionConstraintSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "DirectionConstraintSolver_Solve.rigScale"
+          ],
+        "position" : [
+          "DirectionConstraintSolver_Solve.position"
+          ],
+        "upVector" : [
+          "DirectionConstraintSolver_Solve.upVector"
+          ],
+        "atVector" : [
+          "DirectionConstraintSolver_Solve.atVector"
+          ],
+        "solver.value" : [
+          "DirectionConstraintSolver_Solve.this"
+          ],
+        "DirectionConstraintSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "DirectionConstraintSolver_Solve.this" : [
+          "exec"
+          ],
+        "DirectionConstraintSolver_Solve.constrainee" : [
+          "constrainee"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.DirectionConstraintSolver.DirectionConstraintSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {

@@ -6,7 +6,6 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "BipedFootPivotSolver",
-  "presetGUID" : "DB9B0699DE51044D684CD563ED3037C7",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -96,6 +95,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "DB9B0699DE51044D684CD563ED3037C7",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -253,6 +253,261 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken.Exts.Solvers.BipedFootPivotSolver.BipedFootPivotSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "BipedFootPivotSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rightSide",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "footRock",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "footBank",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "pivotAll",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "backPivot",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "frontPivot",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "outerPivot",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "innerPivot",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "DB9B0699DE51044D684CD563ED3037C7",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "BipedFootPivotSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "BipedFootPivotSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.BipedFootPivotSolver.BipedFootPivotSolver_Constructor",
+          "presetGUID" : "4463186C5019D67BF038104D9DA3ED32"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "BipedFootPivotSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rightSide",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "footRock",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "footBank",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "pivotAll",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "backPivot",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "frontPivot",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "outerPivot",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "innerPivot",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.BipedFootPivotSolver.BipedFootPivotSolver_Solve",
+          "presetGUID" : "9F8A290013784C73ABB3D3AC25310495"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "BipedFootPivotSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "BipedFootPivotSolver_Solve.rigScale"
+          ],
+        "rightSide" : [
+          "BipedFootPivotSolver_Solve.rightSide"
+          ],
+        "footRock" : [
+          "BipedFootPivotSolver_Solve.footRock"
+          ],
+        "footBank" : [
+          "BipedFootPivotSolver_Solve.footBank"
+          ],
+        "pivotAll" : [
+          "BipedFootPivotSolver_Solve.pivotAll"
+          ],
+        "backPivot" : [
+          "BipedFootPivotSolver_Solve.backPivot"
+          ],
+        "frontPivot" : [
+          "BipedFootPivotSolver_Solve.frontPivot"
+          ],
+        "outerPivot" : [
+          "BipedFootPivotSolver_Solve.outerPivot"
+          ],
+        "innerPivot" : [
+          "BipedFootPivotSolver_Solve.innerPivot"
+          ],
+        "solver.value" : [
+          "BipedFootPivotSolver_Solve.this"
+          ],
+        "BipedFootPivotSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "BipedFootPivotSolver_Solve.this" : [
+          "exec"
+          ],
+        "BipedFootPivotSolver_Solve.result" : [
+          "result"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.BipedFootPivotSolver.BipedFootPivotSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {

@@ -6,7 +6,6 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "NBoneIKSolver",
-  "presetGUID" : "7B3248037C3B870DE0DD3D142D9A19F5",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -103,6 +102,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "7B3248037C3B870DE0DD3D142D9A19F5",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -268,6 +268,276 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken.Exts.Solvers.NBoneIKSolver.NBoneIKSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "NBoneIKSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "useInitPose",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ikblend",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "chainBase",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "ikgoal",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "upVector",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "fkcontrols",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "tipBoneLen",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rootIndex",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "pose",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "legEnd",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "7B3248037C3B870DE0DD3D142D9A19F5",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "NBoneIKSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "NBoneIKSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.NBoneIKSolver.NBoneIKSolver_Constructor",
+          "presetGUID" : "FE7D3A4754E6CC9AA78FC1716D9FAC82"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "NBoneIKSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "useInitPose",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "ikblend",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "chainBase",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "ikgoal",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "upVector",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "fkcontrols",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "tipBoneLen",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rootIndex",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "pose",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "legEnd",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.NBoneIKSolver.NBoneIKSolver_Solve",
+          "presetGUID" : "0C2143A1CB33C3DF1BED56A8ED3AA278"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "NBoneIKSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "NBoneIKSolver_Solve.rigScale"
+          ],
+        "useInitPose" : [
+          "NBoneIKSolver_Solve.useInitPose"
+          ],
+        "ikblend" : [
+          "NBoneIKSolver_Solve.ikblend"
+          ],
+        "chainBase" : [
+          "NBoneIKSolver_Solve.chainBase"
+          ],
+        "ikgoal" : [
+          "NBoneIKSolver_Solve.ikgoal"
+          ],
+        "upVector" : [
+          "NBoneIKSolver_Solve.upVector"
+          ],
+        "fkcontrols" : [
+          "NBoneIKSolver_Solve.fkcontrols"
+          ],
+        "tipBoneLen" : [
+          "NBoneIKSolver_Solve.tipBoneLen"
+          ],
+        "rootIndex" : [
+          "NBoneIKSolver_Solve.rootIndex"
+          ],
+        "solver.value" : [
+          "NBoneIKSolver_Solve.this"
+          ],
+        "NBoneIKSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "NBoneIKSolver_Solve.this" : [
+          "exec"
+          ],
+        "NBoneIKSolver_Solve.pose" : [
+          "pose"
+          ],
+        "NBoneIKSolver_Solve.legEnd" : [
+          "legEnd"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.NBoneIKSolver.NBoneIKSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {
