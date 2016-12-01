@@ -6,6 +6,7 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "MultiPoseConstraintSolver",
+  "presetGUID" : "C33190B14003A9844CF4D118896E4443",
   "ports" : [
     {
       "objectType" : "ExecPort",

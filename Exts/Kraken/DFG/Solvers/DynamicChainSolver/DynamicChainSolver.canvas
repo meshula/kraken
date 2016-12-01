@@ -6,6 +6,7 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "DynamicChainSolver",
+  "presetGUID" : "5E53D65DC2F584AD2D47CF25EEDAAD90",
   "ports" : [
     {
       "objectType" : "ExecPort",

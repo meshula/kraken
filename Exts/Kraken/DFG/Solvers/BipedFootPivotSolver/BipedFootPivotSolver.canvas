@@ -6,6 +6,7 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "BipedFootPivotSolver",
+  "presetGUID" : "DB9B0699DE51044D684CD563ED3037C7",
   "ports" : [
     {
       "objectType" : "ExecPort",

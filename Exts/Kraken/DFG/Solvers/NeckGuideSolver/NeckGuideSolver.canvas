@@ -6,6 +6,7 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "NeckGuideSolver",
+  "presetGUID" : "C91879087F12302626F799FC9D490A15",
   "ports" : [
     {
       "objectType" : "ExecPort",

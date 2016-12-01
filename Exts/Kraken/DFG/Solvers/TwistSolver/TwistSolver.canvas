@@ -6,6 +6,7 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "TwistSolver",
+  "presetGUID" : "216D149C5C1686072B77335BE79873A3",
   "ports" : [
     {
       "objectType" : "ExecPort",

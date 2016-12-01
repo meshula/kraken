@@ -6,6 +6,7 @@
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
   "title" : "TwoBoneStretchyIKSolver",
+  "presetGUID" : "FC77B7E6D0B4DE5285473FD43FB22185",
   "ports" : [
     {
       "objectType" : "ExecPort",
