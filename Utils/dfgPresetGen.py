@@ -88,20 +88,25 @@ def replacePresetGUIDs(guidMap):
                 presetFilePath = os.path.join(root, file)
                 presetPathItems = presetFilePath.replace(krakenDFGPath, '').split(os.path.sep)[1:]
                 presetCanvasPath = '.'.join(['Kraken', 'Exts'] + presetPathItems).replace('.canvas', '')
-                dfgBinding = dfgHost.createBindingToPreset(presetCanvasPath)
-                dfgExec = dfgBinding.getExec()
 
-                guid = guidMap.get(presetCanvasPath, None)
-                if guid == '' or guid is None:
-                    guid = subprocess.check_output(guidGenPath)
+                try:
+                    dfgBinding = dfgHost.createBindingToPreset(presetCanvasPath)
+                    dfgExec = dfgBinding.getExec()
 
-                dfgExec.setPresetGUID(guid)
+                    guid = guidMap.get(presetCanvasPath, None)
+                    if guid == '' or guid is None:
+                        guid = subprocess.check_output(guidGenPath)
 
-                print "Writing Preset File: {}".format(presetFilePath)
+                    dfgExec.setPresetGUID(guid)
 
-                content = dfgBinding.exportJSON()
-                with open(presetFilePath, "w") as solverPresetFile:
-                    solverPresetFile.write(content)
+                    print "Writing Preset File: {}".format(presetFilePath)
+
+                    content = dfgBinding.exportJSON()
+                    with open(presetFilePath, "w") as solverPresetFile:
+                        solverPresetFile.write(content)
+                except:
+                    traceback.print_exc()
+                    continue
 
 # ===========================
 # Create User Facing Presets
