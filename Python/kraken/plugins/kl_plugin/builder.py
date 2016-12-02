@@ -1194,7 +1194,14 @@ class Builder(Builder):
         fpmFilePath = os.path.join(self.__outputFolder, "%s.fpm.json" % self.getKLExtensionName())
         klFilePath = os.path.join(self.__outputFolder, ext[0]['filename'])
         testFilePath = os.path.join(self.__outputFolder, "test.kl")
-        fpm = "{\"code\": [\"%s\"], \"dfgPresets\": {\"dir\": \"DFG\", \"presetPath\": \"Kraken.KLRigs.%s\"}}" % (ext[0]['filename'], self.getKLExtensionName())
+        fpm = """{
+  \"code\": [\"%s\"],
+  \"dfgPresets\": {
+    \"dir\": \"DFG\",
+    \"presetPath\": \"Kraken.KLRigs.%s\"
+  },
+  \"autoNamespace\": true
+}""" % (ext[0]['filename'], self.getKLExtensionName())
         self.__ensureFolderExists(fpmFilePath)
         self.__ensureFolderExists(klFilePath)
         self.__ensureFolderExists(testFilePath)
@@ -1213,6 +1220,8 @@ class Builder(Builder):
         if not os.path.exists(presetFolder):
           os.makedirs(presetFolder)
 
+        requireCode = "require %s;\n" % self.getKLExtensionName()
+
         # Create preset
         filePath = os.path.join(presetFolder, 'Create.canvas')
         dfgBinding = dfgHost.createBindingToNewGraph()
@@ -1226,7 +1235,7 @@ class Builder(Builder):
         subExec = dfgExec.getSubExec(func)
         subExec.addExtDep(rigType)
         funcResult = subExec.addExecPort('result', client.DFG.PortTypes.Out, rigType)
-        subExec.setCode("dfgEntry {\n  %s = %s();\n}\n" % (funcResult, rigType))
+        subExec.setCode(requireCode + "dfgEntry {\n  %s = %s();\n}\n" % (funcResult, rigType))
         dfgExec.connectTo(func+'.'+funcResult, var+'.value')
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
@@ -1239,7 +1248,7 @@ class Builder(Builder):
         dfgExec.addExtDep(rigType)
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
         clipInput = dfgExec.addExecPort('clip', client.DFG.PortTypes.In, "KrakenClip")
-        dfgExec.setCode("dfgEntry {\n  %s.setClip(%s);\n}\n" % (funcResult, clipInput))
+        dfgExec.setCode(requireCode + "dfgEntry {\n  %s.setClip(%s);\n}\n" % (funcResult, clipInput))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
@@ -1250,7 +1259,7 @@ class Builder(Builder):
         dfgExec.setTitle("Solve")
         dfgExec.addExtDep(rigType)
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
-        dfgExec.setCode("dfgEntry {\n  %s.solve(KrakenClipContext());\n}\n" % (funcResult))
+        dfgExec.setCode(requireCode + "dfgEntry {\n  %s.solve(KrakenClipContext());\n}\n" % (funcResult))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
@@ -1262,7 +1271,7 @@ class Builder(Builder):
         dfgExec.addExtDep(rigType)
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
         contextInput = dfgExec.addExecPort('context', client.DFG.PortTypes.In, "KrakenClipContext")
-        dfgExec.setCode("dfgEntry {\n  %s.evaluate(%s);\n}\n" % (funcResult, contextInput))
+        dfgExec.setCode(requireCode + "dfgEntry {\n  %s.evaluate(%s);\n}\n" % (funcResult, contextInput))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
@@ -1273,7 +1282,7 @@ class Builder(Builder):
         dfgExec.setTitle("ResetPose")
         dfgExec.addExtDep(rigType)
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
-        dfgExec.setCode("dfgEntry {\n  %s.resetPose();\n}\n" % (funcResult))
+        dfgExec.setCode(requireCode + "dfgEntry {\n  %s.resetPose();\n}\n" % (funcResult))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
@@ -1285,7 +1294,7 @@ class Builder(Builder):
         dfgExec.addExtDep(rigType)
         funcInput = dfgExec.addExecPort('rig', client.DFG.PortTypes.In, rigType)
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
-        dfgExec.setCode("dfgEntry {\n  %s = %s.getJointXfos();\n}\n" % (funcResult, funcInput))
+        dfgExec.setCode(requireCode + "dfgEntry {\n  %s = %s.getJointXfos();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
@@ -1297,7 +1306,7 @@ class Builder(Builder):
         dfgExec.addExtDep(rigType)
         funcInput = dfgExec.addExecPort('rig', client.DFG.PortTypes.In, rigType)
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'Xfo[]')
-        dfgExec.setCode("dfgEntry {\n  %s = %s.getAllXfos();\n}\n" % (funcResult, funcInput))
+        dfgExec.setCode(requireCode + "dfgEntry {\n  %s = %s.getAllXfos();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
@@ -1309,7 +1318,7 @@ class Builder(Builder):
         dfgExec.addExtDep(rigType)
         funcInput = dfgExec.addExecPort('rig', client.DFG.PortTypes.In, rigType)
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'String[]')
-        dfgExec.setCode("dfgEntry {\n  %s = %s.getJointNames();\n}\n" % (funcResult, funcInput))
+        dfgExec.setCode(requireCode + "dfgEntry {\n  %s = %s.getJointNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
@@ -1321,7 +1330,7 @@ class Builder(Builder):
         dfgExec.addExtDep(rigType)
         funcInput = dfgExec.addExecPort('rig', client.DFG.PortTypes.In, rigType)
         funcResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out, 'String[]')
-        dfgExec.setCode("dfgEntry {\n  %s = %s.getAllNames();\n}\n" % (funcResult, funcInput))
+        dfgExec.setCode(requireCode + "dfgEntry {\n  %s = %s.getAllNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
 
