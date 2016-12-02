@@ -1,6 +1,7 @@
 {
   "objectType" : "Graph",
   "title" : "MyRigCtrl",
+  "presetGUID" : "A1F673FD09C2DD39DAB555629FAF9D5D",
   "ports" : [
     {
       "objectType" : "Port",
