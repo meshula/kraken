@@ -46,6 +46,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "7717A6116CE83FCFE013C44388CBBAE4",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -147,6 +148,156 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken_10.PoseConstraintSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "PoseConstraintSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "constrainer",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "constrainee",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "7717A6116CE83FCFE013C44388CBBAE4",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "PoseConstraintSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "PoseConstraintSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Constructor",
+          "presetGUID" : "B8E7E0C67E2E488AB391C559EFACA099"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "PoseConstraintSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "constrainer",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "constrainee",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Solve",
+          "presetGUID" : "48177F48BFB4A2F74E0EBEB31FE5D4AC"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "PoseConstraintSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "PoseConstraintSolver_Solve.rigScale"
+          ],
+        "constrainer" : [
+          "PoseConstraintSolver_Solve.constrainer"
+          ],
+        "solver.value" : [
+          "PoseConstraintSolver_Solve.this"
+          ],
+        "PoseConstraintSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "PoseConstraintSolver_Solve.this" : [
+          "exec"
+          ],
+        "PoseConstraintSolver_Solve.constrainee" : [
+          "constrainee"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {
