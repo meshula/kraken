@@ -148,7 +148,7 @@
       ]
     },
   "requiredPresets" : {
-    "Kraken_10.PoseConstraintSolver" : {
+    "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver" : {
       "objectType" : "Graph",
       "metadata" : {
         "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",

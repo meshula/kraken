@@ -99,8 +99,6 @@ def replacePresetGUIDs(guidMap):
 
                     dfgExec.setPresetGUID(guid)
 
-                    print "Writing Preset File: {}".format(presetFilePath)
-
                     content = dfgBinding.exportJSON()
                     with open(presetFilePath, "w") as solverPresetFile:
                         solverPresetFile.write(content)
@@ -203,6 +201,8 @@ def createSolverPresets():
                     solverParamOutPort = dfgExec.addExecPort(portName, client.DFG.PortTypes.Out, portDataType)
                     dfgExec.connectTo(solverSolve + '.' + portName, solverParamOutPort)
 
+            krakenPresetPath = dfgHost.addPresetDir('', 'Kraken')
+            dfgExec.attachPresetFile(krakenPresetPath, dfgExec.getTitle(), True)
             content = dfgBinding.exportJSON()
             with open(solverOutputPath, "w") as solverPresetFile:
                 solverPresetFile.write(content)
