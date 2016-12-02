@@ -1220,7 +1220,7 @@ class Builder(Builder):
         if not os.path.exists(presetFolder):
           os.makedirs(presetFolder)
 
-        requireCode = "require %s;\n" % self.getKLExtensionName()
+        requireCode = "require Kraken;\nrequire KrakenAnimation;\nrequire KrakenForCanvas;\nrequire %s;\n" % self.getKLExtensionName()
 
         # Create preset
         filePath = os.path.join(presetFolder, 'Create.canvas')
@@ -1228,7 +1228,7 @@ class Builder(Builder):
         dfgExec = dfgBinding.getExec()
         dfgExec.setTitle("Create")
         dfgExec.addExtDep(rigType)
-        var = dfgExec.addVar("rig", rigType, rigType)
+        var = dfgExec.addVar("rig", '%s::%s' % (self.getKLExtensionName(), rigType), rigType)
         varResult = dfgExec.addExecPort('result', client.DFG.PortTypes.Out)
         dfgExec.connectTo(var+'.value', varResult)
         func = dfgExec.addInstWithNewFunc("constructor")
@@ -1246,6 +1246,7 @@ class Builder(Builder):
         dfgExec = dfgBinding.getExec()
         dfgExec.setTitle("SetClip")
         dfgExec.addExtDep(rigType)
+        dfgExec.addExtDep('KrakenAnimation')
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
         clipInput = dfgExec.addExecPort('clip', client.DFG.PortTypes.In, "KrakenClip")
         dfgExec.setCode(requireCode + "dfgEntry {\n  %s.setClip(%s);\n}\n" % (funcResult, clipInput))
@@ -1258,6 +1259,7 @@ class Builder(Builder):
         dfgExec = dfgBinding.getExec()
         dfgExec.setTitle("Solve")
         dfgExec.addExtDep(rigType)
+        dfgExec.addExtDep('KrakenAnimation')
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
         dfgExec.setCode(requireCode + "dfgEntry {\n  %s.solve(KrakenClipContext());\n}\n" % (funcResult))
         content = dfgBinding.exportJSON()
@@ -1269,6 +1271,7 @@ class Builder(Builder):
         dfgExec = dfgBinding.getExec()
         dfgExec.setTitle("Evaluate")
         dfgExec.addExtDep(rigType)
+        dfgExec.addExtDep('KrakenAnimation')
         funcResult = dfgExec.addExecPort('rig', client.DFG.PortTypes.IO, rigType)
         contextInput = dfgExec.addExecPort('context', client.DFG.PortTypes.In, "KrakenClipContext")
         dfgExec.setCode(requireCode + "dfgEntry {\n  %s.evaluate(%s);\n}\n" % (funcResult, contextInput))

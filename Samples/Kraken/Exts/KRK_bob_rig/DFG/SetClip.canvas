@@ -14,7 +14,7 @@
       "name" : "rig",
       "nodePortType" : "IO",
       "execPortType" : "IO",
-      "typeSpec" : "KRK_char_bob_guide"
+      "typeSpec" : "KRK_bob_rig"
       },
     {
       "objectType" : "ExecPort",
@@ -25,22 +25,19 @@
       }
     ],
   "extDeps" : {
-    "KRK_char_bob_guide" : "*"
+    "KRK_bob_rig" : "*",
+    "KrakenAnimation" : "*"
     },
-  "code" : "dfgEntry {
+  "code" : "require Kraken;
+require KrakenAnimation;
+require KrakenForCanvas;
+require KRK_bob_rig;
+dfgEntry {
   rig.setClip(clip);
 }
 ",
   "args" : [
-    {
-      "type" : "KRK_char_bob_guide",
-      "value" : null,
-      "ext" : "KRK_char_bob_guide"
-      },
-    {
-      "type" : "KrakenClip",
-      "value" : null,
-      "ext" : "KrakenAnimation"
-      }
+    null,
+    null
     ]
   }

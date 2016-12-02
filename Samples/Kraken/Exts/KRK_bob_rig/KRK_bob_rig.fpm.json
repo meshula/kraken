@@ -1,0 +1,8 @@
+{
+  "code": ["KRK_bob_rig.kl"],
+  "dfgPresets": {
+    "dir": "DFG",
+    "presetPath": "Kraken.KLRigs.KRK_bob_rig"
+  },
+  "autoNamespace": true
+}
