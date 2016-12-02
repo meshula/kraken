@@ -971,7 +971,7 @@ class Builder(Builder):
                                           execPath="",
                                           extDep=kOperator.getExtension())
 
-                solverTypeName = '%s::%s' % (kOperator.getExtension(), kOperator.getSolverTypeName())
+                solverTypeName = kOperator.getSolverTypeName()
 
                 # Create Solver Function Node
                 dfgEntry = "dfgEntry {\n  solver = " + solverTypeName + "();\n}"
@@ -995,7 +995,7 @@ class Builder(Builder):
                                                       desiredNodeName="solverVar",
                                                       xPos="-75",
                                                       yPos="100",
-                                                      type=solverTypeName,
+                                                      type='{}::{}'.format(str(kOperator.getExtension()), str(solverTypeName)),
                                                       extDep=kOperator.getExtension())
 
                 pm.FabricCanvasConnect(mayaNode=canvasNode,
