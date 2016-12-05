@@ -353,7 +353,6 @@ class Builder(Builder):
                                    keyable=True)
 
         dccSceneItem = parentDCCSceneItem.attr(kAttribute.getName())
-        dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -394,7 +393,6 @@ class Builder(Builder):
         if kAttribute.getUIMax() is not None:
             dccSceneItem.setSoftMax(kAttribute.getUIMax())
 
-        dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -438,7 +436,6 @@ class Builder(Builder):
         if kAttribute.getUIMax() is not None:
             dccSceneItem.setSoftMax(kAttribute.getUIMax())
 
-        dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -465,7 +462,6 @@ class Builder(Builder):
 
         dccSceneItem = parentDCCSceneItem.attr(kAttribute.getName())
         dccSceneItem.set(kAttribute.getValue())
-        dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -604,7 +600,7 @@ class Builder(Builder):
                                                  offsetAngles.y,
                                                  offsetAngles.z])
 
-            pm.rename(dccSceneItem, buildName)        
+            pm.rename(dccSceneItem, buildName)
 
         else:
 
@@ -1298,13 +1294,39 @@ class Builder(Builder):
         return True
 
     # ==================
-    # Parameter Methods
+    # Attribute Methods
     # ==================
-    def lockParameters(self, kSceneItem):
-        """Locks flagged SRT parameters.
+    def lockAttribute(self, kAttribute):
+        """Locks attributes.
 
         Args:
-            kSceneItem (Object): Kraken object to lock the SRT parameters on.
+            kAttribute (object): kraken attributes to lock.
+
+        """
+
+        if kAttribute.getName() in ('visibility', 'ShapeVisibility'):
+            dccSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+
+            if kAttribute.getName() == 'visibility':
+                visAttr = dccSceneItem.attr('visibility')
+                visAttr.setLocked(kAttribute.getLock())
+            elif kAttribute.getName() == 'ShapeVisibility':
+                shapeNodes = pm.listRelatives(dccSceneItem, shapes=True)
+                for shape in shapeNodes:
+                    visAttr = shape.attr('visibility')
+                    visAttr.setLocked(kAttribute.getLock())
+            else:
+                pass
+
+        else:
+            dccSceneItem = self.getDCCSceneItem(kAttribute)
+            dccSceneItem.setLocked(kAttribute.getLock())
+
+    def lockTransformAttrs(self, kSceneItem):
+        """Locks flagged SRT attributes.
+
+        Args:
+            kSceneItem (Object): Kraken object to lock the SRT attributes on.
 
         Return:
             bool: True if successful.
@@ -1408,9 +1430,10 @@ class Builder(Builder):
         shapeVisAttr = kSceneItem.getShapeVisibilityAttr()
         if shapeVisAttr.isConnected() is False and kSceneItem.getShapeVisibility() is False:
             # Get shape node, if it exists, hide it.
-            shape = dccSceneItem.getShape()
-            if shape is not None:
-                shape.visibility.set(False)
+            shapeNodes = pm.listRelatives(dccSceneItem, shapes=True)
+            for shape in shapeNodes:
+                visAttr = shape.attr('visibility')
+                visAttr.set(False)
 
         return True
 
