@@ -26,7 +26,7 @@ function KrakenSolverArg[] PoseConstraintSolver.getArguments(){
 
 
 // Solve
-/// \dfgPresetTitle PoseConstraint_Solve
+/// \dfgPresetTitle PoseConstraintSolver_Solve
 /// \dfgPresetColor Color(49, 60, 61)
 /// \dfgPresetHeaderColor Color(42, 94, 102)
 /// \dfgPresetTextColor Color(168, 229, 240)
