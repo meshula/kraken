@@ -747,7 +747,7 @@ class OSSMouthRig(OSSMouth):
         self.mouthCtrl = Control('mouth', parent=self.mouthCtrlSpace, shape="halfCircle", scale=0.5)
 
         # loLip
-        self.loLipCtrlSpace = CtrlSpace('loLip', parent=self.jawCtrl)
+        self.loLipCtrlSpace = CtrlSpace('loLip', parent=self.ctrlCmpGrp)
         self.loLipRefSpace = CtrlSpace('loLipRef', parent=self.jawCtrl)
         self.loLipCtrl = Control('loLip', parent=self.loLipCtrlSpace, shape="halfCircle")
         self.L_loLipHandleCtrl = CtrlSpace('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"L"})
@@ -825,7 +825,7 @@ class OSSMouthRig(OSSMouth):
 
         #Mouth Offset
         self.offsetOp([self.loLipRefSpace, self.lipsRefSpace,  self.midMouthRefSpace],
-                      [self.loLipCtrlSpace, self.upLipCtrlSpace, self.midMouthCtrlSpace ],
+                      [self.loLipCtrlSpace, self.upLipCtrlSpace, self.midMouthCtrlSpace],
                        self.mouthCtrl.getParent(), self.mouthCtrl, name="offsetOp")
 
 
@@ -882,7 +882,7 @@ class OSSMouthRig(OSSMouth):
 
         self.RMouthAlignSpaces = [self.loLipLevel1Outputs[0], self.upLipLevel1Outputs[0]]
         self.RMouthAlignWeights = [0.5,0.5]
-        
+
         # Add Att Inputs
         self.blendRightCornerOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.blendRightCornerOp.setInput('rigScale', self.rigScaleInputAttr)
@@ -1006,7 +1006,7 @@ class OSSMouthRig(OSSMouth):
                             ctrl.translatePoints(uplipCtrlOffset)
                             ctrl.translatePoints(uplipOffset)
                         else:
-                            ctrl.getParent().xfo = ctrl.getParent().xfo.multiply(Xfo(sc=Vec3(-1,1,-1))) 
+                            ctrl.getParent().xfo = ctrl.getParent().xfo.multiply(Xfo(sc=Vec3(-1,1,-1)))
                             ctrl.getParent().xfo.tr -= lolipOffset
                             ctrl.xfo.tr -= Vec3(lolipOffset)
                             ctrl.translatePoints(lolipCtrlOffset)

@@ -3,6 +3,13 @@ require Kraken;
 object OSS_UntwistSolver : KrakenSolver {
 };
 
+// Default Constructor
+function OSS_UntwistSolver()
+{
+  this.defaultValues["inMatrix"] = Mat44();
+  this.defaultValues["inBaseMatrix"] = Mat44();
+  this.defaultValues["axis"] = 0;
+}
 
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_UntwistSolver.getArguments(){

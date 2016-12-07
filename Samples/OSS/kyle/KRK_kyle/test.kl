@@ -5,6 +5,7 @@ operator entry() {
   KrakenClipContext context;
   for(SInt32 i=0;i<5000;i++) {
     context.time = 1.0;
+    rig.dirtyItem(8);
     rig.evaluate(context);
   };
 }

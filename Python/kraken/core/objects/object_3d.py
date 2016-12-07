@@ -842,6 +842,11 @@ class Object3D(SceneItem):
             raise IndexError("Constraint with name '" + constraint.getName() +
                              "'' already exists as a constraint.")
 
+        for x in self._constraints:
+            if x.isTypeOf(constraint.getTypeName()):
+                raise IndexError("Constraint with type '" + constraint.getTypeName() +
+                                 "'' already exists on object.")
+
         self._constraints.append(constraint)
 
         constraint.setParent(self)
@@ -863,6 +868,8 @@ class Object3D(SceneItem):
         if self.checkConstraintIndex(index) is not True:
             return False
 
+        sourceIndex = self._sources.index(self._constraints[index])
+        del self._sources[sourceIndex]
         del self._constraints[index]
 
         return True
@@ -899,7 +906,8 @@ class Object3D(SceneItem):
 
         """
 
-        del self._constraints[:]
+        while len(self._constraints) > 0:
+            self.removeConstraintByIndex(0)
 
         return True
 

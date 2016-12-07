@@ -1,8 +1,8 @@
 {
   "objectType" : "Graph",
   "metadata" : {
-    "uiGraphZoom" : "{\n  \"value\" : 0.7365182042121887\n  }",
-    "uiGraphPan" : "{\n  \"x\" : -1044.102783203125,\n  \"y\" : 184.9752502441406\n  }"
+    "uiGraphZoom" : "{\n  \"value\" : 0.8219338059425354\n  }",
+    "uiGraphPan" : "{\n  \"x\" : -713.4365234375,\n  \"y\" : 157.2837829589844\n  }"
     },
   "title" : "alembicXfoDisplay",
   "ports" : [
@@ -18,11 +18,10 @@
       },
     {
       "objectType" : "ExecPort",
-      "metadata" : {},
       "name" : "show",
       "nodePortType" : "Out",
       "defaultValues" : {
-        "Boolean" : false
+        "Boolean" : true
         },
       "execPortType" : "In",
       "typeSpec" : "Boolean"
@@ -32,7 +31,7 @@
       "name" : "drawLabels",
       "nodePortType" : "Out",
       "defaultValues" : {
-        "Boolean" : false
+        "Boolean" : true
         },
       "execPortType" : "In"
       },
@@ -50,7 +49,7 @@
       "name" : "regex",
       "nodePortType" : "Out",
       "defaultValues" : {
-        "String" : ""
+        "String" : ".*"
         },
       "execPortType" : "In"
       },
@@ -62,10 +61,36 @@
         "Float32" : 0
         },
       "execPortType" : "In"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiHardRange" : "(0.0001, 1)"
+        },
+      "name" : "scale",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Scalar" : 1
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiRange" : "(1, 50)"
+        },
+      "name" : "fps",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float64" : 30
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Float64"
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "11A1D00421F0880C11ADD191814FF0D5",
+  "presetGUID" : "DA63597C3B7C4807E8E097D905DD850A",
   "nodes" : [
     {
       "objectType" : "Inst",
@@ -91,7 +116,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":2899.23688745,\"y\":-75.532553196}"
+        "uiGraphPos" : "{\"x\":3059.44400907,\"y\":-82.75995779039999}"
         },
       "name" : "DrawAxesInstances_1",
       "ports" : [
@@ -135,7 +160,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":2495.35958862,\"y\":-1.91156005859}"
+        "uiGraphPos" : "{\"x\":2718.20601487,\"y\":39.0437240601}"
         },
       "name" : "DrawLabels_1",
       "ports" : [
@@ -341,7 +366,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1588.946694850922,\"y\":82.28701829910278}"
+        "uiGraphPos" : "{\"x\":1536.63132596,\"y\":105.40324831}"
         },
       "name" : "FrameToTime_1",
       "ports" : [
@@ -540,7 +565,6 @@ dfgEntry {
             }
           ],
         "extDeps" : {},
-        "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
         "code" : "
 dfgEntry {
   elements.resize(indices.size());
@@ -615,7 +639,6 @@ dfgEntry {
             }
           ],
         "extDeps" : {},
-        "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
         "code" : "
 dfgEntry {
   elements.resize(indices.size());
@@ -631,7 +654,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":2664.60632324,\"y\":-141.142807007}"
+        "uiGraphPos" : "{\"x\":2866.97348976,\"y\":-139.938255072}"
         },
       "name" : "If_1",
       "ports" : [
@@ -667,7 +690,7 @@ dfgEntry {
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":3221.12955046,\"y\":-5.97796344757}"
+        "uiGraphPos" : "{\"x\":3360.86040974,\"y\":-2.36426186562}"
         },
       "name" : "If_2",
       "ports" : [
@@ -699,6 +722,82 @@ dfgEntry {
         ],
       "executable" : "Fabric.Core.Control.If",
       "presetGUID" : "3182A478A21643455D549E483D35F831"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":2492.89270139,\"y\":165.931056499}"
+        },
+      "name" : "scaleXfos",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "Xfos",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "scale",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Scalar" : 1
+            }
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "scaleXfos",
+        "ports" : [
+          {
+            "objectType" : "ExecPort",
+            "name" : "exec",
+            "nodePortType" : "IO",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "Xfos",
+            "nodePortType" : "Out",
+            "execPortType" : "In",
+            "typeSpec" : "Xfo[]"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "result",
+            "nodePortType" : "In",
+            "execPortType" : "Out",
+            "typeSpec" : "Xfo[]"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "scale",
+            "nodePortType" : "Out",
+            "execPortType" : "In",
+            "typeSpec" : "Scalar"
+            }
+          ],
+        "extDeps" : {},
+        "code" : "dfgEntry {
+  result.resize(Xfos.size());
+  for(UInt32 i=0; i<Xfos.size(); i++)
+  {
+    result[i] = Xfo(Xfos[i]);
+    result[i].sc = result[i].sc * scale;
+   }
+}
+"
+        }
       }
     ],
   "connections" : {
@@ -716,6 +815,13 @@ dfgEntry {
       ],
     "timeline" : [
       "FrameToTime_1.frame"
+      ],
+    "scale" : [
+      "scaleXfos.scale",
+      "DrawLabels_1.scale"
+      ],
+    "fps" : [
+      "FrameToTime_1.fps"
       ],
     "EmptyDrawingHandle_1.handle" : [
       "DrawLabels_1.handle",
@@ -759,8 +865,7 @@ dfgEntry {
       "GetArray_1.indices"
       ],
     "GetArray_1.elements" : [
-      "DrawAxesInstances_1.transforms",
-      "DrawLabels_1.xfos"
+      "scaleXfos.Xfos"
       ],
     "GetArray_2.elements" : [
       "DrawLabels_1.labels"
@@ -770,14 +875,18 @@ dfgEntry {
       ],
     "If_2.result" : [
       "exec"
+      ],
+    "scaleXfos.result" : [
+      "DrawLabels_1.xfos",
+      "DrawAxesInstances_1.transforms"
       ]
     },
   "requiredPresets" : {
-    "OSS.alembicXfoDisplay" : {
+    "OSS.Utils.alembicXfoDisplay" : {
       "objectType" : "Graph",
       "metadata" : {
-        "uiGraphZoom" : "{\n  \"value\" : 0.7365182042121887\n  }",
-        "uiGraphPan" : "{\n  \"x\" : -1044.102783203125,\n  \"y\" : 184.9752502441406\n  }"
+        "uiGraphZoom" : "{\n  \"value\" : 0.8219338059425354\n  }",
+        "uiGraphPan" : "{\n  \"x\" : -713.4365234375,\n  \"y\" : 157.2837829589844\n  }"
         },
       "title" : "alembicXfoDisplay",
       "ports" : [
@@ -793,11 +902,10 @@ dfgEntry {
           },
         {
           "objectType" : "ExecPort",
-          "metadata" : {},
           "name" : "show",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "Boolean" : false
+            "Boolean" : true
             },
           "execPortType" : "In",
           "typeSpec" : "Boolean"
@@ -807,7 +915,7 @@ dfgEntry {
           "name" : "drawLabels",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "Boolean" : false
+            "Boolean" : true
             },
           "execPortType" : "In"
           },
@@ -825,7 +933,7 @@ dfgEntry {
           "name" : "regex",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "String" : ""
+            "String" : ".*"
             },
           "execPortType" : "In"
           },
@@ -837,10 +945,36 @@ dfgEntry {
             "Float32" : 0
             },
           "execPortType" : "In"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiHardRange" : "(0.0001, 1)"
+            },
+          "name" : "scale",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiRange" : "(1, 50)"
+            },
+          "name" : "fps",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float64" : 30
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Float64"
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "11A1D00421F0880C11ADD191814FF0D5",
+      "presetGUID" : "DA63597C3B7C4807E8E097D905DD850A",
       "nodes" : [
         {
           "objectType" : "Inst",
@@ -866,7 +1000,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":2899.23688745,\"y\":-75.532553196}"
+            "uiGraphPos" : "{\"x\":3059.44400907,\"y\":-82.75995779039999}"
             },
           "name" : "DrawAxesInstances_1",
           "ports" : [
@@ -910,7 +1044,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":2495.35958862,\"y\":-1.91156005859}"
+            "uiGraphPos" : "{\"x\":2718.20601487,\"y\":39.0437240601}"
             },
           "name" : "DrawLabels_1",
           "ports" : [
@@ -1116,7 +1250,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1588.946694850922,\"y\":82.28701829910278}"
+            "uiGraphPos" : "{\"x\":1536.63132596,\"y\":105.40324831}"
             },
           "name" : "FrameToTime_1",
           "ports" : [
@@ -1315,7 +1449,6 @@ dfgEntry {
                 }
               ],
             "extDeps" : {},
-            "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
             "code" : "
 dfgEntry {
   elements.resize(indices.size());
@@ -1390,7 +1523,6 @@ dfgEntry {
                 }
               ],
             "extDeps" : {},
-            "origPresetGUID" : "FE084325B930A23B174F17DFB806D58B",
             "code" : "
 dfgEntry {
   elements.resize(indices.size());
@@ -1406,7 +1538,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":2664.60632324,\"y\":-141.142807007}"
+            "uiGraphPos" : "{\"x\":2866.97348976,\"y\":-139.938255072}"
             },
           "name" : "If_1",
           "ports" : [
@@ -1442,7 +1574,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":3221.12955046,\"y\":-5.97796344757}"
+            "uiGraphPos" : "{\"x\":3360.86040974,\"y\":-2.36426186562}"
             },
           "name" : "If_2",
           "ports" : [
@@ -1474,6 +1606,82 @@ dfgEntry {
             ],
           "executable" : "Fabric.Core.Control.If",
           "presetGUID" : "3182A478A21643455D549E483D35F831"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":2492.89270139,\"y\":165.931056499}"
+            },
+          "name" : "scaleXfos",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "Xfos",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "scale",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Scalar" : 1
+                }
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "scaleXfos",
+            "ports" : [
+              {
+                "objectType" : "ExecPort",
+                "name" : "exec",
+                "nodePortType" : "IO",
+                "execPortType" : "IO",
+                "typeSpec" : "Execute"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "Xfos",
+                "nodePortType" : "Out",
+                "execPortType" : "In",
+                "typeSpec" : "Xfo[]"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "result",
+                "nodePortType" : "In",
+                "execPortType" : "Out",
+                "typeSpec" : "Xfo[]"
+                },
+              {
+                "objectType" : "ExecPort",
+                "name" : "scale",
+                "nodePortType" : "Out",
+                "execPortType" : "In",
+                "typeSpec" : "Scalar"
+                }
+              ],
+            "extDeps" : {},
+            "code" : "dfgEntry {
+  result.resize(Xfos.size());
+  for(UInt32 i=0; i<Xfos.size(); i++)
+  {
+    result[i] = Xfo(Xfos[i]);
+    result[i].sc = result[i].sc * scale;
+   }
+}
+"
+            }
           }
         ],
       "connections" : {
@@ -1491,6 +1699,13 @@ dfgEntry {
           ],
         "timeline" : [
           "FrameToTime_1.frame"
+          ],
+        "scale" : [
+          "scaleXfos.scale",
+          "DrawLabels_1.scale"
+          ],
+        "fps" : [
+          "FrameToTime_1.fps"
           ],
         "EmptyDrawingHandle_1.handle" : [
           "DrawLabels_1.handle",
@@ -1534,8 +1749,7 @@ dfgEntry {
           "GetArray_1.indices"
           ],
         "GetArray_1.elements" : [
-          "DrawAxesInstances_1.transforms",
-          "DrawLabels_1.xfos"
+          "scaleXfos.Xfos"
           ],
         "GetArray_2.elements" : [
           "DrawLabels_1.labels"
@@ -1545,6 +1759,10 @@ dfgEntry {
           ],
         "If_2.result" : [
           "exec"
+          ],
+        "scaleXfos.result" : [
+          "DrawLabels_1.xfos",
+          "DrawAxesInstances_1.transforms"
           ]
         }
       },
@@ -5653,7 +5871,7 @@ dfgEntry {
           "name" : "fps",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "Float64" : 24
+            "Float64" : 30
             },
           "execPortType" : "In",
           "typeSpec" : "Float64"

@@ -333,7 +333,7 @@ class OSS_Component(BaseExampleComponent):
 
 
     def offsetOp(self, objects, targets, offsetA, offsetB, name=None):
-        """Constrain target to a blend between two source Xfos
+        """
         outputs Mat44 array of objects tranformed by the delta of OffsetA to OffsetB
 
         Args:
@@ -352,7 +352,6 @@ class OSS_Component(BaseExampleComponent):
         offsetOpp = KLOperator(name, 'OSS_offsetSolver', 'OSS_Kraken')
         self.addOperator(offsetOpp)
         offsetOpp.setInput('objects', objects)
-        offsetOpp.setInput('objectsParent', [o.getParent() for o in objects])
         offsetOpp.setInput('offsetsRest', [offsetA for o in objects])
         offsetOpp.setInput('offsets', [offsetB for o in objects])
         offsetOpp.setOutput('result', targets)

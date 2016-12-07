@@ -512,7 +512,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
         # Wait, can this be a hier blend op?  Don't like having this explicit OSS_IKFootBlendSolver Op
         # Add Foot Blend KL Op, no footBlend puts the position of the fk always at the ikOSS_IKFootBlendSolver Op pos, so maybe another kind of network
-        self.IKFootBlendKLOp = KLOperator(self.getName(), 'OSS_IKFootBlendSolver', 'OSS_Kraken')
+        self.IKFootBlendKLOp = KLOperator(self.getName()+"_blend", 'OSS_IKFootBlendSolver', 'OSS_Kraken')
         self.addOperator(self.IKFootBlendKLOp)
         # Add Att Inputs
         self.IKFootBlendKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -632,7 +632,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
 
             # Add Foot Ball HierBlend Solver for Mocap
-            self.mocapHierBlendSolver = KLOperator(self.getName(), 'OSS_HierBlendSolver', 'OSS_Kraken')
+            self.mocapHierBlendSolver = KLOperator(self.getName()+"_rocker", 'OSS_HierBlendSolver', 'OSS_Kraken')
             self.addOperator(self.mocapHierBlendSolver)
             self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)
             self.mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])

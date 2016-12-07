@@ -493,6 +493,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
         if data["contstrainFirstControl"]:
             self.contstrainFirstControl_cmpIn = self.createInput('firstControlXfo', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
+            self.controlInputs[0].removeAllConstraints()
             self.controlInputs[0].constrainTo(self.contstrainFirstControl_cmpIn, maintainOffset=True)
 
         # # ====================
