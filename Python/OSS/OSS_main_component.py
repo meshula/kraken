@@ -354,7 +354,10 @@ class OSSMainComponentRig(OSSMainComponent):
         self.autoRootCtrl.lockScale(x=True, y=True, z=True)
         self.autoRootCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
         self.autoRootCtrl.scalePoints(Vec3(0.95, 0.95, 0.99))
+        YFollowBlendAttrGrp = AttributeGroup("______", parent=self.autoRootCtrl)
+        self.autoRootCtrl.YFollowBlendAttr  = ScalarAttribute('YFollowBlend', value=0, minValue=0.0, maxValue=1.0, parent=YFollowBlendAttrGrp)
         self.autoRootCtrlSpace = self.autoRootCtrl.insertCtrlSpace()
+        # Haven't made this a fabric system yet
 
 
         # COG
