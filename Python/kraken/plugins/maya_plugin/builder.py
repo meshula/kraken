@@ -695,10 +695,10 @@ class Builder(Builder):
                 }
 
                 order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
-                # if order == 4:
-                #     order = 5
-                # elif order == 5:
-                #     order = 4
+                if order == 4:
+                    order = 5
+                elif order == 5:
+                    order = 4
 
                 offsetXfo = kConstraint.computeOffset()
                 offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
@@ -991,7 +991,7 @@ class Builder(Builder):
                                                       desiredNodeName="solverVar",
                                                       xPos="-75",
                                                       yPos="100",
-                                                      type=solverTypeName,
+                                                      type='{}::{}'.format(str(kOperator.getExtension()), str(solverTypeName)),
                                                       extDep=kOperator.getExtension())
 
                 pm.FabricCanvasConnect(mayaNode=canvasNode,

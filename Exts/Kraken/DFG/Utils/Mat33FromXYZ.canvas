@@ -53,7 +53,7 @@
   "code" : "require Kraken;
 
 dfgEntry {
-  this.fromXYZ(x, y, z);
+  this = Mat33_fromXYZ(x, y, z);
 }
 "
   }

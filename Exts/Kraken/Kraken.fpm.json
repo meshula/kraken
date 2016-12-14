@@ -21,6 +21,7 @@
     "Solvers/TwistSolver.kl",
     "PersistenceHelpers.kl"
   ],
+  "autoNamespace": true,
   "dfgPresets": {
     "dir": "DFG",
     "presetPath": "Kraken.Exts"
