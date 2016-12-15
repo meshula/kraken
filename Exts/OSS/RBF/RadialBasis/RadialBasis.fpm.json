@@ -9,5 +9,6 @@
   "dfgPresets": {
     "dir": "DFG",
     "presetPath": "Fabric.Exts.RadialBasis"
-    }
+    },
+    "autoNamespace": true
 }

@@ -2,7 +2,7 @@
 import math, re
 
 from kraken.core.maths import RotationOrder
-from kraken.core.maths import Math_degToRad 
+from kraken.core.maths import Math_degToRad
 from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP, AXIS_NAME_TO_INT_MAP
 from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.rotation_order import RotationOrder
@@ -160,6 +160,7 @@ class OSSMouthGuide(OSSMouth):
 
 
         self.paramOut = []
+        """
         # Add midLip Debug Canvas Op
         self.midLipGuideOp = CanvasOperator('midLipGuideOp', 'OSS.Solvers.NURBSCurveGuideSolver')
         self.addOperator(self.midLipGuideOp)
@@ -233,7 +234,7 @@ class OSSMouthGuide(OSSMouth):
         self.reflectionOp.setInput('inputs',   self.lSideObjs)
         self.reflectionOp.setInput('inputParents', self.lSideParentObjs)
         self.reflectionOp.setOutput('results', self.rSideObjs)
-
+        """
         self.loadData(data)
 
         Profiler.getInstance().pop()
@@ -981,9 +982,9 @@ class OSSMouthRig(OSSMouth):
         lolipCtrlOffset = Vec3(0,0,-.5)
         uplipOffset = Vec3(0,0.75,0)
         lolipOffset = Vec3(0,-0.75,0)
-        
+
         #should do this up front - why does hierarchy not get evaluated?
-        rot = Xfo() 
+        rot = Xfo()
         rot.ori.setFromEulerAngles(Vec3(Math_degToRad(0.0), Math_degToRad(180.0), Math_degToRad(0.0)))
 
         lips = [self.upLipLevel1Ctrls, self.loLipLevel1Ctrls]
