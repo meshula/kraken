@@ -40,8 +40,8 @@ function KrakenSolverArg[] OSS_TwoBoneIKSolver.getArguments(){
   args.push(KrakenSolverArg('bone1FK', 'In', 'Mat44'));
   args.push(KrakenSolverArg('ikHandle', 'In', 'Mat44'));
   args.push(KrakenSolverArg('upV', 'In', 'Mat44'));
-  args.push(KrakenSolverArg('boneAxis', 'In', 'UInt32'));
-  args.push(KrakenSolverArg('upAxis', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('boneAxis', 'In', 'SInt32'));
+  args.push(KrakenSolverArg('upAxis', 'In', 'SInt32'));
 
   args.push(KrakenSolverArg('bone0Len', 'In', 'Scalar'));
   args.push(KrakenSolverArg('bone1Len', 'In', 'Scalar'));
@@ -96,7 +96,7 @@ function oss_solve2BoneIK(
 }
 //
 //https://www.desmos.com/calculator/ui3o1qbuer
-inline Scalar diminishByExponent(Scalar input, Scalar x, UInt32 exponent)
+inline Scalar diminishByExponent(Scalar input, Scalar x, SInt32 exponent)
 {
   // For the range of 0 to 1 of x,
   //  Blend input with x exponentially
@@ -104,7 +104,7 @@ inline Scalar diminishByExponent(Scalar input, Scalar x, UInt32 exponent)
 }
 
 
-inline Scalar softCompression(Scalar inDist, Scalar fullDist, UInt32 exponent, UInt32 diminishIterations)
+inline Scalar softCompression(Scalar inDist, Scalar fullDist, SInt32 exponent, SInt32 diminishIterations)
 {
 
     Scalar x = 1 - ((fullDist - inDist) / fullDist);
@@ -120,7 +120,7 @@ inline Scalar softCompression(Scalar inDist, Scalar fullDist, UInt32 exponent, U
     Scalar softMult = 1-((pow(z, strength)*(1.0-zexp) + z*zexp)*(1.0-zexp)+z*zexp);
     softMult = pow(z, strength);
     // Now, let's attenuate this by blending back to x exponentially
-    for(UInt32 i = 0; i < diminishIterations; i++)
+    for(SInt32 i = 0; i < diminishIterations; i++)
       softMult = diminishByExponent(softMult, z, exponent);
     softMult = 1-softMult;
 
@@ -145,8 +145,8 @@ function OSS_TwoBoneIKSolver.solve!(
   Mat44 bone1FK,
   Mat44 ikHandle,
   Mat44 upV,
-  UInt32 boneAxis,
-  UInt32 upAxis,
+  SInt32 boneAxis,
+  SInt32 upAxis,
   Scalar bone0Len,
   Scalar bone1Len,
   io Mat44 bone0Out,
@@ -237,7 +237,7 @@ function OSS_TwoBoneIKSolver.solve!(
 
     // Because of the way oss_solve2BoneIK treats the upvector (z)
     // Perhaps we can re-write to solve in the correct axes eventually, but for now this should work
-    UInt32 upAxisInt = upAxis;
+    SInt32 upAxisInt = upAxis;
     // if (upAxisInt > 2)
     // {
     //   upAxisInt = upAxisInt - 3;
