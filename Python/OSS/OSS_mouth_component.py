@@ -725,7 +725,7 @@ class OSSMouthRig(OSSMouth):
         self.mouthCtrl = Control('mouth', parent=self.mouthCtrlSpace, shape="halfCircle", scale=0.5)
 
         # loLip
-        self.loLipCtrlSpace = CtrlSpace('loLip', parent=self.jawCtrl)
+        self.loLipCtrlSpace = CtrlSpace('loLip', parent=self.ctrlCmpGrp)
         self.loLipRefSpace = CtrlSpace('loLipRef', parent=self.jawCtrl)
         self.loLipCtrl = Control('loLip', parent=self.loLipCtrlSpace, shape="halfCircle")
 
