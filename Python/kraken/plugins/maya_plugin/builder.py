@@ -676,7 +676,7 @@ class Builder(Builder):
 
                 # Fabric's rotation order enums:
                 # We need to use the negative rotation order
-                # to calculate propery offset values.
+                # to calculate properly offset values.
                 #
                 # 0 XYZ
                 # 1 YZX
@@ -695,10 +695,10 @@ class Builder(Builder):
                 }
 
                 order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
-                if order == 4:
-                    order = 5
-                elif order == 5:
-                    order = 4
+                # if order == 4:
+                #     order = 5
+                # elif order == 5:
+                #     order = 4
 
                 offsetXfo = kConstraint.computeOffset()
                 offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
