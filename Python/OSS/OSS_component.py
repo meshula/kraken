@@ -9,6 +9,7 @@ from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.locator import Locator
 from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.control import Control
 from kraken.core.maths import *
 
 
@@ -358,7 +359,6 @@ class OSS_Component(BaseExampleComponent):
         return offsetOpp
 
 
-    # should
     def insertParentSpace(self, ctrl, name=None):
         """Adds a CtrlSpace object above this object - inserted here to work on Transforms
 
@@ -392,3 +392,24 @@ class OSS_Component(BaseExampleComponent):
             newCtrlSpace.setName(name)
 
         return newCtrlSpace
+
+
+    def insertAttachSpace(self, jnt, name=None):
+        """Adds a AttachControl object above this object
+        """
+        if name is None:
+            name = jnt.getName()
+
+        self.attachCtrl = Control(name + '_attach', parent=self.ctrlCmpGrp, shape="null")
+        self.attachCtrlSpace = self.attachCtrl.insertCtrlSpace()
+
+        self.attachCtrlSpace.constrainTo(jnt, constraintType="Orientation", maintainOffset=False)
+        self.attachCtrlSpace.constrainTo(jnt, constraintType="Position",    maintainOffset=False)
+
+        # this is an Space which should not be animated
+        self.attachCtrl.lockTranslation(x=True, y=True, z=True)
+        self.attachCtrl.lockScale(x=True, y=True, z=True)
+        self.attachCtrl.lockRotation(x=True, y=True, z=True)
+        
+        return self.attachCtrl
+
