@@ -498,10 +498,13 @@ class OSSFaceComponentRig(OSSFaceComponent):
                                 sign, axis = direction.split("t")
                                 if axis not in used_axes.keys():
                                     lvAttr = ScalarAttribute("localT"+axis, value=0.5, parent=bsAttrGrp)  #can't currently use dcc eulers directly
+                                    lvAttr.setLock(True)
                                     LTOp.setOutput('localTranslate'+axis.upper(), lvAttr)
 
                                     posAttr = ScalarAttribute(axis+"Pos", value=0.5, parent=bsAttrGrp)
+                                    posAttr.setLock(True)
                                     negAttr = ScalarAttribute(axis+"Neg", value=0.5, parent=bsAttrGrp)
+                                    negAttr.setLock(True)
 
                                     used_axes[axis] = {"+": posAttr, "-": negAttr}
 
@@ -519,6 +522,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
                                 for shape in shapes:
                                     bsAttr = ScalarAttribute(shape, value=0.0, parent=bsAttrGrp)
+                                    bsAttr.setLock(True)
                                     bsAttr.setMetaDataItem("blendShapeName", shape)
                                     bsAttr.connect(used_axes[axis][sign])
 

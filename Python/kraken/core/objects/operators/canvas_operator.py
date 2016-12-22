@@ -34,12 +34,15 @@ class CanvasOperator(Operator):
             1: 'IO',
             2: 'Out'
         }
-
+        print("\nTTPrint: canvas operator: %s" % name)
         # Initialize the inputs and outputs based on the given args.
         for i in xrange(self.node.getExecPortCount()):
             portName = self.node.getExecPortName(i)
+            print("\nTTPrint: portName: %s" % portName)
             portConnectionType = self.portTypeMap[self.node.getExecPortType(i)]
+            print("TTPrint: portConnectionType: %s" % portConnectionType)
             rtVal = self.binding.getArgValue(portName)
+            print("TTPrint: rtVal: %s" % rtVal)
             portDataType = rtVal.getTypeName().getSimpleType()
 
             if portDataType == 'Execute':
@@ -262,8 +265,8 @@ class CanvasOperator(Operator):
                         rtVal = getRTVal(self.inputs[portName])
 
                     validateArg(rtVal, portName, portDataType)
-
-                    self.binding.setArgValue(portName, rtVal, False)
+                    if rtVal is not None:
+                        self.binding.setArgValue(portName, rtVal, False)
             else:
                 if str(portDataType).endswith('[]'):
                     if not len(self.outputs[portName]):
@@ -290,7 +293,8 @@ class CanvasOperator(Operator):
                         rtVal = getRTVal(self.outputs[portName], asInput=False)
 
                     validateArg(rtVal, portName, portDataType)
-                    self.binding.setArgValue(portName, rtVal, False)
+                    if rtVal is not None:
+                        self.binding.setArgValue(portName, rtVal, False)
 
             portDebug = {
                 portName: [

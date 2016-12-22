@@ -52,7 +52,7 @@
   "code" : "require Kraken;
 
 dfgEntry {
-  result = this.getAxis(axisIndex);
+  result = Quat_getAxis(this, axisIndex);
 }
 "
   }

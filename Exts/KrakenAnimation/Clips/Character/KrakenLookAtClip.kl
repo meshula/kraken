@@ -56,7 +56,7 @@ function KrakenLookAtClip(Index matrixIndex, KrakenClip childClip) {
 /// \dfgPresetDefault amount 1.0
 /// \dfgPresetRange amount (0.0, 1.0)
 function KrakenLookAtClip.defineLookAt!(
-  String name, 
+  String name,
   Vec3 target,
   Vec3 axis,
   Boolean locked,
@@ -103,7 +103,7 @@ Xfo[] KrakenLookAtClip.solveHierarchy()
 {
   Xfo allXfos<> = rig.getAllParentXfos();
   Xfo allParentsXfos<> = rig.getAllParentXfos();
-  Size allXfosSize = allXfos.size(); 
+  Size allXfosSize = allXfos.size();
 
   Xfo hierOutXfos[];
 
@@ -159,18 +159,18 @@ Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClip
   Vec3 upVector = parentXfo.ori.getAxis(upAxisIndex).unit();
   targetOri.setFromDirectionAndUpvector(direction, upVector);
   targetXfo.ori = targetOri;
-  targetXfo.align(1,2,3);
+  targetXfo = Xfo_align((targetXfo,1,2,3);
   targetOri = targetXfo.ori;
   // offsetOri.setFrom2Vectors(parentXfo.ori.getAxis(alignAxisIndex), parentXfo.ori.getAxis(upAxisIndex));
   // targetOri = offsetOri*targetOri;
-  
+
   // currentDelta = this.prevOri[id].inverse()*targetOri;
   // newDelta = controlXfo.ori*currentDelta;
   // controlXfo.ori = this.prevOri[id].sphericalLinearInterpolate(newDelta, Float32(Math_clamp(this.amounts[id], 0.0, 1.0)));
   controlXfo.ori = parentXfo.ori.sphericalLinearInterpolate(targetOri, Float32(Math_clamp(this.amounts[id], 0.0, 1.0)));
   this.prevOri[id] = controlXfo.ori;
 
-  return  parentXfo.ori.inverse() * controlXfo; 
+  return  parentXfo.ori.inverse() * controlXfo;
 }
 
 function KrakenLookAtClip.apply(io Ref<KrakenKLRig> rig, KrakenClipContext context, Float32 factor) {

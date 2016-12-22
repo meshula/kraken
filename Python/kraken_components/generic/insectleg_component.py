@@ -84,9 +84,13 @@ class InsectLegComponentGuide(InsectLegComponent):
         for i in xrange(numJoints):
             self.jointCtrls.append(Control('leg' + str(i + 1).zfill(2), parent=self.ctrlCmpGrp, shape="sphere"))
 
+        jointXfos = []
+        for i in xrange(numJoints):
+            jointXfos.append(Xfo(jointPositions[i]))
+
         data = {
            "location": "L",
-           "jointPositions": jointPositions,
+           "jointPositions": jointXfos,
            "numJoints": self.numJoints.getValue()
           }
 

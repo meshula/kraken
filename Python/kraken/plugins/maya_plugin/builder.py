@@ -676,7 +676,7 @@ class Builder(Builder):
 
                 # Fabric's rotation order enums:
                 # We need to use the negative rotation order
-                # to calculate propery offset values.
+                # to calculate properly offset values.
                 #
                 # 0 XYZ
                 # 1 YZX
@@ -991,7 +991,7 @@ class Builder(Builder):
                                                       desiredNodeName="solverVar",
                                                       xPos="-75",
                                                       yPos="100",
-                                                      type=solverTypeName,
+                                                      type='{}::{}'.format(str(kOperator.getExtension()), str(solverTypeName)),
                                                       extDep=kOperator.getExtension())
 
                 pm.FabricCanvasConnect(mayaNode=canvasNode,
@@ -1188,7 +1188,7 @@ class Builder(Builder):
                         else:
                             opType = kOperator.getPresetPath()
 
-                        logger.debug("Operator '" + solverSolveNodeName +
+                        logger.warning("Operator '" + solverSolveNodeName +
                                        "' of type '" + opType +
                                        "' port '" + portName + "' not connected.")
 

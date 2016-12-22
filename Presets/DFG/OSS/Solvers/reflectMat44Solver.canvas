@@ -3,7 +3,18 @@
   "title" : "reflectMat44Solver",
   "ports" : [
     {
-      "objectType" : "Port",
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Execute" : {}
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "inputs",
       "nodePortType" : "Out",
       "defaultValues" : {
         "Mat44[]" : [
@@ -243,22 +254,22 @@
             }
           ]
         },
-      "name" : "inputs",
       "execPortType" : "In",
       "typeSpec" : "Mat44[]"
       },
     {
-      "objectType" : "Port",
+      "objectType" : "ExecPort",
+      "name" : "results",
       "nodePortType" : "In",
       "defaultValues" : {
         "Mat44[]" : []
         },
-      "name" : "results",
       "execPortType" : "Out",
       "typeSpec" : "Mat44[]"
       },
     {
-      "objectType" : "Port",
+      "objectType" : "ExecPort",
+      "name" : "inputParents",
       "nodePortType" : "Out",
       "defaultValues" : {
         "Mat44" : {
@@ -289,25 +300,56 @@
           },
         "Mat44[]" : []
         },
-      "name" : "inputParents",
       "execPortType" : "In",
       "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {},
+      "name" : "alignX",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer" : 1
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Integer"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "alignY",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer" : 2
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Integer"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "alignZ",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer" : 3
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Integer"
       }
     ],
   "extDeps" : {},
-  "presetGUID" : "C3468D88C0F28D1F56DFB74802051B42",
+  "presetGUID" : "9CB684D4D3D95954F8B45235EF4D0DEF",
   "code" : "dfgEntry {
   UInt32 s = inputs.size();
   Mat44 parents[] = inputParents;
   results.resize(s);
   parents.resize(s);
-  
+
   Mat44 m;
   // Flip across xy
   m.row0.x = Scalar(-1);
-  
+
   for (UInt32 i=0; i< inputs.size(); i++) {
     results[i] = m*inputs[i];
+    results[i] = Mat44_align(results[i], alignX, alignY, alignZ);
     results[i] = parents[i].inverse()*results[i];
   }
 }
@@ -318,7 +360,18 @@
       "title" : "reflectMat44Solver",
       "ports" : [
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "inputs",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Mat44[]" : [
@@ -558,22 +611,22 @@
                 }
               ]
             },
-          "name" : "inputs",
           "execPortType" : "In",
           "typeSpec" : "Mat44[]"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
+          "name" : "results",
           "nodePortType" : "In",
           "defaultValues" : {
             "Mat44[]" : []
             },
-          "name" : "results",
           "execPortType" : "Out",
           "typeSpec" : "Mat44[]"
           },
         {
-          "objectType" : "Port",
+          "objectType" : "ExecPort",
+          "name" : "inputParents",
           "nodePortType" : "Out",
           "defaultValues" : {
             "Mat44" : {
@@ -604,25 +657,56 @@
               },
             "Mat44[]" : []
             },
-          "name" : "inputParents",
           "execPortType" : "In",
           "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {},
+          "name" : "alignX",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Integer" : 1
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "alignY",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Integer" : 2
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "alignZ",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Integer" : 3
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Integer"
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "C3468D88C0F28D1F56DFB74802051B42",
+      "presetGUID" : "9CB684D4D3D95954F8B45235EF4D0DEF",
       "code" : "dfgEntry {
   UInt32 s = inputs.size();
   Mat44 parents[] = inputParents;
   results.resize(s);
   parents.resize(s);
-  
+
   Mat44 m;
   // Flip across xy
   m.row0.x = Scalar(-1);
-  
+
   for (UInt32 i=0; i< inputs.size(); i++) {
     results[i] = m*inputs[i];
+    results[i] = Mat44_align(results[i], alignX, alignY, alignZ);
     results[i] = parents[i].inverse()*results[i];
   }
 }

@@ -29,5 +29,6 @@
     "Constraints/KrakenScaleConstraint.kl",
 
     "Shapes/KrakenCurveDict.kl"
-  ]
+  ],
+  "autoNamespace": true
 }

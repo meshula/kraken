@@ -16,7 +16,7 @@ interface KrakenKLRig {
   Xfo[] getControlXfos();
   String[] getJointNames();
   Xfo[] getAllParentXfos();
-  KrakenObject3D[] getAllObject3Ds();
+  //KrakenObject3D[] getAllObject3Ds();
   Xfo[] getAllXfos();
   String[] getAllNames();
 

@@ -819,7 +819,10 @@ class Builder(Builder):
 
         def addPortConnection(canvasOpPath, portName, portDataType, portConnectionType):
 
-            if portDataType in ('EvalContext', 'DrawingHandle', 'InlineDebugShape'):
+            if portDataType in ('Execute',
+                                'EvalContext',
+                                'DrawingHandle',
+                                'InlineDebugShape'):
                 return
 
             canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
@@ -1108,9 +1111,10 @@ class Builder(Builder):
                 canvasOp.Name = buildName
                 self._registerSceneItemPair(kOperator, canvasOp)
 
-                si.FabricCanvasSetExtDeps(canvasOpPath, "", kOperator.getExtension())
+                si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken")
+
                 uniqueNodeName = si.FabricCanvasInstPreset(canvasOpPath, "", kOperator.getPresetPath(), "400", "0")
-                solverNodeName = uniqueNodeName
+                solverSolveNodeName = uniqueNodeName
 
             # Create operator ports and internal connections
             for i in xrange(portCount):

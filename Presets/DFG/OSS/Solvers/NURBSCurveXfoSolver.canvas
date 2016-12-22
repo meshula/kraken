@@ -450,7 +450,7 @@
   Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
   Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
   ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
-  
+
 
   for( Integer i=0; i<points.size(); i++){
     vertexColorsAttr.values[firstIndex] = color[i];
@@ -1119,8 +1119,8 @@ dfgEntry {
         "extDeps" : {
           "Curves" : "*"
           },
-        "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[]) 
-{	
+        "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[])
+{
 	results[index] = curve.getXfo(params[index], keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent[index], altNormal[index]);
 }
 
@@ -1796,7 +1796,7 @@ dfgEntry {
   Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
   Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
   ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
-  
+
 
   for( Integer i=0; i<points.size(); i++){
     vertexColorsAttr.values[firstIndex] = color[i];
@@ -2465,8 +2465,8 @@ dfgEntry {
             "extDeps" : {
               "Curves" : "*"
               },
-            "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[]) 
-{	
+            "code" : "operator __evalXfosTask<<<index>>>(io Xfo results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen, Scalar uselocalNormal, Scalar followCurveTangent, Scalar followCurveNormal, Vec3 altTangent[], Vec3 altNormal[])
+{
 	results[index] = curve.getXfo(params[index], keepArcLength, keepCurveLen, uselocalNormal, followCurveTangent, followCurveNormal, altTangent[index], altNormal[index]);
 }
 
@@ -3442,9 +3442,9 @@ dfgEntry {
       "code" : "
 
 operator __alignXfosTask<<<index>>>(io Xfo results[], Xfo xfos[], UInt8 alignX,  UInt8 alignY,  UInt8 alignZ)
-{ 
+{
   Xfo x = xfos[index];
-  results[index] = x.align(alignX,alignY,alignZ);
+  results[index] = Xfo_align(x, alignX, alignY, alignZ);
 }
 
 dfgEntry {
@@ -3504,8 +3504,8 @@ dfgEntry {
         ],
       "extDeps" : {},
       "presetGUID" : "CDA833B0D8633D1AA2E496723F2484A6",
-      "code" : "operator __evalPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen) 
-{	
+      "code" : "operator __evalPositionsTask<<<index>>>(io Vec3 results[], Ref<NURBSCurve> curve, Scalar params[], Scalar keepArcLength, Scalar keepCurveLen)
+{
 	results[index] = curve.getPoint(params[index], keepArcLength, keepCurveLen);
 }
 

@@ -45,7 +45,7 @@ function OSS_NURBSCurveXfoKLSolver()
   // NOTE, Kraken can create default values for anything
   // we don't specificy here.  Arrays will be empty, matrices identity, etc.
 
-  UInt32 rigidIDs[];
+  SInt32 rigidIDs[];
   Mat44 rigidMat44s[];
   Vec3 rigidAligns[];
   this.defaultValues["degree"] = 3;
@@ -69,21 +69,21 @@ function OSS_NURBSCurveXfoKLSolver()
 function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   KrakenSolverArg args[] = this.parent.getArguments();
   args.push(KrakenSolverArg('params', 'In', 'Scalar[]'));
-  args.push(KrakenSolverArg('degree', 'In', 'SInt8'));
+  args.push(KrakenSolverArg('degree', 'In', 'SInt32'));
   args.push(KrakenSolverArg('keepArcLength', 'In', 'Scalar'));
   args.push(KrakenSolverArg('followCurveTangent', 'In', 'Scalar'));
   args.push(KrakenSolverArg('useLocalNormal', 'In', 'Scalar'));
   args.push(KrakenSolverArg('followCurveNormal', 'In', 'Scalar'));
-  args.push(KrakenSolverArg('alignX', 'In', 'SInt8'));
-  args.push(KrakenSolverArg('alignY', 'In', 'SInt8'));
-  args.push(KrakenSolverArg('alignZ', 'In', 'SInt8'));
+  args.push(KrakenSolverArg('alignX', 'In', 'SInt32'));
+  args.push(KrakenSolverArg('alignY', 'In', 'SInt32'));
+  args.push(KrakenSolverArg('alignZ', 'In', 'SInt32'));
   args.push(KrakenSolverArg('altTangent', 'In', 'Vec3'));
   args.push(KrakenSolverArg('atVec', 'In', 'Mat44'));
   args.push(KrakenSolverArg('parent', 'In', 'Mat44'));
   args.push(KrakenSolverArg('compressionAmt', 'In', 'Scalar'));
   args.push(KrakenSolverArg('controlAligns', 'In', 'Vec3[]'));
   args.push(KrakenSolverArg('controlsRest', 'In', 'Mat44[]'));
-  args.push(KrakenSolverArg('rigidIDs', 'In', 'UInt32[]'));
+  args.push(KrakenSolverArg('rigidIDs', 'In', 'SInt32[]'));
   args.push(KrakenSolverArg('rigidMat44s', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('rigidAligns', 'In', 'Vec3[]'));
   args.push(KrakenSolverArg('controls', 'In', 'Mat44[]'));
@@ -115,21 +115,21 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     in Boolean drawDebug,
     in Scalar rigScale,
     in Scalar params[],
-    in SInt8 degree,
+    in SInt32 degree,
     in Scalar keepArcLength,
     in Scalar followCurveTangent,
     in Scalar useLocalNormal,
     in Scalar followCurveNormal,
-    in SInt8 alignX,
-    in SInt8 alignY,
-    in SInt8 alignZ,
+    in SInt32 alignX,
+    in SInt32 alignY,
+    in SInt32 alignZ,
     in Vec3 altTangent,
     in Mat44 atVec,
     in Mat44 parent,
     in Scalar compressionAmt,
     in Vec3 controlAligns[],
     in Mat44 controlsRest[],
-    in UInt32 rigidIDs[],
+    in SInt32 rigidIDs[],
     in Mat44 rigidMat44s[],
     in Vec3 rigidAligns[],
     in Mat44 controls[],
@@ -158,8 +158,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
 
   /// Align Controls according to main Curve Direction, given the controlAligns Input array
   for (UInt32 i =0; i<inCount; i++) {
-    wd.alignedControls[i] = controls[i];
-    wd.alignedControls[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
+    wd.alignedControls[i] = Mat44_align(controls[i], controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
   }
 
   // iniate posedCurve with aligned Controls
@@ -175,8 +174,7 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
   Mat44 alignedControlsRest[](inCount);
   for (UInt32 i =0; i<inCount; i++) {
     // if any of the mats don't match the existing one, recreate them;
-    alignedControlsRest[i] = controlsRest[i];
-    alignedControlsRest[i].align(controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
+    alignedControlsRest[i] = Mat44_align(controlsRest[i], controlAligns[i].x, controlAligns[i].y, controlAligns[i].z);
     if(restCurve.controlMat44s.values[i] != alignedControlsRest[i]) {
       restCurveIsStale = true;
     }
@@ -210,17 +208,17 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     __evalCompressionTask(i, wd.compression, posedCurveRef, restCurveRef, params, keepArcLength, keepCurveLen);
     Scalar localCompression = Scalar(Math_linearInterpolate(1, wd.compression[i], compressionAmt));
     wd.xfos[i].sc = wd.xfos[i].sc * Vec3(1,localCompression,localCompression);
-    wd.xfos[i].align(alignX,alignY,alignZ);
+    wd.xfos[i] = Xfo_align(wd.xfos[i], alignX, alignY, alignZ);
     outputs[i] = wd.xfos[i].toMat44();
 
     if(rigidIDs.size()) {
       for(UInt32 n=0; n<rigidIDs.size(); n++) {
         if (i==rigidIDs[n])
-          { 
+          {
             // Shouldn't have to do a xfo conversion
             Xfo alignedXfo;
             alignedXfo.setFromMat44(rigidMat44s[n]);
-            alignedXfo.align(rigidAligns[n].x, rigidAligns[n].y, rigidAligns[n].z);
+            alignedXfo = Xfo_align(alignedXfo, rigidAligns[n].x, rigidAligns[n].y, rigidAligns[n].z);
             outputs[i] = alignedXfo.toMat44();
         }
       }

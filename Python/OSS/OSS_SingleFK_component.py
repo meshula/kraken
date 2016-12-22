@@ -201,6 +201,7 @@ class OSSSingleFKRig(OSSSingleFK):
         # ==========
         self.SingleFKDef = Joint(self.getName(), parent=self.deformersParent)
         self.SingleFKDef.setComponent(self)
+        self.insertAttachSpace(self.SingleFKDef)
 
         self.parentSpaceInputTgt.childJoints = [self.SingleFKDef]
 
