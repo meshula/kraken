@@ -1411,26 +1411,6 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
-        xfo = XSIMath.CreateTransform()
-        sc = XSIMath.CreateVector3(kSceneItem.xfo.sc.x,
-                                   kSceneItem.xfo.sc.y,
-                                   kSceneItem.xfo.sc.z)
-
-        quat = XSIMath.CreateQuaternion(kSceneItem.xfo.ori.w,
-                                        kSceneItem.xfo.ori.v.x,
-                                        kSceneItem.xfo.ori.v.y,
-                                        kSceneItem.xfo.ori.v.z)
-
-        tr = XSIMath.CreateVector3(kSceneItem.xfo.tr.x,
-                                   kSceneItem.xfo.tr.y,
-                                   kSceneItem.xfo.tr.z)
-
-        xfo.SetScaling(sc)
-        xfo.SetRotationFromQuaternion(quat)
-        xfo.SetTranslation(tr)
-
-        dccSceneItem.Kinematics.Global.PutTransform2(None, xfo)
-
         # Rotation order remapping
         # Softimage's enums don't map directly to the Fabric rotation orders
         #
@@ -1454,6 +1434,26 @@ class Builder(Builder):
 
         order = rotOrderRemap[kSceneItem.ro.order]
         dccSceneItem.Kinematics.Local.Parameters('rotorder').Value = order
+
+        xfo = XSIMath.CreateTransform()
+        sc = XSIMath.CreateVector3(kSceneItem.xfo.sc.x,
+                                   kSceneItem.xfo.sc.y,
+                                   kSceneItem.xfo.sc.z)
+
+        quat = XSIMath.CreateQuaternion(kSceneItem.xfo.ori.w,
+                                        kSceneItem.xfo.ori.v.x,
+                                        kSceneItem.xfo.ori.v.y,
+                                        kSceneItem.xfo.ori.v.z)
+
+        tr = XSIMath.CreateVector3(kSceneItem.xfo.tr.x,
+                                   kSceneItem.xfo.tr.y,
+                                   kSceneItem.xfo.tr.z)
+
+        xfo.SetScaling(sc)
+        xfo.SetRotationFromQuaternion(quat)
+        xfo.SetTranslation(tr)
+
+        dccSceneItem.Kinematics.Global.PutTransform2(None, xfo)
 
         return True
 
