@@ -591,7 +591,7 @@ class Builder(Builder):
                 # 4 XYZ  | 0 XYZ
                 # 5 ZXY  | 2 ZXY
 
-                roFabricToMayaRemap = {
+                rotOrderRemap = {
                     0: 5,
                     1: 3,
                     2: 4,
@@ -600,7 +600,7 @@ class Builder(Builder):
                     5: 2
                 }
 
-                order = roFabricToMayaRemap[kConstraint.getConstrainee().ro.order]
+                order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
 
                 offsetXfo = kConstraint.computeOffset()
                 offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
@@ -696,7 +696,7 @@ class Builder(Builder):
                 # 4 XYZ  | 0 XYZ
                 # 5 ZXY  | 2 ZXY
 
-                roFabricToMayaRemap = {
+                rotOrderRemap = {
                     0: 5,
                     1: 3,
                     2: 4,
@@ -705,7 +705,7 @@ class Builder(Builder):
                     5: 2
                 }
 
-                order = roFabricToMayaRemap[kConstraint.getConstrainee().ro.order]
+                order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
 
                 offsetXfo = kConstraint.computeOffset()
                 offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
@@ -1527,7 +1527,7 @@ class Builder(Builder):
         # 4 XYZ  | 0 XYZ
         # 5 ZXY  | 2 ZXY
 
-        roFabricToMayaRemap = {
+        rotOrderRemap = {
             0: 5,
             1: 3,
             2: 4,
@@ -1536,7 +1536,7 @@ class Builder(Builder):
             5: 2
         }
 
-        order = roFabricToMayaRemap[kSceneItem.ro.order]
+        order = rotOrderRemap[kSceneItem.ro.order]
 
         #  Maya api is one off from Maya's own node enum pyMel uses API
         dccSceneItem.setRotationOrder(order + 1, False)
