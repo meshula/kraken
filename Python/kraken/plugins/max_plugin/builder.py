@@ -2222,14 +2222,26 @@ class Builder(Builder):
 
         dccSceneItem.SetWorldTM(mat3)
 
+        # Rotation order remapping
+        # Max's enums don't map directly to the Fabric rotation orders
+        #
+        # Fabric | Max
+        # ---------------
+        # 0 ZYX  | 6 ZYX
+        # 1 XZY  | 2 XZY
+        # 2 YXZ  | 4 YXZ
+        # 3 YZX  | 3 YZX
+        # 4 XYZ  | 1 XYZ
+        # 5 ZXY  | 5 ZXY
+
         rotOrderRemap = {
-                0: 1,
-                1: 3,
-                2: 5,
-                3: 2,
-                4: 6,
-                5: 4
-            }
+            0: 6,
+            1: 2,
+            2: 4,
+            3: 3,
+            4: 1,
+            5: 5
+        }
 
         order = rotOrderRemap[kSceneItem.ro.order]
 
