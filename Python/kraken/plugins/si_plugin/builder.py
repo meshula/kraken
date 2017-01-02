@@ -588,16 +588,25 @@ class Builder(Builder):
 
         if kConstraint.getMaintainOffset() is True:
 
-            # Softimage's rotation orders remapped
-            # It appears Softimage uses the reversed orders
-            # Not the same orders.
+            # Rotation order remapping
+            # Softimage's enums don't map directly to the Fabric rotation orders
+            #
+            # Fabric | Softimage
+            # -------------------
+            # 0 ZYX  | 5 ZYX
+            # 1 XZY  | 1 XZY
+            # 2 YXZ  | 2 YXZ
+            # 3 YZX  | 3 YZX
+            # 4 XYZ  | 0 XYZ
+            # 5 ZXY  | 4 ZXY
+
             rotOrderRemap = {
-                0: 0,
-                1: 3,
-                2: 4,
-                3: 1,
-                4: 5,
-                5: 2
+                0: 5,
+                1: 1,
+                2: 2,
+                3: 3,
+                4: 0,
+                5: 4
             }
 
             order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
@@ -641,33 +650,25 @@ class Builder(Builder):
 
         if kConstraint.getMaintainOffset() is True:
 
-            # Fabric's rotation order enums:
-            # We need to use the negative rotation order
-            # to calculate propery offset values.
+            # Rotation order remapping
+            # Softimage's enums don't map directly to the Fabric rotation orders
             #
-            # 0 XYZ
-            # 1 YZX
-            # 2 ZXY
-            # 3 XZY
-            # 4 ZYX
-            # 5 YXZ
-
-            # Softimage's rotation orders
-            #
-            # 0 XYZ
-            # 1 XZY
-            # 2 YXZ
-            # 3 YZX
-            # 4 ZXY
-            # 5 ZYX
+            # Fabric | Softimage
+            # -------------------
+            # 0 ZYX  | 5 ZYX
+            # 1 XZY  | 1 XZY
+            # 2 YXZ  | 2 YXZ
+            # 3 YZX  | 3 YZX
+            # 4 XYZ  | 0 XYZ
+            # 5 ZXY  | 4 ZXY
 
             rotOrderRemap = {
-                0: 4,
+                0: 5,
                 1: 1,
                 2: 2,
                 3: 3,
-                4: 5,
-                5: 0
+                4: 0,
+                5: 4
             }
 
             order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
@@ -1430,14 +1431,25 @@ class Builder(Builder):
 
         dccSceneItem.Kinematics.Global.PutTransform2(None, xfo)
 
-        # Softimage's rotation orders remapped:
+        # Rotation order remapping
+        # Softimage's enums don't map directly to the Fabric rotation orders
+        #
+        # Fabric | Softimage
+        # -------------------
+        # 0 ZYX  | 5 ZYX
+        # 1 XZY  | 1 XZY
+        # 2 YXZ  | 2 YXZ
+        # 3 YZX  | 3 YZX
+        # 4 XYZ  | 0 XYZ
+        # 5 ZXY  | 4 ZXY
+
         rotOrderRemap = {
-            0: 0,
-            1: 3,
-            2: 4,
-            3: 1,
-            4: 5,
-            5: 2
+            0: 5,
+            1: 1,
+            2: 2,
+            3: 3,
+            4: 0,
+            5: 4
         }
 
         order = rotOrderRemap[kSceneItem.ro.order]
