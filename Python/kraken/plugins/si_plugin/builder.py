@@ -1248,7 +1248,7 @@ class Builder(Builder):
         """
 
         if kAttribute.getName() in ('visibility', 'ShapeVisibility'):
-            dccSceneItem = self.getDCCSceneItem(kAttribute.getParent())
+            dccSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
 
             if kAttribute.getName() == 'visibility':
                 visAttr = dccSceneItem.Properties("Visibility").Parameters("viewvis")
