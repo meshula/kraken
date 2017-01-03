@@ -65,7 +65,7 @@ class RotationOrder(MathObject):
 
         """
 
-        self.set(order=value)
+        self._rtval.order = ks.rtVal('Integer', value)
 
         return True
 
@@ -109,7 +109,7 @@ class RotationOrder(MathObject):
                 newOrder = 4
 
         elif type(order) == int:
-            if order not in ROT_ORDER_INT_TO_STR_MAP:
+            if order not in ROT_ORDER_INT_TO_STR_MAP.values():
                 print "Invalid rotation order: '" + str(order) + "', using default 4 (XYZ)."
                 newOrder = 4
             else:
@@ -220,7 +220,7 @@ class RotationOrder(MathObject):
 
         """
 
-        self.order = 0
+        self._rtval.setZYX('')
 
         return True
 
@@ -233,7 +233,7 @@ class RotationOrder(MathObject):
 
         """
 
-        self.order = 1
+        self._rtval.setXZY('')
 
         return True
 
@@ -246,7 +246,7 @@ class RotationOrder(MathObject):
 
         """
 
-        self.order = 2
+        self._rtval.setYXZ('')
 
         return True
 
@@ -259,7 +259,7 @@ class RotationOrder(MathObject):
 
         """
 
-        self.order = 3
+        self._rtval.setYZX('')
 
         return True
 
@@ -272,7 +272,7 @@ class RotationOrder(MathObject):
 
         """
 
-        self.order = 4
+        self._rtval.setXYZ('')
 
         return True
 
@@ -285,6 +285,6 @@ class RotationOrder(MathObject):
 
         """
 
-        self.order = 5
+        self._rtval.setZXY('')
 
         return True
