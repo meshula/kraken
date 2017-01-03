@@ -372,7 +372,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
         # Add Component Params to IK control
         self.handleCtrlAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.handleCtrl)
-        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.ikBlendAttr = ScalarAttribute('ikBlend', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
 
         self.heelCtrl.getVisibilityAttr().connect(self.ikBlendAttr, lock=True)
@@ -380,7 +380,7 @@ class OSSFootComponentRig(OSSFootComponent):
         self.pivotCtrl.getVisibilityAttr().connect(self.ikBlendAttr, lock=True)
 
 
-        self.footIKAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.footIKAttr = ScalarAttribute('footIK', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         footRockerAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=self.handleCtrlAttrGrp)
         ballBreakAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
 

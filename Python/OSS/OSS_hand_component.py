@@ -418,7 +418,7 @@ class OSSHandComponentRig(OSSHandComponent):
         #ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
         #HandTiltInputAttr = ScalarAttribute('handTilt', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
 
-        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.ikBlendAttr = ScalarAttribute('ikBlend', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
         self.handIKInputAttr = ScalarAttribute('handIK', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
 
