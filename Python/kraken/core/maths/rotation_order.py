@@ -63,7 +63,7 @@ class RotationOrder(MathObject):
 
         """
 
-        self._rtval.order = ks.rtVal('Integer', value)
+        self.set(order=value)
 
         return True
 
