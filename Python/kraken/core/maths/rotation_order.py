@@ -6,8 +6,6 @@ RotationOrder -- Rotation Order.
 
 import math
 
-from kraken.core.maths.constants import ROT_ORDER_INT_TO_STR_MAP
-from kraken.core.maths.constants import ROT_ORDER_STR_TO_INT_MAP
 from kraken.core.kraken_system import ks
 from kraken.core.maths.math_object import MathObject
 
@@ -15,7 +13,7 @@ from kraken.core.maths.math_object import MathObject
 class RotationOrder(MathObject):
     """RotationOrder rotation object."""
 
-    def __init__(self, order=4):
+    def __init__(self, order=0):
         """Initialize rotation order."""
 
         super(RotationOrder, self).__init__()
@@ -102,81 +100,51 @@ class RotationOrder(MathObject):
 
         """
 
+        newOrder = 0
+
         if type(order) == str:
-            newOrder = ROT_ORDER_STR_TO_INT_MAP.get(order, -1)
-            if newOrder == -1:
-                print "Invalid rotation order '" + order + "', using default 4 (XYZ)."
+            lowerOrder = order.lower()
+            if lowerOrder == 'xyz':
+                newOrder = 0
+            elif lowerOrder == 'yzx':
+                newOrder = 1
+            elif lowerOrder == 'zxy':
+                newOrder = 2
+            elif lowerOrder == 'xzy':
+                newOrder = 3
+            elif lowerOrder == 'zyx':
                 newOrder = 4
+            elif lowerOrder == 'yxz':
+                newOrder = 5
+            else:
+                print "Invalid rotation order '" + order + "', using default 0 (XYZ)."
+                newOrder = 0
 
         elif type(order) == int:
-            if order not in ROT_ORDER_INT_TO_STR_MAP.values():
-                print "Invalid rotation order: '" + str(order) + "', using default 4 (XYZ)."
-                newOrder = 4
+            if order < 0 or order > 5:
+                print "Invalid rotation order: '" + str(order) + "', using default 0 (XYZ)."
+                newOrder = 0
             else:
                 newOrder = order
         else:
             raise NotImplementedError("Cannot set rotation order with type: " + str(type(order)))
 
         if newOrder == 0:
-            self._rtval.setZYX('')
-        elif newOrder == 1:
-            self._rtval.setXZY('')
-        elif newOrder == 2:
-            self._rtval.setYXZ('')
-        elif newOrder == 3:
-            self._rtval.setYZX('')
-        elif newOrder == 4:
             self._rtval.setXYZ('')
-        elif newOrder == 5:
+        elif newOrder == 1:
+            self._rtval.setYZX('')
+        elif newOrder == 2:
             self._rtval.setZXY('')
+        elif newOrder == 3:
+            self._rtval.setXZY('')
+        elif newOrder == 4:
+            self._rtval.setZYX('')
+        elif newOrder == 5:
+            self._rtval.setYXZ('')
         else:
             raise ValueError("Invalid rotation order: '" + str(order) + "'")
 
         return True
-
-
-    def isZYX(self):
-        """Checks if this Rotation Order is equal to ZYX.
-
-        Returns:
-            bool: True if this rotationorder is ZYX.
-
-        """
-
-        return self.order == 0
-
-
-    def isXZY(self):
-        """Checks if this Rotation Order is equal to XZY.
-
-        Returns:
-            bool: True if this rotationorder is XZY.
-
-        """
-
-        return self.order == 1
-
-
-    def isYXZ(self):
-        """Checks if this Rotation Order is equal to YXZ.
-
-        Returns:
-            bool: True if this rotationorder is YXZ.
-
-        """
-
-        return self.order == 2
-
-
-    def isYZX(self):
-        """Checks if this Rotation Order is equal to YZX.
-
-        Returns:
-            bool: True if this rotationorder is YZX.
-
-        """
-
-        return self.order == 3
 
 
     def isXYZ(self):
@@ -187,7 +155,18 @@ class RotationOrder(MathObject):
 
         """
 
-        return self.order == 4
+        return self.order == 0
+
+
+    def isYZX(self):
+        """Checks if this Rotation Order is equal to YZX.
+
+        Returns:
+            bool: True if this rotationorder is YZX.
+
+        """
+
+        return self.order == 1
 
 
     def isZXY(self):
@@ -195,6 +174,39 @@ class RotationOrder(MathObject):
 
         Returns:
             bool: True if this rotationorder is ZXY.
+
+        """
+
+        return self.order == 2
+
+
+    def isXZY(self):
+        """Checks if this Rotation Order is equal to XZY.
+
+        Returns:
+            bool: True if this rotationorder is XZY.
+
+        """
+
+        return self.order == 3
+
+
+    def isZYX(self):
+        """Checks if this Rotation Order is equal to ZYX.
+
+        Returns:
+            bool: True if this rotationorder is ZYX.
+
+        """
+
+        return self.order == 4
+
+
+    def isYXZ(self):
+        """Checks if this Rotation Order is equal to YXZ.
+
+        Returns:
+            bool: True if this rotationorder is YXZ.
 
         """
 
@@ -212,41 +224,15 @@ class RotationOrder(MathObject):
         return self.isXZY() or self.isZYX() or self.isYXZ()
 
 
-    def setZYX(self):
-        """Sets this rotation order to be ZYX.
+    def setXYZ(self):
+        """Sets this rotation order to be XYZ.
 
         Returns:
             bool: True if successful.
 
         """
 
-        self._rtval.setZYX('')
-
-        return True
-
-
-    def setXZY(self):
-        """Sets this rotation order to be XZY.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        self._rtval.setXZY('')
-
-        return True
-
-
-    def setYXZ(self):
-        """Sets this rotation order to be YXZ.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        self._rtval.setYXZ('')
+        self.order = 0
 
         return True
 
@@ -259,20 +245,7 @@ class RotationOrder(MathObject):
 
         """
 
-        self._rtval.setYZX('')
-
-        return True
-
-
-    def setXYZ(self):
-        """Sets this rotation order to be XYZ.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        self._rtval.setXYZ('')
+        self.order = 1
 
         return True
 
@@ -285,6 +258,45 @@ class RotationOrder(MathObject):
 
         """
 
-        self._rtval.setZXY('')
+        self.order = 2
+
+        return True
+
+
+    def setXZY(self):
+        """Sets this rotation order to be XZY.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self.order = 3
+
+        return True
+
+
+    def setZYX(self):
+        """Sets this rotation order to be ZYX.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self.order = 4
+
+        return True
+
+
+    def setYXZ(self):
+        """Sets this rotation order to be YXZ.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self.order = 5
 
         return True
