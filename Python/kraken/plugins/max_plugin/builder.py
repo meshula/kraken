@@ -2016,18 +2016,18 @@ class Builder(Builder):
     # ==================
     # Attribute Methods
     # ==================
-    def lockAttribute(self, kSceneItem):
+    def lockAttribute(self, kAttribute):
         """Locks attributes.
 
         Args:
-            kSceneItem (object): kraken attributes to lock.
+            kAttribute (object): kraken attributes to lock.
 
         Returns:
             bool: True if successful.
 
         """
 
-        dccSceneItem = self.getDCCSceneItem(kSceneItem)
+        dccSceneItem = self.getDCCSceneItem(kAttribute)
 
         if kAttribute.getParent().getName() == 'implicitAttrGrp':
             return False
@@ -2087,6 +2087,7 @@ class Builder(Builder):
         }
 
         locks = []
+
 
         # Lock Translation
         if kSceneItem.testFlag("lockXTranslation") is True:

@@ -4,9 +4,9 @@
     "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
     "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
     "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
-    "uiTooltip" : "Supported types:\n  this: TwistSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  blendBias: Scalar\n  origin: Mat44\n  originUpV: Mat44\n  insert: Mat44\n  insertUpV: Mat44\n  pose: Mat44[]\n"
+    "uiTooltip" : "Supported types:\n  this: PoseConstraintSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  constrainer: Mat44\n  constrainee: Mat44\n"
     },
-  "title" : "TwistSolver_Solve",
+  "title" : "PoseConstraintSolver_Solve",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -20,7 +20,7 @@
       "name" : "this",
       "nodePortType" : "IO",
       "execPortType" : "IO",
-      "typeSpec" : "TwistSolver"
+      "typeSpec" : "PoseConstraintSolver"
       },
     {
       "objectType" : "ExecPort",
@@ -38,17 +38,10 @@
       },
     {
       "objectType" : "ExecPort",
-      "name" : "blendBias",
-      "nodePortType" : "Out",
-      "execPortType" : "In",
-      "typeSpec" : "Scalar"
-      },
-    {
-      "objectType" : "ExecPort",
       "metadata" : {
         "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
         },
-      "name" : "origin",
+      "name" : "constrainer",
       "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "Mat44"
@@ -58,62 +51,32 @@
       "metadata" : {
         "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
         },
-      "name" : "originUpV",
-      "nodePortType" : "Out",
-      "execPortType" : "In",
-      "typeSpec" : "Mat44"
-      },
-    {
-      "objectType" : "ExecPort",
-      "metadata" : {
-        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-        },
-      "name" : "insert",
-      "nodePortType" : "Out",
-      "execPortType" : "In",
-      "typeSpec" : "Mat44"
-      },
-    {
-      "objectType" : "ExecPort",
-      "metadata" : {
-        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-        },
-      "name" : "insertUpV",
-      "nodePortType" : "Out",
-      "execPortType" : "In",
-      "typeSpec" : "Mat44"
-      },
-    {
-      "objectType" : "ExecPort",
-      "metadata" : {
-        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-        },
-      "name" : "pose",
+      "name" : "constrainee",
       "nodePortType" : "IO",
       "execPortType" : "IO",
-      "typeSpec" : "Mat44[]"
+      "typeSpec" : "Mat44"
       }
     ],
   "extDeps" : {
     "Kraken" : "*"
     },
-  "presetGUID" : "64346A289B3B92EBE75C0E6A4D668C7F",
+  "presetGUID" : "48177F48BFB4A2F74E0EBEB31FE5D4AC",
   "code" : "require Kraken;
 
 dfgEntry {
-  this.solve(drawDebug, rigScale, blendBias, origin, originUpV, insert, insertUpV, pose);
+  this.solve(drawDebug, rigScale, constrainer, constrainee);
 }
 ",
   "requiredPresets" : {
-    "Kraken.Exts.Solvers.TwistSolver.TwistSolver_Solve" : {
+    "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Solve" : {
       "objectType" : "Func",
       "metadata" : {
         "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
         "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
         "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
-        "uiTooltip" : "Supported types:\n  this: TwistSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  blendBias: Scalar\n  origin: Mat44\n  originUpV: Mat44\n  insert: Mat44\n  insertUpV: Mat44\n  pose: Mat44[]\n"
+        "uiTooltip" : "Supported types:\n  this: PoseConstraintSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  constrainer: Mat44\n  constrainee: Mat44\n"
         },
-      "title" : "TwistSolver_Solve",
+      "title" : "PoseConstraintSolver_Solve",
       "ports" : [
         {
           "objectType" : "ExecPort",
@@ -127,7 +90,7 @@ dfgEntry {
           "name" : "this",
           "nodePortType" : "IO",
           "execPortType" : "IO",
-          "typeSpec" : "TwistSolver"
+          "typeSpec" : "PoseConstraintSolver"
           },
         {
           "objectType" : "ExecPort",
@@ -145,17 +108,10 @@ dfgEntry {
           },
         {
           "objectType" : "ExecPort",
-          "name" : "blendBias",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
             },
-          "name" : "origin",
+          "name" : "constrainer",
           "nodePortType" : "Out",
           "execPortType" : "In",
           "typeSpec" : "Mat44"
@@ -165,57 +121,27 @@ dfgEntry {
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
             },
-          "name" : "originUpV",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Mat44"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "name" : "insert",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Mat44"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "name" : "insertUpV",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Mat44"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "name" : "pose",
+          "name" : "constrainee",
           "nodePortType" : "IO",
           "execPortType" : "IO",
-          "typeSpec" : "Mat44[]"
+          "typeSpec" : "Mat44"
           }
         ],
       "extDeps" : {
         "Kraken" : "*"
         },
-      "presetGUID" : "64346A289B3B92EBE75C0E6A4D668C7F",
+      "presetGUID" : "48177F48BFB4A2F74E0EBEB31FE5D4AC",
       "code" : "require Kraken;
 
 dfgEntry {
-  this.solve(drawDebug, rigScale, blendBias, origin, originUpV, insert, insertUpV, pose);
+  this.solve(drawDebug, rigScale, constrainer, constrainee);
 }
 "
       }
     },
   "args" : [
     {
-      "type" : "TwistSolver",
+      "type" : "PoseConstraintSolver",
       "value" : null,
       "ext" : "Kraken"
       },
@@ -228,10 +154,6 @@ dfgEntry {
       "value" : 0
       },
     {
-      "type" : "Scalar",
-      "value" : 0
-      },
-    {
       "type" : "Mat44",
       "value" : {
         "row0" : {
@@ -289,71 +211,6 @@ dfgEntry {
           "t" : 1
           }
         },
-      "ext" : "Math"
-      },
-    {
-      "type" : "Mat44",
-      "value" : {
-        "row0" : {
-          "x" : 1,
-          "y" : 0,
-          "z" : 0,
-          "t" : 0
-          },
-        "row1" : {
-          "x" : 0,
-          "y" : 1,
-          "z" : 0,
-          "t" : 0
-          },
-        "row2" : {
-          "x" : 0,
-          "y" : 0,
-          "z" : 1,
-          "t" : 0
-          },
-        "row3" : {
-          "x" : 0,
-          "y" : 0,
-          "z" : 0,
-          "t" : 1
-          }
-        },
-      "ext" : "Math"
-      },
-    {
-      "type" : "Mat44",
-      "value" : {
-        "row0" : {
-          "x" : 1,
-          "y" : 0,
-          "z" : 0,
-          "t" : 0
-          },
-        "row1" : {
-          "x" : 0,
-          "y" : 1,
-          "z" : 0,
-          "t" : 0
-          },
-        "row2" : {
-          "x" : 0,
-          "y" : 0,
-          "z" : 1,
-          "t" : 0
-          },
-        "row3" : {
-          "x" : 0,
-          "y" : 0,
-          "z" : 0,
-          "t" : 1
-          }
-        },
-      "ext" : "Math"
-      },
-    {
-      "type" : "Mat44[]",
-      "value" : [],
       "ext" : "Math"
       }
     ]

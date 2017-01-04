@@ -820,8 +820,8 @@
           "name" : "value"
           }
         ],
-      "executable" : "Fabric.Core.Data.PassIn",
-      "presetGUID" : "3C33E1B42A2643A035DBAB718554227D"
+      "executable" : "Fabric.Compounds.Data.PassIn",
+      "presetGUID" : "E1A3D489434CCC2433A2E2DF69094AB3"
       },
     {
       "objectType" : "Inst",
@@ -841,8 +841,8 @@
           "name" : "value"
           }
         ],
-      "executable" : "Fabric.Core.Data.PassIn",
-      "presetGUID" : "3C33E1B42A2643A035DBAB718554227D"
+      "executable" : "Fabric.Compounds.Data.PassIn",
+      "presetGUID" : "E1A3D489434CCC2433A2E2DF69094AB3"
       },
     {
       "objectType" : "Inst",
@@ -3821,8 +3821,8 @@
               "name" : "value"
               }
             ],
-          "executable" : "Fabric.Core.Data.PassIn",
-          "presetGUID" : "3C33E1B42A2643A035DBAB718554227D"
+          "executable" : "Fabric.Compounds.Data.PassIn",
+          "presetGUID" : "E1A3D489434CCC2433A2E2DF69094AB3"
           },
         {
           "objectType" : "Inst",
@@ -3842,8 +3842,8 @@
               "name" : "value"
               }
             ],
-          "executable" : "Fabric.Core.Data.PassIn",
-          "presetGUID" : "3C33E1B42A2643A035DBAB718554227D"
+          "executable" : "Fabric.Compounds.Data.PassIn",
+          "presetGUID" : "E1A3D489434CCC2433A2E2DF69094AB3"
           },
         {
           "objectType" : "Inst",
@@ -6367,7 +6367,7 @@ dfgEntry {
 }
 "
       },
-    "Fabric.Core.Data.PassIn" : {
+    "Fabric.Compounds.Data.PassIn" : {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 214,\n  \"g\" : 191,\n  \"b\" : 103\n  }",
@@ -6385,7 +6385,7 @@ dfgEntry {
           }
         ],
       "extDeps" : {},
-      "presetGUID" : "3C33E1B42A2643A035DBAB718554227D",
+      "presetGUID" : "E1A3D489434CCC2433A2E2DF69094AB3",
       "code" : "dfgEntry {
 }
 "

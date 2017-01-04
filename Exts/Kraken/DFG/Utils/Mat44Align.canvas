@@ -1,4 +1,3 @@
-// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
   "metadata" : {
@@ -56,7 +55,114 @@
   "code" : "require Kraken;
 
 dfgEntry {
-  this = Mat44_align(this, x, y, z);
+  this.align(x, y, z);
+}
+",
+  "requiredPresets" : {
+    "Kraken.Exts.Utils.Mat44Align" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Mat44.html",
+        "uiTooltip" : "Supported types:\n  this: Mat44\n  x: SInt8\n  y: SInt8\n  z: SInt8\n"
+        },
+      "title" : "Mat44Align",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "this",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Mat44"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "x",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "y",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "z",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "5C161F48D4E03C6B2F9DB31EF93DDF3B",
+      "code" : "require Kraken;
+
+dfgEntry {
+  this.align(x, y, z);
 }
 "
+      }
+    },
+  "args" : [
+    {
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "SInt8",
+      "value" : 0
+      },
+    {
+      "type" : "SInt8",
+      "value" : 0
+      },
+    {
+      "type" : "SInt8",
+      "value" : 0
+      }
+    ]
   }
