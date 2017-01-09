@@ -23,8 +23,30 @@ from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 
 from kraken.plugins.si_plugin.utils import *
 
+
 logger = getLogger('kraken')
 logger.setLevel(logging.INFO)
+
+# Rotation order remapping
+# Softimage's enums don't map directly to the Fabric rotation orders
+#
+# Fabric | Softimage
+# -------------------
+# 0 ZYX  | 5 ZYX
+# 1 XZY  | 1 XZY
+# 2 YXZ  | 2 YXZ
+# 3 YZX  | 3 YZX
+# 4 XYZ  | 0 XYZ
+# 5 ZXY  | 4 ZXY
+
+ROT_ORDER_REMAP = {
+    0: 5,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 0,
+    5: 4
+}
 
 
 class Builder(Builder):
@@ -588,28 +610,7 @@ class Builder(Builder):
 
         if kConstraint.getMaintainOffset() is True:
 
-            # Rotation order remapping
-            # Softimage's enums don't map directly to the Fabric rotation orders
-            #
-            # Fabric | Softimage
-            # -------------------
-            # 0 ZYX  | 5 ZYX
-            # 1 XZY  | 1 XZY
-            # 2 YXZ  | 2 YXZ
-            # 3 YZX  | 3 YZX
-            # 4 XYZ  | 0 XYZ
-            # 5 ZXY  | 4 ZXY
-
-            rotOrderRemap = {
-                0: 5,
-                1: 1,
-                2: 2,
-                3: 3,
-                4: 0,
-                5: 4
-            }
-
-            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
+            order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
 
             offsetXfo = kConstraint.computeOffset()
             offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
@@ -650,28 +651,7 @@ class Builder(Builder):
 
         if kConstraint.getMaintainOffset() is True:
 
-            # Rotation order remapping
-            # Softimage's enums don't map directly to the Fabric rotation orders
-            #
-            # Fabric | Softimage
-            # -------------------
-            # 0 ZYX  | 5 ZYX
-            # 1 XZY  | 1 XZY
-            # 2 YXZ  | 2 YXZ
-            # 3 YZX  | 3 YZX
-            # 4 XYZ  | 0 XYZ
-            # 5 ZXY  | 4 ZXY
-
-            rotOrderRemap = {
-                0: 5,
-                1: 1,
-                2: 2,
-                3: 3,
-                4: 0,
-                5: 4
-            }
-
-            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
+            order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
 
             offsetXfo = kConstraint.computeOffset()
             offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
@@ -1411,28 +1391,7 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
-        # Rotation order remapping
-        # Softimage's enums don't map directly to the Fabric rotation orders
-        #
-        # Fabric | Softimage
-        # -------------------
-        # 0 ZYX  | 5 ZYX
-        # 1 XZY  | 1 XZY
-        # 2 YXZ  | 2 YXZ
-        # 3 YZX  | 3 YZX
-        # 4 XYZ  | 0 XYZ
-        # 5 ZXY  | 4 ZXY
-
-        rotOrderRemap = {
-            0: 5,
-            1: 1,
-            2: 2,
-            3: 3,
-            4: 0,
-            5: 4
-        }
-
-        order = rotOrderRemap[kSceneItem.ro.order]
+        order = ROT_ORDER_REMAP[kSceneItem.ro.order]
         dccSceneItem.Kinematics.Local.Parameters('rotorder').Value = order
 
         xfo = XSIMath.CreateTransform()
