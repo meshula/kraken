@@ -39,10 +39,10 @@ ROT_ORDER_STR_TO_INT_MAP = {
 }
 
 ROT_ORDER_INT_TO_STR_MAP = {
-    'ZYX': 0,
-    'XZY': 1,
-    'YXZ': 2,
-    'YZX': 3,
-    'XYZ': 4,
-    'ZXY': 5
+    0: 'ZYX',
+    1: 'XZY',
+    2: 'YXZ',
+    3: 'YZX',
+    4: 'XYZ',
+    5: 'ZXY'
 }
