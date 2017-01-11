@@ -324,7 +324,7 @@ class Constraint(SceneItem):
 
         cls = self.__class__.__name__
         ks.loadExtension('KrakenForCanvas')
-        rtVal = ks.rtVal('Kraken%s' % cls)
+        rtVal = ks.rtVal('KrakenForCanvas::Kraken%s' % cls)
 
         for c in self._constrainers:
             rtVal.addConstrainer('', ks.rtVal('Xfo', c.globalXfo).toMat44('Mat44'))
@@ -350,7 +350,7 @@ class Constraint(SceneItem):
 
         cls = self.__class__.__name__
         ks.loadExtension('KrakenForCanvas')
-        rtVal = ks.rtVal('Kraken%s' % cls)
+        rtVal = ks.rtVal('KrakenForCanvas::Kraken%s' % cls)
 
         rtVal.offset = ks.rtVal('Mat44', Mat44())
         for c in self._constrainers:

@@ -11,7 +11,7 @@ from mat33 import Mat33
 from mat44 import Mat44
 from rotation_order import RotationOrder
 from color import Color
-from constants import DEG_TO_RAD, RAD_TO_DEG
+from constants import DEG_TO_RAD, RAD_TO_DEG, PI
 
 
 def Math_radToDeg(val):

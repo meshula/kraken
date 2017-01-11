@@ -1,6 +1,6 @@
 {
   "objectType" : "Func",
-  "title" : "GetJointNames",
+  "title" : "GetJointXfos",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -14,32 +14,29 @@
       "name" : "rig",
       "nodePortType" : "Out",
       "execPortType" : "In",
-      "typeSpec" : "KRK_char_bob_guide"
+      "typeSpec" : "KRK_bob_rig"
       },
     {
       "objectType" : "ExecPort",
       "name" : "result",
       "nodePortType" : "In",
       "execPortType" : "Out",
-      "typeSpec" : "String[]"
+      "typeSpec" : "Xfo[]"
       }
     ],
   "extDeps" : {
-    "KRK_char_bob_guide" : "*"
+    "KRK_bob_rig" : "*"
     },
-  "code" : "dfgEntry {
-  result = rig.getJointNames();
+  "code" : "require Kraken;
+require KrakenAnimation;
+require KrakenForCanvas;
+require KRK_bob_rig;
+dfgEntry {
+  result = rig.getJointXfos();
 }
 ",
   "args" : [
-    {
-      "type" : "KRK_char_bob_guide",
-      "value" : null,
-      "ext" : "KRK_char_bob_guide"
-      },
-    {
-      "type" : "String[]",
-      "value" : []
-      }
+    null,
+    null
     ]
   }

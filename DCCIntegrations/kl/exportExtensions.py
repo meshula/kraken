@@ -10,8 +10,8 @@ def argOpts():
     usage = "usage: %prog extensionA extensionB output_file [options]"
     parser = optparse.OptionParser(usage, version="%prog 1.0")
 
-    parser.add_option("-n", "--namespace", dest="namespace",
-                      help="Suffix for the namespace to use.")
+    parser.add_option("-s", "--suffix", dest="suffix",
+                      help="Suffix to use for the extensions.")
 
     description = optparse.OptionGroup(parser, "Description", "Exports one or more extensions into a json package.")
 
@@ -36,10 +36,10 @@ def main():
     if not hasattr(client, 'exportKLExtensions'):
         raise Exception('This build of Fabric does not have the exportKLExtensions feature enabled.')
 
-    flags = client.RegisterKLExtension_Flags_Default
-    if options.namespace:
-        suffix = options.namespace
-        flags=client.RegisterKLExtension_Flag_AutoNamespace
+    if not options.suffix:
+        raise Exception('You need to specify the --suffix option.')
+    suffix = options.suffix
+    flags=client.RegisterKLExtension_Flag_AutoNamespace
 
     extensions = args[:-1]
     outputfile = args[-1]
@@ -57,7 +57,6 @@ def main():
         json = client.exportKLExtensions(
             extensions,
             suffix,
-            # flags=flags # todo: start to use the namspace flag
             flags=flags
             )
     except Exception as e:

@@ -17,7 +17,7 @@
       }
     ],
   "extDeps" : {
-    "KRK_char_bob_guide" : "*"
+    "KRK_bob_rig" : "*"
     },
   "nodes" : [
     {
@@ -30,8 +30,8 @@
           "nodePortType" : "IO"
           }
         ],
-      "dataType" : "KRK_char_bob_guide",
-      "extDep" : "KRK_char_bob_guide:*"
+      "dataType" : "KRK_bob_rig::KRK_bob_rig",
+      "extDep" : "KRK_bob_rig:*"
       },
     {
       "objectType" : "Inst",
@@ -64,14 +64,18 @@
             "name" : "result",
             "nodePortType" : "In",
             "execPortType" : "Out",
-            "typeSpec" : "KRK_char_bob_guide"
+            "typeSpec" : "KRK_bob_rig"
             }
           ],
         "extDeps" : {
-          "KRK_char_bob_guide" : "*"
+          "KRK_bob_rig" : "*"
           },
-        "code" : "dfgEntry {
-  result = KRK_char_bob_guide();
+        "code" : "require Kraken;
+require KrakenAnimation;
+require KrakenForCanvas;
+require KRK_bob_rig;
+dfgEntry {
+  result = KRK_bob_rig();
 }
 "
         }
@@ -87,9 +91,9 @@
     },
   "args" : [
     {
-      "type" : "KRK_char_bob_guide",
+      "type" : "KRK_bob_rig::KRK_bob_rig",
       "value" : null,
-      "ext" : "KRK_char_bob_guide"
+      "ext" : "KRK_bob_rig"
       }
     ]
   }

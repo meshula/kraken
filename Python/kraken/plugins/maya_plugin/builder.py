@@ -978,7 +978,7 @@ class Builder(Builder):
                                                       desiredNodeName="solverVar",
                                                       xPos="-75",
                                                       yPos="100",
-                                                      type=solverTypeName,
+                                                      type='{}::{}'.format(str(kOperator.getExtension()), str(solverTypeName)),
                                                       extDep=kOperator.getExtension())
 
                 pm.FabricCanvasConnect(mayaNode=canvasNode,

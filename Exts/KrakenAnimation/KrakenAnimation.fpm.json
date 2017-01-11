@@ -12,5 +12,6 @@
     "Clips/Alembic/KrakenAbcClip.kl",
     "Clips/Containers/KrakenClipStack.kl",
     "Clips/Procedural/KrakenRotationWaveClip.kl"
-  ]
+  ],
+  "autoNamespace": true
 }
