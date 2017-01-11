@@ -1,4 +1,3 @@
-// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
   "metadata" : {
@@ -90,5 +89,185 @@
 dfgEntry {
   solve2BoneIK(bone0Length, bone1Length, rootPosition, upVPosition, goalPosition, bone0Xfo, bone1Xfo);
 }
+",
+  "requiredPresets" : {
+    "Kraken.Exts.Utils.Solve2BoneIK" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+        "uiTooltip" : "Supported types:\n  bone0Length: Scalar\n  bone1Length: Scalar\n  rootPosition: Vec3\n  upVPosition: Vec3\n  goalPosition: Vec3\n  bone0Xfo: Xfo\n  bone1Xfo: Xfo\n"
+        },
+      "title" : "Solve2BoneIK",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "bone0Length",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "bone1Length",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "rootPosition",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "upVPosition",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "goalPosition",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "bone0Xfo",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "bone1Xfo",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Xfo"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "1864265C204A62397739D6EBA6A4AA97",
+      "code" : "require Kraken;
+
+dfgEntry {
+  solve2BoneIK(bone0Length, bone1Length, rootPosition, upVPosition, goalPosition, bone0Xfo, bone1Xfo);
+}
 "
+      }
+    },
+  "args" : [
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Scalar",
+      "value" : 0
+      },
+    {
+      "type" : "Vec3",
+      "value" : {
+        "x" : 0,
+        "y" : 0,
+        "z" : 0
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Vec3",
+      "value" : {
+        "x" : 0,
+        "y" : 0,
+        "z" : 0
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Vec3",
+      "value" : {
+        "x" : 0,
+        "y" : 0,
+        "z" : 0
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Xfo",
+      "value" : {
+        "ori" : {
+          "v" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          "w" : 1
+          },
+        "tr" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0
+          },
+        "sc" : {
+          "x" : 1,
+          "y" : 1,
+          "z" : 1
+          }
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "Xfo",
+      "value" : {
+        "ori" : {
+          "v" : {
+            "x" : 0,
+            "y" : 0,
+            "z" : 0
+            },
+          "w" : 1
+          },
+        "tr" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0
+          },
+        "sc" : {
+          "x" : 1,
+          "y" : 1,
+          "z" : 1
+          }
+        },
+      "ext" : "Math"
+      }
+    ]
   }

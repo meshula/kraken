@@ -214,7 +214,7 @@ function Xfo[] solveNBoneIKWithUpVector(
 
 // 'normalizes' Integer so that it returns 1 or -1 respectively if it matches the Input Value or it's negative value.
 /// \dfgPresetOmit
-function SInt8 SInt8.normalize(SInt8 v) {
+function SInt8 SInt8_normalize(SInt8 this, SInt8 v) {
   if (this == v) {
     return SInt8(1);
   } else if (this == -v) {
@@ -237,7 +237,7 @@ function SInt8 SInt8.normalize(SInt8 v) {
 /// \dfgPresetHeaderColor Color(42, 94, 102)
 /// \dfgPresetTextColor Color(168, 229, 240)
 /// \dfgPresetFolder Utils
-function Vec3 Quat.getAxis(in UInt32 axisIndex)
+function Vec3 Quat_getAxis(in Quat this, in UInt32 axisIndex)
 {
   switch (axisIndex)
   {
@@ -264,10 +264,12 @@ function Vec3 Quat.getAxis(in UInt32 axisIndex)
 /// \dfgPresetHeaderColor Color(42, 94, 102)
 /// \dfgPresetTextColor Color(168, 229, 240)
 /// \dfgPresetFolder Utils
-function Mat33.fromXYZ!(SInt8 x, SInt8 y, SInt8 z) {
-  this.row0 = Vec3(x.normalize(1),x.normalize(2),x.normalize(3));
-  this.row1 = Vec3(y.normalize(1),y.normalize(2),y.normalize(3));
-  this.row2 = Vec3(z.normalize(1),z.normalize(2),z.normalize(3));
+function Mat33 Mat33_fromXYZ(SInt8 x, SInt8 y, SInt8 z) {
+  Mat33 this;
+  this.row0 = Vec3(SInt8_normalize(x, 1),SInt8_normalize(x, 2),SInt8_normalize(x, 3));
+  this.row1 = Vec3(SInt8_normalize(y, 1),SInt8_normalize(y, 2),SInt8_normalize(y, 3));
+  this.row2 = Vec3(SInt8_normalize(z, 1),SInt8_normalize(z, 2),SInt8_normalize(z, 3));
+  return this;
 }
 
 /// \dfgPresetTitle Mat44Align
@@ -275,13 +277,13 @@ function Mat33.fromXYZ!(SInt8 x, SInt8 y, SInt8 z) {
 /// \dfgPresetHeaderColor Color(42, 94, 102)
 /// \dfgPresetTextColor Color(168, 229, 240)
 /// \dfgPresetFolder Utils
-function Mat44.align!(SInt8 x, SInt8 y, SInt8 z)
+function Mat44 Mat44_align(Mat44 this, SInt8 x, SInt8 y, SInt8 z)
 {
   Mat33 mat33ori;
-  mat33ori.fromXYZ(x, y, z);
+  mat33ori = Mat33_fromXYZ(x, y, z);
   Mat44 mat44ori;
   mat44ori.setFromMat33(mat33ori);
-  this = this*mat44ori;
+  return this*mat44ori;
 }
 
 /// \dfgPresetTitle XfoAlign
@@ -289,11 +291,13 @@ function Mat44.align!(SInt8 x, SInt8 y, SInt8 z)
 /// \dfgPresetHeaderColor Color(42, 94, 102)
 /// \dfgPresetTextColor Color(168, 229, 240)
 /// \dfgPresetFolder Utils
-function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
+function Xfo Xfo_align(Xfo this, SInt8 x, SInt8 y, SInt8 z)
 {
   Mat44 m = this.toMat44();
-  m.align(x, y, z);
-  this.setFromMat44(m);
+  m = Mat44_align(m, x, y, z);
+  Xfo result;
+  result.setFromMat44(m);
+  return result;
 }
 
 /// \dfgPresetTitle QuatAlign
@@ -301,39 +305,10 @@ function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
 /// \dfgPresetHeaderColor Color(42, 94, 102)
 /// \dfgPresetTextColor Color(168, 229, 240)
 /// \dfgPresetFolder Utils
-function Quat.align!(SInt8 x, SInt8 y, SInt8 z)
+function Quat Quat_align(Quat this, SInt8 x, SInt8 y, SInt8 z)
 {
-  Mat33 mat33ori;
-  mat33ori.fromXYZ(x, y, z);
+  Mat33 mat33ori = Mat33_fromXYZ(x, y, z);
   Quat quatori;
   quatori.setFromMat33(mat33ori);
-  this = this*quatori;
+  return this*quatori;
 }
-
-
-// function Mat44 Mat44.align(SInt8 x, SInt8 y, SInt8 z)
-// {
-//   Mat33 mat33ori;
-//   mat33ori.fromXYZ(x, y, z);
-//   Mat44 mat44ori;
-//   mat44ori.setFromMat33(mat33ori);
-//   return mat44ori;
-// }
-
-// function Xfo Xfo.align(SInt8 x, SInt8 y, SInt8 z)
-// {
-//   Mat44 m = this.toMat44();
-//   m.align(x, y, z);
-//   Xfo outXfo = setFromMat44(m);
-//   return outXfo;
-// }
-
-// function Mat44.align!(SInt8 x, SInt8 y, SInt8 z)
-// {
-//   this = Mat44.align(x, y,  z);
-// }
-
-// function Xfo.align!(SInt8 x, SInt8 y, SInt8 z)
-// {
-//   this = Xfo.align(x, y,  z);
-// }

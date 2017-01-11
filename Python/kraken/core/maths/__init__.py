@@ -11,29 +11,7 @@ from mat33 import Mat33
 from mat44 import Mat44
 from rotation_order import RotationOrder
 from color import Color
-
-
-PI = 3.141592653589793
-DEG_TO_RAD = 0.017453292519943295
-RAD_TO_DEG = 57.29577951308232
-
-AXIS_NAME_TO_TUPLE_MAP = {
-    'POSX': (1, 0, 0),
-    'POSY': (0, 1, 0),
-    'POSZ': (0, 0, 1),
-    'NEGX': (-1, 0, 0),
-    'NEGY': (0, -1, 0),
-    'NEGZ': (0, 0, -1)
-}
-
-AXIS_NAME_TO_INT_MAP = {
-    'POSX': 0,
-    'POSY': 1,
-    'POSZ': 2,
-    'NEGX': 3,
-    'NEGY': 4,
-    'NEGZ': 5
-}
+from constants import DEG_TO_RAD, RAD_TO_DEG, PI
 
 
 def Math_radToDeg(val):

@@ -31,6 +31,27 @@ from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 logger = getLogger('kraken')
 logger.setLevel(logging.INFO)
 
+# Rotation order remapping
+# Max's enums don't map directly to the Fabric rotation orders
+#
+# Fabric | Max
+# ---------------
+# 0 ZYX  | 6 ZYX
+# 1 XZY  | 2 XZY
+# 2 YXZ  | 4 YXZ
+# 3 YZX  | 3 YZX
+# 4 XYZ  | 1 XYZ
+# 5 ZXY  | 5 ZXY
+
+ROT_ORDER_REMAP = {
+    0: 6,
+    1: 2,
+    2: 4,
+    3: 3,
+    4: 1,
+    5: 5
+}
+
 
 class Builder(Builder):
     """Builder object for building Kraken objects in Maya."""
@@ -560,7 +581,7 @@ class Builder(Builder):
             'padding': '\t\t\t',
             'paramName': kAttribute.getName(),
             'initValue': str(kAttribute.getValue()).lower(),
-            'enabled': str(not kAttribute.getLock()).lower(),
+            'enabled': "true",  # str(not kAttribute.getLock()).lower(),
             'minRange': kAttribute.getMin(),
             'maxRange': kAttribute.getMax()
         }
@@ -2014,13 +2035,58 @@ class Builder(Builder):
         return True
 
     # ==================
-    # Parameter Methods
+    # Attribute Methods
     # ==================
-    def lockParameters(self, kSceneItem):
-        """Locks flagged SRT parameters.
+    def lockAttribute(self, kAttribute):
+        """Locks attributes.
 
         Args:
-            kSceneItem (Object): Kraken object to lock the SRT parameters on.
+            kAttribute (object): kraken attributes to lock.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        dccSceneItem = self.getDCCSceneItem(kAttribute)
+
+        if kAttribute.getParent().getName() == 'implicitAttrGrp':
+            return False
+
+        parentDCCSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+        parentObject3D = kAttribute.getParent().getParent()
+        parentAttrGroup = kAttribute.getParent()
+
+        MaxPlus.SelectionManager.ClearNodeSelection()
+        parentDCCSceneItem.Select()
+
+        rt.execute('targetObj = selection[1]')
+        customAttr = getattr(rt.targetObj, kAttribute.getParent().getName(), None)
+
+        if customAttr is None:
+            raise AttributeError('Could not find Attribute Group: {0} on {1}'.format(parentAttrGroup.getName(), parentObject3D.getName()))
+
+        # Get Attribute
+        dataDef = rt.CustAttributes.getDef(customAttr)
+        defSource = dataDef.source
+        defLines = defSource.splitlines()
+        endParamIndex = defLines.index('            -- Param Def End')
+        endRolloutIndex = defLines.index('            -- Rollout Def End')
+
+        # TODO: INSERT CODE TO LOCK ATTRIBUTE HERE
+
+        # newDef = '\n'.join(defLines)
+        # rt.CustAttributes.redefine(dataDef, newDef)
+
+        parentDCCSceneItem.Deselect()
+
+        return True
+
+    def lockTransformAttrs(self, kSceneItem):
+        """Locks flagged SRT attributes.
+
+        Args:
+            kSceneItem (Object): Kraken object to lock the SRT attributes on.
 
         Return:
             bool: True if successful.
@@ -2042,7 +2108,6 @@ class Builder(Builder):
         }
 
         locks = []
-
 
         # Lock Translation
         if kSceneItem.testFlag("lockXTranslation") is True:
@@ -2178,16 +2243,7 @@ class Builder(Builder):
 
         dccSceneItem.SetWorldTM(mat3)
 
-        rotOrderRemap = {
-                0: 1,
-                1: 3,
-                2: 5,
-                3: 2,
-                4: 6,
-                5: 4
-            }
-
-        order = rotOrderRemap[kSceneItem.ro.order]
+        order = ROT_ORDER_REMAP[kSceneItem.ro.order]
 
         dccSceneItem.Select()
         MaxPlus.Core.EvalMAXScript('tgtObj = selection[1]')
