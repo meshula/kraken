@@ -1,6 +1,7 @@
 {
   "objectType" : "Graph",
   "title" : "MyRigAttr",
+  "presetGUID" : "559826EDC71CB98CFA74ED05F31F2A85",
   "ports" : [
     {
       "objectType" : "Port",

@@ -6,7 +6,8 @@ Control - Base Control.
 """
 
 from kraken.core.configs.config import Config
-from kraken.core.maths import AXIS_NAME_TO_TUPLE_MAP, Euler, Quat, Vec3, Xfo
+from kraken.core.maths.constants import AXIS_NAME_TO_TUPLE_MAP
+from kraken.core.maths import Euler, Quat, Vec3, Xfo
 from kraken.core.maths import Math_degToRad
 from kraken.core.objects.curve import Curve
 from kraken.core.objects.ctrlSpace import CtrlSpace

@@ -5,7 +5,7 @@
     "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
     "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
     },
-  "title" : "NeckGuideSolver",
+  "title" : "PoseConstraintSolver",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -30,23 +30,23 @@
       },
     {
       "objectType" : "ExecPort",
-      "name" : "sources",
+      "name" : "constrainer",
       "nodePortType" : "Out",
       "execPortType" : "In",
-      "typeSpec" : "Mat44[]"
+      "typeSpec" : "Mat44"
       },
     {
       "objectType" : "ExecPort",
-      "name" : "targets",
+      "name" : "constrainee",
       "nodePortType" : "In",
       "execPortType" : "Out",
-      "typeSpec" : "Mat44[]"
+      "typeSpec" : "Mat44"
       }
     ],
   "extDeps" : {
     "Kraken" : "*"
     },
-  "presetGUID" : "C91879087F12302626F799FC9D490A15",
+  "presetGUID" : "7717A6116CE83FCFE013C44388CBBAE4",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -58,7 +58,7 @@
           "nodePortType" : "IO"
           }
         ],
-      "dataType" : "NeckGuideSolver",
+      "dataType" : "PoseConstraintSolver",
       "extDep" : "Kraken:*"
       },
     {
@@ -66,7 +66,7 @@
       "metadata" : {
         "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
         },
-      "name" : "NeckGuideSolver_Constructor",
+      "name" : "PoseConstraintSolver_Constructor",
       "ports" : [
         {
           "objectType" : "InstPort",
@@ -79,15 +79,15 @@
           "nodePortType" : "Out"
           }
         ],
-      "executable" : "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Constructor",
-      "presetGUID" : "B6CFE899071BFAAE3992E1E92A04A3AE"
+      "executable" : "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Constructor",
+      "presetGUID" : "B8E7E0C67E2E488AB391C559EFACA099"
       },
     {
       "objectType" : "Inst",
       "metadata" : {
         "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
         },
-      "name" : "NeckGuideSolver_Solve",
+      "name" : "PoseConstraintSolver_Solve",
       "ports" : [
         {
           "objectType" : "InstPort",
@@ -111,51 +111,51 @@
           },
         {
           "objectType" : "InstPort",
-          "name" : "sources",
+          "name" : "constrainer",
           "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
-          "name" : "targets",
+          "name" : "constrainee",
           "nodePortType" : "IO"
           }
         ],
-      "executable" : "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Solve",
-      "presetGUID" : "9B9087CD72D8F83637EDC428FC3A9A47"
+      "executable" : "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Solve",
+      "presetGUID" : "48177F48BFB4A2F74E0EBEB31FE5D4AC"
       }
     ],
   "connections" : {
     "drawDebug" : [
-      "NeckGuideSolver_Solve.drawDebug"
+      "PoseConstraintSolver_Solve.drawDebug"
       ],
     "rigScale" : [
-      "NeckGuideSolver_Solve.rigScale"
+      "PoseConstraintSolver_Solve.rigScale"
       ],
-    "sources" : [
-      "NeckGuideSolver_Solve.sources"
+    "constrainer" : [
+      "PoseConstraintSolver_Solve.constrainer"
       ],
     "solver.value" : [
-      "NeckGuideSolver_Solve.this"
+      "PoseConstraintSolver_Solve.this"
       ],
-    "NeckGuideSolver_Constructor.result" : [
+    "PoseConstraintSolver_Constructor.result" : [
       "solver.value"
       ],
-    "NeckGuideSolver_Solve.this" : [
+    "PoseConstraintSolver_Solve.this" : [
       "exec"
       ],
-    "NeckGuideSolver_Solve.targets" : [
-      "targets"
+    "PoseConstraintSolver_Solve.constrainee" : [
+      "constrainee"
       ]
     },
   "requiredPresets" : {
-    "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver" : {
+    "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver" : {
       "objectType" : "Graph",
       "metadata" : {
         "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
         "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
         "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
         },
-      "title" : "NeckGuideSolver",
+      "title" : "PoseConstraintSolver",
       "ports" : [
         {
           "objectType" : "ExecPort",
@@ -180,23 +180,23 @@
           },
         {
           "objectType" : "ExecPort",
-          "name" : "sources",
+          "name" : "constrainer",
           "nodePortType" : "Out",
           "execPortType" : "In",
-          "typeSpec" : "Mat44[]"
+          "typeSpec" : "Mat44"
           },
         {
           "objectType" : "ExecPort",
-          "name" : "targets",
+          "name" : "constrainee",
           "nodePortType" : "In",
           "execPortType" : "Out",
-          "typeSpec" : "Mat44[]"
+          "typeSpec" : "Mat44"
           }
         ],
       "extDeps" : {
         "Kraken" : "*"
         },
-      "presetGUID" : "C91879087F12302626F799FC9D490A15",
+      "presetGUID" : "7717A6116CE83FCFE013C44388CBBAE4",
       "nodes" : [
         {
           "objectType" : "Var",
@@ -208,7 +208,7 @@
               "nodePortType" : "IO"
               }
             ],
-          "dataType" : "NeckGuideSolver",
+          "dataType" : "PoseConstraintSolver",
           "extDep" : "Kraken:*"
           },
         {
@@ -216,7 +216,7 @@
           "metadata" : {
             "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
             },
-          "name" : "NeckGuideSolver_Constructor",
+          "name" : "PoseConstraintSolver_Constructor",
           "ports" : [
             {
               "objectType" : "InstPort",
@@ -229,15 +229,15 @@
               "nodePortType" : "Out"
               }
             ],
-          "executable" : "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Constructor",
-          "presetGUID" : "B6CFE899071BFAAE3992E1E92A04A3AE"
+          "executable" : "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Constructor",
+          "presetGUID" : "B8E7E0C67E2E488AB391C559EFACA099"
           },
         {
           "objectType" : "Inst",
           "metadata" : {
             "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
             },
-          "name" : "NeckGuideSolver_Solve",
+          "name" : "PoseConstraintSolver_Solve",
           "ports" : [
             {
               "objectType" : "InstPort",
@@ -261,52 +261,52 @@
               },
             {
               "objectType" : "InstPort",
-              "name" : "sources",
+              "name" : "constrainer",
               "nodePortType" : "In"
               },
             {
               "objectType" : "InstPort",
-              "name" : "targets",
+              "name" : "constrainee",
               "nodePortType" : "IO"
               }
             ],
-          "executable" : "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Solve",
-          "presetGUID" : "9B9087CD72D8F83637EDC428FC3A9A47"
+          "executable" : "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Solve",
+          "presetGUID" : "48177F48BFB4A2F74E0EBEB31FE5D4AC"
           }
         ],
       "connections" : {
         "drawDebug" : [
-          "NeckGuideSolver_Solve.drawDebug"
+          "PoseConstraintSolver_Solve.drawDebug"
           ],
         "rigScale" : [
-          "NeckGuideSolver_Solve.rigScale"
+          "PoseConstraintSolver_Solve.rigScale"
           ],
-        "sources" : [
-          "NeckGuideSolver_Solve.sources"
+        "constrainer" : [
+          "PoseConstraintSolver_Solve.constrainer"
           ],
         "solver.value" : [
-          "NeckGuideSolver_Solve.this"
+          "PoseConstraintSolver_Solve.this"
           ],
-        "NeckGuideSolver_Constructor.result" : [
+        "PoseConstraintSolver_Constructor.result" : [
           "solver.value"
           ],
-        "NeckGuideSolver_Solve.this" : [
+        "PoseConstraintSolver_Solve.this" : [
           "exec"
           ],
-        "NeckGuideSolver_Solve.targets" : [
-          "targets"
+        "PoseConstraintSolver_Solve.constrainee" : [
+          "constrainee"
           ]
         }
       },
-    "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Constructor" : {
+    "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {
         "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
         "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
         "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
-        "uiTooltip" : "Supported types:\n  result: NeckGuideSolver\n"
+        "uiTooltip" : "Supported types:\n  result: PoseConstraintSolver\n"
         },
-      "title" : "NeckGuideSolver_Constructor",
+      "title" : "PoseConstraintSolver_Constructor",
       "ports" : [
         {
           "objectType" : "ExecPort",
@@ -320,29 +320,29 @@
           "name" : "result",
           "nodePortType" : "In",
           "execPortType" : "Out",
-          "typeSpec" : "NeckGuideSolver"
+          "typeSpec" : "PoseConstraintSolver"
           }
         ],
       "extDeps" : {
         "Kraken" : "*"
         },
-      "presetGUID" : "B6CFE899071BFAAE3992E1E92A04A3AE",
+      "presetGUID" : "B8E7E0C67E2E488AB391C559EFACA099",
       "code" : "require Kraken;
 
 dfgEntry {
-  result = NeckGuideSolver();
+  result = PoseConstraintSolver();
 }
 "
       },
-    "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Solve" : {
+    "Kraken.Exts.Solvers.PoseConstraintSolver.PoseConstraintSolver_Solve" : {
       "objectType" : "Func",
       "metadata" : {
         "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
         "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
         "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
-        "uiTooltip" : "Supported types:\n  this: NeckGuideSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  sources: Mat44[]\n  targets: Mat44[]\n"
+        "uiTooltip" : "Supported types:\n  this: PoseConstraintSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  constrainer: Mat44\n  constrainee: Mat44\n"
         },
-      "title" : "NeckGuideSolver_Solve",
+      "title" : "PoseConstraintSolver_Solve",
       "ports" : [
         {
           "objectType" : "ExecPort",
@@ -356,7 +356,7 @@ dfgEntry {
           "name" : "this",
           "nodePortType" : "IO",
           "execPortType" : "IO",
-          "typeSpec" : "NeckGuideSolver"
+          "typeSpec" : "PoseConstraintSolver"
           },
         {
           "objectType" : "ExecPort",
@@ -377,30 +377,30 @@ dfgEntry {
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
             },
-          "name" : "sources",
+          "name" : "constrainer",
           "nodePortType" : "Out",
           "execPortType" : "In",
-          "typeSpec" : "Mat44[]"
+          "typeSpec" : "Mat44"
           },
         {
           "objectType" : "ExecPort",
           "metadata" : {
             "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
             },
-          "name" : "targets",
+          "name" : "constrainee",
           "nodePortType" : "IO",
           "execPortType" : "IO",
-          "typeSpec" : "Mat44[]"
+          "typeSpec" : "Mat44"
           }
         ],
       "extDeps" : {
         "Kraken" : "*"
         },
-      "presetGUID" : "9B9087CD72D8F83637EDC428FC3A9A47",
+      "presetGUID" : "48177F48BFB4A2F74E0EBEB31FE5D4AC",
       "code" : "require Kraken;
 
 dfgEntry {
-  this.solve(drawDebug, rigScale, sources, targets);
+  this.solve(drawDebug, rigScale, constrainer, constrainee);
 }
 "
       }
@@ -415,13 +415,63 @@ dfgEntry {
       "value" : 0
       },
     {
-      "type" : "Mat44[]",
-      "value" : [],
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
       "ext" : "Math"
       },
     {
-      "type" : "Mat44[]",
-      "value" : [],
+      "type" : "Mat44",
+      "value" : {
+        "row0" : {
+          "x" : 1,
+          "y" : 0,
+          "z" : 0,
+          "t" : 0
+          },
+        "row1" : {
+          "x" : 0,
+          "y" : 1,
+          "z" : 0,
+          "t" : 0
+          },
+        "row2" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 1,
+          "t" : 0
+          },
+        "row3" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0,
+          "t" : 1
+          }
+        },
       "ext" : "Math"
       }
     ]

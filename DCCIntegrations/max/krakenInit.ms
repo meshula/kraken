@@ -1,10 +1,12 @@
 -- loads Python interpreter if it is not loaded already
 python.Init()
 
--- grab current directory and format to krakenHook.py file
-currFilePath = getFilenamePath ( getThisScriptFilename() )
-krakeEnvScriptPath = currFilePath + "scripts\krakenEnv.py"
-krakeMenuScriptPath = currFilePath + "scripts\krakenMenu.py"
+dotNet.loadAssembly "System"
+env = dotNetClass "system.Environment"
+krakenPath = env.GetEnvironmentVariable "KRAKEN_PATH"
+
+krakeEnvScriptPath = krakenPath + "\DCCIntegrations\max\scripts\krakenEnv.py"
+krakeMenuScriptPath = krakenPath + "\DCCIntegrations\max\scripts\krakenMenu.py"
 
 -- Execute Python startup modules
 python.ExecuteFile krakeEnvScriptPath
