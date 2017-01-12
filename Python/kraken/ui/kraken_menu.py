@@ -5,6 +5,7 @@ import webbrowser
 
 from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 from kraken.ui.preference_editor import PreferenceEditor
+from kraken.core import getVersion
 from kraken.core.kraken_system import KrakenSystem
 from kraken.core.configs.config import Config
 from kraken.log import getLogger
@@ -109,6 +110,8 @@ class KrakenMenu(QtWidgets.QWidget):
         self.krakenWebSiteAction = self.helpMenu.addAction('Kraken Web Site')
         self.krakenDocumentationAction = self.helpMenu.addAction('Kraken Documentation')
         self.fabricForumsAction = self.helpMenu.addAction('Fabric Forums')
+        self.helpMenu.addSeparator()
+        self.aboutKrakenAction = self.helpMenu.addAction('About Kraken')
 
         # Logo
         logoWidget = QtWidgets.QLabel()
@@ -192,6 +195,7 @@ class KrakenMenu(QtWidgets.QWidget):
         self.krakenWebSiteAction.triggered.connect(self.krakenWebSite)
         self.krakenDocumentationAction.triggered.connect(self.krakenDocumentation)
         self.fabricForumsAction.triggered.connect(self.fabricForums)
+        self.aboutKrakenAction.triggered.connect(self.aboutKraken)
 
         # Config Widget
         self.configsWidget.currentIndexChanged.connect(self.setCurrentConfig)
@@ -212,6 +216,12 @@ class KrakenMenu(QtWidgets.QWidget):
     def fabricForums(self):
         webbrowser.open_new_tab('http://forums.fabricengine.com/categories/kraken')
 
+    def aboutKraken(self):
+        aboutMsgBox = QtWidgets.QMessageBox(self)
+        aboutMsgBox.setWindowTitle('About Kraken')
+        aboutMsgBox.setText("You are using Kraken v{}".format(getVersion()))
+        aboutMsgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        aboutMsgBox.exec_()
 
     # ============
     # Preferences
