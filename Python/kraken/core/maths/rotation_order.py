@@ -105,12 +105,12 @@ class RotationOrder(MathObject):
         if type(order) == str:
             newOrder = ROT_ORDER_STR_TO_INT_MAP.get(order, -1)
             if newOrder == -1:
-                print "Invalid rotation order '" + order + "', using default 4 (XYZ)."
+                print "Invalid rotation order string: '" + order + "', using default 4 (XYZ)."
                 newOrder = 4
 
         elif type(order) == int:
-            if order not in ROT_ORDER_INT_TO_STR_MAP.values():
-                print "Invalid rotation order: '" + str(order) + "', using default 4 (XYZ)."
+            if order not in ROT_ORDER_INT_TO_STR_MAP:
+                print "Invalid rotation order index: '" + str(order) + "', using default 4 (XYZ)."
                 newOrder = 4
             else:
                 newOrder = order
