@@ -55,7 +55,7 @@
   "code" : "require Kraken;
 
 dfgEntry {
-  this.align(x, y, z);
+  this = Quat_align(this, x, y, z);
 }
 ",
   "requiredPresets" : {

@@ -55,7 +55,7 @@
   "code" : "require Kraken;
 
 dfgEntry {
-  this.align(x, y, z);
+  this = Xfo_align(xfo, x, y, z);
 }
 ",
   "requiredPresets" : {
