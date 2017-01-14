@@ -1,6 +1,6 @@
 from kraken.core.maths import Vec3, Vec3, Euler, Quat, Xfo
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import *
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -293,7 +293,7 @@ class OSSMainComponentRig(OSSMainComponent):
         else:
             self.mainCtrl.setShape(self.mainCtrlShape) #Why does this not work for guide controls?
 
-        self.mainCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.mainCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later
         self.mainCtrl.setColor("lightsalmon")
         self.mainCtrl.lockScale(x=True, y=True, z=True)
         self.mainCtrlSpace = self.mainCtrl.insertCtrlSpace()
@@ -310,7 +310,7 @@ class OSSMainComponentRig(OSSMainComponent):
         else:
             self.offsetCtrl = Transform('cog', parent=self.mainCtrl)
 
-        self.offsetCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.offsetCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
         self.offsetCtrlSpace = self.insertParentSpace(self.offsetCtrl)
 
@@ -325,7 +325,7 @@ class OSSMainComponentRig(OSSMainComponent):
             self.rootCtrl = Transform('root', parent=self.mainCtrl)
 
 
-        self.rootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.rootCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later
         self.rootCtrl.lockScale(x=True, y=True, z=True)
         rootMotionBlendAttrGrp = AttributeGroup("______", parent=self.rootCtrl)
         self.rootMotionBlendDefault = data['rootMotionBlendDefault']
@@ -335,7 +335,7 @@ class OSSMainComponentRig(OSSMainComponent):
 
         # Just for visibility, so animators can see where joint control is
         self.rootMotionCtrl = Control('root_motion', shape='arrow', parent=self.ctrlCmpGrp)
-        self.rootMotionCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XYZ"])  #Match root joint so Euler values are same for debugging
+        self.rootMotionCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XYZ"])  #Match root joint so Euler values are same for debugging
         self.rootMotionCtrl.setColor("gray")
         self.rootMotionCtrl.lockTranslation(x=True, y=True, z=True)
         self.rootMotionCtrl.lockRotation(x=True, y=True, z=True)
@@ -347,7 +347,7 @@ class OSSMainComponentRig(OSSMainComponent):
         # Just for visibility, so animators can see where auto root is
         self.autoRootCtrl = Control('auto_root', shape='arrow', parent=self.mainCtrl)
 
-        self.autoRootCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #MUST be ZXY to match aim in Z axis and Y-up from COG ori constraint
+        self.autoRootCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #MUST be ZXY to match aim in Z axis and Y-up from COG ori constraint
         self.autoRootCtrl.setColor("gray")
         self.autoRootCtrl.lockTranslation(x=True, y=True, z=True)
         self.autoRootCtrl.lockRotation(x=True, y=True, z=True)
@@ -373,7 +373,7 @@ class OSSMainComponentRig(OSSMainComponent):
             self.cogCtrl = Transform('cog', parent=self.offsetCtrl)
 
 
-        self.cogCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later
+        self.cogCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later
         self.cogCtrlSpace = self.insertParentSpace(self.cogCtrl)
         self.cog_root_offset = Transform('cog_root_offset', parent=self.cogCtrl)
 

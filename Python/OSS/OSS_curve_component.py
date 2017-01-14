@@ -2,7 +2,7 @@
 import math, re
 from kraken.core.maths import Xfo, Vec3
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import ROT_ORDER_STR_TO_INT_MAP
 
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute

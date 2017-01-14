@@ -4,6 +4,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.operators.kl_operator import KLOperator
 
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
+from kraken.core.objects.attributes.string_attribute import StringAttribute
 from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.joint import Joint
@@ -11,6 +12,8 @@ from kraken.core.objects.locator import Locator
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
 from kraken.core.maths import *
+from kraken.core.maths.constants import *
+
 
 
 
@@ -34,6 +37,7 @@ class OSS_Component(BaseExampleComponent):
             self.singleDeformerGroupAttr = BoolAttribute('SingleDeformerGroup', value=True, parent=self.guideSettingsAttrGrp)
             self.mocapAttr = BoolAttribute('mocap', value=False, parent=self.guideSettingsAttrGrp)
             self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
+            self.partitionNames = StringAttribute('partitionNames', value="", parent=self.guideSettingsAttrGrp)
         else: # Rig
             self.deformersLayer = self.getOrCreateLayer('deformers')
             self.deformersParent = self.deformersLayer
@@ -168,8 +172,12 @@ class OSS_Component(BaseExampleComponent):
         align = Vec3()
 
         aim_axis = AXIS_NAME_TO_TUPLE_MAP[aimAxisStr]
+        aim_vec = Vec3(aim_axis[0], aim_axis[1], aim_axis[2])
+
         side_axis = AXIS_NAME_TO_TUPLE_MAP[sideAxisStr]
-        nv = AXIS_NAME_TO_VEC3_MAP[aimAxisStr].cross(AXIS_NAME_TO_VEC3_MAP[sideAxisStr])
+        side_vec = Vec3(side_axis[0], side_axis[1], side_axis[2])
+
+        nv = aim_vec.cross(side_vec)
         norm_axis = [nv.x, nv.y, nv.z]
 
         for i in [1, -1]:
@@ -410,6 +418,6 @@ class OSS_Component(BaseExampleComponent):
         self.attachCtrl.lockTranslation(x=True, y=True, z=True)
         self.attachCtrl.lockScale(x=True, y=True, z=True)
         self.attachCtrl.lockRotation(x=True, y=True, z=True)
-        
+
         return self.attachCtrl
 

@@ -1,7 +1,7 @@
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import *
 
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
@@ -234,7 +234,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # hips
         self.hipsCtrl = FKControl('hips', parent=self.ctrlCmpGrp, shape="squarePointed")
-        self.hipsCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.hipsCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.hipsCtrl.rotatePoints(0, -90.0, 0)
         self.hipsCtrl.scalePoints(Vec3(4.5, 3.0, 3.0))
         self.hipsCtrlSpace = self.hipsCtrl.insertCtrlSpace()
@@ -247,7 +247,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # Torso
         self.torsoCtrl = FKControl('torso', parent=self.ctrlCmpGrp, shape="squarePointed")
-        self.torsoCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.torsoCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.torsoCtrl.rotatePoints(0, -90.0, 0)
         self.torsoCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
         self.torsoCtrlSpace = self.torsoCtrl.insertCtrlSpace()
@@ -255,14 +255,14 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # Chest
         self.chestCtrl = FKControl('chest', parent=self.torsoCtrl, shape="squarePointed")
-        self.chestCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.chestCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.chestCtrl.rotatePoints(0, -90.0, 0)
         self.chestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
         self.chestCtrlSpace = self.chestCtrl.insertCtrlSpace()
 
         # UpChest
         self.upChestCtrl = FKControl('upChest', parent=self.chestCtrl, shape="squarePointed")
-        self.upChestCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.upChestCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.upChestCtrl.rotatePoints(0, -90.0, 0)
         self.upChestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
         self.upChestCtrlSpace = self.upChestCtrl.insertCtrlSpace()

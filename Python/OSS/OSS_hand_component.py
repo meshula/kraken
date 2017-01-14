@@ -1,9 +1,9 @@
 import re
 
-from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP
+from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import *
 
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
@@ -391,19 +391,19 @@ class OSSHandComponentRig(OSSHandComponent):
 
         # IK Handle
         self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="jack")
-        self.handleCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later careful when combining with foot!
+        self.handleCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later careful when combining with foot!
         self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace(name="hand_ik") # To avoid clashes
         self.handleIKCtrlSpace = CtrlSpace('handIK', parent=self.handleCtrl)
 
         # FK Hand
         self.handCtrl = FKControl('hand', parent=self.ctrlCmpGrp, shape="cube")
-        self.handCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.handCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.handCtrl.alignOnXAxis()
         self.handCtrlSpace = self.handCtrl.insertCtrlSpace(name="hand_fk")
 
         # FK palm
         self.palmCtrl = FKControl('palm', parent=self.handCtrl, shape="cube")
-        self.palmCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.palmCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.palmCtrl.alignOnXAxis()
         self.palmCtrlSpace = self.palmCtrl.insertCtrlSpace()
 
@@ -528,7 +528,7 @@ class OSSHandComponentRig(OSSHandComponent):
                 if segment == "end":
                     continue  # don't create control for end (but we need it to loop through control positions correctly)
                 digiSegCtrl = FKControl(digitName+"_"+segment, parent=parent, shape="square")
-                digiSegCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
+                digiSegCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XZY"])  #Set with component settings later
                 digiSegCtrl.rotatePoints(0,0,90)
                 digiSegCtrl.scalePoints(globalScale)
                 digiSegCtrls.append(digiSegCtrl)
