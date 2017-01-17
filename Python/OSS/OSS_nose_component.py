@@ -374,6 +374,8 @@ class OSSNoseComponentRig(OSSNoseComponent):
         self.noseTopOutputTgt.constrainTo(self.noseTipCtrl)
         self.noseTipOutputTgt.constrainTo(self.noseTipCtrl)
 
+        self.tagJointsWithPartNames([self.getDecoratedName()])
+
 
 
 from kraken.core.kraken_system import KrakenSystem

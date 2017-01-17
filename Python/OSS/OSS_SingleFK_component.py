@@ -277,6 +277,8 @@ class OSSSingleFKRig(OSSSingleFK):
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
         self.SingleFKCtrl.scalePoints(globalScale)
 
+        self.tagJointsWithPartNames([self.getDecoratedName()])
+
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()

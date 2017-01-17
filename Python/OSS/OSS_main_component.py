@@ -544,6 +544,8 @@ class OSSMainComponentRig(OSSMainComponent):
         self.offsetOutputTgtConstraint.evaluate()
         self.cogOutputTgtConstraint.evaluate()
 
+        self.tagJointsWithPartNames([self.getDecoratedName()])
+
 
 VIS_SHAPE = [
  {'closed': False,

@@ -6,7 +6,8 @@ struct KrakenClipContext {
   Float64 time;
   Float64 delta;
   SInt32 maxEvalID;
-  Mat44 matrices[300];
+  Mat44 poseJoints[300];  // Incoming ws pose of skeleton
+  Mat44 matrices[16];
   Float32 channels[16];
 };
 

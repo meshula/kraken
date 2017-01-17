@@ -19,7 +19,7 @@ interface KrakenKLRig {
   //KrakenObject3D[] getAllObject3Ds();
   Xfo[] getAllXfos();
   String[] getAllNames();
-
+  String[] getPartNames();
   String[] getShapeNames();
   getShapeWeights(io Float32 weights<>);
 

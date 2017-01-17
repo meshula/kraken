@@ -234,6 +234,8 @@ class OSSTongueRig(OSSTongue):
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
         self.tongueCtrl.scalePoints(globalScale)
 
+        self.tagJointsWithPartNames([self.getDecoratedName()])
+
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()

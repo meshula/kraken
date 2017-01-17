@@ -322,7 +322,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.useOtherIKGoal = bool(data['useOtherIKGoal'])
         self.mocap = bool(data["mocap"])
 
-        self.partitionNames = data.get('partitionNames', "").strip()
+        self.partNames = data.get('partNames', "").strip()
 
         globalScale = data['globalComponentCtrlSize']
         self.globalScaleVec =Vec3(globalScale, globalScale, globalScale)
@@ -850,14 +850,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.evalOperators()
 
-        if self.partitionNames:
-            names = self.partitionNames.split()
-            for joint in self.getHierarchyNodes(classType="Joint", inheritedClass=True):
-                partitionNames = joint.getMetaDataItem("partitionNames") or []
-                for name in names:
-                    if name not in partitionNames:
-                        partitionNames.append(name)
-                joint.setMetaData("partitionNames", partitionNames)
+        self.tagJointsWithPartNames([self.getDecoratedName()])
 
 
 

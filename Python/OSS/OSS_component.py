@@ -37,7 +37,7 @@ class OSS_Component(BaseExampleComponent):
             self.singleDeformerGroupAttr = BoolAttribute('SingleDeformerGroup', value=True, parent=self.guideSettingsAttrGrp)
             self.mocapAttr = BoolAttribute('mocap', value=False, parent=self.guideSettingsAttrGrp)
             self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
-            self.partitionNames = StringAttribute('partitionNames', value="", parent=self.guideSettingsAttrGrp)
+            self.partNames = StringAttribute('partNames', value="", parent=self.guideSettingsAttrGrp)
         else: # Rig
             self.deformersLayer = self.getOrCreateLayer('deformers')
             self.deformersParent = self.deformersLayer
@@ -421,3 +421,14 @@ class OSS_Component(BaseExampleComponent):
 
         return self.attachCtrl
 
+
+    def tagJointsWithPartNames(self, partNames):
+
+        joints = self.deformersParent.getDescendents(classType="Joint", inheritedClass=True)
+        joints = [joint for joint in joints if joint.getComponent() == self]
+        for joint in joints:
+            names = joint.getMetaDataItem("partNames") or []
+            for partName in partNames:
+                if partName not in names:
+                    names.append(partName)
+            joint.setMetaDataItem("partNames", names)

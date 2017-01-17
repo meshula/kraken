@@ -623,6 +623,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.upChestMocapCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], 1.0, data['globalComponentCtrlSize']))
 
 
+        self.tagJointsWithPartNames([self.getDecoratedName()])
+
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
 ks.registerComponent(OSSSpineComponentGuide)

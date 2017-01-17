@@ -373,6 +373,8 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         self.shldrOutputTgtConstraint.evaluate()
         self.shldrEndOutputTgtConstraint.evaluate()
 
+        self.tagJointsWithPartNames([self.getDecoratedName()])
+
 
 
 from kraken.core.kraken_system import KrakenSystem

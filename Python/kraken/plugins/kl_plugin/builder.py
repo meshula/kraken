@@ -409,7 +409,7 @@ class Builder(Builder):
                     valueStr = 'Xfo(Vec3(%.4g, %.4g, %.4g), Quat(%.4g, %.4g, %.4g, %.4g), Vec3(%.4g, %.4g, %.4g))' % (
                         value.tr.x, value.tr.y, value.tr.z,
                         value.ori.v.x, value.ori.v.y, value.ori.v.z, value.ori.w,
-                        value.sc.x, value.sc.y, value.sc.z                      
+                        value.sc.x, value.sc.y, value.sc.z
                         )
                     if argDataType.startswith('Mat44'):
                         code += ["this.%s = %s.toMat44();" % (argMember, valueStr)]
@@ -632,6 +632,7 @@ class Builder(Builder):
         kl += [""]
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  UInt64 evalVersion;"]
+        kl += ["  UInt32 solveJointIDs[];"]
         kl += ["  Boolean isItemDirty[%d];" % self.__klMaxUniqueId]
         if self.__profilingFrames > 0:
             kl += ["  SInt32 profilingFrame;"]
@@ -677,9 +678,17 @@ class Builder(Builder):
 
         if self.__profilingFrames > 0:
             kl += ["  {  AutoProfilingEvent visitKLObjectsEvent(\"rig pose solve\");"]
+        kl += ["    if (this.solveJointIDs.size() == 0) {  //If we haven't set any solveJointIDs, solve all by default"]
 
         for krkDef in self.__krkDeformers:
-            kl += ["    this.%s();" % (self.getSolveMethodName(krkDef['sceneItem']))]
+            kl += ["       this.%s();" % (self.getSolveMethodName(krkDef['sceneItem']))]
+
+        kl += ["    } else {"]
+        kl += ["        for (Count i=0; i < this.solveJointIDs.size(); i++)"]
+        kl += ["        {"]
+        kl += ["          this.solveItem(this.solveJointIDs[i]);"]
+        kl += ["        }"]
+        kl += ["    }"]
 
         if self.__profilingFrames > 0:
             kl += ["  }"]
@@ -974,6 +983,31 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
+        kl += ["inline function String[] %s.getPartNames() {" % self.getKLExtensionName()]
+        kl += ["  String result[](%d);" % len(self.__krkParts.keys())]
+        for i, part in enumerate(self.__krkParts.keys()):
+            kl += ["  result[%d] = \"%s\";" % (i, part)]
+        kl += ["  return result;"]
+        kl += ["}", ""]
+
+        kl += ["inline function String[] %s.getPartItemNames(in String partNames[]) {" % self.getKLExtensionName()]
+        kl += ["  String result[];"]
+        kl += ["  report(\"getPartItemNames:\" + partNames);"]
+        kl += ["  for(Count i=0; i<partNames.size(); i++) {"]
+        kl += ["    switch (partNames[i]) {"]
+        for part, items in self.__krkParts.iteritems():
+            kl += ["       case \"%s\": {" % part]
+            for item in items:
+                kl += ["         result.push(\"%s\");" % item]
+            kl += ["         break;"]
+            kl += ["       }"]
+        kl += ["     }"]
+        kl += ["  }"]
+        kl += ["  return result;"]
+        kl += ["}", ""]
+
+
+
         # To have scalar attributes drive blendShapes in the KL build,
         # assign a "blendShapeName" metaData string to the driver attribute and the kl builder will pick it up
         if self.__krkShapes:
@@ -1014,6 +1048,31 @@ class Builder(Builder):
           kl += ["  KrakenControl result<>(this._KrakenControl);"]
         kl += ["  return result;"]
         kl += ["}", ""]
+
+        kl += ["inline function SInt32 %s.getUniqueID(in String name) {" % self.getKLExtensionName()]
+        kl += ["  // Not meant to be fast!"]
+        kl += ["  String allNames[] = this.getAllNames();"]
+        kl += ["  for(Count i=0; i<allNames.size(); i++) {"]
+        kl += ["    if (allNames[i] == name)"]
+        kl += ["      return i;"]
+        kl += ["  }"]
+        kl += ["  return -1;"]
+        kl += ["}", ""]
+
+
+        kl += ["inline function %s.setSolveJointIDsByNames!(in String names[]) {" % self.getKLExtensionName()]
+        kl += ["  // Not meant to be fast!"]
+        kl += ["  this.solveJointIDs.resize(0);"]
+        kl += ["  for(Count i=0; i<names.size(); i++) {"]
+        kl += ["    SInt32 id = this.getUniqueID(names[i]);"]
+        kl += ["    if (id == -1)"]
+        kl += ["        report(\"Warning: KRK_lucy.setSolveJointIDsByNames solveJoint \\\"\"+names[i]+\"\\\" not found in rig.\");"]
+        kl += ["    else"]
+        kl += ["        this.solveJointIDs.push(id);"]
+        kl += ["  }"]
+        kl += ["  report(\"this.solveJointIDs: \"+this.solveJointIDs);"]
+        kl += ["}", ""]
+
 
         kl += ["inline function Xfo[] %s.getControlXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(controls)]
@@ -1445,6 +1504,13 @@ class Builder(Builder):
             parent = kSceneItem.getParent()
             if not parent is None:
                 obj['parent'] = parent.getDecoratedPath()
+
+        partNames = kSceneItem.getMetaDataItem("partNames") or []
+        for partName in partNames:
+            if partName not in self.__krkParts.keys():
+                self.__krkParts[partName] = [buildName]
+            else:
+                self.__krkParts[partName] += [buildName]
 
         self.__klObjects.append(obj)
         return True
@@ -2008,6 +2074,7 @@ class Builder(Builder):
         self.__krkAttributes = {}
         self.__krkDeformers = []
         self.__krkShapes = []
+        self.__krkParts = {}
 
         return True
 

@@ -677,6 +677,7 @@ class OSSHandComponentRig(OSSHandComponent):
         #HandPlane.scalePointsOnAxis(self.handleCtrl.xfo.tr.subtract(self.palmTipPivotTransform.xfo.tr).length(), "POSZ")
         self.handleCtrl.appendCurveData(HandPlane.getCurveData())
         """
+        self.tagJointsWithPartNames([self.getDecoratedName()])
 
 
 def getDigitNameList(digitNames):

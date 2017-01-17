@@ -635,6 +635,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.headIKCtrl.getVisibilityAttr().connect(self.HeadAlignIkSpaceAttr, lock=True)
         self.headIKUpV.getVisibilityAttr().connect(self.HeadAlignIkSpaceAttr, lock=True)
 
+        self.tagJointsWithPartNames([self.getDecoratedName()])
+
 
 
 

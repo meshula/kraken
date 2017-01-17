@@ -599,6 +599,8 @@ class OSSFaceComponentRig(OSSFaceComponent):
         self.evalOperators()
         self.RemapScalarValueSolverKLOp.evaluate()
 
+        self.tagJointsWithPartNames([self.getDecoratedName()])
+
 
 
 
