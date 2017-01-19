@@ -121,13 +121,15 @@ function KrakenGlueClip.initialize!(io Ref<KrakenKLRig> rig, KrakenClipContext c
 
   //String allNames []   = rig.getAllNames();
   String allJointNames [] = rig.getJointNames();
-  Boolean found = 0;
 
-  for(Count i=0;i<this.controls.size();i++) {
+  report("this.controlJoints.size() = "+this.controlJoints.size());
+  Boolean found = 0;
+  for(Count i=0;i<this.controlJoints.size();i++) {
     for(Count j=0;j<allJointNames.size();j++) {
       // find matching name and establish global id
       if(allJointNames[j] == this.controlJoints[i]) {
         this.controlJointIDs[i] = j;
+        report("  " + this.controlJoints[i] + ": "+ j);
         found = 1;
         break;
       }
@@ -137,12 +139,14 @@ function KrakenGlueClip.initialize!(io Ref<KrakenKLRig> rig, KrakenClipContext c
       report("Error: controlJointID for controlJoint \""+this.controlJoints[i]+"\" not found.");
   }
 
+  report("this.spaceJoints.size() = "+this.spaceJoints.size());
   found = 0;
-  for(Count i=0;i<this.spaces.size();i++) {
+  for(Count i=0;i<this.spaceJoints.size();i++) {
     for(Count j=0;j<allJointNames.size();j++) {
       // find matching name and establish global id
       if(allJointNames[j] == this.spaceJoints[i]) {
         this.spaceJointIDs[i] = j;
+        report("  " + this.spaceJointIDs[i] + ": "+ j);
         found = 1;
         break;
       }
@@ -193,6 +197,31 @@ function KrakenGlueClip.solveConstraints!(io Ref<KrakenKLRig> rig, KrakenClipCon
 
 }
 
+function SInt32[] KrakenGlueClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  for(Count i=0; i<this.controlJointIDs.size(); i++) {
+    if (this.controlJointIDs[i] == -1)
+      continue;
+    result.push(this.controlJointIDs[i]);
+  }
+
+  for(Count i=0; i<this.spaceJointIDs.size(); i++) {
+    if (this.spaceJointIDs[i] == -1)
+      continue;
+    Boolean found = 0;
+    for(Count j=0; j<this.controlJointIDs.size(); j++) {
+        if (this.spaceJointIDs[i] == this.controlJointIDs[j])
+        {
+          found = true;
+          break;
+        }
+    }
+    if (!found)
+      result.push(this.spaceJointIDs[i]);
+  }
+  return result;
+}
 
 
 UInt32 KrakenGlueClip.getChannelCount() {

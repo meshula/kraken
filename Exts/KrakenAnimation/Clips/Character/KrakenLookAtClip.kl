@@ -233,3 +233,9 @@ function KrakenLookAtClip.loadFromJson!(JSONDictValue json) {
     this.defineLookAt(name, target, axis, locked, amount);
   }
 }
+
+function SInt32[] KrakenLookAtClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  return result;
+}
