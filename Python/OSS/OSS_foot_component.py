@@ -730,7 +730,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
         attrs = [attr.getName() for attr in self.handleCtrlAttrGrp._attributes]
 
-        self.tagJointsWithPartNames([self.getDecoratedName()])
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 from kraken.core.kraken_system import KrakenSystem

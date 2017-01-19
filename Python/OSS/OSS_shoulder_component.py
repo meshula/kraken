@@ -373,7 +373,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         self.shldrOutputTgtConstraint.evaluate()
         self.shldrEndOutputTgtConstraint.evaluate()
 
-        self.tagJointsWithPartNames([self.getDecoratedName()])
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 

@@ -1,4 +1,5 @@
 import re
+import collections
 import json
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
@@ -34,7 +35,7 @@ def min_thresh(value, threshold=0.0001):
 
 def export_glue_json(builder, filepath):
 
-    jdict = dict()
+    jdict = collections.OrderedDict()
     jdict["clipType"] = "KrakenGlueClip"
 
     constraint_dict_src = {
@@ -75,7 +76,7 @@ def export_glue_json(builder, filepath):
             constraint_dict_src[fk] = finger_dict
 
 
-    constraint_dict = dict()
+    constraint_dict = collections.OrderedDict()
 
     for ctrl, data in constraint_dict_src.iteritems():
         if "SIDE" in ctrl:
@@ -93,7 +94,10 @@ def export_glue_json(builder, filepath):
         kconstraint.evaluate() #Make sure all leaf nodes are evaluated
 
     def make_constraint(object3D, joint, space=None):
-        constraint = dict()
+        spacestr = " (space = %s)" if space else ""
+        print("    Making glue constraint: object3D[%s] to joint[%s]%s" % (object3D, joint, spacestr))
+
+        constraint = collections.OrderedDict()
         constraint["object3D"] = object3D
         constraint["joint"] = joint
         if space:
@@ -104,27 +108,27 @@ def export_glue_json(builder, filepath):
         else:
             offset = objects[object3D].xfo
 
-        print("\nTTPrint: object3D: %s" % object3D)
-        print("  TTPrint: offset: %s" % offset)
+        #print("\nTTPrint: object3D: %s" % object3D)
+        #print("  TTPrint: offset: %s" % offset)
 
-        constraint["tOffset"] = {
-            "x": min_thresh(offset.tr.x),
-            "y": min_thresh(offset.tr.y),
-            "z": min_thresh(offset.tr.z)
-            }
+        constraint["tOffset"] = collections.OrderedDict([
+            ("x", min_thresh(offset.tr.x)),
+            ("y", min_thresh(offset.tr.y)),
+            ("z", min_thresh(offset.tr.z))
+            ])
         euler = offset.ori.toEuler(objects[object3D].ro)
-        print("  TTPrint: euler: \%s" % euler)
-        constraint["rOffset"] = {
-            "x": min_thresh(Math_radToDeg(euler.x)),
-            "y": min_thresh(Math_radToDeg(euler.y)),
-            "z": min_thresh(Math_radToDeg(euler.z))
-            }
+        #print("  TTPrint: euler: \%s" % euler)
+        constraint["rOffset"] = collections.OrderedDict([
+            ("x", min_thresh(Math_radToDeg(euler.x))),
+            ("y", min_thresh(Math_radToDeg(euler.y))),
+            ("z", min_thresh(Math_radToDeg(euler.z)))
+            ])
         constraint["order"] = objects[object3D].ro.order
-        constraint["sOffset"] = {
-            "x": min_scale(offset.sc.x),
-            "y": min_scale(offset.sc.y),
-            "z": min_scale(offset.sc.z)
-            }
+        constraint["sOffset"] = collections.OrderedDict([
+            ("x", min_scale(offset.sc.x)),
+            ("y", min_scale(offset.sc.y)),
+            ("z", min_scale(offset.sc.z))
+            ])
 
         return constraint
 

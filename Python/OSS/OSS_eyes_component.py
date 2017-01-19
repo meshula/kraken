@@ -522,7 +522,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
         # Eval Operators
         self.evalOperators()
 
-        self.tagJointsWithPartNames([self.getDecoratedName()])
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 def getAnimControlNameList(handleName):

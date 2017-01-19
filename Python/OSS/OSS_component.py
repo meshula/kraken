@@ -37,7 +37,7 @@ class OSS_Component(BaseExampleComponent):
             self.singleDeformerGroupAttr = BoolAttribute('SingleDeformerGroup', value=True, parent=self.guideSettingsAttrGrp)
             self.mocapAttr = BoolAttribute('mocap', value=False, parent=self.guideSettingsAttrGrp)
             self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
-            self.partNames = StringAttribute('partNames', value="", parent=self.guideSettingsAttrGrp)
+            self.tagNamesAttr = StringAttribute('tagNames', value="", parent=self.guideSettingsAttrGrp)
         else: # Rig
             self.deformersLayer = self.getOrCreateLayer('deformers')
             self.deformersParent = self.deformersLayer
@@ -56,6 +56,10 @@ class OSS_Component(BaseExampleComponent):
                 self.defCmpGrp = ComponentGroup(self.getName(), self, parent=self.deformersLayer)
                 self.addItem("defCmpGrp", self.defCmpGrp)
                 self.deformersParent = self.defCmpGrp
+
+        # make tagNames string a list
+        self.tagNames = data.get('tagNames', "").strip().split()
+
 
 
     def convertToStringList(self, inputString):
@@ -422,13 +426,13 @@ class OSS_Component(BaseExampleComponent):
         return self.attachCtrl
 
 
-    def tagJointsWithPartNames(self, partNames):
+    def tagAllComponentJoints(self, tagNames):
+
+        if not hasattr(tagNames, "__iter__"):
+            tagNames = [tagNames]
 
         joints = self.deformersParent.getDescendents(classType="Joint", inheritedClass=True)
         joints = [joint for joint in joints if joint.getComponent() == self]
-        for joint in joints:
-            names = joint.getMetaDataItem("partNames") or []
-            for partName in partNames:
-                if partName not in names:
-                    names.append(partName)
-            joint.setMetaDataItem("partNames", names)
+        for tagName in tagNames:
+            for joint in joints:
+                joint.appendMetaDataListItem("TAGS", tagName)

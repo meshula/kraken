@@ -235,7 +235,7 @@ class OSSTeethRig(OSSTeeth):
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
         self.teethCtrl.scalePoints(globalScale)
 
-        self.tagJointsWithPartNames([self.getDecoratedName()])
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 from kraken.core.kraken_system import KrakenSystem

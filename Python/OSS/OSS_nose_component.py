@@ -374,7 +374,7 @@ class OSSNoseComponentRig(OSSNoseComponent):
         self.noseTopOutputTgt.constrainTo(self.noseTipCtrl)
         self.noseTipOutputTgt.constrainTo(self.noseTipCtrl)
 
-        self.tagJointsWithPartNames([self.getDecoratedName()])
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 

@@ -322,7 +322,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.useOtherIKGoal = bool(data['useOtherIKGoal'])
         self.mocap = bool(data["mocap"])
 
-        self.partNames = data.get('partNames', "").strip()
+        self.tagNames = data.get('tagNames', "").strip()
 
         globalScale = data['globalComponentCtrlSize']
         self.globalScaleVec =Vec3(globalScale, globalScale, globalScale)
@@ -850,7 +850,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.evalOperators()
 
-        self.tagJointsWithPartNames([self.getDecoratedName()])
+        self.tagAllComponentJoints([self.getDecoratedName()] + (self.tagNames or []))
 
 
 

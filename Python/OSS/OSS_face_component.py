@@ -523,7 +523,8 @@ class OSSFaceComponentRig(OSSFaceComponent):
                                 for shape in shapes:
                                     bsAttr = ScalarAttribute(shape, value=0.0, parent=bsAttrGrp)
                                     bsAttr.setLock(True)
-                                    bsAttr.setMetaDataItem("blendShapeName", shape)
+                                    bsAttr.setMetaDataItem("SCALAR_OUTPUT", shape)
+                                    bsAttr.appendMetaDataListItem("TAGS", self.getDecoratedName())
                                     bsAttr.connect(used_axes[axis][sign])
 
                     if side != self.getLocation():
@@ -539,7 +540,6 @@ class OSSFaceComponentRig(OSSFaceComponent):
                     #self.handleConstraints.append(newDef.constrainTo(newCtrl, maintainOffset=False))
                     #controlsList.append(newCtrl)
                     parent = newCtrl
-
 
                     if (ctrlListName+"Xfos") in data.keys():
                         if side == "R":
@@ -599,7 +599,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         self.evalOperators()
         self.RemapScalarValueSolverKLOp.evaluate()
 
-        self.tagJointsWithPartNames([self.getDecoratedName()])
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 

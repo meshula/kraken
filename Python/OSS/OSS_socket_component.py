@@ -236,7 +236,7 @@ class OSSSocketRig(OSSSocket):
         self.socket_offsetCtrl.scalePoints(globalScale)
         self.socketCtrl.scalePoints(globalScale)
 
-        self.tagJointsWithPartNames([self.getDecoratedName()])
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 from kraken.core.kraken_system import KrakenSystem
