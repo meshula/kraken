@@ -72,7 +72,7 @@ class Builder(Builder):
     __krkItems = None
     __krkAttributes = None
     __krkDeformers = None
-    __krkShapes = None
+    __krkScalarOutput = None
 
     def __init__(self):
         super(Builder, self).__init__()
@@ -632,7 +632,7 @@ class Builder(Builder):
         kl += [""]
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  UInt64 evalVersion;"]
-        kl += ["  UInt32 solveJointIDs[];"]
+        kl += ["  UInt32 solveItemIDs[];"]
         kl += ["  Boolean isItemDirty[%d];" % self.__klMaxUniqueId]
         if self.__profilingFrames > 0:
             kl += ["  SInt32 profilingFrame;"]
@@ -649,9 +649,11 @@ class Builder(Builder):
               midfix = "Array"
               suffix = "[]"
             kl += ["  %s arg_%s%s[%d]%s;" % (prefix, prefix, midfix, len(self.__klArgs['members'][argType]), suffix)]
-
+        if hasattr(self, "__klGlueConstraints") and self.__klGlueConstraints:
+            kl += ["  KrakenPoseConstraint _KrakenGlueConstraint[%d];" % len(self.__klGlueConstraints)]
         kl += ["};"]
         kl += [""]
+
         kl += ["inline function %s() {" % self.getKLExtensionName()]
         kl += ["  this.init();"]
         kl += ["}", ""]
@@ -678,15 +680,15 @@ class Builder(Builder):
 
         if self.__profilingFrames > 0:
             kl += ["  {  AutoProfilingEvent visitKLObjectsEvent(\"rig pose solve\");"]
-        kl += ["    if (this.solveJointIDs.size() == 0) {  //If we haven't set any solveJointIDs, solve all by default"]
+        kl += ["    if (this.solveItemIDs.size() == 0) {  //If we haven't set any solveItemIDs, solve all def joints by default"]
 
         for krkDef in self.__krkDeformers:
             kl += ["       this.%s();" % (self.getSolveMethodName(krkDef['sceneItem']))]
 
         kl += ["    } else {"]
-        kl += ["        for (Count i=0; i < this.solveJointIDs.size(); i++)"]
+        kl += ["        for (Count i=0; i < this.solveItemIDs.size(); i++)"]
         kl += ["        {"]
-        kl += ["          this.solveItem(this.solveJointIDs[i]);"]
+        kl += ["          this.solveItem(this.solveItemIDs[i]);"]
         kl += ["        }"]
         kl += ["    }"]
 
@@ -983,19 +985,19 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["inline function String[] %s.getPartNames() {" % self.getKLExtensionName()]
-        kl += ["  String result[](%d);" % len(self.__krkParts.keys())]
-        for i, part in enumerate(self.__krkParts.keys()):
+        kl += ["inline function String[] %s.getTagNames() {" % self.getKLExtensionName()]
+        kl += ["  String result[](%d);" % len(self.__krkTags.keys())]
+        for i, part in enumerate(self.__krkTags.keys()):
             kl += ["  result[%d] = \"%s\";" % (i, part)]
         kl += ["  return result;"]
         kl += ["}", ""]
 
-        kl += ["inline function String[] %s.getPartItemNames(in String partNames[]) {" % self.getKLExtensionName()]
+        kl += ["inline function String[] %s.getTagItemNames(in String tagNames[]) {" % self.getKLExtensionName()]
         kl += ["  String result[];"]
-        kl += ["  report(\"getPartItemNames:\" + partNames);"]
-        kl += ["  for(Count i=0; i<partNames.size(); i++) {"]
-        kl += ["    switch (partNames[i]) {"]
-        for part, items in self.__krkParts.iteritems():
+        kl += ["  report(\"getTagItemNames:\" + tagNames);"]
+        kl += ["  for(Count i=0; i<tagNames.size(); i++) {"]
+        kl += ["    switch (tagNames[i]) {"]
+        for part, items in self.__krkTags.iteritems():
             kl += ["       case \"%s\": {" % part]
             for item in items:
                 kl += ["         result.push(\"%s\");" % item]
@@ -1006,31 +1008,30 @@ class Builder(Builder):
         kl += ["  return result;"]
         kl += ["}", ""]
 
-
-
-        # To have scalar attributes drive blendShapes in the KL build,
-        # assign a "blendShapeName" metaData string to the driver attribute and the kl builder will pick it up
-        if self.__krkShapes:
-            kl += ["inline function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
-            kl += ["  String result[](%d);" % len(self.__krkShapes)]
-            for i in range(len(self.__krkShapes)):
-                kl += ["  result[%d] = \"%s\";" % (i, self.__krkShapes[i]['sceneItem'].getMetaDataItem("blendShapeName"))]
+        # To have scalar attributes drive blendShapes or anything else in the KL build,
+        # assign a "SCALAR_OUTPUT" metaData string to the driver attribute and the kl builder will pick it up
+        # e.g.  blendShapeAttr.setMetaDataItem("SCALAR_OUTPUT", "L_brow_out_dn_blendShape")
+        if self.__krkScalarOutput:
+            kl += ["inline function String[] %s.getScalarOutputNames() {" % self.getKLExtensionName()]
+            kl += ["  String result[](%d);" % len(self.__krkScalarOutput)]
+            for i in range(len(self.__krkScalarOutput)):
+                kl += ["  result[%d] = \"%s\";" % (i, self.__krkScalarOutput[i]['sceneItem'].getMetaDataItem("SCALAR_OUTPUT"))]
             kl += ["  return result;"]
             kl += ["}", ""]
 
-            kl += ["inline function %s.getShapeWeights(io Float32 weights<>) {" % self.getKLExtensionName()]
-            kl += ["  if(weights.size() != %d)" % len(self.__krkShapes)]
+            kl += ["inline function %s.getScalarOutputValues(io Float32 weights<>) {" % self.getKLExtensionName()]
+            kl += ["  if(weights.size() != %d)" % len(self.__krkScalarOutput)]
             kl += ["    return;"]
-            for i in range(len(self.__krkShapes)):
-                kl += ["  weights[%d] = this.%s.value;" % (i, self.__krkShapes[i]['member'])]
+            for i in range(len(self.__krkScalarOutput)):
+                kl += ["  weights[%d] = this.%s.value;" % (i, self.__krkScalarOutput[i]['member'])]
             #kl += ["  weights[0] = 1.0;"]
             kl += ["}", ""]
         else:
-            kl += ["inline function String[] %s.getShapeNames() {" % self.getKLExtensionName()]
-            kl += ["  String result[](%d);" % len(self.__krkShapes)]
+            kl += ["inline function String[] %s.getScalarOutputNames() {" % self.getKLExtensionName()]
+            kl += ["  String result[](%d);" % len(self.__krkScalarOutput)]
             kl += ["  return result;"]
             kl += ["}", ""]
-            kl += ["inline function %s.getShapeWeights(io Float32 weights<>) {" % self.getKLExtensionName()]
+            kl += ["inline function %s.getScalarOutputValues(io Float32 weights<>) {" % self.getKLExtensionName()]
             kl += ["}", ""]
 
         kl += ["inline function KrakenScalarAttribute<> %s.getScalarAttributes() {" % self.getKLExtensionName()]
@@ -1060,17 +1061,19 @@ class Builder(Builder):
         kl += ["}", ""]
 
 
-        kl += ["inline function %s.setSolveJointIDsByNames!(in String names[]) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.setSolveItemIDsByNames!(in String names[], in Boolean append) {" % self.getKLExtensionName()]
         kl += ["  // Not meant to be fast!"]
-        kl += ["  this.solveJointIDs.resize(0);"]
+        kl += ["  if (!append)"]
+        kl += ["    this.solveItemIDs.resize(0);"]
+        kl += [""]
         kl += ["  for(Count i=0; i<names.size(); i++) {"]
         kl += ["    SInt32 id = this.getUniqueID(names[i]);"]
         kl += ["    if (id == -1)"]
-        kl += ["        report(\"Warning: KRK_lucy.setSolveJointIDsByNames solveJoint \\\"\"+names[i]+\"\\\" not found in rig.\");"]
+        kl += ["        report(\"Warning: KRK_lucy.setSolveItemIDsByNames solveJoint \\\"\"+names[i]+\"\\\" not found in rig.\");"]
         kl += ["    else"]
-        kl += ["        this.solveJointIDs.push(id);"]
+        kl += ["        this.solveItemIDs.push(id);"]
         kl += ["  }"]
-        kl += ["  report(\"this.solveJointIDs: \"+this.solveJointIDs);"]
+        kl += ["  report(\"this.solveItemIDs: \"+this.solveItemIDs);"]
         kl += ["}", ""]
 
 
@@ -1440,6 +1443,16 @@ class Builder(Builder):
                 return canvasOp
         return None
 
+
+    def tagKLSceneItem(self, kSceneItem, buildName):
+        tagNames = kSceneItem.getMetaDataItem("TAGS") or []
+        for tagName in tagNames:
+            if tagName not in self.__krkTags.keys():
+                self.__krkTags[tagName] = [buildName]
+            else:
+                self.__krkTags[tagName] += [buildName]
+
+
     def buildKLSceneItem(self, kSceneItem, buildName):
 
         if isinstance(kSceneItem, Rig):
@@ -1505,12 +1518,7 @@ class Builder(Builder):
             if not parent is None:
                 obj['parent'] = parent.getDecoratedPath()
 
-        partNames = kSceneItem.getMetaDataItem("partNames") or []
-        for partName in partNames:
-            if partName not in self.__krkParts.keys():
-                self.__krkParts[partName] = [buildName]
-            else:
-                self.__krkParts[partName] += [buildName]
+        self.tagKLSceneItem(kSceneItem, buildName)
 
         self.__klObjects.append(obj)
         return True
@@ -1550,9 +1558,12 @@ class Builder(Builder):
 
         self.__klAttributes.append(attr)
 
-        if kAttribute.isTypeOf("ScalarAttribute") and kAttribute.getMetaDataItem("blendShapeName") is not None:
-            self.__krkShapes.append(attr)
+        if kAttribute.isTypeOf("ScalarAttribute") and kAttribute.getMetaDataItem("SCALAR_OUTPUT") is not None:
+            self.__krkScalarOutput.append(attr)
 
+        ownerName = attr['sceneItem'].getParent().getParent().getBuildName()
+        name = "%s.%s" % (ownerName, attr['name'])
+        self.tagKLSceneItem(kAttribute, name)
 
         return kAttribute
 
@@ -1573,6 +1584,8 @@ class Builder(Builder):
             'constrainee': kConstraint.getConstrainee(),
             'constrainers': kConstraint.getConstrainers()
         }
+
+        self.tagKLSceneItem(kConstraint, kConstraint.getName())
 
         self.__klConstraints.append(constraint)
         return kConstraint
@@ -2073,8 +2086,8 @@ class Builder(Builder):
         self.__krkItems = {}
         self.__krkAttributes = {}
         self.__krkDeformers = []
-        self.__krkShapes = []
-        self.__krkParts = {}
+        self.__krkScalarOutput = []
+        self.__krkTags = {}
 
         return True
 
