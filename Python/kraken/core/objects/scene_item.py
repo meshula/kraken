@@ -416,7 +416,7 @@ class SceneItem(object):
         """Sets meta data on the rig.
 
         Args:
-            data (dict): Extra data needed to persist the rig / graph.
+            data: Extra data needed to persist the rig / graph.
 
         Returns:
             bool: True if successful.
@@ -424,5 +424,46 @@ class SceneItem(object):
         """
 
         self._metaData[name] = data
+
+        return True
+
+    def appendMetaDataListItem(self, name, data):
+        """Appends an item to a meta data that is a list
+
+        Args:
+            data: Extra data needed to persist the rig / graph.
+
+        Returns:
+            bool: True if successful.
+
+        """
+        if name not in self._metaData:
+            self._metaData[name] = []
+        if not isinstance(self._metaData[name], list):
+            raise ValueError("%s._metaData[%s] is not a list.  Cannot append." % (self.getName(), name))
+
+        self._metaData[name].append(data)
+
+        return True
+
+    def removeMetaDataListItem(self, name, data):
+        """Removes an item to a meta data that is a list (if match is possible)
+
+        Args:
+            data: Item to match (string most likely)
+
+        Returns:
+            bool: True if successful.
+
+        """
+        if name not in self._metaData:
+            raise ValueError("%s._metaData[%s] does not exist.  Cannot remove." % (self.getName(), name))
+        if not isinstance(self._metaData[name], list):
+            raise ValueError("%s._metaData[%s] is not a list.  Cannot remove." % (self.getName(), name))
+
+        try:
+            self._metaData[name].remove(data)
+        except:
+            return False
 
         return True
