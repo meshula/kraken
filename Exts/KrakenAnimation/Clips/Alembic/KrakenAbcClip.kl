@@ -104,6 +104,12 @@ private function KrakenAbcClip.construct!(String filePath) {
   this.lookup = null;
 }
 
+function SInt32[] KrakenAbcClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  return result;
+}
+
 UInt32 KrakenAbcClip.getChannelCount() {
   return this.names.size();
 }
