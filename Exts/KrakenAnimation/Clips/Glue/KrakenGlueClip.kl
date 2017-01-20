@@ -146,7 +146,7 @@ function KrakenGlueClip.initialize!(io Ref<KrakenKLRig> rig, KrakenClipContext c
       // find matching name and establish global id
       if(allJointNames[j] == this.spaceJoints[i]) {
         this.spaceJointIDs[i] = j;
-        report("  " + this.spaceJointIDs[i] + ": "+ j);
+        report("  " + this.spaceJoints[i] + ": "+ j);
         found = 1;
         break;
       }
