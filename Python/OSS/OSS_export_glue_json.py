@@ -38,23 +38,23 @@ def export_glue_json(builder, filepath):
     jdict = collections.OrderedDict()
     jdict["clipType"] = "KrakenGlueClip"
 
-    constraint_dict_src = {
+    constraint_dict_src = collections.OrderedDict([
         #"M_root_fk": {"joint":"M_root_def"},
-        "M_cog_fk": {"joint": "M_pelvis_def", "spaceJoint": "world"},
-        "M_torso_fk": {"joint": "M_spine01_def", "spaceJoint": "M_pelvis_def"},
-        "M_chest_fk": {"joint": "M_spine03_def", "spaceJoint": "M_spine01_def"},
-        "M_upChest_fk": {"joint": "M_spine05_def", "spaceJoint": "M_spine03_def"},
-        "SIDE_upLeg_fk": {"joint": "SIDE_upLeg_def", "spaceJoint": "M_pelvis_def"},
-        "SIDE_loLeg_fk": {"joint": "SIDE_loLeg_def", "spaceJoint": "SIDE_upLeg_def"},
-        "SIDE_foot_fk": {"joint": "SIDE_foot_def", "spaceJoint": "SIDE_loLeg_def"},
-        "SIDE_ball_fk": {"joint": "SIDE_ball_def", "spaceJoint": "SIDE_foot_def"},
-        "SIDE_shldr_fk": {"joint": "SIDE_shldr_def", "spaceJoint": "M_spine05_def"},
-        "SIDE_upArm_fk": {"joint": "SIDE_upArm_def", "spaceJoint": "SIDE_shldr_def"},
-        "SIDE_loArm_fk": {"joint": "SIDE_loArm_def", "spaceJoint": "SIDE_upArm_def"},
-        "SIDE_hand_fk": {"joint": "SIDE_hand_def", "spaceJoint": "SIDE_loArm_def"},
-        "M_neck_fk": {"joint": "M_neck01_def", "spaceJoint": "M_spine05_def"},
-        "M_head_fk": {"joint": "M_head_def", "spaceJoint": "M_neck01_def"}
-        }
+        ("M_cog_fk", {"joint": "M_pelvis_def", "spaceJoint": "world"}),
+        ("M_torso_fk", {"joint": "M_spine01_def", "spaceJoint": "M_pelvis_def"}),
+        ("M_chest_fk", {"joint": "M_spine03_def", "spaceJoint": "M_spine01_def"}),
+        ("M_upChest_fk", {"joint": "M_spine05_def", "spaceJoint": "M_spine03_def"}),
+        ("M_neck_fk", {"joint": "M_neck01_def", "spaceJoint": "M_spine05_def"}),
+        ("M_head_fk", {"joint": "M_head_def", "spaceJoint": "M_neck01_def"}),
+        ("SIDE_upLeg_fk", {"joint": "SIDE_upLeg_def", "spaceJoint": "M_pelvis_def"}),
+        ("SIDE_loLeg_fk", {"joint": "SIDE_loLeg_def", "spaceJoint": "SIDE_upLeg_def"}),
+        ("SIDE_foot_fk", {"joint": "SIDE_foot_def", "spaceJoint": "SIDE_loLeg_def"}),
+        ("SIDE_ball_fk", {"joint": "SIDE_ball_def", "spaceJoint": "SIDE_foot_def"}),
+        ("SIDE_shldr_fk", {"joint": "SIDE_shldr_def", "spaceJoint": "M_spine05_def"}),
+        ("SIDE_upArm_fk", {"joint": "SIDE_upArm_def", "spaceJoint": "SIDE_shldr_def"}),
+        ("SIDE_loArm_fk", {"joint": "SIDE_loArm_def", "spaceJoint": "SIDE_upArm_def"}),
+        ("SIDE_hand_fk", {"joint": "SIDE_hand_def", "spaceJoint": "SIDE_loArm_def"})
+        ])
 
     segments = ["palm", "base", "mid", "tip"]
     for finger in ["thumb", "index", "middle", "ring", "pinky"]:
@@ -117,7 +117,7 @@ def export_glue_json(builder, filepath):
             ("z", min_thresh(offset.tr.z))
             ])
         euler = offset.ori.toEuler(objects[object3D].ro)
-        #print("  TTPrint: euler: \%s" % euler)
+
         constraint["rOffset"] = collections.OrderedDict([
             ("x", min_thresh(Math_radToDeg(euler.x))),
             ("y", min_thresh(Math_radToDeg(euler.y))),
