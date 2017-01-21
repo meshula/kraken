@@ -424,7 +424,7 @@ class Builder(Builder):
                         )
                     code += ['this.%s = %s;' % (argMember, valueStr)]
                 else:
-                    raise Exception("Constantt value has an unsupported type: %s" % value)
+                    raise Exception("Constant value has an unsupported type: %s" % value)
 
                 return code
 
