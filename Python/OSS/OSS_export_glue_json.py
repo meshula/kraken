@@ -14,6 +14,15 @@ from kraken.core.objects.locator import Locator
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.maths import *
 
+# What?  Why do I have do this?  Not even in Maya.  Fabric F'ed something up with rotation orders.
+ROT_ORDER_REMAP = {
+    0: 5,
+    1: 3,
+    2: 4,
+    3: 1,
+    4: 0,
+    5: 2
+}
 
 
 def clamp(value, min_value, max_value):
@@ -94,7 +103,7 @@ def export_glue_json(builder, filepath):
         kconstraint.evaluate() #Make sure all leaf nodes are evaluated
 
     def make_constraint(object3D, joint, space=None):
-        spacestr = " (space = %s)" if space else ""
+        spacestr = " (space = %s)" % space if space else ""
         print("    Making glue constraint: object3D[%s] to joint[%s]%s" % (object3D, joint, spacestr))
 
         constraint = collections.OrderedDict()
@@ -116,14 +125,15 @@ def export_glue_json(builder, filepath):
             ("y", min_thresh(offset.tr.y)),
             ("z", min_thresh(offset.tr.z))
             ])
-        euler = offset.ori.toEuler(objects[object3D].ro)
 
+        euler = offset.ori.toEuler(objects[object3D].ro)
         constraint["rOffset"] = collections.OrderedDict([
             ("x", min_thresh(Math_radToDeg(euler.x))),
             ("y", min_thresh(Math_radToDeg(euler.y))),
             ("z", min_thresh(Math_radToDeg(euler.z)))
             ])
-        constraint["order"] = objects[object3D].ro.order
+        constraint["order"] = ROT_ORDER_REMAP[objects[object3D].ro.order]
+
         constraint["sOffset"] = collections.OrderedDict([
             ("x", min_scale(offset.sc.x)),
             ("y", min_scale(offset.sc.y)),
