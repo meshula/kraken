@@ -45,7 +45,7 @@ function OSS_AngleBetweenSolver.solve!
 {
 
   Vec3 vecA = getAxis(Xfo(matrixA).ori, axisA);
-  Vec3 vecB = getAxis(Xfo(matrixA).ori, axisB);
+  Vec3 vecB = getAxis(Xfo(matrixB).ori, axisB);
 
   angle = vecA.angleTo(vecB);
 
