@@ -427,11 +427,12 @@ class SceneItem(object):
 
         return True
 
-    def appendMetaDataListItem(self, name, data):
+    def appendMetaDataListItem(self, name, data, allowDuplicates=False):
         """Appends an item to a meta data that is a list
 
         Args:
             data: Extra data needed to persist the rig / graph.
+            allowDuplicates (bool) : first check to see if item in list
 
         Returns:
             bool: True if successful.
@@ -442,6 +443,8 @@ class SceneItem(object):
         if not isinstance(self._metaData[name], list):
             raise ValueError("%s._metaData[%s] is not a list.  Cannot append." % (self.getName(), name))
 
+        if not allowDuplicates and data in self._metaData[name]:
+            return
         self._metaData[name].append(data)
 
         return True
