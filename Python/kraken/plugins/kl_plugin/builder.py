@@ -656,6 +656,7 @@ class Builder(Builder):
             kl += ["const UInt32 %s = %d;" % (constant, self.__klConstants[constant])]
         kl += [""]
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
+        kl += ["  Boolean debug;"]
         kl += ["  UInt64 evalVersion;"]
         kl += ["  UInt32 solveItemIDs[];"]
         kl += ["  UInt32 nameToUniqueID[String];"]
@@ -684,9 +685,12 @@ class Builder(Builder):
         kl += ["  this.init();"]
         kl += ["}", ""]
 
-        kl += [""]
         kl += ["inline function UInt64 %s.getEvalVersion() {" % self.getKLExtensionName()]
         kl += ["  return this.evalVersion;"]
+        kl += ["}", ""]
+
+        kl += ["inline function %s.setDebug!(in Boolean debug) {" % self.getKLExtensionName()]
+        kl += ["  this.debug = debug;"]
         kl += ["}", ""]
 
         kl += ["inline function %s.resetPose!() {" % self.getKLExtensionName()]
@@ -709,13 +713,16 @@ class Builder(Builder):
         kl += ["    if (this.solveItemIDs.size() == 0) {  //If we haven't set any solveItemIDs, solve all items tagged with SOLVE by  default"]
 
         for krkDef in self.__krkDeformers:
-            kl += ["       this.%s();" % (self.getSolveMethodName(krkDef['sceneItem']))]
+            kl += ["      this.%s();" % (self.getSolveMethodName(krkDef['sceneItem']))]
 
         kl += ["    } else {"]
-        kl += ["        for (Count i=0; i < this.solveItemIDs.size(); i++)"]
-        kl += ["        {"]
-        kl += ["          this.solveItem(this.solveItemIDs[i]);"]
-        kl += ["        }"]
+        kl += ["      if (this.debug)"]
+        kl += ["        report(\"Warning: %s.getScalarOutputValues: solving for uniqueIDs: \"+this.solveItemIDs);" % self.getKLExtensionName()]
+
+        kl += ["      for (Count i=0; i < this.solveItemIDs.size(); i++)"]
+        kl += ["      {"]
+        kl += ["        this.solveItem(this.solveItemIDs[i]);"]
+        kl += ["      }"]
         kl += ["    }"]
 
         if self.__profilingFrames > 0:
@@ -1062,11 +1069,16 @@ class Builder(Builder):
             kl += ["}", ""]
 
             kl += ["inline function %s.getScalarOutputValues(io Float32 weights<>) {" % self.getKLExtensionName()]
-            kl += ["  if(weights.size() != %d)" % len(self.__krkScalarOutput)]
+            kl += [""]
+            kl += ["  if(weights.size() != %d) {" % len(self.__krkScalarOutput)]
+            kl += ["    if (this.debug)"]
+            kl += ["      report(\"Warning: %s.getScalarOutputValues: input weights size is not 76, it is \"+weights.size());" % self.getKLExtensionName()]
             kl += ["    return;"]
+            kl += ["  }"]
             for i in range(len(self.__krkScalarOutput)):
                 kl += ["  weights[%d] = this.%s.value;" % (i, self.__krkScalarOutput[i]['member'])]
-            #kl += ["  weights[0] = 1.0;"]
+            kl += ["  if (this.debug)"]
+            kl += ["    report(\" %s.getScalarOutputValues: weights = \"+weights);" % self.getKLExtensionName()]
             kl += ["}", ""]
         else:
             kl += ["inline function String[] %s.getScalarOutputNames() {" % self.getKLExtensionName()]
@@ -1116,9 +1128,13 @@ class Builder(Builder):
         kl += [""]
         kl += ["  for(Count i=0; i<names.size(); i++) {"]
         kl += ["    SInt32 id = this.getUniqueID(names[i]);"]
+        kl += ["    if (this.debug)"]
+        kl += ["      report(\"%s.setSolveItemIDsByNames: Solve item name and uniqueID: \"+names[i]+\" = \"+id);" % self.getKLExtensionName()]
         kl += ["    if (id == -1)"]
         kl += ["        report(\"Warning: KRK_lucy.setSolveItemIDsByNames solveJoint \\\"\"+names[i]+\"\\\" not found in rig.\");"]
         kl += ["    else"]
+
+
         kl += ["        this.solveItemIDs.push(id);"]
         kl += ["  }"]
         kl += ["  report(\"this.solveItemIDs: \"+this.solveItemIDs);"]
