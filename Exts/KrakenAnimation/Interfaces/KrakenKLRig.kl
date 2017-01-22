@@ -18,7 +18,7 @@ interface KrakenKLRig {
   Xfo[] getAllParentXfos();
   //KrakenObject3D[] getAllObject3Ds();
   Xfo[] getAllXfos();
-  String[] getAllNames();
+  String[] getAllXfoNames();
   SInt32 getUniqueID(in String name);
   String[] getTagNames();
   setSolveItemIDsByNames!(in String names[], in Boolean append);

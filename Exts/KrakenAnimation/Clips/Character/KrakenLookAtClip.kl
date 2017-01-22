@@ -125,7 +125,7 @@ Xfo KrakenLookAtClip.evaluateXfo!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClip
 
   Xfo allXfos<> = rig.getAllXfos();
   Xfo allParentsXfos<> = rig.getAllParentXfos();
-  String allNames <>   = rig.getAllNames();
+  String allNames <>   = rig.getAllXfoNames();
   // if control hasn't been matched to its global id by name, do it now.
   if(this.objectID[id] == -1) {
     for(Size i=0;i<allNames.size();i++) {

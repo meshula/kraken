@@ -119,7 +119,7 @@ function KrakenGlueClip.initialize!(io Ref<KrakenKLRig> rig, KrakenClipContext c
 
   }
 
-  //String allNames []   = rig.getAllNames();
+  //String allNames []   = rig.getAllXfoNames();
   String allJointNames [] = rig.getJointNames();
 
   report("this.controlJoints.size() = "+this.controlJoints.size());
