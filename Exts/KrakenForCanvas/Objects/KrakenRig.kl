@@ -1,6 +1,6 @@
 require Kraken;
 
-struct KrakenRig : KrakenContainer {
+object KrakenRig : KrakenContainer {
 };
 
 /// \dfgPresetFolder Objects

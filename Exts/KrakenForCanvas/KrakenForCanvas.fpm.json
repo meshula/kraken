@@ -1,6 +1,5 @@
 {
   "code": [
-    "KrakenItem.kl",
 
     "Objects/KrakenObject3D.kl",
     "Objects/KrakenCtrlSpace.kl",

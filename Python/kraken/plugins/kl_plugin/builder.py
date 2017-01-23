@@ -120,7 +120,7 @@ class Builder(Builder):
         if isinstance(item, Attribute):
             owner = item.getParent().getParent() # get 3d obj, skip attrgroup
             # owner KLItem should already exist as all 3d objects are built before any attributes
-            # so getting uniqueID here will get the already exiting one for owner
+            # so getting uniqueId here will get the already exiting one for owner
             name = self.getUniqueName(owner)+'_'+item.getName()
 
         elif hasattr(item, 'getBuildName'):
@@ -658,7 +658,8 @@ class Builder(Builder):
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  Boolean debug;"]
         kl += ["  UInt64 evalVersion;"]
-        kl += ["  UInt32 solveItemIDs[];"]
+        kl += ["  UInt32 directDriveJointIDs[%d];" % len(self.__klMembers['members']['KrakenJoint'])]  # IDs of joints with incoming direct drive mat44, otherwise -1
+        kl += ["  UInt32 solveItemIDs[];"] # Rig items to call solveItem() on
         kl += ["  UInt32 nameToUniqueID[String];"]
         kl += ["  Boolean isItemDirty[%d];" % self.__klMaxUniqueId]
         if self.__profilingFrames > 0:
@@ -666,6 +667,7 @@ class Builder(Builder):
         kl += ["  KrakenClip clip; // the default clip of the rig"]
         for argType in self.__klMembers['members']:
             kl += ["  %s _%s[%d];" % (argType.replace('_Driven', ''), argType, len(self.__klMembers['members'][argType]))]
+        kl += ["  KrakenItem _KrakenItems[%d];" % len(allItems)]
 
         for argType in self.__klArgs['members']:
             prefix = argType
@@ -717,7 +719,7 @@ class Builder(Builder):
 
         kl += ["    } else {"]
         kl += ["      if (this.debug)"]
-        kl += ["        report(\"Warning: %s.getScalarOutputValues: solving for uniqueIDs: \"+this.solveItemIDs);" % self.getKLExtensionName()]
+        kl += ["        report(\"Warning: %s.getScalarOutputValues: solving for uniqueIds: \"+this.solveItemIDs);" % self.getKLExtensionName()]
 
         kl += ["      for (Count i=0; i < this.solveItemIDs.size(); i++)"]
         kl += ["      {"]
@@ -753,12 +755,17 @@ class Builder(Builder):
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
             kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
         kl += ["  if(joints.size() != %d)" % len(self.__krkDeformers)]
-        kl += ["    throw(\"Expected number of joints does not match (\"+joints.size()+\" given, %d expected).\");" % len(self.__krkDeformers)]
+        kl += ["    throw(\"%s.evaluate: Expected number of joints does not match (\"+joints.size()+\" given, %d expected).\");" % (self.getKLExtensionName(), len(self.__krkDeformers))]
         kl += ["  if(this.clip != null) {"]
         if self.__profilingFrames > 0:
             kl += ["    AutoProfilingEvent scopedEvent(\"%s.clip.apply\");" % self.getKLExtensionName()]
         kl += ["    Ref<KrakenKLRig> rig = this;"]
         kl += ["    this.clip.apply(rig, context, 1.0);"]
+        kl += ["  }"]
+        kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
+        kl += ["    if (this.directDriveJointIDs[j] != -1) {"]
+        kl += ["        this.setObject3DGlobalMat44(this.directDriveJointIDs[j], joints[j]);"]
+        kl += ["    }"]
         kl += ["  }"]
         kl += ["  this.solve(context);"]
         if len(self.__krkDeformers) > 0:
@@ -814,6 +821,7 @@ class Builder(Builder):
         kl += ["    this.isItemDirty[i] = false;"]
         kl += ["}", ""]
 
+        # These are for setting values for controls and dirtying their dependents
         kl += ["inline function Mat44 %s.getControlLocalMat44(Index index) {" % self.getKLExtensionName()]
         kl += ["  return this._KrakenControl[index].local;"]
         kl += ["}", ""]
@@ -831,6 +839,34 @@ class Builder(Builder):
         kl += ["  this._KrakenScalarAttribute[index].value = value;"]
         kl += ["  this.dirtyItem(this._KrakenScalarAttribute[index].uniqueId);"]
         kl += ["}", ""]
+
+        # These are for setting values for solve assuming rig is reset to all be dirty
+        kl += ["inline function %s.setBoolAttributeValue!(Index uniqueId, Boolean value) {" % self.getKLExtensionName()]
+        kl += ["  KrakenBoolAttribute(this._KrakenItems[uniqueId]).value = value;"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["}", ""]
+
+        kl += ["inline function %s.setIntegerAttributeValue!(Index uniqueId, SInt32 value) {" % self.getKLExtensionName()]
+        kl += ["  KrakenIntegerAttribute(this._KrakenItems[uniqueId]).value = value;"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["}", ""]
+
+        kl += ["inline function %s.setScalarAttributeValue!(Index uniqueId, Scalar value) {" % self.getKLExtensionName()]
+        kl += ["  KrakenScalarAttribute(this._KrakenItems[uniqueId]).value = value;"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["}", ""]
+
+        kl += ["inline function %s.setObject3DGlobalMat44!(Index uniqueId, Mat44 value) {" % self.getKLExtensionName()]
+        kl += ["  KrakenObject3D(this._KrakenItems[uniqueId]).global = value;"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["}", ""]
+
+        kl += ["inline function %s.setObject3DLocalMat44!(Index uniqueId, Mat44 value) {" % self.getKLExtensionName()]
+        kl += ["  KrakenObject3D(this._KrakenItems[uniqueId]).local = value;"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["}", ""]
+
+
 
         # todo: inject all of the functions!
         for item in allItems:
@@ -862,23 +898,29 @@ class Builder(Builder):
         kl += ["}", ""]
 
 
-
+        # May not need this now that KrakenItems are objects...
         kl += ["inline function %s.buildItemDict!() {" % self.getKLExtensionName()]
         kl += ["  // Build name lookup"]
         for i in range(len(allItems)):
             kl += ["  this.nameToUniqueID[\"%s\"] = %d;" % (allItems[i]['buildName'], self.getUniqueId(allItems[i]['sceneItem']))]
         kl += ["}", ""]
 
-
+        allItemsSortedByUniqueIDs = [None] * len(allItems)
         kl += ["inline function %s.init!() {" % self.getKLExtensionName()]
         kl += ["  Float32 floatAnimation[String];"]
+        kl += [""]
+        kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++)"]
+        kl += ["    this.directDriveJointIDs[j] = -1;"]
         kl += [""]
         if self.__debugMode:
             kl += ["  // build 3D objects"]
         for obj in self.__klObjects:
+            uniqueId = self.getUniqueId(obj['sceneItem'])
+            allItemsSortedByUniqueIDs[uniqueId] = obj
             memberName = obj['member']
-            kl += ["  this.%s.uniqueId = %d;" % (memberName, self.getUniqueId(obj['sceneItem']))]
+            kl += ["  this.%s = %s();" % (memberName, obj['type'])]
             kl += ["  this.%s.name = \"%s\";" % (memberName, obj['buildName'])]
+            kl += ["  this.%s.uniqueId = %d;" % (memberName, uniqueId)]
             if self.__debugMode:
                 kl += ["  this.%s.buildName = \"%s\";" % (memberName, obj['buildName'])]
                 kl += ["  this.%s.path = \"%s\";" % (memberName, obj['path'])]
@@ -889,27 +931,37 @@ class Builder(Builder):
 
         kl += ["", "  // build constraints"]
         for constraint in self.__klConstraints:
+            uniqueId = self.getUniqueId(constraint['sceneItem'])
+            allItemsSortedByUniqueIDs[uniqueId] = constraint
             memberName = constraint['member']
-            kl += ["  this.%s.uniqueId = %d;" % (memberName, self.getUniqueId(constraint['sceneItem']))]
+            kl += ["  this.%s = %s();" % (memberName, constraint['type'])]
+            kl += ["  this.%s.name = \"%s\";" % (memberName, constraint['buildName'])]
+            kl += ["  this.%s.uniqueId = %d;" % (memberName, uniqueId)]
             if constraint['sceneItem'].getMaintainOffset():
                 kl += ["  this.%s.offset = %s.toMat44();" % (memberName, self.__getXfoAsStr(constraint['sceneItem'].computeOffset()))]
             kl += ["  this.%s.constrainers.resize(%d);" % (memberName, len(constraint['constrainers']))]
 
         kl += ["", "  // build kl solvers"]
         for solver in self.__klSolvers:
+            uniqueId = self.getUniqueId(solver['sceneItem'])
+            allItemsSortedByUniqueIDs[uniqueId] = solver
             memberName = solver['member']
             kl += ["  this.%s = %s();" % (memberName, solver['type'])]
-            kl += ["  this.%s.uniqueId = %d;" % (memberName, self.getUniqueId(solver['sceneItem']))]
+            kl += ["  this.%s.name = \"%s\";" % (memberName, solver['buildName'])]
+            kl += ["  this.%s.uniqueId = %d;" % (memberName, uniqueId)]
 
         kl += ["", "  // build kl canvas ops"]
         for canvasOp in self.__klCanvasOps:
+            uniqueId = self.getUniqueId(canvasOp['sceneItem'])
+            allItemsSortedByUniqueIDs[uniqueId] = canvasOp
             memberName = canvasOp['member']
             # todo....
             kl += ["  // todo: this.%s = CanvasSolver?();" % (memberName)]
 
         kl += ["", "  // build attributes"]
         for attr in self.__klAttributes:
-            name = attr['buildName']
+            uniqueId = self.getUniqueId(attr['sceneItem'])
+            allItemsSortedByUniqueIDs[uniqueId] = attr
             memberName = attr['member']
 
             path = attr['path']
@@ -920,7 +972,7 @@ class Builder(Builder):
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s);" % (
                     attr['member'],
                     attr['cls'],
-                    name,
+                    attr['buildName'],
                     path,
                     Boolean(attr['keyable']),
                     Boolean(attr['animatable']),
@@ -930,7 +982,7 @@ class Builder(Builder):
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s);" % (
                     attr['member'],
                     attr['cls'],
-                    name,
+                    attr['buildName'],
                     path,
                     Boolean(attr['keyable']),
                     Boolean(attr['animatable']),
@@ -945,7 +997,7 @@ class Builder(Builder):
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s, %s, %d);" % (
                     attr['member'],
                     attr['cls'],
-                    name,
+                    attr['buildName'],
                     path,
                     Boolean(attr['keyable']),
                     Boolean(attr['animatable']),
@@ -957,7 +1009,7 @@ class Builder(Builder):
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, %s, %s, %.4g, floatAnimation);" % (
                     attr['member'],
                     attr['cls'],
-                    name,
+                    attr['buildName'],
                     path,
                     Boolean(attr['keyable']),
                     Boolean(attr['animatable']),
@@ -969,14 +1021,21 @@ class Builder(Builder):
                 kl += ["  this.%s = Kraken%s(\"%s\", \"%s\", %s, %s, \"%s\");" % (
                     attr['member'],
                     attr['cls'],
-                    name,
+                    attr['buildName'],
                     path,
                     Boolean(attr['keyable']),
                     Boolean(attr['animatable']),
                     attr['value']
                 )]
-            kl += ["  this.%s.uniqueId = %d;" % (memberName, self.getUniqueId(attr['sceneItem']))]
+            kl += ["  this.%s.uniqueId = %d;" % (memberName, uniqueId)]
 
+        kl += [""]
+        kl += ["  // All KrakenItems sorted by uniqueId"]
+        if None in allItemsSortedByUniqueIDs:
+            raise Exception("There is a None in allItemsSortedByUniqueIDs.  Somethings is weird with uniqueIds.  :(")
+        for i, item in enumerate(allItemsSortedByUniqueIDs):
+            kl += ["  this._KrakenItems[%d] = this.%s;" % (i, item['member'])]
+        kl += [""]
 
         kl += ["  this.resetPose();"]
         kl += ["  this.dirtyAllItems();"]
@@ -985,11 +1044,7 @@ class Builder(Builder):
         if self.__profilingFrames > 0:
             kl += ["", "  this.profilingFrame = 0;"]
             kl += ["  StartFabricProfilingFrames(%d);" % (self.__profilingFrames+1)]
-
         kl += ["}", ""]
-
-
-
 
         kl += ["inline function Xfo[] %s.getJointXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(self.__krkDeformers)]
@@ -1129,15 +1184,39 @@ class Builder(Builder):
         kl += ["  for(Count i=0; i<names.size(); i++) {"]
         kl += ["    SInt32 id = this.getUniqueID(names[i]);"]
         kl += ["    if (this.debug)"]
-        kl += ["      report(\"%s.setSolveItemIDsByNames: Solve item name and uniqueID: \"+names[i]+\" = \"+id);" % self.getKLExtensionName()]
+        kl += ["      report(\"%s.setSolveItemIDsByNames: Solve item name and uniqueId: \"+names[i]+\" = \"+id);" % self.getKLExtensionName()]
         kl += ["    if (id == -1)"]
-        kl += ["        report(\"Warning: KRK_lucy.setSolveItemIDsByNames solveJoint \\\"\"+names[i]+\"\\\" not found in rig.\");"]
+        kl += ["        report(\"Warning: KRK_lucy.setSolveItemIDsByNames joint \\\"\"+names[i]+\"\\\" not found in rig.\");"]
         kl += ["    else"]
-
-
         kl += ["        this.solveItemIDs.push(id);"]
         kl += ["  }"]
-        kl += ["  report(\"this.solveItemIDs: \"+this.solveItemIDs);"]
+        kl += ["  if (this.debug)"]
+        kl += ["    report(\"this.solveItemIDs: \"+this.solveItemIDs);"]
+        kl += ["}", ""]
+
+
+        kl += ["inline function %s.setDirectDriveJointIDsByNames!(in String names[]) {" % self.getKLExtensionName()]
+        kl += ["  // Not meant to be fast!"]
+        kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
+        kl += ["    if (this.debug)"]
+        kl += ["      report(\"%s.setDirectDriveJointIDsByNames: Joint: \"+this._KrakenJoint[j].name);" % self.getKLExtensionName()]
+        kl += ["    this.directDriveJointIDs[j] = -1;"]
+        kl += ["    for(Count n=0; n<names.size(); n++) {"]
+        kl += ["      SInt32 id = this.getUniqueID(names[n]);"]
+        kl += ["      if (id == -1) {" ]
+        kl += ["          report(\"Warning: KRK_lucy.setDirectDriveJointIDsByNames joint \\\"\"+names[n]+\"\\\" not found in rig.\");"]
+        kl += ["          break;"]
+        kl += ["      }"]
+        kl += ["      if (this._KrakenJoint[j].uniqueId == id) {"]
+        kl += ["        this.directDriveJointIDs[j] = id;"]
+        kl += ["        if (this.debug)"]
+        kl += ["          report(\"%s.setDirectDriveJointIDsByNames: yes:\");" % self.getKLExtensionName()]
+        kl += ["        break;"]
+        kl += ["      }"]
+        kl += ["    }"]
+        kl += ["  }"]
+        kl += ["  if (this.debug)"]
+        kl += ["    report(\"this.directDriveJointIDs: \"+this.directDriveJointIDs);"]
         kl += ["}", ""]
 
 

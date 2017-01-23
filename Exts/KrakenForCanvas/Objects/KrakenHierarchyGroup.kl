@@ -1,6 +1,6 @@
 require Kraken;
 
-struct KrakenHierarchyGroup : KrakenObject3D {
+object KrakenHierarchyGroup : KrakenObject3D {
 };
 
 /// \dfgPresetFolder Objects

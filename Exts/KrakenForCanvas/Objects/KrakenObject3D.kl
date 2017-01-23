@@ -3,8 +3,7 @@ require Containers;
 require Geometry;
 require Kraken;
 
-struct KrakenObject3D : KrakenItem {
-  String name;
+object KrakenObject3D : KrakenItem {
   String buildName;
   String path;
   String layer;

@@ -6,9 +6,8 @@ interface IKrakenSolver {
 };
 
 /// \dfgPresetOmit
-object KrakenSolver : IKrakenSolver {
+object KrakenSolver : KrakenItem, IKrakenSolver {
 
-  UInt32 uniqueId;
   RTVal defaultValues[String];
 
   Boolean drawDebug;
