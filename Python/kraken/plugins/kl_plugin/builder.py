@@ -656,6 +656,7 @@ class Builder(Builder):
             kl += ["const UInt32 %s = %d;" % (constant, self.__klConstants[constant])]
         kl += [""]
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
+        kl += ["  Boolean useClip;"]
         kl += ["  Boolean debug;"]
         kl += ["  UInt64 evalVersion;"]
         kl += ["  UInt32 directDriveJointIDs[%d];" % len(self.__klMembers['members']['KrakenJoint'])]  # IDs of joints with incoming direct drive mat44, otherwise -1
@@ -693,6 +694,10 @@ class Builder(Builder):
 
         kl += ["inline function %s.setDebug!(in Boolean debug) {" % self.getKLExtensionName()]
         kl += ["  this.debug = debug;"]
+        kl += ["}", ""]
+
+        kl += ["inline function %s.setUseClip!(in Boolean useClip) {" % self.getKLExtensionName()]
+        kl += ["  this.useClip = useClip;"]
         kl += ["}", ""]
 
         kl += ["inline function %s.resetPose!() {" % self.getKLExtensionName()]
@@ -737,7 +742,7 @@ class Builder(Builder):
             kl += ["  if(this.profilingFrame >= 0)"]
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
             kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
-        kl += ["  if(this.clip != null) {"]
+        kl += ["  if(this.useClip && this.clip != null) {"]
         if self.__profilingFrames > 0:
             kl += ["    AutoProfilingEvent scopedEvent(\"%s.clip.apply\");" % self.getKLExtensionName()]
         kl += ["    Ref<KrakenKLRig> rig = this;"]
@@ -756,7 +761,7 @@ class Builder(Builder):
             kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
         kl += ["  if(joints.size() != %d)" % len(self.__krkDeformers)]
         kl += ["    throw(\"%s.evaluate: Expected number of joints does not match (\"+joints.size()+\" given, %d expected).\");" % (self.getKLExtensionName(), len(self.__krkDeformers))]
-        kl += ["  if(this.clip != null) {"]
+        kl += ["  if(this.useClip && this.clip != null) {"]
         if self.__profilingFrames > 0:
             kl += ["    AutoProfilingEvent scopedEvent(\"%s.clip.apply\");" % self.getKLExtensionName()]
         kl += ["    Ref<KrakenKLRig> rig = this;"]
@@ -764,7 +769,7 @@ class Builder(Builder):
         kl += ["  }"]
         kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
         kl += ["    if (this.directDriveJointIDs[j] != -1) {"]
-        kl += ["        this.setObject3DGlobalMat44(this.directDriveJointIDs[j], joints[j]);"]
+        kl += ["        this.setObject3DGlobalMat44(this.directDriveJointIDs[j], context.directDriveJoints[j]);"]
         kl += ["    }"]
         kl += ["  }"]
         kl += ["  this.solve(context);"]
@@ -857,6 +862,8 @@ class Builder(Builder):
         kl += ["}", ""]
 
         kl += ["inline function %s.setObject3DGlobalMat44!(Index uniqueId, Mat44 value) {" % self.getKLExtensionName()]
+        kl += ["if (this.debug)"]
+        kl += ["      report(\"Warning: %s.setObject3DGlobalMat44: uniqueId: \"+uniqueId+\" value: \"+value);" % self.getKLExtensionName()]
         kl += ["  KrakenObject3D(this._KrakenItems[uniqueId]).global = value;"]
         kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
         kl += ["}", ""]
@@ -907,6 +914,8 @@ class Builder(Builder):
 
         allItemsSortedByUniqueIDs = [None] * len(allItems)
         kl += ["inline function %s.init!() {" % self.getKLExtensionName()]
+        kl += ["    this.useClip = true;"]
+        kl += ["    this.debug = false;"]
         kl += ["  Float32 floatAnimation[String];"]
         kl += [""]
         kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++)"]
