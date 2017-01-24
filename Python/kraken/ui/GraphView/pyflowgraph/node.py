@@ -291,21 +291,18 @@ class Node(QtWidgets.QGraphicsWidget):
 
         painter.setPen(QtGui.QPen(QtGui.QColor(0, 0, 0, 0), 0))
 
-        roundingY = 10
-        roundingX = rect.height() / rect.width() * roundingY
+        roundingY = 8
+        roundingX = 8
 
-        painter.drawRoundRect(rect, roundingX, roundingY)
+        painter.drawRoundedRect(rect, roundingX, roundingY, mode=QtCore.Qt.AbsoluteSize)
 
         # Title BG
         titleHeight = self.__headerItem.size().height() - 3
 
         painter.setBrush(self.__color.darker(125))
         roundingY = rect.width() * roundingX / titleHeight
-        painter.drawRoundRect(0, 0, rect.width(), titleHeight, roundingX, roundingY)
+        painter.drawRoundedRect(0, 0, rect.width(), titleHeight, roundingX, roundingY, mode=QtCore.Qt.AbsoluteSize)
         painter.drawRect(0, titleHeight * 0.5 + 2, rect.width(), titleHeight * 0.5)
-
-        # painter.setPen(self.__linePen)
-        # painter.drawLine(QtCore.QPoint(0, titleHeight), QtCore.QPoint(rect.width(), titleHeight))
 
         painter.setBrush(QtGui.QColor(0, 0, 0, 0))
         if self.__selected:
@@ -313,10 +310,10 @@ class Node(QtWidgets.QGraphicsWidget):
         else:
             painter.setPen(self.__unselectedPen)
 
-        roundingY = 10
-        roundingX = rect.height() / rect.width() * roundingY
+        roundingY = 8
+        roundingX = 8
 
-        painter.drawRoundRect(rect, roundingX, roundingY)
+        painter.drawRoundedRect(rect, roundingX, roundingY, mode=QtCore.Qt.AbsoluteSize)
 
 
     #########################
