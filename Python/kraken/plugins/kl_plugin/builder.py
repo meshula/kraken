@@ -593,6 +593,7 @@ class Builder(Builder):
 
         # ensure to generate a unique id for everything
         allItems = self.__klObjects + self.__klConstraints + self.__klSolvers + self.__klCanvasOps + self.__klAttributes
+
         self.__itemByUniqueId = {}
         for item in allItems:
             self.__itemByUniqueId[self.getUniqueId(item['sceneItem'])] = item
@@ -768,7 +769,7 @@ class Builder(Builder):
         kl += ["  }"]
         kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
         kl += ["    if (this.directDriveJointIDs[j] != -1) {"]
-        kl += ["        this.setObject3DGlobalMat44(this.directDriveJointIDs[j], context.directDriveJoints[j]);"]
+        kl += ["        this.setObject3DGlobalMat44ById(this.directDriveJointIDs[j], context.directDriveJoints[j]);"]
         kl += ["    }"]
         kl += ["  }"]
         kl += ["  this.solve(context);"]
@@ -784,17 +785,19 @@ class Builder(Builder):
             kl += ["  this.processProfiling();"]
         kl += ["}", ""]
 
+
+        # Only create dirtyItem lists for controls, attributes that drive things, but are not driven, and any item that has a tag
+        dirtiableItems = [item for item in allItems if isinstance(item['sceneItem'], (Control, Attribute)) and len(item['targetIds'])]
+        for items in self.__krkTags.values():
+            dirtiableItems += [item for item in items if item not in dirtiableItems]
+
         kl += ["inline function %s.dirtyItem!(Index uniqueId) {" % self.getKLExtensionName()]
         kl += ["  if(this.isItemDirty[uniqueId])"]
         kl += ["    return;"]
         kl += ["  this.isItemDirty[uniqueId] = true;"]
         kl += ["  switch(uniqueId) {"]
-        for item in allItems:
-            # only do this for controls or attributes - we don't need to dirty anything else
-            if not isinstance(item['sceneItem'], (Control, Attribute)):
-                continue
-            if len(item['targetIds']) == 0:
-                continue
+        for item in dirtiableItems:
+
             kl += ["    case %d: { // %s" % (self.getUniqueId(item['sceneItem']), self.getUniqueName(item['sceneItem']))]
             uidsToDirty = item['targetIds']
             for uidToDirty in uidsToDirty:
@@ -832,7 +835,8 @@ class Builder(Builder):
 
         kl += ["inline function %s.setControlLocalMat44!(Index index, Mat44 value) {" % self.getKLExtensionName()]
         kl += ["  this._KrakenControl[index].local = value;"]
-        kl += ["  this.dirtyItem(this._KrakenControl[index].uniqueId);"]
+        kl += ["  this.dirtyItem(this._KrakenControl[index].uniqueId);  // dirty all dependencies"]
+        kl += ["  this.isItemDirty[this._KrakenControl[index].uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
         kl += ["inline function Scalar %s.getScalarAttribute(Index index) {" % self.getKLExtensionName()]
@@ -841,35 +845,41 @@ class Builder(Builder):
 
         kl += ["inline function %s.setScalarAttribute!(Index index, Scalar value) {" % self.getKLExtensionName()]
         kl += ["  this._KrakenScalarAttribute[index].value = value;"]
-        kl += ["  this.dirtyItem(this._KrakenScalarAttribute[index].uniqueId);"]
+        kl += ["  this.dirtyItem(this._KrakenScalarAttribute[index].uniqueId);    // dirty all dependencies"]
+        kl += ["  this.isItemDirty[this._KrakenScalarAttribute[index].uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
         # These are for setting values for solve assuming rig is reset to all be dirty
-        kl += ["inline function %s.setBoolAttributeValue!(Index uniqueId, Boolean value) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.setBoolAttributeById!(Index uniqueId, Boolean value) {" % self.getKLExtensionName()]
         kl += ["  KrakenBoolAttribute(this._KrakenItem[uniqueId]).value = value;"]
-        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
-        kl += ["inline function %s.setIntegerAttributeValue!(Index uniqueId, SInt32 value) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.setIntegerAttributeById!(Index uniqueId, SInt32 value) {" % self.getKLExtensionName()]
         kl += ["  KrakenIntegerAttribute(this._KrakenItem[uniqueId]).value = value;"]
-        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
-        kl += ["inline function %s.setScalarAttributeValue!(Index uniqueId, Scalar value) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.setScalarAttributeById!(Index uniqueId, Scalar value) {" % self.getKLExtensionName()]
         kl += ["  KrakenScalarAttribute(this._KrakenItem[uniqueId]).value = value;"]
-        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
-        kl += ["inline function %s.setObject3DGlobalMat44!(Index uniqueId, Mat44 value) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.setObject3DGlobalMat44ById!(Index uniqueId, Mat44 value) {" % self.getKLExtensionName()]
         kl += ["if (this.debug)"]
-        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44: name: \"+this._KrakenItem[uniqueId].name+\" uniqueId: \"+uniqueId+\" value: \"+value);" % self.getKLExtensionName()]
+        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44ById: name: \"+this._KrakenItem[uniqueId].name+\" uniqueId: \"+uniqueId+\" value: \"+value);" % self.getKLExtensionName()]
         kl += ["  KrakenObject3D(this._KrakenItem[uniqueId]).global = value;"]
-        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
-        kl += ["inline function %s.setObject3DLocalMat44!(Index uniqueId, Mat44 value) {" % self.getKLExtensionName()]
+        kl += ["inline function %s.setObject3DLocalMat44ById!(Index uniqueId, Mat44 value) {" % self.getKLExtensionName()]
         kl += ["  KrakenObject3D(this._KrakenItem[uniqueId]).local = value;"]
-        kl += ["  this.isItemDirty[uniqueId] = false;  // clean. don't have to solve sources!"]
+        kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
+        kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
 
@@ -878,7 +888,7 @@ class Builder(Builder):
             "solve_R_loLeg_OSS_AngleBetweenSolver_klOp",
             "solve_R_upLeg_def",
             "solve_R_loLeg_def"]
-        # todo: inject all of the functions!
+
         for item in allItems:
             if len(item['solveCode']) == 0:
               continue
@@ -1112,18 +1122,21 @@ class Builder(Builder):
         kl += ["}", ""]
 
         kl += ["inline function String[] %s.getTagItemNames(in String tagNames[]) {" % self.getKLExtensionName()]
-        kl += ["  String result[];"]
+        kl += ["  Boolean dict[String];"]
         kl += ["  report(\"getTagItemNames:\" + tagNames);"]
         kl += ["  for(Count i=0; i<tagNames.size(); i++) {"]
         kl += ["    switch (tagNames[i]) {"]
         for part, items in self.__krkTags.iteritems():
             kl += ["       case \"%s\": {" % part]
             for item in items:
-                kl += ["         result.push(\"%s\");" % item]
+                kl += ["         dict[\"%s\"] = true;" % item['buildName']]
             kl += ["         break;"]
             kl += ["       }"]
         kl += ["     }"]
         kl += ["  }"]
+        kl += ["  String result[];"]
+        kl += ["  for (k, v in dict)"]
+        kl += ["    result.push(k);"]
         kl += ["  return result;"]
         kl += ["}", ""]
 
@@ -1603,13 +1616,14 @@ class Builder(Builder):
     """
 
 
+
     def tagKLSceneItem(self, KLItem):
         tagNames = KLItem['sceneItem'].getMetaDataItem("TAGS") or []
         for tagName in tagNames:
             if tagName not in self.__krkTags.keys():
-                self.__krkTags[tagName] = [KLItem['buildName']]
-            else:
-                self.__krkTags[tagName] += [KLItem['buildName']]
+                self.__krkTags[tagName] = [KLItem]
+            elif KLItem not in self.__krkTags[tagName]:
+                self.__krkTags[tagName].append(KLItem)
 
 
     def buildKLSceneItem(self, kSceneItem, buildName):
