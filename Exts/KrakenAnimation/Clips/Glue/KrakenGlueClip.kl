@@ -122,14 +122,14 @@ function KrakenGlueClip.initialize!(io Ref<KrakenKLRig> rig, KrakenClipContext c
   //String allNames []   = rig.getAllXfoNames();
   String allJointNames [] = rig.getJointNames();
 
-  report("this.controlJoints.size() = "+this.controlJoints.size());
+  report("this.controlJoints.size() = "+this.controlJoints.size()+" : "+this.controlJoints);
   Boolean found = 0;
   for(Count i=0;i<this.controlJoints.size();i++) {
     for(Count j=0;j<allJointNames.size();j++) {
       // find matching name and establish global id
       if(allJointNames[j] == this.controlJoints[i]) {
         this.controlJointIDs[i] = j;
-        report("  " + this.controlJoints[i] + ": "+ j);
+        //report("  " + this.controlJoints[i] + ": "+ j);
         found = 1;
         break;
       }
@@ -139,14 +139,14 @@ function KrakenGlueClip.initialize!(io Ref<KrakenKLRig> rig, KrakenClipContext c
       report("Error: controlJointID for controlJoint \""+this.controlJoints[i]+"\" not found.");
   }
 
-  report("this.spaceJoints.size() = "+this.spaceJoints.size());
+  report("this.spaceJoints.size() = "+this.spaceJoints.size()+" : "+this.spaceJoints);
   found = 0;
   for(Count i=0;i<this.spaceJoints.size();i++) {
     for(Count j=0;j<allJointNames.size();j++) {
       // find matching name and establish global id
       if(allJointNames[j] == this.spaceJoints[i]) {
         this.spaceJointIDs[i] = j;
-        report("  " + this.spaceJoints[i] + ": "+ j);
+        //report("  " + this.spaceJoints[i] + ": "+ j);
         found = 1;
         break;
       }
@@ -311,7 +311,7 @@ function KrakenGlueClip.loadFromJson!(JSONDictValue json) {
   for(Count i=0;i<constraints.size();i++) {
     JSONDictValue constraint = constraints.get(i);
     String object3D = constraint.getString('object3D');
-    report("object3D: " + object3D);
+    //report("object3D: " + object3D);
     String joint = "";
     if (constraint.has("joint"))
       joint = constraint.getString('joint');
