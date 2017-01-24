@@ -1,5 +1,5 @@
 #
-# Copyright 2015 Horde Software Inc.
+# Copyright 2015-2017 Eric Thivierge
 #
 
 import copy
