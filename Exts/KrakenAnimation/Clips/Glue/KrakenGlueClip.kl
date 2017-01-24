@@ -136,7 +136,7 @@ function KrakenGlueClip.initialize!(io Ref<KrakenKLRig> rig, KrakenClipContext c
 
     }
     if (!found)
-      report("Error: controlJointID for controlJoint \""+this.controlJoints[i]+"\" not found.");
+      report("Warning: controlJointID for controlJoint \""+this.controlJoints[i]+"\" not found.");
   }
 
   report("this.spaceJoints.size() = "+this.spaceJoints.size()+" : "+this.spaceJoints);
@@ -152,7 +152,7 @@ function KrakenGlueClip.initialize!(io Ref<KrakenKLRig> rig, KrakenClipContext c
       }
     }
     if (!found)
-      report("Error: spaceJointID for controlJoint \""+this.spaceJoints[i]+"\" not found.");
+      report("Warning: spaceJointID for controlJoint \""+this.spaceJoints[i]+"\" not found.");
   }
 
   report("... done Initializing");  //Should be done once per clip load
