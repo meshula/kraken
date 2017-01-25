@@ -1,7 +1,7 @@
 require Kraken;
 
 /// \dfgPresetColor Color(99, 129, 92)
-struct KrakenPoseConstraint : KrakenConstraint {
+object KrakenPoseConstraint : KrakenConstraint {
 };
 
 /// \dfgPresetFolder Constraints
@@ -35,7 +35,7 @@ function Mat44 KrakenPoseConstraint.compute?(
 
   result.ori.setUnit();
   result.tr *= 1.0 / Float32(this.constrainers.size());
-  
+
   return result.toMat44() * this.offset;
 }
 

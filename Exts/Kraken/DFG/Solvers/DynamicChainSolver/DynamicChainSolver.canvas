@@ -109,6 +109,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "5E53D65DC2F584AD2D47CF25EEDAAD90",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -282,6 +283,291 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken.Exts.Solvers.DynamicChainSolver.DynamicChainSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "DynamicChainSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "simulate",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "resetframe",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "frame",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "simBlendStart",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "simBlendEnd",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "dampening",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "gravity",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "massStart",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "massEnd",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "fkPose",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "animPose",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44[]"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "5E53D65DC2F584AD2D47CF25EEDAAD90",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "DynamicChainSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "DynamicChainSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.DynamicChainSolver.DynamicChainSolver_Constructor",
+          "presetGUID" : "9457C41CB760782CA6C4591ECD81C573"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "DynamicChainSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "simulate",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "resetframe",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "frame",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "simBlendStart",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "simBlendEnd",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "dampening",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "gravity",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "massStart",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "massEnd",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "fkPose",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "animPose",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.DynamicChainSolver.DynamicChainSolver_Solve",
+          "presetGUID" : "BAA8D217AD511057C15491E652DC1A76"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "DynamicChainSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "DynamicChainSolver_Solve.rigScale"
+          ],
+        "simulate" : [
+          "DynamicChainSolver_Solve.simulate"
+          ],
+        "resetframe" : [
+          "DynamicChainSolver_Solve.resetframe"
+          ],
+        "frame" : [
+          "DynamicChainSolver_Solve.frame"
+          ],
+        "simBlendStart" : [
+          "DynamicChainSolver_Solve.simBlendStart"
+          ],
+        "simBlendEnd" : [
+          "DynamicChainSolver_Solve.simBlendEnd"
+          ],
+        "dampening" : [
+          "DynamicChainSolver_Solve.dampening"
+          ],
+        "gravity" : [
+          "DynamicChainSolver_Solve.gravity"
+          ],
+        "massStart" : [
+          "DynamicChainSolver_Solve.massStart"
+          ],
+        "massEnd" : [
+          "DynamicChainSolver_Solve.massEnd"
+          ],
+        "fkPose" : [
+          "DynamicChainSolver_Solve.fkPose"
+          ],
+        "solver.value" : [
+          "DynamicChainSolver_Solve.this"
+          ],
+        "DynamicChainSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "DynamicChainSolver_Solve.this" : [
+          "exec"
+          ],
+        "DynamicChainSolver_Solve.animPose" : [
+          "animPose"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.DynamicChainSolver.DynamicChainSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {

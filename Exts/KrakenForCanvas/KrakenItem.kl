@@ -1,6 +1,0 @@
-require Kraken;
-
-struct KrakenItem {
-  UInt32 uniqueId;
-};
-

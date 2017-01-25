@@ -129,3 +129,9 @@ function KrakenStaticClip.loadFromJson!(JSONDictValue json) {
     }
   }
 }
+
+function SInt32[] KrakenStaticClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  return result;
+}

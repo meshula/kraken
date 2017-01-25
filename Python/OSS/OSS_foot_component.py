@@ -1,7 +1,7 @@
-from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP
+from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import *
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -52,7 +52,7 @@ class OSSFootComponent(OSS_Component):
         # Declare Input Attrs
 
         # Declare Output Attrs
-        self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=1.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.limbMocap_cmpOutAttr = self.createOutput('limbMocap', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.softIK_cmpOutAttr = self.createOutput('softIK', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.squash_cmpOutAttr = self.createOutput('squash', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
@@ -338,33 +338,33 @@ class OSSFootComponentRig(OSSFootComponent):
 
         # IK Handle
         self.handleCtrl = IKControl(self.getName(), parent=self.ctrlCmpGrp, shape="jack")
-        self.handleCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later careful when combining with foot!
+        self.handleCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later careful when combining with foot!
         self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace(name="foot_ik")
 
         # FK Foot
         self.footCtrl = FKControl(self.getName(), parent=self.ctrlCmpGrp, shape="cube")
-        self.footCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.footCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.footCtrlSpace = self.footCtrl.insertCtrlSpace(name="foot_fk") #avoid name clash with ik spacectrl
 
         # IK Heel
         self.heelCtrl = IKControl('heel', parent=self.ctrlCmpGrp, shape="cube")
-        self.heelCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.heelCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.heelCtrlSpace = self.heelCtrl.insertCtrlSpace()
 
         # FK Ball
         self.ballFKCtrl = FKControl('ball', parent=self.footCtrl, shape="cube")
-        self.ballFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.ballFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.ballFKCtrlSpace = self.ballFKCtrl.insertCtrlSpace()
 
         # IK Ball
         self.ballIKCtrl = IKControl('ball', parent=self.footCtrl, shape="cube")
-        self.ballIKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.ballIKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.ballIKCtrlSpace = self.ballIKCtrl.insertCtrlSpace()
 
         self.heelIKCtrl_footTransform = Transform('heel_foot_transform', parent=self.heelCtrl)
 
         self.pivotCtrl = Control(self.getName(), parent=self.handleCtrl, shape="circle", metaData={"altType": "PivotControl"})
-        self.pivotCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.pivotCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.pivotCtrl.scalePoints(Vec3(2,2,2))
         self.pivotCtrlSpace = self.pivotCtrl.insertCtrlSpace()
 
@@ -372,7 +372,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
         # Add Component Params to IK control
         self.handleCtrlAttrGrp = AttributeGroup("DisplayInfo_FootSettings", parent=self.handleCtrl)
-        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.ikBlendAttr = ScalarAttribute('ikBlend', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
 
         self.heelCtrl.getVisibilityAttr().connect(self.ikBlendAttr, lock=True)
@@ -380,7 +380,7 @@ class OSSFootComponentRig(OSSFootComponent):
         self.pivotCtrl.getVisibilityAttr().connect(self.ikBlendAttr, lock=True)
 
 
-        self.footIKAttr = ScalarAttribute('footIK', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.footIKAttr = ScalarAttribute('footIK', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         footRockerAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=self.handleCtrlAttrGrp)
         ballBreakAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
 
@@ -729,6 +729,8 @@ class OSSFootComponentRig(OSSFootComponent):
         """
 
         attrs = [attr.getName() for attr in self.handleCtrlAttrGrp._attributes]
+
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 from kraken.core.kraken_system import KrakenSystem

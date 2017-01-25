@@ -188,3 +188,9 @@ function KrakenFCurveClip.loadFromJson!(JSONDictValue json) {
     }
   }
 }
+
+function SInt32[] KrakenFCurveClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  return result;
+}

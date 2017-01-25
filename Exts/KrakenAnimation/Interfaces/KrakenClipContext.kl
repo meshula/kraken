@@ -6,6 +6,9 @@ struct KrakenClipContext {
   Float64 time;
   Float64 delta;
   SInt32 maxEvalID;
+  Mat44 poseJoints[300];  // Incoming ws pose of skeleton
+  Mat44 directDriveJoints[300];  // specifically used to drive joinra on rig
+  Float32 directDriveScalars[16];  // specifically used to drive scalar attributes on rig
   Mat44 matrices[16];
   Float32 channels[16];
 };

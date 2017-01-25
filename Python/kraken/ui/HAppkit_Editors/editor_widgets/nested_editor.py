@@ -1,5 +1,6 @@
 import json
-from PySide import QtCore, QtGui
+
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -16,13 +17,13 @@ class NestedEditor(BaseValueEditor):
         self._labels = {}
         self._editors = {}
         self._gridRow = 0
-        self._grid = QtGui.QGridLayout()
+        self._grid = QtWidgets.QGridLayout()
         self._grid.setColumnStretch(1, 1)
 
         if self._valueController.hasOption('displayGroupbox'):
-            groupBox = QtGui.QGroupBox(self._valueController.getDataType())
+            groupBox = QtWidgets.QGroupBox(self._valueController.getDataType())
             groupBox.setLayout(self._grid)
-            vbox = QtGui.QVBoxLayout()
+            vbox = QtWidgets.QVBoxLayout()
             vbox.addWidget(groupBox)
             self.setLayout(vbox)
         else:
@@ -32,12 +33,12 @@ class NestedEditor(BaseValueEditor):
 
     def addValueEditor(self, name, widget):
 
-        # widget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        label = QtGui.QLabel(name, self)
+        # widget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        label = QtWidgets.QLabel(name, self)
         # label.setMaximumWidth(200)
         # label.setContentsMargins(0, 5, 0, 0)
         # label.setMinimumWidth(60)
-        # label.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        # label.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         # label.setAlignment(QtCore.Qt.AlignRight)
         # label.adjustSize()
 

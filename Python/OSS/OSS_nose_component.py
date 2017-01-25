@@ -1,7 +1,7 @@
 from kraken.core.maths import Vec3, Xfo, Quat
 from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import *
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -373,6 +373,8 @@ class OSSNoseComponentRig(OSSNoseComponent):
         self.evalOperators()
         self.noseTopOutputTgt.constrainTo(self.noseTipCtrl)
         self.noseTipOutputTgt.constrainTo(self.noseTipCtrl)
+
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 

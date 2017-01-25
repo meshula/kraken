@@ -4,6 +4,7 @@ const UInt32 KrakenClipChannel_Float32 = 0;
 const UInt32 KrakenClipChannel_Xfo = 1;
 
 interface KrakenClip {
+  SInt32[] getPoseJointIDs();  // Return the subset of joints you want to be actually set with data (for performance reasons)
   UInt32 getChannelCount();
   String getChannelName(UInt32 id);
   UInt32 getChannelType(UInt32 id);

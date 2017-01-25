@@ -1,6 +1,6 @@
 require Kraken;
 
-struct KrakenCurve : KrakenObject3D {
+object KrakenCurve : KrakenObject3D {
   String shapeHash;
 };
 

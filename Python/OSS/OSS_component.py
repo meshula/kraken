@@ -4,6 +4,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.operators.kl_operator import KLOperator
 
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
+from kraken.core.objects.attributes.string_attribute import StringAttribute
 from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.joint import Joint
@@ -11,6 +12,8 @@ from kraken.core.objects.locator import Locator
 from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
 from kraken.core.maths import *
+from kraken.core.maths.constants import *
+
 
 
 
@@ -34,6 +37,7 @@ class OSS_Component(BaseExampleComponent):
             self.singleDeformerGroupAttr = BoolAttribute('SingleDeformerGroup', value=True, parent=self.guideSettingsAttrGrp)
             self.mocapAttr = BoolAttribute('mocap', value=False, parent=self.guideSettingsAttrGrp)
             self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
+            self.tagNamesAttr = StringAttribute('tagNames', value="", parent=self.guideSettingsAttrGrp)
         else: # Rig
             self.deformersLayer = self.getOrCreateLayer('deformers')
             self.deformersParent = self.deformersLayer
@@ -52,6 +56,10 @@ class OSS_Component(BaseExampleComponent):
                 self.defCmpGrp = ComponentGroup(self.getName(), self, parent=self.deformersLayer)
                 self.addItem("defCmpGrp", self.defCmpGrp)
                 self.deformersParent = self.defCmpGrp
+
+        # make tagNames string a list
+        self.tagNames = data.get('tagNames', "").strip().split()
+
 
 
     def convertToStringList(self, inputString):
@@ -168,8 +176,12 @@ class OSS_Component(BaseExampleComponent):
         align = Vec3()
 
         aim_axis = AXIS_NAME_TO_TUPLE_MAP[aimAxisStr]
+        aim_vec = Vec3(aim_axis[0], aim_axis[1], aim_axis[2])
+
         side_axis = AXIS_NAME_TO_TUPLE_MAP[sideAxisStr]
-        nv = AXIS_NAME_TO_VEC3_MAP[aimAxisStr].cross(AXIS_NAME_TO_VEC3_MAP[sideAxisStr])
+        side_vec = Vec3(side_axis[0], side_axis[1], side_axis[2])
+
+        nv = aim_vec.cross(side_vec)
         norm_axis = [nv.x, nv.y, nv.z]
 
         for i in [1, -1]:
@@ -348,15 +360,15 @@ class OSS_Component(BaseExampleComponent):
         """
 
         if not name:
-            name = offsetB.getName()+"OffsetOp"
+            name = offsetB.getName()+"_offset"
 
-        offsetOpp = KLOperator(name, 'OSS_offsetSolver', 'OSS_Kraken')
-        self.addOperator(offsetOpp)
-        offsetOpp.setInput('objects', objects)
-        offsetOpp.setInput('offsetsRest', [offsetA for o in objects])
-        offsetOpp.setInput('offsets', [offsetB for o in objects])
-        offsetOpp.setOutput('result', targets)
-        return offsetOpp
+        offsetOp = KLOperator(name, 'OSS_offsetSolver', 'OSS_Kraken')
+        self.addOperator(offsetOp)
+        offsetOp.setInput('objects', objects)
+        offsetOp.setInput('offsetsRest', [offsetA for o in objects])
+        offsetOp.setInput('offsets', [offsetB for o in objects])
+        offsetOp.setOutput('result', targets)
+        return offsetOp
 
 
     def insertParentSpace(self, ctrl, name=None):
@@ -410,6 +422,34 @@ class OSS_Component(BaseExampleComponent):
         self.attachCtrl.lockTranslation(x=True, y=True, z=True)
         self.attachCtrl.lockScale(x=True, y=True, z=True)
         self.attachCtrl.lockRotation(x=True, y=True, z=True)
-        
+
         return self.attachCtrl
 
+
+    def tagAllComponentJoints(self, tagNames):
+
+        if not hasattr(tagNames, "__iter__"):
+            tagNames = [tagNames]
+
+        joints = self.deformersParent.getDescendents(classType="Joint", inheritedClass=True)
+        joints = [joint for joint in joints if joint.getComponent() == self]
+        for tagName in tagNames:
+            for joint in joints:
+                joint.appendMetaDataListItem("TAGS", tagName)
+
+    def createConditionSolver(self, condition, ifTrue, ifFalse, result=None, name=None):
+
+        if not name:
+            try:
+                name = condition.getName()+"_cond"
+            except:
+                name = "cond"
+
+        condOp = KLOperator(name, 'OSS_ConditionScalarSolver', 'OSS_Kraken')
+        self.addOperator(condOp)
+        condOp.setInput('condition', condition)
+        condOp.setInput('ifTrue', ifTrue)
+        condOp.setInput('ifFalse', ifFalse)
+        if result:
+            condOp.setOutput('result', result)
+        return condOp

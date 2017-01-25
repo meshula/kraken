@@ -1,6 +1,6 @@
 require Kraken;
 
-struct KrakenControl : KrakenCurve {
+object KrakenControl : KrakenCurve {
 };
 
 /// \dfgPresetFolder Objects
@@ -43,8 +43,8 @@ function KrakenControl(
   localXfo.sc.z = floatAnimation.get(this.path+'.sc.z', localXfo.sc.z);
 
   // also do euler values, just in case
-  if(floatAnimation.has(this.path+'.rot.x') || 
-    floatAnimation.has(this.path+'.rot.y') || 
+  if(floatAnimation.has(this.path+'.rot.x') ||
+    floatAnimation.has(this.path+'.rot.y') ||
     floatAnimation.has(this.path+'.rot.z')) {
     Vec3 angles = localXfo.ori.toEulerAngles();
     angles.x = floatAnimation.get(this.path+'.rot.x', angles.x);

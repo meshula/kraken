@@ -5,7 +5,6 @@ Contributed by Roy Nieterau roy_nieterau@hotmail.com
 */
 
 require InlineDrawing;
-require Kraken;
 require Math;
 require Animation;
 

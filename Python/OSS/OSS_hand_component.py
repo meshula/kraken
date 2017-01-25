@@ -1,9 +1,9 @@
 import re
 
-from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP
+from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import *
 
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
@@ -55,7 +55,7 @@ class OSSHandComponent(OSS_Component):
 
         # Declare Output Attrs
         self.drawDebugOutputAttr = self.createOutput('drawDebug', dataType='Boolean', value=False, parent=self.cmpOutputAttrGrp).getTarget()
-        self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=1.0, parent=self.cmpOutputAttrGrp).getTarget()
+        self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         #self.limbMocap_cmpOutAttr = self.createOutput('limbMocap', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.softIK_cmpOutAttr = self.createOutput('softIK', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.stretch_cmpOutAttr = self.createOutput('stretch', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
@@ -391,19 +391,19 @@ class OSSHandComponentRig(OSSHandComponent):
 
         # IK Handle
         self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="jack")
-        self.handleCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZXY"])  #Set with component settings later careful when combining with foot!
+        self.handleCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later careful when combining with foot!
         self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace(name="hand_ik") # To avoid clashes
         self.handleIKCtrlSpace = CtrlSpace('handIK', parent=self.handleCtrl)
 
         # FK Hand
         self.handCtrl = FKControl('hand', parent=self.ctrlCmpGrp, shape="cube")
-        self.handCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.handCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.handCtrl.alignOnXAxis()
         self.handCtrlSpace = self.handCtrl.insertCtrlSpace(name="hand_fk")
 
         # FK palm
         self.palmCtrl = FKControl('palm', parent=self.handCtrl, shape="cube")
-        self.palmCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.palmCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.palmCtrl.alignOnXAxis()
         self.palmCtrlSpace = self.palmCtrl.insertCtrlSpace()
 
@@ -418,7 +418,7 @@ class OSSHandComponentRig(OSSHandComponent):
         #ballBreakInputAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
         #HandTiltInputAttr = ScalarAttribute('handTilt', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
 
-        self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
+        self.ikBlendAttr = ScalarAttribute('ikBlend', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.ikBlend_cmpOutAttr.connect(self.ikBlendAttr)
         self.handIKInputAttr = ScalarAttribute('handIK', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
 
@@ -528,7 +528,7 @@ class OSSHandComponentRig(OSSHandComponent):
                 if segment == "end":
                     continue  # don't create control for end (but we need it to loop through control positions correctly)
                 digiSegCtrl = FKControl(digitName+"_"+segment, parent=parent, shape="square")
-                digiSegCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
+                digiSegCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XZY"])  #Set with component settings later
                 digiSegCtrl.rotatePoints(0,0,90)
                 digiSegCtrl.scalePoints(globalScale)
                 digiSegCtrls.append(digiSegCtrl)
@@ -677,6 +677,7 @@ class OSSHandComponentRig(OSSHandComponent):
         #HandPlane.scalePointsOnAxis(self.handleCtrl.xfo.tr.subtract(self.palmTipPivotTransform.xfo.tr).length(), "POSZ")
         self.handleCtrl.appendCurveData(HandPlane.getCurveData())
         """
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 def getDigitNameList(digitNames):

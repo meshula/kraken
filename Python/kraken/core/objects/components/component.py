@@ -727,6 +727,8 @@ class Component(Object3D):
 
         self._operators.append(operator)
 
+        operator.setComponent(self)
+
 
         return True
 

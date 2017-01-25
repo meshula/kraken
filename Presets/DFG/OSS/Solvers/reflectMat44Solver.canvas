@@ -342,14 +342,14 @@
   Mat44 parents[] = inputParents;
   results.resize(s);
   parents.resize(s);
-  
+
   Mat44 m;
   // Flip across xy
   m.row0.x = Scalar(-1);
-  
+
   for (UInt32 i=0; i< inputs.size(); i++) {
     results[i] = m*inputs[i];
-    results[i] = results[i].align(alignX,alignY,alignZ);
+    results[i] = Mat44_align(results[i], alignX, alignY, alignZ);
     results[i] = parents[i].inverse()*results[i];
   }
 }
@@ -699,14 +699,14 @@
   Mat44 parents[] = inputParents;
   results.resize(s);
   parents.resize(s);
-  
+
   Mat44 m;
   // Flip across xy
   m.row0.x = Scalar(-1);
-  
+
   for (UInt32 i=0; i< inputs.size(); i++) {
     results[i] = m*inputs[i];
-    results[i] = results[i].align(alignX,alignY,alignZ);
+    results[i] = Mat44_align(results[i], alignX, alignY, alignZ);
     results[i] = parents[i].inverse()*results[i];
   }
 }

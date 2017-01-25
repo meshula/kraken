@@ -24,8 +24,30 @@ from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 
 import maya.cmds as cmds
 
+
 logger = getLogger('kraken')
 logger.setLevel(logging.INFO)
+
+# Rotation order remapping
+# Maya's enums don't map directly to the Fabric rotation orders
+#
+# Fabric | Maya
+# ---------------
+# 0 ZYX  | 5 ZYX
+# 1 XZY  | 3 XZY
+# 2 YXZ  | 4 YXZ
+# 3 YZX  | 1 YZX
+# 4 XYZ  | 0 XYZ
+# 5 ZXY  | 2 ZXY
+
+ROT_ORDER_REMAP = {
+    0: 5,
+    1: 3,
+    2: 4,
+    3: 1,
+    4: 0,
+    5: 2
+}
 
 
 class Builder(Builder):
@@ -579,18 +601,7 @@ class Builder(Builder):
 
             if kConstraint.getMaintainOffset() is True:
 
-                # Maya's rotation order enums:
-                # 0 XYZ
-                # 1 YZX
-                # 2 ZXY
-                # 3 XZY
-                # 4 YXZ <-- 5 in Fabric
-                # 5 ZYX <-- 4 in Fabric
-                order = kConstraint.getConstrainee().ro.order
-                if order == 4:
-                    order = 5
-                elif order == 5:
-                    order = 4
+                order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
 
                 offsetXfo = kConstraint.computeOffset()
                 offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
@@ -674,31 +685,7 @@ class Builder(Builder):
 
             if kConstraint.getMaintainOffset() is True:
 
-                # Fabric's rotation order enums:
-                # We need to use the negative rotation order
-                # to calculate propery offset values.
-                #
-                # 0 XYZ
-                # 1 YZX
-                # 2 ZXY
-                # 3 XZY
-                # 4 ZYX
-                # 5 YXZ
-
-                rotOrderRemap = {
-                    0: 4,
-                    1: 3,
-                    2: 5,
-                    3: 1,
-                    4: 0,
-                    5: 2
-                }
-
-                order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
-                # if order == 4:
-                #     order = 5
-                # elif order == 5:
-                #     order = 4
+                order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
 
                 offsetXfo = kConstraint.computeOffset()
                 offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
@@ -991,7 +978,7 @@ class Builder(Builder):
                                                       desiredNodeName="solverVar",
                                                       xPos="-75",
                                                       yPos="100",
-                                                      type=solverTypeName,
+                                                      type='{}::{}'.format(str(kOperator.getExtension()), str(solverTypeName)),
                                                       extDep=kOperator.getExtension())
 
                 pm.FabricCanvasConnect(mayaNode=canvasNode,
@@ -1508,18 +1495,7 @@ class Builder(Builder):
 
         dccSceneItem.setRotation(quat, "world")
 
-        # Maya's rotation order enums:
-        # 0 XYZ
-        # 1 YZX
-        # 2 ZXY
-        # 3 XZY
-        # 4 YXZ <-- 5 in Fabric
-        # 5 ZYX <-- 4 in Fabric
-        order = kSceneItem.ro.order
-        if order == 4:
-            order = 5
-        elif order == 5:
-            order = 4
+        order = ROT_ORDER_REMAP[kSceneItem.ro.order]
 
         #  Maya api is one off from Maya's own node enum pyMel uses API
         dccSceneItem.setRotationOrder(order + 1, False)

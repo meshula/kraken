@@ -10,5 +10,6 @@
   "dfgPresets": {
     "dir": "DFG",
     "presetPath": "OSS.Exts.Curves",
-    }
+    },
+    "autoNamespace": true
 }

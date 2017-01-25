@@ -1,6 +1,5 @@
 {
   "code": [
-    "KrakenItem.kl",
 
     "Objects/KrakenObject3D.kl",
     "Objects/KrakenCtrlSpace.kl",
@@ -29,5 +28,6 @@
     "Constraints/KrakenScaleConstraint.kl",
 
     "Shapes/KrakenCurveDict.kl"
-  ]
+  ],
+  "autoNamespace": true
 }

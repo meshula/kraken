@@ -1,7 +1,7 @@
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import *
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -227,18 +227,18 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         # Neck
         self.neckCtrl = FKControl('neck', parent=self.ctrlCmpGrp, shape="square", scale=2.5)
-        self.neckCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["ZYX"])  #Set with component settings later
+        self.neckCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.neckCtrlSpace = self.neckCtrl.insertCtrlSpace()
 
         # Head
         self.headCtrl = FKControl('head', parent=self.neckCtrl, shape="halfCircle", scale=2)
-        self.headCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
+        self.headCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XZY"])  #Set with component settings later
         self.headCtrlSpace  = self.headCtrl.insertCtrlSpace()
 
 
 
         self.neckMidCtrl = FKControl('neckMid', parent=self.neckCtrl, shape="circle", scale=6)
-        self.neckMidCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
+        self.neckMidCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XZY"])  #Set with component settings later
         #self.headCtrl.rotatePoints(0, 0, 90)
         self.neckMidCtrlSpace  = self.neckMidCtrl.insertCtrlSpace()
 
@@ -634,6 +634,8 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         self.headIKCtrl.getVisibilityAttr().connect(self.HeadAlignIkSpaceAttr, lock=True)
         self.headIKUpV.getVisibilityAttr().connect(self.HeadAlignIkSpaceAttr, lock=True)
+
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 

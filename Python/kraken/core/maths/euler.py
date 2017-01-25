@@ -12,31 +12,6 @@ from kraken.core.maths.mat33 import Mat33
 from kraken.core.maths.rotation_order import RotationOrder
 
 
-rotationOrderStrToIntMapping = {
-    'xyz': 0,
-    'XYZ': 0,
-    'yzx': 1,
-    'YZX': 1,
-    'zxy': 2,
-    'ZXY': 2,
-    'xzy': 3,
-    'XZY': 3,
-    'zyx': 4,
-    'ZYX': 4,
-    'yxz': 5,
-    'YXZ': 5
-}
-
-rotationOrderIntToStrMapping = [
-    'XYZ',
-    'YZX',
-    'ZXY',
-    'XZY',
-    'ZYX',
-    'YXZ'
-]
-
-
 class Euler(MathObject):
     """Euler rotation object."""
 

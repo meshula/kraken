@@ -1,0 +1,56 @@
+require Kraken;
+
+object OSS_AngleBetweenSolver : KrakenSolver {
+};
+
+// Default Constructor
+function OSS_AngleBetweenSolver()
+{
+  this.defaultValues["matrixA"] = Mat44();
+  this.defaultValues["matrixB"] = Mat44();
+  this.defaultValues["axisA"] = 0;
+  this.defaultValues["axisB]"] = 0;
+  this.defaultValues["footBend"] = 0.0;
+  this.defaultValues["radians"] = false;
+
+
+}
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_AngleBetweenSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('matrixA', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('matrixB', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('axisA', 'In', 'SInt32'));
+  args.push(KrakenSolverArg('axisB', 'In', 'SInt32'));
+  args.push(KrakenSolverArg('radians', 'In', 'Boolean'));
+  args.push(KrakenSolverArg('angle', 'Out', 'Scalar'));
+  return args;
+}
+
+
+
+// Solve
+function OSS_AngleBetweenSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Mat44 matrixA,
+  in Mat44 matrixB,
+  in SInt32 axisA,
+  in SInt32 axisB,
+  in Boolean radians,
+  out Scalar angle
+  )
+{
+
+  Vec3 vecA = getAxis(Xfo(matrixA).ori, axisA);
+  Vec3 vecB = getAxis(Xfo(matrixB).ori, axisB);
+
+  angle = vecA.angleTo(vecB);
+
+  if (!radians)
+    angle = Math_radToDeg(angle);
+
+}
+

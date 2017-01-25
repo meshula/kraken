@@ -1,0 +1,99 @@
+{
+  "objectType" : "Graph",
+  "title" : "Create",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out"
+      }
+    ],
+  "extDeps" : {
+    "KRK_bob_rig" : "*"
+    },
+  "nodes" : [
+    {
+      "objectType" : "Var",
+      "name" : "rig",
+      "ports" : [
+        {
+          "objectType" : "VarPort",
+          "name" : "value",
+          "nodePortType" : "IO"
+          }
+        ],
+      "dataType" : "KRK_bob_rig::KRK_bob_rig",
+      "extDep" : "KRK_bob_rig:*"
+      },
+    {
+      "objectType" : "Inst",
+      "name" : "constructor",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "constructor",
+        "ports" : [
+          {
+            "objectType" : "ExecPort",
+            "name" : "exec",
+            "nodePortType" : "IO",
+            "execPortType" : "IO",
+            "typeSpec" : "Execute"
+            },
+          {
+            "objectType" : "ExecPort",
+            "name" : "result",
+            "nodePortType" : "In",
+            "execPortType" : "Out",
+            "typeSpec" : "KRK_bob_rig"
+            }
+          ],
+        "extDeps" : {
+          "KRK_bob_rig" : "*"
+          },
+        "code" : "require Kraken;
+require KrakenAnimation;
+require KrakenForCanvas;
+require KRK_bob_rig;
+dfgEntry {
+  result = KRK_bob_rig();
+}
+"
+        }
+      }
+    ],
+  "connections" : {
+    "rig.value" : [
+      "result"
+      ],
+    "constructor.result" : [
+      "rig.value"
+      ]
+    },
+  "args" : [
+    {
+      "type" : "KRK_bob_rig::KRK_bob_rig",
+      "value" : null,
+      "ext" : "KRK_bob_rig"
+      }
+    ]
+  }

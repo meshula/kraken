@@ -1,0 +1,328 @@
+require Math;
+
+object KrakenGlueClip : KrakenClip {
+  KrakenClip childClip;
+
+  String controls[];
+  String controlJoints[];
+  String spaces[];
+  String spaceJoints[];
+  //UInt32 nameToId[String];
+  //SInt32 objectID[];
+  SInt32 controlJointIDs[];
+  SInt32 spaceJointIDs[];
+  String controlIndexToSpace[];
+  SInt32 controlIndexToSpaceIndex[];
+  //String localXfos[];
+  //String globalXfos[];
+  Mat44 controlOffsets[];
+  Mat44 spaceOffsets[];
+
+  Mat44 controlLocalMatrices[];
+  Mat44 spacesGlobalMatrices[];
+  /*
+  String hierarchy[];
+  SInt32 hierarchyID[];
+  String hierarchyParents[];
+  Mat44 hierarchyMatrix[];
+  Mat44 hierarchyLocalMatrix[];
+  SInt32 hierarchyParentsIndex[];
+  SInt32 hierarchyIDToNameIndex[];  //From global ID to local clip name index if exists in controls
+  */
+  UInt64 rigVersion;
+  KrakenClipLookup lookup;
+};
+
+
+function KrakenGlueClip() {
+  this.lookup = null;
+  this.childClip = null;
+}
+
+
+
+// function KrakenGlueClip.addHierachy!(String hierName, String parentName)
+// {
+//     report("hierName: " + hierName);
+//     report("parentName: " + parentName);
+//     this.hierarchy.push(hierName);
+//     this.hierarchyParents.push(parentName);
+//     this.hierarchyID.push(-1);  //to be defined later when rig is intitialized
+//     this.hierarchyParentsID.push(-1);
+//     this.hierarchyIDToNameIndex.push(-1);
+// }
+
+function KrakenGlueClip.addConstraint!(
+  String name,
+  String joint,
+  String space,
+  Vec3 tOffset,
+  Vec3 rOffset,
+  Vec3 sOffset,
+  UInt32 ro
+) {
+  // Assume we are getting degrees and correct rotation order
+
+  Quat q = Quat();
+  Vec3 radians = Vec3(Math_degToRad(rOffset.x), Math_degToRad(rOffset.y), Math_degToRad(rOffset.z));
+  q.setFromEulerAngles(radians, RotationOrder(ro));
+
+  //this.nameToId[name] = this.controls.size();  //dictionary
+
+  if(space == "")
+  {
+    this.spaces.push(name);
+    this.spaceJoints.push(joint);
+    this.spaceJointIDs.push(-1);
+    this.spaceOffsets.push(Xfo(q, tOffset, sOffset).toMat44());
+    this.spacesGlobalMatrices.push(Mat44());
+
+  } else
+  {
+    this.controls.push(name);
+    this.controlJoints.push(joint);
+    this.controlJointIDs.push(-1);
+    this.controlIndexToSpace.push(space);
+    this.controlIndexToSpaceIndex.push(-1);
+    this.controlOffsets.push(Xfo(q, tOffset, sOffset).toMat44());
+    this.controlLocalMatrices.push(Mat44());
+  }
+
+
+  //this.objectID.push(-1);  //to be defined later when rig is intitialized
+
+
+  //this.offsets.push(Xfo(Quat().setFromEulerAngles(rOffset, RotationOrder(0)), tOffset, sOffset));
+
+}
+
+
+function KrakenGlueClip.initialize!(io Ref<KrakenKLRig> rig, KrakenClipContext context)
+{
+
+  if(rig == null)
+    return;
+
+  report("Initializing clip...");  //Should be done once per clip load
+
+  for(Count i=0; i<this.controls.size(); i++)
+  {
+    String space = this.controlIndexToSpace[i];
+    for(Count s=0; s<this.spaces.size(); s++)
+    {
+      if (space == this.spaces[s])
+      {
+        this.controlIndexToSpaceIndex[i] = s;
+        break;
+      }
+    }
+
+  }
+
+  //String allNames []   = rig.getAllXfoNames();
+  String allJointNames [] = rig.getJointNames();
+
+  report("this.controlJoints.size() = "+this.controlJoints.size()+" : "+this.controlJoints);
+  Boolean found = 0;
+  for(Count i=0;i<this.controlJoints.size();i++) {
+    for(Count j=0;j<allJointNames.size();j++) {
+      // find matching name and establish global id
+      if(allJointNames[j] == this.controlJoints[i]) {
+        this.controlJointIDs[i] = j;
+        //report("  " + this.controlJoints[i] + ": "+ j);
+        found = 1;
+        break;
+      }
+
+    }
+    if (!found)
+      report("Warning: controlJointID for controlJoint \""+this.controlJoints[i]+"\" not found.");
+  }
+
+  report("this.spaceJoints.size() = "+this.spaceJoints.size()+" : "+this.spaceJoints);
+  found = 0;
+  for(Count i=0;i<this.spaceJoints.size();i++) {
+    for(Count j=0;j<allJointNames.size();j++) {
+      // find matching name and establish global id
+      if(allJointNames[j] == this.spaceJoints[i]) {
+        this.spaceJointIDs[i] = j;
+        //report("  " + this.spaceJoints[i] + ": "+ j);
+        found = 1;
+        break;
+      }
+    }
+    if (!found)
+      report("Warning: spaceJointID for controlJoint \""+this.spaceJoints[i]+"\" not found.");
+  }
+
+  report("... done Initializing");  //Should be done once per clip load
+
+
+
+}
+
+function KrakenGlueClip.solveConstraints!(io Ref<KrakenKLRig> rig, KrakenClipContext context)
+{
+  if(rig == null)
+    return;
+
+  //report("\nKrakenGlueClip.solveConstraints...");
+
+
+  for(Count i=0;i<this.spaces.size();i++)
+  {
+      if (this.spaceJointIDs[i] == -1)  // Space not constrained to a joint
+        this.spacesGlobalMatrices[i] = this.spaceOffsets[i];
+      else
+        this.spacesGlobalMatrices[i] = context.poseJoints[this.spaceJointIDs[i]] * this.spaceOffsets[i];
+
+  }
+
+  Mat44 global, local, parent;
+
+  for(Count i=0;i<this.controls.size();i++)
+  {
+
+      if (this.controlIndexToSpaceIndex[i] != -1)
+        parent = this.spacesGlobalMatrices[this.controlIndexToSpaceIndex[i]];
+      else
+        parent = Mat44();
+
+      global = context.poseJoints[this.controlJointIDs[i]] * this.controlOffsets[i];
+      local = parent.inverse() * global;
+      this.controlLocalMatrices[i] = local;
+  }
+
+  //report("... done KrakenGlueClip.solveConstraints");
+
+}
+
+function SInt32[] KrakenGlueClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  for(Count i=0; i<this.controlJointIDs.size(); i++) {
+    if (this.controlJointIDs[i] == -1)
+      continue;
+    result.push(this.controlJointIDs[i]);
+  }
+
+  for(Count i=0; i<this.spaceJointIDs.size(); i++) {
+    if (this.spaceJointIDs[i] == -1)
+      continue;
+    Boolean found = 0;
+    for(Count j=0; j<this.controlJointIDs.size(); j++) {
+        if (this.spaceJointIDs[i] == this.controlJointIDs[j])
+        {
+          found = true;
+          break;
+        }
+    }
+    if (!found)
+      result.push(this.spaceJointIDs[i]);
+  }
+  return result;
+}
+
+
+UInt32 KrakenGlueClip.getChannelCount() {
+  return this.controls.size();
+}
+
+String KrakenGlueClip.getChannelName(UInt32 index) {
+  return this.controls[index];
+}
+
+UInt32 KrakenGlueClip.getChannelType(UInt32 index) {
+  return KrakenClipChannel_Xfo;
+}
+
+Float32 KrakenGlueClip.evaluateFloat32!(UInt32 index, io Ref<KrakenKLRig> rig,, KrakenClipContext context) {
+  return Float32();
+}
+
+Xfo KrakenGlueClip.evaluateXfo!(UInt32 index, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
+  // Returns local space xfo
+  // Assume by now, we have already set global and local Xfos for necessary controls in a temp data structure
+  // The KrakenClipLookup.applyClip() function uses the rig's current control local xfos to interpolate, so we can't set them directly
+
+  //report("KrakenGlueClip.evaluateXfo: "+index);
+  //return Xfo();
+
+  return  Xfo(this.controlLocalMatrices[index]);
+
+}
+
+
+function KrakenGlueClip.apply(io Ref<KrakenKLRig> rig, KrakenClipContext context, Float32 factor) {
+  KrakenGlueClip clip = this; // Why do we do this?  Why not just use "this"?
+  if(clip.lookup == null)
+  {
+    clip.lookup = KrakenClipLookup(rig, clip);
+    clip.initialize(rig, context);
+  }
+
+  clip.solveConstraints(rig, context);
+
+  // OK at this point the context will hold matrices of all current joint positions
+  // We need to calculate the new control xfos all in one function instead of individually in the lookup loop
+  //report("KrakenGlueClip.apply");
+  clip.lookup.applyClip(rig, clip, context, factor);
+}
+
+
+function JSONDictValue KrakenGlueClip.saveToJson!() {
+  JSONArrayValue constraints();
+  for(Count i=0;i<this.controls.size();i++) {
+    JSONDictValue constraint();
+    constraint.setString('object3D', this.controls[i]);
+    constraint.setString('joint', this.controlJoints[i]);
+    // Need to add offsets with ro
+    constraints.add(constraint);
+  }
+  JSONDictValue content();
+  if(this.childClip) {
+    content.setString('childClipType', this.childClip.type());
+    content.set('childClip', this.childClip.saveToJson());
+  }
+  content.set('constraints', constraints);
+  return content;
+}
+
+
+function KrakenGlueClip.loadFromJson!(JSONDictValue json) {
+  report("TTPrint: KrakenGlueClip.loadFromJson");
+
+  this.controls.resize(0);
+  this.controlJoints.resize(0);
+  this.spaces.resize(0);
+  this.spaceJoints.resize(0);
+  this.controlOffsets.resize(0);
+  this.spaceOffsets.resize(0);
+
+  this.controlJointIDs.resize(0);
+  this.spaceJointIDs.resize(0);
+
+  this.controlIndexToSpace.resize(0);
+  this.controlIndexToSpaceIndex.resize(0);
+  this.controlLocalMatrices.resize(0);
+  this.spacesGlobalMatrices.resize(0);
+
+  JSONArrayValue constraints = json.get('constraints');
+  for(Count i=0;i<constraints.size();i++) {
+    JSONDictValue constraint = constraints.get(i);
+    String object3D = constraint.getString('object3D');
+    //report("object3D: " + object3D);
+    String joint = "";
+    if (constraint.has("joint"))
+      joint = constraint.getString('joint');
+    String space = "";
+    if (constraint.has("space"))
+      space = constraint.getString('space');
+    UInt32 ro = constraint.getInteger('order');
+    Vec3 tOffset = constraint.getVec3('tOffset');
+    Vec3 rOffset = constraint.getVec3('rOffset');  //Need rotation order, too
+    Vec3 sOffset = constraint.getVec3('sOffset');  // Check if this exists, and if no scale is 0
+    this.addConstraint(object3D, joint, space, tOffset, rOffset, sOffset, ro);
+  }
+
+}

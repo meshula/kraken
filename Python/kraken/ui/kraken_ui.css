@@ -221,11 +221,11 @@ GraphViewWidget#graphViewWidget QDialog QPushButton::pressed {
 }
 
 /* Save Message Box */
-QMessageBox#SaveMessageBox {
+QMessageBox {
     background-color: #2b2b2b;
 }
 
-QMessageBox#SaveMessageBox QPushButton {
+QMessageBox QPushButton {
     border: 1px #333;
     border-radius: 3px;
     border-style: outset;
@@ -236,11 +236,11 @@ QMessageBox#SaveMessageBox QPushButton {
     color: #e1ffff;
 }
 
-QMessageBox#SaveMessageBox QPushButton:hover {
+QMessageBox QPushButton:hover {
     background-color: #3b3b3b;
 }
 
-QMessageBox#SaveMessageBox QPushButton::pressed {
+QMessageBox QPushButton::pressed {
     border-style: inset;
     padding-top: 7px;
     padding-left: 7px;

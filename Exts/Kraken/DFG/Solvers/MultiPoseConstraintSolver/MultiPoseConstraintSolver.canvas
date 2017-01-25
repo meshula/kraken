@@ -46,6 +46,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "C33190B14003A9844CF4D118896E4443",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -147,6 +148,156 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken.Exts.Solvers.MultiPoseConstraintSolver.MultiPoseConstraintSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "MultiPoseConstraintSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "constrainers",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "constrainees",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44[]"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "C33190B14003A9844CF4D118896E4443",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "MultiPoseConstraintSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "MultiPoseConstraintSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.MultiPoseConstraintSolver.MultiPoseConstraintSolver_Constructor",
+          "presetGUID" : "3509EF5E59B930CE67830E210F3D08EE"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "MultiPoseConstraintSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "constrainers",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "constrainees",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.MultiPoseConstraintSolver.MultiPoseConstraintSolver_Solve",
+          "presetGUID" : "6CC99BB15CE039C90B9EF46A2DB348B1"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "MultiPoseConstraintSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "MultiPoseConstraintSolver_Solve.rigScale"
+          ],
+        "constrainers" : [
+          "MultiPoseConstraintSolver_Solve.constrainers"
+          ],
+        "solver.value" : [
+          "MultiPoseConstraintSolver_Solve.this"
+          ],
+        "MultiPoseConstraintSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "MultiPoseConstraintSolver_Solve.this" : [
+          "exec"
+          ],
+        "MultiPoseConstraintSolver_Solve.constrainees" : [
+          "constrainees"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.MultiPoseConstraintSolver.MultiPoseConstraintSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {

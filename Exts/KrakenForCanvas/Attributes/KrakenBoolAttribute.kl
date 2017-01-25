@@ -1,6 +1,6 @@
 require Math;
 
-struct KrakenBoolAttribute : KrakenAttribute {
+object KrakenBoolAttribute : KrakenAttribute {
   Boolean value;
 };
 
