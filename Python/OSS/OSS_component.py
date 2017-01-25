@@ -360,15 +360,15 @@ class OSS_Component(BaseExampleComponent):
         """
 
         if not name:
-            name = offsetB.getName()+"OffsetOp"
+            name = offsetB.getName()+"_offset"
 
-        offsetOpp = KLOperator(name, 'OSS_offsetSolver', 'OSS_Kraken')
-        self.addOperator(offsetOpp)
-        offsetOpp.setInput('objects', objects)
-        offsetOpp.setInput('offsetsRest', [offsetA for o in objects])
-        offsetOpp.setInput('offsets', [offsetB for o in objects])
-        offsetOpp.setOutput('result', targets)
-        return offsetOpp
+        offsetOp = KLOperator(name, 'OSS_offsetSolver', 'OSS_Kraken')
+        self.addOperator(offsetOp)
+        offsetOp.setInput('objects', objects)
+        offsetOp.setInput('offsetsRest', [offsetA for o in objects])
+        offsetOp.setInput('offsets', [offsetB for o in objects])
+        offsetOp.setOutput('result', targets)
+        return offsetOp
 
 
     def insertParentSpace(self, ctrl, name=None):
@@ -436,3 +436,20 @@ class OSS_Component(BaseExampleComponent):
         for tagName in tagNames:
             for joint in joints:
                 joint.appendMetaDataListItem("TAGS", tagName)
+
+    def createConditionSolver(self, condition, ifTrue, ifFalse, result=None, name=None):
+
+        if not name:
+            try:
+                name = condition.getName()+"_cond"
+            except:
+                name = "cond"
+
+        condOp = KLOperator(name, 'OSS_ConditionScalarSolver', 'OSS_Kraken')
+        self.addOperator(condOp)
+        condOp.setInput('condition', condition)
+        condOp.setInput('ifTrue', ifTrue)
+        condOp.setInput('ifFalse', ifFalse)
+        if result:
+            condOp.setOutput('result', result)
+        return condOp
