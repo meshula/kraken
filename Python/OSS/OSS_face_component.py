@@ -481,7 +481,10 @@ class OSSFaceComponentRig(OSSFaceComponent):
                         location = self.getLocation()
                         if side != location:
                             location = side
-                        if location+"_"+handleName in shapesToControlDict.keys():
+
+                        shapeName = location+"_"+handleName
+
+                        if shapeName in shapesToControlDict.keys():
 
                             LTOp = KLOperator(self.getName()+handleName, 'OSS_GetLocalTranslateSolver', 'OSS_Kraken', metaData={"altLocation":side})
                             self.addOperator(LTOp)
@@ -492,14 +495,21 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
                             bsAttrGrp = AttributeGroup("BlendShapes", parent=newCtrl)
                             used_axes = {}
-                            for direction, shapes in shapesToControlDict[location+"_"+handleName].iteritems():
+                            shapeInfo = shapesToControlDict[shapeName]
                                 #Need something here to extract single local axis value from handleName
 
-                                sign, axis = direction.split("t")
+                            for direction, shapes in shapeInfo["direction"].iteritems():
+                                if 'r' in direction:
+                                    sign, axis = direction.split("r")
+                                    attrName = 'localRotate'
+                                if 't' in direction:
+                                    sign, axis = direction.split("t")
+                                    attrName = 'localTranslate'
+
                                 if axis not in used_axes.keys():
-                                    lvAttr = ScalarAttribute("localT"+axis, value=0.5, parent=bsAttrGrp)  #can't currently use dcc eulers directly
+                                    lvAttr = ScalarAttribute(attrName[:6]+axis, value=0.5, parent=bsAttrGrp)  #can't currently use dcc eulers directly
                                     lvAttr.setLock(True)
-                                    LTOp.setOutput('localTranslate'+axis.upper(), lvAttr)
+                                    LTOp.setOutput(attrName+axis.upper(), lvAttr)
 
                                     posAttr = ScalarAttribute(axis+"Pos", value=0.5, parent=bsAttrGrp)
                                     posAttr.setLock(True)
@@ -521,9 +531,12 @@ class OSSFaceComponentRig(OSSFaceComponent):
                                     self.RemapScalarValueSolverKLOp.setOutput('resultNeg', array)
 
                                 for shape in shapes:
-                                    bsAttr = ScalarAttribute(shape, value=0.0, parent=bsAttrGrp)
+                                    #we should get rid of this
+                                    shapeName = shape + "_bsShape"
+                                    bsAttr = ScalarAttribute(shapeName, value=0.0, parent=bsAttrGrp)
                                     bsAttr.setLock(True)
-                                    bsAttr.setMetaDataItem("blendShapeName", shape)
+                                    bsAttr.setMetaDataItem("SCALAR_OUTPUT", shapeName)
+                                    bsAttr.appendMetaDataListItem("TAGS", self.getDecoratedName())
                                     bsAttr.connect(used_axes[axis][sign])
 
                     if side != self.getLocation():
