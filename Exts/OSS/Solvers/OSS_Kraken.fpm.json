@@ -14,7 +14,8 @@
     "OSS_GetLocalTranslateSolver.kl"
     "OSS_offsetSolver.kl"
     "OSS_WeightedAverageMat44KLSolver.kl",
-    "OSS_AngleBetweenSolver.kl"
+    "OSS_AngleBetweenSolver.kl",
+    "OSS_ConditionScalarSolver.kl"
   ],
   "autoNamespace": true
 }
