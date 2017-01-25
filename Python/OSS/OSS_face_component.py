@@ -4,7 +4,7 @@ import json
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import ROT_ORDER_STR_TO_INT_MAP
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -553,7 +553,6 @@ class OSSFaceComponentRig(OSSFaceComponent):
                     #controlsList.append(newCtrl)
                     parent = newCtrl
 
-
                     if (ctrlListName+"Xfos") in data.keys():
                         if side == "R":
                             indexOffset = len(animControlNameList) * 2
@@ -611,6 +610,8 @@ class OSSFaceComponentRig(OSSFaceComponent):
         # Eval Operators
         self.evalOperators()
         self.RemapScalarValueSolverKLOp.evaluate()
+
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 
