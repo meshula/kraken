@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -10,9 +10,9 @@ class StringEditor(BaseValueEditor):
     def __init__(self, valueController, parent=None):
         super(StringEditor, self).__init__(valueController, parent=parent)
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
 
-        self._editor = QtGui.QTextEdit(self)
+        self._editor = QtWidgets.QTextEdit(self)
         options = valueController.getOption('multiLine')
         if options: # I was getting None...?
             self._editor.setMinimumHeight( options.get('numLines', 5) * 20 )
@@ -22,7 +22,7 @@ class StringEditor(BaseValueEditor):
         # vbox.addStretch(0)
         vbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(vbox)
-        self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
 
         self.updateEditorValue()
 

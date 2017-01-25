@@ -2,10 +2,11 @@
 import os
 import sys
 
-from PySide import QtGui, QtCore
 
 from kraken.core.kraken_system import KrakenSystem
 from kraken.log import getLogger
+
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 from kraken.ui.component_library import ComponentLibrary
 from kraken.ui.GraphView.kgraph_view_widget import KGraphViewWidget
 import kraken.ui.images_rc
@@ -13,7 +14,7 @@ import kraken.ui.images_rc
 logger = getLogger('kraken')
 
 
-class KrakenUI(QtGui.QWidget):
+class KrakenUI(QtWidgets.QWidget):
     """A debugger widget hosting an inspector as well as a graph view"""
 
     def __init__(self, parent=None):
@@ -29,7 +30,7 @@ class KrakenUI(QtGui.QWidget):
         self.graphViewWidget = KGraphViewWidget(parent=self)
         self.nodeLibrary = ComponentLibrary(parent=self)
 
-        self.horizontalSplitter = QtGui.QSplitter(QtCore.Qt.Horizontal, parent=self)
+        self.horizontalSplitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal, parent=self)
         self.horizontalSplitter.addWidget(self.nodeLibrary)
         self.horizontalSplitter.addWidget(self.graphViewWidget)
 
@@ -39,7 +40,7 @@ class KrakenUI(QtGui.QWidget):
         self.horizontalSplitter.splitterMoved.connect(self.splitterMoved)
         self.nodeLibraryExpandedSize = 175
 
-        grid = QtGui.QVBoxLayout(self)
+        grid = QtWidgets.QVBoxLayout(self)
         grid.addWidget(self.horizontalSplitter)
 
 
@@ -92,7 +93,7 @@ class KrakenUI(QtGui.QWidget):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     widget = KrakenUI()
     widget.show()

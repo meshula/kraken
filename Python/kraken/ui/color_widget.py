@@ -1,8 +1,8 @@
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 
 
-class KColorWidget(QtGui.QLabel):
+class KColorWidget(QtWidgets.QLabel):
     """Custom Label widget to display color settings."""
 
     clicked = QtCore.Signal(bool)
@@ -50,8 +50,8 @@ class KColorWidget(QtGui.QLabel):
 
     def openColorDialog(self):
 
-        colorDialog = QtGui.QColorDialog()
-        colorDialog.setOption(QtGui.QColorDialog.DontUseNativeDialog, True)
+        colorDialog = QtWidgets.QColorDialog()
+        colorDialog.setOption(QtWidgets.QColorDialog.DontUseNativeDialog, True)
         newColor = colorDialog.getColor(self._color, self)
         if newColor.isValid():
             self._color = newColor

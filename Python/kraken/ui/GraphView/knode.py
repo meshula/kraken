@@ -5,7 +5,7 @@
 
 
 import json
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from pyflowgraph.node import Node
 from pyflowgraph.port import PortCircle, BasePort, InputPort, OutputPort, PortLabel

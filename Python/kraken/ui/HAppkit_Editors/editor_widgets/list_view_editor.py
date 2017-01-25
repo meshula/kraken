@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -17,8 +17,8 @@ class ListViewEditor(BaseValueEditor):
         super(ListViewEditor, self).__init__(valueController, parent=parent)
 
 
-        hbox = QtGui.QHBoxLayout()
-        self._editor = QtGui.QListWidget(self)
+        hbox = QtWidgets.QHBoxLayout()
+        self._editor = QtWidgets.QListWidget(self)
 
         self.__items = valueController.getOption('combo')
         for item in self.__items:
@@ -30,7 +30,7 @@ class ListViewEditor(BaseValueEditor):
         hbox.addStretch(0)
         hbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(hbox)
-        self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
 
         self.updateEditorValue()
 

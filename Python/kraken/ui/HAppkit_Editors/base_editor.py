@@ -1,8 +1,8 @@
-from PySide import QtGui
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from core.undo_redo_manager import UndoRedoManager, Command
 
-class BaseValueEditor(QtGui.QWidget):
+class BaseValueEditor(QtWidgets.QWidget):
 
     def __init__(self, valueController, parent=None):
         super(BaseValueEditor, self).__init__(parent)

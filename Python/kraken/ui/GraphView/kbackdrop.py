@@ -5,12 +5,12 @@
 
 import math
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from kraken.ui.backdrop_inspector import BackdropInspector
 
 
-class KBackdropTitle(QtGui.QGraphicsWidget):
+class KBackdropTitle(QtWidgets.QGraphicsWidget):
 
     __color = QtGui.QColor(255, 255, 255)
     __font = QtGui.QFont('Helvetica', 11)
@@ -23,7 +23,7 @@ class KBackdropTitle(QtGui.QGraphicsWidget):
 
         self.parentWidget = parent
 
-        self.__textItem = QtGui.QGraphicsTextItem(text, self)
+        self.__textItem = QtWidgets.QGraphicsTextItem(text, self)
         self.__textItem.setDefaultTextColor(self.__color)
         self.__textItem.setFont(self.__font)
         self.__textItem.setPos(0, 1)
@@ -63,14 +63,14 @@ class KBackdropTitle(QtGui.QGraphicsWidget):
         return self.parent().parent()
 
 
-class KBackdropHeader(QtGui.QGraphicsWidget):
+class KBackdropHeader(QtWidgets.QGraphicsWidget):
 
     def __init__(self, text, parent=None):
         super(KBackdropHeader, self).__init__(parent)
 
         self.parentWidget = parent
 
-        layout = QtGui.QGraphicsLinearLayout()
+        layout = QtWidgets.QGraphicsLinearLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(3)
         layout.setOrientation(QtCore.Qt.Horizontal)
@@ -87,7 +87,7 @@ class KBackdropHeader(QtGui.QGraphicsWidget):
         self._titleWidget.setText(text)
 
 
-class KBackdrop(QtGui.QGraphicsWidget):
+class KBackdrop(QtWidgets.QGraphicsWidget):
 
     nameChanged = QtCore.Signal(str, str)
     sizeChanged = QtCore.Signal(float)
@@ -147,7 +147,7 @@ class KBackdrop(QtGui.QGraphicsWidget):
 
     def createLayout(self):
 
-        layout = QtGui.QGraphicsLinearLayout()
+        layout = QtWidgets.QGraphicsLinearLayout()
         layout.setContentsMargins(5, 0, 5, 7)
         layout.setSpacing(7)
         layout.setOrientation(QtCore.Qt.Vertical)

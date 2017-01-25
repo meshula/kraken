@@ -1,5 +1,6 @@
 import json
-from PySide import QtCore, QtGui
+
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -36,16 +37,16 @@ class ComplexTypeEditor(NestedEditor):
             self.expanded = False
 
 
-        # self._grid.addWidget(QtGui.QLabel(valueController.getDataType()+':', self), self._gridRow, 0)
+        # self._grid.addWidget(QtWidgets.QLabel(valueController.getDataType()+':', self), self._gridRow, 0)
 
-        self.expandButton = QtGui.QPushButton("+", self)
+        self.expandButton = QtWidgets.QPushButton("+", self)
         self.expandButton.setCheckable(True)
         self.expandButton.setMinimumHeight(16)
         self.expandButton.setMaximumHeight(16)
-        self.expandButton.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed))
+        self.expandButton.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))
 
-        topToolbar = QtGui.QWidget(self)
-        topToolbarLayout = QtGui.QHBoxLayout()
+        topToolbar = QtWidgets.QWidget(self)
+        topToolbarLayout = QtWidgets.QHBoxLayout()
         topToolbar.setLayout(topToolbarLayout)
         topToolbarLayout.addWidget(self.expandButton, 0)
         topToolbarLayout.addStretch(2)

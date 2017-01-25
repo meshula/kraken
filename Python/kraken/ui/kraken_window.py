@@ -6,9 +6,8 @@ import os
 import sys
 import json
 
-from PySide import QtGui, QtCore
-
 from kraken.log import getLogger
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 from kraken.ui import images_rc
 from kraken.ui.kraken_menu import KrakenMenu
 from kraken.ui.kraken_ui import KrakenUI
@@ -20,7 +19,7 @@ from kraken.ui.kraken_splash import KrakenSplash
 logger = getLogger('kraken')
 
 
-class KrakenWindow(QtGui.QMainWindow):
+class KrakenWindow(QtWidgets.QMainWindow):
     """Main Kraken Window that loads the UI."""
 
     def __init__(self, parent=None):
@@ -61,10 +60,10 @@ class KrakenWindow(QtGui.QMainWindow):
         # Setup Status Bar
         self.statusBar = KrakenStatusBar(self)
 
-        mainWidget = QtGui.QWidget()
+        mainWidget = QtWidgets.QWidget()
 
         # Main Layout
-        self.mainLayout = QtGui.QVBoxLayout()
+        self.mainLayout = QtWidgets.QVBoxLayout()
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
 
         self.krakenUI = KrakenUI(self)
@@ -105,14 +104,14 @@ class KrakenWindow(QtGui.QMainWindow):
 
             return True
 
-        return QtGui.QMainWindow.eventFilter(self, source, event)
+        return QtWidgets.QMainWindow.eventFilter(self, source, event)
 
     def getKrakenUI(self):
         return self.krakenUI
 
     def center(self):
         qr = self.frameGeometry()
-        cp = QtGui.QDesktopWidget().availableGeometry().center()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
@@ -157,21 +156,21 @@ class KrakenWindow(QtGui.QMainWindow):
 
     def closeEvent(self, event):
 
-        msgBox = QtGui.QMessageBox(self)
+        msgBox = QtWidgets.QMessageBox(self)
         msgBox.setObjectName('SaveMessageBox')
         msgBox.setWindowTitle("Kraken Editor")
         msgBox.setText("You are closing Kraken.")
         msgBox.setInformativeText("Do you want to save your changes?")
-        msgBox.setStandardButtons(QtGui.QMessageBox.Save | QtGui.QMessageBox.Discard | QtGui.QMessageBox.Cancel)
-        msgBox.setDefaultButton(QtGui.QMessageBox.Save)
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel)
+        msgBox.setDefaultButton(QtWidgets.QMessageBox.Save)
 
         ret = msgBox.exec_()
 
-        if ret == QtGui.QMessageBox.Cancel:
+        if ret == QtWidgets.QMessageBox.Cancel:
             event.ignore()
             return
 
-        elif ret == QtGui.QMessageBox.Save:
+        elif ret == QtWidgets.QMessageBox.Save:
             self.kraken_ui.graphViewWidget.saveRigPreset()
 
             self.statusBar.showMessage('Closing')
@@ -191,7 +190,7 @@ class KrakenWindow(QtGui.QMainWindow):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     splash = KrakenSplash(app)
     splash.show()

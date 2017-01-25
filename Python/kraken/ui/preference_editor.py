@@ -6,10 +6,10 @@
 import os
 import json
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 
 
-class PreferenceEditor(QtGui.QDialog):
+class PreferenceEditor(QtWidgets.QDialog):
     """A widget providing the ability to nest """
 
     def __init__(self, parent=None):
@@ -30,19 +30,19 @@ class PreferenceEditor(QtGui.QDialog):
     def createLayout(self):
 
         # Parent Layout
-        self._topLayout = QtGui.QVBoxLayout()
+        self._topLayout = QtWidgets.QVBoxLayout()
         self._topLayout.setContentsMargins(0, 0, 0, 0)
         self._topLayout.setSpacing(0)
 
-        self._mainWidget = QtGui.QWidget()
+        self._mainWidget = QtWidgets.QWidget()
         self._mainWidget.setObjectName('mainPrefWidget')
 
         # Main Layout
-        self._mainLayout = QtGui.QVBoxLayout(self._mainWidget)
+        self._mainLayout = QtWidgets.QVBoxLayout(self._mainWidget)
         self._mainLayout.setContentsMargins(0, 0, 0, 0)
         self._mainLayout.setSpacing(0)
 
-        self._preferenceLayout = QtGui.QGridLayout()
+        self._preferenceLayout = QtWidgets.QGridLayout()
         self._preferenceLayout.setContentsMargins(10, 10, 10, 10)
         self._preferenceLayout.setSpacing(3)
         self._preferenceLayout.setColumnMinimumWidth(0, 200)
@@ -53,16 +53,16 @@ class PreferenceEditor(QtGui.QDialog):
         preferences = self.parentWidget().window().preferences.getPreferences()
         i = 0
         for k, v in preferences.iteritems():
-            labelFrameWidget = QtGui.QFrame()
+            labelFrameWidget = QtWidgets.QFrame()
             labelFrameWidget.setObjectName('prefLabelWidgetFrame')
-            labelFrameWidget.setFrameStyle(QtGui.QFrame.NoFrame | QtGui.QFrame.Plain)
+            labelFrameWidget.setFrameStyle(QtWidgets.QFrame.NoFrame | QtWidgets.QFrame.Plain)
             labelFrameWidget.setToolTip(v['description'])
-            labelFrameLayout = QtGui.QHBoxLayout()
+            labelFrameLayout = QtWidgets.QHBoxLayout()
 
-            prefLabel = QtGui.QLabel(v['nice_name'], self)
+            prefLabel = QtWidgets.QLabel(v['nice_name'], self)
             prefLabel.setProperty('labelClass', 'preferenceLabel')
             prefLabel.setObjectName(k + "_label")
-            prefLabel.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
+            prefLabel.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
             prefLabel.setMinimumWidth(200)
 
             labelFrameLayout.addWidget(prefLabel)
@@ -71,12 +71,12 @@ class PreferenceEditor(QtGui.QDialog):
             self._preferenceLayout.addWidget(labelFrameWidget, i, 0)
 
             if v['type'] == 'bool':
-                valueFrameWidget = QtGui.QFrame()
+                valueFrameWidget = QtWidgets.QFrame()
                 valueFrameWidget.setObjectName('prefValueWidgetFrame')
-                valueFrameWidget.setFrameStyle(QtGui.QFrame.NoFrame | QtGui.QFrame.Plain)
-                valueFrameLayout = QtGui.QHBoxLayout()
+                valueFrameWidget.setFrameStyle(QtWidgets.QFrame.NoFrame | QtWidgets.QFrame.Plain)
+                valueFrameLayout = QtWidgets.QHBoxLayout()
 
-                valueWidget = QtGui.QCheckBox(self)
+                valueWidget = QtWidgets.QCheckBox(self)
                 valueWidget.setObjectName(k + "_valueWidget")
                 valueWidget.setChecked(v['value'])
 
@@ -89,10 +89,10 @@ class PreferenceEditor(QtGui.QDialog):
             i += 1
 
         # OK and Cancel buttons
-        buttonLayout = QtGui.QHBoxLayout()
+        buttonLayout = QtWidgets.QHBoxLayout()
         buttonLayout.setContentsMargins(10, 10, 10, 10)
-        buttons = QtGui.QDialogButtonBox(
-            QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel,
+        buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
             QtCore.Qt.Horizontal, self)
 
         buttons.accepted.connect(self.accept)
@@ -101,7 +101,7 @@ class PreferenceEditor(QtGui.QDialog):
         buttonLayout.addWidget(buttons)
 
         # Menu Bar
-        self.menu_bar = QtGui.QMenuBar()
+        self.menu_bar = QtWidgets.QMenuBar()
         self.file_menu = self.menu_bar.addMenu('&File')
         self.importPrefAction = self.file_menu.addAction('&Import...')
         self.exportPrefAction = self.file_menu.addAction('&Export...')
@@ -120,14 +120,14 @@ class PreferenceEditor(QtGui.QDialog):
 
 
     def importPrefs(self):
-        fileDialog = QtGui.QFileDialog(self)
-        fileDialog.setOption(QtGui.QFileDialog.DontUseNativeDialog, on=True)
+        fileDialog = QtWidgets.QFileDialog(self)
+        fileDialog.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, on=True)
         fileDialog.setWindowTitle('Import Preferences')
         fileDialog.setDirectory(os.path.expanduser('~'))
-        fileDialog.setAcceptMode(QtGui.QFileDialog.AcceptOpen)
+        fileDialog.setAcceptMode(QtWidgets.QFileDialog.AcceptOpen)
         fileDialog.setNameFilter('JSON files (*.json)')
 
-        if fileDialog.exec_() == QtGui.QFileDialog.Accepted:
+        if fileDialog.exec_() == QtWidgets.QFileDialog.Accepted:
             filePath = fileDialog.selectedFiles()[0]
 
             with open(filePath, "r") as openPrefFile:
@@ -138,15 +138,15 @@ class PreferenceEditor(QtGui.QDialog):
 
     def exportPrefs(self):
 
-        fileDialog = QtGui.QFileDialog(self)
-        fileDialog.setOption(QtGui.QFileDialog.DontUseNativeDialog, on=True)
+        fileDialog = QtWidgets.QFileDialog(self)
+        fileDialog.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, on=True)
         fileDialog.setWindowTitle('Export Preferences')
         fileDialog.setDirectory(os.path.expanduser('~'))
-        fileDialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
+        fileDialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         fileDialog.setNameFilter('JSON files (*.json)')
         fileDialog.setDefaultSuffix('json')
 
-        if fileDialog.exec_() == QtGui.QFileDialog.Accepted:
+        if fileDialog.exec_() == QtWidgets.QFileDialog.Accepted:
             filePath = fileDialog.selectedFiles()[0]
 
             preferences = self.parentWidget().window().preferences.getPreferences()
@@ -177,7 +177,7 @@ class PreferenceEditor(QtGui.QDialog):
         preferences = self.parentWidget().window().preferences
 
         for widget in self.prefValueWidgets:
-            if type(widget) == QtGui.QCheckBox:
+            if type(widget) == QtWidgets.QCheckBox:
                 prefName = widget.objectName().rsplit('_', 1)[0]
                 preferences.setPreference(prefName, widget.isChecked())
 
