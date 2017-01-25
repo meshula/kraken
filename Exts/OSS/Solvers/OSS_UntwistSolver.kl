@@ -17,7 +17,7 @@ function KrakenSolverArg[] OSS_UntwistSolver.getArguments(){
 
   args.push(KrakenSolverArg('inMatrix', 'In', 'Mat44'));
   args.push(KrakenSolverArg('inBaseMatrix', 'In', 'Mat44'));
-  args.push(KrakenSolverArg('axis', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('axis', 'In', 'SInt32'));
   args.push(KrakenSolverArg('untwistedMatrix', 'Out', 'Mat44'));
   return args;
 }
@@ -30,7 +30,7 @@ function OSS_UntwistSolver.solve!
   in Scalar rigScale,
   in Mat44 inMatrix,
   in Mat44 inBaseMatrix,
-  in UInt32 axis,
+  in SInt32 axis,
   out Mat44 untwistedMatrix,
 )
 {

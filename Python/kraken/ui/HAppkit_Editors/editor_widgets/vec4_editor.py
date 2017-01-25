@@ -1,10 +1,10 @@
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
 from ..base_editor import BaseValueEditor
 
-class LineEdit(QtGui.QLineEdit):
+class LineEdit(QtWidgets.QLineEdit):
 
     def minimumSizeHint(self):
         return QtCore.QSize(10, 25)
@@ -18,7 +18,7 @@ class Vec4Editor(BaseValueEditor):
         super(Vec4Editor, self).__init__(valueController, parent=parent)
 
         self.__editors = []
-        hbox = QtGui.QHBoxLayout()
+        hbox = QtWidgets.QHBoxLayout()
 
         def defineLineEditSubEditor():
             widget = LineEdit(self)
@@ -38,7 +38,7 @@ class Vec4Editor(BaseValueEditor):
         hbox.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(hbox)
-        self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
+        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
 
         self.updateEditorValue()
 

@@ -28,7 +28,6 @@
       },
     {
       "objectType" : "ExecPort",
-      "metadata" : {},
       "name" : "timeline",
       "nodePortType" : "Out",
       "execPortType" : "In",
@@ -36,7 +35,6 @@
       },
     {
       "objectType" : "ExecPort",
-      "metadata" : {},
       "name" : "saveClip",
       "nodePortType" : "Out",
       "execPortType" : "In",
@@ -73,7 +71,7 @@
           "nodePortType" : "Out"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_char_bob_guide.Create"
+      "executable" : "Kraken.KLRigs.KRK_bob_rig.Create"
       },
     {
       "objectType" : "Inst",
@@ -98,7 +96,7 @@
           "nodePortType" : "In"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_char_bob_guide.SetClip"
+      "executable" : "Kraken.KLRigs.KRK_bob_rig.SetClip"
       },
     {
       "objectType" : "Inst",
@@ -123,7 +121,7 @@
           "nodePortType" : "In"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_char_bob_guide.Evaluate"
+      "executable" : "Kraken.KLRigs.KRK_bob_rig.Evaluate"
       },
     {
       "objectType" : "Inst",
@@ -148,7 +146,7 @@
           "nodePortType" : "Out"
           }
         ],
-      "executable" : "Kraken.KLRigs.KRK_char_bob_guide.GetJointXfos"
+      "executable" : "Kraken.KLRigs.KRK_bob_rig.GetJointXfos"
       },
     {
       "objectType" : "Inst",
@@ -353,7 +351,7 @@
             "name" : "clip",
             "nodePortType" : "IO",
             "execPortType" : "IO",
-            "typeSpec" : "KrakenFCurveClip"
+            "typeSpec" : "KrakenAnimation::KrakenFCurveClip"
             },
           {
             "objectType" : "ExecPort",
@@ -377,8 +375,12 @@
             "typeSpec" : "Float32"
             }
           ],
-        "extDeps" : {},
-        "code" : "dfgEntry {
+        "extDeps" : {
+          "KrakenAnimation" : "*"
+          },
+        "code" : "require KrakenAnimation;
+
+dfgEntry {
   KeyframeTrack tracks[] = clip.getChannelTracks(channel);
   if(tracks.size() == 0)
     return;
@@ -547,7 +549,7 @@
       ]
     },
   "requiredPresets" : {
-    "Kraken.KLRigs.KRK_char_bob_guide.Create" : {
+    "Kraken.KLRigs.KRK_bob_rig.Create" : {
       "objectType" : "Graph",
       "title" : "Create",
       "ports" : [
@@ -566,7 +568,7 @@
           }
         ],
       "extDeps" : {
-        "KRK_char_bob_guide" : "*"
+        "KRK_bob_rig" : "*"
         },
       "nodes" : [
         {
@@ -579,8 +581,8 @@
               "nodePortType" : "IO"
               }
             ],
-          "dataType" : "KRK_char_bob_guide",
-          "extDep" : "KRK_char_bob_guide:*"
+          "dataType" : "KRK_bob_rig::KRK_bob_rig",
+          "extDep" : "KRK_bob_rig:*"
           },
         {
           "objectType" : "Inst",
@@ -613,14 +615,18 @@
                 "name" : "result",
                 "nodePortType" : "In",
                 "execPortType" : "Out",
-                "typeSpec" : "KRK_char_bob_guide"
+                "typeSpec" : "KRK_bob_rig"
                 }
               ],
             "extDeps" : {
-              "KRK_char_bob_guide" : "*"
+              "KRK_bob_rig" : "*"
               },
-            "code" : "dfgEntry {
-  result = KRK_char_bob_guide();
+            "code" : "require Kraken;
+require KrakenAnimation;
+require KrakenForCanvas;
+require KRK_bob_rig;
+dfgEntry {
+  result = KRK_bob_rig();
 }
 "
             }
@@ -635,7 +641,7 @@
           ]
         }
       },
-    "Kraken.KLRigs.KRK_char_bob_guide.SetClip" : {
+    "Kraken.KLRigs.KRK_bob_rig.SetClip" : {
       "objectType" : "Func",
       "title" : "SetClip",
       "ports" : [
@@ -651,7 +657,7 @@
           "name" : "rig",
           "nodePortType" : "IO",
           "execPortType" : "IO",
-          "typeSpec" : "KRK_char_bob_guide"
+          "typeSpec" : "KRK_bob_rig"
           },
         {
           "objectType" : "ExecPort",
@@ -662,14 +668,19 @@
           }
         ],
       "extDeps" : {
-        "KRK_char_bob_guide" : "*"
+        "KRK_bob_rig" : "*",
+        "KrakenAnimation" : "*"
         },
-      "code" : "dfgEntry {
+      "code" : "require Kraken;
+require KrakenAnimation;
+require KrakenForCanvas;
+require KRK_bob_rig;
+dfgEntry {
   rig.setClip(clip);
 }
 "
       },
-    "Kraken.KLRigs.KRK_char_bob_guide.Evaluate" : {
+    "Kraken.KLRigs.KRK_bob_rig.Evaluate" : {
       "objectType" : "Func",
       "title" : "Evaluate",
       "ports" : [
@@ -685,7 +696,7 @@
           "name" : "rig",
           "nodePortType" : "IO",
           "execPortType" : "IO",
-          "typeSpec" : "KRK_char_bob_guide"
+          "typeSpec" : "KRK_bob_rig"
           },
         {
           "objectType" : "ExecPort",
@@ -696,14 +707,19 @@
           }
         ],
       "extDeps" : {
-        "KRK_char_bob_guide" : "*"
+        "KRK_bob_rig" : "*",
+        "KrakenAnimation" : "*"
         },
-      "code" : "dfgEntry {
+      "code" : "require Kraken;
+require KrakenAnimation;
+require KrakenForCanvas;
+require KRK_bob_rig;
+dfgEntry {
   rig.evaluate(context);
 }
 "
       },
-    "Kraken.KLRigs.KRK_char_bob_guide.GetJointXfos" : {
+    "Kraken.KLRigs.KRK_bob_rig.GetJointXfos" : {
       "objectType" : "Func",
       "title" : "GetJointXfos",
       "ports" : [
@@ -719,7 +735,7 @@
           "name" : "rig",
           "nodePortType" : "Out",
           "execPortType" : "In",
-          "typeSpec" : "KRK_char_bob_guide"
+          "typeSpec" : "KRK_bob_rig"
           },
         {
           "objectType" : "ExecPort",
@@ -730,9 +746,13 @@
           }
         ],
       "extDeps" : {
-        "KRK_char_bob_guide" : "*"
+        "KRK_bob_rig" : "*"
         },
-      "code" : "dfgEntry {
+      "code" : "require Kraken;
+require KrakenAnimation;
+require KrakenForCanvas;
+require KRK_bob_rig;
+dfgEntry {
   result = rig.getJointXfos();
 }
 "

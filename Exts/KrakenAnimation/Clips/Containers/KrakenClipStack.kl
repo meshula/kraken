@@ -25,6 +25,7 @@ function KrakenClip KrakenClipStack.getClip(UInt32 id) {
   return this.clips[id];
 }
 
+
 UInt32 KrakenClipStack.getChannelCount() {
   return 0;
 }
@@ -81,4 +82,10 @@ function KrakenClipStack.loadFromJson!(JSONDictValue json) {
     c.loadFromJson(content);
     this.addClip(c, weight);
   }
+}
+
+function SInt32[] KrakenClipStack.getPoseJointIDs() {
+
+  SInt32 result[];
+  return result;
 }

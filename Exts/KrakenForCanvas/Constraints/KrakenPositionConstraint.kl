@@ -1,6 +1,6 @@
 require Kraken;
 
-struct KrakenPositionConstraint : KrakenConstraint {
+object KrakenPositionConstraint : KrakenConstraint {
 };
 
 /// \dfgPresetFolder Constraints

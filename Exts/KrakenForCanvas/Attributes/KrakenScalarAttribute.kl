@@ -1,6 +1,6 @@
 require Math;
 
-struct KrakenScalarAttribute : KrakenAttribute {
+object KrakenScalarAttribute : KrakenAttribute {
   Scalar min;
   Scalar max;
   Scalar value;
@@ -23,7 +23,7 @@ function KrakenScalarAttribute(
   this.animatable = animatable;
   this.min = min;
   this.max = max;
-  
+
   this.value = floatAnimation.get(this.path, value);
   this.value = min >= max ? value : (this.value < min ? min : (this.value > max ? max : this.value));
 }

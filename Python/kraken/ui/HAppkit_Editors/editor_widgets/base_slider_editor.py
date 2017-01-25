@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -9,8 +9,8 @@ class BaseSliderEditor(BaseValueEditor):
     def __init__(self, valueController, parent=None):
         super(BaseSliderEditor, self).__init__(valueController, parent=parent)
 
-        self._editEditor = QtGui.QLineEdit(self)
-        self._sliderEditor = QtGui.QSlider(QtCore.Qt.Horizontal, self)
+        self._editEditor = QtWidgets.QLineEdit(self)
+        self._sliderEditor = QtWidgets.QSlider(QtCore.Qt.Horizontal, self)
 
         self._range = valueController.getOption('range')
         # self._uiOutOfSliderRange = self._range
@@ -42,7 +42,7 @@ class BaseSliderEditor(BaseValueEditor):
 
 
     # def keyPressEvent(self, event):
-    #   modifiers = QtGui.QApplication.keyboardModifiers()
+    #   modifiers = QtWidgets.QApplication.keyboardModifiers()
     #   alt = modifiers & QtCore.Qt.AltModifier
 
     #   factor = None

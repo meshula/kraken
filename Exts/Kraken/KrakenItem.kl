@@ -1,0 +1,22 @@
+require Kraken;
+
+object KrakenItem {
+  String name;
+  String buildName;
+  UInt32 uniqueId;
+};
+
+function KrakenItem (
+  String name
+){
+    this.name = name;
+}
+
+function KrakenItem (
+  String name,
+  UInt32 uniqueId
+){
+    this.name = name;
+    this.uniqueId = uniqueId;
+}
+

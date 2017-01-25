@@ -1,7 +1,8 @@
 require Kraken;
 
-struct KrakenTransform : KrakenObject3D {
+object KrakenTransform : KrakenObject3D {
 };
+
 
 /// \dfgPresetFolder Objects
 function KrakenTransform(

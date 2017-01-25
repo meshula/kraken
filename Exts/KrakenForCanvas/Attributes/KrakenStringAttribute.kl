@@ -1,6 +1,6 @@
 require Math;
 
-struct KrakenStringAttribute : KrakenAttribute {
+object KrakenStringAttribute : KrakenAttribute {
   String value;
 };
 

@@ -1,0 +1,46 @@
+require Kraken;
+
+object OSS_ConditionScalarSolver : KrakenSolver {
+};
+
+function OSS_ConditionScalarSolver()
+{
+  // NOTE:  Ideally, these conditionals are a standard Solver for Kraken
+  // Then in the KL build, it can be reduced to simple KL code instead of a "solver" for the sake of optimization
+
+  Scalar input;
+  Scalar result;
+
+  this.defaultValues["condition"] = false;
+  this.defaultValues["ifTrue"] = 1.0;
+  this.defaultValues["ifFalse"] = 0.0;
+  this.defaultValues["result"] = 0.0;
+
+}
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_ConditionScalarSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+
+  args.push(KrakenSolverArg('condition', 'In', 'Boolean'));
+  args.push(KrakenSolverArg('ifTrue', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('ifFalse', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('result', 'Out', 'Scalar'));
+  return args;
+}
+
+
+// Solve
+function OSS_ConditionScalarSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Boolean condition,
+  in Scalar ifTrue,
+  in Scalar ifFalse,
+  out Scalar result,
+  )
+{
+    result = condition ? ifTrue : ifFalse;
+}
+

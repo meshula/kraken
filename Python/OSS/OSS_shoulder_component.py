@@ -1,7 +1,7 @@
-from kraken.core.maths import Vec3, AXIS_NAME_TO_TUPLE_MAP, AXIS_NAME_TO_INT_MAP
+from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import *
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -233,7 +233,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # =========
         # Shoulder
         self.shldrCtrl = FKControl('shldr', parent=self.ctrlCmpGrp, shape="square")
-        self.shldrCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
+        self.shldrCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
         self.shldrCtrlSpace = self.shldrCtrl.insertCtrlSpace()
 
 
@@ -372,6 +372,8 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
         self.shldrOutputTgtConstraint.evaluate()
         self.shldrEndOutputTgtConstraint.evaluate()
+
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 

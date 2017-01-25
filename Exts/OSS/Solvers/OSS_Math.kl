@@ -17,7 +17,7 @@ function Vec3 getAxisAsVector(in UInt32 axisIndex)
     case 5:
       return Vec3(0.0, 0.0, -1.0);
   }
-  report("OSS_TwoBoneIKSolver:getAxisAsVector() invalid axisIndex");
+  report("OSS_Math:getAxisAsVector() invalid axisIndex");
   return Vec3(1.0, 0.0, 0.0);
 }
 
@@ -38,7 +38,7 @@ function Vec3 getAxis(in Quat ori, in UInt32 axisIndex)
     case 5:
       return ori.getZaxis().negate();
   }
-  report("OSS_TwoBoneIKSolver:getAxis() invalid axisIndex");
+  report("OSS_Math:getAxis() invalid axisIndex");
   return ori.getXaxis();
 
 }

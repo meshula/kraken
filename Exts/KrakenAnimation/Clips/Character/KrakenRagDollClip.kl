@@ -29,7 +29,7 @@ function KrakenRagDollClip(Index matrixIndex, KrakenClip childClip) {
 /// \dfgPresetDefault amount 1.0
 /// \dfgPresetRange amount (0.0, 1.0)
 function KrakenRagDollClip.defineRagDoll!(
-  String name, 
+  String name,
   Float32 amount
 ) {
   UInt32 id = this.nameToId.get(name, this.names.size());
@@ -56,11 +56,11 @@ UInt32 KrakenRagDollClip.getChannelType(UInt32 id) {
   return KrakenClipChannel_Xfo;
 }
 
-Float32 KrakenRagDollClip.evaluateFloat32!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Float32 KrakenRagDollClip.evaluateFloat32!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   return Float32();
 }
 
-Xfo KrakenRagDollClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipContext context) {
+Xfo KrakenRagDollClip.evaluateXfo!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   if(rig == null)
     return Xfo();
   if(this.targets[id].almostEqual(Vec3()))
@@ -77,7 +77,7 @@ Xfo KrakenRagDollClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipCont
     if(this.controlId[id] == -1)
       return Xfo(); // not found
   }
-  
+
   Quat offsetOri, result;
 
   Xfo global = controls[this.controlId[id]].global;
@@ -86,7 +86,7 @@ Xfo KrakenRagDollClip.evaluateXfo!(UInt32 id, io KrakenKLRig rig, KrakenClipCont
   return  parentXfo.inverse() * global;
 }
 
-function KrakenRagDollClip.apply(io KrakenKLRig rig, KrakenClipContext context, Float32 factor) {
+function KrakenRagDollClip.apply(io Ref<KrakenKLRig> rig, KrakenClipContext context, Float32 factor) {
   if(this.childClip)
     this.childClip.apply(rig, context, factor);
 
@@ -138,4 +138,10 @@ function KrakenRagDollClip.loadFromJson!(JSONDictValue json) {
     Float32 amount = lookat.getScalar('amount');
     this.defineRagDoll(name, amount);
   }
+}
+
+function SInt32[] KrakenRagDollClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  return result;
 }

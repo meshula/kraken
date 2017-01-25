@@ -1,5 +1,6 @@
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo
+from kraken.core.maths.constants import *
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -186,12 +187,12 @@ class OSSSingleFKRig(OSSSingleFK):
         # Controls
         # =========
         # SingleFK
-
         self.SingleFKEndOutputTgt.xfo = data[self.getName() + 'Xfo']
         self.SingleFKParentSpace = CtrlSpace(self.getName() + 'ParentSpace', parent=self.ctrlCmpGrp)
         self.SingleFKCtrlSpace = CtrlSpace(self.getName() + 'CtrlSpace', parent=self.SingleFKParentSpace)
         self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFKCtrlSpace, shape="cube")
         #self.SingleFKCtrl.setCurveData(data['SingleFKCtrlCrvData'])
+
 
         self.SingleFKParentSpace.xfo = data[self.getName() + 'Xfo']
         self.SingleFKCtrlSpace.xfo = data[self.getName() + 'Xfo']
@@ -201,7 +202,7 @@ class OSSSingleFKRig(OSSSingleFK):
         # ==========
         self.SingleFKDef = Joint(self.getName(), parent=self.deformersParent)
         self.SingleFKDef.setComponent(self)
-        self.insertAttachSpace(self.SingleFKDef)
+        self.selfAttachWidget = self.insertAttachSpace(self.SingleFKDef)
 
         self.parentSpaceInputTgt.childJoints = [self.SingleFKDef]
 
@@ -221,6 +222,8 @@ class OSSSingleFKRig(OSSSingleFK):
         self.parentSpaceAttr = ScalarAttribute('alignToParent', value=1.0, minValue=0.0, maxValue=1.0, parent=SingleFKSettingsAttrGrp)
         self.worldSpaceAttr = ScalarAttribute('alignToWorld', value=0.0, minValue=0.0, maxValue=1.0, parent=SingleFKSettingsAttrGrp)
 
+        self.ctrlShapeToggle = BoolAttribute('SingleFKCtrl', value=False, parent=SingleFKSettingsAttrGrp)
+        self.selfAttachWidget.getVisibilityAttr().connect(self.ctrlShapeToggle)
 
         # Add Spine Canvas Op
         self.alignSpacesKLOp = KLOperator('headAlign', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
@@ -273,6 +276,8 @@ class OSSSingleFKRig(OSSSingleFK):
 
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
         self.SingleFKCtrl.scalePoints(globalScale)
+
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 from kraken.core.kraken_system import KrakenSystem

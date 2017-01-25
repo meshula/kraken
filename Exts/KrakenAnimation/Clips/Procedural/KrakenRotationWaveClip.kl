@@ -22,7 +22,7 @@ function KrakenRotationWaveClip() {
 /// \dfgPresetDefault speed 3.0
 /// \dfgPresetDefault offset 0.0
 function KrakenRotationWaveClip.defineWave!(
-  String name, 
+  String name,
   Vec3 axis,
   Float32 amplitude,
   Float32 shift,
@@ -115,4 +115,10 @@ function KrakenRotationWaveClip.loadFromJson!(JSONDictValue json) {
     Float32 offset = wave.getScalar('offset');
     this.defineWave(name, axis, amplitude, shift, speed, offset);
   }
+}
+
+function SInt32[] KrakenRotationWaveClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  return result;
 }

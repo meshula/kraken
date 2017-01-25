@@ -1,7 +1,7 @@
 from kraken.core.maths import *
 from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV, aimAt
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import *
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -322,6 +322,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.useOtherIKGoal = bool(data['useOtherIKGoal'])
         self.mocap = bool(data["mocap"])
 
+        self.tagNames = data.get('tagNames', "").strip()
+
         globalScale = data['globalComponentCtrlSize']
         self.globalScaleVec =Vec3(globalScale, globalScale, globalScale)
 
@@ -345,7 +347,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.uplimbFKCtrl = FKControl(self.uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
         self.uplimbFKCtrl.xfo = data['uplimbXfo']
         self.uplimbFKCtrlSpace.xfo = data['uplimbXfo']
-        self.uplimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
+        self.uplimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
 
         if self.untwistUplimb:
             # We should be able to insert a space to any kind of 3D object, not just controls
@@ -357,7 +359,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbFKCtrl = FKControl(self.lolimbName, parent=self.lolimbFKCtrlSpace)
         self.lolimbFKCtrlSpace.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
-        self.lolimbFKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
+        self.lolimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
 
 
         # lolimbIK
@@ -365,7 +367,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbIKCtrl = FKControl(self.lolimbName+'IK', parent=self.lolimbIKCtrlSpace, shape="circle", scale=globalScale*0.8)
         self.lolimbIKCtrlSpace.xfo = data['lolimbXfo']
         self.lolimbIKCtrl.xfo = data['lolimbXfo']
-        self.lolimbIKCtrl.ro = RotationOrder(rotationOrderStrToIntMapping["XZY"])  #Set with component settings later
+        self.lolimbIKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XZY"])  #Set with component settings later
         self.lolimbIKCtrl.lockRotation(x=True, y=True, z=True)
         self.lolimbIKCtrl.lockScale(x=True, y=True, z=True)
         self.lolimbIKCtrl.rotatePoints(0, 0, 90)
@@ -428,13 +430,13 @@ class OSSLimbComponentRig(OSSLimbComponent):
         if self.useOtherIKGoal:
             self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
             self.limbIKCtrl.constrainTo(self.ikgoal_cmpIn, maintainOffset=True)
-            self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', value=1.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
+            self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
             self.softIKAttr = self.createInput('softIK', dataType='Float', value=0.0, minValue=0.0, parent=self.cmpInputAttrGrp).getTarget()
             self.squashAttr = self.createInput('squash', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
             self.stretchAttr = self.createInput('stretch', dataType='Float', value=1.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
         else:
             self.ikgoal_cmpIn = None
-            self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
+            self.ikBlendAttr = ScalarAttribute('ikBlend', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
             self.softIKAttr = ScalarAttribute('softIK', value=0.0, minValue=0.0, parent=limbSettingsAttrGrp)
             self.squashAttr = ScalarAttribute('squash', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
             self.stretchAttr = ScalarAttribute('stretch', value=1.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
@@ -505,7 +507,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbDef = Joint(self.lolimbName, parent=self.uplimbDef)
         self.lolimbDef.setComponent(self)
         # Don't want to change RO for fbx output right now
-        # self.lolimbDef.ro = RotationOrder(rotationOrderStrToIntMapping["YXZ"])  #Set with component settings later
+        # self.lolimbDef.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
 
         self.limbendDef = Joint(name+'end', parent=self.lolimbDef)
         self.limbendDef.setComponent(self)
@@ -745,10 +747,14 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 
         if self.addTwistJointsORaddMidControls:
-            boneAxisVec = AXIS_NAME_TO_VEC3_MAP[self.boneAxisStr]
-            upAxisVec = AXIS_NAME_TO_VEC3_MAP[self.upAxisStr]
-            sideAxisVec = boneAxisVec.cross(upAxisVec)
-            sideAxisStr = TUPLE_TO_AXIS_NAME_MAP[sideAxisVec.x, sideAxisVec.y, sideAxisVec.z]
+            bone_axis = AXIS_NAME_TO_TUPLE_MAP[self.boneAxisStr]
+            boneAxisVec = Vec3(bone_axis[0], bone_axis[1], bone_axis[2])
+
+            up_axis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
+            upAxisVec = Vec3(up_axis[0], up_axis[1], up_axis[2])
+
+            #sideAxisVec = boneAxisVec.cross(upAxisVec)
+            #sideAxisStr = TUPLE_TO_AXIS_NAME_MAP[sideAxisVec.x, sideAxisVec.y, sideAxisVec.z]
 
 
             uplimbStartTwistXfo = self.createOutput(self.uplimbName+"StartTwist", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
@@ -828,6 +834,39 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
             self.parentSpaceInputTgt.childJoints.append(uplimbPartialDef)
 
+
+        # PSD
+        psdAttrGrp = AttributeGroup("PSD", parent=self.lolimbDef)
+        self.lolimbAngleBetweenSolver = KLOperator(self.lolimbName, 'OSS_AngleBetweenSolver', 'OSS_Kraken')
+        self.addOperator(self.lolimbAngleBetweenSolver)
+
+        # Add Att Inputs
+        self.lolimbAngleBetweenSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        self.lolimbAngleBetweenSolver.setInput('rigScale', self.rigScaleInputAttr)
+        # Add Xfo Inputs
+        self.lolimbAngleBetweenSolver.setInput('matrixA', self.uplimbDef)
+        self.lolimbAngleBetweenSolver.setInput('matrixB', self.lolimbDef)
+        self.lolimbAngleBetweenSolver.setInput('axisA', AXIS_NAME_TO_INT_MAP[self.boneAxisStr])
+        self.lolimbAngleBetweenSolver.setInput('axisB', AXIS_NAME_TO_INT_MAP[self.boneAxisStr])
+        self.lolimbAngleBetweenSolver.setInput('radians', True)
+        # Add Xfo Outputs
+        angleAttr = ScalarAttribute("angleResult", value=0.0, parent=psdAttrGrp)
+        self.lolimbAngleBetweenSolver.setOutput('angle', angleAttr)
+        enablePSDAttr = ScalarAttribute("enablePSD", value=0.0, parent=psdAttrGrp)
+
+        self.lolimbConditionSolver = self.createConditionSolver(enablePSDAttr, angleAttr, 0, name=self.lolimbName)
+
+        psdName = "PSD_"+self.lolimbDef.getBuildName()+"_bsShape"  # naming just to keep current convention
+
+        psdAttr = ScalarAttribute(psdName, value=0.0, parent=psdAttrGrp)
+        psdAttr.setLock(True)
+        psdAttr.setMetaDataItem("SCALAR_OUTPUT", psdName)
+        psdAttr.appendMetaDataListItem("TAGS", self.getDecoratedName())
+        psdAttr.appendMetaDataListItem("TAGS", "PSD")
+        self.lolimbConditionSolver.setOutput('result', psdAttr)
+
+
+
         #JSON data at this point is generated by guide rig and passed to this rig, should include all defaults+loaded info
 
         self.lolimbFKCtrl.scalePoints(Vec3(1, self.globalScaleVec.y, self.globalScaleVec.z))
@@ -843,6 +882,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.connectReverse(self.ikBlendAttr, self.lolimbFKCtrl.getVisibilityAttr())
 
         self.evalOperators()
+
+        self.tagAllComponentJoints([self.getDecoratedName()] + (self.tagNames or []))
 
 
 

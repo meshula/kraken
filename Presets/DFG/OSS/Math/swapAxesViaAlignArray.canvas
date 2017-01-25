@@ -52,12 +52,12 @@
   "code" : "
 
 operator __alignMatsTask<<<index>>>(io Mat44 results[], Mat44 mats[], Vec3 alignArray[])
-{ 
+{
   Mat44 m = mats[index];
   UInt8 alignX = 1; // alignArray[index].x;
   UInt8 alignY = 2; // alignArray[index].y;
   UInt8 alignZ = 3; // alignArray[index].z;
-  results[index] = m.align(alignX,alignY,alignZ);
+  results[index] = Mat44_align(m, alignX, alignY, alignZ);
 }
 
 dfgEntry {
@@ -124,12 +124,12 @@ dfgEntry {
       "code" : "
 
 operator __alignMatsTask<<<index>>>(io Mat44 results[], Mat44 mats[], Vec3 alignArray[])
-{ 
+{
   Mat44 m = mats[index];
   UInt8 alignX = 1; // alignArray[index].x;
   UInt8 alignY = 2; // alignArray[index].y;
   UInt8 alignZ = 3; // alignArray[index].z;
-  results[index] = m.align(alignX,alignY,alignZ);
+  results[index] = Mat44_align(m, alignX, alignY, alignZ);
 }
 
 dfgEntry {

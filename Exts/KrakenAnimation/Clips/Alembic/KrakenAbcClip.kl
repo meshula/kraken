@@ -92,7 +92,7 @@ private function KrakenAbcClip.construct!(String filePath) {
         continue;
 
       String channelName = name.reversePartition('/')[2].reversePartition(':')[2];
-      channelName += '.'+propKeys[j].reversePartition('/')[2]; 
+      channelName += '.'+propKeys[j].reversePartition('/')[2];
       this.nameToId[channelName] = this.scalars.size();
       this.names.push(channelName);
       this.types.push(KrakenClipChannel_Float32);
@@ -102,6 +102,12 @@ private function KrakenAbcClip.construct!(String filePath) {
   }
 
   this.lookup = null;
+}
+
+function SInt32[] KrakenAbcClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  return result;
 }
 
 UInt32 KrakenAbcClip.getChannelCount() {
@@ -196,6 +202,7 @@ function JSONDictValue KrakenAbcClip.saveToJson!() {
 }
 
 function KrakenAbcClip.loadFromJson!(JSONDictValue json) {
+  report("TTPrint: KrakenAbcClip.loadFromJson");
   String filePath = json.getString('filePath');
   this.construct(filePath);
 }

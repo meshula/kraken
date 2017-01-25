@@ -127,11 +127,11 @@ class mjEyelidComponentGuide(mjEyelidComponent):
         self.lidLowLateralCtrl.setColor("peach")
 
 
-        # ===============
-        # Add Debug Splice Ops
-        # ===============
+        # =====================
+        # Add Debug Canvas Ops
+        # =====================
         # Add Lid Up Canvas Op
-        self.debugLidUpCanvasOp = CanvasOperator('Debug_Canvas_Eyelid_Up_Op', 'MJCG.Solvers.mjEyelidDebugSolver')
+        self.debugLidUpCanvasOp = CanvasOperator('Debug_Canvas_Eyelid_Up_Op', 'Kraken.ThirdParty.MJCG.Solvers.mjEyelidDebugSolver')
         self.addOperator(self.debugLidUpCanvasOp)
 
         # Add Attributes Inputs
@@ -153,7 +153,7 @@ class mjEyelidComponentGuide(mjEyelidComponent):
 
 
         # Add Lid Low Canvas Op
-        self.debugLidLowCanvasOp = CanvasOperator('Debug_Canvas_Eyelid_Low_Op', 'MJCG.Solvers.mjEyelidDebugSolver')
+        self.debugLidLowCanvasOp = CanvasOperator('Debug_Canvas_Eyelid_Low_Op', 'Kraken.ThirdParty.MJCG.Solvers.mjEyelidDebugSolver')
         self.addOperator(self.debugLidLowCanvasOp)
 
         # Add Attributes Inputs
@@ -519,7 +519,7 @@ class mjEyelidComponentRig(mjEyelidComponent):
                                                                ])
 
         # Add Lid Up Canvas Op
-        self.lidUpCanvasOp = CanvasOperator('eyelidUp', 'MJCG.Solvers.mjEyelidConstraintSolver')
+        self.lidUpCanvasOp = CanvasOperator('eyelidUp', 'Kraken.ThirdParty.MJCG.Solvers.mjEyelidConstraintSolver')
         self.addOperator(self.lidUpCanvasOp)
 
         # Add Attributes Inputs
@@ -546,7 +546,7 @@ class mjEyelidComponentRig(mjEyelidComponent):
 
 
         # Add Lid Low Canvas Op
-        self.lidLowCanvasOp = CanvasOperator('eyelidLow', 'MJCG.Solvers.mjEyelidConstraintSolver')
+        self.lidLowCanvasOp = CanvasOperator('eyelidLow', 'Kraken.ThirdParty.MJCG.Solvers.mjEyelidConstraintSolver')
         self.addOperator(self.lidLowCanvasOp)
 
         # Add Attributes Inputs

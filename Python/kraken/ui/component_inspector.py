@@ -5,8 +5,11 @@
 
 
 import sys
-from PySide import QtGui, QtCore
+
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
+
 from HAppkit_Editors import EditorFactory, GetterSetterController, BaseInspector
+
 from kraken.core.kraken_system import KrakenSystem
 
 
@@ -101,7 +104,7 @@ class ComponentInspector(BaseInspector):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     from kraken_components.biped.arm_component import ArmComponentGuide
     armGuide = ArmComponentGuide("arm")

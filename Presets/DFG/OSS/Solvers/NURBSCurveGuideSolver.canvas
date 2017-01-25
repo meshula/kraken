@@ -12,6 +12,15 @@
       "defaultValues" : {
         "Mat44[]" : []
         },
+      "name" : "refMats",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Mat44[]" : []
+        },
       "name" : "controls",
       "execPortType" : "In"
       },
@@ -33,15 +42,7 @@
       "name" : "drawDebug",
       "execPortType" : "In"
       },
-    {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
-      "defaultValues" : {
-        "Mat44[]" : []
-        },
-      "name" : "refMats",
-      "execPortType" : "In"
-      },
+
     {
       "objectType" : "Port",
       "nodePortType" : "Out",
@@ -272,7 +273,7 @@
   Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
   Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
   ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
-  
+
 
   for( Integer i=0; i<points.size(); i++){
     vertexColorsAttr.values[firstIndex] = color[i];
@@ -784,7 +785,7 @@
   Vec3Attribute positionsAttr = this.attributes.getOrCreateAttribute('positions', Vec3Attribute);
   Vec3Attribute normalsAttr = this.attributes.getOrCreateAttribute('normals', Vec3Attribute);
   ColorAttribute vertexColorsAttr = this.attributes.getOrCreateColorAttribute('vertexColors');
-  
+
 
   for( Integer i=0; i<points.size(); i++){
     vertexColorsAttr.values[firstIndex] = color[i];

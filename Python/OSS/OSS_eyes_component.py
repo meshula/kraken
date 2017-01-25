@@ -522,6 +522,8 @@ class OSSEyesComponentRig(OSSEyesComponent):
         # Eval Operators
         self.evalOperators()
 
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
+
 
 def getAnimControlNameList(handleName):
     """ tokenizes string argument, returns a list"""

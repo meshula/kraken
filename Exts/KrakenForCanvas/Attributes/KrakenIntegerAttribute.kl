@@ -1,6 +1,6 @@
 require Math;
 
-struct KrakenIntegerAttribute : KrakenAttribute {
+object KrakenIntegerAttribute : KrakenAttribute {
   Integer min;
   Integer max;
   Integer value;

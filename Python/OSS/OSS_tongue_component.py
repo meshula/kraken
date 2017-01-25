@@ -1,5 +1,6 @@
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo
+from kraken.core.maths.constants import *
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -232,6 +233,8 @@ class OSSTongueRig(OSSTongue):
 
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
         self.tongueCtrl.scalePoints(globalScale)
+
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 from kraken.core.kraken_system import KrakenSystem

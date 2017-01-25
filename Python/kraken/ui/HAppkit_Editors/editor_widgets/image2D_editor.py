@@ -1,5 +1,6 @@
 import json
-from PySide import QtCore, QtGui
+
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -11,15 +12,15 @@ class Image2DEditor(BaseValueEditor):
 
         super(Image2DEditor, self).__init__(valueController, parent=parent)
 
-        self._grid = QtGui.QGridLayout()
+        self._grid = QtWidgets.QGridLayout()
         self._grid.setContentsMargins(0, 0, 0, 0)
 
         self.__value = self._invokeGetter()
 
         # format
-        formatLabelEditor = QtGui.QLabel("format", self)
+        formatLabelEditor = QtWidgets.QLabel("format", self)
         formatLabelEditor.setMinimumWidth(20)
-        self._formatEditor = QtGui.QLineEdit(self)
+        self._formatEditor = QtWidgets.QLineEdit(self)
         self._formatEditor.setText(self.__value.pixelFormat)
         self._formatEditor.setReadOnly(True)
 
@@ -27,12 +28,12 @@ class Image2DEditor(BaseValueEditor):
         self._grid.addWidget(self._formatEditor, 0, 1)
 
         # width
-        widthLabelEditor = QtGui.QLabel("width", self)
+        widthLabelEditor = QtWidgets.QLabel("width", self)
         widthLabelEditor.setMinimumWidth(20)
-        self._widthEditor = QtGui.QSpinBox(self)
+        self._widthEditor = QtWidgets.QSpinBox(self)
         self._widthEditor.setMinimum(0)
         self._widthEditor.setMaximum(9999999)
-        self._widthEditor.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        self._widthEditor.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         self._widthEditor.setValue(self.__value.width)
         self._widthEditor.setReadOnly(True)
 
@@ -40,12 +41,12 @@ class Image2DEditor(BaseValueEditor):
         self._grid.addWidget(self._widthEditor, 1, 1)
 
         # height
-        heightLabelEditor = QtGui.QLabel("height", self)
+        heightLabelEditor = QtWidgets.QLabel("height", self)
         heightLabelEditor.setMinimumWidth(20)
-        self._heightEditor = QtGui.QSpinBox(self)
+        self._heightEditor = QtWidgets.QSpinBox(self)
         self._heightEditor.setMinimum(0)
         self._heightEditor.setMaximum(9999999)
-        self._heightEditor.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        self._heightEditor.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         self._heightEditor.setValue(self.__value.height)
         self._heightEditor.setReadOnly(True)
 
@@ -53,15 +54,15 @@ class Image2DEditor(BaseValueEditor):
         self._grid.addWidget(self._heightEditor, 2, 1)
 
         self._thumbnailSize = 40
-        self.tumbnailEditor = QtGui.QLabel()
+        self.tumbnailEditor = QtWidgets.QLabel()
         self.tumbnailEditor.setBackgroundRole(QtGui.QPalette.Base)
-        self.tumbnailEditor.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        self.tumbnailEditor.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         self.tumbnailEditor.setScaledContents(True)
 
         self._updateThumbnail()
 
         self.setLayout(self._grid)
-        self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Preferred)
+        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
 
         # self.updateEditorValue()
 

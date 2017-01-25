@@ -1,6 +1,6 @@
 require Math;
 
-struct KrakenColorAttribute : KrakenAttribute {
+object KrakenColorAttribute : KrakenAttribute {
   Color value;
 };
 

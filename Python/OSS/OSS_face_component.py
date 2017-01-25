@@ -4,7 +4,7 @@ import json
 from kraken.core.maths import Vec3
 from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.rotation_order import RotationOrder
-from kraken.core.maths.euler import rotationOrderStrToIntMapping
+from kraken.core.maths.constants import ROT_ORDER_STR_TO_INT_MAP
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -523,7 +523,8 @@ class OSSFaceComponentRig(OSSFaceComponent):
                                 for shape in shapes:
                                     bsAttr = ScalarAttribute(shape, value=0.0, parent=bsAttrGrp)
                                     bsAttr.setLock(True)
-                                    bsAttr.setMetaDataItem("blendShapeName", shape)
+                                    bsAttr.setMetaDataItem("SCALAR_OUTPUT", shape)
+                                    bsAttr.appendMetaDataListItem("TAGS", self.getDecoratedName())
                                     bsAttr.connect(used_axes[axis][sign])
 
                     if side != self.getLocation():
@@ -539,7 +540,6 @@ class OSSFaceComponentRig(OSSFaceComponent):
                     #self.handleConstraints.append(newDef.constrainTo(newCtrl, maintainOffset=False))
                     #controlsList.append(newCtrl)
                     parent = newCtrl
-
 
                     if (ctrlListName+"Xfos") in data.keys():
                         if side == "R":
@@ -598,6 +598,8 @@ class OSSFaceComponentRig(OSSFaceComponent):
         # Eval Operators
         self.evalOperators()
         self.RemapScalarValueSolverKLOp.evaluate()
+
+        self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 
 

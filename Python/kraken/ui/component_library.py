@@ -4,13 +4,13 @@ import os
 
 import difflib
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 
 from kraken.core.maths import Vec2
 from kraken.core.kraken_system import KrakenSystem
 
 
-class ComponentTreeWidget(QtGui.QTreeWidget):
+class ComponentTreeWidget(QtWidgets.QTreeWidget):
     """Component Tree Widget"""
 
     def __init__(self, parent):
@@ -19,7 +19,7 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
         self.header().close()
         self.setColumnCount(1)
         self.setDragEnabled(True)
-        self.setDragDropMode(QtGui.QTreeWidget.DragOnly)
+        self.setDragDropMode(QtWidgets.QTreeWidget.DragOnly)
 
         krakenUIWidget = self.parent().parent()
         graphViewWidget = krakenUIWidget.graphViewWidget
@@ -55,7 +55,7 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
                     print "  " + component
                 continue
 
-            treeItem = QtGui.QTreeWidgetItem(parentWidget)
+            treeItem = QtWidgets.QTreeWidgetItem(parentWidget)
             treeItem.setData(0, QtCore.Qt.UserRole, data['components'][item])
             treeItem.setText(0, item)
             component = self.ks.registeredComponents[data['components'][item]]
@@ -67,7 +67,7 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
 
         for item in data['subDirs'].keys():
 
-            treeItem = QtGui.QTreeWidgetItem(parentWidget)
+            treeItem = QtWidgets.QTreeWidgetItem(parentWidget)
             treeItem.setData(0, QtCore.Qt.UserRole, 'Folder')
             treeItem.setText(0, item)
 
@@ -158,7 +158,7 @@ class ComponentTreeWidget(QtGui.QTreeWidget):
         drag.start(QtCore.Qt.IgnoreAction)
 
 
-class ComponentLibrary(QtGui.QWidget):
+class ComponentLibrary(QtWidgets.QWidget):
 
     def __init__(self, parent):
         super(ComponentLibrary, self).__init__(parent)
@@ -167,6 +167,6 @@ class ComponentLibrary(QtGui.QWidget):
 
         self.componentTreeWidget = ComponentTreeWidget(self)
 
-        grid = QtGui.QGridLayout()
+        grid = QtWidgets.QGridLayout()
         grid.addWidget(self.componentTreeWidget, 0, 0)
         self.setLayout(grid)

@@ -1,0 +1,49 @@
+{
+  "clipType": "KrakenGlueClip",
+  "content": {
+    "constraints": [
+      {
+        "control": "M_root_fk",
+        "joint": "M_root_def",
+        "tOffset": {"x": 0.0, "y": 0.0, "z": 1.0},
+        "rOffset": {"x": 0.0, "y": 1.0, "z": 0.0},
+        "sOffset": {"x": 0.0, "y": 1.0, "z": 0.0}
+      },
+      {
+        "control": "M_cog_fk",
+        "joint": "M_pelvis_def",
+        "tOffset": {"x": 0.0, "y": 0.0, "z": 1.0},
+        "rOffset": {"x": 0.0, "y": 1.0, "z": 0.0},
+        "sOffset": {"x": 0.0, "y": 1.0, "z": 0.0}
+      },
+      {
+        "control": "M_torso_fk",
+        "joint": "M_spine01_def",
+        "tOffset": {"x": 0.0, "y": 0.0, "z": 1.0},
+        "rOffset": {"x": 0.0, "y": 1.0, "z": 0.0},
+        "sOffset": {"x": 0.0, "y": 1.0, "z": 0.0}
+      },
+      {
+        "control": "M_chest_fk",
+        "joint": "M_spine03_def",
+        "tOffset": {"x": 0.0, "y": 0.0, "z": 1.0},
+        "rOffset": {"x": 0.0, "y": 1.0, "z": 0.0},
+        "sOffset": {"x": 0.0, "y": 1.0, "z": 0.0}
+      },
+      {
+        "control": "M_neck_fk",
+        "joint": "M_neck01_def",
+        "tOffset": {"x": 0.0, "y": 0.0, "z": 1.0},
+        "rOffset": {"x": 0.0, "y": 1.0, "z": 0.0},
+        "sOffset": {"x": 0.0, "y": 1.0, "z": 0.0}
+      },
+      {
+        "control": "M_head_fk",
+        "joint": "M_head_def",
+        "tOffset": {"x": 0.0, "y": 0.0, "z": 1.0},
+        "rOffset": {"x": 0.0, "y": 1.0, "z": 0.0},
+        "sOffset": {"x": 0.0, "y": 1.0, "z": 0.0}
+      }
+    ]
+}
+}

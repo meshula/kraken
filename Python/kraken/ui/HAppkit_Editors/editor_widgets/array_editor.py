@@ -1,5 +1,6 @@
 import copy
-from PySide import QtGui, QtCore
+
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -12,7 +13,7 @@ class ArrayEditor(BaseValueEditor):
     def __init__(self, valueController, parent=None):
         super(ArrayEditor, self).__init__(valueController, parent=parent)
 
-        self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.MinimumExpanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
 
         self._enableAddElements = True #valueController.getOption('enableAddElements', valueController.getOption('enableAddRemoveElements', True))
         self._enableRemoveElements = True #valueController.getOption('enableRemoveElements', valueController.getOption('enableAddRemoveElements', True))
@@ -31,28 +32,28 @@ class ArrayEditor(BaseValueEditor):
         self._valueArray = self._invokeGetter()
         self.determineElementType()
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
 
         if self._displayArrayLimit or self._displayNumElements:
-            topToolbar = QtGui.QWidget(self)
-            topToolbarLayout = QtGui.QHBoxLayout()
+            topToolbar = QtWidgets.QWidget(self)
+            topToolbarLayout = QtWidgets.QHBoxLayout()
             topToolbar.setLayout(topToolbarLayout)
             vbox.addWidget(topToolbar, 0)
 
             if self._displayNumElements:
-                topToolbarLayout.addWidget(QtGui.QLabel('Num Elements:'+str(len(self._valueArray)), self))
+                topToolbarLayout.addWidget(QtWidgets.QLabel('Num Elements:'+str(len(self._valueArray)), self))
 
             if self._displayArrayLimit:
                 # display a widget to enable setting the maximum number of displayed elements.
 
-                label = QtGui.QLabel('Max Displayed elements:', self)
-                # label.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+                label = QtWidgets.QLabel('Max Displayed elements:', self)
+                # label.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
                 topToolbarLayout.addWidget(label, 0)
 
-                spinBox = QtGui.QSpinBox(self)
+                spinBox = QtWidgets.QSpinBox(self)
                 spinBox.setMinimum(0)
                 spinBox.setMaximum(100)
-                # spinBox.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+                # spinBox.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
                 spinBox.setValue(self._arrayLimit)
                 def setArrayLimit(value):
                     self._arrayLimit = value
@@ -61,19 +62,19 @@ class ArrayEditor(BaseValueEditor):
                 topToolbarLayout.addWidget(spinBox, 0)
             topToolbarLayout.addStretch(1)
 
-        self._grid = QtGui.QGridLayout()
+        self._grid = QtWidgets.QGridLayout()
         self._grid.setContentsMargins(0, 0, 0, 0)
 
-        widget = QtGui.QWidget(self)
+        widget = QtWidgets.QWidget(self)
         widget.setLayout(self._grid)
         vbox.addWidget(widget)
 
         if self._displayGroupBox:
-            groupBox = QtGui.QGroupBox(self._valueController.getDataType())
+            groupBox = QtWidgets.QGroupBox(self._valueController.getDataType())
             groupBox.setLayout(vbox)
-            groupBox.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+            groupBox.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
-            groupBoxLayout = QtGui.QVBoxLayout()
+            groupBoxLayout = QtWidgets.QVBoxLayout()
             groupBoxLayout.addWidget(groupBox, 0)
             self.setLayout(groupBoxLayout)
         else:
@@ -165,7 +166,7 @@ class ArrayEditor(BaseValueEditor):
 
         if self.isEditable() and self._enableAddElements:
             if not self._displayArrayLimit or self._displayArrayLimit and len(self._valueArray) < self._arrayLimit and not self._constSizeArray:
-                self.addElementButton = QtGui.QPushButton(self._addElementButtonLabel, self)
+                self.addElementButton = QtWidgets.QPushButton(self._addElementButtonLabel, self)
                 def addElement():
                     undoManager = UndoRedoManager.getInstance()
                     undoManager.openBracket("Add element to :" + self.getName())
@@ -199,14 +200,14 @@ class ArrayEditor(BaseValueEditor):
         row = index
         column = 0
         if self._displayIndex:
-            self._grid.addWidget(QtGui.QLabel(str(index), self), row, column, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
+            self._grid.addWidget(QtWidgets.QLabel(str(index), self), row, column, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
             column += 1
         if elementEditor is not None:
             self._grid.addWidget(elementEditor, row, column)
             column += 1
 
         if self.isEditable() and self._enableRemoveElements and not self._constSizeArray:
-            self.removeElementButton = QtGui.QPushButton(self._removeElementButtonLabel, self)
+            self.removeElementButton = QtWidgets.QPushButton(self._removeElementButtonLabel, self)
             def removeElement():
 
                 undoManager = UndoRedoManager.getInstance()

@@ -4,7 +4,7 @@
 
 import copy
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from pyflowgraph.graph_view import GraphView
 from pyflowgraph.graph_view import MANIP_MODE_NONE, MANIP_MODE_SELECT, MANIP_MODE_PAN, MANIP_MODE_MOVE, MANIP_MODE_ZOOM
@@ -108,7 +108,7 @@ class KGraphView(GraphView):
     # =======
     def mousePressEvent(self, event):
 
-        modifiers = QtGui.QApplication.keyboardModifiers()
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
 
         if event.button() == QtCore.Qt.MouseButton.RightButton:
 
@@ -139,7 +139,7 @@ class KGraphView(GraphView):
 
             if graphicItem is None:
 
-                contextMenu = QtGui.QMenu(self.getGraphViewWidget())
+                contextMenu = QtWidgets.QMenu(self.getGraphViewWidget())
                 contextMenu.setObjectName('rightClickContextMenu')
                 contextMenu.setMinimumWidth(150)
 
@@ -162,7 +162,7 @@ class KGraphView(GraphView):
             if isinstance(graphicItem, KNode):
                 self.selectNode(graphicItem, clearSelection=True, emitSignal=True)
 
-                contextMenu = QtGui.QMenu(self.getGraphViewWidget())
+                contextMenu = QtWidgets.QMenu(self.getGraphViewWidget())
                 contextMenu.setObjectName('rightClickContextMenu')
                 contextMenu.setMinimumWidth(150)
 
@@ -194,7 +194,7 @@ class KGraphView(GraphView):
                     if outPort.getDataType().startswith(inPort.getDataType()) and outPort.getDataType().endswith('[]'):
 
                         globalPos = event.globalPos()
-                        contextMenu = QtGui.QMenu(self.getGraphViewWidget())
+                        contextMenu = QtWidgets.QMenu(self.getGraphViewWidget())
                         contextMenu.setObjectName('rightClickContextMenu')
                         contextMenu.setMinimumWidth(150)
 

@@ -3,8 +3,9 @@ import os
 import sys
 import webbrowser
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 from kraken.ui.preference_editor import PreferenceEditor
+from kraken.core import getVersion
 from kraken.core.kraken_system import KrakenSystem
 from kraken.core.configs.config import Config
 from kraken.log import getLogger
@@ -12,7 +13,7 @@ from kraken.log import getLogger
 logger = getLogger('kraken')
 
 
-class KrakenMenu(QtGui.QWidget):
+class KrakenMenu(QtWidgets.QWidget):
     """Kraken Menu Widget"""
 
     def __init__(self, parent=None):
@@ -26,12 +27,12 @@ class KrakenMenu(QtGui.QWidget):
 
     def createLayout(self):
 
-        self.menuLayout = QtGui.QHBoxLayout()
+        self.menuLayout = QtWidgets.QHBoxLayout()
         self.menuLayout.setContentsMargins(0, 0, 0, 0)
         self.menuLayout.setSpacing(0)
 
         # Menu
-        self.menuBar = QtGui.QMenuBar()
+        self.menuBar = QtWidgets.QMenuBar()
 
         # File Menu
         self.fileMenu = self.menuBar.addMenu('&File')
@@ -52,7 +53,7 @@ class KrakenMenu(QtGui.QWidget):
         self.saveAsAction.setObjectName("saveAsAction")
 
         self.fileMenu.addSeparator()
-        self.recentFilesMenu = QtGui.QMenu(title='&Recent Files', parent=self.fileMenu)
+        self.recentFilesMenu = QtWidgets.QMenu(title='&Recent Files', parent=self.fileMenu)
         self.fileMenu.addMenu(self.recentFilesMenu)
 
 
@@ -109,9 +110,11 @@ class KrakenMenu(QtGui.QWidget):
         self.krakenWebSiteAction = self.helpMenu.addAction('Kraken Web Site')
         self.krakenDocumentationAction = self.helpMenu.addAction('Kraken Documentation')
         self.fabricForumsAction = self.helpMenu.addAction('Fabric Forums')
+        self.helpMenu.addSeparator()
+        self.aboutKrakenAction = self.helpMenu.addAction('About Kraken')
 
         # Logo
-        logoWidget = QtGui.QLabel()
+        logoWidget = QtWidgets.QLabel()
         logoWidget.setObjectName('logoWidget')
         logoWidget.setMinimumHeight(20)
         logoWidget.setMinimumWidth(110)
@@ -120,16 +123,16 @@ class KrakenMenu(QtGui.QWidget):
         logoWidget.setPixmap(logoPixmap)
 
         # Config Widget
-        self.configsParent = QtGui.QFrame(self)
+        self.configsParent = QtWidgets.QFrame(self)
         self.configsParent.setObjectName('configParent')
-        self.configsParent.setFrameStyle(QtGui.QFrame.NoFrame)
+        self.configsParent.setFrameStyle(QtWidgets.QFrame.NoFrame)
         self.configsParent.setMinimumWidth(160)
 
-        self.configsLayout = QtGui.QVBoxLayout()
+        self.configsLayout = QtWidgets.QVBoxLayout()
         self.configsLayout.setContentsMargins(0, 0, 0, 0)
         self.configsLayout.setSpacing(0)
 
-        self.configsWidget = QtGui.QComboBox()
+        self.configsWidget = QtWidgets.QComboBox()
         self.configsWidget.setAutoFillBackground(True)
         self.configsWidget.setObjectName('configWidget')
         self.configsWidget.setMinimumWidth(160)
@@ -192,6 +195,7 @@ class KrakenMenu(QtGui.QWidget):
         self.krakenWebSiteAction.triggered.connect(self.krakenWebSite)
         self.krakenDocumentationAction.triggered.connect(self.krakenDocumentation)
         self.fabricForumsAction.triggered.connect(self.fabricForums)
+        self.aboutKrakenAction.triggered.connect(self.aboutKraken)
 
         # Config Widget
         self.configsWidget.currentIndexChanged.connect(self.setCurrentConfig)
@@ -212,6 +216,12 @@ class KrakenMenu(QtGui.QWidget):
     def fabricForums(self):
         webbrowser.open_new_tab('http://forums.fabricengine.com/categories/kraken')
 
+    def aboutKraken(self):
+        aboutMsgBox = QtWidgets.QMessageBox(self)
+        aboutMsgBox.setWindowTitle('About Kraken')
+        aboutMsgBox.setText("You are using Kraken v{}".format(getVersion()))
+        aboutMsgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        aboutMsgBox.exec_()
 
     # ============
     # Preferences
@@ -378,7 +388,7 @@ class KrakenMenu(QtGui.QWidget):
         graphViewWidget.loadRigPreset(self.sender().text())
 
 
-class RigNameLabel(QtGui.QLabel):
+class RigNameLabel(QtWidgets.QLabel):
 
     clicked = QtCore.Signal()
 
@@ -392,7 +402,7 @@ class RigNameLabel(QtGui.QLabel):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     KrakenMenu()
 

@@ -1,6 +1,7 @@
 {
   "version": "1.2.0",
   "code": [
+    "KrakenItem.kl",
     "Drawing/DrawingUtils.kl",
     "Solvers/Math.kl",
     "Solvers/KrakenSolverArg.kl",
@@ -21,6 +22,7 @@
     "Solvers/TwistSolver.kl",
     "PersistenceHelpers.kl"
   ],
+  "autoNamespace": true,
   "dfgPresets": {
     "dir": "DFG",
     "presetPath": "Kraken.Exts"
