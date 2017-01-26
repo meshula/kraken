@@ -265,7 +265,7 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
         self.setTransform(QtGui.QTransform.fromTranslate(graphPos.x()-(size.width()*0.5), graphPos.y()-(size.height()*0.5)), False)
 
     def translate(self, x, y):
-        super(KBackdrop, self).translate(x, y)
+        super(KBackdrop, self).moveBy(x, y)
 
     def paint(self, painter, option, widget):
         rect = self.windowFrameRect()
