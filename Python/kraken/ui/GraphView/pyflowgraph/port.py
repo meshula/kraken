@@ -8,7 +8,7 @@ from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 
 class PortLabel(QtWidgets.QGraphicsWidget):
-    __font = QtGui.QFont('Decorative', 12)
+    __font = QtGui.QFont('Roboto', 12)
     __fontMetrics = QtGui.QFontMetrics(__font)
 
     def __init__(self, port, text, hOffset, color, highlightColor):
@@ -25,7 +25,6 @@ class PortLabel(QtWidgets.QGraphicsWidget):
         self.__textItem.document().setDefaultTextOption(option)
         self.__textItem.document().setDocumentMargin(0)
         self.__textItem.adjustSize()
-        self.__textItem.transform().translate(0, self.__fontMetrics.height() * -0.5)
 
         self.setPreferredSize(self.textSize())
         self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))

@@ -12,7 +12,7 @@ from port import InputPort, OutputPort, IOPort
 class NodeTitle(QtWidgets.QGraphicsWidget):
 
     __color = QtGui.QColor(25, 25, 25)
-    __font = QtGui.QFont('Decorative', 14)
+    __font = QtGui.QFont('Roboto', 14)
     __font.setLetterSpacing(QtGui.QFont.PercentageSpacing, 115)
     __labelBottomSpacing = 12
 
