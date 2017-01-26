@@ -660,10 +660,10 @@ class Builder(Builder):
         kl += ["  Boolean useClip;"]
         kl += ["  Boolean debug;"]
         kl += ["  UInt64 evalVersion;"]
-        kl += ["  UInt32 directDriveJointIDs[%d];" % len(self.__klMembers['members']['KrakenJoint'])]  # IDs of joints with incoming direct drive mat44, otherwise -1
+        kl += ["  SInt32 directDriveJointIDs[%d];" % len(self.__klMembers['members']['KrakenJoint'])]  # IDs of joints with incoming direct drive mat44, otherwise -1
         kl += ["  UInt32 directDriveAttrs[String]; // key: KrakenItem name value: index uniqueID"]
         kl += ["  Scalar directDriveAttrValues[];  // size AND order same as directDriveAttrs"]
-        kl += ["  UInt32 solveItemIDs[];"] # Rig items to call solveItem() on
+        kl += ["  SInt32 solveItemIDs[];"] # Rig items to call solveItem() on
         kl += ["  UInt32 nameToUniqueID[String];"]
         kl += ["  Boolean isItemDirty[%d];" % self.__klMaxUniqueId]
         if self.__profilingFrames > 0:
