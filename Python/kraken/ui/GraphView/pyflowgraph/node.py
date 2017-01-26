@@ -138,12 +138,13 @@ class Node(QtWidgets.QGraphicsWidget):
         layout.setAlignment(self.__headerItem, QtCore.Qt.AlignCenter | QtCore.Qt.AlignTop)
 
         self.__ports = []
-        self.__inputPortsHolder = PortList(self)
         self.__ioPortsHolder = PortList(self)
+        self.__inputPortsHolder = PortList(self)
         self.__outputPortsHolder = PortList(self)
+        self.__outputPortsHolder.layout().setContentsMargins(0, 0, 0, 10)
 
-        layout.addItem(self.__inputPortsHolder)
         layout.addItem(self.__ioPortsHolder)
+        layout.addItem(self.__inputPortsHolder)
         layout.addItem(self.__outputPortsHolder)
 
         self.__selected = False
