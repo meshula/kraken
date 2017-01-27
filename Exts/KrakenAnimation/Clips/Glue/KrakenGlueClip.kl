@@ -171,6 +171,7 @@ function KrakenGlueClip.solveConstraints!(io Ref<KrakenKLRig> rig, KrakenClipCon
 
   for(Count i=0;i<this.spaces.size();i++)
   {
+
       if (this.spaceJointIDs[i] == -1)  // Space not constrained to a joint
         this.spacesGlobalMatrices[i] = this.spaceOffsets[i];
       else
@@ -188,6 +189,7 @@ function KrakenGlueClip.solveConstraints!(io Ref<KrakenKLRig> rig, KrakenClipCon
       else
         parent = Mat44();
 
+      report("Constraining control "+this.controls[i]);
       global = context.poseJoints[this.controlJointIDs[i]] * this.controlOffsets[i];
       local = parent.inverse() * global;
       this.controlLocalMatrices[i] = local;

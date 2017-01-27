@@ -893,11 +893,7 @@ class Builder(Builder):
         kl += ["}", ""]
 
 
-        trackItemNames = [
-            "solve_R_loLeg_def_PSD_R_loLeg_def_bsShape",
-            "solve_R_loLeg_OSS_AngleBetweenSolver_klOp",
-            "solve_R_upLeg_def",
-            "solve_R_loLeg_def"]
+        trackItemNames = []
 
         for item in allItems:
             if len(item['solveCode']) == 0:
