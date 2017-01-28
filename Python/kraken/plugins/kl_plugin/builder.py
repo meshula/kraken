@@ -846,7 +846,7 @@ class Builder(Builder):
         kl += ["inline function %s.setControlLocalMat44!(Index index, Mat44 value) {" % self.getKLExtensionName()]
         kl += ["  this._KrakenControl[index].local = value;"]
         kl += ["  this.dirtyItem(this._KrakenControl[index].uniqueId);  // dirty all dependencies"]
-        kl += ["  this.isItemDirty[this._KrakenControl[index].uniqueId] = false;  // clean this"]
+#        kl += ["  this.isItemDirty[this._KrakenControl[index].uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
         kl += ["inline function Scalar %s.getScalarAttribute(Index index) {" % self.getKLExtensionName()]
@@ -856,7 +856,7 @@ class Builder(Builder):
         kl += ["inline function %s.setScalarAttribute!(Index index, Scalar value) {" % self.getKLExtensionName()]
         kl += ["  this._KrakenScalarAttribute[index].value = value;"]
         kl += ["  this.dirtyItem(this._KrakenScalarAttribute[index].uniqueId);    // dirty all dependencies"]
-        kl += ["  this.isItemDirty[this._KrakenScalarAttribute[index].uniqueId] = false;  // clean this"]
+#        kl += ["  this.isItemDirty[this._KrakenScalarAttribute[index].uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
         # These are for setting values for solve assuming rig is reset to all be dirty
