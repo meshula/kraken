@@ -409,7 +409,7 @@ class Builder(Builder):
             if self.__debugMode:
                 item['solveCode'] += ["report(\"solving KLSolver %s\");" % (sourceName)]
             if self.__profilingFrames > 0:
-                item['solveCode'] += ["{ AutoProfilingEvent solverEvent_%s(\"%s\");" % (eventSolverName, kOperator.getDecoratedPath())]
+                item['solveCode'] += ["{ AutoProfilingEvent solverEvent_%s(\"%s\");" % (eventSolverName, sourceSolver['buildName'])]
 
             def getSolveCodeForConstantValue(argMember, argDataType, value):
                 code = []
@@ -877,8 +877,8 @@ class Builder(Builder):
         kl += ["}", ""]
 
         kl += ["inline function %s.setObject3DGlobalMat44ById!(Index uniqueId, Mat44 value) {" % self.getKLExtensionName()]
-        kl += ["if (this.debug)"]
-        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44ById: name: \"+this._KrakenItem[uniqueId].name+\" uniqueId: \"+uniqueId+\" value: \"+value);" % self.getKLExtensionName()]
+#        kl += ["if (this.debug)"]
+#        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44ById: name: \"+this._KrakenItem[uniqueId].name+\" uniqueId: \"+uniqueId+\" value: \"+value);" % self.getKLExtensionName()]
         kl += ["  KrakenObject3D(this._KrakenItem[uniqueId]).global = value;"]
         kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
         kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
@@ -898,13 +898,16 @@ class Builder(Builder):
               continue
             sceneItem = item['sceneItem']
             kl += ["inline function %s.%s!() {" % (self.getKLExtensionName(), self.getSolveMethodName(sceneItem))]
-            if self.getSolveMethodName(sceneItem) in trackItemNames:
-                kl += ["    if (this.debug)"]
-                kl += ["        report(\"Debug: KRK: solving item \\\""+self.getSolveMethodName(sceneItem)+"\\\", this.isItemDirty["+str(self.getUniqueId(sceneItem))+"]=\"+this.isItemDirty["+str(self.getUniqueId(sceneItem))+"]);"]
+            kl += ["  if (this.debug)"]
+            kl += ["  {"]
+            kl += ["    if(this.isItemDirty[%d])" % self.getUniqueId(sceneItem)]
+            kl += ["      report(\"Debug: %s.%s: \");" % (self.getKLExtensionName(), self.getSolveMethodName(sceneItem))]
+            kl += ["    else"]
+            kl += ["      report(\"Debug: %s.%s (CLEAN): \");" % (self.getKLExtensionName(), self.getSolveMethodName(sceneItem))]
+            kl += ["  }"]
             kl += ["  if(!this.isItemDirty[%d])" % self.getUniqueId(sceneItem)]
             kl += ["    return;"]
-            kl += ["  if (this.debug)"]
-            kl += ["    report(\"Debug: %s.%s\");"  % (self.getKLExtensionName(), self.getSolveMethodName(sceneItem))]
+
             kl += ["  this.isItemDirty[%d] = false;" % self.getUniqueId(sceneItem)]
             if self.__debugMode:
                 kl += ["  report(\"solving %s\ (%d)\");" % (self.getUniqueName(sceneItem), self.getUniqueId(sceneItem))]
@@ -913,10 +916,15 @@ class Builder(Builder):
             kl += ["}", ""]
 
         kl += ["inline function %s.solveItem!(Index uniqueId) {" % self.getKLExtensionName()]
+        kl += ["  if (this.debug)"]
+        kl += ["  {"]
+        kl += ["    if(this.isItemDirty[uniqueId])"]
+        kl += ["      report(\"\\nDebug: %s.solveItem: \"+this._KrakenItem[uniqueId].name);" % self.getKLExtensionName()]
+        kl += ["    else"]
+        kl += ["      report(\"\\nDebug: %s.solveItem (CLEAN): \"+this._KrakenItem[uniqueId].name);" % self.getKLExtensionName()]
+        kl += ["  }"]
         kl += ["  if(!this.isItemDirty[uniqueId])"]
         kl += ["    return;"]
-        kl += ["  if (this.debug)"]
-        kl += ["    report(\"\\nDebug: %s.solveItem: \"+this._KrakenItem[uniqueId]);"  % self.getKLExtensionName()]
         kl += ["  switch(uniqueId) {"]
         for item in allItems:
             if len(item['solveCode']) == 0:
