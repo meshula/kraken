@@ -721,10 +721,8 @@ class Builder(Builder):
         if self.__profilingFrames > 0:
             kl += ["  {  AutoProfilingEvent visitKLObjectsEvent(\"rig pose solve\");"]
         kl += ["    if (this.solveItemIDs.size() == 0) {  //If we haven't set any solveItemIDs, solve all items tagged with SOLVE by  default"]
-
-        for krkDef in self.__krkDeformers:
-            kl += ["      this.%s();" % (self.getSolveMethodName(krkDef['sceneItem']))]
-
+        for item in self.__krkTags.get("SOLVE", []):
+            kl += ["      this.%s();" % (self.getSolveMethodName(item['sceneItem']))]
         kl += ["    } else {"]
         kl += ["      for (Count i=0; i < this.solveItemIDs.size(); i++)"]
         kl += ["      {"]
@@ -1132,7 +1130,7 @@ class Builder(Builder):
         kl += ["  report(\"getTagItemNames:\" + tagNames);"]
         kl += ["  for(Count i=0; i<tagNames.size(); i++) {"]
         kl += ["    switch (tagNames[i]) {"]
-        for part, items in self.__krkTags.iteritems():
+        for tag, items in self.__krkTags.iteritems():
             kl += ["       case \"%s\": {" % part]
             for item in items:
                 kl += ["         dict[\"%s\"] = true;" % item['buildName']]
@@ -1783,7 +1781,7 @@ class Builder(Builder):
 
         # By default, add the scalar output attributes to the solve list.
         # They may not have any dependents, so this might be the only way they are solved
-        if kAttribute.getMetaDataItem("SCALAR_OUTPUT") and "SCALAR_OUTPUT" in kAttribute.getMetaDataItem("TAGS"):
+        if kAttribute.getMetaDataItem("SCALAR_OUTPUT"):
             kAttribute.appendMetaDataListItem("TAGS", "SOLVE")
         self.tagKLSceneItem(attr)
 
