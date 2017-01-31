@@ -726,8 +726,8 @@ class Builder(Builder):
         kl += ["    } else {"]
         kl += ["      for (Count i=0; i < this.solveItemIDs.size(); i++)"]
         kl += ["      {"]
-        kl += ["        if (this.debug)"]
-        kl += ["          report(\"Debug: %s.solve: Solving for: \\\"\"+this._KrakenItem[this.solveItemIDs[i]].name+\"\\\" uniqueId: \"+this.solveItemIDs[i]);" % self.getKLExtensionName()]
+#        kl += ["        if (this.debug)"]
+#        kl += ["          report(\"Debug: %s.solve: Solving for: \\\"\"+this._KrakenItem[this.solveItemIDs[i]].name+\"\\\" uniqueId: \"+this.solveItemIDs[i]);" % self.getKLExtensionName()]
         kl += ["        this.solveItem(this.solveItemIDs[i]);"]
         kl += ["      }"]
         kl += ["    }"]
@@ -903,6 +903,8 @@ class Builder(Builder):
                 kl += ["        report(\"Debug: KRK: solving item \\\""+self.getSolveMethodName(sceneItem)+"\\\", this.isItemDirty["+str(self.getUniqueId(sceneItem))+"]=\"+this.isItemDirty["+str(self.getUniqueId(sceneItem))+"]);"]
             kl += ["  if(!this.isItemDirty[%d])" % self.getUniqueId(sceneItem)]
             kl += ["    return;"]
+            kl += ["  if (this.debug)"]
+            kl += ["    report(\"Debug: %s.%s\");"  % (self.getKLExtensionName(), self.getSolveMethodName(sceneItem))]
             kl += ["  this.isItemDirty[%d] = false;" % self.getUniqueId(sceneItem)]
             if self.__debugMode:
                 kl += ["  report(\"solving %s\ (%d)\");" % (self.getUniqueName(sceneItem), self.getUniqueId(sceneItem))]
@@ -913,6 +915,8 @@ class Builder(Builder):
         kl += ["inline function %s.solveItem!(Index uniqueId) {" % self.getKLExtensionName()]
         kl += ["  if(!this.isItemDirty[uniqueId])"]
         kl += ["    return;"]
+        kl += ["  if (this.debug)"]
+        kl += ["    report(\"\\nDebug: %s.solveItem: \"+this._KrakenItem[uniqueId]);"  % self.getKLExtensionName()]
         kl += ["  switch(uniqueId) {"]
         for item in allItems:
             if len(item['solveCode']) == 0:
@@ -1120,18 +1124,17 @@ class Builder(Builder):
 
         kl += ["inline function String[] %s.getTagNames() {" % self.getKLExtensionName()]
         kl += ["  String result[](%d);" % len(self.__krkTags.keys())]
-        for i, part in enumerate(self.__krkTags.keys()):
-            kl += ["  result[%d] = \"%s\";" % (i, part)]
+        for i, tag in enumerate(self.__krkTags.keys()):
+            kl += ["  result[%d] = \"%s\";" % (i, tag)]
         kl += ["  return result;"]
         kl += ["}", ""]
 
         kl += ["inline function String[] %s.getTagItemNames(in String tagNames[]) {" % self.getKLExtensionName()]
         kl += ["  Boolean dict[String];"]
-        kl += ["  report(\"getTagItemNames:\" + tagNames);"]
         kl += ["  for(Count i=0; i<tagNames.size(); i++) {"]
         kl += ["    switch (tagNames[i]) {"]
         for tag, items in self.__krkTags.iteritems():
-            kl += ["       case \"%s\": {" % part]
+            kl += ["       case \"%s\": {" % tag]
             for item in items:
                 kl += ["         dict[\"%s\"] = true;" % item['buildName']]
             kl += ["         break;"]
