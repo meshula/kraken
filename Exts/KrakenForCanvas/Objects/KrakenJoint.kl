@@ -1,6 +1,11 @@
 require Kraken;
 
 object KrakenJoint : KrakenObject3D {
+  // Temporary until we can reduce dg to actually rely on joints instead of solver output xforms with drive joints
+  // Joints have source xfo objects with poseconstraints, other things might rely on these xfos instead of the joints
+  // That screws up dg graph stuff if you set the joint values and dirty joint dependencies.
+  // For dgraph purposes we treat the sourceObject just like the joint itself
+  UInt32 sourceObjectUniqueId;
 };
 
 /// \dfgPresetFolder Objects
