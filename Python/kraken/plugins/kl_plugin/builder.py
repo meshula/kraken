@@ -830,10 +830,10 @@ class Builder(Builder):
             dirtiableItems += [item for item in items if item not in dirtiableItems]
 
         kl += ["inline function %s.dirtyItem!(Index uniqueId) {" % self.getKLExtensionName()]
-        kl += ["  if(this.isItemDirty[uniqueId])"]
-        kl += ["    return;"]
         if self.__profilingFrames > 0:
             kl += ["  AutoProfilingEvent methodEvent(\"%s.dirtyItem\");" % self.getKLExtensionName()]
+        kl += ["  if(this.isItemDirty[uniqueId])"]
+        kl += ["    return;"]
         kl += ["  this.isItemDirty[uniqueId] = true;"]
         kl += ["  switch(uniqueId) {"]
 
