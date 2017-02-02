@@ -719,8 +719,6 @@ class Builder(Builder):
 
         kl += self.__klPreCode
 
-        if self.__profilingFrames > 0:
-            kl += ["  {  AutoProfilingEvent visitKLObjectsEvent(\"rig pose solve\");"]
         kl += ["    if (this.debugIter)"]
         kl += ["      report(\"this.solveItemIDs.size(): \"+this.solveItemIDs.size());"]
         kl += ["    if (this.solveItemIDs.size() == 0) {  //If we haven't set any solveItemIDs, solve all items tagged with SOLVE by  default"]
@@ -739,8 +737,6 @@ class Builder(Builder):
         kl += ["      }"]
         kl += ["    }"]
 
-        if self.__profilingFrames > 0:
-            kl += ["  }"]
         kl += ["}", ""]
 
         kl += ["inline function %s.evaluate!(KrakenClipContext context) {" % self.getKLExtensionName()]
@@ -836,6 +832,8 @@ class Builder(Builder):
         kl += ["inline function %s.dirtyItem!(Index uniqueId) {" % self.getKLExtensionName()]
         kl += ["  if(this.isItemDirty[uniqueId])"]
         kl += ["    return;"]
+        if self.__profilingFrames > 0:
+            kl += ["  AutoProfilingEvent methodEvent(\"%s.dirtyItem\");" % self.getKLExtensionName()]
         kl += ["  this.isItemDirty[uniqueId] = true;"]
         kl += ["  switch(uniqueId) {"]
 
@@ -861,11 +859,6 @@ class Builder(Builder):
             appendUidsToDirty(item, uidsToDirty)
             for uidToDirty in uidsToDirty:
                 targetItem = self.__itemByUniqueId[uidToDirty]
-                if item['buildName'] == "L_loArm_def":
-                    uidsToDirtyNames = [self.__itemByUniqueId[u]['buildName'] for u in uidsToDirty]
-                    print("TTPrint: uidsToDirtyNames: %s" % uidsToDirtyNames)
-                    print("TTPrint: targetItem['buildName']: %s" % targetItem['buildName'])
-                    print("")
                 kl += ["      this.isItemDirty[%d] = true; // %s" % (uidToDirty, self.getUniqueName(targetItem['sceneItem']))]
                 appendUidsToDirty(targetItem, uidsToDirty)
 
