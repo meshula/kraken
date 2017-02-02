@@ -242,6 +242,7 @@ class SceneItem(object):
 
         Arguments:
         source (Object): Object that is the source of this one.
+        prepend (bool): Add this source to the beginning of the list instead of the end
 
         Returns:
             int: Index of the source used
