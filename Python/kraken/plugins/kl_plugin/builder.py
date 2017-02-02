@@ -1428,6 +1428,10 @@ class Builder(Builder):
         # kl += ["}", ""]
 
         if self.__profilingFrames > 0:
+            kl += ["inline function %s.setProfilingFrame!(SInt32 frame) {" % self.getKLExtensionName()]
+            kl += ["  this.profilingFrame = frame;"]
+            kl += ["}"]
+            kl += [""]
             kl += ["inline function %s.processProfiling!() {" % self.getKLExtensionName()]
             kl += ["  if(this.profilingFrame != %s)" % self.__profilingFrames]
             kl += ["    return;"]
