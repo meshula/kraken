@@ -662,7 +662,6 @@ class Builder(Builder):
         kl += ["  String solveDepthSpaces;"]
         kl += ["  UInt64 evalVersion;"]
         kl += ["  SInt32 directDriveJointIDs[%d];" % len(self.__klMembers['members']['KrakenJoint'])]  # IDs of joints with incoming direct drive mat44, otherwise -1
-        kl += ["  SInt32 directDriveJointSourceIDs[%d];" % len(self.__klMembers['members']['KrakenJoint'])]  # IDs of transforms that are the source of joints hack to make up for outputs joints not being proper sources in dgraph
         kl += ["  UInt32 directDriveAttrs[String]; // key: KrakenItem name value: index uniqueID"]
         kl += ["  Scalar directDriveAttrValues[];  // size AND order same as directDriveAttrs"]
         kl += ["  SInt32 solveItemIDs[];"] # Rig items to call solveItem() on
@@ -783,15 +782,26 @@ class Builder(Builder):
         kl += [""]
         kl += ["  // Set Direct Drive Xfo Values if any"]
         kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
-        kl += ["    if (this.directDriveJointIDs[j] != -1) {"]
-        kl += ["        this.setObject3DGlobalMat44ById(this.directDriveJointIDs[j], context.directDriveJoints[j]);"]
-        kl += ["        this.setObject3DGlobalMat44ById(this.directDriveJointSourceIDs[j], context.directDriveJoints[j]);  // Hack"]
-        kl += ["    }"]
+        kl += ["    if (this.directDriveJointIDs[j] == -1)"]
+        kl += ["      continue;"]
+        kl += ["     this.setObject3DGlobalMat44ById(this.directDriveJointIDs[j], context.directDriveJoints[j]); "]
+        kl += ["     for (Count i=0; i < KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds.size(); i++)   // Hack"]
+        kl += ["       this.setObject3DGlobalMat44ById(KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i], context.directDriveJoints[j]);  // Hack"]
+        kl += ["    "]
         kl += ["  }"]
         kl += ["  // Again, set the direct drive joints to be clean because the setObject3DGlobalMat44ById may have dirtied some"]
         kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
+        kl += ["    if (this.directDriveJointIDs[j] == -1)"]
+        kl += ["      continue;"]
+        kl += ["    if (this.debugIter)"]
+        kl += ["        report(\"Debug: %s.evaluate() : this.isItemDirty[this.directDriveJointIDs[\"+j+\"]] = false; // \"+this._KrakenItem[this.directDriveJointIDs[j]].name);" % (self.getKLExtensionName())]
         kl += ["    this.isItemDirty[this.directDriveJointIDs[j]] = false;"]
-        kl += ["    this.isItemDirty[this.directDriveJointSourceIDs[j]] = false;"]
+        kl += ["    for (Count i=0; i < KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds.size(); i++)   // Hack"]
+        kl += ["    {"]
+        kl += ["      if (this.debugIter)"]
+        kl += ["        report(\"Debug: %s.evaluate() : this.isItemDirty[this._KrakenItem[this.directDriveJointIDs[\"+j+\"]].identicalSourceObject3DUniquIds[\"+i+\"]]= false; // \"+this._KrakenItem[KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i]].name);" % (self.getKLExtensionName())]
+        kl += ["      this.isItemDirty[KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i]] = false;;  // Hack"]
+        kl += ["    }"]
         kl += ["  }"]
         kl += [""]
         kl += ["  // Set Direct Drive Attribute Values if any.  directDriveAttrValues[] order is same as setScalarAttributeById order"]
@@ -833,15 +843,17 @@ class Builder(Builder):
             for targetId in item['targetIds']:
                 if targetId not in uidsToDirty:
                     uidsToDirty.append(targetId)
-            # For now, let's assume that joints and their driving outputs are one in the same.  Ideally, we don't have these inbetweens
+
+            # For now, let's assume that joints and their identical xfo ancestors are one in the same.  Ideally, we don't have these inbetweens
             # after the rig is optimized.  This is not ideal or infallible, but I think it will work OK for now...
             if item['sceneItem'].isTypeOf("Joint"):
-                source1 = item['sceneItem'].getCurrentSource()
-                if source1.isTypeOf('PoseConstraint'):
-                    source2 = source1.getCurrentSource()  # PoseConstraint must have a source
-                    for targetId in self.findKLItem(source2)['targetIds']:
+                poseConstraintSource = item['sceneItem'].getCurrentSource()
+                while poseConstraintSource and poseConstraintSource.isTypeOf('PoseConstraint'):
+                    transformSource = poseConstraintSource.getCurrentSource()  # PoseConstraint must have a source
+                    for targetId in self.findKLItem(transformSource)['targetIds']:
                         if targetId not in uidsToDirty:
                             uidsToDirty.append(targetId)
+                    poseConstraintSource = transformSource.getCurrentSource()
 
         for item in dirtiableItems:
             kl += ["    case %d: { // %s" % (self.getUniqueId(item['sceneItem']), self.getUniqueName(item['sceneItem']))]
@@ -919,6 +931,10 @@ class Builder(Builder):
         kl += ["inline function %s.setObject3DGlobalMat44ById!(Index uniqueId, Mat44 value) {" % self.getKLExtensionName()]
 #        kl += ["if (this.debugIter)"]
 #        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44ById: name: \"+this._KrakenItem[uniqueId].name+\" uniqueId: \"+uniqueId+\" value: \"+value);" % self.getKLExtensionName()]
+        kl += ["  if (this.debugIter)"]
+        kl += ["  {"]
+        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44ById() :\"+this._KrakenItem[uniqueId].name);" % (self.getKLExtensionName())]
+        kl += ["  }"]
         kl += ["  KrakenObject3D(this._KrakenItem[uniqueId]).global = value;"]
         kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
         kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
@@ -997,10 +1013,7 @@ class Builder(Builder):
         kl += ["  Float32 floatAnimation[String];"]
         kl += [""]
         kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++)"]
-        kl += ["  {"]
         kl += ["    this.directDriveJointIDs[j] = -1;"]
-        kl += ["    this.directDriveJointSourceIDs[j] = -1;"]
-        kl += ["  }"]
         kl += [""]
         if self.__debugMode:
             kl += ["  // build 3D objects"]
@@ -1014,13 +1027,11 @@ class Builder(Builder):
 
             # Hack to treat the xfo sources of a joint like the joint in dg // Ideally this is gone if/when we add optimization to kraken
             if obj['sceneItem'].isTypeOf("Joint"):
-                kl += [" // Joint"]
-
-                source1 = item['sceneItem'].getCurrentSource()
-                if source1.isTypeOf('PoseConstraint'):
-                    kl += [" // PoseConstraint"]
-                    source2 = source1.getCurrentSource()  # PoseConstraint must have a source
-                    kl += ["  this.%s.sourceObjectUniqueId = %d;" % (memberName, self.getUniqueId(source2))]
+                poseConstraintSource = obj['sceneItem'].getCurrentSource()
+                while poseConstraintSource and poseConstraintSource.isTypeOf('PoseConstraint'):
+                    transformSource = poseConstraintSource.getCurrentSource()  # PoseConstraint must have a source
+                    kl += ["  this.%s.identicalSourceObject3DUniquIds.push(%d);  // %s" % (memberName, self.getUniqueId(transformSource), self.findKLItem(transformSource)['buildName'])]
+                    poseConstraintSource = transformSource.getCurrentSource()
 
             if self.__debugMode:
                 kl += ["  this.%s.buildName = \"%s\";" % (memberName, obj['buildName'])]
@@ -1303,7 +1314,6 @@ class Builder(Builder):
         kl += ["    if (this.debugIter)"]
         kl += ["      report(\"Debug: %s.setDirectDriveJointIDsByNames: Joint: \"+this._KrakenJoint[j].name);" % self.getKLExtensionName()]
         kl += ["    this.directDriveJointIDs[j] = -1;"]
-        kl += ["    this.directDriveJointSourceIDs[j] = -1;"]
         kl += ["    for(Count n=0; n<names.size(); n++) {"]
         kl += ["      SInt32 id = this.getUniqueID(names[n]);"]
         kl += ["      if (id == -1) {" ]
@@ -1312,7 +1322,6 @@ class Builder(Builder):
         kl += ["      }"]
         kl += ["      if (this._KrakenJoint[j].uniqueId == id) {"]
         kl += ["        this.directDriveJointIDs[j] = id;"]
-        kl += ["        this.directDriveJointSourceIDs[j] = this._KrakenJoint[j].sourceObjectUniqueId;"]
         kl += ["        if (this.debugIter)"]
         kl += ["          report(\"Debug: %s.setDirectDriveJointIDsByNames: yes:\");" % self.getKLExtensionName()]
         kl += ["        break;"]
