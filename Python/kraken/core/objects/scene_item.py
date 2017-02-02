@@ -207,7 +207,7 @@ class SceneItem(object):
 
         self.removeSource(self._parent)
         self._parent = parent
-        self.addSource(parent)
+        self.addSource(parent, prepend=True) #always want parent to be first source, then constraints etc.
 
         return True
 
@@ -237,7 +237,7 @@ class SceneItem(object):
 
         return None
 
-    def addSource(self, source):
+    def addSource(self, source, prepend=False):
         """Adds another source to this object.
 
         Arguments:
@@ -255,7 +255,10 @@ class SceneItem(object):
             if prevSource.getId() == source.getId():
                 return False
 
-        self._sources.append(source)
+        if prepend:
+            self._sources.insert(0, source)
+        else:
+            self._sources.append(source)
 
         if self not in source._depends:
             source._depends.append(self)
