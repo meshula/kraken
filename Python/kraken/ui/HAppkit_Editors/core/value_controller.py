@@ -4,7 +4,7 @@
 #
 
 
-from PySide import QtCore
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 
 from undo_redo_manager import UndoRedoManager, Command
 

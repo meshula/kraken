@@ -1,0 +1,42 @@
+{
+  "objectType" : "Func",
+  "title" : "GetAllXfos",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rig",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "KRK_bob_rig"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[]"
+      }
+    ],
+  "extDeps" : {
+    "KRK_bob_rig" : "*"
+    },
+  "code" : "require Kraken;
+require KrakenAnimation;
+require KrakenForCanvas;
+require KRK_bob_rig;
+dfgEntry {
+  result = rig.getAllXfos();
+}
+",
+  "args" : [
+    null,
+    null
+    ]
+  }

@@ -1,5 +1,5 @@
 
-from PySide import QtCore
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 
 class UndoRedoManager(QtCore.QObject):
     """An UndoManager manages the undo/redo stack for an application.

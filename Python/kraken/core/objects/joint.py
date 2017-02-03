@@ -12,8 +12,8 @@ from kraken.core.objects.object_3d import Object3D
 class Joint(Object3D):
     """Joint object."""
 
-    def __init__(self, name, parent=None, flags=None, **kwargs):
-        super(Joint, self).__init__(name, parent=parent, flags=flags)
+    def __init__(self, name, parent=None, flags=None, metaData=None, **kwargs):
+        super(Joint, self).__init__(name, parent=parent, flags=flags, metaData=metaData)
         self._radius = 1.0
 
         if 'radius' in kwargs:

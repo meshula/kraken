@@ -12,8 +12,8 @@ from kraken.core.kraken_system import ks
 class StringAttribute(Attribute):
     """String Attribute. Implemented value type checking."""
 
-    def __init__(self, name, value="", parent=None):
-        super(StringAttribute, self).__init__(name, value=value, parent=parent)
+    def __init__(self, name, value="", parent=None, metaData=None):
+        super(StringAttribute, self).__init__(name, value=value, parent=parent, metaData=metaData)
 
         if not isinstance(value, basestring):
             raise TypeError("Value is not of type 'str':" + str(value))

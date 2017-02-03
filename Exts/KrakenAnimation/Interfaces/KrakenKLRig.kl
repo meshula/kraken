@@ -22,6 +22,17 @@ interface KrakenKLRig {
   String[] getShapeNames();
   getShapeWeights(io Float32 weights<>);
 
+  dirtyItem!(Index index);
+  cleanItem!(Index index);
+  dirtyAllItems!();
+  cleanAllItems!();
+
   KrakenControl<> getControls();
   KrakenScalarAttribute<> getScalarAttributes();
+  
+  Mat44 getControlLocalMat44(Index index);
+  setControlLocalMat44!(Index index, Mat44 value);
+  Scalar getScalarAttribute(Index index);
+  setScalarAttribute!(Index index, Scalar value);
+
 };

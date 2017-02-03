@@ -1,5 +1,6 @@
 import copy
-from PySide import QtGui, QtCore
+
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -13,21 +14,21 @@ class DictEditor(BaseValueEditor):
     def __init__(self, valueController, parent=None):
         super(DictEditor, self).__init__(valueController, parent=parent)
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.setSpacing(2)
 
         self.setLayout(vbox)
 
-        self._grid = QtGui.QGridLayout()
+        self._grid = QtWidgets.QGridLayout()
         self._grid.setContentsMargins(0, 0, 0, 0)
 
-        gridEditor = QtGui.QWidget(self)
+        gridEditor = QtWidgets.QWidget(self)
         gridEditor.setLayout(self._grid)
 
         vbox.addWidget(gridEditor, 1)
 
         self.setLayout(self._grid)
-        self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Preferred)
+        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
 
         self.__enableAddRemoveElements = valueController.getOption('enableAddRemoveElements', True)
         self.__addElementButtonLabel = valueController.getOption('addElementButtonLabel', 'add')
@@ -149,14 +150,14 @@ class DictEditor(BaseValueEditor):
                     )
             valueEditor = EditorFactory.constructEditor(elementController, parent=self)
 
-            # self._grid.addWidget(QtGui.QLabel(attrName, self), index, 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
+            # self._grid.addWidget(QtWidgets.QLabel(attrName, self), index, 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
             self._grid.addWidget(keyEditor, index, 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
             self._grid.addWidget(valueEditor, index, 1)
             self.__keywidgets[attrName] = keyEditor
             self.__editors[attrName] = valueEditor
 
             if self.__enableAddRemoveElements:
-                removeElementButton = QtGui.QPushButton(self.__removeElementButtonLabel, self)
+                removeElementButton = QtWidgets.QPushButton(self.__removeElementButtonLabel, self)
                 def removeElement():
                     undoManager = UndoRedoManager.getInstance()
                     undoManager.openBracket("Remove element from :" + self.getName())
@@ -181,7 +182,7 @@ class DictEditor(BaseValueEditor):
             index = index + 1
 
         if self.__enableAddRemoveElements:
-            self.addElementButton = QtGui.QPushButton(self.__addElementButtonLabel, self)
+            self.addElementButton = QtWidgets.QPushButton(self.__addElementButtonLabel, self)
             def addElement():
                 feRtVal = FE.getInstance().rtVal
                 undoManager = UndoRedoManager.getInstance()

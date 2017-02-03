@@ -24,8 +24,30 @@ from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 
 import maya.cmds as cmds
 
+
 logger = getLogger('kraken')
 logger.setLevel(logging.INFO)
+
+# Rotation order remapping
+# Maya's enums don't map directly to the Fabric rotation orders
+#
+# Fabric | Maya
+# ---------------
+# 0 ZYX  | 5 ZYX
+# 1 XZY  | 3 XZY
+# 2 YXZ  | 4 YXZ
+# 3 YZX  | 1 YZX
+# 4 XYZ  | 0 XYZ
+# 5 ZXY  | 2 ZXY
+
+ROT_ORDER_REMAP = {
+    0: 5,
+    1: 3,
+    2: 4,
+    3: 1,
+    4: 0,
+    5: 2
+}
 
 
 class Builder(Builder):
@@ -353,7 +375,6 @@ class Builder(Builder):
                                    keyable=True)
 
         dccSceneItem = parentDCCSceneItem.attr(kAttribute.getName())
-        dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -394,7 +415,6 @@ class Builder(Builder):
         if kAttribute.getUIMax() is not None:
             dccSceneItem.setSoftMax(kAttribute.getUIMax())
 
-        dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -438,7 +458,6 @@ class Builder(Builder):
         if kAttribute.getUIMax() is not None:
             dccSceneItem.setSoftMax(kAttribute.getUIMax())
 
-        dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -465,7 +484,6 @@ class Builder(Builder):
 
         dccSceneItem = parentDCCSceneItem.attr(kAttribute.getName())
         dccSceneItem.set(kAttribute.getValue())
-        dccSceneItem.setLocked(kAttribute.getLock())
         self._registerSceneItemPair(kAttribute, dccSceneItem)
 
         return True
@@ -560,37 +578,60 @@ class Builder(Builder):
 
         """
 
+        dccSceneItem = None
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = pm.orientConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=kConstraint.getName() + "_ori_cns",
-            maintainOffset=kConstraint.getMaintainOffset())
 
-        if kConstraint.getMaintainOffset() is True:
+        if self.getConfig().getMetaData('UseMayaNativeConstraints', False):
 
-            # Maya's rotation order enums:
-            # 0 XYZ
-            # 1 YZX
-            # 2 ZXY
-            # 3 XZY
-            # 4 YXZ <-- 5 in Fabric
-            # 5 ZYX <-- 4 in Fabric
-            order = kConstraint.getConstrainee().ro.order
-            if order == 4:
-                order = 5
-            elif order == 5:
-                order = 4
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
 
-            offsetXfo = kConstraint.computeOffset()
-            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
-                RotationOrder(order))
+            dccSceneItem = pm.orientConstraint(
+                        [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+                        constraineeDCCSceneItem,
+                        name=kConstraint.getName() + "_ori_cns",
+                        maintainOffset=kConstraint.getMaintainOffset())
 
-            dccSceneItem.attr('offset').set([offsetAngles.x,
-                                             offsetAngles.y,
-                                             offsetAngles.z])
+            if kConstraint.getMaintainOffset() is True:
 
-        pm.rename(dccSceneItem, buildName)
+                order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
+
+                offsetXfo = kConstraint.computeOffset()
+                offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
+                    RotationOrder(order))
+
+                dccSceneItem.attr('offset').set([offsetAngles.x,
+                                                 offsetAngles.y,
+                                                 offsetAngles.z])
+
+            pm.rename(dccSceneItem, buildName)
+
+        else:
+
+            constrainerDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainers()[0])
+            dccSceneItem = pm.PyNode(pm.createNode('fabricConstraint'))
+            pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
+            pm.connectAttr('%s.rotate' % dccSceneItem, '%s.rotate' % constraineeDCCSceneItem)
+            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
+
+            if kConstraint.getConstrainee().isTypeOf('Joint'):
+                parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
+                pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
+            else:
+                pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
+
+            if kConstraint.getMaintainOffset() is True:
+                offsetXfo = kConstraint.computeOffset()
+                self.setMat44Attr('%s' % dccSceneItem, 'offset', offsetXfo.toMat44())
+
+            pm.rename(dccSceneItem, buildName)
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -607,73 +648,84 @@ class Builder(Builder):
 
         """
 
+        dccSceneItem = None
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = pm.parentConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName,
-            maintainOffset=kConstraint.getMaintainOffset())
 
-        # We need this block of code to replace the pose constraint name with
-        # the scale constraint name since we don't have a single pos, rot, scl,
-        # constraint in Maya.
-        config = Config.getInstance()
-        nameTemplate = config.getNameTemplate()
-        poseCnsName = nameTemplate['types']['PoseConstraint']
-        sclCnsName = nameTemplate['types']['ScaleConstraint']
+        if self.getConfig().getMetaData('UseMayaNativeConstraints', False):
 
-        scaleConstraint = pm.scaleConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName.replace(poseCnsName, sclCnsName),
-            maintainOffset=kConstraint.getMaintainOffset())
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
 
-        if kConstraint.getMaintainOffset() is True:
+            dccSceneItem = pm.parentConstraint(
+                [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+                constraineeDCCSceneItem,
+                name=buildName,
+                maintainOffset=kConstraint.getMaintainOffset())
 
-            # Fabric's rotation order enums:
-            # We need to use the negative rotation order
-            # to calculate propery offset values.
-            #
-            # 0 XYZ
-            # 1 YZX
-            # 2 ZXY
-            # 3 XZY
-            # 4 ZYX
-            # 5 YXZ
+            # We need this block of code to replace the pose constraint name with
+            # the scale constraint name since we don't have a single pos, rot, scl,
+            # constraint in Maya.
+            config = Config.getInstance()
+            nameTemplate = config.getNameTemplate()
+            poseCnsName = nameTemplate['types']['PoseConstraint']
+            sclCnsName = nameTemplate['types']['ScaleConstraint']
 
-            rotOrderRemap = {
-                0: 4,
-                1: 3,
-                2: 5,
-                3: 1,
-                4: 0,
-                5: 2
-            }
+            scaleConstraint = pm.scaleConstraint(
+                [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+                constraineeDCCSceneItem,
+                name=buildName.replace(poseCnsName, sclCnsName),
+                maintainOffset=kConstraint.getMaintainOffset())
 
-            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
-            # if order == 4:
-            #     order = 5
-            # elif order == 5:
-            #     order = 4
+            if kConstraint.getMaintainOffset() is True:
 
-            offsetXfo = kConstraint.computeOffset()
-            offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
-                RotationOrder(order))
+                order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
 
-            # Set offsets on parent constraint
-            dccSceneItem.target[0].targetOffsetTranslate.set([offsetXfo.tr.x,
-                                                              offsetXfo.tr.y,
-                                                              offsetXfo.tr.z])
+                offsetXfo = kConstraint.computeOffset()
+                offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
+                    RotationOrder(order))
 
-            dccSceneItem.target[0].targetOffsetRotate.set(
-                [Math_radToDeg(offsetAngles.x),
-                 Math_radToDeg(offsetAngles.y),
-                 Math_radToDeg(offsetAngles.z)])
+                # Set offsets on parent constraint
+                dccSceneItem.target[0].targetOffsetTranslate.set([offsetXfo.tr.x,
+                                                                  offsetXfo.tr.y,
+                                                                  offsetXfo.tr.z])
 
-            # Set offsets on the scale constraint
-            scaleConstraint.offset.set([offsetXfo.sc.x,
-                                        offsetXfo.sc.y,
-                                        offsetXfo.sc.z])
+                dccSceneItem.target[0].targetOffsetRotate.set(
+                    [Math_radToDeg(offsetAngles.x),
+                     Math_radToDeg(offsetAngles.y),
+                     Math_radToDeg(offsetAngles.z)])
+
+                # Set offsets on the scale constraint
+                scaleConstraint.offset.set([offsetXfo.sc.x,
+                                            offsetXfo.sc.y,
+                                            offsetXfo.sc.z])
+
+        else:
+
+            constrainerDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainers()[0])
+            dccSceneItem = pm.PyNode(pm.createNode('fabricConstraint'))
+            pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
+            pm.connectAttr('%s.translate' % dccSceneItem, '%s.translate' % constraineeDCCSceneItem)
+            pm.connectAttr('%s.rotate' % dccSceneItem, '%s.rotate' % constraineeDCCSceneItem)
+            pm.connectAttr('%s.scale' % dccSceneItem, '%s.scale' % constraineeDCCSceneItem)
+            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
+            if kConstraint.getConstrainee().isTypeOf('Joint'):
+                parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
+                pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
+            else:
+                pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
+
+            if kConstraint.getMaintainOffset() is True:
+                offsetXfo = kConstraint.computeOffset()
+                self.setMat44Attr('%s' % dccSceneItem, 'offset', offsetXfo.toMat44())
+
+            pm.rename(dccSceneItem, buildName)
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -690,20 +742,53 @@ class Builder(Builder):
 
         """
 
+        dccSceneItem = None
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = pm.pointConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName,
-            maintainOffset=kConstraint.getMaintainOffset())
 
-        if kConstraint.getMaintainOffset() is True:
-            offsetXfo = kConstraint.computeOffset()
+        if self.getConfig().getMetaData('UseMayaNativeConstraints', False):
 
-            # Set offsets on the scale constraint
-            dccSceneItem.offset.set([offsetXfo.tr.x,
-                                     offsetXfo.tr.y,
-                                     offsetXfo.tr.z])
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
+
+            dccSceneItem = pm.pointConstraint(
+                [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+                constraineeDCCSceneItem,
+                name=buildName,
+                maintainOffset=kConstraint.getMaintainOffset())
+
+            if kConstraint.getMaintainOffset() is True:
+                offsetXfo = kConstraint.computeOffset()
+
+                # Set offsets on the scale constraint
+                dccSceneItem.offset.set([offsetXfo.tr.x,
+                                         offsetXfo.tr.y,
+                                         offsetXfo.tr.z])
+
+        else:
+
+            constrainerDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainers()[0])
+            dccSceneItem = pm.PyNode(pm.createNode('fabricConstraint'))
+            pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
+            pm.connectAttr('%s.translate' % dccSceneItem, '%s.translate' % constraineeDCCSceneItem)
+            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
+            if kConstraint.getConstrainee().isTypeOf('Joint'):
+                parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
+                pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
+            else:
+                pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
+
+            if kConstraint.getMaintainOffset() is True:
+                offsetXfo = kConstraint.computeOffset()
+                self.setMat44Attr('%s' % dccSceneItem, 'offset', offsetXfo.toMat44())
+
+            pm.rename(dccSceneItem, buildName)
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
@@ -720,59 +805,58 @@ class Builder(Builder):
 
         """
 
+        dccSceneItem = None
         constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
-        dccSceneItem = pm.scaleConstraint(
-            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
-            constraineeDCCSceneItem,
-            name=buildName,
-            maintainOffset=kConstraint.getMaintainOffset())
 
-        if kConstraint.getMaintainOffset() is True:
-            offsetXfo = kConstraint.computeOffset()
+        if self.getConfig().getMetaData('UseMayaNativeConstraints', False):
 
-            # Set offsets on the scale constraint
-            dccSceneItem.offset.set([offsetXfo.sc.x,
-                                     offsetXfo.sc.y,
-                                     offsetXfo.sc.z])
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+            pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
+
+            dccSceneItem = pm.scaleConstraint(
+                [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+                constraineeDCCSceneItem,
+                name=buildName,
+                maintainOffset=kConstraint.getMaintainOffset())
+
+            if kConstraint.getMaintainOffset() is True:
+                offsetXfo = kConstraint.computeOffset()
+
+                # Set offsets on the scale constraint
+                dccSceneItem.offset.set([offsetXfo.sc.x,
+                                         offsetXfo.sc.y,
+                                         offsetXfo.sc.z])
+
+        else:
+
+            constrainerDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainers()[0])
+            dccSceneItem = pm.PyNode(pm.createNode('fabricConstraint'))
+            pm.connectAttr('%s.worldMatrix' % constrainerDCCSceneItem, '%s.input' % dccSceneItem)
+            pm.connectAttr('%s.scale' % dccSceneItem, '%s.scale' % constraineeDCCSceneItem)
+            pm.setAttr('%s.rotateOrder' % dccSceneItem, pm.getAttr('%s.rotateOrder' % constraineeDCCSceneItem))
+            if kConstraint.getConstrainee().isTypeOf('Joint'):
+                parentDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee().getParent())
+                pm.connectAttr("%s.worldMatrix" % parentDCCSceneItem, "%s.parent" % dccSceneItem)
+            else:
+                pm.setAttr("%s.inheritsTransform" % constraineeDCCSceneItem, 0)
+
+            if kConstraint.getMaintainOffset() is True:
+                offsetXfo = kConstraint.computeOffset()
+                self.setMat44Attr('%s' % dccSceneItem, 'offset', offsetXfo.toMat44())
+
+            pm.rename(dccSceneItem, buildName)
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 
         return dccSceneItem
 
-    # ========================
-    # Component Build Methods
-    # ========================
-    def buildAttributeConnection(self, connectionInput):
-        """Builds the connection between the attribute and the connection.
-
-        Args:
-            connectionInput (Object): Kraken connection to build.
-
-        Return:
-            bool: True if successful.
-
-        """
-
-        if connectionInput.isConnected() is False:
-            return False
-
-        connection = connectionInput.getConnection()
-        connectionTarget = connection.getTarget()
-        inputTarget = connectionInput.getTarget()
-
-        if connection.getDataType().endswith('[]'):
-            connectionTarget = connection.getTarget()[connectionInput.getIndex()]
-        else:
-            connectionTarget = connection.getTarget()
-
-        connectionTargetDCCSceneItem = self.getDCCSceneItem(connectionTarget)
-        targetDCCSceneItem = self.getDCCSceneItem(inputTarget)
-
-        pm.connectAttr(connectionTargetDCCSceneItem,
-                       targetDCCSceneItem,
-                       force=True)
-
-        return True
 
     # =========================
     # Operator Builder Methods
@@ -851,6 +935,12 @@ class Builder(Builder):
             canvasNode = pm.createNode('canvasNode', name=buildName)
             self._registerSceneItemPair(kOperator, pm.PyNode(canvasNode))
 
+            try:
+              # disable the eval context
+              pm.setAttr('%s.enableEvalContext' % canvasNode, False)
+            except:
+              pass
+
             config = Config.getInstance()
             nameTemplate = config.getNameTemplate()
             typeTokens = nameTemplate['types']
@@ -888,7 +978,7 @@ class Builder(Builder):
                                                       desiredNodeName="solverVar",
                                                       xPos="-75",
                                                       yPos="100",
-                                                      type=solverTypeName,
+                                                      type='{}::{}'.format(str(kOperator.getExtension()), str(solverTypeName)),
                                                       extDep=kOperator.getExtension())
 
                 pm.FabricCanvasConnect(mayaNode=canvasNode,
@@ -1143,7 +1233,10 @@ class Builder(Builder):
 
                     def connectOutput(src, opObject, dccSceneItem):
                         if isinstance(opObject, Attribute):
+                            locked = dccSceneItem.isLocked()
+                            dccSceneItem.unlock()
                             pm.connectAttr(src, dccSceneItem)
+                            dccSceneItem.setLocked(locked)
                         elif isinstance(opObject, Object3D):
                             decomposeNode = pm.createNode('decomposeMatrix')
                             pm.connectAttr(src,
@@ -1179,19 +1272,48 @@ class Builder(Builder):
                                        execPath=solverSolveNodeName,
                                        code=opSourceCode)
 
+            if kOperator.testFlag('disableParallelEval') is False:
+                pm.FabricCanvasSetExecuteShared(mayaNode=canvasNode, enable=True)
+
         finally:
             pass
 
         return True
 
     # ==================
-    # Parameter Methods
+    # Attribute Methods
     # ==================
-    def lockParameters(self, kSceneItem):
-        """Locks flagged SRT parameters.
+    def lockAttribute(self, kAttribute):
+        """Locks attributes.
 
         Args:
-            kSceneItem (Object): Kraken object to lock the SRT parameters on.
+            kAttribute (object): kraken attributes to lock.
+
+        """
+
+        if kAttribute.getName() in ('visibility', 'ShapeVisibility'):
+            dccSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+
+            if kAttribute.getName() == 'visibility':
+                visAttr = dccSceneItem.attr('visibility')
+                visAttr.setLocked(kAttribute.getLock())
+            elif kAttribute.getName() == 'ShapeVisibility':
+                shapeNodes = pm.listRelatives(dccSceneItem, shapes=True)
+                for shape in shapeNodes:
+                    visAttr = shape.attr('visibility')
+                    visAttr.setLocked(kAttribute.getLock())
+            else:
+                pass
+
+        else:
+            dccSceneItem = self.getDCCSceneItem(kAttribute)
+            dccSceneItem.setLocked(kAttribute.getLock())
+
+    def lockTransformAttrs(self, kSceneItem):
+        """Locks flagged SRT attributes.
+
+        Args:
+            kSceneItem (Object): Kraken object to lock the SRT attributes on.
 
         Return:
             bool: True if successful.
@@ -1295,9 +1417,10 @@ class Builder(Builder):
         shapeVisAttr = kSceneItem.getShapeVisibilityAttr()
         if shapeVisAttr.isConnected() is False and kSceneItem.getShapeVisibility() is False:
             # Get shape node, if it exists, hide it.
-            shape = dccSceneItem.getShape()
-            if shape is not None:
-                shape.visibility.set(False)
+            shapeNodes = pm.listRelatives(dccSceneItem, shapes=True)
+            for shape in shapeNodes:
+                visAttr = shape.attr('visibility')
+                visAttr.set(False)
 
         return True
 
@@ -1372,18 +1495,7 @@ class Builder(Builder):
 
         dccSceneItem.setRotation(quat, "world")
 
-        # Maya's rotation order enums:
-        # 0 XYZ
-        # 1 YZX
-        # 2 ZXY
-        # 3 XZY
-        # 4 YXZ <-- 5 in Fabric
-        # 5 ZYX <-- 4 in Fabric
-        order = kSceneItem.ro.order
-        if order == 4:
-            order = 5
-        elif order == 5:
-            order = 4
+        order = ROT_ORDER_REMAP[kSceneItem.ro.order]
 
         #  Maya api is one off from Maya's own node enum pyMel uses API
         dccSceneItem.setRotationOrder(order + 1, False)

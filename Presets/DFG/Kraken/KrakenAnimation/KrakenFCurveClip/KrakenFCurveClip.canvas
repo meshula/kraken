@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  result: KrakenFCurveClip\n"
+    },
+  "title" : "KrakenFCurveClip",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "KrakenFCurveClip"
+      }
+    ],
+  "extDeps" : {
+    "KrakenAnimation" : "*"
+    },
+  "presetGUID" : "3A0639878CE49F692064B3E9C1E5F4D0",
+  "code" : "require KrakenAnimation;
+
+dfgEntry {
+  result = KrakenFCurveClip();
+}
+"
+  }

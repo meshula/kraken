@@ -11,14 +11,17 @@ class SceneItem(object):
 
     __maxId = 0
 
-    def __init__(self, name, parent=None):
+    def __init__(self, name, parent=None, metaData=None):
         super(SceneItem, self).__init__()
         self._parent = parent
         self._name = name
         self._component = None
         self._sources = []
+        self._depends = []
         self._id = SceneItem.__maxId
         self._metaData = {}
+        if metaData is not None:
+            self._metaData = metaData
 
         SceneItem.__maxId = SceneItem.__maxId + 1
 
@@ -64,6 +67,9 @@ class SceneItem(object):
     def isTypeOf(self, typeName):
         """Returns the class name of this object.
 
+        Arguments:
+            typeName (str): Name to check against.
+
         Returns:
             bool: True if the scene item is of the given type.
 
@@ -77,6 +83,9 @@ class SceneItem(object):
 
     def isOfAnyType(self, typeNames):
         """Returns true if this item has any of the given type names
+
+        Arguments:
+            typeNames (tuple): Type names to check against.
 
         Returns:
             bool: True if the scene item is of the given type.
@@ -240,8 +249,10 @@ class SceneItem(object):
 
         self._sources.append(source)
 
-        return True
+        if self not in source._depends:
+            source._depends.append(self)
 
+        return True
 
     def removeSource(self, source):
         """Removes a source from this object.
@@ -256,6 +267,8 @@ class SceneItem(object):
 
         self._sources[:] = [s for s in self._sources if s != source]
 
+        if self not in source._depends:
+            source._depends[:] = [s for s in self._depends if s != self]
 
     def setSource(self, index, source):
         """Sets the source of this object.
@@ -269,6 +282,16 @@ class SceneItem(object):
         self._sources[index] = source
 
         return True
+
+    def getDepends(self):
+        """Returns the objects that depend on this object.
+
+        Returns:
+            list: All depending objects of this object.
+
+        """
+
+        return self._depends
 
     # ==================
     # Component Methods
@@ -298,6 +321,60 @@ class SceneItem(object):
 
         return True
 
+    # =============
+    # Flag Methods
+    # =============
+    def setFlag(self, name):
+        """Sets the flag of the specified name.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._flags[name] = True
+
+        return True
+
+    def testFlag(self, name):
+        """Tests if the specified flag is set.
+
+        Args:
+            name (str): Name of the flag to test.
+
+        Returns:
+            bool: True if flag is set.
+
+        """
+
+        return name in self._flags
+
+    def clearFlag(self, name):
+        """Clears the flag of the specified name.
+
+        Args:
+            name (str): Name of the flag to clear.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if name in self._flags:
+            del self._flags[name]
+            return True
+
+        return False
+
+    def getFlags(self):
+        """Returns all flags set on this object.
+
+        Returns:
+            list: Flags set on this object.
+
+        """
+
+        return self._flags.keys()
 
     # ==========
     # Meta Data

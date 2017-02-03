@@ -33,8 +33,8 @@ logger.setLevel(logging.INFO)
 class Object3D(SceneItem):
     """Kraken base object type for any 3D object."""
 
-    def __init__(self, name, parent=None, flags=None):
-        super(Object3D, self).__init__(name, parent)
+    def __init__(self, name, parent=None, flags=None, metaData=None):
+        super(Object3D, self).__init__(name, parent=parent, metaData=metaData)
         self._children = []
         self._flags = {}
         self._attributeGroups = []
@@ -245,7 +245,14 @@ class Object3D(SceneItem):
                 elif self.getComponent() is None:
                     location = None
                 else:
-                    location = self.getComponent().getLocation()
+                    component = self.getComponent()
+                    if component is None:
+                        raise ValueError("object [%s] does not have a component." % self.getName())
+                    location = component.getLocation()
+
+                altLocation = self.getMetaDataItem("altLocation")
+                if altLocation is not None and altLocation in nameTemplate['locations']:
+                    location = altLocation
 
                 if location not in nameTemplate['locations']:
                     msg = "Invalid location on '{}'. Location: {}. Valid locations: {}"
@@ -260,6 +267,10 @@ class Object3D(SceneItem):
                     objectType = 'ComponentInput'
                 elif objectType == 'Locator' and self.testFlag('outputObject'):
                     objectType = 'ComponentOutput'
+
+                altType = self.getMetaDataItem("altType")
+                if altType is not None and nameTemplate['types'].get(altType, None) is not None:
+                    objectType = altType
 
                 builtName += nameTemplate['types'][objectType]
 
@@ -621,62 +632,6 @@ class Object3D(SceneItem):
 
         return childrenOfType
 
-    # =============
-    # Flag Methods
-    # =============
-    def setFlag(self, name):
-        """Sets the flag of the specified name.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        self._flags[name] = True
-
-        return True
-
-    def testFlag(self, name):
-        """Tests if the specified flag is set.
-
-        Args:
-            name (str): Name of the flag to test.
-
-        Returns:
-            bool: True if flag is set.
-
-        """
-
-        return name in self._flags
-
-    def clearFlag(self, name):
-        """Clears the flag of the specified name.
-
-        Args:
-            name (str): Name of the flag to clear.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        if name in self._flags:
-            del self._flags[name]
-            return True
-
-        return False
-
-    def getFlags(self):
-        """Returns all flags set on this object.
-
-        Returns:
-            list: Flags set on this object.
-
-        """
-
-        return self._flags.keys()
-
-
     # ========================
     # Attribute Group Methods
     # ========================
@@ -892,6 +847,11 @@ class Object3D(SceneItem):
             raise IndexError("Constraint with name '" + constraint.getName() +
                              "'' already exists as a constraint.")
 
+        for x in self._constraints:
+            if x.isTypeOf(constraint.getTypeName()):
+                raise IndexError("Constraint with type '" + constraint.getTypeName() +
+                                 "'' already exists on object.")
+
         self._constraints.append(constraint)
 
         constraint.setParent(self)
@@ -913,6 +873,8 @@ class Object3D(SceneItem):
         if self.checkConstraintIndex(index) is not True:
             return False
 
+        sourceIndex = self._sources.index(self._constraints[index])
+        del self._sources[sourceIndex]
         del self._constraints[index]
 
         return True
@@ -949,7 +911,8 @@ class Object3D(SceneItem):
 
         """
 
-        del self._constraints[:]
+        while len(self._constraints) > 0:
+            self.removeConstraintByIndex(0)
 
         return True
 

@@ -27,6 +27,9 @@ def argOpts():
     parser.add_option("-C", "--constants", dest="constants", action="store_true",
                       help="Enables the use of constants for the array indices - thus easier to read code")
 
+    parser.add_option("-n", "--extensionname", dest="extensionname",
+                      help="Overrides the name of the extension. By default it is based on the name of the rig in the krg file.")
+
     description = optparse.OptionGroup(parser, "Description", "Generate a kl character from krg input")
 
     parser.add_option_group(description)
@@ -86,6 +89,8 @@ def main():
         config.setMetaData('ProfilingFrames', options.numframes)
     if options.logfile:
         config.setMetaData('ProfilingLogFile', options.logfile)
+    if options.extensionname:
+        config.setMetaData('RigTitle', options.extensionname)
 
     builder.build(rig)
 

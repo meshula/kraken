@@ -11,8 +11,8 @@ from kraken.core.objects.scene_item import SceneItem
 class ComponentOutputPort(SceneItem):
     """Component Output Object."""
 
-    def __init__(self, name, parent, dataType):
-        super(ComponentOutputPort, self).__init__(name, parent=parent)
+    def __init__(self, name, parent, dataType, metaData=None):
+        super(ComponentOutputPort, self).__init__(name, parent=parent, metaData=metaData)
         self._dataType = None
         self._connections = []
         self._target = None

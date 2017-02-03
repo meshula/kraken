@@ -20,8 +20,8 @@ logger = getLogger('kraken')
 class CanvasOperator(Operator):
     """Canvas Operator representation."""
 
-    def __init__(self, name, canvasPresetPath):
-        super(CanvasOperator, self).__init__(name)
+    def __init__(self, name, canvasPresetPath, metaData=None):
+        super(CanvasOperator, self).__init__(name, metaData=metaData)
 
         self.canvasPresetPath = canvasPresetPath
 
@@ -72,7 +72,7 @@ class CanvasOperator(Operator):
 
         rtVal = self.node.getPortDefaultValue(name, RTValDataType)
 
-        logger.info("Using default value for %s.%s.%s(%s) --> %s" % (self.canvasPresetPath, self.getName(), mode, name, rtVal))
+        logger.debug("Using default value for %s.%s.%s(%s) --> %s" % (self.canvasPresetPath, self.getName(), mode, name, rtVal))
 
         return rtVal
 
@@ -266,8 +266,8 @@ class CanvasOperator(Operator):
                         rtVal = getRTVal(self.inputs[portName])
 
                     validateArg(rtVal, portName, portDataType)
-
-                    self.binding.setArgValue(portName, rtVal, False)
+                    if rtVal is not None:
+                        self.binding.setArgValue(portName, rtVal, False)
             else:
                 if str(portDataType).endswith('[]'):
                     if not len(self.outputs[portName]):
@@ -294,7 +294,8 @@ class CanvasOperator(Operator):
                         rtVal = getRTVal(self.outputs[portName], asInput=False)
 
                     validateArg(rtVal, portName, portDataType)
-                    self.binding.setArgValue(portName, rtVal, False)
+                    if rtVal is not None:
+                        self.binding.setArgValue(portName, rtVal, False)
 
             portDebug = {
                 portName: [

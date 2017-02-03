@@ -3,8 +3,7 @@ require Containers;
 require Geometry;
 require Kraken;
 
-struct KrakenObject3D {
-  SInt32 evalID;
+struct KrakenObject3D : KrakenItem {
   String name;
   String buildName;
   String path;

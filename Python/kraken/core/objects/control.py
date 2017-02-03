@@ -6,7 +6,8 @@ Control - Base Control.
 """
 
 from kraken.core.configs.config import Config
-from kraken.core.maths import AXIS_NAME_TO_TUPLE_MAP, Euler, Quat, Vec3, Xfo
+from kraken.core.maths.constants import AXIS_NAME_TO_TUPLE_MAP
+from kraken.core.maths import Euler, Quat, Vec3, Xfo
 from kraken.core.maths import Math_degToRad
 from kraken.core.objects.curve import Curve
 from kraken.core.objects.ctrlSpace import CtrlSpace
@@ -15,7 +16,7 @@ from kraken.core.objects.ctrlSpace import CtrlSpace
 class Control(Curve):
     """Base Control object."""
 
-    def __init__(self, name, parent=None, shape="null", flags=None):
+    def __init__(self, name, parent=None, shape="null", scale=1.0, flags=None, metaData=None):
         """Initializes control object.
 
         Args:
@@ -24,10 +25,12 @@ class Control(Curve):
 
         """
 
-        super(Control, self).__init__(name, parent=parent, flags=flags)
+        super(Control, self).__init__(name, parent=parent, flags=flags, metaData=metaData)
         self.shape = shape
 
         self.setShape(shape)
+
+        self.scalePoints(Vec3(scale,scale,scale))
 
     # ==============
     # Shape Methods
@@ -323,6 +326,9 @@ class Control(Curve):
         newCtrlSpace = CtrlSpace(name, parent=self.getParent())
         if self.getParent() is not None:
             self.getParent().removeChild(self)
+
+        if self.getMetaDataItem("altLocation") is not None:
+            newCtrlSpace.setMetaDataItem("altLocation", self.getMetaDataItem("altLocation"))
 
         self.setParent(newCtrlSpace)
         newCtrlSpace.addChild(self)

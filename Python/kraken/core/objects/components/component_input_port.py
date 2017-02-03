@@ -13,8 +13,8 @@ from kraken.core.objects.attributes.attribute import Attribute
 class ComponentInputPort(SceneItem):
     """Component Input Object."""
 
-    def __init__(self, name, parent, dataType):
-        super(ComponentInputPort, self).__init__(name, parent=parent)
+    def __init__(self, name, parent, dataType, metaData=None):
+        super(ComponentInputPort, self).__init__(name, parent=parent, metaData=metaData)
         self._dataType = None
         self._connection = None
         self._target = None

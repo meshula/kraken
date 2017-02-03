@@ -1,5 +1,6 @@
 import os.path
-from PySide import QtGui, QtCore
+
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -11,12 +12,12 @@ class FilepathEditor(BaseValueEditor):
     def __init__(self, valueController, parent=None):
         super(FilepathEditor, self).__init__(valueController, parent=parent)
 
-        self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
+        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
 
-        self._line = QtGui.QLineEdit(self)
-        self._browse = QtGui.QPushButton(' ... ', self)
+        self._line = QtWidgets.QLineEdit(self)
+        self._browse = QtWidgets.QPushButton(' ... ', self)
 
-        hbox = QtGui.QHBoxLayout()
+        hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
         hbox.addWidget(self._line)
         hbox.addWidget(self._browse)
@@ -35,9 +36,9 @@ class FilepathEditor(BaseValueEditor):
                 initialDir = os.path.join(self._folder, self._line.text())
 
             if self._saveFile:
-                (filepath, filter) = QtGui.QFileDialog.getSaveFileName(None, caption=self._options['Title'], dir=initialDir, filter=self._options['Filter'])
+                (filepath, filter) = QtWidgets.QFileDialog.getSaveFileName(None, caption=self._options['Title'], dir=initialDir, filter=self._options['Filter'])
             else:
-                (filepath, filter) = QtGui.QFileDialog.getOpenFileName(None, caption=self._options['Title'], dir=initialDir, filter=self._options['Filter'])
+                (filepath, filter) = QtWidgets.QFileDialog.getOpenFileName(None, caption=self._options['Title'], dir=initialDir, filter=self._options['Filter'])
 
             if filepath is None or len(filepath) == 0:
                 return

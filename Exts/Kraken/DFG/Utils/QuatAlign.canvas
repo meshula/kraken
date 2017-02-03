@@ -1,4 +1,3 @@
-// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
   "metadata" : {
@@ -56,7 +55,96 @@
   "code" : "require Kraken;
 
 dfgEntry {
+  this = Quat_align(this, x, y, z);
+}
+",
+  "requiredPresets" : {
+    "Kraken.Exts.Utils.QuatAlign" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 168,\n  \"g\" : 229,\n  \"b\" : 240\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 49,\n  \"g\" : 60,\n  \"b\" : 61\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 42,\n  \"g\" : 94,\n  \"b\" : 102\n  }",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Quat.html",
+        "uiTooltip" : "Supported types:\n  this: Quat\n  x: SInt8\n  y: SInt8\n  z: SInt8\n"
+        },
+      "title" : "QuatAlign",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+            },
+          "name" : "this",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Quat"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "x",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "y",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "z",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "SInt8"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "9DD7A57045804356C5BED6A3079BE6E3",
+      "code" : "require Kraken;
+
+dfgEntry {
   this.align(x, y, z);
 }
 "
+      }
+    },
+  "args" : [
+    {
+      "type" : "Quat",
+      "value" : {
+        "v" : {
+          "x" : 0,
+          "y" : 0,
+          "z" : 0
+          },
+        "w" : 1
+        },
+      "ext" : "Math"
+      },
+    {
+      "type" : "SInt8",
+      "value" : 0
+      },
+    {
+      "type" : "SInt8",
+      "value" : 0
+      },
+    {
+      "type" : "SInt8",
+      "value" : 0
+      }
+    ]
   }

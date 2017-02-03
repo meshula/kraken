@@ -1,0 +1,8 @@
+require KRK_bob_rig;
+
+operator entry() {
+  KRK_bob_rig rig();
+  KrakenClipContext context;
+  context.time = 1.0;
+  rig.evaluate(context);
+}

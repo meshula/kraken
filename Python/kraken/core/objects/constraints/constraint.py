@@ -16,8 +16,8 @@ from kraken.core.maths.mat44 import Mat44
 class Constraint(SceneItem):
     """Constraint object."""
 
-    def __init__(self, name, parent=None):
-        super(Constraint, self).__init__(name, parent)
+    def __init__(self, name, parent=None, metaData=None):
+        super(Constraint, self).__init__(name, parent, metaData=metaData)
 
         self._constrainee = None
         self._constrainers = []
@@ -62,6 +62,10 @@ class Constraint(SceneItem):
                 objectType = eachType
                 break
 
+        altType = self.getMetaDataItem("altType")
+        if altType is not None and nameTemplate['types'].get(altType, None) is not None:
+            objectType = altType
+
         if objectType is None:
             objectType = 'default'
 
@@ -75,10 +79,20 @@ class Constraint(SceneItem):
                     builtName += nameTemplate['separator']
 
             elif token is 'location':
-                location = self.getParent().getComponent().getLocation()
+                parent = self.getParent()
+                if parent is None:
+                    raise ValueError("constraint [%s] does not have a parent." % self.getName())
+                component = parent.getComponent()
+                if component is None:
+                    raise ValueError("constraint [%s] parent [%s] does not have a component." % (self.getName(), parent))
+                location = component.getLocation()
 
                 if location not in nameTemplate['locations']:
                     raise ValueError("Invalid location on: " + self.getPath())
+
+                altLocation = self.getMetaDataItem("altLocation")
+                if altLocation is not None and altLocation in nameTemplate['locations']:
+                    location = altLocation
 
                 builtName += location
 
@@ -93,7 +107,7 @@ class Constraint(SceneItem):
                     skipSep = True
                     continue
 
-                builtName += self.getParent().getName()
+                builtName += self.getParent().getComponent().getName()
 
             elif token is 'container':
                 if self.getContainer() is None:
@@ -318,7 +332,7 @@ class Constraint(SceneItem):
 
         cls = self.__class__.__name__
         ks.loadExtension('KrakenForCanvas')
-        rtVal = ks.rtVal('Kraken%s' % cls)
+        rtVal = ks.rtVal('KrakenForCanvas::Kraken%s' % cls)
 
         for c in self._constrainers:
             rtVal.addConstrainer('', ks.rtVal('Xfo', c.globalXfo).toMat44('Mat44'))
@@ -344,7 +358,7 @@ class Constraint(SceneItem):
 
         cls = self.__class__.__name__
         ks.loadExtension('KrakenForCanvas')
-        rtVal = ks.rtVal('Kraken%s' % cls)
+        rtVal = ks.rtVal('KrakenForCanvas::Kraken%s' % cls)
 
         rtVal.offset = ks.rtVal('Mat44', Mat44())
         for c in self._constrainers:

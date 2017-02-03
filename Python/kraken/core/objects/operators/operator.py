@@ -4,9 +4,7 @@ Classes:
 Operator - Base operator object.
 
 """
-
-import warnings
-
+import re
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
 
@@ -14,8 +12,8 @@ from kraken.core.objects.scene_item import SceneItem
 class Operator(SceneItem):
     """Operator representation."""
 
-    def __init__(self, name, parent=None):
-        super(Operator, self).__init__(name, parent)
+    def __init__(self, name, parent=None, metaData=None):
+        super(Operator, self).__init__(name, parent, metaData=metaData)
 
         self.inputs = {}
         self.outputs = {}
@@ -44,14 +42,14 @@ class Operator(SceneItem):
         nameTemplate = config.getNameTemplate()
 
         # Get the token list for this type of object
-        nameFormat = None
+        format = None
         for typeName in nameTemplate['formats'].keys():
             if typeName in typeNameHierarchy:
-                nameFormat = nameTemplate['formats'][typeName]
+                format = nameTemplate['formats'][typeName]
                 break
 
-        if nameFormat is None:
-            nameFormat = nameTemplate['formats']['default']
+        if format is None:
+            format = nameTemplate['formats']['default']
 
         objectType = None
         for eachType in typeNameHierarchy:
@@ -59,26 +57,34 @@ class Operator(SceneItem):
                 objectType = eachType
                 break
 
+        altType = self.getMetaDataItem("altType")
+        if altType is not None and nameTemplate['types'].get(altType, None) is not None:
+            objectType = altType
+
         if objectType is None:
             objectType = 'default'
 
         # Generate a name by concatenating the resolved tokens together.
         builtName = ""
         skipSep = False
-        for token in nameFormat:
+        for token in format:
 
             if token is 'sep':
                 if not skipSep:
                     builtName += nameTemplate['separator']
 
             elif token is 'location':
-                if self.getParent() is None:
-                    continue
-
-                location = self.getParent().getLocation()
+                parent = self.getParent()
+                if parent is None:
+                    raise ValueError("operator [%s] does not have a parent." % self.getName())
+                location = parent.getLocation()
 
                 if location not in nameTemplate['locations']:
                     raise ValueError("Invalid location on: " + self.getPath())
+
+                altLocation = self.getMetaDataItem("altLocation")
+                if altLocation is not None and altLocation in nameTemplate['locations']:
+                    location = altLocation
 
                 builtName += location
 
@@ -101,6 +107,19 @@ class Operator(SceneItem):
                     continue
 
                 builtName += self.getContainer().getName()
+
+            elif token is 'solverName':
+                if self.isTypeOf("KLOperator"):
+                    builtName += self.solverTypeName
+                else:
+                    builtName += self.canvasPresetPath.rpartition('.')[-1]
+
+            elif token is 'solverSource':
+                if self.isTypeOf("KLOperator"):
+                    builtName += self.extension
+                else:
+                    builtName += re.sub("[\W\d]", "", self.canvasPresetPath.rpartition('.')[0])
+
 
             else:
                 raise ValueError("Unresolvabled token '" + token +
@@ -177,14 +196,11 @@ class Operator(SceneItem):
         sources = []
         for name in self.getInputNames():
             inputTargets = self.getInput(name)
-
             if not isinstance(inputTargets, list):
                 inputTargets = [inputTargets]
-
             for inputTarget in inputTargets:
                 if not isinstance(inputTarget, SceneItem):
                     continue
-
                 sources.append(inputTarget)
 
         return super(Operator, self).getSources() + sources
@@ -204,20 +220,18 @@ class Operator(SceneItem):
 
         """
 
-        raise DeprecationWarning("Method 'resizeInput' has been deprecated!")
+        if name not in self.inputs:
+            raise Exception("Input with name '" + name +
+                            "' was not found in operator: " + self.getName() +
+                            ".")
 
-        # if name not in self.inputs:
-        #     raise Exception("Input with name '" + name +
-        #                     "' was not found in operator: " + self.getName() +
-        #                     ".")
+        if isinstance(self.inputs[name], list):
+            while len(self.inputs[name]) < count:
+                self.inputs[name].append(None)
+        else:
+            raise Exception("Input is not an array input: " + name + ".")
 
-        # if isinstance(self.inputs[name], list):
-        #     while len(self.inputs[name]) < count:
-        #         self.inputs[name].append(None)
-        # else:
-        #     raise Exception("Input is not an array input: " + name + ".")
-
-        # return True
+        return True
 
     def setInput(self, name, operatorInput, index=0):
         """Sets the input by the given name.
@@ -232,11 +246,10 @@ class Operator(SceneItem):
         """
 
         if name not in self.inputs:
-            raise KeyError("Input with name '" + name +
-                           "' was not found in operator: " + self.getName() +
-                           ".\nValid inputs are:\n" +
-                           "\n".join(self.inputs.keys()))
-
+            raise Exception("Input with name '" + name +
+                            "' was not found in operator: " + self.getName() +
+                            ".\nValid inputs are:\n" +
+                            "\n".join(self.inputs.keys()))
 
         if self.inputs[name] is None and self.getInputType(name).endswith('[]'):
             self.inputs[name] = []
@@ -279,11 +292,9 @@ class Operator(SceneItem):
 
         return self.inputs[name]
 
-
     def getInputType(self, name):
         """Returns the type of input with the specified name."""
-
-        raise NotImplementedError("Method 'getInputType' must be re-implemented in sub-classes.")
+        pass
 
     def getInputNames(self):
         """Returns the names of all inputs.
@@ -310,21 +321,18 @@ class Operator(SceneItem):
 
         """
 
+        if name not in self.outputs:
+            raise Exception("Output with name '" + name +
+                            "' was not found in operator: " + self.getName() +
+                            ".")
 
-        raise DeprecationWarning("Method 'resizeInput' has been deprecated!")
+        if isinstance(self.outputs[name], list):
+            while len(self.outputs[name]) < count:
+                self.outputs[name].append(None)
+        else:
+            raise Exception("Output is not an array output: " + name + ".")
 
-        # if name not in self.outputs:
-        #     raise Exception("Output with name '" + name +
-        #                     "' was not found in operator: " + self.getName() +
-        #                     ".")
-
-        # if isinstance(self.outputs[name], list):
-        #     while len(self.outputs[name]) < count:
-        #         self.outputs[name].append(None)
-        # else:
-        #     raise Exception("Output is not an array output: " + name + ".")
-
-        # return True
+        return True
 
     def setOutput(self, name, operatorOutput, index=0):
         """Sets the output by the given name.
@@ -382,13 +390,14 @@ class Operator(SceneItem):
                             "' was not found in operator: " + self.getName() +
                             ".")
 
-        return self.outputs[name]
+        if self.outputs[name] is None and self.getOutputType(name).endswith('[]'):
+            self.outputs[name] = []
 
+        return self.outputs[name]
 
     def getOutputType(self, name):
         """Returns the type of input with the specified name."""
-
-        raise NotImplementedError("Method 'getInputType' must be re-implemented in sub-classes.")
+        pass
 
     def getOutputNames(self):
         """Returns the names of all outputs.

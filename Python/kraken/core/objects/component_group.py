@@ -11,8 +11,8 @@ from kraken.core.objects.object_3d import Object3D
 class ComponentGroup(Object3D):
     """ComponentGroup object."""
 
-    def __init__(self, name, component, parent=None):
-        super(ComponentGroup, self).__init__(name, parent=parent)
+    def __init__(self, name, component, parent=None, metaData=None):
+        super(ComponentGroup, self).__init__(name, parent=parent, metaData=metaData)
 
         self.setComponent(component)
 

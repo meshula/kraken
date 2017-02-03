@@ -3,10 +3,10 @@
 # Copyright 2015 Horde Software Inc.
 #
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 
-class Connection(QtGui.QGraphicsPathItem):
+class Connection(QtWidgets.QGraphicsPathItem):
     __defaultPen = QtGui.QPen(QtGui.QColor(168, 134, 3), 1.5)
 
     def __init__(self, graph, srcPortCircle, dstPortCircle):

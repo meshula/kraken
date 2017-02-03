@@ -1,4 +1,4 @@
-from PySide import QtGui
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -11,20 +11,20 @@ class ColorEditor(BaseValueEditor):
     def __init__(self, valueController, parent=None):
         super(ColorEditor, self).__init__(valueController, parent=parent)
 
-        hbox = QtGui.QHBoxLayout()
+        hbox = QtWidgets.QHBoxLayout()
         self._editors = []
 
-        self._qgraphcsScene = QtGui.QGraphicsScene(self)
-        self._qgraphcsView = QtGui.QGraphicsView(self)
+        self._qgraphcsScene = QtWidgets.QGraphicsScene(self)
+        self._qgraphcsView = QtWidgets.QGraphicsView(self)
         self._qgraphcsView.setScene(self._qgraphcsScene)
         self._qgraphcsView.setFixedSize(100, 20)
-        self._qgraphcsView.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        self._qgraphcsView.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         hbox.addWidget(self._qgraphcsView, 1)
 
         hbox.addStretch(0)
         hbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(hbox)
-        self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         self.updateEditorValue()
         self.setEditable( valueController.isEditable() )
 
@@ -53,7 +53,7 @@ class ColorEditor(BaseValueEditor):
         if self._valueController.isEditable():
             self.__backupColor = self.__color
             self.beginInteraction()
-            dialog = QtGui.QColorDialog(self.__color, self)
+            dialog = QtWidgets.QColorDialog(self.__color, self)
             dialog.currentColorChanged.connect(self.__onColorChanged)
             dialog.accepted.connect(self.__onAccepted)
             dialog.rejected.connect(self.__onCanceled)

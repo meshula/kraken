@@ -7,10 +7,10 @@
 import os
 import sys
 
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 from widget_factory import EditorFactory
 
-class BaseInspector(QtGui.QWidget):
+class BaseInspector(QtWidgets.QWidget):
     """A widget providing the ability to nest """
 
     def __init__(self, objectname='inspector', parent=None):
@@ -22,25 +22,25 @@ class BaseInspector(QtGui.QWidget):
         self.setObjectName(objectname)
 
         # layout
-        self.mainLayout = QtGui.QVBoxLayout(self)
+        self.mainLayout = QtWidgets.QVBoxLayout(self)
         self.setLayout(self.mainLayout)
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
 
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
 
-        self.paramsFrame = QtGui.QScrollArea(self)
+        self.paramsFrame = QtWidgets.QScrollArea(self)
         self.paramsFrame.setWidgetResizable(True)
         self.paramsFrame.setEnabled(True)
         self.paramsFrame.setSizePolicy(sizePolicy)
-        # self.paramsFrame.setFrameStyle(QtGui.QFrame.NoFrame)
-        self.paramsFrame.setFrameStyle(QtGui.QFrame.StyledPanel)
+        # self.paramsFrame.setFrameStyle(QtWidgets.QFrame.NoFrame)
+        self.paramsFrame.setFrameStyle(QtWidgets.QFrame.StyledPanel)
 
-        self.paramsGroup = QtGui.QWidget(self.paramsFrame)
+        self.paramsGroup = QtWidgets.QWidget(self.paramsFrame)
         self.paramsFrame.setWidget(self.paramsGroup)
 
-        self.paramsLayout = QtGui.QGridLayout()
+        self.paramsLayout = QtWidgets.QGridLayout()
         self.paramsLayout.setAlignment(QtCore.Qt.AlignTop)
 
         self.paramsGroup.setLayout(self.paramsLayout)
@@ -67,7 +67,7 @@ class BaseInspector(QtGui.QWidget):
         label = None
         widgetColumn = 0
         if name != None:
-            label = QtGui.QLabel(name, self.paramsGroup)
+            label = QtWidgets.QLabel(name, self.paramsGroup)
             label.setContentsMargins(0, 5, 0, 0)
             self.paramsLayout.addWidget(label, self.gridRow, 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
             self.gridRow += 1
@@ -96,11 +96,11 @@ class BaseInspector(QtGui.QWidget):
 
     def addSeparator(self, name=None):
 
-        separatorEditor = QtGui.QFrame(self.paramsGroup)
-        separatorEditor.setFrameShape(QtGui.QFrame.HLine)
+        separatorEditor = QtWidgets.QFrame(self.paramsGroup)
+        separatorEditor.setFrameShape(QtWidgets.QFrame.HLine)
         separatorEditor.setObjectName('separatorFrame')
         if name is not None:
-            labelEditor = QtGui.QLabel(name, self.paramsGroup)
+            labelEditor = QtWidgets.QLabel(name, self.paramsGroup)
             labelEditor.setObjectName('separatorLabel')
 
             self.paramsLayout.addWidget(labelEditor, self.gridRow, 0)
@@ -112,7 +112,7 @@ class BaseInspector(QtGui.QWidget):
 
 
     def addStretch(self, stretch):
-        self.paramsLayout.addWidget(QtGui.QWidget(self), self.gridRow, 0, 1, 2)
+        self.paramsLayout.addWidget(QtWidgets.QWidget(self), self.gridRow, 0, 1, 2)
         self.paramsLayout.setRowStretch(self.gridRow, stretch)
         self.gridRow += 1
 

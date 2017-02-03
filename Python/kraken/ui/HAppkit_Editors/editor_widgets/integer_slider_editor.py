@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -17,17 +17,17 @@ class IntegerSliderEditor(BaseSliderEditor):
 
         super(IntegerSliderEditor, self).__init__(valueController, parent=parent)
 
-        hbox = QtGui.QHBoxLayout()
+        hbox = QtWidgets.QHBoxLayout()
 
         validator = QtGui.QIntValidator(self)
         validator.setRange(int(self._range['min']), int(self._range['max']))
 
         self._editEditor.setValidator(validator)
-        self._editEditor.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        self._editEditor.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
 
         self._sliderEditor.setMinimum(int(self._range['min']))
         self._sliderEditor.setMaximum(int(self._range['max']))
-        self._sliderEditor.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
+        self._sliderEditor.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
 
         self._editEditor.setMinimumWidth(50)
         self._editEditor.setMaximumWidth(90)

@@ -13,8 +13,8 @@ from kraken.core.objects.scene_item import SceneItem
 class AttributeGroup(SceneItem):
     """Attribute Group that attributes belong to."""
 
-    def __init__(self, name, parent=None):
-        super(AttributeGroup, self).__init__(name)
+    def __init__(self, name, parent=None, metaData=None):
+        super(AttributeGroup, self).__init__(name, metaData=metaData)
         self._attributes = []
 
         if parent is not None:

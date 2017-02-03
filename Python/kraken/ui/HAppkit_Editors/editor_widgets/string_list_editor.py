@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -17,13 +17,13 @@ class StringListEditor(BaseValueEditor):
         super(StringListEditor, self).__init__(valueController, parent=parent)
 
 
-        hbox = QtGui.QHBoxLayout()
-        self._editor = QtGui.QListWidget(self)
+        hbox = QtWidgets.QHBoxLayout()
+        self._editor = QtWidgets.QListWidget(self)
         if self._valueController.hasOption('maxHeight'):
             self._editor.setMaximumHeight(self._valueController.getOption('maxHeight', 65))
-            self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+            self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         else:
-            self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+            self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
 
         hbox.addWidget(self._editor, 1)
         hbox.setContentsMargins(0, 0, 0, 0)

@@ -46,6 +46,7 @@
   "extDeps" : {
     "Kraken" : "*"
     },
+  "presetGUID" : "C91879087F12302626F799FC9D490A15",
   "nodes" : [
     {
       "objectType" : "Var",
@@ -147,6 +148,156 @@
       ]
     },
   "requiredPresets" : {
+    "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\"r\": 168, \"g\": 229, \"b\": 240}",
+        "uiNodeColor" : "{\"r\": 49, \"g\": 60, \"b\": 61}",
+        "uiHeaderColor" : "{\"r\": 42, \"g\": 94, \"b\": 102}"
+        },
+      "title" : "NeckGuideSolver",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "drawDebug",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "rigScale",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "sources",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Mat44[]"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "targets",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Mat44[]"
+          }
+        ],
+      "extDeps" : {
+        "Kraken" : "*"
+        },
+      "presetGUID" : "C91879087F12302626F799FC9D490A15",
+      "nodes" : [
+        {
+          "objectType" : "Var",
+          "name" : "solver",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "name" : "value",
+              "nodePortType" : "IO"
+              }
+            ],
+          "dataType" : "NeckGuideSolver",
+          "extDep" : "Kraken:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-300.0,\"y\":0.0}"
+            },
+          "name" : "NeckGuideSolver_Constructor",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Constructor",
+          "presetGUID" : "B6CFE899071BFAAE3992E1E92A04A3AE"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 200.0,\"y\": 0.0}"
+            },
+          "name" : "NeckGuideSolver_Solve",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "drawDebug",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "rigScale",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "sources",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "targets",
+              "nodePortType" : "IO"
+              }
+            ],
+          "executable" : "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Solve",
+          "presetGUID" : "9B9087CD72D8F83637EDC428FC3A9A47"
+          }
+        ],
+      "connections" : {
+        "drawDebug" : [
+          "NeckGuideSolver_Solve.drawDebug"
+          ],
+        "rigScale" : [
+          "NeckGuideSolver_Solve.rigScale"
+          ],
+        "sources" : [
+          "NeckGuideSolver_Solve.sources"
+          ],
+        "solver.value" : [
+          "NeckGuideSolver_Solve.this"
+          ],
+        "NeckGuideSolver_Constructor.result" : [
+          "solver.value"
+          ],
+        "NeckGuideSolver_Solve.this" : [
+          "exec"
+          ],
+        "NeckGuideSolver_Solve.targets" : [
+          "targets"
+          ]
+        }
+      },
     "Kraken.Exts.Solvers.NeckGuideSolver.NeckGuideSolver_Constructor" : {
       "objectType" : "Func",
       "metadata" : {

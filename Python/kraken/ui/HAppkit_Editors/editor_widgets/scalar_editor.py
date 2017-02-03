@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from ..fe import FE
 from ..widget_factory import EditorFactory
@@ -10,9 +10,9 @@ class ScalarEditor(BaseValueEditor):
     def __init__(self, valueController, parent=None):
         super(ScalarEditor, self).__init__(valueController, parent=parent)
 
-        hbox = QtGui.QHBoxLayout()
+        hbox = QtWidgets.QHBoxLayout()
 
-        self._editor = QtGui.QLineEdit(self)
+        self._editor = QtWidgets.QLineEdit(self)
         validator = QtGui.QDoubleValidator(self)
         validator.setDecimals(3)
         self._editor.setValidator(validator)
@@ -21,7 +21,7 @@ class ScalarEditor(BaseValueEditor):
         hbox.addStretch(0)
         hbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(hbox)
-        self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
 
         self.updateEditorValue()
         self._editor.editingFinished.connect(self._setValueToController)

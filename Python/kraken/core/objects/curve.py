@@ -13,8 +13,8 @@ from kraken.core.objects.object_3d import Object3D
 class Curve(Object3D):
     """Curve object."""
 
-    def __init__(self, name, parent=None, flags=None):
-        super(Curve, self).__init__(name, parent=parent, flags=flags)
+    def __init__(self, name, parent=None, flags=None, metaData=None):
+        super(Curve, self).__init__(name, parent=parent, flags=flags, metaData=metaData)
 
         self._data = None
 

@@ -18,8 +18,8 @@ from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 class Rig(Container):
     """Rig object."""
 
-    def __init__(self, name='rig'):
-        super(Rig, self).__init__(name)
+    def __init__(self, name='rig', metaData=None):
+        super(Rig, self).__init__(name, metaData=metaData)
 
     # ====================
     # Load / Save Methods

@@ -1,15 +1,14 @@
 import re
 import sys
 
-from PySide import QtGui, QtCore
-
+from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 from kraken.ui import images_rc
 from kraken.log import getLogger
 
 logger = getLogger('kraken')
 
 
-class KrakenSplash(QtGui.QSplashScreen):
+class KrakenSplash(QtWidgets.QSplashScreen):
 
     messageFlag = QtCore.Qt.AlignBottom | QtCore.Qt.AlignLeft
 

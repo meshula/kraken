@@ -23,8 +23,30 @@ from kraken.helpers.utility_methods import prepareToSave, prepareToLoad
 
 from kraken.plugins.si_plugin.utils import *
 
+
 logger = getLogger('kraken')
 logger.setLevel(logging.INFO)
+
+# Rotation order remapping
+# Softimage's enums don't map directly to the Fabric rotation orders
+#
+# Fabric | Softimage
+# -------------------
+# 0 ZYX  | 5 ZYX
+# 1 XZY  | 1 XZY
+# 2 YXZ  | 2 YXZ
+# 3 YZX  | 3 YZX
+# 4 XYZ  | 0 XYZ
+# 5 ZXY  | 4 ZXY
+
+ROT_ORDER_REMAP = {
+    0: 5,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 0,
+    5: 4
+}
 
 
 class Builder(Builder):
@@ -588,19 +610,7 @@ class Builder(Builder):
 
         if kConstraint.getMaintainOffset() is True:
 
-            # Softimage's rotation orders remapped
-            # It appears Softimage uses the reversed orders
-            # Not the same orders.
-            rotOrderRemap = {
-                0: 0,
-                1: 3,
-                2: 4,
-                3: 1,
-                4: 5,
-                5: 2
-            }
-
-            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
+            order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
 
             offsetXfo = kConstraint.computeOffset()
             offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
@@ -641,36 +651,7 @@ class Builder(Builder):
 
         if kConstraint.getMaintainOffset() is True:
 
-            # Fabric's rotation order enums:
-            # We need to use the negative rotation order
-            # to calculate propery offset values.
-            #
-            # 0 XYZ
-            # 1 YZX
-            # 2 ZXY
-            # 3 XZY
-            # 4 ZYX
-            # 5 YXZ
-
-            # Softimage's rotation orders
-            #
-            # 0 XYZ
-            # 1 XZY
-            # 2 YXZ
-            # 3 YZX
-            # 4 ZXY
-            # 5 ZYX
-
-            rotOrderRemap = {
-                0: 4,
-                1: 1,
-                2: 2,
-                3: 3,
-                4: 5,
-                5: 0
-            }
-
-            order = rotOrderRemap[kConstraint.getConstrainee().ro.order]
+            order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
 
             offsetXfo = kConstraint.computeOffset()
             offsetAngles = offsetXfo.ori.toEulerAnglesWithRotOrder(
@@ -762,38 +743,6 @@ class Builder(Builder):
 
         return dccSceneItem
 
-    # ========================
-    # Component Build Methods
-    # ========================
-    def buildAttributeConnection(self, connectionInput):
-        """Builds the link between the target and connection target.
-
-        Args:
-            connectionInput (object): kraken component input to build
-                connections for.
-
-        Returns:
-            bool: True if successful.
-
-        """
-
-        if connectionInput.isConnected() is False:
-            return False
-
-        connection = connectionInput.getConnection()
-        connectionTarget = connection.getTarget()
-        inputTarget = connectionInput.getTarget()
-
-        if connection.getDataType().endswith('[]'):
-            connectionTarget = connection.getTarget()[connectionInput.getIndex()]
-        else:
-            connectionTarget = connection.getTarget()
-
-        connectionTargetDCCSceneItem = self.getDCCSceneItem(connectionTarget)
-        targetDCCSceneItem = self.getDCCSceneItem(inputTarget)
-        targetDCCSceneItem.AddExpression(connectionTargetDCCSceneItem.FullName)
-
-        return True
 
     # =========================
     # Operator Builder Methods
@@ -851,7 +800,10 @@ class Builder(Builder):
 
         def addPortConnection(canvasOpPath, portName, portDataType, portConnectionType):
 
-            if portDataType in ('EvalContext', 'DrawingHandle', 'InlineDebugShape'):
+            if portDataType in ('Execute',
+                                'EvalContext',
+                                'DrawingHandle',
+                                'InlineDebugShape'):
                 return
 
             canvasOp = si.Dictionary.GetObject(canvasOpPath, False)
@@ -1140,9 +1092,10 @@ class Builder(Builder):
                 canvasOp.Name = buildName
                 self._registerSceneItemPair(kOperator, canvasOp)
 
-                si.FabricCanvasSetExtDeps(canvasOpPath, "", kOperator.getExtension())
+                si.FabricCanvasSetExtDeps(canvasOpPath, "", "Kraken")
+
                 uniqueNodeName = si.FabricCanvasInstPreset(canvasOpPath, "", kOperator.getPresetPath(), "400", "0")
-                solverNodeName = uniqueNodeName
+                solverSolveNodeName = uniqueNodeName
 
             # Create operator ports and internal connections
             for i in xrange(portCount):
@@ -1262,13 +1215,42 @@ class Builder(Builder):
         return True
 
     # ==================
-    # Parameter Methods
+    # Attribute Methods
     # ==================
-    def lockParameters(self, kSceneItem):
-        """Locks flagged SRT parameters.
+    def lockAttribute(self, kAttribute):
+        """Locks attributes.
 
         Args:
-            kSceneItem (object): kraken object to lock the SRT parameters on.
+            kAttribute (object): kraken attributes to lock.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        if kAttribute.getName() in ('visibility', 'ShapeVisibility'):
+            dccSceneItem = self.getDCCSceneItem(kAttribute.getParent().getParent())
+
+            if kAttribute.getName() == 'visibility':
+                visAttr = dccSceneItem.Properties("Visibility").Parameters("viewvis")
+                visAttr.SetLock(constants.siLockLevelManipulation)
+            elif kAttribute.getName() == 'ShapeVisibility':
+                visAttr = dccSceneItem.Properties("Visibility").Parameters("viewvis")
+                visAttr.SetLock(constants.siLockLevelManipulation)
+            else:
+                pass
+
+        else:
+            dccSceneItem = self.getDCCSceneItem(kAttribute)
+            dccSceneItem.SetLock(constants.siLockLevelManipulation)
+
+        return True
+
+    def lockTransformAttrs(self, kSceneItem):
+        """Locks flagged SRT attributes.
+
+        Args:
+            kSceneItem (object): kraken object to lock the SRT attributes on.
 
         Returns:
             bool: True if successful.
@@ -1409,6 +1391,9 @@ class Builder(Builder):
 
         dccSceneItem = self.getDCCSceneItem(kSceneItem)
 
+        order = ROT_ORDER_REMAP[kSceneItem.ro.order]
+        dccSceneItem.Kinematics.Local.Parameters('rotorder').Value = order
+
         xfo = XSIMath.CreateTransform()
         sc = XSIMath.CreateVector3(kSceneItem.xfo.sc.x,
                                    kSceneItem.xfo.sc.y,
@@ -1428,19 +1413,6 @@ class Builder(Builder):
         xfo.SetTranslation(tr)
 
         dccSceneItem.Kinematics.Global.PutTransform2(None, xfo)
-
-        # Softimage's rotation orders remapped:
-        rotOrderRemap = {
-            0: 0,
-            1: 3,
-            2: 4,
-            3: 1,
-            4: 5,
-            5: 2
-        }
-
-        order = rotOrderRemap[kSceneItem.ro.order]
-        dccSceneItem.Kinematics.Local.Parameters('rotorder').Value = order
 
         return True
 

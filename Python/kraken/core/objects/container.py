@@ -18,8 +18,8 @@ class Container(Object3D):
     The never get built.
     """
 
-    def __init__(self, name):
-        super(Container, self).__init__(name, None)
+    def __init__(self, name, metaData=None):
+        super(Container, self).__init__(name, None, metaData=metaData)
 
         self.setShapeVisibility(False)
         self.lockRotation(x=True, y=True, z=True)
