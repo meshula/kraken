@@ -121,8 +121,6 @@ class OSSSingleFKGuide(OSSSingleFK):
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
 
         self.SingleFKCtrl.scalePoints(globalScaleVec)
-        for d in data:
-            print d
         return True
 
 
@@ -140,8 +138,6 @@ class OSSSingleFKGuide(OSSSingleFK):
         # should include getCurveData
         data = self.saveAllObjectData(data, "Control")
         data = self.saveAllObjectData(data, "Transform")
-        print data
-
         return data
 
 
