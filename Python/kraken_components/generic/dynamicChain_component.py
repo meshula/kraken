@@ -56,13 +56,13 @@ class DynamicChainComponent(BaseExampleComponent):
         # Declare Output Attrs
 
 
-class DyanmicChainComponentGuide(DynamicChainComponent):
+class DynamicChainComponentGuide(DynamicChainComponent):
     """FKChain Component Guide"""
 
     def __init__(self, name='DynamicChain', parent=None):
 
         Profiler.getInstance().push("Construct FKCHain Guide Component:" + name)
-        super(DyanmicChainComponentGuide, self).__init__(name, parent)
+        super(DynamicChainComponentGuide, self).__init__(name, parent)
 
         # =========
         # Controls
@@ -101,7 +101,7 @@ class DyanmicChainComponentGuide(DynamicChainComponent):
 
         """
 
-        data = super(DyanmicChainComponentGuide, self).saveData()
+        data = super(DynamicChainComponentGuide, self).saveData()
 
         jointPositions = []
         for i in xrange(len(self.jointCtrls)):
@@ -123,7 +123,7 @@ class DyanmicChainComponentGuide(DynamicChainComponent):
 
         """
 
-        super(DyanmicChainComponentGuide, self).loadData(data)
+        super(DynamicChainComponentGuide, self).loadData(data)
 
         for i in xrange(len(data['jointPositions'])):
             self.jointCtrls[i].xfo.tr = data['jointPositions'][i]
@@ -139,7 +139,7 @@ class DyanmicChainComponentGuide(DynamicChainComponent):
 
         """
 
-        data = super(DyanmicChainComponentGuide, self).getRigBuildData()
+        data = super(DynamicChainComponentGuide, self).getRigBuildData()
 
         numJoints = self.numJoints.getValue()
 
@@ -255,16 +255,16 @@ class DyanmicChainComponentGuide(DynamicChainComponent):
 
         """
 
-        return DyanmicChainComponentRig
+        return DynamicChainComponentRig
 
 
-class DyanmicChainComponentRig(DynamicChainComponent):
+class DynamicChainComponentRig(DynamicChainComponent):
     """FK Chain Leg Rig"""
 
     def __init__(self, name='FKChain', parent=None):
 
         Profiler.getInstance().push("Construct FK Chain Rig Component:" + name)
-        super(DyanmicChainComponentRig, self).__init__(name, parent)
+        super(DynamicChainComponentRig, self).__init__(name, parent)
 
 
         # =========
@@ -434,7 +434,7 @@ class DyanmicChainComponentRig(DynamicChainComponent):
 
         """
 
-        super(DyanmicChainComponentRig, self).loadData( data )
+        super(DynamicChainComponentRig, self).loadData( data )
 
         boneXfos = data['boneXfos']
         boneLengths = data['boneLengths']
@@ -497,5 +497,5 @@ class DyanmicChainComponentRig(DynamicChainComponent):
 
 from kraken.core.kraken_system import KrakenSystem
 ks = KrakenSystem.getInstance()
-ks.registerComponent(DyanmicChainComponentGuide)
-ks.registerComponent(DyanmicChainComponentRig)
+ks.registerComponent(DynamicChainComponentGuide)
+ks.registerComponent(DynamicChainComponentRig)
