@@ -35,9 +35,9 @@ class TestScalarAttribute(unittest.TestCase):
     def testValidateValue(self):
         attribute = self.getAttribute()
 
-        self.assertRaises(TypeError, lambda: attribute.validateValue(True))
-        self.assertRaises(TypeError, lambda: attribute.validateValue({}))
-        self.assertRaises(TypeError, lambda: attribute.validateValue('One'))
+        self.assertFalse(attribute.validateValue(True))
+        self.assertFalse(attribute.validateValue({}))
+        self.assertFalse(attribute.validateValue('One'))
 
     def testGetDataType(self):
         attribute = self.getAttribute()

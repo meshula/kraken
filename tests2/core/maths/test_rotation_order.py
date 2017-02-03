@@ -10,7 +10,7 @@ class TestRotationOrder(unittest.TestCase):
         rotationOrder = RotationOrder()
 
         self.assertEquals(str(rotationOrder),
-            "RotationOrder(0)")
+            "RotationOrder(order='4')")
 
     def testGetPropertyValues(self):
         rotationOrder = RotationOrder(2)
@@ -49,41 +49,41 @@ class TestRotationOrder(unittest.TestCase):
 
         # Test setting from lowercase strings
         rotationOrder.set('xyz')
-        self.assertEquals(rotationOrder.order, 0)
-
-        rotationOrder.set('yzx')
-        self.assertEquals(rotationOrder.order, 1)
-
-        rotationOrder.set('zxy')
-        self.assertEquals(rotationOrder.order, 2)
-
-        rotationOrder.set('xzy')
-        self.assertEquals(rotationOrder.order, 3)
-
-        rotationOrder.set('zyx')
         self.assertEquals(rotationOrder.order, 4)
 
-        rotationOrder.set('yxz')
+        rotationOrder.set('yzx')
+        self.assertEquals(rotationOrder.order, 3)
+
+        rotationOrder.set('zxy')
         self.assertEquals(rotationOrder.order, 5)
+
+        rotationOrder.set('xzy')
+        self.assertEquals(rotationOrder.order, 1)
+
+        rotationOrder.set('zyx')
+        self.assertEquals(rotationOrder.order, 0)
+
+        rotationOrder.set('yxz')
+        self.assertEquals(rotationOrder.order, 2)
 
         # Test setting from lowercase strings
         rotationOrder.set('XYZ')
-        self.assertEquals(rotationOrder.order, 0)
-
-        rotationOrder.set('YZX')
-        self.assertEquals(rotationOrder.order, 1)
-
-        rotationOrder.set('ZXY')
-        self.assertEquals(rotationOrder.order, 2)
-
-        rotationOrder.set('XZY')
-        self.assertEquals(rotationOrder.order, 3)
-
-        rotationOrder.set('ZYX')
         self.assertEquals(rotationOrder.order, 4)
 
-        rotationOrder.set('YXZ')
+        rotationOrder.set('YZX')
+        self.assertEquals(rotationOrder.order, 3)
+
+        rotationOrder.set('ZXY')
         self.assertEquals(rotationOrder.order, 5)
+
+        rotationOrder.set('XZY')
+        self.assertEquals(rotationOrder.order, 1)
+
+        rotationOrder.set('ZYX')
+        self.assertEquals(rotationOrder.order, 0)
+
+        rotationOrder.set('YXZ')
+        self.assertEquals(rotationOrder.order, 2)
 
         # Test setting from integers
         rotationOrder.set(0)
@@ -105,7 +105,8 @@ class TestRotationOrder(unittest.TestCase):
         self.assertEquals(rotationOrder.order, 5)
 
         # Test out of range
-        self.assertRaises(ValueError, lambda: rotationOrder.set(6))
+        rotationOrder.set(6)
+        self.assertEquals(rotationOrder.order, 4)
 
     def testIsXYZ(self):
         rotationOrder = RotationOrder()
@@ -113,27 +114,27 @@ class TestRotationOrder(unittest.TestCase):
         self.assertTrue(rotationOrder.isXYZ())
 
     def testIsYZX(self):
-        rotationOrder = RotationOrder(1)
+        rotationOrder = RotationOrder(3)
 
         self.assertTrue(rotationOrder.isYZX())
 
     def testIsZXY(self):
-        rotationOrder = RotationOrder(2)
+        rotationOrder = RotationOrder(5)
 
         self.assertTrue(rotationOrder.isZXY())
 
     def testIsXZY(self):
-        rotationOrder = RotationOrder(3)
+        rotationOrder = RotationOrder(1)
 
         self.assertTrue(rotationOrder.isXZY())
 
     def testIsZYX(self):
-        rotationOrder = RotationOrder(4)
+        rotationOrder = RotationOrder(0)
 
         self.assertTrue(rotationOrder.isZYX())
 
     def testIsYXZ(self):
-        rotationOrder = RotationOrder(5)
+        rotationOrder = RotationOrder(2)
 
         self.assertTrue(rotationOrder.isYXZ())
 
@@ -162,37 +163,37 @@ class TestRotationOrder(unittest.TestCase):
         rotationOrder = RotationOrder()
         rotationOrder.setXYZ()
 
-        self.assertEquals(rotationOrder.order, 0)
+        self.assertEquals(rotationOrder.order, 4)
 
     def testSetYZX(self):
         rotationOrder = RotationOrder()
         rotationOrder.setYZX()
 
-        self.assertEquals(rotationOrder.order, 1)
+        self.assertEquals(rotationOrder.order, 3)
 
     def testSetZXY(self):
         rotationOrder = RotationOrder()
         rotationOrder.setZXY()
 
-        self.assertEquals(rotationOrder.order, 2)
+        self.assertEquals(rotationOrder.order, 5)
 
     def testSetXZY(self):
         rotationOrder = RotationOrder()
         rotationOrder.setXZY()
 
-        self.assertEquals(rotationOrder.order, 3)
+        self.assertEquals(rotationOrder.order, 1)
 
     def testSetZYX(self):
         rotationOrder = RotationOrder()
         rotationOrder.setZYX()
 
-        self.assertEquals(rotationOrder.order, 4)
+        self.assertEquals(rotationOrder.order, 0)
 
     def testSetYXZ(self):
         rotationOrder = RotationOrder()
         rotationOrder.setYXZ()
 
-        self.assertEquals(rotationOrder.order, 5)
+        self.assertEquals(rotationOrder.order, 2)
 
 
 
