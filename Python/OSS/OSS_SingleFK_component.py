@@ -254,7 +254,7 @@ class OSSSingleFKRig(OSSSingleFK):
         True if successful.
 
         """
-        super(OSSSingleFKRig, self).loadData( data )
+        super(OSSSingleFKRig, self).loadData(data)
 
         self.createControls(data)
 
@@ -272,6 +272,12 @@ class OSSSingleFKRig(OSSSingleFK):
 
         globalScale = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
         self.SingleFKCtrl.scalePoints(globalScale)
+
+        # ====================
+        # Evaluate Fabric Ops
+        # ====================
+        # Eval Operators # Order is important
+        self.evalOperators()
 
         self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
