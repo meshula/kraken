@@ -741,6 +741,8 @@ class Builder(Builder):
 
         kl += ["inline function %s.evaluate!(KrakenClipContext context) {" % self.getKLExtensionName()]
         if self.__profilingFrames > 0:
+            kl += ["  if(this.profilingFrame == 0)"]
+            kl += ["    report(\"*** START %s RIG PROFILING\");" % self.getKLExtensionName()]
             kl += ["  if(this.profilingFrame >= 0)"]
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
             kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
@@ -764,6 +766,8 @@ class Builder(Builder):
 
         kl += ["inline function %s.evaluate!(KrakenClipContext context, io Mat44 joints<>) {" % self.getKLExtensionName()]
         if self.__profilingFrames > 0:
+            kl += ["  if(this.profilingFrame == 0)"]
+            kl += ["    report(\"*** START %s RIG PROFILING\");" % self.getKLExtensionName()]
             kl += ["  if(this.profilingFrame >= 0)"]
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
             kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
@@ -1002,6 +1006,8 @@ class Builder(Builder):
         kl += ["inline function %s.init!() {" % self.getKLExtensionName()]
         kl += ["    this.useClip = true;"]
         kl += ["    this.debugIter = 0;"]
+        if self.__profilingFrames > 0:
+            kl += ["    this.profilingFrame = -1;"]
         kl += ["    this.solveDepthSpaces = \"\";"]
         kl += ["  Float32 floatAnimation[String];"]
         kl += [""]
@@ -1141,15 +1147,18 @@ class Builder(Builder):
         for i, item in enumerate(allItemsSortedByUniqueIDs):
             kl += ["  this._KrakenItem[%d] = this.%s;" % (i, item['member'])]
         kl += [""]
-
         kl += ["  this.resetPose();"]
         kl += ["  this.dirtyAllItems();"]
         kl += [""]
         kl += ["  this.buildItemDict();"]
+        kl += ["}", ""]
+
         if self.__profilingFrames > 0:
-            kl += ["", "  this.profilingFrame = 0;"]
+            kl += ["inline function %s.startProfilingFrames!() {" % self.getKLExtensionName()]
+            kl += ["  this.profilingFrame = 0;"]
             kl += ["  StartFabricProfilingFrames(%d);" % (self.__profilingFrames+1)]
         kl += ["}", ""]
+
 
         kl += ["inline function Xfo[] %s.getJointXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(self.__krkDeformers)]
@@ -1428,17 +1437,15 @@ class Builder(Builder):
         # kl += ["}", ""]
 
         if self.__profilingFrames > 0:
-            kl += ["inline function %s.setProfilingFrame!(SInt32 frame) {" % self.getKLExtensionName()]
-            kl += ["  this.profilingFrame = frame;"]
-            kl += ["}"]
-            kl += [""]
             kl += ["inline function %s.processProfiling!() {" % self.getKLExtensionName()]
             kl += ["  if(this.profilingFrame != %s)" % self.__profilingFrames]
             kl += ["    return;"]
             kl += ["  this.profilingFrame = -1;"]
+            kl += ["  report(\"*** END %s RIG PROFILING\");" % self.getKLExtensionName()]
             kl += ["  ProfilingEvent events[] = GetProfilingEvents();"]
             kl += ["  if(events.size() == 0)"]
             kl += ["    return;"]
+            kl += ["  report(events);"]
             kl += ["  ProfilingEvent combinedEvents[](events.size() / %d);" % self.__profilingFrames]
             kl += ["  for(Size i=0;i<events.size();i++) {"]
             kl += ["    if(i < combinedEvents.size()) {"]
