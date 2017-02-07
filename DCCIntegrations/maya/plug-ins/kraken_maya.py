@@ -47,23 +47,41 @@ class OpenKrakenEditorCmd(OpenMayaMPx.MPxCommand):
     # Invoked when the command is run.
     def doIt(self, args):
 
-        app = QtWidgets.QApplication.instance()
-        if not app:
-            app = QtWidgets.QApplication([])
+        isSetToCentimeters = True
+        if pm.currentUnit( query=True, linear=True ) != 'cm':
+            result = pm.confirmDialog(
+                title='Confirm Change Units?',
+                message='Kraken currently only supports scene units in centimeters.\nDo you want to switch to centimeters?',
+                button=['Yes', 'No'],
+                defaultButton='Yes',
+                cancelButton='No',
+                dismissString='No')
 
-        for widget in app.topLevelWidgets():
-            if widget.objectName() == 'KrakenMainWindow':
-                widget.showNormal()
+            if result == 'Yes':
+                pm.currentUnit(linear='cm')
+                OpenMaya.MGlobal.displayWarning('Kraken: Scene units changed to centimeters.')
+            else:
+                OpenMaya.MGlobal.displayWarning('Kraken: Open Cancelled.')
+                isSetToCentimeters = False
 
-                return
+        if isSetToCentimeters is True:
+            app = QtWidgets.QApplication.instance()
+            if not app:
+                app = QtWidgets.QApplication([])
 
-        splash = KrakenSplash(app)
-        splash.show()
+            for widget in app.topLevelWidgets():
+                if widget.objectName() == 'KrakenMainWindow':
+                    widget.showNormal()
 
-        window = KrakenWindow(parent=getMayaWindow())
-        window.show()
+                    return
 
-        splash.finish(window)
+            splash = KrakenSplash(app)
+            splash.show()
+
+            window = KrakenWindow(parent=getMayaWindow())
+            window.show()
+
+            splash.finish(window)
 
     # Creator
     @staticmethod
