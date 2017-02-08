@@ -5,12 +5,12 @@
     "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.2905593812465668,\n    \"y\" : -0.5645936727523804,\n    \"z\" : 0.774324357509613,\n    \"t\" : 6.638515472412109\n    },\n  \"row1\" : {\n    \"x\" : -4.061412710143486e-06,\n    \"y\" : 0.8072788119316101,\n    \"z\" : 0.5912596583366394,\n    \"t\" : 6.769777774810791\n    },\n  \"row2\" : {\n    \"x\" : -0.9589961171150208,\n    \"y\" : -0.1710656583309174,\n    \"z\" : 0.2346044927835465,\n    \"t\" : 2.727512359619141\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "0",
     "timeline_loopMode" : "1",
-    "uiGraphZoom" : "{\n  \"value\" : 0.8725235462188721\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
     "timeline_simMode" : "0",
     "camera_focalDistance" : "10.29734134674072",
-    "timeline_current" : "30",
+    "timeline_current" : "1",
     "timeline_end" : "50",
-    "uiGraphPan" : "{\n  \"x\" : 382.876266156246,\n  \"y\" : 477.2669466771363\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 1224.378875732422,\n  \"y\" : 544.8575439453125\n  }"
     },
   "title" : "",
   "ports" : [
@@ -37,7 +37,7 @@
       "name" : "kernel",
       "nodePortType" : "Out",
       "execPortType" : "In",
-      "typeSpec" : "RadialBasisKernel"
+      "typeSpec" : "RadialBasis::RadialBasisKernel"
       },
     {
       "objectType" : "ExecPort",
@@ -83,6 +83,16 @@
       "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "Float32[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "name" : "filePath",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "String"
       }
     ],
   "extDeps" : {},
@@ -281,10 +291,7 @@
         {
           "objectType" : "InstPort",
           "name" : "kernel",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "RadialBasisKernel" : 2
-            }
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
@@ -314,6 +321,12 @@
           "objectType" : "InstPort",
           "name" : "result",
           "nodePortType" : "Out"
+          }
+        ],
+      "loadDiags" : [
+        {
+          "desc" : "index 2: port 'kernel': 'defaultValues': 'RadialBasisKerne...': 'RadialBasisKernel': type not registered",
+          "diagIndex" : 2
           }
         ],
       "executable" : "Fabric.Exts.RadialBasis.RadialBasisSolver.RadialBasisSolver",
@@ -588,7 +601,7 @@
           }
         ],
       "executable" : "Fabric.Compounds.IO.Alembic.Load",
-      "presetGUID" : "4297E867013C119E57DE2317CBB1375D"
+      "presetGUID" : "E80219EC596B80E2C7494A8DC44E4533"
       },
     {
       "objectType" : "Inst",
@@ -3241,6 +3254,9 @@ dfgEntry {
     "timeline" : [
       "FrameToTime_1.frame"
       ],
+    "filePath" : [
+      "Load_1.filePath"
+      ],
     "EmptyDrawingHandle_1.handle" : [
       "DrawPoints_1.this"
       ],
@@ -3474,7 +3490,7 @@ dfgEntry {
     "Fabric.Exts.InlineDrawing.DrawingHandle.Clear" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
         "uiTooltip" : "removes all contents from the DrawingHandle\n\n Supported by DrawingHandle"
         },
       "title" : "Clear",
@@ -3508,7 +3524,7 @@ dfgEntry {
     "Fabric.Exts.InlineDrawing.DrawingHandle.DrawPoints" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
         "uiTooltip" : "helper function to draw a points object given a color + a single transform\n\n Supported by DrawingHandle"
         },
       "title" : "DrawPoints",
@@ -3580,7 +3596,7 @@ dfgEntry {
       "code" : "require InlineDrawing;
 
 dfgEntry {
-  this.drawPoints(name, transform, points, dummyResult, instance);
+  if(this) this.drawPoints(name, transform, points, dummyResult, instance);
 }
 "
       },
@@ -3692,7 +3708,7 @@ dfgEntry {
           "name" : "kernel",
           "nodePortType" : "Out",
           "defaultValues" : {
-            "RadialBasisKernel" : 2
+            "RadialBasis::RadialBasisKernel" : 2
             },
           "execPortType" : "In",
           "typeSpec" : "RadialBasisKernel"
@@ -5242,7 +5258,7 @@ dfgEntry {
     "Fabric.Exts.AlembicWrapper.AlembicArchiveReader.GetAllPaths" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/AlembicWrapper/AlembicArchiveReader.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/AlembicWrapper/AlembicArchiveReader.html",
         "uiTooltip" : "returns the full paths of all AlembicIObject entities within the file\n\n Supported by AlembicArchiveReader"
         },
       "title" : "GetAllPaths",
@@ -5283,7 +5299,7 @@ dfgEntry {
     "Fabric.Exts.AlembicWrapper.AlembicArchiveReader.GetPathsOfType" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/AlembicWrapper/AlembicArchiveReader.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/AlembicWrapper/AlembicArchiveReader.html",
         "uiTooltip" : "returns the fullpaths of all AlembicIObject entities of a given type\n\n Supported by AlembicArchiveReader"
         },
       "title" : "GetPathsOfType",
@@ -5593,8 +5609,9 @@ dfgEntry {
       "metadata" : {
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiNodeColor" : "{\n  \"r\" : 170,\n  \"g\" : 130,\n  \"b\" : 100\n  }",
+        "uiGraphZoom" : "{\n  \"value\" : 0.9191978573799133\n  }",
         "uiTooltip" : "Opens an Alembic file and provides access to its contents. Use this in conjunction with an Alembic.GetPaths node to get access to the table of contents of an Alembic file.",
-        "uiGraphPan" : "{\n  \"x\" : 324.0,\n  \"y\" : -92.0\n  }"
+        "uiGraphPan" : "{\n  \"x\" : 134.6165001690388,\n  \"y\" : 162.2389444261789\n  }"
         },
       "title" : "Load",
       "ports" : [
@@ -5602,6 +5619,9 @@ dfgEntry {
           "objectType" : "ExecPort",
           "name" : "exec",
           "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
           "execPortType" : "IO",
           "typeSpec" : "Execute"
           },
@@ -5609,6 +5629,9 @@ dfgEntry {
           "objectType" : "ExecPort",
           "name" : "filePath",
           "nodePortType" : "Out",
+          "defaultValues" : {
+            "String" : ""
+            },
           "execPortType" : "In",
           "typeSpec" : "String"
           },
@@ -5616,17 +5639,22 @@ dfgEntry {
           "objectType" : "ExecPort",
           "name" : "archive",
           "nodePortType" : "In",
+          "defaultValues" : {
+            "AlembicArchiveReader" : null
+            },
           "execPortType" : "Out",
           "typeSpec" : "AlembicArchiveReader"
           }
         ],
-      "extDeps" : {},
-      "presetGUID" : "4297E867013C119E57DE2317CBB1375D",
+      "extDeps" : {
+        "AlembicWrapper" : "*"
+        },
+      "presetGUID" : "E80219EC596B80E2C7494A8DC44E4533",
       "nodes" : [
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":823.0,\"y\":254.0}"
+            "uiGraphPos" : "{\"x\":1037.0,\"y\":48.0}"
             },
           "name" : "AlembicArchiveReader_1",
           "ports" : [
@@ -5652,7 +5680,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":484.0,\"y\":181.0}"
+            "uiGraphPos" : "{\"x\":348.0,\"y\":23.0}"
             },
           "name" : "Exists_1",
           "ports" : [
@@ -5678,7 +5706,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1133.0,\"y\":203.0}"
+            "uiGraphPos" : "{\"x\":1353.0,\"y\":35.0}"
             },
           "name" : "If_1",
           "ports" : [
@@ -5714,7 +5742,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":664.0,\"y\":262.0}"
+            "uiGraphPos" : "{\"x\":548.0,\"y\":12.0}"
             },
           "name" : "String_1",
           "ports" : [
@@ -5740,7 +5768,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":303.0,\"y\":173.0}"
+            "uiGraphPos" : "{\"x\":109.0,\"y\":23.0}"
             },
           "name" : "ExpandEnvVars_1",
           "ports" : [
@@ -5766,7 +5794,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":1301.0,\"y\":244.0}"
+            "uiGraphPos" : "{\"x\":1525.87892842,\"y\":129.582306147}"
             },
           "name" : "Cache_1",
           "ports" : [
@@ -5787,7 +5815,7 @@ dfgEntry {
         {
           "objectType" : "Inst",
           "metadata" : {
-            "uiGraphPos" : "{\"x\":59.0,\"y\":243.0}"
+            "uiGraphPos" : "{\"x\":-61.0,\"y\":25.0}"
             },
           "name" : "FilePath_1",
           "ports" : [
@@ -5809,6 +5837,92 @@ dfgEntry {
             ],
           "executable" : "Fabric.Exts.FileIO.FilePath.FilePath",
           "presetGUID" : "99F8F257D7FABE2353B3E7A635249DF8"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":494.5,\"y\":198.5}"
+            },
+          "name" : "Not_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "value",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Fabric.Core.Logic.Not",
+          "presetGUID" : "B8FE3CDCF84BBE1B3A07C80E724FB147"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":688.5,\"y\":175.5}"
+            },
+          "name" : "Concat_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "this",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "String" : "File does not exist : "
+                }
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "other",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "result",
+              "nodePortType" : "Out"
+              }
+            ],
+          "executable" : "Fabric.Exts.Util.String.Concat",
+          "presetGUID" : "4B178940781A931CA14F10DA3FA75E26"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":848.982944012,\"y\":210.793624878}"
+            },
+          "name" : "RaiseErrorIf_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "name" : "exec",
+              "nodePortType" : "IO"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "condition",
+              "nodePortType" : "In"
+              },
+            {
+              "objectType" : "InstPort",
+              "name" : "message",
+              "nodePortType" : "In"
+              }
+            ],
+          "executable" : "Fabric.Compounds.Debug.RaiseErrorIf",
+          "presetGUID" : "692367692FF1DF56BFDD920BD3A74F6F"
           }
         ],
       "connections" : {
@@ -5822,13 +5936,15 @@ dfgEntry {
           "String_1.this"
           ],
         "Exists_1.result" : [
-          "If_1.cond"
+          "If_1.cond",
+          "Not_1.value"
           ],
         "If_1.result" : [
           "Cache_1.value"
           ],
         "String_1.result" : [
-          "AlembicArchiveReader_1.fileName"
+          "AlembicArchiveReader_1.fileName",
+          "Concat_1.other"
           ],
         "ExpandEnvVars_1.result" : [
           "Exists_1.this"
@@ -5838,13 +5954,22 @@ dfgEntry {
           ],
         "FilePath_1.result" : [
           "ExpandEnvVars_1.this"
+          ],
+        "Not_1.result" : [
+          "RaiseErrorIf_1.condition"
+          ],
+        "Concat_1.result" : [
+          "RaiseErrorIf_1.message"
+          ],
+        "RaiseErrorIf_1.exec" : [
+          "Cache_1.exec"
           ]
         }
       },
     "Fabric.Exts.AlembicWrapper.AlembicArchiveReader.AlembicArchiveReader" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/AlembicWrapper/AlembicArchiveReader.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/AlembicWrapper/AlembicArchiveReader.html",
         "uiTooltip" : "default constructor provided a fileName to a abc file.\n\n Supported by AlembicArchiveReader"
         },
       "title" : "AlembicArchiveReader",
@@ -5885,7 +6010,7 @@ dfgEntry {
     "Fabric.Exts.FileIO.FilePath.Exists" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/FileIO/FilePath.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/FileIO/FilePath.html",
         "uiTooltip" : "returns true if this path exists\n\n Supported by FilePath"
         },
       "title" : "Exists",
@@ -5926,7 +6051,7 @@ dfgEntry {
     "Fabric.Exts.FileIO.Func.String" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/FileIO/FileTime.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/FileIO/FileTime.html",
         "uiTooltip" : "returns the time as a string, in the format \"YYYY-MM-DD HH-MM-SS\"\n\n Supported by FileTime,FilePath"
         },
       "title" : "String",
@@ -5967,7 +6092,7 @@ dfgEntry {
     "Fabric.Exts.FileIO.FilePath.ExpandEnvVars" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/FileIO/FilePath.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/FileIO/FilePath.html",
         "uiTooltip" : "expands all contained env vars in the FilePath. Env vars have to be specified as ${VARIABLE}\n\n\n Supported by FilePath"
         },
       "title" : "ExpandEnvVars",
@@ -6008,7 +6133,7 @@ dfgEntry {
     "Fabric.Exts.FileIO.FilePath.FilePath" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/FileIO/FilePath.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/FileIO/FilePath.html",
         "uiTooltip" : "standard constructor from string\n\n Supported by FilePath"
         },
       "title" : "FilePath",
@@ -6043,6 +6168,134 @@ dfgEntry {
 
 dfgEntry {
   result = FilePath(value);
+}
+"
+      },
+    "Fabric.Core.Logic.Not" : {
+      "objectType" : "Func",
+      "title" : "Not !",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "value",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Boolean"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "B8FE3CDCF84BBE1B3A07C80E724FB147",
+      "code" : "
+dfgEntry {
+	result = !value;
+}
+"
+      },
+    "Fabric.Exts.Util.String.Concat" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "returns this + other\n\nSupported types:\n  this: String\n  other: String\n  result: String\n"
+        },
+      "title" : "Concat",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "this",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "other",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "String"
+          }
+        ],
+      "extDeps" : {
+        "Util" : "*"
+        },
+      "presetGUID" : "4B178940781A931CA14F10DA3FA75E26",
+      "code" : "require Util;
+
+dfgEntry {
+  result = this.concat(other);
+}
+"
+      },
+    "Fabric.Compounds.Debug.RaiseErrorIf" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiTooltip" : "Will report an error with the given message, if the given condition is true."
+        },
+      "title" : "RaiseErrorIf",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "condition",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "message",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "String" : ""
+            },
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "692367692FF1DF56BFDD920BD3A74F6F",
+      "code" : "dfgEntry {
+  if( condition ) { setError( message ); }
 }
 "
       },
@@ -7219,7 +7472,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Xfo.html"
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/Math/Xfo.html"
         },
       "title" : "Xfo[]",
       "ports" : [
@@ -7593,7 +7846,7 @@ dfgEntry {
     "Fabric.Exts.InlineDrawing.DrawingHandle.DrawAxesInstances" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
         "uiTooltip" : "helper function to draw axes at given transforms\n\n Supported by DrawingHandle"
         },
       "title" : "DrawAxesInstances",
@@ -7655,7 +7908,7 @@ dfgEntry {
       "code" : "require InlineDrawing;
 
 dfgEntry {
-  this.drawAxesInstances(name, transforms, dummyResult, instance);
+  if(this) this.drawAxesInstances(name, transforms, dummyResult, instance);
 }
 "
       },
@@ -7772,7 +8025,7 @@ dfgEntry {
     "Fabric.Exts.Geometry.Points.Points" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Geometry/Points.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/Geometry/Points.html",
         "uiTooltip" : "Constructor taking the string to be used as the name.\n\n Supported by Points"
         },
       "title" : "Points",
@@ -7816,7 +8069,7 @@ dfgEntry {
     "Fabric.Exts.Geometry.Func.Clear" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Geometry/GeometryAttributes.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/Geometry/GeometryAttributes.html",
         "uiTooltip" : "Removes all attributes, and resets attribute value array sizes to 0.\n\n Supported by GeometryAttributes,BaseGeometry,Points,Lines,PolygonMesh"
         },
       "title" : "Clear",
@@ -7850,7 +8103,7 @@ dfgEntry {
     "Fabric.Exts.Geometry.Points.Resize" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Geometry/Points.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/Geometry/Points.html",
         "uiTooltip" : "Changes the number of points, adding or truncating the last ones.\n\n Supported by Points"
         },
       "title" : "Resize",
@@ -9091,7 +9344,7 @@ dfgEntry {
       "objectType" : "Func",
       "metadata" : {
         "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.3.0/HTML/KLExtensionsGuide/Math/Color.html",
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.4.0/HTML/KLExtensionsGuide/Math/Color.html",
         "uiTooltip" : "Constructor from rgba Scalar components\n\n Supported by Color"
         },
       "title" : "Color[]",
@@ -9280,6 +9533,12 @@ dfgEntry {
 "
       }
     },
+  "bindingLoadDiags" : [
+    {
+      "desc" : "Unable to decode value for argument 'kernel': 'RadialBasisKernel': type not registered",
+      "diagIndex" : 3
+      }
+    ],
   "args" : [
     {
       "type" : "DrawingHandle",
@@ -9287,8 +9546,8 @@ dfgEntry {
       "ext" : "InlineDrawing"
       },
     {
-      "type" : "RadialBasisKernel",
-      "value" : 3
+      "type" : "RadialBasis::RadialBasisKernel",
+      "value" : 0
       },
     {
       "type" : "UInt32",
@@ -9309,6 +9568,10 @@ dfgEntry {
     {
       "type" : "Float32[]",
       "value" : null
+      },
+    {
+      "type" : "String",
+      "value" : "V:/oculusstorystudio/kraken/Exts/OSS/RBF/Samples/04_RadialBasisSolver_Weights.abc"
       }
     ]
   }
