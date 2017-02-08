@@ -376,6 +376,7 @@ class Builder(Builder):
         elif isinstance(item['sceneItem'], Constraint):
 
             constraint = item['sceneItem']
+
             item['solveCode'] += ["", "// solving inputs for %s constraint %s" % (constraint.__class__.__name__, self.getUniqueName(constraint))]
             if self.__debugMode:
                 item['solveCode'] += ["report(\"solving %s constraint %s\");" % (constraint.__class__.__name__, self.getUniqueName(constraint))]
@@ -389,7 +390,11 @@ class Builder(Builder):
                     item['solveCode'] += ["this.%s();" % (self.getSolveMethodName(constrainerItem['sceneItem']))]
                 item['solveCode'] += ['this.%s.constrainers[%d] = this.%s.global;' % (member, i, constrainerItem['member'])]
             constraineeItem = self.findKLObject(item['constrainee'])
+            if self.__profilingFrames > 0:
+                item['solveCode'] += ["{ AutoProfilingEvent scopedEvent(\"%s.compute\");" % (constraint.__class__.__name__)]
             item['solveCode'] += ['this.%s.global = this.%s.compute(this.%s.global);' % (constraineeItem['member'], item['member'], constraineeItem['member'])]
+            if self.__profilingFrames > 0:
+                item['solveCode'] += ["}"]
 
 
         elif isinstance(item['sceneItem'], KLOperator):
@@ -397,7 +402,8 @@ class Builder(Builder):
             sourceSolver = item
             kOperator = sourceSolver['sceneItem']
             sourceMember = sourceSolver['member']
-            sourceName = self.getUniqueName(kOperator)
+            solverName = sourceSolver['buildName']
+            solveMethodName = self.getSolveMethodName(kOperator)
             eventSolverName = sourceMember.replace('[', '').replace(']', '')
             args = kOperator.getSolverArgs()
 
@@ -405,11 +411,11 @@ class Builder(Builder):
                 logger.debug(indent+"sourceSolver: %s for item %s" % (sourceSolver['member'], item['member']))
             sourceSolver['visited'] = True
 
-            item['solveCode'] += ["", "// solving KLSolver %s" % (sourceName)]
+            item['solveCode'] += ["", "// solving KLSolver %s" % (solverName)]
             if self.__debugMode:
-                item['solveCode'] += ["report(\"solving KLSolver %s\");" % (sourceName)]
+                item['solveCode'] += ["report(\"solving KLSolver %s\");" % (solverName)]
             if self.__profilingFrames > 0:
-                item['solveCode'] += ["{ AutoProfilingEvent solverEvent_%s(\"%s\");" % (eventSolverName, sourceSolver['buildName'])]
+                item['solveCode'] += ["{ //AutoProfilingEvent solverEvent_%s(\"%s\");" % (solveMethodName, solveMethodName)]
 
             def getSolveCodeForConstantValue(argMember, argDataType, value):
                 code = []
@@ -553,7 +559,7 @@ class Builder(Builder):
                     item['solveCode'] += ["report(\"arg %s \" + this.%s);" % (argName, argMember)]
 
             if self.__profilingFrames > 0:
-                item['solveCode'] += ["{ AutoProfilingEvent scopedEvent(\"%s.solve\");" % (eventSolverName)]
+                item['solveCode'] += ["{ AutoProfilingEvent scopedEvent(\"%s.solve\");" % (sourceSolver["type"])]
 
             item['solveCode'] += ["this.%s.solve(" % sourceMember]
             for i in xrange(len(args)):
@@ -641,6 +647,7 @@ class Builder(Builder):
                 argMember = self.getUniqueArgMember(solver['sceneItem'], argName, argDataType)
 
         kl = []
+        kl += ["require Util;"]
         kl += ["require Math;"]
         kl += ["require Geometry;"]
         kl += ["require Kraken;"]
@@ -659,6 +666,7 @@ class Builder(Builder):
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  Boolean useClip;"]
         kl += ["  UInt32 debugIter;"]
+        kl += ["  UInt32 profilingFrames;"]
         kl += ["  String solveDepthSpaces;"]
         kl += ["  UInt64 evalVersion;"]
         kl += ["  SInt32 directDriveJointIDs[%d];" % len(self.__klMembers['members']['KrakenJoint'])]  # IDs of joints with incoming direct drive mat44, otherwise -1
@@ -741,8 +749,6 @@ class Builder(Builder):
 
         kl += ["inline function %s.evaluate!(KrakenClipContext context) {" % self.getKLExtensionName()]
         if self.__profilingFrames > 0:
-            kl += ["  if(this.profilingFrame == 0)"]
-            kl += ["    report(\"*** START %s RIG PROFILING\");" % self.getKLExtensionName()]
             kl += ["  if(this.profilingFrame >= 0)"]
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
             kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
@@ -765,14 +771,17 @@ class Builder(Builder):
         kl += ["}", ""]
 
         kl += ["inline function %s.evaluate!(KrakenClipContext context, io Mat44 joints<>) {" % self.getKLExtensionName()]
+        kl += [""]
         if self.__profilingFrames > 0:
             kl += ["  if(this.profilingFrame == 0)"]
             kl += ["    report(\"*** START %s RIG PROFILING\");" % self.getKLExtensionName()]
             kl += ["  if(this.profilingFrame >= 0)"]
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
             kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
+        kl += [""]
         kl += ["  if(joints.size() != %d)" % len(self.__krkDeformers)]
         kl += ["    throw(\"%s.evaluate: Expected number of joints does not match (\"+joints.size()+\" given, %d expected).\");" % (self.getKLExtensionName(), len(self.__krkDeformers))]
+        kl += [""]
         kl += ["  if(this.useClip && this.clip != null) {"]
         if self.__profilingFrames > 0:
             kl += ["    AutoProfilingEvent scopedEvent(\"%s.clip.apply\");" % self.getKLExtensionName()]
@@ -780,41 +789,53 @@ class Builder(Builder):
         kl += ["    this.clip.apply(rig, context, 1.0);"]
         kl += ["  }"]
         kl += [""]
-        kl += ["  // Set Direct Drive Xfo Values if any"]
-        kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
-        kl += ["    if (this.directDriveJointIDs[j] == -1)"]
-        kl += ["      continue;"]
-        kl += ["     this.setObject3DGlobalMat44ById(this.directDriveJointIDs[j], context.directDriveJoints[j]); "]
-        kl += ["     for (Count i=0; i < KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds.size(); i++)   // Hack"]
-        kl += ["       this.setObject3DGlobalMat44ById(KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i], context.directDriveJoints[j]);  // Hack"]
-        kl += ["    "]
+        kl += ["  {"]
+        if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.evaluate:SettingDirectDriveJoints\");" % self.getKLExtensionName()]
+        kl += ["    // Set Direct Drive Xfo Values if any"]
+        kl += ["    for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
+        kl += ["      if (this.directDriveJointIDs[j] == -1)"]
+        kl += ["        continue;"]
+        kl += ["       this.setObject3DGlobalMat44ById(this.directDriveJointIDs[j], context.directDriveJoints[j]); "]
+        kl += ["       for (Count i=0; i < KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds.size(); i++)   // Hack"]
+        kl += ["         this.setObject3DGlobalMat44ById(KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i], context.directDriveJoints[j]);  // Hack"]
+        kl += ["      "]
+        kl += ["    }"]
         kl += ["  }"]
-        kl += ["  // Again, set the direct drive joints to be clean because the setObject3DGlobalMat44ById may have dirtied some"]
-        kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
-        kl += ["    if (this.directDriveJointIDs[j] == -1)"]
-        kl += ["      continue;"]
-        kl += ["    if (this.debugIter)"]
-        kl += ["        report(\"Debug: %s.evaluate() : this.isItemDirty[this.directDriveJointIDs[\"+j+\"]] = false; // \"+this._KrakenItem[this.directDriveJointIDs[j]].name);" % (self.getKLExtensionName())]
-        kl += ["    this.isItemDirty[this.directDriveJointIDs[j]] = false;"]
-        kl += ["    for (Count i=0; i < KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds.size(); i++)   // Hack"]
-        kl += ["    {"]
+        kl += ["  {"]
+        if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.evaluate:SettingDDJointsCleanSecondTime\");" % self.getKLExtensionName()]
+        kl += ["    // Again, set the direct drive joints to be clean because the setObject3DGlobalMat44ById may have dirtied some"]
+        kl += ["    for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
+        kl += ["      if (this.directDriveJointIDs[j] == -1)"]
+        kl += ["        continue;"]
         kl += ["      if (this.debugIter)"]
-        kl += ["        report(\"Debug: %s.evaluate() : this.isItemDirty[this._KrakenItem[this.directDriveJointIDs[\"+j+\"]].identicalSourceObject3DUniquIds[\"+i+\"]]= false; // \"+this._KrakenItem[KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i]].name);" % (self.getKLExtensionName())]
-        kl += ["      this.isItemDirty[KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i]] = false;;  // Hack"]
+        kl += ["          report(\"Debug: %s.evaluate() : this.isItemDirty[this.directDriveJointIDs[\"+j+\"]] = false; // \"+this._KrakenItem[this.directDriveJointIDs[j]].name);" % (self.getKLExtensionName())]
+        kl += ["      this.isItemDirty[this.directDriveJointIDs[j]] = false;"]
+        kl += ["      for (Count i=0; i < KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds.size(); i++)   // Hack"]
+        kl += ["      {"]
+        kl += ["        if (this.debugIter)"]
+        kl += ["          report(\"Debug: %s.evaluate() : this.isItemDirty[this._KrakenItem[this.directDriveJointIDs[\"+j+\"]].identicalSourceObject3DUniquIds[\"+i+\"]]= false; // \"+this._KrakenItem[KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i]].name);" % (self.getKLExtensionName())]
+        kl += ["        this.isItemDirty[KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i]] = false;;  // Hack"]
+        kl += ["      }"]
         kl += ["    }"]
         kl += ["  }"]
         kl += [""]
+        kl += ["  {"]
+        if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.evaluate:SetDirectDriveAttributeValues\");" % self.getKLExtensionName()]
         kl += ["  // Set Direct Drive Attribute Values if any.  directDriveAttrValues[] order is same as setScalarAttributeById order"]
         kl += ["  Index i =0;"]
         kl += ["  for (name, index in this.directDriveAttrs)  //Should iterate in insert order"]
         kl += ["    this.setScalarAttributeById(index, this.directDriveAttrValues[i]);"]
+        kl += ["  }"]
         kl += [""]
         kl += ["  this.solve(context);  // Let's do this"]
         kl += [""]
         if len(self.__krkDeformers) > 0:
             kl += ["  {"]
             if self.__profilingFrames > 0:
-                kl += ["    AutoProfilingEvent scopedEvent(\"%s.transferingJoints\");" % self.getKLExtensionName()]
+                kl += ["    AutoProfilingEvent scopedEvent(\"%s.evaluate:transferingJoints\");" % self.getKLExtensionName()]
             kl += ["    for(Size j=0;j<%d;j++)" % len(self.__krkDeformers)]
             kl += ["      joints[j] = this._KrakenJoint[j].global;"]
             kl += ["  }"]
@@ -1006,8 +1027,8 @@ class Builder(Builder):
         kl += ["inline function %s.init!() {" % self.getKLExtensionName()]
         kl += ["    this.useClip = true;"]
         kl += ["    this.debugIter = 0;"]
-        if self.__profilingFrames > 0:
-            kl += ["    this.profilingFrame = -1;"]
+        kl += ["    this.profilingFrames = %d;" % self.__profilingFrames]
+        kl += ["    this.profilingFrame = -1;"]
         kl += ["    this.solveDepthSpaces = \"\";"]
         kl += ["  Float32 floatAnimation[String];"]
         kl += [""]
@@ -1153,10 +1174,20 @@ class Builder(Builder):
         kl += ["  this.buildItemDict();"]
         kl += ["}", ""]
 
+        kl += ["inline function %s.setProfilingFrames!(UInt32 numFrames) {" % self.getKLExtensionName()]
         if self.__profilingFrames > 0:
-            kl += ["inline function %s.startProfilingFrames!() {" % self.getKLExtensionName()]
+            kl += ["  this.profilingFrames = numFrames;"]
+        else:
+            kl += ["  report(\"*** %s.setProfilingFrames: RIG NOT BUILT WITH PROFILING CODE\");" % self.getKLExtensionName()]
+        kl += ["}", ""]
+
+        kl += ["inline function %s.startProfilingFrames!() {" % self.getKLExtensionName()]
+        if self.__profilingFrames > 0:
+            kl += ["  report(\"*** START %s RIG PROFILING\");" % self.getKLExtensionName()]
             kl += ["  this.profilingFrame = 0;"]
-            kl += ["  StartFabricProfilingFrames(%d);" % (self.__profilingFrames+1)]
+            kl += ["  StartFabricProfilingFrames(this.profilingFrames+1);"]
+        else:
+            kl += ["  report(\"*** %s.startProfilingFrames RIG NOT BUILT WITH PROFILING CODE\");" % self.getKLExtensionName()]
         kl += ["}", ""]
 
 
@@ -1437,29 +1468,97 @@ class Builder(Builder):
         # kl += ["}", ""]
 
         if self.__profilingFrames > 0:
+            kl += [""]
+            kl += ["inline function %s.populateOrderedEvents!(String eventName, io String sortedEvents[], String combinedEventsChildren[String][])" % self.getKLExtensionName()]
+            kl += ["{"]
+            kl += ["   sortedEvents.push(eventName);"]
+            kl += [""]
+            kl += ["   for (Count i=0; i<combinedEventsChildren[eventName].size(); i++)"]
+            kl += ["   {"]
+            kl += ["      this.populateOrderedEvents(combinedEventsChildren[eventName][i], sortedEvents, combinedEventsChildren);"]
+            kl += ["   }"]
+            kl += ["}"]
+            kl += [""]
             kl += ["inline function %s.processProfiling!() {" % self.getKLExtensionName()]
-            kl += ["  if(this.profilingFrame != %s)" % self.__profilingFrames]
+            kl += ["  if(this.profilingFrame != this.profilingFrames)"]
             kl += ["    return;"]
             kl += ["  this.profilingFrame = -1;"]
             kl += ["  report(\"*** END %s RIG PROFILING\");" % self.getKLExtensionName()]
+            kl += [""]
             kl += ["  ProfilingEvent events[] = GetProfilingEvents();"]
             kl += ["  if(events.size() == 0)"]
             kl += ["    return;"]
-            kl += ["  report(events);"]
-            kl += ["  ProfilingEvent combinedEvents[](events.size() / %d);" % self.__profilingFrames]
-            kl += ["  for(Size i=0;i<events.size();i++) {"]
-            kl += ["    if(i < combinedEvents.size()) {"]
-            kl += ["      combinedEvents[i] = events[i];"]
-            kl += ["    } else {"]
-            kl += ["      combinedEvents[i % combinedEvents.size()].duration += events[i].duration;"]
-            kl += ["    }"]
+            kl += [""]
+            kl += ["  // Documentation says events are not returend in order, but for now let's assume they are..."]
+            kl += ["  ProfilingEvent combinedEvents[String];"]
+            kl += ["  String combinedEventsChildren[String][];"]
+            kl += ["  // Slower, but more flexible"]
+            kl += ["  // We assume every event type happens on every frame"]
+            kl += [""]
+
+            kl += ["     String previousEvent = \"\";"]
+            kl += ["     String ancestors[];"]
+            kl += ["     Count currentLevel = 0;"]
+            kl += ["     for(Size i=0;i<events.size();i++)"]
+            kl += ["     {"]
+            kl += ["  "]
+            kl += ["      if (events[i].level > currentLevel)"]
+            kl += ["      {"]
+            kl += ["       ancestors.push(previousEvent);"]
+            kl += ["      }"]
+            kl += ["      else if (events[i].level < currentLevel)"]
+            kl += ["      {"]
+            kl += ["       for (Count l=0; l < (currentLevel - events[i].level); l++)"]
+            kl += ["        ancestors.pop();"]
+            kl += ["      }"]
+            kl += ["  "]
+            kl += ["      if (combinedEvents.has(events[i].label))"]
+            kl += ["      {"]
+            kl += ["       combinedEvents[events[i].label].duration += events[i].duration;"]
+            kl += ["      }"]
+            kl += ["      else"]
+            kl += ["      {"]
+            kl += ["       combinedEvents[events[i].label] = ProfilingEvent(events[i]);  // keeps properties of first instance"]
+            kl += ["       String temp[];  // is there another way to create an empty string array?"]
+            kl += ["       combinedEventsChildren[events[i].label] = temp;"]
+            kl += ["       if (ancestors.size())"]
+            kl += ["        combinedEventsChildren[ancestors[ancestors.size()-1]].push(events[i].label);"]
+            kl += ["       report(\"combinedEventsChildren:\"+combinedEventsChildren);"]
+            kl += ["      }"]
+            kl += ["      currentLevel = events[i].level;"]
+            kl += ["      previousEvent = events[i].label;"]
+            kl += ["     }"]
+            kl += ["  "]
+            kl += ["     for (eventName, children in combinedEventsChildren)"]
+            kl += ["     {"]
+            kl += ["      for(Count i=0; i < children.size(); i++)"]
+            kl += ["      {"]
+            kl += ["       Count j = i;"]
+            kl += ["       while (j > 0 && combinedEvents[children[j-1]].duration < combinedEvents[children[j]].duration)"]
+            kl += ["       {"]
+            kl += ["        children.swap(j, j-1);"]
+            kl += ["        j -= 1;"]
+            kl += ["       }"]
+            kl += ["      }"]
+            kl += ["     }"]
+            kl += ["     report(combinedEventsChildren);"]
+            kl += [""]
+            kl += ["   String orderedEventNames[];"]
+            kl += ["   this.populateOrderedEvents(\"KRK_lucy.evaluate\", orderedEventNames, combinedEventsChildren);"]
+            kl += [""]
+            kl += ["  ProfilingEvent sortedEvents[];"]
+            kl += ["  for(Count i=0; i < orderedEventNames.size(); i++)"]
+            kl += ["  {"]
+            kl += ["    sortedEvents.push(combinedEvents[orderedEventNames[i]]);"]
             kl += ["  }"]
-            kl += ["  String profilingReport;"]
-            kl += ["  for(Size i=0;i<combinedEvents.size();i++) {"]
-            kl += ["    combinedEvents[i].duration /= %d.0;" % self.__profilingFrames]
-            kl += ["    for( Size j = 0; j < combinedEvents[i].level; ++j )"]
+            kl += [""]
+            kl += ["  String profilingReport = \"%s Profiling Report:\\n\";" % self.getKLExtensionName()]
+            kl += ["  for(Count i=0; i < sortedEvents.size(); i++)"]
+            kl += ["  {"]
+            kl += ["    sortedEvents[i].duration /= %d.0;" % self.__profilingFrames]
+            kl += ["    for( Size j = 0; j < sortedEvents[i].level; ++j )"]
             kl += ["      profilingReport += '  ';"]
-            kl += ["    Float64 durationms = Scalar(combinedEvents[i].duration)*1000.0;"]
+            kl += ["    Float64 durationms = Scalar(sortedEvents[i].duration)*1000.0;"]
             kl += ["    Size ms = Size(durationms);"]
             kl += ["    durationms -= Float64(ms) / 1000.0;"]
             kl += ["    durationms *= 9999.99;"]
@@ -1471,8 +1570,10 @@ class Builder(Builder):
             kl += ["      msfractStr = \"0\" + msfractStr;"]
             kl += ["    if(durationms < 10)"]
             kl += ["      msfractStr = \"0\" + msfractStr;"]
-            kl += ["    profilingReport += combinedEvents[i].label + \": duration=\"+ms+\".\"+msfractStr+\" ms\\n\";"]
+            kl += ["    profilingReport += sortedEvents[i].label + \": duration=\"+ms+\".\"+msfractStr+\" ms\\n\";"]
             kl += ["  }"]
+            kl += [""]
+
 
             if self.__profilingLogFile:
                 kl += ["  TextWriter writer(\"%s\");" % self.__profilingLogFile.replace('\\', '/')]
@@ -1484,6 +1585,7 @@ class Builder(Builder):
 
             kl += ["  StopFabricProfiling();"]
             kl += ["}"]
+
 
         return "\n".join(kl)
 
