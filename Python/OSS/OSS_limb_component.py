@@ -883,6 +883,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.evalOperators()
 
+        """
         self.uplimbRBFWeightSolver = KLOperator(self.uplimbName, 'OSS_RBFWeightSolver', 'OSS_Kraken')
         self.addOperator(self.uplimbRBFWeightSolver)
         # Add Att Inputs
@@ -922,6 +923,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # Add weight attr Outputs
         self.uplimbRBFWeightSolver.setOutput('weights', poseAttrs)
 
+        """
         self.tagAllComponentJoints([self.getDecoratedName()] + (self.tagNames or []))
 
 
