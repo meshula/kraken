@@ -1181,7 +1181,7 @@ class Builder(Builder):
 
         kl += ["inline function %s.startProfilingFrames!() {" % self.getKLExtensionName()]
         if self.__profilingFrames > 0:
-            kl += ["  report(\"*** START %s RIG PROFILING\");" % self.getKLExtensionName()]
+            kl += ["  report(\"*** START %s RIG PROFILING FOR \"+ this.profilingFrames +\" Frames\");" % self.getKLExtensionName()]
             kl += ["  this.profilingFrame = 0;"]
             kl += ["  StartFabricProfilingFrames(this.profilingFrames+1);"]
         else:
