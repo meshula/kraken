@@ -1,0 +1,91 @@
+require Kraken;
+require RadialBasis;
+
+object OSS_RBFWeightSolver : KrakenSolver {
+  Boolean initialized;
+  RadialBasisSolver rbf;
+  RadialBasisArray driverArray;
+  Quat quats[];  // temp
+};
+
+// Default Constructor
+function OSS_RBFWeightSolver()
+{
+  this.initialized = false;
+
+  Mat44 defaultPoses[];
+  Mat44 defaultDrivers[];
+  Mat44 defaultDriverParents[];
+
+  this.defaultValues["kernel"] = RadialBasisKernel_Multiquadric;
+  this.defaultValues["keyType"] = 3;  // Quat / Color  NOTE: Make consts for these, too
+  this.defaultValues["valueType"] = 3;  // Quat / Color  NOTE: Should remove this
+  this.defaultValues["epsilon"] = -1.0;  // Magic
+  this.defaultValues["poses"] = defaultPoses;
+  this.defaultValues["drivers"] = defaultDrivers;
+  this.defaultValues["drivers"] = defaultDriverParents;
+}
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_RBFWeightSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+
+  args.push(KrakenSolverArg('kernel', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('keyType', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('valueType', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('epsilon', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('poses', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('drivers', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('driverParents', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('weights', 'Out', 'Scalar[]'));
+  return args;
+}
+
+
+// Solve
+function OSS_RBFWeightSolver.solve!
+(
+  in RadialBasisKernel kernel,
+  in UInt32 keyType,
+  in UInt32 valueType,
+  in Scalar epsilon,
+  in Mat44 poses[],  // Can only be xfos for now... usually around 3 - 8
+  in Mat44 drivers[],  // Can be mutliple xfos, but most cases there will be just a single measured input (e.g. uparm bone)
+  in Mat44 driverParents[],  // Can be mutliple xfos, but most cases there will be just a single measured input (e.g. uparm bone)
+  out Scalar weights[], // One scalar weight for each pose
+)
+{
+
+  if (drivers.size() != driverParents.size())
+    throw("Error in OSS_RBFWeightSolver.solve(). The number of drivers ("+drivers.size()+") must equal the number of driverParents ("+driverParents.size()+")");
+
+
+  if (!this.initialized)  // Assume for now that we cannot change any input other than drivers
+    this.rbf = RadialBasisSolver(kernel, keyType, valueType, epsilon);
+
+    RadialBasisArray keys;
+    this.quats.resize(0);
+    for (Count i=0; i<poses.size(); i++)
+    {
+      this.quats.push(Xfo(poses[i]).ori);
+    }
+    keys.setFromQuat(this.quats);
+
+    // We shouldn't need to set pairs for a weight solve.  Fix this
+    // The second argument below should be "values" wich is the data interpolated, but we are only solving for weights.  Fix this
+    this.rbf.setPairs(keys, keys);
+
+    this.driverArray.resize(drivers.size());  // Get ready for solve
+    this.initialized = true;
+
+  this.quats.resize(0);
+  for (Count i=0; i<drivers.size(); i++)
+  {
+    this.quats.push(Xfo(drivers[i]).ori);
+  }
+  this.driverArray.setFromQuat(this.quats);
+
+  weights = this.rbf.solveWeights(this.driverArray).toFloat32();
+
+}
+

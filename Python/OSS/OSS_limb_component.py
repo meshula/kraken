@@ -883,6 +883,45 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.evalOperators()
 
+        self.uplimbRBFWeightSolver = KLOperator(self.uplimbName, 'OSS_RBFWeightSolver', 'OSS_Kraken')
+        self.addOperator(self.uplimbRBFWeightSolver)
+        # Add Att Inputs
+        self.uplimbRBFWeightSolver.setInput('drawDebug', self.drawDebugInputAttr)
+        self.uplimbRBFWeightSolver.setInput('rigScale', self.rigScaleInputAttr)
+        # Add Xfo Inputs
+        self.uplimbRBFWeightSolver.setInput('kernel', 0)  # RadialBasisKernel_Multiquadric
+        self.uplimbRBFWeightSolver.setInput('keyType', 3)  # Quat / Color
+        self.uplimbRBFWeightSolver.setInput('valueType', 3)  #  Quat / Color  NOTE: Should remove this
+        self.uplimbRBFWeightSolver.setInput('epsilon', -1)
+        self.uplimbRBFWeightSolver.setInput('drivers', [self.uplimbDef])
+        self.uplimbRBFWeightSolver.setInput('driverParents', [self.uplimbDef.getParent()])
+
+        rbfAttrGroup = AttributeGroup("RBF", parent=self.uplimbDef)
+        eulerPoses = [
+            [0, 0, 90],  # down
+            [0, 0, -90],  # up
+            [90, 0, 0],  # forward
+            [-90, 0, 0],  # back
+        ]
+        xfoPoses = []
+        poseAttrs = []
+        for i, eulerPose in enumerate(eulerPoses):
+            xfo = Xfo()
+            xfo.ori.setFromEulerAnglesWithRotOrder(
+                Vec3(
+                    Math_degToRad(eulerPose[0]),
+                    Math_degToRad(eulerPose[1]),
+                    Math_degToRad(eulerPose[2])),
+                self.uplimbDef.ro)
+            xfoPoses.append(xfo)
+            poseAttrs.append(ScalarAttribute(self.uplimbName+"_RBF"+str(i), value=0.0, parent=rbfAttrGroup))
+
+
+        self.uplimbRBFWeightSolver.setInput('poses', xfoPoses)
+
+        # Add weight attr Outputs
+        self.uplimbRBFWeightSolver.setOutput('weights', poseAttrs)
+
         self.tagAllComponentJoints([self.getDecoratedName()] + (self.tagNames or []))
 
 
