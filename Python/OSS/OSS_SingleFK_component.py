@@ -222,7 +222,7 @@ class OSSSingleFKRig(OSSSingleFK):
         self.selfAttachWidget.getVisibilityAttr().connect(self.ctrlShapeToggle)
 
         # Add Spine Canvas Op
-        self.alignSpacesKLOp = KLOperator('SingleFKAlign', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
+        self.alignSpacesKLOp = KLOperator(self.getName()+'_SingleFKAlign', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
         self.addOperator(self.alignSpacesKLOp)
 
         self.alignSpaces = []
