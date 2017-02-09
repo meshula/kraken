@@ -146,6 +146,17 @@ inline RadialBasisSolver(RadialBasisKernel kernel, UInt32 keyType, UInt32 valueT
   this.invalidate();
 }
 
+// Use when solving for weights, not interpolating values
+function RadialBasisSolver.pushKeys!(RadialBasisArray keys)
+{
+  if(keys.size() % this.keyCols > 0) {
+    report('keys size has to be a multiple of '+this.keyCols);
+    return;
+  }
+  this.pM.pushRowArray(keys);
+  this.invalidate();
+}
+
 function RadialBasisSolver.pushPairs!(RadialBasisArray keys, RadialBasisArray values) {
   if(keys.size() % this.keyCols > 0) {
     report('keys size has to be a multiple of '+this.keyCols);
@@ -155,10 +166,23 @@ function RadialBasisSolver.pushPairs!(RadialBasisArray keys, RadialBasisArray va
     report('values size has to be a multiple of '+this.valueCols);
     return;
   }
-
   this.pM.pushRowArray(keys);
   this.fM.pushRowArray(values);
   this.invalidate();
+}
+
+// Use when solving for weights, not interpolating values
+function RadialBasisSolver.setKeys!(RadialBasisArray keys) {
+  if(this.pM.matrix.size() == 0) {
+    this.pushKeys(keys);
+  } else {
+    if(keys.size() != this.pM.matrix.size()) {
+      report('keys size has to be '+this.pM.matrix.size());
+      return;
+    }
+    this.pM.matrix = keys;
+    this.invalidate();
+  }
 }
 
 function RadialBasisSolver.setPairs!(RadialBasisArray keys, RadialBasisArray values) {
@@ -179,6 +203,14 @@ function RadialBasisSolver.setPairs!(RadialBasisArray keys, RadialBasisArray val
     this.invalidate();
   }
 }
+
+// Use when solving for weights, not interpolating values
+function RadialBasisSolver.clearKeys!() {
+  this.aM = null;
+  this.pM = RadialBasisMatrix(0, this.keyCols);
+  this.invalidate();
+}
+
 
 function RadialBasisSolver.clearPairs!() {
   this.aM = null;
@@ -310,12 +342,12 @@ private function RadialBasisSolver.invalidate!()
     this.epsilon = -1.0;
 }
 
-private function RadialBasisSolver.init!()
+private function RadialBasisSolver.init!(Boolean solvingWeights)
 {
   if(this.successfullyInitialized)
     return;
-
-  if(this.pM.rows != this.fM.rows)
+  report("test: "+solvingWeights);
+  if(!solvingWeights && this.pM.rows != this.fM.rows)
   {
     report('RadialBasisSolver: cannot solve - number of keys does not match number of values.');
     return;
@@ -411,7 +443,7 @@ private function RadialBasisMatrix RadialBasisSolver.interpolate!(RadialBasisMat
 //
 //    Output:
 //      an array of interpolated values per coords points.
-  this.init();
+  this.init(false);  // not solvingWeights
   if(!this.successfullyInitialized)
     return RadialBasisMatrix();
 
@@ -454,7 +486,7 @@ private function RadialBasisMatrix RadialBasisSolver.interpolateWeights!(RadialB
 //
 //    Output:
 //      an array of interpolated values per coords points.
-  this.init();
+  this.init(true);  // solvingWeights
   if(!this.successfullyInitialized)
     return RadialBasisMatrix();
 
