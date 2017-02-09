@@ -418,6 +418,7 @@ operator RadialBasisSolver_InterpolatedWeightsTask(
     this.tempFi[col].f[j] = 0.0;
     for(UInt32 k = 0; k < m; k++)
       this.tempFi[col].f[j] += pow(xi.get(index, k) - xd.get(j, k), 2);
+    //this.tempFi[col].f[j] = this.distance(this.tempFi[col].f[j]);  How does kernal and epsilon fit in here?
 
     if(Math_badDivisor(this.tempFi[col].f[j]))
       this.tempFi[col].f[j] = BIGSCALAR_POSITIVE;
