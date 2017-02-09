@@ -346,7 +346,6 @@ private function RadialBasisSolver.init!(Boolean solvingWeights)
 {
   if(this.successfullyInitialized)
     return;
-  report("test: "+solvingWeights);
   if(!solvingWeights && this.pM.rows != this.fM.rows)
   {
     report('RadialBasisSolver: cannot solve - number of keys does not match number of values.');

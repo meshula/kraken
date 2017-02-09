@@ -5,12 +5,12 @@
     "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.1668761521577835,\n    \"y\" : -0.4299201369285584,\n    \"z\" : 0.8896346688270569,\n    \"t\" : 8.435722351074219\n    },\n  \"row1\" : {\n    \"x\" : -7.618701147293905e-06,\n    \"y\" : 0.8998016715049744,\n    \"z\" : 0.4371766149997711,\n    \"t\" : 5.967756271362305\n    },\n  \"row2\" : {\n    \"x\" : -0.9885280132293701,\n    \"y\" : -0.07258296012878418,\n    \"z\" : 0.1501783132553101,\n    \"t\" : 2.493302345275879\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "0",
     "timeline_loopMode" : "1",
-    "uiGraphZoom" : "{\n  \"value\" : 0.8344689607620239\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.6906013488769531\n  }",
     "timeline_simMode" : "0",
     "camera_focalDistance" : "10.29724025726318",
-    "timeline_current" : "50",
+    "timeline_current" : "34",
     "timeline_end" : "50",
-    "uiGraphPan" : "{\n  \"x\" : 623.8201904296875,\n  \"y\" : 537.6703491210938\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 654.862025659126,\n  \"y\" : 411.3898266767006\n  }"
     },
   "title" : "",
   "ports" : [
@@ -124,6 +124,16 @@
       "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "String"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiPersistValue" : "true"
+        },
+      "name" : "epsilon",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
       }
     ],
   "extDeps" : {},
@@ -3521,7 +3531,7 @@ dfgEntry {
       "objectType" : "Inst",
       "metadata" : {
         "uiComment" : "RBF Weights only",
-        "uiGraphPos" : "{\"x\":-211.42125988,\"y\":-228.95893383}",
+        "uiGraphPos" : "{\"x\":-381.639483571,\"y\":-254.623932004}",
         "uiCommentExpanded" : "true"
         },
       "name" : "RadialBasisSolver_1",
@@ -3569,7 +3579,8 @@ dfgEntry {
     ],
   "connections" : {
     "kernel" : [
-      "SinglePointRBFSolver.kernel"
+      "SinglePointRBFSolver.kernel",
+      "RadialBasisSolver_1.kernel"
       ],
     "input_count" : [
       "getFirstN.N"
@@ -3585,6 +3596,9 @@ dfgEntry {
       ],
     "filePath" : [
       "Load_1.filePath"
+      ],
+    "epsilon" : [
+      "SinglePointRBFSolver.epsilon"
       ],
     "EmptyDrawingHandle_1.handle" : [
       "DrawPoints_1.this"
@@ -10079,6 +10093,10 @@ dfgEntry {
     {
       "type" : "String",
       "value" : "V:/oculusstorystudio/kraken/Exts/OSS/RBF/Samples/04_RadialBasisSolver_Weights.abc"
+      },
+    {
+      "type" : "Float32",
+      "value" : -1
       }
     ]
   }

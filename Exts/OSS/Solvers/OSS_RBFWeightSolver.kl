@@ -6,6 +6,9 @@ object OSS_RBFWeightSolver : KrakenSolver {
   RadialBasisSolver rbf;
   RadialBasisArray driverArray;
   Quat quats[];  // temp
+  UInt32 kernelCache;
+  UInt32 epsilonCache;
+
 };
 
 // Default Constructor
@@ -16,14 +19,16 @@ function OSS_RBFWeightSolver()
   Mat44 defaultPoses[];
   Mat44 defaultDrivers[];
   Mat44 defaultDriverParents[];
+  Mat44 defaultDriverLocalOffsets[];
 
-  this.defaultValues["kernel"] = RadialBasisKernel_Multiquadric;
+  this.defaultValues["kernel"] = UInt32(RadialBasisKernel_Multiquadric);
   this.defaultValues["keyType"] = 3;  // Quat / Color  NOTE: Make consts for these, too
   this.defaultValues["valueType"] = 3;  // Quat / Color  NOTE: Should remove this
   this.defaultValues["epsilon"] = -1.0;  // Magic
   this.defaultValues["poses"] = defaultPoses;
   this.defaultValues["drivers"] = defaultDrivers;
   this.defaultValues["drivers"] = defaultDriverParents;
+  this.defaultValues["driverLocalOffsets"] = defaultDriverLocalOffsets;
 }
 
 // Return Arguments for Kraken
@@ -37,6 +42,7 @@ function KrakenSolverArg[] OSS_RBFWeightSolver.getArguments(){
   args.push(KrakenSolverArg('poses', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('drivers', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('driverParents', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('driverLocalOffsets', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('weights', 'Out', 'Scalar[]'));
   return args;
 }
@@ -45,23 +51,30 @@ function KrakenSolverArg[] OSS_RBFWeightSolver.getArguments(){
 // Solve
 function OSS_RBFWeightSolver.solve!
 (
-  in RadialBasisKernel kernel,
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in UInt32 kernel,
   in UInt32 keyType,
   in UInt32 valueType,
   in Scalar epsilon,
   in Mat44 poses[],  // Can only be xfos for now... usually around 3 - 8
   in Mat44 drivers[],  // Can be mutliple xfos, but most cases there will be just a single measured input (e.g. uparm bone)
   in Mat44 driverParents[],  // Can be mutliple xfos, but most cases there will be just a single measured input (e.g. uparm bone)
+  in Mat44 driverLocalOffsets[],  // Local offset from parent to generate default global space for driver.  Parent might be complete other orientation
   out Scalar weights[], // One scalar weight for each pose
 )
 {
 
   if (drivers.size() != driverParents.size())
     throw("Error in OSS_RBFWeightSolver.solve(). The number of drivers ("+drivers.size()+") must equal the number of driverParents ("+driverParents.size()+")");
+  if (drivers.size() != driverLocalOffsets.size())
+    throw("Error in OSS_RBFWeightSolver.solve(). The number of drivers ("+drivers.size()+") must equal the number of driverLocalOffsets ("+driverLocalOffsets.size()+")");
 
 
-  if (!this.initialized)  // Assume for now that we cannot change any input other than drivers
-    this.rbf = RadialBasisSolver(kernel, keyType, valueType, epsilon);
+  if (!this.initialized || kernel != this.kernelCache || epsilon != this.epsilonCache)
+  {
+    report("Creating new RBF Solver...");
+    this.rbf = RadialBasisSolver(RadialBasisKernel(kernel), keyType, valueType, epsilon);
 
     RadialBasisArray keys;
     this.quats.resize(0);
@@ -71,17 +84,20 @@ function OSS_RBFWeightSolver.solve!
     }
     keys.setFromQuat(this.quats);
 
-    // We shouldn't need to set pairs for a weight solve.  Fix this
-    // The second argument below should be "values" wich is the data interpolated, but we are only solving for weights.  Fix this
-    this.rbf.setPairs(keys, keys);
+    this.rbf.setKeys(keys);  // Don't set keys, values pairs.  We are solving for just weights
 
     this.driverArray.resize(drivers.size());  // Get ready for solve
-    this.initialized = true;
 
-  this.quats.resize(0);
+    this.kernelCache = kernel;
+    this.epsilonCache = epsilon;
+    this.initialized = true;
+  }
+
+  this.quats.resize(drivers.size());
   for (Count i=0; i<drivers.size(); i++)
   {
-    this.quats.push(Xfo(drivers[i]).ori);
+    Xfo defaultGlobalSpaceXfo = Xfo(driverParents[i] * driverLocalOffsets[i]);
+    this.quats[i] = ((defaultGlobalSpaceXfo.inverse() * Xfo(drivers[i])).ori);  // driver local xfo in default space
   }
   this.driverArray.setFromQuat(this.quats);
 
