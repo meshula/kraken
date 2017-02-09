@@ -61,6 +61,7 @@ class Control(Curve):
         if shape not in configShapes.keys():
             raise KeyError("'" + shape + "' is not a valid shape in the loaded config of class [" + config.__class__.__name__ + "]")
 
+        self.shape = shape
         self.setCurveData(configShapes[shape])
 
         return True
@@ -192,8 +193,8 @@ class Control(Curve):
         """Scales the point positions from it's center along the given axis only.
 
         Args:
-            scale: scale value to apply to the points.
-            scaleAxis: which axes to scale and by what direction
+            scale (float): scale value to apply to the points.
+            scaleAxis (str): which axes to scale and by what direction
 
         Returns:
             bool: True if successful.

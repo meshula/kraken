@@ -10,8 +10,10 @@ import logging
 
 from kraken.log import getLogger
 
+
 from kraken.core.configs.config import Config
 from kraken.core.objects.scene_item import SceneItem
+from kraken.core.maths import decodeValue
 from kraken.core.maths.xfo import Xfo
 from kraken.core.maths.rotation_order import RotationOrder
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
@@ -210,14 +212,14 @@ class Object3D(SceneItem):
         nameTemplate = config.getNameTemplate()
 
         # Get the token list for this type of object
-        format = None
+        nameFormat = None
         for typeName in nameTemplate['formats'].keys():
             if typeName in typeNameHierarchy:
-                format = nameTemplate['formats'][typeName]
+                nameFormat = nameTemplate['formats'][typeName]
                 break
 
-        if format is None:
-            format = nameTemplate['formats']['default']
+        if nameFormat is None:
+            nameFormat = nameTemplate['formats']['default']
 
         objectType = None
         for eachType in typeNameHierarchy:
@@ -231,7 +233,7 @@ class Object3D(SceneItem):
         # Generate a name by concatenating the resolved tokens together.
         builtName = ""
         skipSep = False
-        for token in format:
+        for token in nameFormat:
 
             if token is 'sep':
                 if not skipSep:
@@ -240,6 +242,8 @@ class Object3D(SceneItem):
             elif token is 'location':
                 if self.isTypeOf('Component'):
                     location = self.getLocation()
+                elif self.getComponent() is None:
+                    location = None
                 else:
                     component = self.getComponent()
                     if component is None:
@@ -251,7 +255,8 @@ class Object3D(SceneItem):
                     location = altLocation
 
                 if location not in nameTemplate['locations']:
-                    msg = "Invalid location on '{}'. Location: {}. Valid locations: {}".format(self.getPath(), location, nameTemplate['locations'])
+                    msg = "Invalid location on '{}'. Location: {}. Valid locations: {}"
+                    msg = msg.format(self.getPath(), location, nameTemplate['locations'])
                     raise ValueError(msg)
 
                 builtName += location
@@ -286,7 +291,7 @@ class Object3D(SceneItem):
 
             else:
                 raise ValueError("Unresolvabled token '" + token +
-                    "' used on: " + self.getPath())
+                                 "' used on: " + self.getPath())
 
         return builtName
 
@@ -1159,16 +1164,19 @@ class Object3D(SceneItem):
             'attributeGroups': [],
             'constraints': [],
             'xfo': self.xfo.jsonEncode(),
-            'color': self.getColor(),
-            'visibility': self._visibility,
-            'shapeVisibility': self._shapeVisibility,
         }
 
         if self.getParent() is not None:
             jsonData['parent'] = self.getParent().getName()
 
         if self.getColor() is not None:
-            jsonData['color'] = saver.encodeValue(self.getColor())
+            if type(self.getColor()) is tuple:
+                jsonData['color'] = self.getColor()
+            elif type(self.getColor()):
+                jsonData['color'] = self.getColor()
+
+        jsonData['visibility'] = self.getVisibilityAttr().jsonEncode(saver)
+        jsonData['shapeVisibility'] = self.getShapeVisibilityAttr().jsonEncode(saver)
 
         for child in self.getChildren():
             jsonData['children'].append(child.jsonEncode(saver))
@@ -1194,11 +1202,14 @@ class Object3D(SceneItem):
         """
 
         self._flags = jsonData['flags']
-        self.xfo = loader.decodeValue(jsonData['xfo'])
+        self.xfo = Xfo()
+        self.xfo.jsonDecode(jsonData['xfo'], decodeValue)
+
         if 'color' in jsonData and jsonData['color'] is not None:
-            self.setColor(loader.decodeValue(jsonData['color']))
-        self._visibility = jsonData['visibility']
-        self._shapeVisibility = jsonData['shapeVisibility']
+            self.color.jsonDecode(jsonData['color'], decodeValue)
+
+        self._visibility = loader.construct(jsonData['visibility'])
+        self._shapeVisibility = loader.construct(jsonData['shapeVisibility'])
 
         for child in jsonData['children']:
             self.addChild(loader.construct(child))

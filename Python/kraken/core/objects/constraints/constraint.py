@@ -214,6 +214,9 @@ class Constraint(SceneItem):
 
         """
 
+        if not isinstance(value, bool):
+            raise TypeError("Value is not of type 'bool': " + str(value))
+
         self._maintainOffset = value
 
     def setConstrainee(self, constrainee):
@@ -294,6 +297,11 @@ class Constraint(SceneItem):
             bool: True if successful.
 
         """
+
+        if index > len(self._constrainers):
+            raise IndexError("Index '{}' is out of range: {}".format(index, len(self._constrainers)))
+
+        del self._constrainers[index]
 
         return True
 
@@ -397,7 +405,7 @@ class Constraint(SceneItem):
 
         jsonData = {
             '__typeHierarchy__': classHierarchy,
-            'name': self.name,
+            'name': self._name,
             'constrainee': self._constrainee.getName(),
             'constrainers': []
         }

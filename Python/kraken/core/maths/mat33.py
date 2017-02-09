@@ -30,7 +30,7 @@ class Mat33(MathObject):
     def __str__(self):
         """Return a string representation of the 3x3 matrix."""
 
-        return "Mat33(" + str(self.row0) + "," + str(self.row1) + "," + str(self.row2) + ")"
+        return "Mat33(" + str(self.row0) + ", " + str(self.row1) + ", " + str(self.row2) + ")"
 
 
     @property
@@ -230,7 +230,7 @@ class Mat33(MathObject):
         return True
 
 
-    def setDiagonal(self, v):
+    def setDiagonalVec3(self, v):
         """Sets the diagonal components of this matrix to the components of a
         vector.
 

@@ -18,4 +18,3 @@ class HierarchyGroup(Object3D):
         self.lockRotation(True, True, True)
         self.lockScale(True, True, True)
         self.lockTranslation(True, True, True)
-

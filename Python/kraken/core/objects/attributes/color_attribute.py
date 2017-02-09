@@ -17,9 +17,9 @@ class ColorAttribute(Attribute):
 
         if value is None:
             value = {
-                'r': 0.5,
-                'g': 0.5,
-                'b': 0.5,
+                'r': 0.0,
+                'g': 0.0,
+                'b': 0.0,
                 'a': 1.0
             }
 
@@ -53,7 +53,6 @@ class ColorAttribute(Attribute):
         """
 
         return ks.rtVal('Color', self._value)
-
 
 
     def getDataType(self):

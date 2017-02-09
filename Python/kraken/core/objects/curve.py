@@ -44,6 +44,14 @@ class Curve(Object3D):
 
         """
 
+        dataErrorMsg = ("Curve Object '{}', sub-curve[{}] data does not contain "
+                        "required '{}' data.")
+
+        for i, subCurve in enumerate(data):
+            assert 'points' in subCurve, dataErrorMsg.format(self.getName(), str(i), 'points')
+            assert 'degree' in subCurve, dataErrorMsg.format(self.getName(), str(i), 'degree')
+            assert 'closed' in subCurve, dataErrorMsg.format(self.getName(), str(i), 'closed')
+
         self._data = copy.deepcopy(data)
 
         return True
@@ -61,6 +69,9 @@ class Curve(Object3D):
 
         """
 
+        if self._data is None:
+            raise ValueError("Curve object has no curve data to append to.")
+
         self._data += data
 
         return True
@@ -77,8 +88,9 @@ class Curve(Object3D):
 
         """
 
-        if index > len(self.getCurveData()):
-            raise IndexError("'" + str(index) + "' is out of the range of the 'data' array.")
+        if index > len(self.getCurveData()) - 1:
+            errMsg = "Invalid index [{}], out of the range [{}] of the 'data' array."
+            raise IndexError(errMsg.format(str(index), str(len(self.getCurveData()) - 1)))
 
         return True
 

@@ -36,9 +36,9 @@ class Color(MathObject):
             str: String representation of the Color object."""
 
         stringRep = "Color("
-        stringRep += str(self.r) + ","
-        stringRep += str(self.g) + ","
-        stringRep += str(self.b) + ","
+        stringRep += str(self.r) + ", "
+        stringRep += str(self.g) + ", "
+        stringRep += str(self.b) + ", "
         stringRep += str(self.a) + ")"
 
         return stringRep
@@ -242,7 +242,7 @@ class Color(MathObject):
                                        ks.rtVal('Scalar', precision)).getSimpleType()
 
 
-    def component(self, i ):
+    def component(self, i):
         """Gets the component of this Color by index.
 
         Args:
@@ -256,7 +256,7 @@ class Color(MathObject):
         return self._rtval.component('Scalar', ks.rtVal('Size', i)).getSimpleType()
 
 
-    def setComponent(self, i, v ):
+    def setComponent(self, i, v):
         """Sets the component of this Color by index.
 
         Args:

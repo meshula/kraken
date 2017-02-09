@@ -9,6 +9,7 @@ from kraken.core.objects.scene_item import SceneItem
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.attributes.attribute import Attribute
 
+
 class ComponentInputPort(SceneItem):
     """Component Input Object."""
 
@@ -36,6 +37,9 @@ class ComponentInputPort(SceneItem):
             bool: True if successful.
 
         """
+
+        # TODO: Need to implement data type validation!
+        # Currently can set to anything.
 
         self._dataType = dataType
 
@@ -75,11 +79,11 @@ class ComponentInputPort(SceneItem):
 
         return self._connection
 
-    def setConnection(self, connectionObj, index = 0):
+    def setConnection(self, connectionObj, index=0):
         """Sets the connection to the component output.
 
         Args:
-            connectionObj (ComponentOutput): Output object to connect to.
+            connectionObj (ComponentOutputPort): Output object to connect to.
 
         Returns:
             bool: True if successful.
@@ -87,11 +91,11 @@ class ComponentInputPort(SceneItem):
         """
 
         if connectionObj.getDataType() != self.getDataType() and connectionObj.getDataType()[:-2] != self.getDataType():
-            raise Exception("Data Type mismatch! Cannot connect '" +
-                connectionObj.getDataType() + "' to '" + self.getDataType())
+            raise TypeError("Data Type mismatch! Cannot connect '" +
+                            connectionObj.getDataType() + "' to '" + self.getDataType())
 
         if connectionObj is self.getConnection():
-            raise Exception("'connectionObj' is already set as the connection.")
+            raise ValueError("'connectionObj' is already set as the connection.")
 
         self._connection = connectionObj
         connectionObj._addConnection(self)
@@ -156,6 +160,8 @@ class ComponentInputPort(SceneItem):
         """
 
         self._target = target
+
+        return True
 
     def getTarget(self):
         """Returns the target of the input.
