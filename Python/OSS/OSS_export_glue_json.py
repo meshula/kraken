@@ -117,9 +117,6 @@ def export_glue_json(builder, filepath):
         else:
             offset = objects[object3D].xfo
 
-        #print("\nTTPrint: object3D: %s" % object3D)
-        #print("  TTPrint: offset: %s" % offset)
-
         constraint["tOffset"] = collections.OrderedDict([
             ("x", min_thresh(offset.tr.x)),
             ("y", min_thresh(offset.tr.y)),
