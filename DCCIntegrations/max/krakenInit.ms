@@ -5,9 +5,12 @@ dotNet.loadAssembly "System"
 env = dotNetClass "system.Environment"
 krakenPath = env.GetEnvironmentVariable "KRAKEN_PATH"
 
-krakeEnvScriptPath = krakenPath + "\DCCIntegrations\max\scripts\krakenEnv.py"
-krakeMenuScriptPath = krakenPath + "\DCCIntegrations\max\scripts\krakenMenu.py"
-
--- Execute Python startup modules
-python.ExecuteFile krakeEnvScriptPath
-python.ExecuteFile krakeMenuScriptPath
+if krakenPath != undefined do
+(
+    krakeEnvScriptPath = krakenPath + "\DCCIntegrations\max\scripts\krakenEnv.py"
+    krakeMenuScriptPath = krakenPath + "\DCCIntegrations\max\scripts\krakenMenu.py"
+    
+    -- Execute Python startup modules
+    python.ExecuteFile krakeEnvScriptPath
+    python.ExecuteFile krakeMenuScriptPath
+)
