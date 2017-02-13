@@ -6,8 +6,12 @@ object OSS_RBFWeightSolver : KrakenSolver {
   RadialBasisSolver rbf;
   RadialBasisArray driverArray;
   Quat quats[];  // temp
-  UInt32 kernelCache;
-  UInt32 epsilonCache;
+  Vec3 vec3s[];  // temp
+  UInt32 kernel;
+  Scalar epsilon;
+  Boolean useTwist;
+  UInt32 twistAxis;// 0=X, 1=Y, 2=Z  Only if useTwist
+  Vec3 twistAxisVec;
 
 };
 
@@ -23,7 +27,9 @@ function OSS_RBFWeightSolver()
 
   this.defaultValues["kernel"] = UInt32(RadialBasisKernel_Multiquadric);
   this.defaultValues["keyType"] = 3;  // Quat / Color  NOTE: Make consts for these, too
-  this.defaultValues["valueType"] = 3;  // Quat / Color  NOTE: Should remove this
+  this.defaultValues["useTwist"] = false; //
+  this.defaultValues["twistAxis"] = 0; // 0=X, 1=Y, 2=Z  Only if useTwist
+//  this.defaultValues["valueType"] = 3;  // Quat / Color
   this.defaultValues["epsilon"] = -1.0;  // Magic
   this.defaultValues["poses"] = defaultPoses;
   this.defaultValues["drivers"] = defaultDrivers;
@@ -37,7 +43,9 @@ function KrakenSolverArg[] OSS_RBFWeightSolver.getArguments(){
 
   args.push(KrakenSolverArg('kernel', 'In', 'UInt32'));
   args.push(KrakenSolverArg('keyType', 'In', 'UInt32'));
-  args.push(KrakenSolverArg('valueType', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('useTwist', 'In', 'Boolean'));
+  args.push(KrakenSolverArg('twistAxis', 'In', 'UInt32'));
+//  args.push(KrakenSolverArg('valueType', 'In', 'UInt32'));
   args.push(KrakenSolverArg('epsilon', 'In', 'Scalar'));
   args.push(KrakenSolverArg('poses', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('drivers', 'In', 'Mat44[]'));
@@ -55,11 +63,14 @@ function OSS_RBFWeightSolver.solve!
   in Scalar rigScale,
   in UInt32 kernel,
   in UInt32 keyType,
-  in UInt32 valueType,
+  in Boolean useTwist,
+  in UInt32 twistAxis,  // 0=X, 1=Y, 2=Z  Only if useTwist
+  // Add translation / scale as bool options here
+//  in UInt32 valueType,
   in Scalar epsilon,
-  in Mat44 poses[],  // Can only be xfos for now... usually around 3 - 8
-  in Mat44 drivers[],  // Can be mutliple xfos, but most cases there will be just a single measured input (e.g. uparm bone)
-  in Mat44 driverParents[],  // Can be mutliple xfos, but most cases there will be just a single measured input (e.g. uparm bone)
+  in Mat44 poses[],  // Local space! Usually stored and not connnections.
+  in Mat44 drivers[],  // Can be mutliple matrices, but most cases there will be just a single measured input (e.g. uparm bone)
+  in Mat44 driverParents[],  // Can be mutliple matrices, but most cases there will be just a single measured input (e.g. uparm bone)
   in Mat44 driverLocalOffsets[],  // Local offset from parent to generate default global space for driver.  Parent might be complete other orientation
   out Scalar weights[], // One scalar weight for each pose
 )
@@ -70,38 +81,103 @@ function OSS_RBFWeightSolver.solve!
   if (drivers.size() != driverLocalOffsets.size())
     throw("Error in OSS_RBFWeightSolver.solve(). The number of drivers ("+drivers.size()+") must equal the number of driverLocalOffsets ("+driverLocalOffsets.size()+")");
 
-
-  if (!this.initialized || kernel != this.kernelCache || epsilon != this.epsilonCache)
+  if (!this.initialized ||
+    kernel != this.kernel ||
+    epsilon != this.epsilon ||
+    useTwist != this.useTwist ||
+    twistAxis != this.twistAxis
+    )
   {
-    report("Creating new RBF Solver...");
-    this.rbf = RadialBasisSolver(RadialBasisKernel(kernel), keyType, valueType, epsilon);
+    report("Creating new RBF Solver...of keyType: "+keyType);
+    this.rbf = RadialBasisSolver(RadialBasisKernel(kernel), keyType, epsilon);  // Don't have valueType for weights solver
+
+    this.twistAxisVec = getAxisAsVector(twistAxis);
 
     RadialBasisArray keys;
-    this.quats.resize(0);
-    for (Count i=0; i<poses.size(); i++)
-    {
-      this.quats.push(Xfo(poses[i]).ori);
-    }
-    keys.setFromQuat(this.quats);
 
+    /*
+    if (keyType == 2) // Vec3
+    {
+      Vec3 localTwistAxisVec = Vec3();
+      Quat untwistedLocalQuat = Quat();
+      this.vec3s.resize(poses.size());
+      for (Count i=0; i<poses.size(); i++)
+      {
+        localTwistAxisVec = poses[i].multiplyVector3(twistAxisVec);
+        untwistedLocalQuat.setFrom2Vectors(twistAxisVec, localTwistAxisVec);
+
+        this.vec3s[i] = Xfo(poses[i]).ori.v;
+      }
+      keys.setFromVec3(this.vec3s);
+    }
+    else if (keyType == 3)  // Quat / Color
+      */
+    {
+      this.quats.resize(poses.size());
+
+      for (Count i=0; i<poses.size(); i++)
+      {
+        if (!useTwist) { // Remove axis from equation
+          Vec3 localTwistAxisVec = poses[i].multiplyVector3(this.twistAxisVec);
+          this.quats[i] = Quat();
+          this.quats[i].setFrom2Vectors(this.twistAxisVec, localTwistAxisVec);  // untwisted quat
+          // Actually, we might be able to remove one dimention here.  Check out the quat results
+          // from removing twist.  We could use a Vec3 (removing the axis in question)
+          //T:/MayaSandbox/MatrixUntwist/MatrixUntwist.ma
+        }
+        else
+        {
+          this.quats[i] = Xfo(poses[i]).ori;
+        }
+      }
+      keys.setFromQuat(this.quats);
+    }
+    report("TTPrint: keys.size(): " + keys.size());
     this.rbf.setKeys(keys);  // Don't set keys, values pairs.  We are solving for just weights
 
     this.driverArray.resize(drivers.size());  // Get ready for solve
 
-    this.kernelCache = kernel;
-    this.epsilonCache = epsilon;
+    this.kernel = kernel;
+    this.epsilon = epsilon;
+    this.useTwist = useTwist;
+    this.twistAxis = twistAxis;
     this.initialized = true;
   }
 
-  this.quats.resize(drivers.size());
-  for (Count i=0; i<drivers.size(); i++)
+  /*
+  if (keyType == 2) // Vec3
   {
-    Xfo defaultGlobalSpaceXfo = Xfo(driverParents[i] * driverLocalOffsets[i]);
-    this.quats[i] = ((defaultGlobalSpaceXfo.inverse() * Xfo(drivers[i])).ori);  // driver local xfo in default space
+    this.vec3s.resize(drivers.size());
+    for (Count i=0; i<drivers.size(); i++)
+    {
+      Xfo driverDefaultGlobalXfo = Xfo(driverParents[i] * driverLocalOffsets[i]);
+      this.vec3s[i] = (driverDefaultGlobalXfo.inverse() * Xfo(drivers[i])).ori.v;  // driver local xfo in default space
+    }
+    this.driverArray.setFromVec3(this.vec3s);
   }
-  this.driverArray.setFromQuat(this.quats);
+  else if (keyType == 3) // Quat / Color
+    */
+  {
+    this.quats.resize(drivers.size());
+    for (Count i=0; i<drivers.size(); i++)
+    {
+      Mat44 driverDefaultGlobalMatrix = driverParents[i] * driverLocalOffsets[i];
+      Mat44 driverLocalMatrix = driverDefaultGlobalMatrix.inverse() * drivers[i];
 
-  weights = this.rbf.solveWeights(this.driverArray).toFloat32();
+      if (!useTwist) { // Remove axis from equation
+        // Decalare these variable more globally for optimization later...
+        Vec3 localTwistAxisVec = driverLocalMatrix.multiplyVector3(this.twistAxisVec);
+        this.quats[i] = Quat();
+        this.quats[i].setFrom2Vectors(this.twistAxisVec, localTwistAxisVec);  // untwisted quat
+      }
+      else
+      {
+        this.quats[i] = Xfo(driverLocalMatrix).ori;  // driver local xfo in default space
+      }
+    }
+    this.driverArray.setFromQuat(this.quats);
+  }
 
+  weights = this.rbf.solve(this.driverArray).toFloat32();
 }
 

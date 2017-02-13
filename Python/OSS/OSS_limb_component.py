@@ -885,47 +885,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.evalOperators()
 
-        rbfAttrGroup = AttributeGroup("RBF", parent=self.uplimbFKCtrl)
-        self.uplimbRBFWeightSolver = KLOperator(self.uplimbName, 'OSS_RBFWeightSolver', 'OSS_Kraken')
-        self.addOperator(self.uplimbRBFWeightSolver)
-        # Add Att Inputs
-        self.uplimbRBFWeightSolver.setInput('drawDebug', self.drawDebugInputAttr)
-        self.uplimbRBFWeightSolver.setInput('rigScale', self.rigScaleInputAttr)
-        # Add Xfo Inputs
-        self.uplimbRBFWeightSolver.setInput('kernel', ScalarAttribute("kernel", value=0, parent=rbfAttrGroup))  # RadialBasisKernel_Multiquadric
-        self.uplimbRBFWeightSolver.setInput('keyType', 3)  # Quat / Color
-        self.uplimbRBFWeightSolver.setInput('valueType', 3)  #  Quat / Color  NOTE: Should remove this
-        self.uplimbRBFWeightSolver.setInput('epsilon', ScalarAttribute("epsilon", value=-1.0, parent=rbfAttrGroup))
-        self.uplimbRBFWeightSolver.setInput('drivers', [self.uplimbDef])
-        self.uplimbRBFWeightSolver.setInput('driverParents', [self.uplimbDef.getParent()])
-        localoffset = self.uplimbDef.getParent().xfo.inverse() * self.uplimbDef.xfo
-        self.uplimbRBFWeightSolver.setInput('driverLocalOffsets', [self.uplimbDef.getParent().xfo.inverse() * self.uplimbDef.xfo])
-
-        eulerPoses = {
-            "default": [0, 0, 0],
-            "down": [0, 0, 90],
-            "up": [0, 0, -90],
-            "forward": [90, 0, 0],
-            "back": [-90, 0, 0]
-        }
-        xfoPoses = []
-        poseAttrs = []
-        for name, euler in eulerPoses.iteritems():
-            xfo = Xfo()
-            xfo.ori.setFromEulerAnglesWithRotOrder(
-                Vec3(
-                    Math_degToRad(euler[0]),
-                    Math_degToRad(euler[1]),
-                    Math_degToRad(euler[2])),
-                self.uplimbDef.ro)
-            xfoPoses.append(xfo)
-            poseAttrs.append(ScalarAttribute(self.uplimbName+"_RBF_"+name, value=0.0, parent=rbfAttrGroup))
-
-
-        self.uplimbRBFWeightSolver.setInput('poses', xfoPoses)
-
-        # Add weight attr Outputs
-        self.uplimbRBFWeightSolver.setOutput('weights', poseAttrs)
+        self.uplimbRBFWeightSolver = self.createRBFWeightsSolver(self.uplimbDef, self.uplimbDef.getParent(), self.uplimbFKCtrl, name=self.uplimbName)
+        self.lolimbRBFWeightSolver = self.createRBFWeightsSolver(self.lolimbDef, self.lolimbDef.getParent(), self.lolimbFKCtrl, name=self.lolimbName)
 
         self.evalOperators()
 
