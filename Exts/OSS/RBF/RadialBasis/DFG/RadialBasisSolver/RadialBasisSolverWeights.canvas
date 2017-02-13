@@ -1,0 +1,59 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  kernel: RadialBasisKernel\n  keyType: UInt32\n  epsilon: Float32\n  result: RadialBasisSolver\n"
+    },
+  "title" : "RadialBasisSolverWeights",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiCombo" : "(\"multiquadric\", \"inverse\", \"gaussian\", \"linear\", \"cubic\", \"quintic\", \"thin_plate\")"
+        },
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "RadialBasisKernel" : 2
+        },
+      "name" : "kernel",
+      "execPortType" : "In",
+      "typeSpec" : "RadialBasisKernel"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiCombo" : "(\"Float32\", \"Vec2\", \"Vec3\", \"Quat / Color\", \"Xfo\")"
+        },
+      "nodePortType" : "Out",
+      "name" : "keyType",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : -1
+        },
+      "name" : "epsilon",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "RadialBasisSolver"
+      }
+    ],
+  "extDeps" : {
+    "RadialBasis" : "*"
+    },
+  "code" : "require RadialBasis;
+
+dfgEntry {
+  result = RadialBasisSolver(kernel, keyType, epsilon);
+}
+"
+  }
