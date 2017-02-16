@@ -4,6 +4,13 @@ object OSS_GetLocalTranslateSolver : KrakenSolver {
 };
 
 
+// Default Constructor
+function OSS_GetLocalTranslateSolver()
+{
+  this.defaultValues["inMatrix"] = Mat44();
+  this.defaultValues["inBaseMatrix"] = Mat44();
+}
+
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_GetLocalTranslateSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
@@ -11,18 +18,18 @@ function KrakenSolverArg[] OSS_GetLocalTranslateSolver.getArguments(){
   args.push(KrakenSolverArg('inMatrix', 'In', 'Mat44'));
   args.push(KrakenSolverArg('inBaseMatrix', 'In', 'Mat44'));
   args.push(KrakenSolverArg('localMatrix', 'Out', 'Mat44'));
-  args.push(KrakenSolverArg('localTranslate', 'Out', 'Vec3'));
-  args.push(KrakenSolverArg('localRotate', 'Out', 'Vec3'));
-  args.push(KrakenSolverArg('localScale', 'Out', 'Vec3'));
-  args.push(KrakenSolverArg('localTranslateX', 'Out', 'Scalar'));
-  args.push(KrakenSolverArg('localTranslateY', 'Out', 'Scalar'));
-  args.push(KrakenSolverArg('localTranslateZ', 'Out', 'Scalar'));
-  args.push(KrakenSolverArg('localRotateX', 'Out', 'Scalar'));
-  args.push(KrakenSolverArg('localRotateY', 'Out', 'Scalar'));
-  args.push(KrakenSolverArg('localRotateZ', 'Out', 'Scalar'));
-  args.push(KrakenSolverArg('localScaleX', 'Out', 'Scalar'));
-  args.push(KrakenSolverArg('localScaleY', 'Out', 'Scalar'));
-  args.push(KrakenSolverArg('localScaleZ', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('translate', 'Out', 'Vec3'));
+  args.push(KrakenSolverArg('rotate', 'Out', 'Vec3'));
+  args.push(KrakenSolverArg('scale', 'Out', 'Vec3'));
+  args.push(KrakenSolverArg('tx', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('ty', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('tz', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('rx', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('ry', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('rz', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('sx', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('sy', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('sz', 'Out', 'Scalar'));
   return args;
 }
 
@@ -35,36 +42,37 @@ function OSS_GetLocalTranslateSolver.solve!
   in Mat44 inMatrix,
   in Mat44 inBaseMatrix,
   out Mat44 localMatrix,
-  out Vec3 localTranslate,
-  out Vec3 localRotate,
-  out Vec3 localScale,
-  out Scalar localTranslateX,
-  out Scalar localTranslateY,
-  out Scalar localTranslateZ,
-  out Scalar localRotateX,
-  out Scalar localRotateY,
-  out Scalar localRotateZ,
-  out Scalar localScaleX,
-  out Scalar localScaleY,
-  out Scalar localScaleZ
+  out Vec3 translate,
+  out Vec3 rotate,
+  out Vec3 scale,
+  out Scalar tx,
+  out Scalar ty,
+  out Scalar tz,
+  out Scalar rx,
+  out Scalar ry,
+  out Scalar rz,
+  out Scalar sx,
+  out Scalar sy,
+  out Scalar sz
 )
 {
   localMatrix = inBaseMatrix.inverse() * inMatrix;
-  Mat33 localRotateMat33;
-  localMatrix.decompose(localScale, localRotateMat33, localTranslate);
+  Mat33 rMat33;
+  localMatrix.decompose(scale, rMat33, translate);
 
-  localTranslateX = localTranslate.x;
-  localTranslateY = localTranslate.y;
-  localTranslateZ = localTranslate.z;
+  tx = translate.x;
+  ty = translate.y;
+  tz = translate.z;
 
-  Quat localRotateQuat;
-  localRotateQuat = Quat(localRotateMat33);
-  localRotate = localRotateQuat.toEulerAngles();
-  localRotateX = localRotate.x;
-  localRotateY = localRotate.y;
-  localRotateZ = localRotate.z;
+  Quat rQuat;
+  rQuat = Quat(rMat33);
+  rotate = rQuat.toEulerAngles();
 
-  localScaleX = localScale.x;
-  localScaleY = localScale.y;
-  localScaleZ = localScale.z;
+  rx = rotate.x;
+  ry = rotate.y;
+  rz = rotate.z;
+
+  sx = scale.x;
+  sy = scale.y;
+  sz = scale.z;
 }

@@ -396,26 +396,15 @@ class OSSFaceComponentRig(OSSFaceComponent):
         Profiler.getInstance().pop()
 
 
-
     def createControls(self, anCtrlType, handleNames, data):
 
         ctrlListName = "an"+str(anCtrlType)+"DCtrls"
-
         animControlNameList = getAnimControlNameList(handleNames)
 
-        shapesToControlsJSON = data.get("shapesToControlsJSON", "")
-        shapesToControlDict = {}
-        if shapesToControlsJSON:
-            shapesToControlDict = json.loads(shapesToControlsJSON)
 
         segments = ["base", "tweak"]
 
         globalScale = data['globalComponentCtrlSize']
-
-        self.RemapScalarValueSolverKLOp = KLOperator(self.getName()+str(anCtrlType), 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
-        self.addOperator(self.RemapScalarValueSolverKLOp)
-        self.RemapScalarValueSolverKLOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.RemapScalarValueSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
 
         if self.LeftRightPairs:
             sides = ["L", "R"]
@@ -482,62 +471,6 @@ class OSSFaceComponentRig(OSSFaceComponent):
                         if side != location:
                             location = side
 
-                        shapeName = location+"_"+handleName
-
-                        if shapeName in shapesToControlDict.keys():
-
-                            LTOp = KLOperator(self.getName()+handleName, 'OSS_GetLocalTranslateSolver', 'OSS_Kraken', metaData={"altLocation":side})
-                            self.addOperator(LTOp)
-                            LTOp.setInput('drawDebug', self.drawDebugInputAttr)
-                            LTOp.setInput('rigScale', self.rigScaleInputAttr)
-                            LTOp.setInput('inMatrix', newCtrl)
-                            LTOp.setInput('inBaseMatrix', newCtrlSpace)
-
-                            bsAttrGrp = AttributeGroup("BlendShapes", parent=newCtrl)
-                            used_axes = {}
-                            shapeInfo = shapesToControlDict[shapeName]
-                                #Need something here to extract single local axis value from handleName
-
-                            for direction, shapes in shapeInfo["direction"].iteritems():
-                                if 'r' in direction:
-                                    sign, axis = direction.split("r")
-                                    attrName = 'localRotate'
-                                if 't' in direction:
-                                    sign, axis = direction.split("t")
-                                    attrName = 'localTranslate'
-
-                                if axis not in used_axes.keys():
-                                    lvAttr = ScalarAttribute(attrName[:6]+axis, value=0.5, parent=bsAttrGrp)  #can't currently use dcc eulers directly
-                                    lvAttr.setLock(True)
-                                    LTOp.setOutput(attrName+axis.upper(), lvAttr)
-
-                                    posAttr = ScalarAttribute(axis+"Pos", value=0.5, parent=bsAttrGrp)
-                                    posAttr.setLock(True)
-                                    negAttr = ScalarAttribute(axis+"Neg", value=0.5, parent=bsAttrGrp)
-                                    negAttr.setLock(True)
-
-                                    used_axes[axis] = {"+": posAttr, "-": negAttr}
-
-                                    array = self.RemapScalarValueSolverKLOp.getInput("inputValues") or []
-                                    array.append(lvAttr)
-                                    self.RemapScalarValueSolverKLOp.setInput('inputValues', array)
-
-                                    array = self.RemapScalarValueSolverKLOp.getOutput("resultPos") or []
-                                    array.append(posAttr)
-                                    self.RemapScalarValueSolverKLOp.setOutput('resultPos', array)
-
-                                    array = self.RemapScalarValueSolverKLOp.getOutput("resultNeg") or []
-                                    array.append(negAttr)
-                                    self.RemapScalarValueSolverKLOp.setOutput('resultNeg', array)
-
-                                for shape in shapes:
-                                    #we should get rid of this
-                                    shapeName = shape + "_bsShape"
-                                    bsAttr = ScalarAttribute(shapeName, value=0.0, parent=bsAttrGrp)
-                                    bsAttr.setLock(True)
-                                    bsAttr.setMetaDataItem("SCALAR_OUTPUT", shapeName)
-                                    bsAttr.appendMetaDataListItem("TAGS", self.getDecoratedName())
-                                    bsAttr.connect(used_axes[axis][sign])
 
                     if side != self.getLocation():
                         newCtrl.setMetaDataItem("altLocation", side)
@@ -607,12 +540,14 @@ class OSSFaceComponentRig(OSSFaceComponent):
         self.createControls(3, data.get("an3DNames", ""), data)
         self.createControls(2, data.get("an2DNames", ""), data)
         self.createControls(1, data.get("an1DNames", ""), data)
+
+
+        self.createAttrMappings(self.getAttrMapping())
         # Eval Operators
         self.evalOperators()
-        self.RemapScalarValueSolverKLOp.evaluate()
+        # self.RemapScalarValueSolverKLOp.evaluate()
 
         self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
-
 
 
 

@@ -1,4 +1,4 @@
-import re
+import re, os, json
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.operators.kl_operator import KLOperator
@@ -13,6 +13,7 @@ from kraken.core.objects.ctrlSpace import CtrlSpace
 from kraken.core.objects.control import Control
 from kraken.core.maths import *
 from kraken.core.maths.constants import *
+from collections import defaultdict
 
 
 
@@ -21,7 +22,6 @@ class OSS_Component(BaseExampleComponent):
     """OSS Component object."""
 
     def __init__(self, name='', parent=None):
-
         super(OSS_Component, self).__init__(name, parent=parent)
 
         self._color = (155, 155, 200, 255)
@@ -453,3 +453,157 @@ class OSS_Component(BaseExampleComponent):
         if result:
             condOp.setOutput('result', result)
         return condOp
+
+
+    def getAttrMapping(self):
+
+        # SHOULD BE relative TO KRG
+        filePath = r"Z:/shows/wolvesProto01/source/assets/_charTemplate/rig/scripts/attrMappings.json"
+
+        if not os.path.exists(filePath):
+            print 'Error: No attrMappings json file found at %s'%filePath
+            return None
+        jsonFile = open(filePath, "r")
+        with jsonFile as data_file:
+            data = json.load(jsonFile)
+        jsonFile.close()
+
+        return data
+
+
+    def createRemapScalarValueSolver(self, name, input, result, scale=1.0, clamp=False):
+        operator = KLOperator(str(name), 'OSS_RemapScalarValueSolver', 'OSS_Kraken')
+        self.addOperator(operator)
+        operator.setInput('drawDebug', self.drawDebugInputAttr)
+        operator.setInput('rigScale', self.rigScaleInputAttr)
+        operator.setInput('input', input)
+        operator.setInput('scale', scale)
+        operator.setInput('clamp', clamp)
+        operator.setOutput('result', result)
+        return operator
+        
+    def createLocalTransformSolver(self, name, inMatrix):
+        TranslateOp = KLOperator(name, 'OSS_GetLocalTranslateSolver', 'OSS_Kraken') #, metaData={"altLocation":side})
+        self.addOperator(TranslateOp)
+        print "made Operator with Name: %s"%name
+        TranslateOp.setInput('drawDebug', self.drawDebugInputAttr)
+        TranslateOp.setInput('rigScale', self.rigScaleInputAttr)
+        TranslateOp.setInput('inMatrix', inMatrix)
+        TranslateOp.setInput('inBaseMatrix', inMatrix.getParent())
+        return TranslateOp
+
+    def createScalarAttribute(self, name, group, force=True, lock=True):
+        newAttr = group.getAttributeByName(name)
+        if not newAttr:
+            newAttr = ScalarAttribute(name, value=0.0, parent=group)
+        newAttr.setLock(lock)
+        return newAttr
+
+
+    def isTransformAttribute(self, attrName):
+        for attr in ["tx","ty","tz"]:
+            if attr in attrName:
+                return "t"
+        for attr in ["rx","ry","rz"]:
+            if attr in attrName:
+                return "r"
+        for attr in ["sx","sy","sz"]:
+            if attr in attrName:
+                return "s"
+        return False
+
+
+    def createAttrMappings(self, attrMappingsData):
+
+        #shapeName = location+"_"+handleName
+
+        controlsWithLocalTranslateSolvers = []
+        controlsWithAttrGroup = []
+        used_axes = {}
+        opDict = defaultdict()
+        # assuming attributes just live on controls should be expanded to all Nodes
+        controls = self.getHierarchyNodes(classType="Control")
+        connectionList = []
+
+        # we unfortunately need to structure our dict to be per source node, not source Attr
+        remapDict = {}
+
+        hasTransformOp = []
+        needsRemapOp = False
+        attrGrpName = "customAttr"
+
+        for mapping in attrMappingsData:
+            source = mapping["source"]
+            sourceSplt = mapping["source"].split('.')
+            targetSplt = mapping["target"].split('.')
+
+            if not source in remapDict.keys():
+                remapDict[source] = {}
+
+            if len(sourceSplt) < 2:
+                continue
+            else:
+                srcNode = sourceSplt[0]
+                srcAttr = sourceSplt[1]
+
+            if len(targetSplt) > 1:
+                tgtNode = targetSplt[0]
+                tgtAttr = targetSplt[1]
+            else:
+                tgtNode = None
+                tgtAttr = targetSplt[0]
+
+            for control in controls:
+                controlName = control.getBuildName()
+
+                if controlName == srcNode:
+
+                    customAttrGrp = control.getAttributeGroupByName(attrGrpName)
+                    if not customAttrGrp:
+                        customAttrGrp = AttributeGroup(attrGrpName, parent=control)
+                    
+                    # drivingAttr  = self.createScalarAttribute(srcAttr, customAttrGrp)
+
+                    # 1 - - - - -
+                    # set up local transofmAttrs                    
+                    transformAttrs = self.isTransformAttribute(srcAttr)
+                    # we currently only support transform Attrs
+                    if not transformAttrs:
+                        print "Warning: We currently don't support transform attributes"
+                        continue
+                    else:
+                        drivingAttrName = 'local' + srcAttr
+                        drivingAttr  = self.createScalarAttribute(drivingAttrName, customAttrGrp)
+
+                    if control not in hasTransformOp:
+                        # if we get any transform Attrs, we need to build a LocalTransformSolver to get the local space from the src node
+                        TranslateOp = self.createLocalTransformSolver(controlName, control)
+                        hasTransformOp.append(control)
+                        
+                    try:
+                        TranslateOp.setOutput(srcAttr, drivingAttr)
+                    except:
+                        pass
+
+                    drivingAttrName = 'local' + srcAttr
+
+                    target = mapping["target"]
+                    customAttrGrp = control.getAttributeGroupByName(attrGrpName)
+                    #we should get rid of this
+                    toTargetName = target + "_bsShape"
+                    toTargetAttr = self.createScalarAttribute(toTargetName, customAttrGrp)
+                    toTargetAttr.setMetaDataItem("SCALAR_OUTPUT", toTargetName)
+                    toTargetAttr.appendMetaDataListItem("TAGS", self.getDecoratedName())
+
+                    # 2 - - - - -
+                    # set up Scalar Attrs
+                    if mapping["operator"]["type"] == "OSS_RemapScalarValueSolver":
+                        if not "clamp" in mapping["operator"].keys():
+                            mapping["operator"]["clamp"] = True
+                        self.createRemapScalarValueSolver(controlName+srcAttr+target, input = drivingAttr, result = toTargetAttr, scale = mapping["operator"]["scale"], clamp = mapping["operator"]["clamp"] )
+                    # else:
+                    #     toTargetAttr.connect(drivingAttr)
+
+
+
+        # print json.dumps(opDict, indent=4, sort_keys=True)
