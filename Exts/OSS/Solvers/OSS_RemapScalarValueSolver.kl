@@ -7,25 +7,22 @@ function OSS_RemapScalarValueSolver()
 {
   // NOTE, Kraken can create default values for anything
   // we don't specificy here.  Arrays will be empty, matrices identity, etc.
+  Scalar input;
+  Scalar result;
 
-  Scalar inputValues[];
-  Scalar resultPos[];
-  Scalar resultNeg[];
-
-  this.defaultValues["inputValues"] = inputValues;
-  this.defaultValues["resultPos"] = resultPos;
-  this.defaultValues["resultNeg"] = resultNeg;
+  this.defaultValues["input"] = input;
+  this.defaultValues["result"] = result;
 }
 
 
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_RemapScalarValueSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
-
-  args.push(KrakenSolverArg('inputValues', 'In', 'Scalar[]'));
-  // args.push(KrakenSolverArg('scale', 'In', 'Scalar[]'));
-  args.push(KrakenSolverArg('resultNeg', 'Out', 'Scalar[]'));
-  args.push(KrakenSolverArg('resultPos', 'Out', 'Scalar[]'));
+  // we should turn this into curves
+  args.push(KrakenSolverArg('input', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('scale', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('clamp', 'In', 'Boolean'));
+  args.push(KrakenSolverArg('result', 'Out', 'Scalar'));
   //args.push(KrakenSolverArg('result', 'Out', 'Scalar[]'));  KL builder can't handle non-connected outputs right now
   return args;
 }
@@ -36,23 +33,19 @@ function OSS_RemapScalarValueSolver.solve!
 (
   in Boolean drawDebug,
   in Scalar rigScale,
-  in Scalar[] inputValues,
-  // in Scalar scale[],
-  out Scalar[] resultNeg,
-  out Scalar[] resultPos,
-  //out Scalar[] result
+  in Scalar input,
+  in Scalar scale,
+  in Boolean clamp,
+  out Scalar result,
   )
 {
-  Scalar scale = 1.0;
-  UInt32 size = inputValues.size();
-  resultPos.resize(size);
-  resultNeg.resize(size);
-  //result.resize(size);
-
-  for(UInt32 i=0; i<inputValues.size(); i++){
-    resultPos[i] = Scalar(Math_max(0,inputValues[i]))*scale;
-    resultNeg[i] = abs(Scalar(Math_min(0,inputValues[i])))*scale;
-    //result[i] = resultPos[i] - resultNeg[i];
+  result = input*abs(scale);
+  if (clamp) {
+    if (scale > 0) {
+      result = abs(Scalar(Math_max(0,result)));
+    } else {
+      result = abs(Scalar(Math_min(0,result)));
+    }
   }
 }
 
