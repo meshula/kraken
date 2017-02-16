@@ -845,7 +845,8 @@ class OSSMouthRig(OSSMouth):
         self.blendLeftCornerOp = KLOperator('blendLeftCornerOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
         self.addOperator(self.blendLeftCornerOp)
 
-        self.LMouthAlignSpaces = [self.loLipLevel1Outputs[-2], self.upLipLevel1Outputs[-2]]
+        self.LMouthAlignSpaces = [self.loLipLevel1Outputs[-1], self.upLipLevel1Outputs[-1]]
+
         self.LMouthAlignWeights = [0.5,0.5]
 
         # Add Att Inputs
@@ -866,7 +867,7 @@ class OSSMouthRig(OSSMouth):
         self.blendRightCornerOp = KLOperator('blendRightCornerOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
         self.addOperator(self.blendRightCornerOp)
 
-        self.RMouthAlignSpaces = [self.loLipLevel1Outputs[1], self.upLipLevel1Outputs[1]]
+        self.RMouthAlignSpaces = [self.loLipLevel1Outputs[0], self.upLipLevel1Outputs[0]]
         self.RMouthAlignWeights = [0.5,0.5]
 
         # Add Att Inputs
