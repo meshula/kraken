@@ -183,13 +183,13 @@ class OSSSingleFKRig(OSSSingleFK):
         # Controls
         # =========
         # SingleFK
-        self.SingleFKEndOutputTgt.xfo = data[self.getName() + 'Xfo']
         self.SingleFKParentSpace = CtrlSpace(self.getName() + 'ParentSpace', parent=self.ctrlCmpGrp)
         self.SingleFKCtrlSpace = CtrlSpace(self.getName() + 'CtrlSpace', parent=self.SingleFKParentSpace)
         self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFKCtrlSpace, shape="cube")
         #self.SingleFKCtrl.setCurveData(data['SingleFKCtrlCrvData'])
 
 
+        self.SingleFKEndOutputTgt.xfo = data[self.getName() + 'Xfo']
         self.SingleFKParentSpace.xfo = data[self.getName() + 'Xfo']
         self.SingleFKCtrlSpace.xfo = data[self.getName() + 'Xfo']
         self.SingleFKCtrl.xfo = data[self.getName() + 'Xfo']
