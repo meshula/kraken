@@ -7,6 +7,7 @@ from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.attributes.string_attribute import StringAttribute
 from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
+from kraken.core.objects.attributes.integer_attribute import IntegerAttribute
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.locator import Locator
 from kraken.core.objects.ctrlSpace import CtrlSpace
@@ -455,6 +456,7 @@ class OSS_Component(BaseExampleComponent):
         return condOp
 
 
+<<<<<<< .merge_file_a34768
     def getAttrMapping(self):
 
         # SHOULD BE relative TO KRG
@@ -607,3 +609,61 @@ class OSS_Component(BaseExampleComponent):
 
 
         # print json.dumps(opDict, indent=4, sort_keys=True)
+=======
+    def createRBFWeightsSolver(self, driver, driverParent, attrParent=None, kernel=0, keyType=3, eulerPoses=None, poseAttrs=None, name=None):  # RadialBasisKernel_Multiquadric, Quat / Color
+
+        if not name:
+            try:
+                name = condition.getName()+"_rbf"
+            except:
+                name = "rbf"
+
+        if not attrParent:
+            attrParent = driver
+
+        if not eulerPoses:
+            eulerPoses = {
+                "default": [0, 0, 0],
+                "down": [0, 0, 90],
+                "up": [0, 0, -90],
+                "forward": [0, 90, 0],
+                "back": [0, -90, 0]
+            }
+
+        rbfOp = KLOperator(name, 'OSS_RBFWeightSolver', 'OSS_Kraken')
+        self.addOperator(rbfOp)
+
+        rbfAttrGroup = AttributeGroup("RBF", parent=attrParent)
+        # Add Att Inputs
+        rbfOp.setInput('drawDebug', self.drawDebugInputAttr)
+        rbfOp.setInput('rigScale', self.rigScaleInputAttr)
+        # Add Xfo Inputs
+        rbfOp.setInput('kernel', ScalarAttribute("kernel", value=3, parent=rbfAttrGroup))  # RadialBasisKernel_Gaussian
+        rbfOp.setInput('keyType', 3)  # 2=Vec3 , 3=Quat
+        rbfOp.setInput('epsilon', ScalarAttribute("epsilon", value=-1.0, parent=rbfAttrGroup))
+        rbfOp.setInput('useTwist', BoolAttribute("useTwist", value=False, parent=rbfAttrGroup))
+        rbfOp.setInput('twistAxis', IntegerAttribute("twistAxis", value=0, parent=rbfAttrGroup))
+        rbfOp.setInput('drivers', [driver])
+        rbfOp.setInput('driverParents', [driverParent])
+        # Note, sources to diver and driverParent must be evaluated before this call!
+        rbfOp.setInput('driverLocalOffsets', [driverParent.xfo.inverse() * driver.xfo])
+
+        xfoPoses = []
+        if not poseAttrs:
+            poseAttrs = []
+        for name, euler in eulerPoses.iteritems():
+            xfo = Xfo()
+            xfo.ori.setFromEulerAnglesWithRotOrder(
+                Vec3(
+                    Math_degToRad(euler[0]),
+                    Math_degToRad(euler[1]),
+                    Math_degToRad(euler[2])),
+                self.uplimbDef.ro)
+            xfoPoses.append(xfo)
+            if len(poseAttrs) < len(eulerPoses):
+                poseAttrs.append(ScalarAttribute(self.uplimbName+"_RBF_"+name, value=0.0, parent=rbfAttrGroup))
+
+        rbfOp.setInput('poses', xfoPoses)
+        # Add weight attr Outputs
+        rbfOp.setOutput('weights', poseAttrs)
+>>>>>>> .merge_file_a34160
