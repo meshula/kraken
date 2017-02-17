@@ -456,7 +456,6 @@ class OSS_Component(BaseExampleComponent):
         return condOp
 
 
-<<<<<<< .merge_file_a34768
     def getAttrMapping(self):
 
         # SHOULD BE relative TO KRG
@@ -605,11 +604,8 @@ class OSS_Component(BaseExampleComponent):
                         self.createRemapScalarValueSolver(controlName+srcAttr+target, input = drivingAttr, result = toTargetAttr, scale = mapping["operator"]["scale"], clamp = mapping["operator"]["clamp"] )
                     # else:
                     #     toTargetAttr.connect(drivingAttr)
-
-
-
         # print json.dumps(opDict, indent=4, sort_keys=True)
-=======
+
     def createRBFWeightsSolver(self, driver, driverParent, attrParent=None, kernel=0, keyType=3, eulerPoses=None, poseAttrs=None, name=None):  # RadialBasisKernel_Multiquadric, Quat / Color
 
         if not name:
@@ -666,4 +662,3 @@ class OSS_Component(BaseExampleComponent):
         rbfOp.setInput('poses', xfoPoses)
         # Add weight attr Outputs
         rbfOp.setOutput('weights', poseAttrs)
->>>>>>> .merge_file_a34160

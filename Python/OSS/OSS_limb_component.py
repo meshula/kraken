@@ -406,7 +406,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             for ctrl in [self.uplimbFKCtrl, self.lolimbFKCtrl]:
                 if self.getLocation() == 'R':
                     ctrl.scalePoints(Vec3(-1,-1,-1))
-                ctrl.rotatePoints(-90,0,90)
+                ctrl.rotatePoints(0,90,90)
 
 
         self.limbIKCtrlSpace = CtrlSpace(self.ikHandleName, parent=self.ctrlCmpGrp)
