@@ -49,6 +49,39 @@ ROT_ORDER_REMAP = {
     5: 2
 }
 
+MAYA_2015_COLORS = {
+    "black": [1, [0.00, 0.00, 0.0]],
+    "lightGrey": [2, [0.75, 0.75, 0.75]],
+    "darkGrey": [3, [0.50, 0.50, 0.50]],
+    "fusia": [4, [0.80, 0.00, 0.20]],
+    "blueDark": [5, [0.00, 0.00, 0.40]],
+    "blue": [6, [0.00, 0.00, 1.00]],
+    "green": [7, [0.00, 0.30, 0.00]],
+    "purpleDark": [8, [0.20, 0.00, 0.30]],
+    "magenta": [9, [0.80, 0.00, 0.80]],
+    "brownLight": [10, [0.60, 0.30, 0.20]],
+    "brownDark": [11, [0.25, 0.13, 0.13]],
+    "orange": [12, [0.70, 0.20, 0.00]],
+    "red": [13, [1.00, 0.00, 0.00]],
+    "greenBright": [14, [0.00, 1.00, 0.00]],
+    "blueMedium": [15, [0.00, 0.30, 0.60]],
+    "white": [16, [1.00, 1.00, 1.00]],
+    "yellow": [17, [1.00, 1.00, 0.00]],
+    "greenBlue": [18, [0.00, 1.00, 1.00]],
+    "turqoise": [19, [0.00, 1.00, 0.80]],
+    "pink": [20, [1.00, 0.70, 0.70]],
+    "peach": [21, [0.90, 0.70, 0.50]],
+    "yellowLight": [22, [1.00, 1.00, 0.40]],
+    "turqoiseDark": [23, [0.00, 0.70, 0.40]],
+    "brownMuted": [24, [0.60, 0.40, 0.20]],
+    "yellowMuted": [25, [0.63, 0.63, 0.17]],
+    "greenMuted": [26, [0.40, 0.60, 0.20]],
+    "turqoiseMuted": [27, [0.20, 0.63, 0.35]],
+    "blueLightMuted": [28, [0.18, 0.63, 0.63]],
+    "blueDarkMuted": [29, [0.18, 0.40, 0.63]],
+    "purpleLight": [30, [0.43, 0.18, 0.63]]
+}
+
 
 class Builder(Builder):
     """Builder object for building Kraken objects in Maya."""
@@ -1443,21 +1476,71 @@ class Builder(Builder):
         buildColor = self.getBuildColor(kSceneItem)
 
         if buildColor is not None:
-            dccSceneItem.overrideEnabled.set(True)
-            dccSceneItem.overrideRGBColors.set(True)
 
-            if type(buildColor) is str:
+            if pm.about(version=True).startswith("2015"):
+                dccSceneItem.overrideEnabled.set(True)
 
-                # Color in config is stored as rgb scalar values in a list
-                if type(colors[buildColor]) is list:
-                    dccSceneItem.overrideColorRGB.set(colors[buildColor][0], colors[buildColor][1], colors[buildColor][2])
+                def getClosestColor(colorIn):
+                    maxValue = 10000000000
+                    index = None
+                    for i, key in enumerate(MAYA_2015_COLORS):
+                        print "========================="
+                        print colorIn
+                        print MAYA_2015_COLORS[key][1]
+                        print "========================="
+                        dist = (MAYA_2015_COLORS[key][1][0] - colorIn[0]) * (MAYA_2015_COLORS[key][1][0] - colorIn[0]) + \
+                               (MAYA_2015_COLORS[key][1][1] - colorIn[1]) * (MAYA_2015_COLORS[key][1][1] - colorIn[1]) + \
+                               (MAYA_2015_COLORS[key][1][2] - colorIn[2]) * (MAYA_2015_COLORS[key][1][2] - colorIn[2]) 
 
-                # Color in config is stored as a Color object
-                elif type(colors[buildColor]).__name__ == 'Color':
+                        dist /= 3.0
+                        if dist < maxValue:
+                            maxValue = dist
+                            index = i
+                            closestKey = key
+
+                    return closestKey
+                
+                if type(buildColor) is str:
+
+                    targetColor = colors[buildColor]
+
+                    # Color in config is stored as a Color object
+                    if type(colors[buildColor]).__name__ == 'Color':
+                        targetColor = [colors[buildColor].r,
+                                       colors[buildColor].g,
+                                       colors[buildColor].b]
+
+                    # Get the closest color to the limited Maya 2015 colors
+                    buildColor = getClosestColor(targetColor)
+                    
+                    dccSceneItem.overrideColor.set(MAYA_2015_COLORS[buildColor][0])
+
+                elif type(buildColor).__name__ == 'Color':
+                    buildColor = [buildColor.r,
+                                  buildColor.g,
+                                  buildColor.b]
+
+                    # Get the closest color to the limited Maya 2015 colors
+                    buildColor = getClosestColor(buildColor)
+
+                    dccSceneItem.overrideColor.set(MAYA_2015_COLORS[buildColor][0])
+
+            else:
+                dccSceneItem.overrideEnabled.set(True)
+                dccSceneItem.overrideRGBColors.set(True)
+
+                if type(buildColor) is str:
+
+                    # Color in config is stored as rgb scalar values in a list
+                    if type(colors[buildColor]) is list:
+                        dccSceneItem.overrideColorRGB.set(colors[buildColor][0], colors[buildColor][1], colors[buildColor][2])
+
+                    # Color in config is stored as a Color object
+                    elif type(colors[buildColor]).__name__ == 'Color':
+                        dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
+
+                elif type(buildColor).__name__ == 'Color':
                     dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
-
-            elif type(buildColor).__name__ == 'Color':
-                dccSceneItem.overrideColorRGB.set(colors[buildColor].r, colors[buildColor].g, colors[buildColor].b)
 
         return True
 
