@@ -486,7 +486,6 @@ class OSS_Component(BaseExampleComponent):
     def createLocalTransformSolver(self, name, inMatrix):
         TranslateOp = KLOperator(name, 'OSS_GetLocalTranslateSolver', 'OSS_Kraken') #, metaData={"altLocation":side})
         self.addOperator(TranslateOp)
-        print "made Operator with Name: %s"%name
         TranslateOp.setInput('drawDebug', self.drawDebugInputAttr)
         TranslateOp.setInput('rigScale', self.rigScaleInputAttr)
         TranslateOp.setInput('inMatrix', inMatrix)
