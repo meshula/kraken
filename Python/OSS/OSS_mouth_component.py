@@ -104,6 +104,11 @@ class OSSMouthGuide(OSSMouth):
 
 
 
+        self.L_cheekBone = Control('cheekBone', parent=self.lipsCtrl, metaData={"altLocation":"L"})
+        self.R_cheekBone = Control('cheekBone', parent=self.lipsCtrl, metaData={"altLocation":"R"})
+        
+        self.L_mandible = Control('mandible', parent=self.lipsCtrl, metaData={"altLocation":"L"})
+        self.R_mandible = Control('mandible', parent=self.lipsCtrl, metaData={"altLocation":"R"})
 
         # Mark Handles
         for ctrl in [self.L_midLipHandleCtrl,
@@ -148,6 +153,10 @@ class OSSMouthGuide(OSSMouth):
                 "upLipXfo": Xfo(Vec3(0, 17, 4)),
                 "L_upLipHandleXfo": Xfo(Vec3(1.75, 17, 4)),
                 "R_upLipHandleXfo": Xfo(Vec3(-1.75, 17, 4)),
+                "L_cheekBoneXfo": Xfo(Vec3(3, 18, 1)),
+                "R_cheekBoneXfo": Xfo(Vec3(-3, 18, 1)),
+                "L_mandibleXfo": Xfo(Vec3(3, 12, 1)),
+                "R_mandibleXfo": Xfo(Vec3(-3, 12, 1)),
                 "L_MouthXfo": Xfo(Vec3(3, 15, 3)),
                 "R_MouthXfo": Xfo(Vec3(-3, 15, 3)),
                 "L_MouthOutXfo": Xfo(Vec3(4, 15, 2)),
@@ -746,19 +755,28 @@ class OSSMouthRig(OSSMouth):
         self.R_upLipHandleCtrl = CtrlSpace('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"R"})
 
         self.L_MouthRefSpace = CtrlSpace('MouthRef', parent=self.midMouthCtrlSpace, metaData={"altLocation":"L"})
+        self.L_MouthOffsetSpace = CtrlSpace('MouthOffset', parent=self.midMouthCtrlSpace, metaData={"altLocation":"L"})
         self.L_MouthCtrlSpace = CtrlSpace('Mouth', parent=self.midMouthCtrlSpace, metaData={"altLocation":"L"})
         self.L_MouthCtrl = Control('Mouth', parent=self.L_MouthCtrlSpace, shape="circle", scale=0.5, metaData={"altLocation":"L"})
         self.L_MouthCornerCtrlSpace = CtrlSpace('Mouth', parent=self.L_MouthCtrl, metaData={"altLocation":"L"})
         self.L_MouthCornerCtrl = Control('MouthCorner', parent=self.L_MouthCornerCtrlSpace, shape="circle", scale=0.125, metaData={"altLocation":"L"})
         self.L_MouthCtrl.setColor("mediumseagreen")
 
+
         self.R_MouthRefSpace = CtrlSpace('MouthRef', parent=self.midMouthCtrlSpace, metaData={"altLocation":"R"})
+        self.R_MouthOffsetSpace = CtrlSpace('MouthOffset', parent=self.midMouthCtrlSpace, metaData={"altLocation":"R"})
         self.R_MouthCtrlSpace = CtrlSpace('Mouth', parent=self.midMouthCtrlSpace, metaData={"altLocation":"R"})
         self.R_MouthCtrl = Control('Mouth', parent=self.R_MouthCtrlSpace, shape="circle", scale=0.5, metaData={"altLocation":"R"})
         self.R_MouthCornerCtrlSpace = CtrlSpace('Mouth', parent=self.R_MouthCtrl, metaData={"altLocation":"R"})
         self.R_MouthCornerCtrl = Control('MouthCorner', parent=self.R_MouthCornerCtrlSpace, shape="circle", scale=0.125, metaData={"altLocation":"R"})
         self.R_MouthCtrl.setColor("mediumvioletred")
 
+
+        self.L_cheekBone = CtrlSpace('cheekBone', parent=self.mouthCtrlSpace, metaData={"altLocation":"L"})
+        self.R_cheekBone = CtrlSpace('cheekBone', parent=self.mouthCtrlSpace, metaData={"altLocation":"R"})
+        
+        self.L_mandible = CtrlSpace('mandible', parent=self.jawCtrl, metaData={"altLocation":"L"})
+        self.R_mandible = CtrlSpace('mandible', parent=self.jawCtrl, metaData={"altLocation":"R"})
 
         # ==============
         # Constrain I/O
@@ -809,8 +827,7 @@ class OSSMouthRig(OSSMouth):
             )
 
 
-        #Mouth Offset
-        self.offsetOp([self.loLipRefSpace, self.lipsRefSpace,  self.midMouthRefSpace],
+        self.MouthOffsetOP = self.offsetOp([self.loLipRefSpace,  self.lipsRefSpace,   self.midMouthRefSpace],
                       [self.loLipCtrlSpace, self.upLipCtrlSpace, self.midMouthCtrlSpace],
                        self.mouthCtrl.getParent(), self.mouthCtrl, name="offsetOp")
 
@@ -891,6 +908,7 @@ class OSSMouthRig(OSSMouth):
         self.rMouthDefConstraint = self.rMouthDef.constrainTo(self.R_MouthCornerLoc, constraintType="Position")
 
         # global ControlScaling before moving them into position
+
         for ctrl in self.getHierarchyNodes(classType="Control"):
             ctrl.scalePoints(globalScale)
 
@@ -912,11 +930,16 @@ class OSSMouthRig(OSSMouth):
             ctrl.xfo = data['mouthXfo']
 
 
-        for ctrl in [self.L_MouthCtrlSpace, self.L_MouthCtrl, self.L_MouthCornerCtrlSpace, self.L_MouthCornerCtrl, self.L_MouthRefSpace]:
+        for ctrl in [self.L_MouthOffsetSpace, self.L_MouthCtrlSpace, self.L_MouthCtrl, self.L_MouthCornerCtrlSpace, self.L_MouthCornerCtrl, self.L_MouthRefSpace]:
             ctrl.xfo = data['L_MouthXfo']
 
-        for ctrl in [self.R_MouthCtrlSpace, self.R_MouthCtrl, self.R_MouthCornerCtrlSpace, self.R_MouthCornerCtrl, self.R_MouthRefSpace]:
+        for ctrl in [self.R_MouthOffsetSpace, self.R_MouthCtrlSpace, self.R_MouthCtrl, self.R_MouthCornerCtrlSpace, self.R_MouthCornerCtrl, self.R_MouthRefSpace]:
             ctrl.xfo = data['R_MouthXfo']
+
+        self.L_cheekBone.xfo = data['L_cheekBoneXfo']
+        self.R_cheekBone.xfo = data['R_cheekBoneXfo']
+        self.L_mandible.xfo = data['L_mandibleXfo']
+        self.R_mandible.xfo = data['R_mandibleXfo']
 
         for ctrl in [self.R_MouthCtrl, self.R_MouthCornerCtrl]:
             ctrl.translatePoints(Vec3(Vec3(-.5, -.5,  0)))
@@ -932,9 +955,159 @@ class OSSMouthRig(OSSMouth):
             ctrl.lockScale(x=True, y=True, z=True)
 
         self.R_MouthCtrlSpace.xfo = self.R_MouthCtrlSpace.xfo.multiply(Xfo(sc=Vec3(-1,1,1)))
+        self.R_MouthRefSpace.xfo = self.R_MouthCtrlSpace.xfo
+        self.R_MouthOffsetSpace.xfo = self.R_MouthCtrlSpace.xfo
+
+        for ctrl in [self.L_MouthOffsetSpace, self.R_MouthOffsetSpace]:
+            ctrl.xfo = ctrl.xfo.multiply(Xfo(Vec3(0, 0.0, -1)))
 
         #align work
         # self.R_MouthCtrlSpace.xfo.sc = Vec3(1.0, 1.0, -1.0)
+
+        # cheek dynamics
+        self.L_cheekDef = Joint('cheek',  parent=self.mouthDef, metaData={"altLocation":"L"})
+        self.lCheekBlendOp = KLOperator('lCheekBlendOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
+        self.addOperator(self.lCheekBlendOp)
+
+        # Add Att Inputs
+        self.lCheekBlendOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.lCheekBlendOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.lCheekBlendOp.setInput('parent', self.L_cheekDef.getParent())
+        self.lCheekBlendOp.setInput('mats', [self.L_cheekBone, self.L_mandible, self.lMouthDef])
+        self.lCheekBlendOp.setInput('matWeights', [0.5,0.5,0.5])
+        self.lCheekBlendOp.setInput('translationAmt',  1)
+        self.lCheekBlendOp.setInput('scaleAmt',  0)
+        self.lCheekBlendOp.setInput('rotationAmt',  0)
+        self.lCheekBlendOp.setOutput('result', self.L_cheekDef)
+
+
+
+        self.R_cheekDef = Joint('cheek',  parent=self.mouthDef, metaData={"altLocation":"R"})
+        self.rCheekBlendOp = KLOperator('rCheekBlendOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
+        self.addOperator(self.rCheekBlendOp)
+
+        # Add Att Inputs
+        self.rCheekBlendOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.rCheekBlendOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.rCheekBlendOp.setInput('parent', self.R_cheekDef.getParent())
+        self.rCheekBlendOp.setInput('mats', [self.R_cheekBone, self.R_mandible, self.rMouthDef])
+        self.rCheekBlendOp.setInput('matWeights', [0.5,0.5,0.5])
+        self.rCheekBlendOp.setInput('translationAmt',  1)
+        self.rCheekBlendOp.setInput('scaleAmt',  0)
+        self.rCheekBlendOp.setInput('rotationAmt',  0)
+        self.rCheekBlendOp.setOutput('result', self.R_cheekDef)
+
+
+        mouthAttrGrp    = AttributeGroup("mouthAttrGrp", parent = self.jawCtrl)
+
+        self.lDistAttr    = self.createScalarAttribute('L_distance', mouthAttrGrp)
+        self.lDistRelAttr = self.createScalarAttribute('L_distanceRel', mouthAttrGrp)
+        self.lStretchAttr = self.createScalarAttribute('L_mouth_dn_bsShape', mouthAttrGrp)
+        self.lSquashAttr  = self.createScalarAttribute('L_mouth_up_bsShape', mouthAttrGrp)
+
+        self.lCornerRetractAttr = self.createScalarAttribute('L_corner_retract', mouthAttrGrp)
+        self.rCornerRetractAttr = self.createScalarAttribute('R_corner_retract', mouthAttrGrp)
+
+        # self.MouthOffsetOP.evaluate()
+        # Mouth Offset
+        
+        self.lMouthOffsetOp = self.offsetOp([self.L_MouthRefSpace], [self.L_MouthCtrlSpace], self.L_MouthRefSpace, self.L_MouthOffsetSpace, name="lMouthoffsetOp", amount = self.lCornerRetractAttr )
+        self.rMouthOffsetOp = self.offsetOp([self.R_MouthRefSpace], [self.R_MouthCtrlSpace], self.R_MouthRefSpace, self.R_MouthOffsetSpace, name="rMouthoffsetOp", amount = self.rCornerRetractAttr )
+
+
+        self.lDistanceOp =  self.createDistanceSolver(
+            name             = 'OSS_lCheekDistanceSolver',
+            MatA             = self.L_cheekBone,
+            MatB             = self.L_mandible,
+            distance         = self.lDistAttr,
+            distanceRelative = self.lDistRelAttr,
+            distanceRest     = self.L_cheekBone.xfo.tr.distanceTo(self.L_mandible.xfo.tr)
+            )
+
+        self.lCheekSquashOp = self.createEvalKeyframesValueSolver(
+            name               = 'OSS_lCheekSquashSolver',
+            t                  = self.lDistRelAttr,
+            keyframeTime       = [-1.0,1.0],
+            keyframeValue      = [3.0,0.0],
+            keyframeTangentIn  = [Vec2(0,0),Vec2(0.2,0)],
+            keyframeTangentOut = [Vec2(0.2,1),Vec2(0,0)],
+            result             = self.lSquashAttr
+            )
+
+        self.lCheekStretchOp = self.createEvalKeyframesValueSolver(
+            name               = 'OSS_lCheekStretchSolver',
+            t                  = self.lDistRelAttr,
+            keyframeTime       = [1.0,3.0],
+            keyframeValue      = [0.0,1.0],
+            keyframeTangentIn  = [Vec2(0.0,0),Vec2(0.0,0)],
+            keyframeTangentOut = [Vec2(0.2,1),Vec2(0.2,0)],
+            result             = self.lStretchAttr
+            )
+
+        self.lCornerRetractOp = self.createEvalKeyframesValueSolver(
+            name               = 'OSS_lCornerRetractOp',
+            t                  = self.lDistRelAttr,
+            keyframeTime       = [1.0,3.0],
+            keyframeValue      = [0.0,2.0],
+            keyframeTangentIn  = [Vec2(0.0,0),Vec2(0.0,0)],
+            keyframeTangentOut = [Vec2(0,0),Vec2(0,0)],
+            result             = self.lCornerRetractAttr
+            )
+
+        self.rDistAttr        = self.createScalarAttribute('R_distance', mouthAttrGrp)
+        self.rDistRelAttr     = self.createScalarAttribute('R_distanceRel', mouthAttrGrp)
+        self.rStretchAttr = self.createScalarAttribute('R_mouth_dn_bsShape', mouthAttrGrp)
+        self.rSquashAttr = self.createScalarAttribute('R_mouth_up_bsShape', mouthAttrGrp)
+
+        self.rDistanceOp =  self.createDistanceSolver(
+            name             = 'OSS_rCheekDistanceSolver',
+            MatA             = self.R_cheekBone,    
+            MatB             = self.R_mandible,
+            distance         = self.rDistAttr,
+            distanceRelative = self.rDistRelAttr,
+            distanceRest     = self.R_cheekBone.xfo.tr.distanceTo(self.R_mandible.xfo.tr)
+            )
+        
+        self.rCheekSquashOp = self.createEvalKeyframesValueSolver(
+            name               = 'OSS_rCheekSquashSolver',
+            t                  = self.rDistRelAttr,
+            keyframeTime       = [-1.0,1.0],
+            keyframeValue      = [3.0,0.0],
+            keyframeTangentIn  = [Vec2(0.0,0),Vec2(0.0,0)],
+            keyframeTangentOut = [Vec2(0.0,0),Vec2(0.0,0)],
+            result             = self.rSquashAttr
+            )
+
+        self.lCheekStretchOp = self.createEvalKeyframesValueSolver(
+            name               = 'OSS_rCheekStretchSolver',
+            t                  = self.rDistRelAttr,
+            keyframeTime       = [1.0,3.0],
+            keyframeValue      = [0.0,1.0],
+            keyframeTangentIn  = [Vec2(0,0),Vec2(0.2,0)],
+            keyframeTangentOut = [Vec2(0.2,1),Vec2(0.2,0)],
+            result             = self.rStretchAttr
+            )
+
+        self.rCornerRetractOp = self.createEvalKeyframesValueSolver(
+            name               = 'OSS_rCornerRetractOp',
+            t                  = self.rDistRelAttr,
+            keyframeTime       = [1.0,3.0],
+            keyframeValue      = [0.0,2.0],
+            keyframeTangentIn  = [Vec2(0.0,0),Vec2(0.0,0)],
+            keyframeTangentOut = [Vec2(0,0),Vec2(0,0)],
+            result             = self.rCornerRetractAttr
+            )
+
+        # eulerPoses = {
+        #         "default":  [  0,   0,   0],
+        #         "dn":       [ 90,   0,   0],
+        #         "up":       [-90,   0,   0],
+        #         "left":     [  0,  90,   0],
+        #         "right":    [  0, -90,   0],
+        #     }
+
+        # self.jawCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YZX"])  #Set with component settings later
+        # self.jawRBFWeightSolver = self.createRBFWeightsSolver(self.jawCtrl, self.jawCtrl.getParent(), self.jawCtrl, eulerPoses = eulerPoses, name="jaw", twistAxis = 2, useTwist=True, eulerRotationOrder = self.jawCtrl.ro , attrPrefix='M_mouth_', attrSuffix='_bsShape')
 
         # Eval Constraints
         self.mouthOutputTgtConstraint.evaluate()

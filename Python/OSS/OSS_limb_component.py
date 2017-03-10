@@ -885,8 +885,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         self.evalOperators()
 
-        self.uplimbRBFWeightSolver = self.createRBFWeightsSolver(self.uplimbDef, self.uplimbDef.getParent(), self.uplimbFKCtrl, name=self.uplimbName)
-        self.lolimbRBFWeightSolver = self.createRBFWeightsSolver(self.lolimbDef, self.lolimbDef.getParent(), self.lolimbFKCtrl, name=self.lolimbName)
+        self.uplimbRBFWeightSolver = self.createRBFWeightsSolver(self.uplimbDef, self.uplimbDef.getParent(), self.uplimbFKCtrl, name=self.uplimbName, eulerRotationOrder=self.uplimbDef.ro)
+        self.lolimbRBFWeightSolver = self.createRBFWeightsSolver(self.lolimbDef, self.lolimbDef.getParent(), self.lolimbFKCtrl, name=self.lolimbName, eulerRotationOrder=self.uplimbDef.ro)
 
         self.evalOperators()
 

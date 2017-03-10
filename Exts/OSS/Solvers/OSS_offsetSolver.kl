@@ -3,13 +3,21 @@ require Kraken;
 object OSS_offsetSolver : KrakenSolver {
 };
 
+// Default Ctargetsonstructor
+function OSS_offsetSolver()
+{
+  this.defaultValues["amount"] = 1.0;
+}
+
 // Return Arguments for Kraken
 function KrakenSolverArg[] OSS_offsetSolver.getArguments(){
   KrakenSolverArg args[] = this.parent.getArguments();
-  args.push(KrakenSolverArg('objects', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('amount', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('references', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('targetsParents', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('offsets', 'In', 'Mat44[]'));
   args.push(KrakenSolverArg('offsetsRest', 'In', 'Mat44[]'));
-  args.push(KrakenSolverArg('result', 'Out', 'Mat44[]'));
+  args.push(KrakenSolverArg('targets', 'Out', 'Mat44[]'));
   return args;
 }
 
@@ -18,20 +26,26 @@ function OSS_offsetSolver.solve!
 (
   in Boolean drawDebug,
   in Scalar rigScale,
-  in Mat44[] objects,
+  in Scalar amount,
+  in Mat44[] references,
+  in Mat44[] targetsParents,
   in Mat44[] offsets,
   in Mat44[] offsetsRest,
-  out Mat44[] result
+  out Mat44[] targets
   )
 {
-  Size size = objects.size();
-  result.resize(size);
+  Size size = references.size();
+  targets.resize(size);
 
+  Mat44 results[];
+  results.resize(size);
+  
   for(Size i=0; i<size; i++){
-    // get local Transform
-    result[i] = offsetsRest[i].inverse()*objects[i];
-    result[i] = offsets[i]*result[i];
+    results[i] = offsetsRest[i].inverse()*references[i];
+    if (amount > 0) {
+      results[i]      = results[i].sphericalLinearInterpolate( offsetsRest[i].inverse()*offsets[i]  *  offsetsRest[i].inverse()*references[i], amount);
+    } 
+    targets[i] = targetsParents[i].inverse()*offsetsRest[i]*results[i];
   }
-
 }
 

@@ -329,7 +329,6 @@ class OSS_Component(BaseExampleComponent):
             floatAttr = sourceAttribute
 
         #############################
-
         ReverseSolver = KLOperator(name, 'OSS_ReverseSolver', 'OSS_Kraken')
         self.addOperator(ReverseSolver)
         ReverseSolver.setInput('drawDebug', self.drawDebugInputAttr)
@@ -346,17 +345,18 @@ class OSS_Component(BaseExampleComponent):
 
 
 
-    def offsetOp(self, objects, targets, offsetA, offsetB, name=None):
+    def offsetOp(self, references, targets, offsetA, offsetB, amount = 1, name=None):
         """
         outputs Mat44 array of objects tranformed by the delta of OffsetA to OffsetB
 
         Args:
-            objects (Mat44): objects that provide source Mat44
+            amount (Scalar): blend amount
+            references (Mat44): reference objects that provide source Mat44
             targets (Mat44): targets after offset
             offsetA (Mat44): First Value for Delta
             offsetB (Mat44): Second Value for Delta
         Returns:
-            The KL constraint operator
+            The KL offset operator
 
         """
 
@@ -365,10 +365,12 @@ class OSS_Component(BaseExampleComponent):
 
         offsetOp = KLOperator(name, 'OSS_offsetSolver', 'OSS_Kraken')
         self.addOperator(offsetOp)
-        offsetOp.setInput('objects', objects)
-        offsetOp.setInput('offsetsRest', [offsetA for o in objects])
-        offsetOp.setInput('offsets', [offsetB for o in objects])
-        offsetOp.setOutput('result', targets)
+        offsetOp.setInput('amount', amount)
+        offsetOp.setInput('references', references)
+        offsetOp.setInput('targetsParents',  [o.getParent() for o in targets])
+        offsetOp.setInput('offsetsRest', [offsetA for o in references])
+        offsetOp.setInput('offsets',     [offsetB for o in references])
+        offsetOp.setOutput('targets', targets)
         return offsetOp
 
 
@@ -470,6 +472,32 @@ class OSS_Component(BaseExampleComponent):
         jsonFile.close()
 
         return data
+
+
+    def createDistanceSolver(self, name, MatA, MatB, distance, distanceRelative, distanceRest=1.0):
+        operator = KLOperator(str(name), 'OSS_distanceSolver', 'OSS_Kraken')
+        self.addOperator(operator)
+        operator.setInput('drawDebug', self.drawDebugInputAttr)
+        operator.setInput('rigScale', self.rigScaleInputAttr)
+        operator.setInput('distanceRest', distanceRest)
+        operator.setInput('MatA', MatA)
+        operator.setInput('MatB', MatB)
+        operator.setOutput('distanceRelative', distanceRelative)
+        return operator
+
+
+
+    def createEvalKeyframesValueSolver(self, name, t, result, keyframeTime=[0.0,1.0], keyframeValue=[0.0,1.0], keyframeTangentIn=[Vec2(0.0,0.01),Vec2(0.0,0.01)], keyframeTangentOut =[Vec2(0.0,0.01),Vec2(0.0,0.01)]):
+        operator = KLOperator(str(name), 'OSS_EvalKeyframesValueSolver', 'OSS_Kraken')
+        self.addOperator(operator)
+        operator.setInput('drawDebug', self.drawDebugInputAttr)
+        operator.setInput('rigScale', self.rigScaleInputAttr)
+        operator.setInput('t', t)
+        operator.setInput('keyframeTime', keyframeTime)
+        operator.setInput('keyframeValue', keyframeValue)
+        operator.setInput('keyframeTangentIn', keyframeTangentIn)
+        operator.setInput('keyframeTangentOut', keyframeTangentOut)
+        operator.setOutput('result', result)
 
 
     def createRemapScalarValueSolver(self, name, input, result, scale=1.0, clamp=False):
@@ -605,11 +633,11 @@ class OSS_Component(BaseExampleComponent):
                     #     toTargetAttr.connect(drivingAttr)
         # print json.dumps(opDict, indent=4, sort_keys=True)
 
-    def createRBFWeightsSolver(self, driver, driverParent, attrParent=None, kernel=0, keyType=3, eulerPoses=None, poseAttrs=None, name=None):  # RadialBasisKernel_Multiquadric, Quat / Color
+    def createRBFWeightsSolver(self, driver, driverParent, attrParent=None, kernel=0, keyType=3, eulerPoses=None, eulerRotationOrder=None, poseAttrs=None,  useTwist=True,  attrPrefix=None, attrSuffix = None, twistAxis = 0, name=None):  # RadialBasisKernel_Multiquadric, Quat / Color
 
         if not name:
             try:
-                name = condition.getName()+"_rbf"
+                name = condition.getName()
             except:
                 name = "rbf"
 
@@ -625,38 +653,48 @@ class OSS_Component(BaseExampleComponent):
                 "back": [0, -90, 0]
             }
 
-        rbfOp = KLOperator(name, 'OSS_RBFWeightSolver', 'OSS_Kraken')
+        if attrPrefix is None:
+            attrPrefix = name+"_RBF_"
+
+        if attrSuffix is None:
+            attrSuffix = "_rbf"
+
+        rbfOp = KLOperator(name+"_rbf", 'OSS_RBFWeightSolver', 'OSS_Kraken')
         self.addOperator(rbfOp)
 
         rbfAttrGroup = AttributeGroup("RBF", parent=attrParent)
+
         # Add Att Inputs
         rbfOp.setInput('drawDebug', self.drawDebugInputAttr)
         rbfOp.setInput('rigScale', self.rigScaleInputAttr)
+
         # Add Xfo Inputs
         rbfOp.setInput('kernel', ScalarAttribute("kernel", value=3, parent=rbfAttrGroup))  # RadialBasisKernel_Gaussian
         rbfOp.setInput('keyType', 3)  # 2=Vec3 , 3=Quat
         rbfOp.setInput('epsilon', ScalarAttribute("epsilon", value=-1.0, parent=rbfAttrGroup))
-        rbfOp.setInput('useTwist', BoolAttribute("useTwist", value=False, parent=rbfAttrGroup))
-        rbfOp.setInput('twistAxis', IntegerAttribute("twistAxis", value=0, parent=rbfAttrGroup))
+        rbfOp.setInput('useTwist',  BoolAttribute("useTwist", value=useTwist, parent=rbfAttrGroup))
+        rbfOp.setInput('twistAxis', IntegerAttribute("twistAxis", value=twistAxis, parent=rbfAttrGroup))
         rbfOp.setInput('drivers', [driver])
         rbfOp.setInput('driverParents', [driverParent])
+
         # Note, sources to diver and driverParent must be evaluated before this call!
         rbfOp.setInput('driverLocalOffsets', [driverParent.xfo.inverse() * driver.xfo])
 
         xfoPoses = []
         if not poseAttrs:
             poseAttrs = []
-        for name, euler in eulerPoses.iteritems():
+        for posename, euler in eulerPoses.iteritems():
             xfo = Xfo()
             xfo.ori.setFromEulerAnglesWithRotOrder(
                 Vec3(
                     Math_degToRad(euler[0]),
                     Math_degToRad(euler[1]),
                     Math_degToRad(euler[2])),
-                self.uplimbDef.ro)
+                    eulerRotationOrder
+                    )
             xfoPoses.append(xfo)
             if len(poseAttrs) < len(eulerPoses):
-                poseAttrs.append(ScalarAttribute(self.uplimbName+"_RBF_"+name, value=0.0, parent=rbfAttrGroup))
+                poseAttrs.append(ScalarAttribute(('').join([attrPrefix,posename,attrSuffix]), value=0.0, parent=rbfAttrGroup))
 
         rbfOp.setInput('poses', xfoPoses)
         # Add weight attr Outputs
