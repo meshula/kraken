@@ -73,7 +73,7 @@ class Builder(Builder):
     __krkAttributes = None
     __krkDeformers = None
     __krkScalarOutput = None
-    __krkGlueObjectData = None
+    __krkGlueObjectData = {}
 
     def __init__(self):
         super(Builder, self).__init__()
@@ -757,12 +757,6 @@ class Builder(Builder):
             kl += ["  if(this.profilingFrame >= 0)"]
             kl += ["    FabricProfilingBeginFrame(this.profilingFrame++, Float32(context.time));"]
             kl += ["  AutoProfilingEvent methodEvent(\"%s.evaluate\");" % self.getKLExtensionName()]
-        kl += ["  {"]
-        if self.__profilingFrames > 0:
-            kl += ["    AutoProfilingEvent scopedEvent(\"%s.glue_controls\");" % self.getKLExtensionName()]
-        kl += ["    this.glue_controls(context);"]
-        kl += ["  }"]
-
         kl += ["  if(this.useClip && this.clip != null) {"]
         if self.__profilingFrames > 0:
             kl += ["    AutoProfilingEvent scopedEvent(\"%s.clip.apply\");" % self.getKLExtensionName()]
@@ -780,7 +774,7 @@ class Builder(Builder):
         if self.__profilingFrames > 0:
             kl += ["  this.processProfiling();"]
         kl += ["}", ""]
-
+        kl += [""]
         kl += ["inline function %s.evaluate!(KrakenClipContext context, io Mat44 joints<>) {" % self.getKLExtensionName()]
         kl += [""]
         if self.__profilingFrames > 0:
@@ -848,6 +842,11 @@ class Builder(Builder):
         kl += ["    this.setScalarAttributeById(index, this.directDriveAttrValues[i++]);"]
         kl += ["  }"]
         kl += [""]
+        kl += ["  {"]
+        if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.glue_controls\");" % self.getKLExtensionName()]
+        kl += ["    this.glue_controls(context);"]
+        kl += ["  }"]
         kl += ["  this.solve(context);  // Let's do this"]
         kl += [""]
         if len(self.__krkDeformers) > 0:
