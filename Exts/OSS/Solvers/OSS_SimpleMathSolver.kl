@@ -1,0 +1,58 @@
+require Kraken;
+
+object OSS_SimpleMathSolver : KrakenSolver {
+};
+
+// Default Constructor
+function OSS_SimpleMathSolver()
+{
+  this.defaultValues["inputA"] = 0.0;
+  this.defaultValues["inputB"] = 0.0;
+  this.defaultValues["mode"] = 0;
+}
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_SimpleMathSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('inputA', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('inputB', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('mode', 'In', 'UInt32'));
+  args.push(KrakenSolverArg('result', 'Out', 'Scalar'));
+  return args;
+}
+
+
+
+// Solve
+function OSS_SimpleMathSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Scalar inputA,
+  in Scalar inputB,
+  in UInt32 mode,
+  out Scalar result
+  )
+{
+
+  switch (mode)
+  {
+    case 0: // Add
+      result = inputA + inputB;
+      break;
+    case 1: // Subtract
+      result = inputA - inputB;
+      break;
+    case 2: // Multiply
+      result = inputA * inputB;
+      break;
+    case 3: // Divide
+      if (Math_badDivisor(inputB))
+      {
+        throw("Bad divisor in "+FUNC);
+      }
+      result = inputA / inputB;
+      break;
+  }
+
+}
