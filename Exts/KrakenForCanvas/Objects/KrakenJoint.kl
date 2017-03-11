@@ -11,7 +11,7 @@ object KrakenJoint : KrakenObject3D {
   // Store all direct Xfo ancestors of joints that need to be set when a joint is set by direct-drive.  Essentially, treat
   // All objects that should have the joint's xfo as one.
 
-  UInt32 identicalSourceObject3DUniquIds[];
+  UInt32 identicalSourceObject3DUniquIds[];  //(store id, until we know storing ref is not slower)
 };
 
 /// \dfgPresetFolder Objects
@@ -33,6 +33,8 @@ function KrakenJoint(
   this.local = xfo.toMat44();
   this.visibility = visibility;
   this.color = color;
+  this.glue_joint_index = -1;
+  this.glue_space_uniqueId = -1;
 }
 
 /// \dfgPresetFolder DebugDrawing

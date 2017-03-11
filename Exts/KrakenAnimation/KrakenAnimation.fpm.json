@@ -11,6 +11,7 @@
     "Clips/FCurve/KrakenFCurveClip.kl",
     "Clips/Alembic/KrakenAbcClip.kl",
     "Clips/Glue/KrakenGlueClip.kl",
+    "Clips/Snap/KrakenSnapClip.kl",
     "Clips/Containers/KrakenClipStack.kl",
     "Clips/Procedural/KrakenRotationWaveClip.kl"
   ],

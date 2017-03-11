@@ -25,6 +25,8 @@ function KrakenControl(
   this.visibility = visibility;
   this.color = color;
   this.shapeHash = shapeHash;
+  this.glue_joint_index = -1;
+  this.glue_space_uniqueId = -1;
 
   // xfo animation
   Xfo localXfo = xfo;

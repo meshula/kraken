@@ -22,6 +22,8 @@ function KrakenLocator(
   this.local = xfo.toMat44();
   this.visibility = visibility;
   this.color = color;
+  this.glue_joint_index = -1;
+  this.glue_space_uniqueId = -1;
 }
 
 /// \dfgPresetFolder DebugDrawing

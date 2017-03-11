@@ -16,7 +16,8 @@
     "OSS_WeightedAverageMat44KLSolver.kl",
     "OSS_AngleBetweenSolver.kl",
     "OSS_ConditionScalarSolver.kl",
-    "OSS_EvalKeyframesValueSolver.kl",
+    //"OSS_EvalKeyframesValueSolver.kl",
+    "OSS_SimpleMathSolver.kl",
     "OSS_RBFWeightSolver.kl"
   ],
   "autoNamespace": true

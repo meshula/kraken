@@ -32,6 +32,7 @@ from kraken.helpers.utility_methods import logHierarchy
 from OSS.OSS_control import *
 from OSS.OSS_component import OSS_Component
 
+
 COMPONENT_NAME = "hand"
 
 class OSSHandComponent(OSS_Component):

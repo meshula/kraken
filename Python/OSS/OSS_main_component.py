@@ -30,6 +30,7 @@ from kraken.core.configs.config import Config
 from OSS.OSS_control import *
 from OSS.OSS_component import OSS_Component
 
+
 COMPONENT_NAME = "main"
 
 class OSSMainComponent(OSS_Component):

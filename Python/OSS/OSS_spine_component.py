@@ -29,6 +29,7 @@ from kraken.helpers.utility_methods import logHierarchy
 from OSS.OSS_control import *
 from OSS.OSS_component import OSS_Component
 
+
 COMPONENT_NAME = "spine"
 
 class OSSSpineComponent(OSS_Component):
@@ -266,9 +267,39 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.upChestCtrl.rotatePoints(0, -90.0, 0)
         self.upChestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
         self.upChestCtrlSpace = self.upChestCtrl.insertCtrlSpace()
+        self.upChestCtrlResult = Transform('upChest_result', parent=self.ctrlCmpGrp)
+        self.upChestCtrlResult.xfo = Xfo(self.upChestCtrl.xfo)
+
+
+        # chest Aim
+        chestNeckSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.upChestCtrl)
+        self.chestAlignToWorldSpaceAttr = ScalarAttribute('alignToWorld', value=0.0, minValue=0.0, maxValue=1.0, parent=chestNeckSettingsAttrGrp)
+        self.chestAlignIkSpaceAttr = ScalarAttribute('alignToChestIK', value=0.0, minValue=0.0, maxValue=1.0, parent=chestNeckSettingsAttrGrp)
+        self.chestIKAttr = ScalarAttribute('chestIK', value=0.0, minValue=0.0, maxValue=1.0, parent=chestNeckSettingsAttrGrp)
+
+
+        self.chestWorldRef = CtrlSpace('chestWorldRef', parent=self.ctrlCmpGrp)
+        self.chestFKToWorldRef = CtrlSpace('FKToWorldRef', parent=self.ctrlCmpGrp)
+        self.chestFKRef = CtrlSpace('chestFKRef', parent=self.chestCtrl)
+        self.upChestIKRef = CtrlSpace('upChestIKRef', parent=self.ctrlCmpGrp)
+        self.upChestIKCtrlSpace = CtrlSpace('upChestIK', parent=self.ctrlCmpGrp)
+        self.upChestIKCtrl = IKControl('chest', parent=self.upChestIKCtrlSpace, shape="square")
+        self.upChestIKCtrl.setColor('red')
+        self.upChestIKCtrl.rotatePoints(90,0,0)
+        self.upChestIKCtrl.scalePoints(Vec3(3,3,3))
+        self.upChestIKCtrl.lockScale(x=True, y=True, z=True)
+        self.upChestIKCtrl.lockRotation(x=True, y=True, z=True)
+
+        self.upChestIKUpVSpace = CtrlSpace('chestUpV', parent=self.globalSRTInputTgt)
+        self.upChestIKUpV = Control('chestUpV', parent=self.upChestIKUpVSpace, shape="circle")
+        self.upChestIKUpV.scalePoints(Vec3(3,3,3))
+        self.upChestIKUpV.lockScale(x=True, y=True, z=True)
+        self.upChestIKUpV.lockRotation(x=True, y=True, z=True)
 
         # Neck
-        self.neckCtrlSpace = CtrlSpace('neck', parent=self.upChestCtrl)
+        self.neckCtrlSpace = CtrlSpace('neck', parent=self.ctrlCmpGrp)
+        self.neckCtrlSpace.constrainTo(self.upChestCtrlResult, maintainOffset=True)
+
 
         # ==========
         # Deformers
@@ -301,7 +332,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # ==============
         # Constraint inputs
         self.hipsCtrlSpaceConstraint = self.hipsCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-        self.torsoCtrlSpaceConstraint = self.torsoCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.torsoCtrlSpaceConstraint = self.torsoCtrlSpace.constrainTo(self.parentSpaceInputTgt)
 
 
         # ===============
@@ -431,9 +462,59 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.neckCtrlSpace.xfo.tr = neckPosition
         # self.neckCtrl.xfo.tr = neckPosition
 
+        # Chest LookAt/Aim Controls
+        self.chestFKRef.xfo = self.upChestCtrlSpace.xfo
+        length = upChestPosition.distanceTo(torsoPosition) * 3
+        self.upChestIKCtrlSpace.xfo.ori = self.upChestCtrlSpace.xfo.ori
+        self.upChestIKCtrlSpace.xfo.tr = self.upChestCtrlSpace.xfo.tr.add(Vec3(0, 0, length))
+        self.upChestIKCtrl.xfo = self.upChestIKCtrlSpace.xfo
+
+        self.upChestIKUpV.xfo.ori = self.upChestCtrlSpace.xfo.ori
+        self.upChestIKUpV.xfo.tr = self.upChestCtrlSpace.xfo.tr.add(Vec3(0, length, 0))
+
+        # Do we want this to be world up or hips up?
+        self.chestIKUpVSpaceConstraint = self.upChestIKUpVSpace.constrainTo(self.hipsCtrl, maintainOffset=True)
+
+        # Add Aim Op
+        self.chestAimKLOp = KLOperator('chestAimKLOp', 'OSS_AimKLSolver', 'OSS_Kraken')
+        self.addOperator(self.chestAimKLOp)
+
+        # Add Att Inputs
+        self.chestAimKLOp.setInput('drawDebug', self.drawDebugInputAttr)
+        self.chestAimKLOp.setInput('rigScale', self.rigScaleInputAttr)
+        self.chestAimKLOp.setInput('blend',  0)
+        # Add Xfo Inputs
+        self.chestAimKLOp.setInput('rest', self.chestFKRef)
+        self.chestAimKLOp.setInput('ik', self.upChestIKCtrl)
+        self.chestAimKLOp.setInput('up', self.upChestIKUpV)
+        # Outputs
+        self.chestAimKLOp.setOutput('result', self.upChestIKRef)
+
+
+        # Add Blend Op
+        # Add Att Inputs
+        self.alignchestToWorldOp = self.blend_two_xfos(
+            self.chestFKToWorldRef,
+            self.chestFKRef, self.chestWorldRef,
+            blendTranslate=0,
+            blendRotate=self.chestAlignToWorldSpaceAttr,
+            blendScale=0,
+            name='alignchestToWorldOp')
+
+        self.upChestCtrlSpace.setParent(self.ctrlCmpGrp)
+
+        self.alignchestToIKOp = self.blend_two_xfos(
+            self.upChestCtrlSpace,
+            self.chestFKToWorldRef, self.upChestIKRef,
+            blendTranslate=0,
+            blendRotate=self.chestAlignIkSpaceAttr,
+            blendScale=0,
+            name='alignchestToIKOp')
+
+
+
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers)
-
 
         self.pelvisHeight = pelvisPosition.subtract(torsoPosition)
         self.hipsCtrl.translatePoints( self.pelvisHeight - Vec3(0,2,0))
@@ -441,13 +522,13 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.controlInputs.append(self.pelvisCtrlSpace)
         self.controlInputs.append(self.torsoCtrl)
         self.controlInputs.append(self.chestCtrl)
-        self.controlInputs.append(self.upChestCtrl)
+        self.controlInputs.append(self.upChestCtrlResult)
         self.controlInputs.append(self.neckCtrlSpace)
 
         self.controlRestInputs.append(self.pelvisCtrlSpace.xfo)
         self.controlRestInputs.append(self.torsoCtrl.xfo)
         self.controlRestInputs.append(self.chestCtrl.xfo)
-        self.controlRestInputs.append(self.upChestCtrl.xfo)
+        self.controlRestInputs.append(self.upChestCtrlResult.xfo)
         self.controlRestInputs.append(self.neckCtrlSpace.xfo)
 
         self.rigidMat44s.append(self.controlInputs[0])
@@ -586,6 +667,18 @@ class OSSSpineComponentRig(OSSSpineComponent):
             constraint = self.deformerJoints[i].constrainTo(self.spineOutputs[i])
             constraint.evaluate()
 
+
+        #self.spineEndOutputTgt.xfo = Xfo(self.spineOutputs[-1].xfo)
+
+
+        self.chestIKOp = self.blend_two_xfos(
+            self.upChestCtrlResult,
+            self.upChestCtrl, self.upChestIKRef,
+            blendTranslate=0,
+            blendRotate=self.chestIKAttr,
+            blendScale=0,
+            name='chestIKAttrOp')
+
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # ====================
@@ -603,6 +696,13 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         # Don't eval *input* constraints because they should all have maintainOffset on and get evaluated at the end during build()
 
+
+        chestIKVisAddAttr = self.createScalarAttribute(name="chestIKVisAdd", groupName="__vis__", kObject=self.upChestIKCtrl)
+        self.addSolver = self.createSimpleMathSolver(self.chestAlignIkSpaceAttr, self.chestIKAttr, mode="ADD", output=chestIKVisAddAttr)
+        visAttr = self.createScalarAttribute(name="chestIKVis", groupName="__vis__", kObject=self.upChestIKCtrl)
+        self.aimVisConditionSolver = self.createConditionSolver(chestIKVisAddAttr, 1.0, 0.0, name="aimVis", result=visAttr)
+        self.upChestIKCtrl.getVisibilityAttr().connect(visAttr, lock=True)
+        self.upChestIKUpV.getVisibilityAttr().connect(visAttr, lock=True)
 
         # ====================
         # Extra Shape Mods
@@ -622,7 +722,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.chestMocapCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'],1.0, data['globalComponentCtrlSize']))
             self.upChestMocapCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], 1.0, data['globalComponentCtrlSize']))
 
-
+        self.evalOperators()
         self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 
 from kraken.core.kraken_system import KrakenSystem
