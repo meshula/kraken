@@ -63,7 +63,7 @@ Float32 KrakenSnapClip.evaluateFloat32!(UInt32 id, io Ref<KrakenKLRig> rig, Krak
 Xfo KrakenSnapClip.evaluateXfo!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
   if(rig == null)
     return Xfo();
-  report("TTPrint: index" +this.indexes[id]+" " + this.names[id] + " = "+context.matrices[this.indexes[id]]);
+  //report("TTPrint: index" +this.indexes[id]+" " + this.names[id] + " = "+context.matrices[this.indexes[id]]);
   return context.matrices[this.indexes[id]];
 }
 
