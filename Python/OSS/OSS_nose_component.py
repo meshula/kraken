@@ -317,7 +317,7 @@ class OSSNoseComponentRig(OSSNoseComponent):
         # Add Att Inputs
         self.noseTopAimKLOP.setInput('drawDebug', self.drawDebugInputAttr)
         self.noseTopAimKLOP.setInput('rigScale', self.rigScaleInputAttr)
-        self.noseTopAimKLOP.setInput('blend',  0)
+        self.noseTopAimKLOP.setInput('blend',  1)
         self.noseTopAimKLOP.setInput('rest', self.noseTopAlignSpaceRest)
         self.noseTopAimKLOP.setInput('ik', self.midLipSpace)
         # Add Xfo Inputs

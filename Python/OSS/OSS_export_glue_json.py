@@ -50,6 +50,7 @@ def export_glue_json(builder, filepath):
     constraint_dict_src = collections.OrderedDict([
         #"M_root_fk": {"joint":"M_root_def"},
         ("M_cog_fk", {"joint": "M_pelvis_def", "spaceJoint": "world"}),
+        ("M_hips_fk", {"joint": "M_pelvis_def", "spaceJoint": "world"}),
         ("M_torso_fk", {"joint": "M_spine01_def", "spaceJoint": "M_pelvis_def"}),
         ("M_chest_fk", {"joint": "M_spine03_def", "spaceJoint": "M_spine01_def"}),
         ("M_upChest_fk", {"joint": "M_spine05_def", "spaceJoint": "M_spine03_def"}),

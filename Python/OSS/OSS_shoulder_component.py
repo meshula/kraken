@@ -366,13 +366,15 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # Eval Operators # Order is important
         self.evalOperators()
 
-        self.shldrDef.constrainTo(self.shldrOutputTgt)
+
         # ====================
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # ====================
         # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
         self.shldrOutputTgtConstraint.evaluate()
         self.shldrEndOutputTgtConstraint.evaluate()
+
+        self.shldrDef.constrainTo(self.shldrOutputTgt).evaluate()
 
         self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 

@@ -364,7 +364,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
         # Add Att Inputs
         self.EyeAutoAimKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.EyeAutoAimKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.EyeAutoAimKLOp.setInput('blend',  0)
+        self.EyeAutoAimKLOp.setInput('blend',  1)
 
         self.EyeAutoAimKLOp.setOutput('result', self.eyeTrackerIKSpace)
         self.EyeAutoAimKLOp.setInput('rest', self.eyeTracker)

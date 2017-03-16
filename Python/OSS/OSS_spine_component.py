@@ -482,7 +482,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Add Att Inputs
         self.chestAimKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.chestAimKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.chestAimKLOp.setInput('blend',  0)
+        self.chestAimKLOp.setInput('blend',  1)
         # Add Xfo Inputs
         self.chestAimKLOp.setInput('rest', self.chestFKRef)
         self.chestAimKLOp.setInput('ik', self.upChestIKCtrl)

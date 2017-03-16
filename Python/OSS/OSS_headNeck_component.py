@@ -352,7 +352,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Add Att Inputs
         self.HeadAimKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.HeadAimKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.HeadAimKLOp.setInput('blend',  0)
+        self.HeadAimKLOp.setInput('blend',  1)
         # Add Xfo Inputs
         self.HeadAimKLOp.setInput('rest', self.headFKRef)
         self.HeadAimKLOp.setInput('ik', self.headIKCtrl)
