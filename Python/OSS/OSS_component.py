@@ -699,3 +699,54 @@ class OSS_Component(BaseExampleComponent):
         rbfOp.setInput('poses', xfoPoses)
         # Add weight attr Outputs
         rbfOp.setOutput('weights', poseAttrs)
+
+
+
+    def insertCtrlSpace(self, ctrl, name=None):
+        """Adds a CtrlSpace object above this object - inserted here to work on Transforms
+
+        Args:
+            name (string): optional name for this CtrlSpace, default is same as
+                this object
+
+        Returns:
+            object: New CtrlSpace object
+
+        """
+
+        if name is None:
+            name = ctrl.getName()
+
+        newCtrlSpace = CtrlSpace(name, parent=ctrl.getParent())
+        if ctrl.getParent() is not None:
+            ctrl.getParent().removeChild(ctrl)
+
+        if ctrl.getMetaDataItem("altLocation"):
+            newCtrlSpace.setMetaDataItem("altLocation", ctrl.getMetaDataItem("altLocation"))
+
+        ctrl.setParent(newCtrlSpace)
+        newCtrlSpace.addChild(ctrl)
+
+        newCtrlSpace.xfo = Xfo(ctrl.xfo)
+
+        # To ensure that names of control spaces don't clash with controls and
+        # if they do, set's the control space's name back to what it was intended
+        if ctrl.getName() == name:
+            newCtrlSpace.setName(name)
+
+        return newCtrlSpace
+
+
+
+    def fillValues(self, numDefs, minVal=0.0, maxVal=1.0, popFirst=False, popLast=False):
+        params = []
+        if numDefs == 1:
+            return [0.5]
+        for i in range(numDefs):
+            ratio = float(i) / float(numDefs-1)
+            params.append((1.0-ratio)*minVal + ratio*maxVal)
+        if popFirst and (len(params) > 1):
+            del params[0]
+        if popLast and (len(params) > 1):
+            del params[-1]
+        return params
