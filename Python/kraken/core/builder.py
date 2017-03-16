@@ -673,6 +673,11 @@ class Builder(object):
         traverser.traverse()
 
         try:
+
+            cons_and_ops = traverser.getItemsOfType(['Constraint', 'Operator'])
+            for item in cons_and_ops:
+                item.evaluate()  # Ensure that everything is evaluated and in the correct order
+
             self._preBuild(kSceneItem)
 
             objects3d = traverser.getItemsOfType('Object3D')
