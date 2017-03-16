@@ -3,6 +3,16 @@ require Kraken;
 object KrakenCtrlSpace : KrakenObject3D {
 };
 
+function KrakenCtrlSpace()
+{
+  this.initialize();
+}
+
+function KrakenCtrlSpace.initialize!()
+{
+  this.parent.initialize();
+}
+
 /// \dfgPresetFolder Objects
 function KrakenCtrlSpace(
   String name,
@@ -14,6 +24,7 @@ function KrakenCtrlSpace(
   Boolean visibility,
   Color color
 ) {
+  this.initialize();
   this.name = name;
   this.buildName = buildName;
   this.path = path;

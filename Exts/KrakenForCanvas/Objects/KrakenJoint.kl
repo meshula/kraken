@@ -15,6 +15,17 @@ object KrakenJoint : KrakenObject3D {
 };
 
 /// \dfgPresetFolder Objects
+function KrakenJoint()
+{
+  this.initialize();
+}
+
+function KrakenJoint.initialize!()
+{
+  this.parent.initialize();
+}
+
+/// \dfgPresetFolder Objects
 function KrakenJoint(
   String name,
   String buildName,
@@ -25,6 +36,7 @@ function KrakenJoint(
   Boolean visibility,
   Color color
 ) {
+  this.initialize();
   this.name = name;
   this.buildName = buildName;
   this.path = path;

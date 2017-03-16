@@ -3,6 +3,16 @@ require Kraken;
 object KrakenRig : KrakenContainer {
 };
 
+function KrakenRig()
+{
+  this.initialize();
+}
+
+function KrakenRig.initialize!()
+{
+  this.parent.initialize();
+}
+
 /// \dfgPresetFolder Objects
 function KrakenRig(
   String name,
@@ -14,6 +24,7 @@ function KrakenRig(
   Boolean visibility,
   Color color
 ) {
+  this.initialize();
   this.name = name;
   this.buildName = buildName;
   this.path = path;

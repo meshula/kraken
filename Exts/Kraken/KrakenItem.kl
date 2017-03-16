@@ -6,9 +6,21 @@ object KrakenItem {
   UInt32 uniqueId;
 };
 
+function KrakenItem()
+{
+  this.initialize();
+}
+
+function KrakenItem.initialize!()
+{
+    // Do init stuff
+}
+
 function KrakenItem (
   String name
-){
+)
+{
+    this.initialize();
     this.name = name;
 }
 
@@ -16,6 +28,7 @@ function KrakenItem (
   String name,
   UInt32 uniqueId
 ){
+    this.initialize();
     this.name = name;
     this.uniqueId = uniqueId;
 }

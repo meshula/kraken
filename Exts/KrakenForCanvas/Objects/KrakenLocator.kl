@@ -4,6 +4,17 @@ object KrakenLocator : KrakenObject3D {
 };
 
 /// \dfgPresetFolder Objects
+function KrakenLocator()
+{
+  this.initialize();
+}
+
+function KrakenLocator.initialize!()
+{
+  this.parent.initialize();
+}
+
+/// \dfgPresetFolder Objects
 function KrakenLocator(
   String name,
   String buildName,
@@ -14,6 +25,7 @@ function KrakenLocator(
   Boolean visibility,
   Color color
 ) {
+  this.initialize();
   this.name = name;
   this.buildName = buildName;
   this.path = path;

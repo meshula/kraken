@@ -3,6 +3,15 @@ require Kraken;
 object KrakenTransform : KrakenObject3D {
 };
 
+function KrakenTransform()
+{
+  this.initialize();
+}
+
+function KrakenTransform.initialize!()
+{
+  this.parent.initialize();
+}
 
 /// \dfgPresetFolder Objects
 function KrakenTransform(
@@ -15,6 +24,7 @@ function KrakenTransform(
   Boolean visibility,
   Color color
 ) {
+  this.initialize();
   this.name = name;
   this.buildName = buildName;
   this.path = path;
@@ -23,9 +33,6 @@ function KrakenTransform(
   this.local = xfo.toMat44();
   this.visibility = visibility;
   this.color = color;
-  this.glue_joint_index = -1;
-  this.glue_space_uniqueId = -1;
-
 }
 
 /// \dfgPresetFolder DebugDrawing

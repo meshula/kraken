@@ -429,11 +429,11 @@ class Object3D(SceneItem):
             bool: True if successful.
 
         """
-        if parent:
+        if parent is None:
             parent.addChild(self)
         else:
             if self._parent is not None:
-                parent.removeChild(self)
+                self._parent.removeChild(self)
             SceneItem.setParent(self, None)
 
         return True
@@ -849,7 +849,7 @@ class Object3D(SceneItem):
 
         self._constraints.append(constraint)
 
-        constraint.setParent(self)
+        constraint.setParent(self)  # do before setConstrainee
         constraint.setConstrainee(self)
 
         return True

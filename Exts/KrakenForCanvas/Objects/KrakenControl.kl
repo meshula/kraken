@@ -3,6 +3,16 @@ require Kraken;
 object KrakenControl : KrakenCurve {
 };
 
+function KrakenControl()
+{
+  this.initialize();
+}
+
+function KrakenControl.initialize!()
+{
+  this.parent.initialize();
+}
+
 /// \dfgPresetFolder Objects
 function KrakenControl(
   String name,
@@ -17,6 +27,7 @@ function KrakenControl(
   Xfo xfoAnimation[String],
   Float32 floatAnimation[String]
 ) {
+  this.initialize();
   this.name = name;
   this.buildName = buildName;
   this.path = path;
