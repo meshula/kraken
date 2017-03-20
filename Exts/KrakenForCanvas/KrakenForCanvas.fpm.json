@@ -30,5 +30,9 @@
 
     "Shapes/KrakenCurveDict.kl"
   ],
-  "autoNamespace": true
+  "autoNamespace": true,
+    "dfgPresets": {
+    "dir": "DFG",
+    "presetPath": "KrakenForCanvas.Exts"
+  }
 }
