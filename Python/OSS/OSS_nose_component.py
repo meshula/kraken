@@ -32,6 +32,7 @@ from kraken.helpers.utility_methods import logHierarchy
 from OSS.OSS_control import *
 from OSS.OSS_component import OSS_Component
 
+
 COMPONENT_NAME = "nose"
 
 class OSSNoseComponent(OSS_Component):
@@ -316,7 +317,7 @@ class OSSNoseComponentRig(OSSNoseComponent):
         # Add Att Inputs
         self.noseTopAimKLOP.setInput('drawDebug', self.drawDebugInputAttr)
         self.noseTopAimKLOP.setInput('rigScale', self.rigScaleInputAttr)
-        self.noseTopAimKLOP.setInput('blend',  0)
+        self.noseTopAimKLOP.setInput('blend',  1)
         self.noseTopAimKLOP.setInput('rest', self.noseTopAlignSpaceRest)
         self.noseTopAimKLOP.setInput('ik', self.midLipSpace)
         # Add Xfo Inputs

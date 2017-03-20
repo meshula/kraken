@@ -1,0 +1,118 @@
+require Math;
+
+object KrakenSnapClip : KrakenClip {
+  String names[];
+  UInt32 nameToId[String];
+  UInt32 types[];
+  UInt32 indexes[];
+
+  KrakenClipLookup lookup;
+};
+
+function KrakenSnapClip() {
+  this.lookup = null;
+}
+
+function KrakenSnapClip.setFloat32!(String name, Index index) {
+  UInt32 id = this.nameToId.get(name, this.names.size());
+  if(id == this.names.size()) {  // If adding to the list
+    this.nameToId[name] = this.names.size();
+    this.names.push(name);
+    this.types.push(KrakenClipChannel_Float32);
+    this.indexes.push(index);
+  } else {  // already exists
+    this.types[id] = KrakenClipChannel_Float32;
+    this.indexes[id] = index;
+  }
+  this.lookup = null;
+}
+
+function KrakenSnapClip.setXfo!(String name, Index index) {
+  UInt32 id = this.nameToId.get(name, this.names.size());
+  if(id == this.names.size()) {  // If adding to the list
+    this.nameToId[name] = this.names.size();
+    this.names.push(name);
+    this.types.push(KrakenClipChannel_Xfo);
+    this.indexes.push(index);
+  } else {  // already exists
+    this.types[id] = KrakenClipChannel_Xfo;
+    this.indexes[id] = index;
+  }
+  this.lookup = null;
+}
+
+UInt32 KrakenSnapClip.getChannelCount() {
+  return this.names.size();
+}
+
+String KrakenSnapClip.getChannelName(UInt32 id) {
+  return this.names[id];
+}
+
+UInt32 KrakenSnapClip.getChannelType(UInt32 id) {
+  return this.types[id];
+}
+
+Float32 KrakenSnapClip.evaluateFloat32!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
+  if(rig == null)
+    return 0.0;
+
+  return context.channels[this.indexes[id]];
+}
+
+Xfo KrakenSnapClip.evaluateXfo!(UInt32 id, io Ref<KrakenKLRig> rig, KrakenClipContext context) {
+  if(rig == null)
+    return Xfo();
+  //report("TTPrint: index" +this.indexes[id]+" " + this.names[id] + " = "+context.matrices[this.indexes[id]]);
+  return context.matrices[this.indexes[id]];
+}
+
+function KrakenSnapClip.apply(io Ref<KrakenKLRig> rig, KrakenClipContext context, Float32 factor) {
+  KrakenSnapClip clip = this;
+  if(clip.lookup == null)
+    clip.lookup = KrakenClipLookup(rig, clip);
+  clip.lookup.applyClip(rig, clip, context, factor);
+}
+
+function JSONDictValue KrakenSnapClip.saveToJson!() {
+  JSONArrayValue snaps();
+  for(Size i=0;i<this.types.size();i++) {
+    JSONDictValue snap();
+    snap.setString('name', this.names[i]);
+    snap.setInteger('type', this.types[i]);
+    snap.setInteger('index', this.indexes[i]);
+    }
+  JSONDictValue content();
+  return content;
+}
+
+function KrakenSnapClip.loadFromJson!(JSONDictValue json) {
+  this.names.resize(0);
+  this.nameToId.clear();
+  this.types.resize(0);
+  this.indexes.resize(0);
+
+  JSONArrayValue snaps = json.get('snaps');
+  report("TTPrint: snaps.size(): " + snaps.size());
+  for(Size i=0;i<snaps.size();i++) {
+    JSONDictValue snap = snaps.get(i);
+    String name = snap.getString('name');
+    report("TTPrint: name: " + name);
+    Integer type = snap.getInteger('type');
+    report("TTPrint: type: " + type);
+    Index index = snap.getInteger('index');
+    report("TTPrint: index: " + index);
+
+    if(type == KrakenClipChannel_Float32)
+      this.setFloat32(name, index);
+    else {
+      this.setXfo(name, index);
+    }
+  }
+}
+
+function SInt32[] KrakenSnapClip.getPoseJointIDs() {
+
+  SInt32 result[];
+  return result;
+}

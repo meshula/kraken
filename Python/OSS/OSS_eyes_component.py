@@ -28,6 +28,7 @@ from kraken.helpers.utility_methods import logHierarchy
 from OSS.OSS_control import *
 from OSS.OSS_component import OSS_Component
 
+
 COMPONENT_NAME = "eyes"
 
 class OSSEyesComponent(OSS_Component):
@@ -363,7 +364,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
         # Add Att Inputs
         self.EyeAutoAimKLOp.setInput('drawDebug', self.drawDebugInputAttr)
         self.EyeAutoAimKLOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.EyeAutoAimKLOp.setInput('blend',  0)
+        self.EyeAutoAimKLOp.setInput('blend',  1)
 
         self.EyeAutoAimKLOp.setOutput('result', self.eyeTrackerIKSpace)
         self.EyeAutoAimKLOp.setInput('rest', self.eyeTracker)
@@ -423,7 +424,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     newDefConstraint = newDef.constrainTo(newLoc)
 
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
-                    upVSpaceBlendInputAttr = ScalarAttribute(handleName+'FKIK', value=1.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
+                    self.ikBlendAttr = ScalarAttribute(handleName+'IK', value=0.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
 
 
 
@@ -471,11 +472,11 @@ class OSSEyesComponentRig(OSSEyesComponent):
             self.addOperator(self.EyeIkFkBlendKLOp)
 
             # Add Att Inputs
-            self.EyeIkFkBlendKLOp.setInput('blend',  upVSpaceBlendInputAttr)
+            self.EyeIkFkBlendKLOp.setInput('blend',  self.ikBlendAttr)
             self.EyeIkFkBlendKLOp.setInput('rest', fkCtrl)
+            self.EyeIkFkBlendKLOp.setInput('ik', ikCtrl)
 
             self.EyeIkFkBlendKLOp.setOutput('result', newLoc)
-            self.EyeIkFkBlendKLOp.setInput('ik', ikCtrl)
             # Add Xfo Inputs
             self.EyeIkFkBlendKLOp.setInput('up', upCtrlSpace)
             # temp now until handles are swapped

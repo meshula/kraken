@@ -74,9 +74,9 @@ function KrakenSolverArg[] OSS_NURBSCurveXfoKLSolver.getArguments() {
   args.push(KrakenSolverArg('followCurveTangent', 'In', 'Scalar'));
   args.push(KrakenSolverArg('useLocalNormal', 'In', 'Scalar'));
   args.push(KrakenSolverArg('followCurveNormal', 'In', 'Scalar'));
-  args.push(KrakenSolverArg('alignX', 'In', 'SInt32'));
-  args.push(KrakenSolverArg('alignY', 'In', 'SInt32'));
-  args.push(KrakenSolverArg('alignZ', 'In', 'SInt32'));
+  args.push(KrakenSolverArg('alignX', 'In', 'SInt8'));
+  args.push(KrakenSolverArg('alignY', 'In', 'SInt8'));
+  args.push(KrakenSolverArg('alignZ', 'In', 'SInt8'));
   args.push(KrakenSolverArg('altTangent', 'In', 'Vec3'));
   args.push(KrakenSolverArg('atVec', 'In', 'Mat44'));
   args.push(KrakenSolverArg('parent', 'In', 'Mat44'));
@@ -120,9 +120,9 @@ function OSS_NURBSCurveXfoKLSolver.solve!(
     in Scalar followCurveTangent,
     in Scalar useLocalNormal,
     in Scalar followCurveNormal,
-    in SInt32 alignX,
-    in SInt32 alignY,
-    in SInt32 alignZ,
+    in SInt8 alignX,
+    in SInt8 alignY,
+    in SInt8 alignZ,
     in Vec3 altTangent,
     in Mat44 atVec,
     in Mat44 parent,

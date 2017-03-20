@@ -177,8 +177,11 @@ class Builder(Builder):
             object: Node that is created.
 
         """
+        parent = kSceneItem.getParent()
+        parentNode = self.getDCCSceneItem(parent)
 
-        parentNode = self.getDCCSceneItem(kSceneItem.getParent())
+        if parent and not parentNode:
+            raise Exception("Parent node (%s) for node (%s) does not exist yet.  Cannot parent in Maya.  You probably have a cycle." % (parent.getBuildName(), buildName))
 
         dccSceneItem = pm.group(name="group", em=True)
         pm.parent(dccSceneItem, parentNode)

@@ -285,9 +285,9 @@ class OSS_Component(BaseExampleComponent):
             The KL constraint operator
 
         """
-
         if not name:
             name = target.getName()
+
 
         blendTRSConstraint = KLOperator(name, 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
         self.addOperator(blendTRSConstraint)
@@ -510,7 +510,7 @@ class OSS_Component(BaseExampleComponent):
         operator.setInput('clamp', clamp)
         operator.setOutput('result', result)
         return operator
-        
+
     def createLocalTransformSolver(self, name, inMatrix):
         TranslateOp = KLOperator(name, 'OSS_GetLocalTranslateSolver', 'OSS_Kraken') #, metaData={"altLocation":side})
         self.addOperator(TranslateOp)
@@ -520,7 +520,18 @@ class OSS_Component(BaseExampleComponent):
         TranslateOp.setInput('inBaseMatrix', inMatrix.getParent())
         return TranslateOp
 
-    def createScalarAttribute(self, name, group, force=True, lock=True):
+    def createScalarAttribute(self, name, group=None, groupName=None, kObject=None, force=True, lock=True):
+
+        if not group:
+            if not groupName:
+                raise ("Must provide a groupName if not passing a group.")
+            if not kObject:
+                raise ("Must provide a kObject if not passing a group.")
+
+            group = kObject.getAttributeGroupByName(groupName)
+            if not group:
+                group = AttributeGroup(groupName, parent=kObject)
+
         newAttr = group.getAttributeByName(name)
         if not newAttr:
             newAttr = ScalarAttribute(name, value=0.0, parent=group)
@@ -589,11 +600,11 @@ class OSS_Component(BaseExampleComponent):
                     customAttrGrp = control.getAttributeGroupByName(attrGrpName)
                     if not customAttrGrp:
                         customAttrGrp = AttributeGroup(attrGrpName, parent=control)
-                    
+
                     # drivingAttr  = self.createScalarAttribute(srcAttr, customAttrGrp)
 
                     # 1 - - - - -
-                    # set up local transofmAttrs                    
+                    # set up local transofmAttrs
                     transformAttrs = self.isTransformAttribute(srcAttr)
                     # we currently only support transform Attrs
                     if not transformAttrs:
@@ -607,7 +618,7 @@ class OSS_Component(BaseExampleComponent):
                         # if we get any transform Attrs, we need to build a LocalTransformSolver to get the local space from the src node
                         TranslateOp = self.createLocalTransformSolver(controlName, control)
                         hasTransformOp.append(control)
-                        
+
                     try:
                         TranslateOp.setOutput(srcAttr, drivingAttr)
                     except:
@@ -700,7 +711,7 @@ class OSS_Component(BaseExampleComponent):
         # Add weight attr Outputs
         rbfOp.setOutput('weights', poseAttrs)
 
-
+        return rbfOp
 
     def insertCtrlSpace(self, ctrl, name=None):
         """Adds a CtrlSpace object above this object - inserted here to work on Transforms
@@ -750,3 +761,33 @@ class OSS_Component(BaseExampleComponent):
         if popLast and (len(params) > 1):
             del params[-1]
         return params
+
+
+
+    def createSimpleMathSolver(self, inputA, inputB, mode="ADD", output=None, name=None):
+
+        if not name:
+            name = mode
+
+        mathOp = KLOperator('addVis', 'OSS_SimpleMathSolver', 'OSS_Kraken')
+
+        self.addOperator(mathOp)
+
+        mathOp.setInput('rigScale', self.rigScaleInputAttr)
+        mathOp.setInput('drawDebug', self.drawDebugInputAttr)
+        mathOp.setInput('inputA', inputA)
+        mathOp.setInput('inputB', inputB)
+
+        if mode == "ADD":
+            mathOp.setInput('mode', 0)
+        elif mode == "SUB":
+            mathOp.setInput('mode', 1)
+        elif mode == "MUL":
+            mathOp.setInput('mode', 2)
+        elif mode == "DIV":
+            mathOp.setInput('mode', 3)
+
+        if output:
+            mathOp.setOutput('result', output)
+
+        return mathOp

@@ -39,7 +39,7 @@ function OSS_AimKLSolver.solve!
 
   Xfo resultXfo;
   resultXfo.tr = rest.translation();
-  resultXfo.ori = aimOri.sphericalLinearInterpolate(restOri, blend);
+  resultXfo.ori = restOri.sphericalLinearInterpolate(aimOri, blend);
   resultXfo.sc = restSc;
   result = resultXfo.toMat44();
 }

@@ -5,6 +5,17 @@ object KrakenCurve : KrakenObject3D {
 };
 
 /// \dfgPresetFolder Objects
+function KrakenCurve()
+{
+  this.initialize();
+}
+
+function KrakenCurve.initialize!()
+{
+  this.parent.initialize();
+}
+
+/// \dfgPresetFolder Objects
 function KrakenCurve(
   String name,
   String buildName,
@@ -16,6 +27,7 @@ function KrakenCurve(
   Color color,
   String shapeHash
 ) {
+  this.initialize();
   this.name = name;
   this.buildName = buildName;
   this.path = path;

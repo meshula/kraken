@@ -50,6 +50,7 @@ def export_glue_json(builder, filepath):
     constraint_dict_src = collections.OrderedDict([
         #"M_root_fk": {"joint":"M_root_def"},
         ("M_cog_fk", {"joint": "M_pelvis_def", "spaceJoint": "world"}),
+        ("M_hips_fk", {"joint": "M_pelvis_def", "spaceJoint": "world"}),
         ("M_torso_fk", {"joint": "M_spine01_def", "spaceJoint": "M_pelvis_def"}),
         ("M_chest_fk", {"joint": "M_spine03_def", "spaceJoint": "M_spine01_def"}),
         ("M_upChest_fk", {"joint": "M_spine05_def", "spaceJoint": "M_spine03_def"}),
@@ -102,40 +103,17 @@ def export_glue_json(builder, filepath):
     for kconstraint in [c['sceneItem'] for c in builder._Builder__klConstraints]:
         kconstraint.evaluate() #Make sure all leaf nodes are evaluated
 
-    def make_constraint(object3D, joint, space=None):
+    def make_constraint(object3D, joint, space=None, spaceJoint=None):
         spacestr = " (space = %s)" % space if space else ""
         print("    Making glue constraint: object3D[%s] to joint[%s]%s" % (object3D, joint, spacestr))
 
         constraint = collections.OrderedDict()
-        constraint["object3D"] = object3D
-        constraint["joint"] = joint
+        constraint["control"] = object3D
+        constraint["control_joint"] = joint
         if space:
             constraint["space"] = space
-
-        if joint in objects.keys():
-            offset = objects[joint].xfo.inverse() * objects[object3D].xfo
-        else:
-            offset = objects[object3D].xfo
-
-        constraint["tOffset"] = collections.OrderedDict([
-            ("x", min_thresh(offset.tr.x)),
-            ("y", min_thresh(offset.tr.y)),
-            ("z", min_thresh(offset.tr.z))
-            ])
-
-        euler = offset.ori.toEuler(objects[object3D].ro)
-        constraint["rOffset"] = collections.OrderedDict([
-            ("x", min_thresh(Math_radToDeg(euler.x))),
-            ("y", min_thresh(Math_radToDeg(euler.y))),
-            ("z", min_thresh(Math_radToDeg(euler.z)))
-            ])
-        constraint["order"] = ROT_ORDER_REMAP[objects[object3D].ro.order]
-
-        constraint["sOffset"] = collections.OrderedDict([
-            ("x", min_scale(offset.sc.x)),
-            ("y", min_scale(offset.sc.y)),
-            ("z", min_scale(offset.sc.z))
-            ])
+            if spaceJoint:
+                constraint["space_joint"] = spaceJoint
 
         return constraint
 
@@ -153,10 +131,9 @@ def export_glue_json(builder, filepath):
             raise Exception("spaceJoint [%s] not found in deformer list %s" % (data["spaceJoint"], "\n".join(objects.keys())))
 
         space = objects[ctrl].getParent().getBuildName()
-        constraints.append(make_constraint(space, data["spaceJoint"]))
-        constraints.append(make_constraint(ctrl, data["joint"], space=space))
+        constraints.append(make_constraint(ctrl, data["joint"], space=space, spaceJoint=data.get("spaceJoint")))
 
-    jdict["content"] = {"constraints": constraints}
+    jdict["controls"] = constraints
 
     with open(filepath, 'w') as fp:
         json.dump(jdict, fp, sort_keys=False, indent=4)

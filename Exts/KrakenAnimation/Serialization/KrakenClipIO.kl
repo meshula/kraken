@@ -28,7 +28,11 @@ function KrakenClip KrakenClip_getFromTypeName(String typeName) {
       return KrakenRotationWaveClip();
     case "KrakenGlueClip":
       return KrakenGlueClip();
+    case "KrakenSnapClip":
+      return KrakenSnapClip();
   }
+  // Is there anyway to do an "eval" in KL so we can create these types on the fly?
+  report("Cannot create clip of typeName: " + typeName + ". Is is missing from: " + FUNC);
   return null;
 }
 
@@ -46,7 +50,6 @@ function KrakenClip KrakenClip_loadFromFile(String filePath) {
   doc.parse(json);
 
   String clipType = doc.root.getString('clipType');
-
   KrakenClip clip = KrakenClip_getFromTypeName(clipType);
   if(clip)
     clip.loadFromJson(doc.root.get('content'));

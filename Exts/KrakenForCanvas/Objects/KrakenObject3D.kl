@@ -13,7 +13,27 @@ object KrakenObject3D : KrakenItem {
   Boolean visibility;
   Color color;
   String flags[String];
+  // Definitely don't keep the below properties here.  We should great a new glue constraint object type
+  UInt32 glue_joint_index;  // a KrakenJoint Index into list of all joints, until we know storing ref is not slower)
+  Mat44 glue_offset;  // offset from that glue_joint_index joint
+  UInt32 glue_space_uniqueId; // another ik of KrakenObject3D in which to calculate local space (store id, until we know storing ref is not slower)
+  Boolean glue_local_or_global;
 };
+
+/// \dfgPresetFolder Objects
+function KrakenObject3D()
+{
+  this.initialize();
+}
+
+function KrakenObject3D.initialize!()
+{
+  this.parent.initialize();
+  this.glue_joint_index = -1;
+  this.glue_space_uniqueId = -1;
+  this.glue_local_or_global = false;  // local
+}
+
 
 function KrakenObject3D_DrawIntoLines_VertexColors(KrakenObject3D obj, Index firstIndex, io Lines lines) {
   GeometryAttributes attributes = lines.getAttributes();

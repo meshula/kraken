@@ -73,6 +73,7 @@ class Builder(Builder):
     __krkAttributes = None
     __krkDeformers = None
     __krkScalarOutput = None
+    __krkGlueObjectData = {}
 
     def __init__(self):
         super(Builder, self).__init__()
@@ -666,13 +667,20 @@ class Builder(Builder):
         kl += ["object %s : KrakenKLRig {" % self.getKLExtensionName()]
         kl += ["  Boolean useClip;"]
         kl += ["  UInt32 debugIter;"]
+        kl += ["  Boolean debugSolve;"]
+        kl += ["  Boolean debugDirectDrive;"]
         kl += ["  UInt32 profilingFrames;"]
-        kl += ["  String solveDepthSpaces;"]
+        kl += ["  String solveDepthSpaces;  // used for indenting while debugSolve printing"]
         kl += ["  UInt64 evalVersion;"]
+        kl += ["  Mat44 inPoseJointValues[%d];  // A pose of world-space matrices may be set here, or may not" % len(self.__klMembers['members']['KrakenJoint'])]  # IDs of joints with incoming direct drive mat44, otherwise -1
         kl += ["  SInt32 directDriveJointIDs[%d];" % len(self.__klMembers['members']['KrakenJoint'])]  # IDs of joints with incoming direct drive mat44, otherwise -1
+        kl += ["  UInt32 directDriveObject3Ds[String]; // key: KrakenItem name value: index uniqueID"]
+        kl += ["  Mat44 directDriveObject3DValues[];  // size AND order same as directDriveObject3Ds"]
         kl += ["  UInt32 directDriveAttrs[String]; // key: KrakenItem name value: index uniqueID"]
         kl += ["  Scalar directDriveAttrValues[];  // size AND order same as directDriveAttrs"]
-        kl += ["  SInt32 solveItemIDs[];"] # Rig items to call solveItem() on
+        kl += ["  SInt32 solveItemIDs[]; // Rig items to call solveItem() on"]
+        kl += ["  SInt32 glueControlIDs[]; // Rig controls that will be constrained to their associated joint in directDriveJointIDs[]"]
+        kl += ["  SInt32 glueJointIndexes[];  // List of joints required for evaluating glueControlIDs"]
         kl += ["  UInt32 nameToUniqueID[String];"]
         kl += ["  Boolean isItemDirty[%d];" % self.__klMaxUniqueId]
         if self.__profilingFrames > 0:
@@ -708,6 +716,10 @@ class Builder(Builder):
         kl += ["  this.debugIter = iterations;"]
         kl += ["}", ""]
 
+        kl += ["inline function %s.setDebugSolve!(in Boolean solve) {" % self.getKLExtensionName()]
+        kl += ["  this.debugSolve = solve;"]
+        kl += ["}", ""]
+
         kl += ["inline function %s.setUseClip!(in Boolean useClip) {" % self.getKLExtensionName()]
         kl += ["  this.useClip = useClip;"]
         kl += ["}", ""]
@@ -727,7 +739,7 @@ class Builder(Builder):
 
         kl += self.__klPreCode
 
-        kl += ["    if (this.debugIter)"]
+        kl += ["    if (Boolean(this.debugIter) && this.debugSolve)"]
         kl += ["      report(\"this.solveItemIDs.size(): \"+this.solveItemIDs.size());"]
         kl += ["    if (this.solveItemIDs.size() == 0) {  //If we haven't set any solveItemIDs, solve all items tagged with SOLVE by  default"]
         for item in self.__krkTags.get("SOLVE", []):
@@ -735,11 +747,11 @@ class Builder(Builder):
             kl += ["        this.solveDepthSpaces = \"\";"]
             kl += ["      this.%s();" % (self.getSolveMethodName(item['sceneItem']))]
         kl += ["    } else {"]
-        kl += ["      if (this.debugIter)"]
+        kl += ["      if (Boolean(this.debugIter) && this.debugSolve)"]
         kl += ["        report(\"Solving specific solveItemIDs...\");"]
         kl += ["      for (Count i=0; i < this.solveItemIDs.size(); i++)"]
         kl += ["      {"]
-        kl += ["        if (this.debugIter)"]
+        kl += ["        if (Boolean(this.debugIter) && this.debugSolve)"]
         kl += ["          this.solveDepthSpaces = \"\";"]
         kl += ["        this.solveItem(this.solveItemIDs[i]);"]
         kl += ["      }"]
@@ -769,7 +781,7 @@ class Builder(Builder):
         if self.__profilingFrames > 0:
             kl += ["  this.processProfiling();"]
         kl += ["}", ""]
-
+        kl += [""]
         kl += ["inline function %s.evaluate!(KrakenClipContext context, io Mat44 joints<>) {" % self.getKLExtensionName()]
         kl += [""]
         if self.__profilingFrames > 0:
@@ -814,18 +826,54 @@ class Builder(Builder):
         kl += ["      {"]
         kl += ["        if (this.debugIter)"]
         kl += ["          report(\"Debug: %s.evaluate() : this.isItemDirty[this._KrakenItem[this.directDriveJointIDs[\"+j+\"]].identicalSourceObject3DUniquIds[\"+i+\"]]= false; // \"+this._KrakenItem[KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i]].name);" % (self.getKLExtensionName())]
-        kl += ["        this.isItemDirty[KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i]] = false;;  // Hack"]
+        kl += ["        this.isItemDirty[KrakenJoint(this._KrakenItem[this.directDriveJointIDs[j]]).identicalSourceObject3DUniquIds[i]] = false;  // Hack"]
         kl += ["      }"]
         kl += ["    }"]
         kl += ["  }"]
         kl += [""]
         kl += ["  {"]
         if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.evaluate:SetDirectDriveObject3DValues\");" % self.getKLExtensionName()]
+        kl += ["  // Set Direct Drive Object3D Values if any.  directDriveObject3DValues[] order is same as setObject3DGlobalMat44ById order"]
+        kl += ["    Index i = 0;"]
+        kl += ["    for (name, id in this.directDriveObject3Ds)  //Should iterate in insert order"]
+        kl += ["    {"]
+        kl += ["      this.setObject3DGlobalMat44ById(id, this.directDriveObject3DValues[i++]);"]
+        kl += ["    }"]
+        kl += ["  }"]
+        kl += ["  {"]
+        if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.evaluate:SettingDDObject3dCleanSecondTime\");" % self.getKLExtensionName()]
+        kl += ["  // Again, Set Direct Drive Object3D Values as clean.  directDriveObject3DValues[] order is same as setObject3DGlobalMat44ById order"]
+        kl += ["    for (name, id in this.directDriveObject3Ds)  //Should iterate in insert order"]
+        kl += ["    {"]
+        kl += ["      this.isItemDirty[id] = false;"]
+        kl += ["    }"]
+        kl += ["  }"]
+        kl += ["  {"]
+        if self.__profilingFrames > 0:
             kl += ["    AutoProfilingEvent scopedEvent(\"%s.evaluate:SetDirectDriveAttributeValues\");" % self.getKLExtensionName()]
         kl += ["  // Set Direct Drive Attribute Values if any.  directDriveAttrValues[] order is same as setScalarAttributeById order"]
-        kl += ["  Index i =0;"]
-        kl += ["  for (name, index in this.directDriveAttrs)  //Should iterate in insert order"]
-        kl += ["    this.setScalarAttributeById(index, this.directDriveAttrValues[i]);"]
+        kl += ["    Index i = 0;"]
+        kl += ["    for (name, id in this.directDriveAttrs)  //Should iterate in insert order"]
+        kl += ["    {"]
+        kl += ["      this.setScalarAttributeById(id, this.directDriveAttrValues[i++]);"]
+        kl += ["    }"]
+        kl += ["  }"]
+        kl += [""]
+        kl += ["  {"]
+        if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.evaluate:SettingDDAttrsCleanSecondTime\");" % self.getKLExtensionName()]
+        kl += ["  // Again, Set attrValues as clean.  directDriveAttrs[] order is same as setObject3DGlobalMat44ById order"]
+        kl += ["    for (name, id in this.directDriveAttrs)  //Should iterate in insert order"]
+        kl += ["    {"]
+        kl += ["      this.isItemDirty[id] = false;"]
+        kl += ["    }"]
+        kl += ["  }"]
+        kl += ["  {"]
+        if self.__profilingFrames > 0:
+            kl += ["    AutoProfilingEvent scopedEvent(\"%s.glue_controls\");" % self.getKLExtensionName()]
+        kl += ["    this.glue_controls(context);"]
         kl += ["  }"]
         kl += [""]
         kl += ["  this.solve(context);  // Let's do this"]
@@ -927,18 +975,30 @@ class Builder(Builder):
 
         # These are for setting values for solve assuming rig is reset to all be dirty
         kl += ["inline function %s.setBoolAttributeById!(Index uniqueId, Boolean value) {" % self.getKLExtensionName()]
+        kl += ["  if (this.debugIter)"]
+        kl += ["  {"]
+        kl += ["      report(\"Debug: %s.setBoolAttributeById() :\"+this._KrakenItem[uniqueId].name + \": \" + value);" % (self.getKLExtensionName())]
+        kl += ["  }"]
         kl += ["  KrakenBoolAttribute(this._KrakenItem[uniqueId]).value = value;"]
         kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
         kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
         kl += ["inline function %s.setIntegerAttributeById!(Index uniqueId, SInt32 value) {" % self.getKLExtensionName()]
+        kl += ["  if (this.debugIter)"]
+        kl += ["  {"]
+        kl += ["      report(\"Debug: %s.setIntegerAttributeById() :\"+this._KrakenItem[uniqueId].name + \": \" + value);" % (self.getKLExtensionName())]
+        kl += ["  }"]
         kl += ["  KrakenIntegerAttribute(this._KrakenItem[uniqueId]).value = value;"]
         kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
         kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
         kl += ["inline function %s.setScalarAttributeById!(Index uniqueId, Scalar value) {" % self.getKLExtensionName()]
+        kl += ["  if (this.debugIter)"]
+        kl += ["  {"]
+        kl += ["      report(\"Debug: \"+FUNC+\" :\"+this._KrakenItem[uniqueId].name + \": \" + value);"]
+        kl += ["  }"]
         kl += ["  KrakenScalarAttribute(this._KrakenItem[uniqueId]).value = value;"]
         kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
         kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
@@ -949,7 +1009,8 @@ class Builder(Builder):
 #        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44ById: name: \"+this._KrakenItem[uniqueId].name+\" uniqueId: \"+uniqueId+\" value: \"+value);" % self.getKLExtensionName()]
         kl += ["  if (this.debugIter)"]
         kl += ["  {"]
-        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44ById() :\"+this._KrakenItem[uniqueId].name);" % (self.getKLExtensionName())]
+        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44ById() this._KrakenItem[\"+uniqueId+\"].global :\"+KrakenObject3D(this._KrakenItem[uniqueId]).global);" % self.getKLExtensionName()]
+        kl += ["      report(\"Debug: %s.setObject3DGlobalMat44ById() :\"+this._KrakenItem[uniqueId].name + \": \" + value);" % self.getKLExtensionName()]
         kl += ["  }"]
         kl += ["  KrakenObject3D(this._KrakenItem[uniqueId]).global = value;"]
         kl += ["  this.dirtyItem(uniqueId);  // dirty all dependencies"]
@@ -962,12 +1023,79 @@ class Builder(Builder):
         kl += ["  this.isItemDirty[uniqueId] = false;  // clean this"]
         kl += ["}", ""]
 
+
+        kl += ["inline function %s.glue_controls!(KrakenClipContext context) {" % self.getKLExtensionName()]
+        kl += ["  {"]
+        kl += ["  // Note this function also sets the global value of the space items.  Not sure if that's an issue, a little more optimized that way, but we can easily fix later"]
+        kl += ["    AutoProfilingEvent scopedEvent(\"%s.evaluate:SettingGlueControls\");" % self.getKLExtensionName()]
+        kl += [""]
+        kl += ["    KrakenObject3D control = null;  // Most likely a KrakenControl now, but maybe we use it for other things later"]
+        kl += ["    KrakenJoint control_joint = null;"]
+        kl += ["    KrakenObject3D space = null;"]
+        kl += ["    KrakenJoint space_joint = null;"]
+        kl += ["    Mat44 space_global;  // Use this instead of space.global.  We really should only be affecting the \"control\" objects"]
+        kl += [""]
+        kl += ["    for(Index i=0; i<this.glueControlIDs.size(); i++)"]
+        kl += ["    {"]
+        kl += ["        control = KrakenObject3D(this._KrakenItem[this.glueControlIDs[i]]);"]
+        kl += ["        if (this.debugIter)"]
+        kl += ["        {"]
+        kl += ["        report(\"TTPrint: control.name: \" + control.name);"]
+        kl += ["        report(\"TTPrint: control.glue_joint_index: \" + control.glue_joint_index);"]
+        kl += ["        }"]
+        kl += ["        if (control.glue_joint_index == -1) {"]
+        kl += ["            report(\"Attempting to glue control \\\"\"+control.name+\"\\\" without specifying a driving joint.  Skipping.\");"]
+        kl += ["            continue;"]
+        kl += ["        }"]
+        kl += ["        if (this.debugIter)"]
+        kl += ["        {"]
+        kl += ["          report(\"TTPrint: context.directDriveJoints[control.glue_joint_index]: \" + context.directDriveJoints[control.glue_joint_index]);"]
+        kl += ["          report(\"TTPrint: control.glue_offset: \" + control.glue_offset);"]
+        kl += ["        }"]
+        kl += ["        control.global = context.directDriveJoints[control.glue_joint_index] * control.glue_offset;"]
+        kl += ["        if (control.glue_local_or_global == false)  // local"]
+        kl += ["        {"]
+        kl += ["            if (control.glue_space_uniqueId != -1)"]
+        kl += ["            {"]
+        kl += ["                space = KrakenObject3D(this._KrakenItem[control.glue_space_uniqueId]);"]
+        kl += ["                if (space.glue_joint_index != -1)"]
+        kl += ["                {"]
+        kl += ["                    space_global = context.directDriveJoints[space.glue_joint_index] * space.glue_offset;"]
+        kl += ["                }"]
+        kl += ["                else"]
+        kl += ["                {"]
+        kl += ["                    space_global = space.glue_offset;"]
+        kl += ["                }"]
+        kl += ["                control.local = space_global.inverse() * control.global;"]
+        kl += ["            }"]
+        kl += ["            else"]
+        kl += ["            {"]
+        kl += ["                control.local = Mat44(control.global);  // copy"]
+        kl += ["            }"]
+        kl += ["            if (this.debugIter)"]
+        kl += ["            {"]
+        kl += ["                report(\"Setting control \"+control.name+\" local to: \"+control.local);"]
+        kl += ["            }        "]
+        kl += ["        }"]
+        kl += ["        this.dirtyItem(control.uniqueId);  // dirty all dependencies"]
+        kl += ["    }"]
+        kl += [""]
+        kl += ["    for(Index i=0; i<this.glueControlIDs.size(); i++)"]
+        kl += ["    {"]
+        kl += ["        control = KrakenObject3D(this._KrakenItem[this.glueControlIDs[i]]);"]
+        kl += ["        if (control.glue_local_or_global == true)"]
+        kl += ["            this.isItemDirty[control.uniqueId] = false;  // clean if global"]
+        kl += ["    }"]
+        kl += ["  }"]
+        kl += ["}"]
+
+
         for item in allItems:
             if len(item['solveCode']) == 0:
               continue
             sceneItem = item['sceneItem']
             kl += ["inline function %s.%s!() {" % (self.getKLExtensionName(), self.getSolveMethodName(sceneItem))]
-            kl += ["  if (this.debugIter)"]
+            kl += ["  if (Boolean(this.debugIter) && this.debugSolve)"]
             kl += ["  {"]
             kl += ["    this.solveDepthSpaces = this.solveDepthSpaces+\" \";"]
             kl += ["    if(this.isItemDirty[%d])" % self.getUniqueId(sceneItem)]
@@ -977,7 +1105,7 @@ class Builder(Builder):
             kl += ["  }"]
             kl += ["  if(!this.isItemDirty[%d])" % self.getUniqueId(sceneItem)]
             kl += ["  {"]
-            kl += ["    if (this.debugIter)"]
+            kl += ["    if (Boolean(this.debugIter) && this.debugSolve)"]
             kl += ["      this.solveDepthSpaces = this.solveDepthSpaces.rightStrip(1);"]
             kl += ["    return;"]
             kl += ["  }"]
@@ -986,14 +1114,14 @@ class Builder(Builder):
                 kl += ["  report(\"solving %s\ (%d)\");" % (self.getUniqueName(sceneItem), self.getUniqueId(sceneItem))]
             for solveLine in item['solveCode']:
                 kl += ["  " + solveLine]
-            kl += ["  if (this.debugIter)"]
+            kl += ["  if (Boolean(this.debugIter) && this.debugSolve)"]
             kl += ["  {"]
             kl += ["    this.solveDepthSpaces = this.solveDepthSpaces.rightStrip(1);"]
             kl += ["  }"]
             kl += ["}", ""]
 
         kl += ["inline function %s.solveItem!(Index uniqueId) {" % self.getKLExtensionName()]
-        kl += ["  if (this.debugIter)"]
+        kl += ["  if (Boolean(this.debugIter) && this.debugSolve)"]
         kl += ["  {"]
         kl += ["    if(this.isItemDirty[uniqueId])"]
         kl += ["      report(\"\\nDebug: %s.solveItem: \\\"\"+this._KrakenItem[uniqueId].name+\"\\\"\");" % self.getKLExtensionName()]
@@ -1025,13 +1153,15 @@ class Builder(Builder):
         kl += ["inline function %s.init!() {" % self.getKLExtensionName()]
         kl += ["    this.useClip = true;"]
         kl += ["    this.debugIter = 0;"]
+        kl += ["    this.debugSolve = 0;"]
+        kl += ["    this.debugDirectDrive = 0;"]
         kl += ["    this.profilingFrames = %d;" % self.__profilingFrames]
         kl += ["    this.profilingFrame = -1;"]
         kl += ["    this.solveDepthSpaces = \"\";"]
         kl += ["  Float32 floatAnimation[String];"]
         kl += [""]
         kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++)"]
-        kl += ["    this.directDriveJointIDs[j] = -1;"]
+        kl += ["    this.directDriveJointIDs[j] = -1;  //no entry for this index"]
         kl += [""]
         if self.__debugMode:
             kl += ["  // build 3D objects"]
@@ -1042,6 +1172,15 @@ class Builder(Builder):
             kl += ["  this.%s = %s();" % (memberName, obj['type'])]
             kl += ["  this.%s.name = \"%s\";" % (memberName, obj['buildName'])]
             kl += ["  this.%s.uniqueId = %d;" % (memberName, uniqueId)]
+            if obj["buildName"] in self.__krkGlueObjectData.keys():
+                jointIndex = self.__krkGlueObjectData[obj["buildName"]].get("jointIndex")
+                if jointIndex is not None:
+                    kl += ["  this.%s.glue_joint_index = %d;" % (memberName, jointIndex)]
+                mat44Str = self.__getXfoAsStr(self.__krkGlueObjectData[obj["buildName"]].get("offsetXfo"))+".toMat44()"
+                kl += ["  this.%s.glue_offset = %s;" % (memberName, mat44Str)]
+                spaceId = self.__krkGlueObjectData[obj["buildName"]].get("spaceId")
+                if spaceId is not None:
+                    kl += ["  this.%s.glue_space_uniqueId = %d;" % (memberName, spaceId)]
 
             # Hack to treat the xfo sources of a joint like the joint in dg // Ideally this is gone if/when we add optimization to kraken
             if obj['sceneItem'].isTypeOf("Joint"):
@@ -1189,6 +1328,16 @@ class Builder(Builder):
         kl += ["}", ""]
 
 
+        kl += ["inline function Boolean int_array_has(in SInt32 array[], in SInt32 search) {"]
+        kl += ["    // Would be nice if KL provided this in arrays..."]
+        kl += ["    Boolean found = false;"]
+        kl += ["    for(Count i=0; i<array.size(); i++) {"]
+        kl += ["        if (array[i] == search)"]
+        kl += ["            return true;"]
+        kl += ["    }"]
+        kl += ["    return false;"]
+        kl += ["}"]
+
         kl += ["inline function Xfo[] %s.getJointXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(self.__krkDeformers)]
         if len(self.__krkDeformers) > 0:
@@ -1309,8 +1458,33 @@ class Builder(Builder):
         else:
           kl += ["  KrakenControl result<>(this._KrakenControl);"]
         kl += ["  return result;"]
-        kl += ["}", ""]
-
+        kl += ["}"]
+        kl += [""]
+        kl += ["inline function String[] %s.getControlNames() {" % self.getKLExtensionName()]
+        kl += ["  String result[](this._KrakenControl.size());"]
+        kl += ["  for(Count i=0; i<this._KrakenControl.size(); i++)"]
+        kl += ["  {"]
+        kl += ["    result[i] = this._KrakenControl[i].name;"]
+        kl += ["  }"]
+        kl += ["  return result;"]
+        kl += ["}"]
+        kl += [""]
+        kl += ["inline function String[] %s.getGlueControlNames() {" % self.getKLExtensionName()]
+        kl += ["  // Return the names of the controls that can be \"glue\" constrained to the inPoseJointValues skeleton"]
+        kl += ["  String result[];"]
+        kl += ["  for(Count i=0; i<this._KrakenControl.size(); i++)"]
+        kl += ["  {"]
+        kl += ["    report(\"TTPrint: this._KrakenControl[i].glue_joint_index: \" + this._KrakenControl[i].glue_joint_index);"]
+        kl += ["    report(\"TTPrint: this._KrakenControl[i].name: \" + this._KrakenControl[i].name);"]
+        kl += ["    if (this._KrakenControl[i].glue_joint_index != -1)"]
+        kl += ["    {"]
+        kl += ["     report(\"TTPrint: Pushed: \" + this._KrakenControl[i].name);"]
+        kl += ["      result.push(this._KrakenControl[i].name);"]
+        kl += ["    }"]
+        kl += ["  }"]
+        kl += ["  return result;"]
+        kl += ["}"]
+        kl += [""]
         kl += ["inline function SInt32 %s.getUniqueID(in String name) {" % self.getKLExtensionName()]
         kl += ["     // Hmmmm... any way we can avoid double lookup?  Can we catch exception? 8|"]
         kl += ["  if (!this.nameToUniqueID.has(name))"]
@@ -1318,8 +1492,7 @@ class Builder(Builder):
         kl += [""]
         kl += ["  return this.nameToUniqueID[name];"]
         kl += ["}", ""]
-
-
+        kl += [""]
         kl += ["inline function %s.setSolveItemIDsByNames!(in String names[], in Boolean append) {" % self.getKLExtensionName()]
         kl += ["  // Not meant to be fast!"]
         kl += ["  if (!append)"]
@@ -1330,12 +1503,12 @@ class Builder(Builder):
         kl += ["    if (this.debugIter)"]
         kl += ["      report(\"Debug: %s.setSolveItemIDsByNames: Solve item name and uniqueId: \"+names[i]+\" = \"+id);" % self.getKLExtensionName()]
         kl += ["    if (id == -1)"]
-        kl += ["        report(\"Warning: KRK_lucy.setSolveItemIDsByNames joint \\\"\"+names[i]+\"\\\" not found in rig.\");"]
+        kl += ["        report(\"Warning: %s.setSolveItemIDsByNames joint \\\"\"+names[i]+\"\\\" not found in rig.\");" % self.getKLExtensionName()]
         kl += ["    else"]
         kl += ["        this.solveItemIDs.push(id);"]
         kl += ["  }"]
         kl += ["  if (this.debugIter)"]
-        kl += ["    report(\"Debug: %s.setSolveItemIDsByNames: this.solveItemIDs: \"+this.solveItemIDs);"  % self.getKLExtensionName()]
+        kl += ["    report(\"Debug: %s.setSolveItemIDsByNames: this.solveItemIDs: \"+this.solveItemIDs);" % self.getKLExtensionName()]
         kl += ["}", ""]
 
 
@@ -1344,7 +1517,7 @@ class Builder(Builder):
         kl += ["  for(Count j=0; j<this.directDriveJointIDs.size(); j++) {"]
         kl += ["    if (this.debugIter)"]
         kl += ["      report(\"Debug: %s.setDirectDriveJointIDsByNames: Joint: \"+this._KrakenJoint[j].name);" % self.getKLExtensionName()]
-        kl += ["    this.directDriveJointIDs[j] = -1;"]
+        kl += ["    this.directDriveJointIDs[j] = -1;  //no entry for this index"]
         kl += ["    for(Count n=0; n<names.size(); n++) {"]
         kl += ["      SInt32 id = this.getUniqueID(names[n]);"]
         kl += ["      if (id == -1) {" ]
@@ -1360,10 +1533,79 @@ class Builder(Builder):
         kl += ["    }"]
         kl += ["  }"]
         kl += ["  if (this.debugIter)"]
-        kl += ["    report(\"Debug: %s.setDirectDriveJointIDsByNames: this.directDriveJointIDs: \"+this.directDriveJointIDs);"  % self.getKLExtensionName()]
+        kl += ["    report(\"Debug: %s.setDirectDriveJointIDsByNames: this.directDriveJointIDs: \"+this.directDriveJointIDs);" % self.getKLExtensionName()]
         kl += ["}", ""]
 
+        kl += [""]
+        kl += ["inline function String[] %s.setGlueControlIDsByNames!(in String names[], in Boolean local_or_global, in Boolean append) {" % self.getKLExtensionName()]
+        kl += ["  // Not meant to be fast!"]
+        kl += ["  if (!append)"]
+        kl += ["    this.glueControlIDs.resize(0);"]
+        kl += ["    this.glueJointIndexes.resize(0);"]
+        kl += [""]
+        kl += ["  String namesInOrder[];"]
+        kl += ["  for(Count i=0; i<this.glueControlIDs.size(); i++) {"]
+        kl += ["    namesInOrder.push(this._KrakenItem[this.glueControlIDs[i]].name);"]
+        kl += ["  }"]
+        kl += [""]
+        kl += ["  for(Count n=0; n<names.size(); n++) {"]
+        kl += ["    SInt32 id = this.getUniqueID(names[n]);"]
+        kl += ["    if (this.debugIter)"]
+        kl += ["      report(\"Debug: %s.setGlueControlIDsByNames: Solve item name and uniqueId: \"+names[n]+\" = \"+id);" % self.getKLExtensionName()]
+        kl += ["    if (id == -1)"]
+        kl += ["    {"]
+        kl += ["      report(\"Warning: %s.setGlueControlIDsByNames control \\\"\"+names[n]+\"\\\" not found in rig.\");" % self.getKLExtensionName()]
+        kl += ["    }"]
+        kl += ["    else"]
+        kl += ["    {"]
+        kl += ["        KrakenObject3D control = KrakenObject3D(this._KrakenItem[id]);"]
+        kl += ["        SInt32 glue_joint_index = control.glue_joint_index;"]
+        kl += ["        if (glue_joint_index == -1)"]
+        kl += ["        {"]
+        kl += ["            report(\"Warning: %s.setGlueControlIDsByNames control \"+names[n]+\" does not have glue_joint to constrain to. Skipping.\");" % self.getKLExtensionName()]
+        kl += ["            continue;"]
+        kl += ["        }"]
+        kl += ["        control.glue_local_or_global = local_or_global;"]
+        kl += ["        namesInOrder.push(names[n]);"]
+        kl += ["        this.glueControlIDs.push(id);"]
+        kl += ["        {"]
+        kl += ["            if (!int_array_has(this.glueJointIndexes, glue_joint_index))"]
+        kl += ["                this.glueJointIndexes.push(glue_joint_index);"]
+        kl += ["        }"]
+        kl += ["        SInt32 spaceId = KrakenObject3D(this._KrakenItem[id]).glue_space_uniqueId;"]
+        kl += ["        if (spaceId != -1)"]
+        kl += ["        {"]
+        kl += ["            glue_joint_index = KrakenObject3D(this._KrakenItem[spaceId]).glue_joint_index;"]
+        kl += ["            if (glue_joint_index != -1)"]
+        kl += ["            {"]
+        kl += ["                if (!int_array_has(this.glueJointIndexes, glue_joint_index))"]
+        kl += ["                    this.glueJointIndexes.push(glue_joint_index);"]
+        kl += ["            }"]
+        kl += ["        }"]
+        kl += ["    }"]
+        kl += ["  }"]
+        kl += ["  if (this.debugIter)"]
+        kl += ["  {"]
+        kl += ["    report(\"Debug:  %s.setGlueControlIDsByNames: this.glueControlIDs: \"+this.glueControlIDs);" % self.getKLExtensionName()]
+        kl += ["    report(\"Debug:  %s.setGlueControlIDsByNames: this.glueJointIndexes: \"+this.glueJointIndexes);" % self.getKLExtensionName()]
+        kl += ["  }"]
+        kl += [""]
+        kl += ["    return namesInOrder;"]
+        kl += ["}"]
 
+        kl += [""]
+        kl += ["inline function String[]   %s.getGlueJointNames()" % self.getKLExtensionName()]
+        kl += ["{"]
+        kl += ["    String namesInOrder[];"]
+        kl += ["    for(Count i=0; i<this.glueJointIndexes.size(); i++)"]
+        kl += ["    {"]
+        kl += ["        if (this.glueJointIndexes[i] == -1)"]
+        kl += ["            throw(\"%s.setGlueControlIDsByNames glueJointIndex is -1;  Should never happen.\");" % self.getKLExtensionName()]
+        kl += ["        namesInOrder.push(this._KrakenJoint[this.glueJointIndexes[i]].name);"]
+        kl += ["    }"]
+        kl += ["    return namesInOrder;"]
+        kl += ["}"]
+        kl += [""]
         kl += ["inline function String[]  %s.setDirectDriveScalarIDsByNames!(in String names[]) {" % self.getKLExtensionName()]
         kl += ["  // Add names to the directDriveAttrs and expands directDriveAttrValues array size to match"]
         kl += ["  // Returns all directDriveAttrs names in the canonical order  this order is crucial when setting directDriveAttrValues[]"]
@@ -1391,7 +1633,41 @@ class Builder(Builder):
         kl += ["    return namesInOrder;"]
         kl += [""]
         kl += ["}"]
+        kl += [""]
+        kl += ["inline function String[]  %s.setDirectDriveObject3DIDsByNames!(in String names[]) {" % self.getKLExtensionName()]
+        kl += ["  // Add names to the directDriveObject3Ds and expands directDriveObject3DValues array size to match"]
+        kl += ["  // Returns all directDriveObject3Ds names in the canonical order  this order is crucial when setting setDirectDriveObject3DValues[]"]
+        kl += ["  String namesInOrder[];"]
+        kl += [""]
+        kl += ["    for(Count n=0; n<names.size(); n++) {"]
+        kl += ["      SInt32 id = this.getUniqueID(names[n]);"]
+        kl += ["      if (id == -1) {"]
+        kl += ["          report(\"Warning: %s.setDirectDriveObject3DIDsByNames Object3D \\\"\"+names[n]+\"\\\" not found in rig.\");" % self.getKLExtensionName()]
+        kl += ["          continue;"]
+        kl += ["      }"]
+        kl += ["      if (!this.directDriveObject3Ds.has(names[n])) {"]
+        kl += [""]
+        kl += ["        this.directDriveObject3Ds[names[n]] = id;"]
+        kl += ["        if (this.debugIter)"]
+        kl += ["          report(\"Debug: %s.setDirectDriveObject3DIDsByNames: name=\"+names[n]+\" id=\"+id);" % self.getKLExtensionName()]
+        kl += ["      }"]
+        kl += ["    }"]
+        kl += ["    for (name, id in this.directDriveObject3Ds)"]
+        kl += ["        namesInOrder.push(name);"]
+        kl += [""]
+        kl += ["    this.directDriveObject3DValues.resize(this.directDriveObject3Ds.size());"]
 
+        kl += ["    if (this.directDriveObject3DValues.size() > 0)"]
+        kl += ["    {"]
+        kl += ["        this.directDriveObject3DValues[0] = Mat44(1.0,0.0,0.0,33.0,0.0,1.0,0.0,66.0,0.0,0.0,1.0,99.0,0.0,0.0,0.0,1.0);"]
+        kl += ["    }"]
+
+        kl += [""]
+        kl += ["    // Return all valid names in the canonical order, this order is crucial when setting setDirectDriveObject3DValues[]"]
+        kl += ["    return namesInOrder;"]
+        kl += [""]
+        kl += ["}"]
+        kl += [""]
 
         kl += ["inline function Xfo[] %s.getControlXfos() {" % self.getKLExtensionName()]
         kl += ["  Xfo result[](%d);" % len(controls)]
@@ -1540,7 +1816,7 @@ class Builder(Builder):
             kl += ["     }"]
             kl += [""]
             kl += ["   String orderedEventNames[];"]
-            kl += ["   this.populateOrderedEvents(\"KRK_lucy.evaluate\", orderedEventNames, combinedEventsChildren);"]
+            kl += ["   this.populateOrderedEvents(\"%s.evaluate\", orderedEventNames, combinedEventsChildren);" % self.getKLExtensionName()]
             kl += [""]
             kl += ["  ProfilingEvent sortedEvents[];"]
             kl += ["  for(Count i=0; i < orderedEventNames.size(); i++)"]
@@ -1590,7 +1866,7 @@ class Builder(Builder):
         kl += ["require %s;" % self.getKLExtensionName()]
         kl += [""]
         kl += ["operator entry() {"]
-        kl += ["  %s rig();" % self.getKLExtensionName()]
+        kl += [" %s rig();" % self.getKLExtensionName()]
         kl += ["  KrakenClipContext context;"]
         if self.__profilingFrames > 0:
             kl += ["  for(SInt32 i=0;i<%d;i++) {" % self.__profilingFrames]
@@ -1785,6 +2061,7 @@ class Builder(Builder):
         dfgExec.setCode(requireCode + "dfgEntry {\n  %s = %s.getAllXfoNames();\n}\n" % (funcResult, funcInput))
         content = dfgBinding.exportJSON()
         open(filePath, "w").write(content)
+
 
     def findKLItem(self, kSceneItem):
         if isinstance(kSceneItem, Attribute):
@@ -2471,6 +2748,7 @@ class Builder(Builder):
         self.__useRigConstants = self.getConfig().getMetaData('UseRigConstants', False)
         self.__profilingFrames = self.getConfig().getMetaData('ProfilingFrames', 0)
         self.__profilingLogFile = self.getConfig().getMetaData('ProfilingLogFile', None)
+        self.__controlGlueJSONFile = self.getConfig().getMetaData('ControlGlueJSONFile', None)
         self.__canvasGraph = GraphManager()
         self.__debugMode = False
         self.__names = {}
@@ -2512,7 +2790,62 @@ class Builder(Builder):
 
         super(Builder, self)._postBuild(kSceneItem)
 
+        self.loadGlueData()
+
         return self.saveKLExtension()
 
     def logOrphanedGraphItems(self, kSceneItem):
         pass  # override default. KL build doesn't build any dcc objects
+
+
+    def loadGlueData(self):
+        data = None
+        if self.__controlGlueJSONFile:
+            if not os.path.exists(self.__controlGlueJSONFile):
+                raise Exception('Error: No json file found at %s' % self.__controlGlueJSONFile)
+            with open(self.__controlGlueJSONFile, "r") as data_file:
+                data = json.load(data_file)
+
+        if not data:
+            return
+
+        def findKLItemByBuildName(buildName):
+            for klo in self.__klObjects:
+                if klo["buildName"] == buildName:
+                    return klo
+
+        controls = data.get("controls")
+
+        self.__krkGlueObjectData = {}
+
+        for control in controls:
+
+            controlObj = findKLItemByBuildName(control.get("control"))
+            if not controlObj:
+                raise("Cannot find control \"%s\"." % control["control"])
+
+            controlJointObj = findKLItemByBuildName(control["control_joint"])
+            if not controlObj:
+                raise("Cannot find control_joint \"%s\" for control \"%s\"." % (control["control_joint"], control["control"]))
+
+            controlName = controlObj['buildName']
+            self.__krkGlueObjectData[controlName] = {}
+            self.__krkGlueObjectData[controlName]["jointIndex"] = self.__krkDeformers.index(controlJointObj)
+            controlOffsetXfo = (controlJointObj["sceneItem"].xfo.inverse() * controlObj["sceneItem"].xfo)
+            self.__krkGlueObjectData[controlName]["offsetXfo"] = controlOffsetXfo
+
+            spaceObj = findKLItemByBuildName(control.get("space"))
+            if spaceObj:
+                spaceName = spaceObj["buildName"]
+                self.__krkGlueObjectData[controlName]["spaceId"] = self.getUniqueId(spaceObj['sceneItem'])
+                spaceJointObj = findKLItemByBuildName(control.get("space_joint"))
+                if spaceName not in self.__krkGlueObjectData:
+                    self.__krkGlueObjectData[spaceName] = {}
+                    if spaceJointObj:
+                        self.__krkGlueObjectData[spaceName]["jointIndex"] = self.__krkDeformers.index(spaceJointObj)
+                        spaceOffsetXfo = (spaceJointObj["sceneItem"].xfo.inverse() * spaceObj["sceneItem"].xfo)
+                    else:
+                        spaceOffsetXfo = spaceObj["sceneItem"].xfo
+                    self.__krkGlueObjectData[spaceName]["offsetXfo"] = spaceOffsetXfo
+
+

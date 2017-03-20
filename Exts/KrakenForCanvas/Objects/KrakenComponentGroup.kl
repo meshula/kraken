@@ -3,6 +3,16 @@ require Kraken;
 object KrakenComponentGroup : KrakenObject3D {
 };
 
+function KrakenComponentGroup()
+{
+  this.initialize();
+}
+
+function KrakenComponentGroup.initialize!()
+{
+  this.parent.initialize();
+}
+
 /// \dfgPresetFolder Objects
 function KrakenComponentGroup(
   String name,
@@ -14,6 +24,7 @@ function KrakenComponentGroup(
   Boolean visibility,
   Color color
 ) {
+  this.initialize();
   this.name = name;
   this.buildName = buildName;
   this.path = path;

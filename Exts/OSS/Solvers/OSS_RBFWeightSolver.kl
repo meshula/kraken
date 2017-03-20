@@ -18,6 +18,7 @@ object OSS_RBFWeightSolver : KrakenSolver {
 // Default Constructor
 function OSS_RBFWeightSolver()
 {
+  report("Creating new RBF Solver...");
   this.initialized = false;
 
   Mat44 defaultPoses[];
@@ -81,14 +82,18 @@ function OSS_RBFWeightSolver.solve!
   if (drivers.size() != driverLocalOffsets.size())
     throw("Error in OSS_RBFWeightSolver.solve(). The number of drivers ("+drivers.size()+") must equal the number of driverLocalOffsets ("+driverLocalOffsets.size()+")");
 
+  report("TTPrint: this.quats.size(): " + this.quats.size());
+  report("TTPrint: poses.size(): " + poses.size());
   if (!this.initialized ||
     kernel != this.kernel ||
     epsilon != this.epsilon ||
     useTwist != this.useTwist ||
-    twistAxis != this.twistAxis
+    twistAxis != this.twistAxis ||
+    poses.size() != this.quats.size() ||
+    drivers.size() != this.driverArray.size()
     )
   {
-    report("Creating new RBF Solver...of keyType: "+keyType);
+    report("Re-initalizing RBF Solver...of keyType: "+keyType);
     this.rbf = RadialBasisSolver(RadialBasisKernel(kernel), keyType, epsilon);  // Don't have valueType for weights solver
 
     this.twistAxisVec = getAxisAsVector(twistAxis);
