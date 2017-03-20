@@ -1,22 +1,28 @@
-// Created by kl2dfg (processComposeFunction)
 {
   "objectType" : "Func",
   "title" : "-> KrakenClipContext",
   "ports" : [
     {
-      "objectType" : "Port",
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "time",
       "nodePortType" : "Out",
       "defaultValues" : {
         "Float64" : 0
         },
-      "name" : "time",
       "execPortType" : "In",
       "typeSpec" : "Float64"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "In",
+      "objectType" : "ExecPort",
       "name" : "result",
+      "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "KrakenClipContext"
       }

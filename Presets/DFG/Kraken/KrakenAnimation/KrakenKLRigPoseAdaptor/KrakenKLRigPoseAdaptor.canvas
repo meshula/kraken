@@ -1,4 +1,3 @@
-// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
   "metadata" : {
@@ -7,23 +6,30 @@
   "title" : "KrakenKLRigPoseAdaptor",
   "ports" : [
     {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "rig",
+      "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "KrakenKLRig"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
+      "objectType" : "ExecPort",
       "name" : "character",
+      "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "Character"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "In",
+      "objectType" : "ExecPort",
       "name" : "result",
+      "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "KrakenKLRigPoseAdaptor"
       }
