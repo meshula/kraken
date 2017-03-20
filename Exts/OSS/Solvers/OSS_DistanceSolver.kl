@@ -1,0 +1,31 @@
+require Kraken;
+
+object OSS_distanceSolver : KrakenSolver {
+};
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_distanceSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('distanceRest', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('MatA', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('MatB', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('distance', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('distanceRelative', 'Out', 'Scalar'));
+  return args;
+}
+
+// Solve
+function OSS_distanceSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Scalar distanceRest,
+  in Mat44 MatA,
+  in Mat44 MatB,
+  out Scalar distance,
+  out Scalar distanceRelative
+  )
+{
+  distance = (MatA.translation() - MatB.translation()).length();
+  distanceRelative = distance/distanceRest;
+}
