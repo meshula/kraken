@@ -365,19 +365,6 @@ class OSSCurveComponentRig(OSSCurveComponent):
         return controlsList
 
 
-    def fillValues(self, numDefs, minVal=0.0, maxVal=1.0, popFirst=False, popLast=False):
-        params = []
-        if numDefs == 1:
-            return [0.5]
-        for i in range(numDefs):
-            ratio = float(i) / float(numDefs-1)
-            params.append((1.0-ratio)*minVal + ratio*maxVal)
-        if popFirst and (len(params) > 1):
-            del params[0]
-        if popLast and (len(params) > 1):
-            del params[-1]
-        return params
-
     def setNumDeformers(self, numDeformers, data):
         for output in reversed(self.curveOutputs):
             output.getParent().removeChild(output)
@@ -393,9 +380,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
         self.params = self.fillValues(numDeformers, minVal=0.0, maxVal=1.0, popFirst=self.popFirst, popLast=self.popLast)
 
-
         numDeformers = len(self.params)
-
 
         # Add new deformers and outputs
         for i in xrange(len(self.curveOutputs), numDeformers):
@@ -474,16 +459,18 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
+
+        # ====================
+        # Evaluate Fabric Ops
+        # ====================
+        # Eval Operators # Order is important
+        
         self.evalOperators()
         self.NURBSCurveKLOp.evaluate()
 
         for i in xrange(len(self.curveOutputs)):
             constraint = self.deformerJoints[i].constrainTo(self.curveOutputs[i])
             constraint.evaluate()
-        # ====================
-        # Evaluate Fabric Ops
-        # ====================
-        # Eval Operators # Order is important
 
 
 

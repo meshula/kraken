@@ -91,7 +91,6 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         self.handleCtrl = Control('handle', parent=self.ctrlCmpGrp, shape="jack")
 
         self.useOtherIKGoalInput.setValueChangeCallback(self.updateUseOtherIKGoal)
-        #self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
 
         self.limbMocapInputAttr = None
 
@@ -179,23 +178,6 @@ class OSSLimbComponentGuide(OSSLimbComponent):
 
 
         return True
-
-
-    def updateMocap(self, mocap):
-        """ Callback to changing the component setting 'useOtherIKGoalInput'
-        Really, we should build this ability into the system, to add/remove input attrs based on guide setting bools.
-        That way, we don't have to write these callbacks.
-        """
-        if mocap:
-            if self.limbMocapInputAttr is None:
-                self.limbMocapInputAttr = self.createInput('limbMocap', dataType='Float', parent=self.cmpInputAttrGrp)
-                self.mocap = True
-
-        else:
-            if self.limbMocapInputAttr is not None:
-                # self.deleteInput('limbMocap', parent=self.cmpInputAttrGrp)
-                self.limbMocapInputAttr = None
-                self.mocap = False
 
 
 
@@ -425,9 +407,6 @@ class OSSLimbComponentRig(OSSLimbComponent):
         limbSettingsAttrGrp = AttributeGroup("DisplayInfo_LimbSettings", parent=self.limbIKCtrl)
 
 
-        if self.mocap:
-                self.limbMocapInputAttr = self.createInput('limbMocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
-
         if self.useOtherIKGoal:
             self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
             self.limbIKCtrl.constrainTo(self.ikgoal_cmpIn, maintainOffset=True)
@@ -449,32 +428,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.drawDebugInputAttr.connect(self.limbDrawDebugAttr)
 
 
-
         # =========
-        # Mocap
-        # =========
-        if self.mocap:
-            # Mocap uplimb
-            self.uplimb_mocap = MCControl(self.uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
-            #rotation order should stay consistent no matter what ro the controls have
-            self.uplimb_mocap.xfo = data['uplimbXfo']
-            self.uplimb_mocap.alignOnXAxis()
-            self.uplimb_mocap.scalePointsOnAxis(data['uplimbLen'], self.boneAxisStr)
-
-
-            # Mocap lolimb
-            self.lolimb_mocap = MCControl(self.lolimbName, parent=self.uplimb_mocap, shape="cube")
-            self.lolimb_mocap.xfo = data['lolimbXfo']
-            self.lolimb_mocap.alignOnXAxis()
-            self.lolimb_mocap.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
-            self.lolimb_mocap.insertCtrlSpace()
-            # Mocap handle
-            self.endlimb_mocap = Transform(name+'end', parent=self.lolimb_mocap)
-            self.endlimb_mocap.xfo = data['handleXfo']
-            self.endlimb_mocap.xfo.ori = self.lolimb_mocap.xfo.ori
-            self.endlimb_mocap.insertCtrlSpace()
-
-
         # UpV
         self.limbUpVCtrl = Control(name+'UpV', parent=self.ctrlCmpGrp, shape="triangle")
         self.limbUpVCtrl.xfo = data['upVXfo']

@@ -63,12 +63,13 @@ class OSSSingleFKGuide(OSSSingleFK):
         # Guide Controls
         self.SingleFKCtrl = Control(self.getName() , parent=self.ctrlCmpGrp, shape="null")
 
+
         data = {
                 "name": name,
                 "location": "M",
-                self.getName() + "SingleFKCtrlXfo": Xfo(Vec3(0.0, 0.0, 0.0)),
-                self.getName() + "EndCtrlXfo": Xfo(Vec3(0.0, 1.0, 0.0)),
-                self.getName() + 'CrvData': self.SingleFKCtrl.getCurveData()
+                "Xfo": Xfo(Vec3(0.0, 0.0, 0.0)),
+                "EndCtrlXfo": Xfo(Vec3(0.0, 1.0, 0.0)),
+                'CrvData': self.SingleFKCtrl.getCurveData()
                }
         self.loadData(data)
 
@@ -88,6 +89,7 @@ class OSSSingleFKGuide(OSSSingleFK):
 
         data = super(OSSSingleFKGuide, self).saveData()
 
+        print("saving: " + str(data))
         data = self.saveAllObjectData(data, "Control")
         data = self.saveAllObjectData(data, "Transform")
         #data['SingleFKCtrlCrvData'] = self.SingleFKCtrl.getCurveData()
@@ -185,10 +187,16 @@ class OSSSingleFKRig(OSSSingleFK):
         # =========
         # SingleFK
         self.SingleFKParentSpace = CtrlSpace(self.getName() + 'ParentSpace', parent=self.ctrlCmpGrp)
-        self.SingleFKCtrlSpace = CtrlSpace(self.getName() + 'CtrlSpace', parent=self.SingleFKParentSpace)
-        self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFKCtrlSpace, shape="cube")
+        self.SingleFKCtrlSpace   = CtrlSpace(self.getName() + 'CtrlSpace', parent=self.SingleFKParentSpace)
+        self.SingleFKCtrl        = Control(self.getName(), parent=self.SingleFKCtrlSpace, shape="cube")
         #self.SingleFKCtrl.setCurveData(data['SingleFKCtrlCrvData'])
 
+        for key, value in data.iteritems():
+            print key
+            # print value
+
+
+        print("\n\nName: %s\n\n"%self.getName())
 
         self.SingleFKEndOutputTgt.xfo = data[self.getName() + 'Xfo']
         self.SingleFKParentSpace.xfo = data[self.getName() + 'Xfo']
