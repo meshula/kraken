@@ -1,0 +1,79 @@
+require Kraken;
+
+object OSS_distanceSolver : KrakenSolver {
+};
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_distanceSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('a', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('aRest', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('b', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('bRest', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('c', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('cRest', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('area', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('areaRelative', 'Out', 'Scalar'));
+  args.push(KrakenSolverArg('centroid', 'Out', 'Vec3'));
+  return args;
+}
+
+
+function Scalar heron(in Scalar a, in Scalar b, in Scalar c){
+    Scalar s = (a + b + c) / 2;
+    Scalar area = pow((s*(s-a) * (s-b)*(s-c)),0.5);
+    return area;
+}
+
+function Scalar triangleArea(in Vec3 a, in Vec3 b, in Vec3 c){
+  Scalar aLen = a.distanceTo(b);
+  Scalar bLen = b.distanceTo(c);
+  Scalar cLen = c.distanceTo(a);
+  return heron(aLen,bLen,cLen);
+}
+
+
+function Vec3 averageVec3 (in Vec3[] vectors) {
+  Vec3 result;
+  UInt32 numVecs = vectors.size();
+  Vec3 cumVec = Vec3()*0;
+
+  for (UInt32 i=0; i<numVecs; i++)
+  {
+    result += vectors[i];
+  }
+  return result/numVecs;
+}
+
+// Solve
+function OSS_distanceSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Mat44 a,
+  in Mat44 aRest,
+  in Mat44 b,
+  in Mat44 bRest,
+  in Mat44 c,
+  in Mat44 cRest,
+  out Scalar area,
+  out Scalar areaRelative,
+  out Vec3 centroid
+  )
+{
+  Vec3 a_tr = a.translation();
+  Vec3 b_tr = b.translation();
+  Vec3 c_tr = c.translation();
+  
+  Vec3 aRest_tr = aRest.translation();
+  Vec3 bRest_tr = bRest.translation();
+  Vec3 cRest_tr = cRest.translation();
+  Scalar areaRest = triangleArea(aRest_tr,bRest_tr,cRest_tr);
+  area     = triangleArea(a_tr,b_tr,c_tr);
+  areaRelative = area/areaRest;
+  Vec3 tr[];
+  tr.push(a_tr);
+  tr.push(c_tr);
+  tr.push(b_tr);
+  centroid  = averageVec3(tr);
+}
