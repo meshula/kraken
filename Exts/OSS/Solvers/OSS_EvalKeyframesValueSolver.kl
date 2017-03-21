@@ -1,0 +1,54 @@
+require Kraken;
+
+object OSS_EvalKeyframesValueSolver : KrakenSolver {
+};
+
+function OSS_EvalKeyframesValueSolver()
+{
+  // NOTE, Kraken can create default values for anything
+  // we don't specificy here.  Arrays will be empty, matrices identity, etc.
+  Scalar input;
+  Scalar result;
+
+  this.defaultValues["input"] = input;
+  this.defaultValues["result"] = result;
+}
+
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] OSS_EvalKeyframesValueSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  // we should turn this into curves
+  args.push(KrakenSolverArg('t', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('keyframeTime', 'In', 'Scalar[]'));
+  args.push(KrakenSolverArg('keyframeValue', 'In', 'Scalar[]'));
+  args.push(KrakenSolverArg('keyframeTangentIn', 'In', 'Vec2[]'));
+  args.push(KrakenSolverArg('keyframeTangentOut', 'In', 'Vec2[]'));
+  args.push(KrakenSolverArg('result', 'Out', 'Scalar'));
+  return args;
+}
+
+// Solve
+function OSS_EvalKeyframesValueSolver.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Scalar t,
+  in Scalar keyframeTime[],
+  in Scalar keyframeValue[],
+  in Vec2   keyframeTangentIn[],
+  in Vec2   keyframeTangentOut[],
+  out Scalar result,
+  )
+{
+  KeyframeTrack track = KeyframeTrack('track', Color(1.0, 0.0, 0.0));
+
+  Size size = keyframeTime.size();
+
+  for(UInt32 i=0; i<size; i++){
+    track.addKey(Keyframe(keyframeTime[i], keyframeValue[i],  keyframeTangentIn[i], keyframeTangentOut[i]));
+  }
+
+  result = track.evaluate(t);
+}
+
