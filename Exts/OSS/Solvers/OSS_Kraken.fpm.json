@@ -18,7 +18,8 @@
     "OSS_ConditionScalarSolver.kl",
     "OSS_EvalKeyframesValueSolver.kl",
     "OSS_DistanceSolver.kl",
-    "OSS_RBFWeightSolver.kl"
+    "OSS_RBFWeightSolver.kl",
+    "OSS_SimpleMathSolver"
   ],
   "autoNamespace": true
 }
