@@ -713,6 +713,7 @@ class OSS_Component(BaseExampleComponent):
 
         return rbfOp
 
+
     def insertCtrlSpace(self, ctrl, name=None):
         """Adds a CtrlSpace object above this object - inserted here to work on Transforms
 
@@ -761,7 +762,6 @@ class OSS_Component(BaseExampleComponent):
         if popLast and (len(params) > 1):
             del params[-1]
         return params
-
 
 
     def createSimpleMathSolver(self, inputA, inputB, mode="ADD", output=None, name=None):
