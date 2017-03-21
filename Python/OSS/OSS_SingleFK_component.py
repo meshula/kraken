@@ -61,8 +61,7 @@ class OSSSingleFKGuide(OSSSingleFK):
         # Controls
         # =========
         # Guide Controls
-        self.SingleFKCtrl = Control(self.getName() , parent=self.ctrlCmpGrp, shape="null")
-
+        self.SingleFKCtrl = Control(name, parent=self.ctrlCmpGrp, shape="null")
 
         data = {
                 "name": name,
@@ -198,6 +197,8 @@ class OSSSingleFKRig(OSSSingleFK):
 
         print("\n\nName: %s\n\n"%self.getName())
 
+
+        print self.getName() + 'Xfo'
         self.SingleFKEndOutputTgt.xfo = data[self.getName() + 'Xfo']
         self.SingleFKParentSpace.xfo = data[self.getName() + 'Xfo']
         self.SingleFKCtrlSpace.xfo = data[self.getName() + 'Xfo']

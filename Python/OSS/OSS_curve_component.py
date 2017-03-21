@@ -70,14 +70,14 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         self.name = name
         self.curveCtrlNames = StringAttribute('curveCtrlNames', value="A B C D", parent=self.guideSettingsAttrGrp)
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=99, parent=self.guideSettingsAttrGrp)
-        self.popFirst = BoolAttribute('popFirst', value=False,  parent=self.guideSettingsAttrGrp)
-        self.popFirst = BoolAttribute('popLast', value=False, parent=self.guideSettingsAttrGrp)
+        self.popFirstControlInput = BoolAttribute('removeFirstControl', value=False, parent=self.guideSettingsAttrGrp)
+        self.popFirstDefJoint = BoolAttribute('popFirstDefJoint', value=False,  parent=self.guideSettingsAttrGrp)
+        self.popLastDefJoint = BoolAttribute('popLastDefJoint', value=False, parent=self.guideSettingsAttrGrp)
         self.exposeControls = BoolAttribute('exposeControls', value=True, parent=self.guideSettingsAttrGrp)
         self.tweakControls = BoolAttribute('tweakControls', value=False, parent=self.guideSettingsAttrGrp)
         self.controlSizeTaper = ScalarAttribute('controlSizeTaper', 0.0, maxValue=1.0, minValue=-1.0, parent=self.guideSettingsAttrGrp)
         self.controlHierarchy = BoolAttribute('controlHierarchy', value=True, parent=self.guideSettingsAttrGrp)
         self.contstrainFirstControlInput = BoolAttribute('contstrainFirstControl', value=False, parent=self.guideSettingsAttrGrp)
-        self.removeFirstControlInput = BoolAttribute('removeFirstControl', value=False, parent=self.guideSettingsAttrGrp)
         #self.numDeformersAttr.setValueChangeCallback(self.updateNumDeformers)  # Unnecessary unless changing the guide rig objects depending on num joints
         # Guide Controls
 
@@ -85,7 +85,7 @@ class OSSCurveComponentGuide(OSSCurveComponent):
         self.curveCtrlNames.setValueChangeCallback(self.updateCurveCtrls)
 
         self.contstrainFirstControlInput.setValueChangeCallback(self.updateContstrainFirstControl)
-        # self.removeFirstControlInput.setValueChangeCallback(self.removeFirstControl)
+        # self.popFirstControlInput.setValueChangeCallback(self.removeFirstControl)
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         self.globalScaleVec = Vec3(globalScale, globalScale, globalScale)
@@ -375,10 +375,8 @@ class OSSCurveComponentRig(OSSCurveComponent):
         del self.deformerJoints[:] #Clear since this array obj is tied to output already
 
         # Determine params for number of Deformers
-        self.popFirst = bool(data['popFirst'])  #This should be a simple method instead
-        self.popLast = bool(data['popLast'])  #This should be a simple method instead
 
-        self.params = self.fillValues(numDeformers, minVal=0.0, maxVal=1.0, popFirst=self.popFirst, popLast=self.popLast)
+        self.params = self.fillValues(numDeformers, minVal=0.0, maxVal=1.0, popFirst=bool(data['popFirstDefJoint']), popLast=bool(data['popLastDefJoint']))
 
         numDeformers = len(self.params)
 
