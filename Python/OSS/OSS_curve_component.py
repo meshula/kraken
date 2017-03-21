@@ -376,7 +376,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
 
         # Determine params for number of Deformers
 
-        self.params = self.fillValues(numDeformers, minVal=0.0, maxVal=1.0, popFirst=bool(data['popFirstDefJoint']), popLastDefJoint=bool(data['popLastDefJoint']))
+        self.params = self.fillValues(numDeformers, minVal=0.0, maxVal=1.0, popFirst=bool(data['popFirstDefJoint']), popLast=bool(data['popLastDefJoint']))
 
         numDeformers = len(self.params)
 
