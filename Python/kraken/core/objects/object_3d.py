@@ -429,12 +429,12 @@ class Object3D(SceneItem):
             bool: True if successful.
 
         """
-        if parent is None:
+
+        if self._parent is not None:
+            self._parent.removeChild(self)
+
+        if parent:
             parent.addChild(self)
-        else:
-            if self._parent is not None:
-                self._parent.removeChild(self)
-            SceneItem.setParent(self, None)
 
         return True
 
