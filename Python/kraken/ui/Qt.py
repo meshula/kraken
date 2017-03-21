@@ -71,7 +71,7 @@ __all__ = [
     "QtWidgets",
     "QtNetwork",
     "QtXml",
-    "QtHelp",
+    # "QtHelp",
     "QtCompat"
 ]
 
@@ -84,10 +84,9 @@ QT_STRICT = bool(os.getenv("QT_STRICT"))
 QtGui = types.ModuleType("QtGui")
 QtCore = types.ModuleType("QtCore")
 QtWidgets = types.ModuleType("QtWidgets")
-QtWidgets = types.ModuleType("QtWidgets")
 QtNetwork = types.ModuleType("QtNetwork")
 QtXml = types.ModuleType("QtXml")
-QtHelp = types.ModuleType("QtHelp")
+# QtHelp = types.ModuleType("QtHelp")
 QtCompat = types.ModuleType("QtCompat")
 Qt = sys.modules[__name__]  # Reference to this module
 
@@ -123,7 +122,7 @@ def _pyside():
         QtCore,
         QtNetwork,
         QtXml,
-        QtHelp,
+        # QtHelp,
         QtUiTools,
         __version__
     )
@@ -142,7 +141,7 @@ def _pyside():
                                           disambiguation,
                                           QtCore.QCoreApplication.CodecForTr,
                                           n))
-    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
+    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, None
 
 
 def _pyqt5():
@@ -915,6 +914,9 @@ across all other bindings.
 """
 
 for module, members in _strict_members.items():
+    if module == "QtHelp":
+        continue
+
     for member in members:
         orig = getattr(sys.modules[__name__], "_%s" % module)
         repl = getattr(sys.modules[__name__], module)
@@ -929,7 +931,7 @@ sys.modules.update({
     __name__ + ".QtWidgets": QtWidgets,
     __name__ + ".QtXml": QtXml,
     __name__ + ".QtNetwork": QtNetwork,
-    __name__ + ".QtHelp": QtHelp,
+    # __name__ + ".QtHelp": QtHelp,
     __name__ + ".QtCompat": QtCompat,
 })
 
