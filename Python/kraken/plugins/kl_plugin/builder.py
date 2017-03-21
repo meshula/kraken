@@ -31,6 +31,7 @@ from kraken.core.objects.constraints.constraint import Constraint
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
+from kraken.core.maths.vec2 import Vec2
 from kraken.core.maths.vec3 import Vec3
 from kraken.core.maths.quat import Quat
 from kraken.core.maths.color import Color
