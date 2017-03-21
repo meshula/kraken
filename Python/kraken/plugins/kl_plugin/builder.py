@@ -429,6 +429,8 @@ class Builder(Builder):
                         code += ["this.%s = true;" % (argMember, j)]
                     else:
                         code += ["this.%s = false;" % (argMember, j)]
+                elif isinstance(value, Vec2):
+                    code += ["this.%s = Vec2(%.4g, %.4g);" % (argMember, value.x, value.y)]
                 elif isinstance(value, Vec3):
                     code += ["this.%s = Vec3(%.4g, %.4g, %.4g);" % (argMember, value.x, value.y, value.z)]
                 elif isinstance(value, Quat):
