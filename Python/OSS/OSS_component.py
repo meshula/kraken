@@ -461,7 +461,7 @@ class OSS_Component(BaseExampleComponent):
     def getAttrMapping(self):
 
         # SHOULD BE relative TO KRG
-        filePath = r"Z:/shows/wolvesProto01/source/assets/_charTemplate/rig/scripts/attrMappings.json"
+        filePath = r"z:/shows/wolves/lib/templates/assets/char/source/rig/scripts/attrMappings.json"
 
         if not os.path.exists(filePath):
             print 'Error: No attrMappings json file found at %s'%filePath
