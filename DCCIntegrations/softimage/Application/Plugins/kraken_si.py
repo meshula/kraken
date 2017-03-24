@@ -127,6 +127,7 @@ def OpenKrakenEditor_Execute():
     for widget in app.topLevelWidgets():
             if widget.objectName() == 'KrakenMainWindow':
                 widget.showNormal()
+                widget.activateWindow()
 
                 return
 
