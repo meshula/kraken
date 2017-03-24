@@ -54,6 +54,7 @@ class OpenKrakenEditorCmd(OpenMayaMPx.MPxCommand):
         for widget in app.topLevelWidgets():
             if widget.objectName() == 'KrakenMainWindow':
                 widget.showNormal()
+                widget.activateWindow()
 
                 return
 
