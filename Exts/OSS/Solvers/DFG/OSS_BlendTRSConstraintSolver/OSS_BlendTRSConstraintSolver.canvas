@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  result: OSS_BlendTRSConstraintSolver\n"
+    },
+  "title" : "OSS_BlendTRSConstraintSolver",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "OSS_BlendTRSConstraintSolver"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "D019B7CF98B7FDA3F6F24B851893AB2B",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = OSS_BlendTRSConstraintSolver();
+}
+"
+  }

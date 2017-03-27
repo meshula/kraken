@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  result: OSS_WeightedAverageMat44KLSolver\n"
+    },
+  "title" : "OSS_WeightedAverageMat44KLSolver",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "OSS_WeightedAverageMat44KLSolver"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "26A5AEF2D543305669EB2DDC6EC7BB3C",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = OSS_WeightedAverageMat44KLSolver();
+}
+"
+  }

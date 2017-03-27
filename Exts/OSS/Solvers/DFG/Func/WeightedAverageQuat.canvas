@@ -1,0 +1,54 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  quatWeights: Scalar[]\n  quats: Quat[]\n  result: Quat\n"
+    },
+  "title" : "WeightedAverageQuat",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "quatWeights",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+        },
+      "name" : "quats",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Quat[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 0,\n  \"g\" : 191,\n  \"b\" : 232\n  }"
+        },
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Quat"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "03FECA03F28E3669CBB5D383848EC2B0",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = weightedAverageQuat(quatWeights, quats);
+}
+"
+  }

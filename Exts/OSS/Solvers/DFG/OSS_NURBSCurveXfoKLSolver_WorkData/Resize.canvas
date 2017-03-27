@@ -1,0 +1,48 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: OSS_NURBSCurveXfoKLSolver_WorkData\n  inCount: UInt32\n  outCount: UInt32\n"
+    },
+  "title" : "Resize",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "OSS_NURBSCurveXfoKLSolver_WorkData"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "inCount",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "outCount",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "9C1177ED06D56CA7F6B2DCF02385B9D3",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  this.resize(inCount, outCount);
+}
+"
+  }

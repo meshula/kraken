@@ -1,0 +1,62 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  inDist: Scalar\n  fullDist: Scalar\n  exponent: SInt32\n  diminishIterations: SInt32\n  result: Scalar\n"
+    },
+  "title" : "SoftCompression",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "inDist",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "fullDist",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "exponent",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "diminishIterations",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "5F1C1450414BF63965FDF76BF4ABFFC1",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = softCompression(inDist, fullDist, exponent, diminishIterations);
+}
+"
+  }
