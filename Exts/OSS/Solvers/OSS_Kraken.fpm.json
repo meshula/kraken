@@ -19,6 +19,7 @@
     "OSS_EvalKeyframesValueSolver.kl",
     "OSS_DistanceSolver.kl",
     "OSS_RBFWeightSolver.kl",
+    "OSS_NBoneIKSolver.kl",
     "OSS_SimpleMathSolver.kl"
   ],
   "autoNamespace": true

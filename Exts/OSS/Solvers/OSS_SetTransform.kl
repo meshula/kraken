@@ -1,0 +1,47 @@
+require Kraken;
+
+object SetTransform : KrakenSolver {
+};
+
+// Return Arguments for Kraken
+function KrakenSolverArg[] SetTransform.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('objects', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('parent', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('offsets', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('offsetsRest', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('result', 'Out', 'Mat44[]'));
+  return args;
+}
+
+// Solve
+function SetTransform.solve!
+(
+  in Boolean drawDebug,
+  in Scalar rigScale,
+  in Mat44[] objects,
+  in Mat44[] parent,
+  in Mat44[] offsets,
+  in Mat44[] offsetsRest,
+  out Mat44[] result
+  )
+{
+  Size size = objects.size();
+  result.resize(size);
+  
+  Quat.setFromEulerAngles!(Scalar eulerX, Scalar eulerY, Scalar eulerZ, RotationOrder ro)
+
+  for(UInt32 i=0; i<size; i++){
+    // get local Transform
+    result[i] = offsetsRest[i].inverse()*objects[i];
+    result[i] = offsets[i]*result[i];
+    result[i] = parent[i].inverse()*result[i];
+
+    // convert object's world space into local space
+    // apply euler offset
+      // convert euler to quat
+      // apply quat offset
+    // convert back to global xfo
+  }
+
+}

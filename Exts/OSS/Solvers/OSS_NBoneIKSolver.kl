@@ -1,0 +1,202 @@
+require InlineDrawing;
+require JSON;
+
+object OSS_NBoneIKSolver : KrakenSolver, Persistable {
+  Xfo initPose[];
+};
+
+// Default Constructor
+/// \dfgPresetTitle NBoneIKSolver_Constructor
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
+function OSS_NBoneIKSolver()
+{
+
+}
+
+/// \dfgPresetTitle NBoneIKSolver_Constructor_Init
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
+function OSS_NBoneIKSolver(
+  Xfo initPose[])
+{
+  this.initPose = initPose;
+}
+
+
+// Return Arguments for Kraken
+/// \dfgPresetOmit
+function KrakenSolverArg[] OSS_NBoneIKSolver.getArguments(){
+  KrakenSolverArg args[] = this.parent.getArguments();
+  args.push(KrakenSolverArg('useInitPose', 'In', 'Boolean'));
+  args.push(KrakenSolverArg('ikblend', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('chainBase', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('ikgoal', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('upVector', 'In', 'Mat44'));
+  args.push(KrakenSolverArg('upAxis', 'In', 'Vec3'));
+  args.push(KrakenSolverArg('fkcontrols', 'In', 'Mat44[]'));
+  args.push(KrakenSolverArg('tipBoneLen', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('rootIndex', 'In', 'Integer'));
+  args.push(KrakenSolverArg('pose', 'Out', 'Mat44[]'));
+  args.push(KrakenSolverArg('legEnd', 'Out', 'Mat44'));
+  return args;
+}
+
+
+// Solve
+/// \dfgPresetTitle NBoneIKSolver_Solve
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
+function OSS_NBoneIKSolver.solve!
+(
+  Boolean drawDebug,
+  Scalar rigScale,
+  Boolean useInitPose,
+  Scalar ikblend,
+  Mat44 chainBase,
+  Mat44 ikgoal,
+  Mat44 upVector,
+  Vec3 upAxis,
+  Mat44 fkcontrols[],
+  Scalar tipBoneLen,
+  Integer rootIndex,
+  io Mat44 pose[],
+  io Mat44 legEnd
+) {
+  if(fkcontrols.size() != pose.size())
+    throw("Error in OSS_NBoneIKSolver. The number of FKControls does not match the number of joints");
+
+  if(this.initPose.size() == 0) {
+    this.initPose.resize(pose.size());
+
+    Xfo fkPose[];
+    fkPose.resize(fkcontrols.size()+1);
+    for(UInt32 i=0; i< fkcontrols.size(); i++) {
+      fkPose[i] = Xfo(fkcontrols[i]);
+    }
+    fkPose[fkcontrols.size()] = fkPose[fkcontrols.size()-1];
+    fkPose[fkcontrols.size()].tr = fkPose[fkcontrols.size()-1].transformVector(Vec3(tipBoneLen, 0.0, 0.0));
+    this.initPose = fkPose;
+  }
+
+  Xfo xfoPose[];
+  Vec3 boneVectors[];
+  xfoPose.resize(fkcontrols.size()+1);
+  boneVectors.resize(fkcontrols.size());
+  for(UInt32 i=0; i < fkcontrols.size(); i++) {
+    xfoPose[i] = Xfo(fkcontrols[i]);
+    if(i>0)
+      boneVectors[i-1] = xfoPose[i-1].inverse().transformVector(xfoPose[i].tr);
+  }
+  boneVectors[boneVectors.size()-1] = Vec3(tipBoneLen, 0.0, 0.0);
+  xfoPose[fkcontrols.size()] = xfoPose[fkcontrols.size()-1];
+  xfoPose[fkcontrols.size()].tr = xfoPose[fkcontrols.size()-1].transformVector(boneVectors[boneVectors.size()-1]);
+
+  if(ikblend > 0.0) {
+    UInt32 ikIndex = 0;
+    if (rootIndex > this.initPose.size() - 3) {
+      report('rootIndex has to leave at least 2 joints at the end of the chain!');
+      ikIndex = this.initPose.size() - 3;
+    }
+    else {
+      ikIndex = rootIndex;
+    }
+
+    Xfo offsetInitPose[];
+    offsetInitPose.resize(this.initPose.size());
+    if (useInitPose == 1) {
+      // Calculate the initpose offset by the chain base input
+      for (Integer i=0; i < this.initPose.size(); i++) {
+        offsetInitPose[i] = chainBase * (this.initPose[0].inverse() * this.initPose[i]);
+      }
+    }
+
+    // Now blend the IK result with the FK result
+    Xfo initPose[];
+    initPose.resize(this.initPose.size() - ikIndex);
+    for(UInt32 i=ikIndex; i < xfoPose.size(); i++) {
+      if (useInitPose == 1)
+        initPose[i - ikIndex] = offsetInitPose[i];
+      else
+        initPose[i - ikIndex] = xfoPose[i];
+    }
+
+    Xfo ikPose[];
+    if (useInitPose == 1) {
+      ikPose = solveNBoneIKWithUpVector(initPose, ikgoal.translation(), upVector.translation(), upAxis, rigScale);
+    }
+    else {
+      ikPose = solveNBoneIK(initPose, ikgoal.translation(), rigScale);
+    }
+
+    // Now blend the IK result with the FK result
+    for(UInt32 i=ikIndex; i < xfoPose.size(); i++) {
+      xfoPose[i].ori = xfoPose[i ].ori.sphericalLinearInterpolate(ikPose[i- ikIndex].ori, ikblend);
+      if(i>0)
+        xfoPose[i].tr = xfoPose[i-1].transformVector(boneVectors[i-1]);
+    }
+  }
+
+  // Convert the Xfos back to Mat44s
+  for(UInt32 i=0; i < pose.size(); i++)
+    pose[i] = xfoPose[i].toMat44();
+  legEnd = xfoPose[xfoPose.size()-1].toMat44();
+
+  // Set debugging visibility.
+  this.setDebug(drawDebug);
+  if(this.drawDebug) {
+    if(!this.handle)
+      this.handle = DrawingHandle();
+
+    Color boneColor(1.0, 1.0, 0);
+    for(UInt32 i=0; i<pose.size(); i++){
+      Scalar boneLength = boneVectors[i].length();
+      etDrawBone(this.handle.rootTransform, 'bone'+i, pose[i], boneLength, boneLength * 0.15, boneColor);
+    }
+  }
+}
+
+
+/// \dfgPresetTitle NBoneIKSolverSaveData
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
+function String OSS_NBoneIKSolver.saveDataToString(PersistenceContext context){
+  JSONDoc doc();
+
+  JSONArrayValue initPoseJson();
+  for(UInt32 i=0; i<this.initPose.size(); i++)
+      initPoseJson.add(xfoToJSON(this.initPose[i]));
+
+  doc.root.set('initPose', initPoseJson);
+  String jsonStr = doc.write();
+  return jsonStr;
+}
+
+
+/// \dfgPresetTitle NBoneIKSolverLoadData
+/// \dfgPresetColor Color(49, 60, 61)
+/// \dfgPresetHeaderColor Color(42, 94, 102)
+/// \dfgPresetTextColor Color(168, 229, 240)
+/// \dfgPresetFolder Solvers\NBoneIKSolver
+function OSS_NBoneIKSolver.loadDataFromString!(PersistenceContext context, String data){
+  JSONDoc doc();
+  if(doc.parse(data)){
+    if(doc.root.has('initPose')){
+      JSONArrayValue initPoseJson = doc.root.get("initPose");
+      this.initPose.resize(0);
+      for (UInt32 i = 0; i < initPoseJson.size(); i++)
+          this.initPose.push(xfoFromJSON(initPoseJson.get(i)));
+    }
+  }
+  else{
+      setError("ERROR Loading OSS_NBoneIKSolver. Saved JSON data is not valid");
+  }
+}
