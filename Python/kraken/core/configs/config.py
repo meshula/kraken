@@ -312,6 +312,7 @@ class Config(object):
                 "Joint": "def",
                 "Layer": "",
                 "Locator": "loc",
+                "Space": "space",
                 "CtrlSpace": "ctrlSpace",
                 "OrientationConstraint": "oriCns",
                 "PoseConstraint": "poseCns",

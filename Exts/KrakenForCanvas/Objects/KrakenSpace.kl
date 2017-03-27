@@ -1,0 +1,43 @@
+require Kraken;
+
+object KrakenSpace : KrakenObject3D {
+};
+
+function KrakenSpace()
+{
+  this.initialize();
+}
+
+function KrakenSpace.initialize!()
+{
+  this.parent.initialize();
+}
+
+/// \dfgPresetFolder Objects
+function KrakenSpace(
+  String name,
+  String buildName,
+  String path,
+  String layer,
+  String component,
+  Xfo xfo,
+  Boolean visibility,
+  Color color
+) {
+  this.initialize();
+  this.name = name;
+  this.buildName = buildName;
+  this.path = path;
+  this.layer = layer;
+  this.component = component;
+  this.local = xfo.toMat44();
+  this.visibility = visibility;
+  this.color = color;
+  this.glue_joint_index = -1;
+  this.glue_space_uniqueId = -1;
+}
+
+
+/// \dfgPresetFolder DebugDrawing
+function KrakenSpace.drawIntoLinesObject(Xfo xfo, io Lines lines) {
+}

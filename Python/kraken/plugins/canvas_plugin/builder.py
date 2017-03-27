@@ -196,6 +196,7 @@ class Builder(Builder):
             'ComponentGroup',
             'Container',
             'CtrlSpace',
+            'Space',
             'Curve',
             'Control',
             'HierarchyGroup',

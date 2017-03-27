@@ -2143,6 +2143,8 @@ class Builder(Builder):
             cls = 'Transform'
         elif kSceneItem.isTypeOf('CtrlSpace'):
             cls = 'Transform'
+        elif kSceneItem.isTypeOf('Space'):
+            cls = 'Transform'
         elif kSceneItem.isTypeOf('Curve'):
             cls = 'Control'
         elif kSceneItem.isTypeOf('Control'):

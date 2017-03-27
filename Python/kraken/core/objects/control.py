@@ -332,7 +332,7 @@ class Control(Curve):
         self.setParent(newCtrlSpace)
         newCtrlSpace.addChild(self)
 
-        newCtrlSpace.xfo = Xfo(self.xfo)
+        newCtrlSpace.xfo = self.xfo  # clones via setter
 
         # To ensure that names of control spaces don't clash with controls and
         # if they do, set's the control space's name back to what it was intended

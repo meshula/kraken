@@ -545,6 +545,10 @@ class Builder(object):
             if phase == self._buildPhase_3DObjectsAttributes:
                 dccSceneItem = self.buildHierarchyGroup(kObject, buildName)
 
+        elif kObject.isTypeOf("Space"):
+            if phase == self._buildPhase_3DObjectsAttributes:
+                dccSceneItem = self.buildGroup(kObject, buildName)
+
         elif kObject.isTypeOf("CtrlSpace"):
             if phase == self._buildPhase_3DObjectsAttributes:
                 dccSceneItem = self.buildGroup(kObject, buildName)

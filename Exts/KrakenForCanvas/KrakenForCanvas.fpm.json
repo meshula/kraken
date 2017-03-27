@@ -2,6 +2,7 @@
   "code": [
 
     "Objects/KrakenObject3D.kl",
+    "Objects/KrakenSpace.kl",
     "Objects/KrakenCtrlSpace.kl",
     "Objects/KrakenComponentGroup.kl",
     "Objects/KrakenContainer.kl",
