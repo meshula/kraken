@@ -608,7 +608,11 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
 
         for i in xrange(len(self.neckOutputs)-1):
-            constraint = self.deformerJoints[i].constrainTo(self.neckOutputs[i])
+            if i == 0:
+                constraintType = "Parent"  #Base joint, in case of FabricConstraint we don't want parent compensation
+            else:
+                constraintType = "Pose"
+            constraint = self.deformerJoints[i].constrainTo(self.neckOutputs[i], constraintType=constraintType)
             constraint.evaluate()
 
         #Really
