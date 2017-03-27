@@ -23,7 +23,7 @@ from kraken.core.objects.components.component_output import ComponentOutput
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.locator import Locator
 from kraken.core.objects.control import Control
@@ -446,12 +446,12 @@ class OSSMouthRig(OSSMouth):
                 controlsList.append(newCtrl)
 
                 newDef = Joint(defName + "_" + name, parent= self.mouthDef)
-                newDef.constrainTo(newCtrl)
 
                 if side:
                     newCtrl.setMetaDataItem("altLocation", side)
                     newDef.setMetaDataItem("altLocation", side)
 
+                const = newDef.constrainTo(newCtrl)
 
             for defCtrlName in rSideControls:
                 creatDefControl(defCtrlName, side="R")
@@ -508,7 +508,7 @@ class OSSMouthRig(OSSMouth):
         return controlsList
 
 
-    def insertParentSpaces(self, controls = []):
+    def insertParentSpaces(self, controls=[]):
         numCtrls = len(controls)
         controlParents = []
         if numCtrls:
@@ -520,8 +520,8 @@ class OSSMouthRig(OSSMouth):
             for i in range(numCtrls):
                 ctrl = controls[i]
                 ctrl.setColor("goldenrod")
-                ctrlGrandParent = self.insertCtrlSpace(ctrl, name= ctrl.getName() + 'Driven')
-                ctrlParent     = self.insertCtrlSpace(ctrl)
+                ctrlGrandParent = ctrl.insertSpace(name=ctrl.getName() + 'Driven')
+                ctrlParent = ctrl.insertSpace()
                 # if i < (half-1):
                 #     ctrlParent.constrainTo(self.upLipCtrls[i+1], maintainOffset=True)
                 # if (half+1) < i:
@@ -536,7 +536,7 @@ class OSSMouthRig(OSSMouth):
         alignY = data["alignY"]
         alignZ = data["alignZ"]
         atXfo = self.jawCtrl
-        parent = self.jawCtrlSpace
+        parent = self.jawSpace
         # Corner Transforms
         # Corner Transforms
         lRigCorner = Transform('L_' + name + 'RigCorner', parent=self.ctrlCmpGrp)
@@ -687,71 +687,71 @@ class OSSMouthRig(OSSMouth):
         # Controls
         # =========
         # Jaw
-        self.lipsRefSpace = CtrlSpace('lipsRef', parent=self.ctrlCmpGrp)
+        self.lipsRefSpace = Space('lipsRef', parent=self.ctrlCmpGrp)
 
-        self.jawCtrlSpace = CtrlSpace('jaw', parent=self.ctrlCmpGrp)
-        self.jawCtrl = Control('jaw', parent=self.jawCtrlSpace, shape="halfCircle", scale=0.5)
+        self.jawSpace = Space('jaw', parent=self.ctrlCmpGrp)
+        self.jawCtrl = Control('jaw', parent=self.jawSpace, shape="halfCircle", scale=0.5)
 
         # midMouth
-        self.midMouthCtrlSpace = CtrlSpace('midMouth', parent=self.ctrlCmpGrp)
-        self.midMouthRefSpace = CtrlSpace('midMouthRef', parent=self.ctrlCmpGrp)
+        self.midMouthSpace = Space('midMouth', parent=self.ctrlCmpGrp)
+        self.midMouthRefSpace = Space('midMouthRef', parent=self.ctrlCmpGrp)
 
         # Mouth
-        self.mouthCtrlSpace = CtrlSpace('mouth', parent=self.ctrlCmpGrp)
-        self.mouthCtrl = Control('mouth', parent=self.mouthCtrlSpace, shape="halfCircle", scale=0.5)
+        self.mouthSpace = Space('mouth', parent=self.ctrlCmpGrp)
+        self.mouthCtrl = Control('mouth', parent=self.mouthSpace, shape="halfCircle", scale=0.5)
 
         # loLip
-        self.loLipCtrlSpace = CtrlSpace('loLip', parent=self.ctrlCmpGrp)
-        self.loLipRefSpace = CtrlSpace('loLipRef', parent=self.jawCtrl)
-        self.loLipCtrl = Control('loLip', parent=self.loLipCtrlSpace, shape="halfCircle")
+        self.loLipSpace = Space('loLip', parent=self.ctrlCmpGrp)
+        self.loLipRefSpace = Space('loLipRef', parent=self.jawCtrl)
+        self.loLipCtrl = Control('loLip', parent=self.loLipSpace, shape="halfCircle")
 
         self.loLipCtrlAttrGrp = AttributeGroup("loLipSettings", parent=self.loLipCtrl)
         self.loLipCtrlRotation = ScalarAttribute('Curl', value=0.0,  parent=self.loLipCtrlAttrGrp)
 
-        self.L_loLipHandleCtrl = CtrlSpace('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"L"})
-        self.R_loLipHandleCtrl = CtrlSpace('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"R"})
+        self.L_loLipHandleCtrl = Space('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"L"})
+        self.R_loLipHandleCtrl = Space('loLipHandle', parent=self.loLipCtrl, metaData={"altLocation":"R"})
 
         # upLip
-        self.upLipCtrlSpace = CtrlSpace('upLip', parent=self.ctrlCmpGrp)
-        self.upLipCtrl = Control('upLip', parent=self.upLipCtrlSpace, shape="halfCircle")
+        self.upLipSpace = Space('upLip', parent=self.ctrlCmpGrp)
+        self.upLipCtrl = Control('upLip', parent=self.upLipSpace, shape="halfCircle")
 
         self.upLipCtrlAttrGrp = AttributeGroup("upLipSettings", parent=self.upLipCtrl)
         self.upLipCtrlRotation = ScalarAttribute('Curl', value=0.0,  parent=self.upLipCtrlAttrGrp)
 
-        self.L_upLipHandleCtrl = CtrlSpace('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"L"})
-        self.R_upLipHandleCtrl = CtrlSpace('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"R"})
+        self.L_upLipHandleCtrl = Space('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"L"})
+        self.R_upLipHandleCtrl = Space('upLipHandle', parent=self.upLipCtrl, metaData={"altLocation":"R"})
 
-        self.L_MouthRefSpace = CtrlSpace('MouthRef', parent=self.midMouthCtrlSpace, metaData={"altLocation":"L"})
-        self.L_MouthOffsetSpace = CtrlSpace('MouthOffset', parent=self.midMouthCtrlSpace, metaData={"altLocation":"L"})
-        self.L_MouthCtrlSpace = CtrlSpace('Mouth', parent=self.midMouthCtrlSpace, metaData={"altLocation":"L"})
-        self.L_MouthCtrl = Control('Mouth', parent=self.L_MouthCtrlSpace, shape="circle", scale=0.5, metaData={"altLocation":"L"})
-        self.L_MouthCornerCtrlSpace = CtrlSpace('Mouth', parent=self.L_MouthCtrl, metaData={"altLocation":"L"})
-        self.L_MouthCornerCtrl = Control('MouthCorner', parent=self.L_MouthCornerCtrlSpace, shape="circle", scale=0.125, metaData={"altLocation":"L"})
+        self.L_MouthRefSpace = Space('MouthRef', parent=self.midMouthSpace, metaData={"altLocation":"L"})
+        self.L_MouthOffsetSpace = Space('MouthOffset', parent=self.midMouthSpace, metaData={"altLocation":"L"})
+        self.L_MouthSpace = Space('Mouth', parent=self.midMouthSpace, metaData={"altLocation":"L"})
+        self.L_MouthCtrl = Control('Mouth', parent=self.L_MouthSpace, shape="circle", scale=0.5, metaData={"altLocation":"L"})
+        self.L_MouthCornerSpace = Space('Mouth', parent=self.L_MouthCtrl, metaData={"altLocation":"L"})
+        self.L_MouthCornerCtrl = Control('MouthCorner', parent=self.L_MouthCornerSpace, shape="circle", scale=0.125, metaData={"altLocation":"L"})
         self.L_MouthCtrl.setColor("mediumseagreen")
 
 
-        self.R_MouthRefSpace = CtrlSpace('MouthRef', parent=self.midMouthCtrlSpace, metaData={"altLocation":"R"})
-        self.R_MouthOffsetSpace = CtrlSpace('MouthOffset', parent=self.midMouthCtrlSpace, metaData={"altLocation":"R"})
-        self.R_MouthCtrlSpace = CtrlSpace('Mouth', parent=self.midMouthCtrlSpace, metaData={"altLocation":"R"})
-        self.R_MouthCtrl = Control('Mouth', parent=self.R_MouthCtrlSpace, shape="circle", scale=0.5, metaData={"altLocation":"R"})
-        self.R_MouthCornerCtrlSpace = CtrlSpace('Mouth', parent=self.R_MouthCtrl, metaData={"altLocation":"R"})
-        self.R_MouthCornerCtrl = Control('MouthCorner', parent=self.R_MouthCornerCtrlSpace, shape="circle", scale=0.125, metaData={"altLocation":"R"})
+        self.R_MouthRefSpace = Space('MouthRef', parent=self.midMouthSpace, metaData={"altLocation":"R"})
+        self.R_MouthOffsetSpace = Space('MouthOffset', parent=self.midMouthSpace, metaData={"altLocation":"R"})
+        self.R_MouthSpace = Space('Mouth', parent=self.midMouthSpace, metaData={"altLocation":"R"})
+        self.R_MouthCtrl = Control('Mouth', parent=self.R_MouthSpace, shape="circle", scale=0.5, metaData={"altLocation":"R"})
+        self.R_MouthCornerSpace = Space('Mouth', parent=self.R_MouthCtrl, metaData={"altLocation":"R"})
+        self.R_MouthCornerCtrl = Control('MouthCorner', parent=self.R_MouthCornerSpace, shape="circle", scale=0.125, metaData={"altLocation":"R"})
         self.R_MouthCtrl.setColor("mediumvioletred")
 
 
-        self.L_cheekBone = CtrlSpace('cheekBone', parent=self.mouthCtrlSpace, metaData={"altLocation":"L"})
-        self.R_cheekBone = CtrlSpace('cheekBone', parent=self.mouthCtrlSpace, metaData={"altLocation":"R"})
-        
-        self.L_mandible = CtrlSpace('mandible', parent=self.jawCtrl, metaData={"altLocation":"L"})
-        self.R_mandible = CtrlSpace('mandible', parent=self.jawCtrl, metaData={"altLocation":"R"})
+        self.L_cheekBone = Space('cheekBone', parent=self.mouthSpace, metaData={"altLocation":"L"})
+        self.R_cheekBone = Space('cheekBone', parent=self.mouthSpace, metaData={"altLocation":"R"})
+
+        self.L_mandible = Space('mandible', parent=self.jawCtrl, metaData={"altLocation":"L"})
+        self.R_mandible = Space('mandible', parent=self.jawCtrl, metaData={"altLocation":"R"})
 
         # ==============
         # Constrain I/O
         # ==============
         # Input
-        self.mouthInputConstraint = self.mouthCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.mouthInputConstraint = self.mouthSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         self.mouthInputConstraint = self.lipsRefSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-        self.mouthInputConstraint = self.jawCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.mouthInputConstraint = self.jawSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # Output
         #self.lipOutputTgtConstraint = self.lipOutputTgt.constrainTo(self.midLipCtrl)
@@ -795,7 +795,7 @@ class OSSMouthRig(OSSMouth):
 
 
         self.MouthOffsetOP = self.offsetOp([self.loLipRefSpace,  self.lipsRefSpace,   self.midMouthRefSpace],
-                      [self.loLipCtrlSpace, self.upLipCtrlSpace, self.midMouthCtrlSpace],
+                      [self.loLipSpace, self.upLipSpace, self.midMouthSpace],
                        self.mouthCtrl.getParent(), self.mouthCtrl, name="offsetOp")
 
 
@@ -810,7 +810,7 @@ class OSSMouthRig(OSSMouth):
         #blending mouth corner defs
         self.blendMidMouthLevel0Op = self.blend_two_xfos(
             self.midMouthRefSpace,
-            self.jawCtrl, self.jawCtrlSpace,
+            self.jawCtrl, self.jawSpace,
             blend=0.5,
             name="blendMidMouthLevel0Op")
 
@@ -886,20 +886,20 @@ class OSSMouthRig(OSSMouth):
         for ctrl in [self.R_loLipHandleCtrl, self.R_upLipHandleCtrl]:
             ctrl.xfo = data['R_midLipHandleXfo']
 
-        for ctrl in [self.midMouthCtrlSpace, self.lipsRefSpace, self.midMouthRefSpace, self.loLipRefSpace]:
+        for ctrl in [self.midMouthSpace, self.lipsRefSpace, self.midMouthRefSpace, self.loLipRefSpace]:
             ctrl.xfo = data['midLipXfo']
 
-        for ctrl in [self.jawCtrlSpace, self.jawCtrl, self.jawEndOutputTgt, self.mouthOutputTgt, self.mouthCtrlSpace, self.mouthCtrl, self.mouthDef]:
+        for ctrl in [self.jawSpace, self.jawCtrl, self.jawEndOutputTgt, self.mouthOutputTgt, self.mouthSpace, self.mouthCtrl, self.mouthDef]:
             ctrl.xfo = data['jawXfo']
 
 
-        for ctrl in [self.mouthCtrlSpace, self.mouthCtrl]:
+        for ctrl in [self.mouthSpace, self.mouthCtrl]:
             ctrl.xfo = data['mouthXfo']
 
-        for ctrl in [self.L_MouthOffsetSpace, self.L_MouthCtrlSpace, self.L_MouthCtrl, self.L_MouthCornerCtrlSpace, self.L_MouthCornerCtrl, self.L_MouthRefSpace]:
+        for ctrl in [self.L_MouthOffsetSpace, self.L_MouthSpace, self.L_MouthCtrl, self.L_MouthCornerSpace, self.L_MouthCornerCtrl, self.L_MouthRefSpace]:
             ctrl.xfo = data['L_MouthXfo']
 
-        for ctrl in [self.R_MouthOffsetSpace, self.R_MouthCtrlSpace, self.R_MouthCtrl, self.R_MouthCornerCtrlSpace, self.R_MouthCornerCtrl, self.R_MouthRefSpace]:
+        for ctrl in [self.R_MouthOffsetSpace, self.R_MouthSpace, self.R_MouthCtrl, self.R_MouthCornerSpace, self.R_MouthCornerCtrl, self.R_MouthRefSpace]:
             ctrl.xfo = data['R_MouthXfo']
 
         self.L_cheekBone.xfo = data['L_cheekBoneXfo']
@@ -920,15 +920,15 @@ class OSSMouthRig(OSSMouth):
             ctrl.lockRotation(x=True, y=True, z=True)
             ctrl.lockScale(x=True, y=True, z=True)
 
-        self.R_MouthCtrlSpace.xfo = self.R_MouthCtrlSpace.xfo.multiply(Xfo(sc=Vec3(-1,1,1)))
-        self.R_MouthRefSpace.xfo = self.R_MouthCtrlSpace.xfo
-        self.R_MouthOffsetSpace.xfo = self.R_MouthCtrlSpace.xfo
+        self.R_MouthSpace.xfo = self.R_MouthSpace.xfo.multiply(Xfo(sc=Vec3(-1,1,1)))
+        self.R_MouthRefSpace.xfo = self.R_MouthSpace.xfo
+        self.R_MouthOffsetSpace.xfo = self.R_MouthSpace.xfo
 
         for ctrl in [self.L_MouthOffsetSpace, self.R_MouthOffsetSpace]:
             ctrl.xfo = ctrl.xfo.multiply(Xfo(Vec3(0, 0.0, -1)))
 
         #align work
-        # self.R_MouthCtrlSpace.xfo.sc = Vec3(1.0, 1.0, -1.0)
+        # self.R_MouthSpace.xfo.sc = Vec3(1.0, 1.0, -1.0)
 
         # cheek dynamics
         self.L_cheekDef = Joint('cheek',  parent=self.mouthDef, metaData={"altLocation":"L"})
@@ -976,9 +976,9 @@ class OSSMouthRig(OSSMouth):
 
         # self.MouthOffsetOP.evaluate()
         # Mouth Offset
-        
-        self.lMouthOffsetOp = self.offsetOp([self.L_MouthRefSpace], [self.L_MouthCtrlSpace], self.L_MouthRefSpace, self.L_MouthOffsetSpace, name="lMouthoffsetOp", amount = self.lCornerRetractAttr )
-        self.rMouthOffsetOp = self.offsetOp([self.R_MouthRefSpace], [self.R_MouthCtrlSpace], self.R_MouthRefSpace, self.R_MouthOffsetSpace, name="rMouthoffsetOp", amount = self.rCornerRetractAttr )
+
+        self.lMouthOffsetOp = self.offsetOp([self.L_MouthRefSpace], [self.L_MouthSpace], self.L_MouthRefSpace, self.L_MouthOffsetSpace, name="lMouthoffsetOp", amount = self.lCornerRetractAttr )
+        self.rMouthOffsetOp = self.offsetOp([self.R_MouthRefSpace], [self.R_MouthSpace], self.R_MouthRefSpace, self.R_MouthOffsetSpace, name="rMouthoffsetOp", amount = self.rCornerRetractAttr )
 
 
         self.lDistanceOp =  self.createDistanceSolver(
@@ -1027,13 +1027,13 @@ class OSSMouthRig(OSSMouth):
 
         self.rDistanceOp =  self.createDistanceSolver(
             name             = 'OSS_rCheekDistanceSolver',
-            MatA             = self.R_cheekBone,    
+            MatA             = self.R_cheekBone,
             MatB             = self.R_mandible,
             distance         = self.rDistAttr,
             distanceRelative = self.rDistRelAttr,
             distanceRest     = self.R_cheekBone.xfo.tr.distanceTo(self.R_mandible.xfo.tr)
             )
-        
+
         self.rCheekSquashOp = self.createEvalKeyframesValueSolver(
             name               = 'OSS_rCheekSquashSolver',
             t                  = self.rDistRelAttr,

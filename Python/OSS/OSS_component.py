@@ -10,7 +10,7 @@ from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.attributes.integer_attribute import IntegerAttribute
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.locator import Locator
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 from kraken.core.maths import *
 from kraken.core.maths.constants import *
@@ -36,6 +36,7 @@ class OSS_Component(BaseExampleComponent):
         if self.getComponentType() == "Guide":
             self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
             self.singleDeformerGroupAttr = BoolAttribute('SingleDeformerGroup', value=True, parent=self.guideSettingsAttrGrp)
+            self.parentSpaceScaleCompensate = BoolAttribute('ParentSpaceScaleCompensate', value=False, parent=self.guideSettingsAttrGrp)
             self.mocapAttr = BoolAttribute('mocap', value=False, parent=self.guideSettingsAttrGrp)
             self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
             self.tagNamesAttr = StringAttribute('tagNames', value="", parent=self.guideSettingsAttrGrp)
@@ -57,6 +58,9 @@ class OSS_Component(BaseExampleComponent):
                 self.defCmpGrp = ComponentGroup(self.getName(), self, parent=self.deformersLayer)
                 self.addItem("defCmpGrp", self.defCmpGrp)
                 self.deformersParent = self.defCmpGrp
+
+            #self.parentSpaceScaleCompensate =
+            self.parentSpaceInputTgt.setScaleCompensate(bool(data.get("ParentSpaceScaleCompensate", False)))
 
         # make tagNames string a list
         self.tagNames = data.get('tagNames', "").strip().split()
@@ -137,7 +141,7 @@ class OSS_Component(BaseExampleComponent):
 
         partialJointDef = Joint(name, parent=parent)
         partialJointDef.setComponent(self)
-        partialJointDef.xfo = Xfo(joint.xfo)
+        partialJointDef.xfo = joint.xfo
 
         # Should make an orient solver, too or add flags to this one?
         partialBlendSolver = KLOperator(name+'partial', 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
@@ -286,7 +290,7 @@ class OSS_Component(BaseExampleComponent):
 
         """
         if not name:
-            name = target.getName()
+            name = target.getBuildName()
 
 
         blendTRSConstraint = KLOperator(name, 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
@@ -315,18 +319,37 @@ class OSS_Component(BaseExampleComponent):
         return blendTRSConstraint
 
 
-    def connectReverse(self, sourceAttribute, destAttribute, name=None, lock=True):
+    def connectReverse(self, sourceAttribute, destAttribute=None, name=None, lock=True):
+        """Invert the value of sourceAttribute to be 1.0 - sourceAttribute value
+
+        Args:
+            sourceAttribute (Attribute): Kraken attribute to be reversed
+            destAttribute (Attribute): Krkane attribute to receive new value (can be None)
+                                        If destAttribute is None, a new sibling attribute will be created
+                                        to receive the value and returned
+            name (string): name of this OSS_ReverseSolver, can be None and autogenerate
+            lock (bool): lock this attribute upon build
+
+        Returns: OSS_ReverseSolver object
+
+        """
 
         sourceObject = sourceAttribute.getParent().getParent()
+
+        if not destAttribute:
+            destAttribute = ScalarAttribute(sourceObject.getBuildName()+"_"+sourceAttribute.getName()+"_reversed", value=0.0, parent=sourceAttribute.getParent())
+
         destObject = destAttribute.getParent().getParent()
 
-        name = sourceObject.getName()+"_"+sourceAttribute.getName()+"_2_"+destObject.getName()+"_"+destAttribute.getName()
+        if not name:
+            name = sourceObject.getBuildName()+"_"+sourceAttribute.getName()+"_2_"+destObject.getBuildName()+"_"+destAttribute.getName()
         attrGrp = AttributeGroup("Reversed", parent=destObject)
+
         if destAttribute.isTypeOf("BoolAttribute"):  #Can't pass bool to kl solver so create an intermediate float attribute
             parent = destAttribute.getParent()
             floatAttr = ScalarAttribute(destAttribute.getName()+"_float", value=1.0, minValue=0.0, maxValue=1.0, parent=attrGrp)
         else:
-            floatAttr = sourceAttribute
+            floatAttr = destAttribute
 
         #############################
         ReverseSolver = KLOperator(name, 'OSS_ReverseSolver', 'OSS_Kraken')
@@ -342,6 +365,8 @@ class OSS_Component(BaseExampleComponent):
 
         if lock:
             destAttribute.setLock(True)
+
+        return ReverseSolver
 
 
 
@@ -361,7 +386,7 @@ class OSS_Component(BaseExampleComponent):
         """
 
         if not name:
-            name = offsetB.getName()+"_offset"
+            name = offsetB.getBuildName()+"_offset"
 
         offsetOp = KLOperator(name, 'OSS_offsetSolver', 'OSS_Kraken')
         self.addOperator(offsetOp)
@@ -374,41 +399,6 @@ class OSS_Component(BaseExampleComponent):
         return offsetOp
 
 
-    def insertParentSpace(self, ctrl, name=None):
-        """Adds a CtrlSpace object above this object - inserted here to work on Transforms
-
-        Args:
-            name (string): optional name for this CtrlSpace, default is same as
-                this object
-
-        Returns:
-            object: New CtrlSpace object
-
-        """
-
-        if name is None:
-            name = ctrl.getName()
-
-        newCtrlSpace = CtrlSpace(name, parent=ctrl.getParent())
-        if ctrl.getParent() is not None:
-            ctrl.getParent().removeChild(ctrl)
-
-        if ctrl.getMetaDataItem("altLocation"):
-            newCtrlSpace.setMetaDataItem("altLocation", ctrl.getMetaDataItem("altLocation"))
-
-        ctrl.setParent(newCtrlSpace)
-        newCtrlSpace.addChild(ctrl)
-
-        newCtrlSpace.xfo = Xfo(ctrl.xfo)
-
-        # To ensure that names of control spaces don't clash with controls and
-        # if they do, set's the control space's name back to what it was intended
-        if ctrl.getName() == name:
-            newCtrlSpace.setName(name)
-
-        return newCtrlSpace
-
-
     def insertAttachSpace(self, jnt, name=None):
         """Adds a AttachControl object above this object
         """
@@ -416,10 +406,10 @@ class OSS_Component(BaseExampleComponent):
             name = jnt.getName()
 
         self.attachCtrl = Control(name + '_attach', parent=self.ctrlCmpGrp, shape="null")
-        self.attachCtrlSpace = self.attachCtrl.insertCtrlSpace()
+        self.attachSpace = self.attachCtrl.insertSpace()
 
-        self.attachCtrlSpace.constrainTo(jnt, constraintType="Orientation", maintainOffset=False)
-        self.attachCtrlSpace.constrainTo(jnt, constraintType="Position",    maintainOffset=False)
+        self.attachSpace.constrainTo(jnt, constraintType="Orientation", maintainOffset=False)
+        self.attachSpace.constrainTo(jnt, constraintType="Position",    maintainOffset=False)
 
         # this is an Space which should not be animated
         self.attachCtrl.lockTranslation(x=True, y=True, z=True)
@@ -444,7 +434,7 @@ class OSS_Component(BaseExampleComponent):
 
         if not name:
             try:
-                name = condition.getName()+"_cond"
+                name = condition.getBuildName()+"_cond"
             except:
                 name = "cond"
 
@@ -632,7 +622,7 @@ class OSS_Component(BaseExampleComponent):
                     toTargetName = target + "_bsShape"
                     toTargetAttr = self.createScalarAttribute(toTargetName, customAttrGrp)
                     toTargetAttr.setMetaDataItem("SCALAR_OUTPUT", toTargetName)
-                    toTargetAttr.appendMetaDataListItem("TAGS", self.getDecoratedName())
+                    toTargetAttr.appendMetaDataListItem("TAGS", self.getBuildName())
 
                     # 2 - - - - -
                     # set up Scalar Attrs
@@ -647,10 +637,7 @@ class OSS_Component(BaseExampleComponent):
     def createRBFWeightsSolver(self, driver, driverParent, attrParent=None, kernel=0, keyType=3, eulerPoses=None, eulerRotationOrder=None, poseAttrs=None,  useTwist=True,  attrPrefix=None, attrSuffix = None, twistAxis = 0, name=None):  # RadialBasisKernel_Multiquadric, Quat / Color
 
         if not name:
-            try:
-                name = condition.getName()
-            except:
-                name = "rbf"
+            name = driver.getBuildName()+"rbf"
 
         if not attrParent:
             attrParent = driver
@@ -712,42 +699,6 @@ class OSS_Component(BaseExampleComponent):
         rbfOp.setOutput('weights', poseAttrs)
 
         return rbfOp
-
-
-    def insertCtrlSpace(self, ctrl, name=None):
-        """Adds a CtrlSpace object above this object - inserted here to work on Transforms
-
-        Args:
-            name (string): optional name for this CtrlSpace, default is same as
-                this object
-
-        Returns:
-            object: New CtrlSpace object
-
-        """
-
-        if name is None:
-            name = ctrl.getName()
-
-        newCtrlSpace = CtrlSpace(name, parent=ctrl.getParent())
-        if ctrl.getParent() is not None:
-            ctrl.getParent().removeChild(ctrl)
-
-        if ctrl.getMetaDataItem("altLocation"):
-            newCtrlSpace.setMetaDataItem("altLocation", ctrl.getMetaDataItem("altLocation"))
-
-        ctrl.setParent(newCtrlSpace)
-        newCtrlSpace.addChild(ctrl)
-
-        newCtrlSpace.xfo = Xfo(ctrl.xfo)
-
-        # To ensure that names of control spaces don't clash with controls and
-        # if they do, set's the control space's name back to what it was intended
-        if ctrl.getName() == name:
-            newCtrlSpace.setName(name)
-
-        return newCtrlSpace
-
 
 
     def fillValues(self, numDefs, minVal=0.0, maxVal=1.0, popFirst=False, popLast=False):

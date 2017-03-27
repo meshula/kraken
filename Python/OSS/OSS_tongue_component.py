@@ -15,7 +15,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.locator import Locator
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
@@ -179,8 +179,8 @@ class OSSTongueRig(OSSTongue):
         # Tongue
 
         self.tongueCtrl = Control(self.getName(), parent=self.ctrlCmpGrp, shape="circle")
-        self.tongueCtrlSpace = self.tongueCtrl.insertCtrlSpace()
-        self.tongueCtrlSpace.xfo = data['tongueXfo']
+        self.tongueSpace = self.tongueCtrl.insertSpace()
+        self.tongueSpace.xfo = data['tongueXfo']
         self.tongueCtrl.xfo = data['tongueXfo']
         #self.tongueCtrl.setCurveData(data['tongueCtrlCrvData'])
         self.tongueCtrl.setColor("pink")
@@ -206,7 +206,7 @@ class OSSTongueRig(OSSTongue):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.tongueInputConstraint = self.tongueCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.tongueInputConstraint = self.tongueSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # Constraint outputs
         self.tongueOutputTgtConstraint = self.tongueOutputTgt.constrainTo(self.tongueCtrl)

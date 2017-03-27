@@ -16,7 +16,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
@@ -57,9 +57,6 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
 
 
          # Guide Settings
-        #self.mocapAttr.setValueChangeCallback(self.updateMocap, updateNodeGraph=True, )
-        self.mocapInputAttr = None
-
 
         # =========
         # Controls
@@ -132,22 +129,6 @@ class OSSShoulderComponentGuide(OSSShoulderComponent):
 
         return True
 
-
-    def updateMocap(self, mocap):
-        """ Callback to changing the component setting 'useOtherIKGoalInput'
-        Really, we should build this ability into the system, to add/remove input attrs based on guide setting bools.
-        That way, we don't have to write these callbacks.
-        """
-        if mocap:
-            if self.mocapInputAttr is None:
-                self.mocapInputAttr = self.createInput('mocap', dataType='Float', parent=self.cmpInputAttrGrp)
-                self.mocap = True
-
-        else:
-            if self.mocapInputAttr is not None:
-                self.deleteInput('mocap', parent=self.cmpInputAttrGrp)
-                self.mocapInputAttr = None
-                self.mocap = False
 
 
     def getRigBuildData(self):
@@ -227,18 +208,15 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         Profiler.getInstance().push("Construct Shoulder Rig Component:" + name)
         super(OSSShoulderComponentRig, self).__init__(name, parent)
 
-        self.mocap = False
-
         # =========
         # Controls
         # =========
         # Shoulder
         self.shldrCtrl = FKControl('shldr', parent=self.ctrlCmpGrp, shape="square")
         self.shldrCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
-        self.shldrCtrlSpace = self.shldrCtrl.insertCtrlSpace()
+        self.shldrSpace = self.shldrCtrl.insertSpace(shareXfo=False)
 
-
-        self.shldrEndCtrlSpace = CtrlSpace('shldrEnd', parent=self.shldrCtrl)
+        self.shldrEndSpace = Space('shldrEnd', parent=self.shldrCtrl)
 
         # ==========
         # Deformers
@@ -251,7 +229,7 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         # ==============
         # Constraint inputs
 
-        self.shldrSpaceCtrlConstraint = self.shldrCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.shldrSpaceCtrlConstraint = self.shldrSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
 
 
@@ -272,9 +250,6 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
 
         super(OSSShoulderComponentRig, self).loadData(data)
 
-
-        self.mocap = bool(data["mocap"])
-
         self.shldrDef = Joint('shldr', parent=self.deformersParent)
         self.shldrDef.setComponent(self)
 
@@ -286,7 +261,6 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         self.globalScale = data['globalComponentCtrlSize']
         self.globalScaleVec = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
 
-        self.shldrCtrlSpace.xfo = data['shldrXfo']
         self.shldrCtrl.xfo = data['shldrXfo']
         xoffset = 2*self.globalScale
         yoffset = -5.0*self.globalScale
@@ -298,67 +272,17 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         self.shldrCtrl.alignOnXAxis(self.getLocation() == 'R')
         self.shldrCtrl.scalePoints(Vec3(data['shldrLen'], shldrWidth, shldrWidth))
         self.shldrCtrl.translatePoints(Vec3(xoffset, yoffset, 0.0))
-        self.shldrEndCtrlSpace.xfo = data['shldrEndXfo']
+        self.shldrEndSpace.xfo = data['shldrEndXfo']
 
         # ============
         # Set IO Xfos
         # ============
-        self.shldrEndOutputTgt.xfo = data['shldrXfo']
-        self.shldrOutputTgt.xfo = data['shldrXfo']
+        self.shldrEndOutputTgt.xfo = data['shldrEndXfo']
+        self.shldrOutputTgt.xfo = self.shldrCtrl.xfo
 
 
-        if self.mocap:
-            self.mocapInputAttr = self.createInput('mocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
-
-            self.shldrMocapCtrl = MCControl('shldr', parent=self.ctrlCmpGrp, shape="circle")
-            self.shldrMocapCtrl.scalePoints(Vec3(5.0, 5.0, 5.0))
-            self.shldrMocapCtrl.rotatePoints(0.0, 0.0, 90.0)
-            self.shldrMocapCtrl.setColor("mediumpurple")
-            self.shldrMocapCtrl.xfo = data['shldrXfo']
-            self.shldrMocapCtrlSpace = self.shldrMocapCtrl.insertCtrlSpace()
-
-            self.shldrMocapCtrlSpaceConstraint = self.shldrMocapCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-
-            self.shdlrEndMocapSpaceCtrl = CtrlSpace('shdlrEnd', parent=self.shldrMocapCtrl)
-            self.shdlrEndMocapSpaceCtrl.xfo = data['shldrEndXfo']
-
-            self.mocapHierBlendSolver = KLOperator(self.getName()+'mocap', 'OSS_HierBlendSolver', 'OSS_Kraken')
-            self.addOperator(self.mocapHierBlendSolver)
-            self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)  # connect this to attr
-            # Add Att Inputs
-            self.mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-            self.mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
-            # Add Xfo Inputs
-            self.mocapHierBlendSolver.setInput('hierA',
-                [
-                self.shldrCtrl,
-                self.shldrEndCtrlSpace
-                ],
-            )
-
-            self.mocapHierBlendSolver.setInput('hierB',
-                [
-                self.shldrMocapCtrl,
-                self.shdlrEndMocapSpaceCtrl,
-                ]
-            )
-            #Create some nodes just for the oupt of the blend.
-            #Wish we could just make direct connections....
-
-            self.shldrMocap_link = Transform('shldrMocap_link', parent=self.outputHrcGrp)
-            self.shdlrEndMocapSpaceCtrl_link = Transform('shdlrEndMocapSpaceCtrl_link', parent=self.outputHrcGrp)
-
-            self.mocapHierBlendSolver.setOutput('hierOut',
-                [
-                self.shldrMocap_link,
-                self.shdlrEndMocapSpaceCtrl_link,
-                ]
-            )
-            self.shldrOutputTgtConstraint = self.shldrOutputTgt.constrainTo(self.shldrMocap_link)
-            self.shldrEndOutputTgtConstraint = self.shldrEndOutputTgt.constrainTo(self.shdlrEndMocapSpaceCtrl_link)
-        else:
-            self.shldrOutputTgtConstraint = self.shldrOutputTgt.constrainTo(self.shldrCtrl)
-            self.shldrEndOutputTgtConstraint = self.shldrEndOutputTgt.constrainTo(self.shldrEndCtrlSpace)
+        self.shldrOutputTgtConstraint = self.shldrOutputTgt.constrainTo(self.shldrCtrl)
+        self.shldrEndOutputTgtConstraint = self.shldrEndOutputTgt.constrainTo(self.shldrEndSpace)
 
         # ====================
         # Evaluate Fabric Ops
@@ -375,6 +299,8 @@ class OSSShoulderComponentRig(OSSShoulderComponent):
         self.shldrEndOutputTgtConstraint.evaluate()
 
         self.shldrDef.constrainTo(self.shldrOutputTgt).evaluate()
+
+        self.shldrSpace.xfo = self.shldrCtrl.xfo
 
         self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 

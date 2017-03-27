@@ -2,6 +2,7 @@
   "code": [
 
     "Objects/KrakenObject3D.kl",
+    "Objects/KrakenSpace.kl",
     "Objects/KrakenCtrlSpace.kl",
     "Objects/KrakenComponentGroup.kl",
     "Objects/KrakenContainer.kl",
@@ -23,6 +24,7 @@
 
     "Constraints/KrakenConstraint.kl",
     "Constraints/KrakenPoseConstraint.kl",
+    "Constraints/KrakenParentConstraint.kl",
     "Constraints/KrakenPositionConstraint.kl",
     "Constraints/KrakenOrientationConstraint.kl",
     "Constraints/KrakenScaleConstraint.kl",

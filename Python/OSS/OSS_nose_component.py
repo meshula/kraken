@@ -18,7 +18,7 @@ from kraken.core.objects.components.component_output import ComponentOutput
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.control import Control
 from kraken.core.objects.locator import Locator
@@ -216,7 +216,7 @@ class OSSNoseComponentRig(OSSNoseComponent):
 
         # NoseTop
         self.noseTopCtrl = FKControl('noseTop', parent=self.ctrlCmpGrp, shape="circle", scale=1.5)
-        self.noseTopCtrlSpace = self.noseTopCtrl.insertCtrlSpace()
+        self.noseTopSpace = self.noseTopCtrl.insertSpace()
         self.noseTopBlendSpace = Transform('noseTopBlend', parent=self.ctrlCmpGrp)
         self.noseTopFKSpace = Transform('noseTopFKSpace', parent=self.noseAlignSpaces)
         self.noseTopAlignSpace = Transform('noseTopAlign', parent=self.ctrlCmpGrp)
@@ -229,19 +229,19 @@ class OSSNoseComponentRig(OSSNoseComponent):
 
         # NoseMid
         self.noseMidCtrl = FKControl('noseMid', parent=self.noseTopCtrl, shape="circle", scale=1.5)
-        self.noseMidCtrlSpaceRest = Transform('noseMidCtrlSpaceRest', parent=self.noseAlignSpaces)
-        self.noseMidCtrlSpace  = self.noseMidCtrl.insertCtrlSpace()
+        self.noseMidSpaceRest = Transform('noseMidSpaceRest', parent=self.noseAlignSpaces)
+        self.noseMidSpace  = self.noseMidCtrl.insertSpace()
         self.noseMidDef = Joint('noseMid', parent=self.noseTopDef)
 
         # NoseTip
         self.noseTipCtrl = FKControl('noseTip', parent=self.noseMidCtrl, shape="circle", scale=2)
         # self.noseTipCtrlAlignSpace = Transform('noseTipCtrlAlignSpace', parent=self.noseMidCtrlAlignSpace)
-        self.noseTipCtrlSpaceRest = Transform('noseTipCtrlSpaceRest', parent=self.ctrlCmpGrp)
-        self.noseTipCtrlSpace  = self.noseTipCtrl.insertCtrlSpace()
+        self.noseTipSpaceRest = Transform('noseTipSpaceRest', parent=self.ctrlCmpGrp)
+        self.noseTipSpace  = self.noseTipCtrl.insertSpace()
         self.noseTipDef = Joint('noseTip', parent=self.noseMidDef)
 
         # NoseAimObjects
-        self.noseTipSpace = CtrlSpace('noseTip', parent=self.globalSRTInputTgt)
+        self.noseTipSpace = Space('noseTip', parent=self.globalSRTInputTgt)
 
         self.midLipSpace = Transform('midLipSpace', parent=self.noseAlignSpaces)
 
@@ -277,7 +277,7 @@ class OSSNoseComponentRig(OSSNoseComponent):
 
 
         self.noseUpCtrl.xfo = noseUpXfo
-        self.noseTopCtrlSpace.xfo = noseTopXfo
+        self.noseTopSpace.xfo = noseTopXfo
         self.noseTopBlendSpace.xfo = noseTopXfo
         self.noseTopAlignSpace.xfo = noseTopXfo
         self.noseTopFKSpace.xfo = noseTopXfo
@@ -285,13 +285,13 @@ class OSSNoseComponentRig(OSSNoseComponent):
         self.noseTopCtrl.xfo = noseTopXfo
 
         self.noseMidCtrl.xfo = noseMidXfo
-        self.noseMidCtrlSpace.xfo = noseMidXfo
-        self.noseMidCtrlSpaceRest.xfo = noseMidXfo
+        self.noseMidSpace.xfo = noseMidXfo
+        self.noseMidSpaceRest.xfo = noseMidXfo
         # self.noseMidCtrlAlignSpace.xfo = noseMidXfo
 
-        self.noseTipCtrlSpace.xfo = noseTipXfo
+        self.noseTipSpace.xfo = noseTipXfo
         self.noseTipCtrl.xfo = noseTipXfo
-        self.noseTipCtrlSpaceRest.xfo = noseTipXfo
+        self.noseTipSpaceRest.xfo = noseTipXfo
         # self.noseTipCtrlAlignSpace.xfo = noseTipXfo
 
         self.midLipSpace.xfo = self.midLipInputTgt.xfo
@@ -336,8 +336,8 @@ class OSSNoseComponentRig(OSSNoseComponent):
             name= 'alignNoseToLipOp')
 
         # self.midBlendOp = self.blend_two_xfos(
-        #     self.noseMidCtrlSpace,
-        #     self.noseMidCtrlSpaceRest, self.noseMidCtrlAlignSpace,
+        #     self.noseMidSpace,
+        #     self.noseMidSpaceRest, self.noseMidCtrlAlignSpace,
         #     parentSpace = self.noseTopCtrl,
         #     blendTranslate=self.midBlend,
         #     blendRotate=self.midBlend,
@@ -345,8 +345,8 @@ class OSSNoseComponentRig(OSSNoseComponent):
         #     name= 'midBlendOp')
 
         # self.tipBlendOp = self.blend_two_xfos(
-        #     self.noseTipCtrlSpace,
-        #     self.noseTipCtrlSpaceRest, self.noseTipCtrlAlignSpace,
+        #     self.noseTipSpace,
+        #     self.noseTipSpaceRest, self.noseTipCtrlAlignSpace,
         #     parentSpace = self.ctrlCmpGrp,
         #     blendTranslate=self.tipBlend,
         #     blendRotate=self.tipBlend,
@@ -358,7 +358,7 @@ class OSSNoseComponentRig(OSSNoseComponent):
 
         self.noseTopAimKLOP.evaluate()
         self.noseTopFKSpace.xfo.ori = noseTopOri
-        self.noseTopCtrlSpace.constrainTo(self.noseTopBlendSpace, maintainOffset=True)
+        self.noseTopSpace.constrainTo(self.noseTopBlendSpace, maintainOffset=True)
 
         self.noseTopDef.constrainTo(self.noseTopCtrl)
         self.noseMidDef.constrainTo(self.noseMidCtrl)

@@ -16,7 +16,7 @@ from kraken.core.objects.components.component_output import ComponentOutput
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.control import Control
 
@@ -238,11 +238,11 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.hipsCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.hipsCtrl.rotatePoints(0, -90.0, 0)
         self.hipsCtrl.scalePoints(Vec3(4.5, 3.0, 3.0))
-        self.hipsCtrlSpace = self.hipsCtrl.insertCtrlSpace()
+        self.hipsSpace = self.hipsCtrl.insertSpace()
 
         # Pelvis
-        self.pelvisCtrlSpace = CtrlSpace('pelvis', parent=self.hipsCtrl)
-        # self.pelvisCtrl = Control('pelvis', parent=self.pelvisCtrlSpace, shape="cube")
+        self.pelvisSpace = Space('pelvis', parent=self.hipsCtrl)
+        # self.pelvisCtrl = Control('pelvis', parent=self.pelvisSpace, shape="cube")
         # self.pelvisCtrl.setColor("green")
         # self.pelvisCtrl.scalePoints(Vec3(1, 1, 1))
 
@@ -251,7 +251,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.torsoCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.torsoCtrl.rotatePoints(0, -90.0, 0)
         self.torsoCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
-        self.torsoCtrlSpace = self.torsoCtrl.insertCtrlSpace()
+        self.torsoSpace = self.torsoCtrl.insertSpace()
 
 
         # Chest
@@ -259,16 +259,16 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.chestCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.chestCtrl.rotatePoints(0, -90.0, 0)
         self.chestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
-        self.chestCtrlSpace = self.chestCtrl.insertCtrlSpace()
+        self.chestSpace = self.chestCtrl.insertSpace()
 
         # UpChest
         self.upChestCtrl = FKControl('upChest', parent=self.chestCtrl, shape="squarePointed")
         self.upChestCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.upChestCtrl.rotatePoints(0, -90.0, 0)
         self.upChestCtrl.scalePoints(Vec3(5.0, 3.0, 3.0))
-        self.upChestCtrlSpace = self.upChestCtrl.insertCtrlSpace()
+        self.upChestSpace = self.upChestCtrl.insertSpace()
         self.upChestCtrlResult = Transform('upChest_result', parent=self.ctrlCmpGrp)
-        self.upChestCtrlResult.xfo = Xfo(self.upChestCtrl.xfo)
+        self.upChestCtrlResult.xfo = self.upChestCtrl.xfo
 
 
         # chest Aim
@@ -278,27 +278,27 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.chestIKAttr = ScalarAttribute('chestIK', value=0.0, minValue=0.0, maxValue=1.0, parent=chestNeckSettingsAttrGrp)
 
 
-        self.chestWorldRef = CtrlSpace('chestWorldRef', parent=self.ctrlCmpGrp)
-        self.chestFKToWorldRef = CtrlSpace('FKToWorldRef', parent=self.ctrlCmpGrp)
-        self.chestFKRef = CtrlSpace('chestFKRef', parent=self.chestCtrl)
-        self.upChestIKRef = CtrlSpace('upChestIKRef', parent=self.ctrlCmpGrp)
-        self.upChestIKCtrlSpace = CtrlSpace('upChestIK', parent=self.ctrlCmpGrp)
-        self.upChestIKCtrl = IKControl('chest', parent=self.upChestIKCtrlSpace, shape="square")
+        self.chestWorldRef = Space('chestWorldRef', parent=self.ctrlCmpGrp)
+        self.chestFKToWorldRef = Space('FKToWorldRef', parent=self.ctrlCmpGrp)
+        self.chestFKRef = Space('chestFKRef', parent=self.chestCtrl)
+        self.upChestIKRef = Space('upChestIKRef', parent=self.ctrlCmpGrp)
+        self.upChestIKSpace = Space('upChestIK', parent=self.ctrlCmpGrp)
+        self.upChestIKCtrl = IKControl('chest', parent=self.upChestIKSpace, shape="square")
         self.upChestIKCtrl.setColor('red')
         self.upChestIKCtrl.rotatePoints(90,0,0)
         self.upChestIKCtrl.scalePoints(Vec3(3,3,3))
         self.upChestIKCtrl.lockScale(x=True, y=True, z=True)
         self.upChestIKCtrl.lockRotation(x=True, y=True, z=True)
 
-        self.upChestIKUpVSpace = CtrlSpace('chestUpV', parent=self.globalSRTInputTgt)
+        self.upChestIKUpVSpace = Space('chestUpV', parent=self.globalSRTInputTgt)
         self.upChestIKUpV = Control('chestUpV', parent=self.upChestIKUpVSpace, shape="circle")
         self.upChestIKUpV.scalePoints(Vec3(3,3,3))
         self.upChestIKUpV.lockScale(x=True, y=True, z=True)
         self.upChestIKUpV.lockRotation(x=True, y=True, z=True)
 
         # Neck
-        self.neckCtrlSpace = CtrlSpace('neck', parent=self.ctrlCmpGrp)
-        self.neckCtrlSpace.constrainTo(self.upChestCtrlResult, maintainOffset=True)
+        self.neckSpace = Space('neck', parent=self.ctrlCmpGrp)
+        self.neckSpace.constrainTo(self.upChestCtrlResult, maintainOffset=True)
 
 
         # ==========
@@ -331,8 +331,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.hipsCtrlSpaceConstraint = self.hipsCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-        self.torsoCtrlSpaceConstraint = self.torsoCtrlSpace.constrainTo(self.parentSpaceInputTgt)
+        self.hipsSpaceConstraint = self.hipsSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.torsoSpaceConstraint = self.torsoSpace.constrainTo(self.parentSpaceInputTgt)
 
 
         # ===============
@@ -444,33 +444,33 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
         self.mocap = bool(data["mocap"])
 
-        self.pelvisCtrlSpace.xfo.tr = pelvisPosition
+        self.pelvisSpace.xfo.tr = pelvisPosition
 
-        self.hipsCtrlSpace.xfo.tr = torsoPosition
+        self.hipsSpace.xfo.tr = torsoPosition
         self.hipsCtrl.xfo.tr = torsoPosition
 
 
-        self.torsoCtrlSpace.xfo.tr = torsoPosition
+        self.torsoSpace.xfo.tr = torsoPosition
         self.torsoCtrl.xfo.tr = torsoPosition
 
-        self.chestCtrlSpace.xfo.tr = chestPosition
+        self.chestSpace.xfo.tr = chestPosition
         self.chestCtrl.xfo.tr = chestPosition
 
-        self.upChestCtrlSpace.xfo.tr = upChestPosition
+        self.upChestSpace.xfo.tr = upChestPosition
         self.upChestCtrl.xfo.tr = upChestPosition
 
-        self.neckCtrlSpace.xfo.tr = neckPosition
+        self.neckSpace.xfo.tr = neckPosition
         # self.neckCtrl.xfo.tr = neckPosition
 
         # Chest LookAt/Aim Controls
-        self.chestFKRef.xfo = self.upChestCtrlSpace.xfo
+        self.chestFKRef.xfo = self.upChestSpace.xfo
         length = upChestPosition.distanceTo(torsoPosition) * 3
-        self.upChestIKCtrlSpace.xfo.ori = self.upChestCtrlSpace.xfo.ori
-        self.upChestIKCtrlSpace.xfo.tr = self.upChestCtrlSpace.xfo.tr.add(Vec3(0, 0, length))
-        self.upChestIKCtrl.xfo = self.upChestIKCtrlSpace.xfo
+        self.upChestIKSpace.xfo.ori = self.upChestSpace.xfo.ori
+        self.upChestIKSpace.xfo.tr = self.upChestSpace.xfo.tr.add(Vec3(0, 0, length))
+        self.upChestIKCtrl.xfo = self.upChestIKSpace.xfo
 
-        self.upChestIKUpV.xfo.ori = self.upChestCtrlSpace.xfo.ori
-        self.upChestIKUpV.xfo.tr = self.upChestCtrlSpace.xfo.tr.add(Vec3(0, length, 0))
+        self.upChestIKUpV.xfo.ori = self.upChestSpace.xfo.ori
+        self.upChestIKUpV.xfo.tr = self.upChestSpace.xfo.tr.add(Vec3(0, length, 0))
 
         # Do we want this to be world up or hips up?
         self.chestIKUpVSpaceConstraint = self.upChestIKUpVSpace.constrainTo(self.hipsCtrl, maintainOffset=True)
@@ -501,10 +501,10 @@ class OSSSpineComponentRig(OSSSpineComponent):
             blendScale=0,
             name='alignchestToWorldOp')
 
-        self.upChestCtrlSpace.setParent(self.ctrlCmpGrp)
+        self.upChestSpace.setParent(self.ctrlCmpGrp)
 
         self.alignchestToIKOp = self.blend_two_xfos(
-            self.upChestCtrlSpace,
+            self.upChestSpace,
             self.chestFKToWorldRef, self.upChestIKRef,
             blendTranslate=0,
             blendRotate=self.chestAlignIkSpaceAttr,
@@ -519,17 +519,17 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.pelvisHeight = pelvisPosition.subtract(torsoPosition)
         self.hipsCtrl.translatePoints( self.pelvisHeight - Vec3(0,2,0))
 
-        self.controlInputs.append(self.pelvisCtrlSpace)
+        self.controlInputs.append(self.pelvisSpace)
         self.controlInputs.append(self.torsoCtrl)
         self.controlInputs.append(self.chestCtrl)
         self.controlInputs.append(self.upChestCtrlResult)
-        self.controlInputs.append(self.neckCtrlSpace)
+        self.controlInputs.append(self.neckSpace)
 
-        self.controlRestInputs.append(self.pelvisCtrlSpace.xfo)
+        self.controlRestInputs.append(self.pelvisSpace.xfo)
         self.controlRestInputs.append(self.torsoCtrl.xfo)
         self.controlRestInputs.append(self.chestCtrl.xfo)
         self.controlRestInputs.append(self.upChestCtrlResult.xfo)
-        self.controlRestInputs.append(self.neckCtrlSpace.xfo)
+        self.controlRestInputs.append(self.neckSpace.xfo)
 
         self.rigidMat44s.append(self.controlInputs[0])
         self.rigidMat44s.append(self.controlInputs[-1])
@@ -550,13 +550,13 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.hipsMocapCtrl.scalePoints(Vec3(4.5, height, 2.5))
             self.hipsMocapCtrl.setColor("mediumpurple")
             self.hipsMocapCtrl.xfo.tr = pelvisPosition
-            self.hipsMocapCtrlSpace = self.hipsMocapCtrl.insertCtrlSpace()
+            self.hipsMocapSpace = self.hipsMocapCtrl.insertSpace()
 
             self.pelvisMocapCtrl = MCControl('pelvis', parent=self.hipsMocapCtrl, shape="circle")
             self.pelvisMocapCtrl.scalePoints(Vec3(4.5, height, 2.5))
             self.pelvisMocapCtrl.setColor("mediumpurple")
             self.pelvisMocapCtrl.xfo.tr = pelvisPosition
-            self.pelvisMocapCtrlSpace = self.pelvisMocapCtrl.insertCtrlSpace()
+            self.pelvisMocapSpace = self.pelvisMocapCtrl.insertSpace()
 
             # Torso
             self.torsoMocapCtrl = MCControl('torso', parent=self.hipsMocapCtrl, shape="circle")
@@ -564,25 +564,25 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.torsoMocapCtrl.setColor("mediumpurple")
 
             self.torsoMocapCtrl.xfo.tr = torsoPosition
-            self.torsoMocapCtrlSpace = self.torsoMocapCtrl.insertCtrlSpace()
+            self.torsoMocapSpace = self.torsoMocapCtrl.insertSpace()
 
             # Chest
             self.chestMocapCtrl = MCControl('chest', parent=self.torsoMocapCtrl, shape="circle")
             self.chestMocapCtrl.scalePoints(Vec3(5.0, height, 3.0))
             self.chestMocapCtrl.setColor("mediumpurple")
             self.chestMocapCtrl.xfo.tr = chestPosition
-            self.chestMocapCtrlSpace = self.chestMocapCtrl.insertCtrlSpace()
+            self.chestMocapSpace = self.chestMocapCtrl.insertSpace()
 
             # UpChest
             self.upChestMocapCtrl = MCControl('upChest', parent=self.chestMocapCtrl, shape="circle")
             self.upChestMocapCtrl.scalePoints(Vec3(5.0, height, 3.0))
             self.upChestMocapCtrl.setColor("mediumpurple")
             self.upChestMocapCtrl.xfo.tr = upChestPosition
-            self.upChestMocapCtrlSpace = self.upChestMocapCtrl.insertCtrlSpace()
+            self.upChestMocapSpace = self.upChestMocapCtrl.insertSpace()
 
             # Neck
-            self.neckMocapCtrlSpace = CtrlSpace('neckPosition', parent=self.upChestMocapCtrl)
-            self.neckMocapCtrlSpace.xfo.tr = neckPosition
+            self.neckMocapSpace = Space('neckPosition', parent=self.upChestMocapCtrl)
+            self.neckMocapSpace.xfo.tr = neckPosition
 
             # ==============
             # Constrain I/O
@@ -600,42 +600,42 @@ class OSSSpineComponentRig(OSSSpineComponent):
             self.mocapHierBlendSolver.setInput('hierA',
                 [
                 self.hipsCtrl,
-                self.pelvisCtrlSpace,
+                self.pelvisSpace,
                 self.torsoCtrl,
                 self.chestCtrl,
                 self.upChestCtrl,
-                self.neckCtrlSpace
+                self.neckSpace
                 ],
             )
 
             self.mocapHierBlendSolver.setInput('hierB',
                 [
                 self.hipsMocapCtrl,
-                self.pelvisMocapCtrlSpace,
+                self.pelvisMocapSpace,
                 self.torsoMocapCtrl,
                 self.chestMocapCtrl,
                 self.upChestMocapCtrl,
-                self.neckMocapCtrlSpace
+                self.neckMocapSpace
                 ]
             )
             #Create some nodes just for the ouput of the blend.
             #Wish we could just make direct connections....
 
             self.hipsCtrl_link = Transform('hipsCtrl_link', parent=self.outputHrcGrp)
-            self.pelvisCtrlSpace_link = Transform('pelvisCtrlSpace_link', parent=self.outputHrcGrp)
+            self.pelvisSpace_link = Transform('pelvisSpace_link', parent=self.outputHrcGrp)
             self.torsoCtrl_link = Transform('torsoCtrl_link', parent=self.outputHrcGrp)
             self.chestCtrl_link = Transform('chestCtrl_link', parent=self.outputHrcGrp)
             self.upChestCtrl_link = Transform('upChestCtrl_link', parent=self.outputHrcGrp)
-            self.neckCtrlSpace_link = Transform('neckCtrlSpace_link', parent=self.outputHrcGrp)
+            self.neckSpace_link = Transform('neckSpace_link', parent=self.outputHrcGrp)
 
             self.mocapHierBlendSolver.setOutput('hierOut',
                 [
                 self.hipsCtrl_link,
-                self.pelvisCtrlSpace_link,
+                self.pelvisSpace_link,
                 self.torsoCtrl_link,
                 self.chestCtrl_link,
                 self.upChestCtrl_link,
-                self.neckCtrlSpace_link
+                self.neckSpace_link
                 ]
             )
             self.mocapHierBlendSolver.setInput("parentIndexes", [-1, 0, 0, 2, 3, 4])
@@ -644,17 +644,17 @@ class OSSSpineComponentRig(OSSSpineComponent):
             # Add Xfo Outputs
             self.mcControlInputs = []
             self.NURBSSpineKLOp.setInput('controls', self.mcControlInputs)
-            self.mcControlInputs.append(self.pelvisCtrlSpace_link)
+            self.mcControlInputs.append(self.pelvisSpace_link)
             self.mcControlInputs.append(self.torsoCtrl_link)
             self.mcControlInputs.append(self.chestCtrl_link)
             self.mcControlInputs.append(self.upChestCtrl_link)
-            self.mcControlInputs.append(self.neckCtrlSpace_link)
+            self.mcControlInputs.append(self.neckSpace_link)
 
             self.hipsOutputConstraint = self.hipsOutputTgt.constrainTo(self.hipsCtrl_link)
-            #self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace_link)
+            #self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisSpace_link)
         else:     # Constraint outputs
             self.hipsOutputConstraint = self.hipsOutputTgt.constrainTo(self.hipsCtrl)
-            #self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisCtrlSpace)
+            #self.pelvisOutputConstraint = self.pelvisOutputTgt.constrainTo(self.pelvisSpace)
 
 
         # ====================
@@ -668,7 +668,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
             constraint.evaluate()
 
 
-        #self.spineEndOutputTgt.xfo = Xfo(self.spineOutputs[-1].xfo)
+        #self.spineEndOutputTgt.xfo = self.spineOutputs[-1].xfo
 
 
         self.chestIKOp = self.blend_two_xfos(
@@ -683,8 +683,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         # Evaluate Output Constraints (needed for building input/output connection constraints in next pass)
         # ====================
         # Evaluate the *output* constraints to ensure the outputs are now in the correct location.
-        self.hipsCtrlSpaceConstraint.evaluate()
-        self.torsoCtrlSpaceConstraint.evaluate()
+        self.hipsSpaceConstraint.evaluate()
+        self.torsoSpaceConstraint.evaluate()
         self.hipsOutputConstraint.evaluate()
         #self.spineBaseOutputConstraint.evaluate()
         #self.pelvisOutputConstraint.evaluate()

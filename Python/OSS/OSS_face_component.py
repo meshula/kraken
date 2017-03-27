@@ -19,7 +19,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
@@ -383,7 +383,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         # Controls
         # =========
         # Face
-        self.faceCtrlSpace = CtrlSpace('face', parent=self.ctrlCmpGrp)
+        self.faceSpace = Space('face', parent=self.ctrlCmpGrp)
         self.ctrlCmpGrp.setComponent(self)
         # ==========
         # Deformers
@@ -393,7 +393,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         # ==============
         # Constrain I/O
         # ==============
-        self.faceInputConstraint = self.faceCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.faceInputConstraint = self.faceSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         Profiler.getInstance().pop()
 
 
@@ -415,18 +415,18 @@ class OSSFaceComponentRig(OSSFaceComponent):
         for side in sides:
 
             for i, handleName in enumerate(animControlNameList):
-                parent = self.faceCtrlSpace
+                parent = self.faceSpace
                 newCtrls = []
 
                 for j, segment in enumerate(segments):
                     #Eventually, we need outputs and ports for this component for each handle segment
                     #spineOutput = ComponentOutput(handleName+"_"+segment, parent=self.outputHrcGrp)
 
-                    newCtrlSpace = CtrlSpace(handleName+"_"+segment, parent=parent)
-                    # newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
+                    newSpace = Space(handleName+"_"+segment, parent=parent)
+                    # newCtrl = Control(handleName+"_"+segment, parent=newSpace, shape="circle")
 
                     if j == 0:
-                        newCtrl = Transform(handleName+"_"+segment, parent=newCtrlSpace)
+                        newCtrl = Transform(handleName+"_"+segment, parent=newSpace)
                         '''
                         if anCtrlType ==1: # Slider
                                 newCtrl.setShape("square")
@@ -452,7 +452,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
                         newCtrl.rotatePoints(90,0,0)
                         '''
                     else:
-                        newCtrl = Control(handleName+"_"+segment, parent=newCtrlSpace, shape="circle")
+                        newCtrl = Control(handleName+"_"+segment, parent=newSpace, shape="circle")
                         if anCtrlType ==1: # Slider
                             newCtrl.setShape("square")
                             newCtrl.scalePoints(Vec3(.5,.25,.25))
@@ -475,7 +475,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
                     if side != self.getLocation():
                         newCtrl.setMetaDataItem("altLocation", side)
-                        newCtrlSpace.setMetaDataItem("altLocation", side)
+                        newSpace.setMetaDataItem("altLocation", side)
 
                         # newCtrl.lockTranslation(x=True, y=True, z=True)
                     newCtrl.lockScale(x=True, y=True, z=True)
@@ -495,7 +495,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
 
                         index = indexOffset + (i*len(segments) + j)
                         if index < len(data[ctrlListName+"Xfos"]):
-                            newCtrlSpace.xfo = data[ctrlListName+"Xfos"][index]
+                            newSpace.xfo = data[ctrlListName+"Xfos"][index]
                             newCtrl.xfo = data[ctrlListName+"Xfos"][index]
 
             # Add Deformer Joint Constrain
@@ -529,7 +529,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         self.LeftRightPairs = data.get("LeftRightPairs", True)
         self.MirrorLeftToRight = data.get("MirrorLeftToRight", True)
 
-        self.faceCtrlSpace.xfo = data['faceXfo']
+        self.faceSpace.xfo = data['faceXfo']
         # ============
         # Set IO Xfos
         # ============

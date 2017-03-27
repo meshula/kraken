@@ -19,6 +19,7 @@ from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 
 from kraken.core.objects.constraints.constraint import Constraint
 from kraken.core.objects.constraints.orientation_constraint import OrientationConstraint
+from kraken.core.objects.constraints.parent_constraint import ParentConstraint
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.core.objects.constraints.position_constraint import PositionConstraint
 from kraken.core.objects.constraints.scale_constraint import ScaleConstraint
@@ -793,9 +794,9 @@ class Object3D(SceneItem):
         if name is None:
             constraintName = ""
             if hasattr(constrainers, '__iter__'):
-                constraintName = '_'.join([self.getName(), 'To', constrainers[0].getName(), constraintType + 'Constraint'])
+                constraintName = '_'.join([self.getBuildName(), 'To', constrainers[0].getBuildName(), constraintType + 'Constraint'])
             else:
-                constraintName = '_'.join([self.getName(), 'To', constrainers.getName(), constraintType + 'Constraint'])
+                constraintName = '_'.join([self.getBuildName(), 'To', constrainers.getBuildName(), constraintType + 'Constraint'])
         else:
             constraintName = name
 
@@ -804,6 +805,8 @@ class Object3D(SceneItem):
             constraint = OrientationConstraint(constraintName)
         elif constraintType == "Pose":
             constraint = PoseConstraint(constraintName)
+        elif constraintType == "Parent":
+            constraint = ParentConstraint(constraintName)
         elif constraintType == "Position":
             constraint = PositionConstraint(constraintName)
         elif constraintType == "Scale":
@@ -1217,3 +1220,44 @@ class Object3D(SceneItem):
             self.addConstraint(loader.construct(constr))
 
         return True
+
+
+    def insertSpace(self, name=None, shareXfo=False):
+        """Adds a space Transform above this object
+
+        Args:
+            name (string): optional name for this Transform, default is same as
+                this object
+            shareXfo (bool): If True, Transform's xfo is the same object as this xfo
+
+        Returns:
+            object: New Transform object
+
+        """
+        # Maybe we need a better way to do this import?
+        import kraken.core.objects.space
+
+        if name is None:
+            name = self.getName()
+
+        newSpace = kraken.core.objects.space.Space(name, parent=self.getParent())
+        if self.getParent() is not None:
+            self.getParent().removeChild(self)
+
+        if self.getMetaDataItem("altLocation") is not None:
+            newSpace.setMetaDataItem("altLocation", self.getMetaDataItem("altLocation"))
+
+        self.setParent(newSpace)
+        newSpace.addChild(self)
+
+        if shareXfo:
+            newSpace._xfo = self._xfo
+        else:
+            newSpace.xfo = self.xfo  # clones with setter
+
+        # To ensure that names of control spaces don't clash with controls and
+        # if they do, set's the control space's name back to what it was intended
+        if self.getName() == name:
+            newSpace.setName(name)
+
+        return newSpace

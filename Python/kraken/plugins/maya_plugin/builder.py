@@ -686,7 +686,8 @@ class Builder(Builder):
                 name=buildName.replace(poseCnsName, sclCnsName),
                 maintainOffset=kConstraint.getMaintainOffset())
 
-            if kConstraint.getMaintainOffset() is True:
+            # This breaks.  Wrong offsets. Why do this at all if we already have offsets???
+            if False:  # kConstraint.getMaintainOffset() is True:
 
                 order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
 
@@ -729,6 +730,41 @@ class Builder(Builder):
                 self.setMat44Attr('%s' % dccSceneItem, 'offset', offsetXfo.toMat44())
 
             pm.rename(dccSceneItem, buildName)
+
+        self._registerSceneItemPair(kConstraint, dccSceneItem)
+
+        return dccSceneItem
+
+
+    def buildParentConstraint(self, kConstraint, buildName):
+        """Builds an parent constraint represented by the kConstraint.
+
+        Args:
+            kConstraint (Object): Kraken constraint object to build.
+
+        Return:
+            bool: True if successful.
+
+        """
+
+        dccSceneItem = None
+        constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
+
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
+
+        dccSceneItem = pm.parentConstraint(
+            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+            constraineeDCCSceneItem,
+            name=buildName,
+            maintainOffset=kConstraint.getMaintainOffset())
 
         self._registerSceneItemPair(kConstraint, dccSceneItem)
 

@@ -17,7 +17,7 @@ from kraken.core.objects.components.component_output import ComponentOutput
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.control import Control
 
@@ -446,7 +446,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
                     ctrl.scalePoints(self.globalScaleVec)
                     ctrl.scalePoints(Vec3(1 - i*taperRatio, 1 - i*taperRatio, 1 - i*taperRatio))
                     ctrl.setColor("gold")
-                    ctrlParent = ctrl.insertCtrlSpace()
+                    ctrlParent = ctrl.insertSpace()
                 else:
                     ctrlParent = ctrl
                 #this is for a curve only solution
@@ -462,7 +462,7 @@ class OSSCurveComponentRig(OSSCurveComponent):
         # Evaluate Fabric Ops
         # ====================
         # Eval Operators # Order is important
-        
+
         self.evalOperators()
         self.NURBSCurveKLOp.evaluate()
 

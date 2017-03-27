@@ -196,6 +196,7 @@ class Builder(Builder):
             'ComponentGroup',
             'Container',
             'CtrlSpace',
+            'Space',
             'Curve',
             'Control',
             'HierarchyGroup',
@@ -370,6 +371,7 @@ class Builder(Builder):
         if not cls in [
             'OrientationConstraint',
             'PoseConstraint',
+            'ParentConstraint',
             'PositionConstraint',
             'ScaleConstraint'
         ]:

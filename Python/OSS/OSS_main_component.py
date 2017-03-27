@@ -16,7 +16,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 from kraken.core.objects.control import Curve
 
@@ -297,7 +297,7 @@ class OSSMainComponentRig(OSSMainComponent):
         self.mainCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later
         self.mainCtrl.setColor("lightsalmon")
         self.mainCtrl.lockScale(x=True, y=True, z=True)
-        self.mainCtrlSpace = self.mainCtrl.insertCtrlSpace()
+        self.mainSpace = self.mainCtrl.insertSpace()
 
         # COG
         self.createOffsetControl = bool(data['createOffsetControl'])
@@ -313,7 +313,7 @@ class OSSMainComponentRig(OSSMainComponent):
 
         self.offsetCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later
         self.offsetCtrl.lockScale(x=True, y=True, z=True)
-        self.offsetCtrlSpace = self.insertParentSpace(self.offsetCtrl)
+        self.offsetSpace = self.offsetCtrl.insertSpace()
 
 
         self.createRootControl = bool(data['createRootControl'])
@@ -331,7 +331,7 @@ class OSSMainComponentRig(OSSMainComponent):
         rootMotionBlendAttrGrp = AttributeGroup("______", parent=self.rootCtrl)
         self.rootMotionBlendDefault = data['rootMotionBlendDefault']
         self.rootCtrl.rootMotionBlendAttr  = ScalarAttribute('rootMotionBlend', value=self.rootMotionBlendDefault, minValue=0.0, maxValue=1.0, parent=rootMotionBlendAttrGrp)
-        self.rootCtrlSpace = self.insertParentSpace(self.rootCtrl)
+        self.rootSpace = self.rootCtrl.insertSpace()
 
 
         # Just for visibility, so animators can see where joint control is
@@ -343,7 +343,7 @@ class OSSMainComponentRig(OSSMainComponent):
         self.rootMotionCtrl.lockScale(x=True, y=True, z=True)
         self.rootMotionCtrl.scalePoints(Vec3(10.0, 10.0, 5.0))
         self.rootMotionCtrl.scalePoints(Vec3(0.3, 0.3, 0.3))
-        self.rootMotionCtrlSpace = self.rootMotionCtrl.insertCtrlSpace()
+        self.rootMotionSpace = self.rootMotionCtrl.insertSpace()
 
         # Just for visibility, so animators can see where auto root is
         self.autoRootCtrl = Control('auto_root', shape='arrow', parent=self.mainCtrl)
@@ -357,7 +357,7 @@ class OSSMainComponentRig(OSSMainComponent):
         self.autoRootCtrl.scalePoints(Vec3(0.95, 0.95, 0.99))
         YFollowBlendAttrGrp = AttributeGroup("______", parent=self.autoRootCtrl)
         self.autoRootCtrl.YFollowBlendAttr  = ScalarAttribute('YFollowBlend', value=0, minValue=0.0, maxValue=1.0, parent=YFollowBlendAttrGrp)
-        self.autoRootCtrlSpace = self.autoRootCtrl.insertCtrlSpace()
+        self.autoRootSpace = self.autoRootCtrl.insertSpace()
         # Haven't made this a fabric system yet
 
 
@@ -375,7 +375,7 @@ class OSSMainComponentRig(OSSMainComponent):
 
 
         self.cogCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later
-        self.cogCtrlSpace = self.insertParentSpace(self.cogCtrl)
+        self.cogSpace = self.cogCtrl.insertSpace()
         self.cog_root_offset = Transform('cog_root_offset', parent=self.cogCtrl)
 
         # VIS
@@ -429,7 +429,7 @@ class OSSMainComponentRig(OSSMainComponent):
         # Add Xfo Inputs
 
         # Add Xfo Outputs
-        self.rigScaleKLOp.setOutput('target', self.mainCtrlSpace)
+        self.rigScaleKLOp.setOutput('target', self.mainSpace)
 
 
 
@@ -444,13 +444,13 @@ class OSSMainComponentRig(OSSMainComponent):
         # =======================
         # Set Control Transforms
         # =======================
-        self.mainCtrlSpace.xfo = data["mainXfo"]
+        self.mainSpace.xfo = data["mainXfo"]
         self.mainCtrl.xfo = data["mainXfo"]
-        self.offsetCtrlSpace.xfo = data["mainXfo"]
+        self.offsetSpace.xfo = data["mainXfo"]
         self.offsetCtrl.xfo = data["mainXfo"]
         self.rootCtrl.xfo = data["mainXfo"]
 
-        self.cogCtrlSpace.xfo.tr = data["cogPosition"]
+        self.cogSpace.xfo.tr = data["cogPosition"]
         self.cogCtrl.xfo.tr = data["cogPosition"]
 
         self.cog_root_offset.xfo.tr = data["cogPosition"]
@@ -485,7 +485,7 @@ class OSSMainComponentRig(OSSMainComponent):
             self.cogMocapCtrl = MCControl('cog', parent=self.offsetCtrl, shape="circle")
             self.cogMocapCtrl.setColor("mediumpurple")
             self.cogMocapCtrl.xfo.tr = data["cogPosition"]
-            self.cogMocapCtrlSpace = self.cogMocapCtrl.insertCtrlSpace()
+            self.cogMocapSpace = self.cogMocapCtrl.insertSpace()
 
             self.cogMocapCtrl.scalePoints(Vec3( data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize']))
 
@@ -501,7 +501,7 @@ class OSSMainComponentRig(OSSMainComponent):
             # Add Xfo Inputs
             self.mocapHierBlendSolver.setInput('hierA',[self.cogCtrl])
             self.mocapHierBlendSolver.setInput('hierB',[self.cogMocapCtrl])
-            self.cogCtrl_link = Transform('cogCtrlSpace_link', parent=self.outputHrcGrp)
+            self.cogCtrl_link = Transform('cogSpace_link', parent=self.outputHrcGrp)
             self.mocapHierBlendSolver.setOutput('hierOut',[self.cogCtrl_link])
 
             self.mocapHierBlendSolver.evaluate()

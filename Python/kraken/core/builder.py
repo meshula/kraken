@@ -391,6 +391,25 @@ class Builder(object):
 
         return dccSceneItem
 
+    def buildParentConstraint(self, kConstraint, buildName):
+        """Builds an pose constraint represented by the kConstraint.
+
+        Args:
+            kConstraint (object): kraken constraint object to build.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        logger.info("buildParentConstraint: " + kConstraint.getPath() + " to: " +
+                    kConstraint.getConstrainee().getPath())
+
+        dccSceneItem = None  # Add constraint object here.
+        self._registerSceneItemPair(kConstraint, dccSceneItem)
+
+        return dccSceneItem
+
     def buildPositionConstraint(self, kConstraint, buildName):
         """Builds an position constraint represented by the kConstraint.
 
@@ -545,6 +564,10 @@ class Builder(object):
             if phase == self._buildPhase_3DObjectsAttributes:
                 dccSceneItem = self.buildHierarchyGroup(kObject, buildName)
 
+        elif kObject.isTypeOf("Space"):
+            if phase == self._buildPhase_3DObjectsAttributes:
+                dccSceneItem = self.buildGroup(kObject, buildName)
+
         elif kObject.isTypeOf("CtrlSpace"):
             if phase == self._buildPhase_3DObjectsAttributes:
                 dccSceneItem = self.buildGroup(kObject, buildName)
@@ -604,6 +627,10 @@ class Builder(object):
         elif kObject.isTypeOf("PoseConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
                 dccSceneItem = self.buildPoseConstraint(kObject, buildName)
+
+        elif kObject.isTypeOf("ParentConstraint"):
+            if phase == self._buildPhase_ConstraintsOperators:
+                dccSceneItem = self.buildParentConstraint(kObject, buildName)
 
         elif kObject.isTypeOf("PositionConstraint"):
             if phase == self._buildPhase_ConstraintsOperators:
