@@ -686,7 +686,8 @@ class Builder(Builder):
                 name=buildName.replace(poseCnsName, sclCnsName),
                 maintainOffset=kConstraint.getMaintainOffset())
 
-            if kConstraint.getMaintainOffset() is True:
+            # This breaks.  Wrong offsets. Why do this at all if we already have offsets???
+            if False:  # kConstraint.getMaintainOffset() is True:
 
                 order = ROT_ORDER_REMAP[kConstraint.getConstrainee().ro.order]
 
