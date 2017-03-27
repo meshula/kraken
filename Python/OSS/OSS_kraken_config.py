@@ -76,6 +76,7 @@ class OSSConfig(Config):
                                   "Space": "space",
                                   "OrientationConstraint": "oriCns",
                                   "PoseConstraint": "poseCns",
+                                  "ParentConstraint": "parCns",
                                   "PositionConstraint": "posCns",
                                   "ScaleConstraint": "sclCns",
                                   "KLOperator": "klOp",
