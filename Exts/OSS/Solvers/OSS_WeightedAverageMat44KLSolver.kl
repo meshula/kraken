@@ -15,6 +15,7 @@ function OSS_WeightedAverageMat44KLSolver()
   this.defaultValues["translationAmt"] = 0.0;
   this.defaultValues["rotationAmt"] = 0.0;
   this.defaultValues["scaleAmt"] = 0.0;
+  this.defaultValues["restMat"] = Mat44();
   this.defaultValues["parent"] = Mat44();
 }
 
@@ -26,6 +27,7 @@ function KrakenSolverArg[] OSS_WeightedAverageMat44KLSolver.getArguments() {
   args.push(KrakenSolverArg('translationAmt', 'In', 'Scalar'));
   args.push(KrakenSolverArg('scaleAmt', 'In', 'Scalar'));
   args.push(KrakenSolverArg('rotationAmt', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('restMat', 'In', 'Mat44'));
   args.push(KrakenSolverArg('parent', 'In', 'Mat44'));
   args.push(KrakenSolverArg('result', 'Out', 'Mat44'));
   return args;
@@ -102,18 +104,20 @@ function OSS_WeightedAverageMat44KLSolver.solve!
   in Scalar translationAmt,
   in Scalar scaleAmt,
   in Scalar rotationAmt,
+  in Mat44 restMat,
   in Mat44 parent,
   out Mat44 result
 )
 {
   // get Original Transform
-  Xfo origXfo = mats[0];
+  Xfo origXfo = restMat;
   Xfo resultXfo;
 
   Xfo xfos[];
   xfos.resize(mats.size());
   for (UInt32 i = 0; i<xfos.size(); i++){
-    xfos[i].setFromMat44(mats[i]);
+    // setting up the target matrices, adding offset (original rest position)
+    xfos[i].setFromMat44(mats[i]*restMat);
   }
 
   Scalar normMatWeights[];
@@ -144,18 +148,14 @@ function OSS_WeightedAverageMat44KLSolver.solve!
   Vec3 averageTranslation = weightedAverageVec3(normMatWeights, tr);
   Vec3 averageScale       = weightedAverageVec3(normMatWeights, sc);
 
-  for (UInt32 i =0; i<xfos.size(); i++)
-  {
-    ori[i]= xfos[i].ori;
-    tr[i] = xfos[i].tr;
-    sc[i] = xfos[i].sc;
-  }
-
   resultXfo.ori = origXfo.ori.sphericalLinearInterpolate(averageRotation, rotationAmt);
-  resultXfo.tr = origXfo.tr.linearInterpolate(averageTranslation, translationAmt);
-  resultXfo.sc = origXfo.sc.linearInterpolate(averageScale, scaleAmt);
+  resultXfo.tr  = origXfo.tr.linearInterpolate(averageTranslation, translationAmt);
+  resultXfo.sc  = origXfo.sc.linearInterpolate(averageScale, scaleAmt);
 
+  // return Local Transform
   resultXfo = parent.inverse()*resultXfo;
   result = resultXfo.toMat44();
 }
+
+
 

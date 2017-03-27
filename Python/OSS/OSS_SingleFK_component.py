@@ -56,7 +56,9 @@ class OSSSingleFKGuide(OSSSingleFK):
         Profiler.getInstance().push("Construct SingleFK Guide Component:" + name)
         super(OSSSingleFKGuide, self).__init__(name, parent)
 
-
+        self.lockTranslation = BoolAttribute('lockTranslation', value=False, parent=self.guideSettingsAttrGrp)
+        self.lockRotation = BoolAttribute('lockRotation', value=False, parent=self.guideSettingsAttrGrp)
+        self.lockScale = BoolAttribute('lockScale', value=False, parent=self.guideSettingsAttrGrp)
         # =========
         # Controls
         # =========
@@ -120,7 +122,6 @@ class OSSSingleFKGuide(OSSSingleFK):
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
-
         self.SingleFKCtrl.scalePoints(globalScaleVec)
         return True
 
@@ -190,10 +191,20 @@ class OSSSingleFKRig(OSSSingleFK):
         #self.SingleFKCtrl.setCurveData(data['SingleFKCtrlCrvData'])
 
 
+        if bool(data['lockTranslation']):
+            self.SingleFKCtrl.lockTranslation(x=True, y=True, z=True)
+        if bool(data['lockRotation']):
+            self.SingleFKCtrl.lockRotation(x=True, y=True, z=True)
+        if bool(data['lockScale']):
+            self.SingleFKCtrl.lockScale(x=True, y=True, z=True)
+        
+
+
         self.SingleFKEndOutputTgt.xfo = data[self.getName() + 'Xfo']
         self.SingleFKParentSpace.xfo = data[self.getName() + 'Xfo']
         self.SingleFKCtrlSpace.xfo = data[self.getName() + 'Xfo']
         self.SingleFKCtrl.xfo = data[self.getName() + 'Xfo']
+
         # ==========
         # Deformers
         # ==========
@@ -234,10 +245,11 @@ class OSSSingleFKRig(OSSSingleFK):
 
         self.alignSpacesKLOp.setInput('mats', self.alignSpaces)
         self.alignSpacesKLOp.setInput('matWeights', self.alignWeights)
-        self.alignSpacesKLOp.setInput('translationAmt',  0)
+        self.alignSpacesKLOp.setInput('translationAmt',  1)
         self.alignSpacesKLOp.setInput('scaleAmt',  0)
         self.alignSpacesKLOp.setInput('rotationAmt',  1)
-        self.alignSpacesKLOp.setInput('parent',  self.SingleFKParentSpace)
+        self.alignSpacesKLOp.setInput('restMat',  Xfo())
+        self.alignSpacesKLOp.setInput('parent',  self.SingleFKCtrlSpace.getParent())
         self.alignSpacesKLOp.setOutput('result', self.SingleFKCtrlSpace)
 
 
@@ -255,6 +267,7 @@ class OSSSingleFKRig(OSSSingleFK):
         True if successful.
 
         """
+        
         super(OSSSingleFKRig, self).loadData(data)
 
         self.createControls(data)
