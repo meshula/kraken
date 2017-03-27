@@ -11,7 +11,7 @@ from kraken.core.objects.attributes.scalar_attribute import ScalarAttribute
 from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 from kraken.core.objects.joint import Joint
 from kraken.core.objects.locator import Locator
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.maths import *
 
 # What?  Why do I have do this?  Not even in Maya.  Fabric F'ed something up with rotation orders.

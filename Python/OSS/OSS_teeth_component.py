@@ -15,7 +15,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.locator import Locator
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
@@ -180,8 +180,8 @@ class OSSTeethRig(OSSTeeth):
         # Teeth
 
         self.teethCtrl = Control(self.getName(), parent=self.ctrlCmpGrp, shape="circle")
-        self.teethCtrlSpace = self.teethCtrl.insertCtrlSpace()
-        self.teethCtrlSpace.xfo = data['teethXfo']
+        self.teethSpace = self.teethCtrl.insertSpace()
+        self.teethSpace.xfo = data['teethXfo']
         self.teethCtrl.xfo = data['teethXfo']
         #self.teethCtrl.setCurveData(data['teethCtrlCrvData'])
         self.teethCtrl.setColor("turquoise")
@@ -207,7 +207,7 @@ class OSSTeethRig(OSSTeeth):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.teethInputConstraint = self.teethCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.teethInputConstraint = self.teethSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # Constraint outputs
         self.teethOutputTgtConstraint = self.teethOutputTgt.constrainTo(self.teethCtrl)

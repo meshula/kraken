@@ -17,7 +17,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 from kraken.core.objects.transform import Transform
 
@@ -340,34 +340,34 @@ class OSSFootComponentRig(OSSFootComponent):
         # IK Handle
         self.handleCtrl = IKControl(self.getName(), parent=self.ctrlCmpGrp, shape="jack")
         self.handleCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later careful when combining with foot!
-        self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace(name="foot_ik")
+        self.handleSpace = self.handleCtrl.insertSpace(name="foot_ik")
 
         # FK Foot
         self.footCtrl = FKControl(self.getName(), parent=self.ctrlCmpGrp, shape="cube")
         self.footCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
-        self.footCtrlSpace = self.footCtrl.insertCtrlSpace(name="foot_fk") #avoid name clash with ik spacectrl
+        self.footSpace = self.footCtrl.insertSpace(name="foot_fk") #avoid name clash with ik spacectrl
 
         # IK Heel
         self.heelCtrl = IKControl('heel', parent=self.ctrlCmpGrp, shape="cube")
         self.heelCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
-        self.heelCtrlSpace = self.heelCtrl.insertCtrlSpace()
+        self.heelSpace = self.heelCtrl.insertSpace()
 
         # FK Ball
         self.ballFKCtrl = FKControl('ball', parent=self.footCtrl, shape="cube")
         self.ballFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
-        self.ballFKCtrlSpace = self.ballFKCtrl.insertCtrlSpace()
+        self.ballFKSpace = self.ballFKCtrl.insertSpace()
 
         # IK Ball
         self.ballIKCtrl = IKControl('ball', parent=self.footCtrl, shape="cube")
         self.ballIKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
-        self.ballIKCtrlSpace = self.ballIKCtrl.insertCtrlSpace()
+        self.ballIKSpace = self.ballIKCtrl.insertSpace()
 
         self.heelIKCtrl_footTransform = Transform('heel_foot_transform', parent=self.heelCtrl)
 
         self.pivotCtrl = Control(self.getName(), parent=self.handleCtrl, shape="circle", metaData={"altType": "PivotControl"})
         self.pivotCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.pivotCtrl.scalePoints(Vec3(2,2,2))
-        self.pivotCtrlSpace = self.pivotCtrl.insertCtrlSpace()
+        self.pivotSpace = self.pivotCtrl.insertSpace()
 
         # Rig Ref objects
 
@@ -457,8 +457,8 @@ class OSSFootComponentRig(OSSFootComponent):
         # ==============
         # Constraint inputs
 
-        self.handleCtrlSpaceConstraint = self.handleCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
-        self.footCtrlSpaceConstraint = self.footCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.handleSpaceConstraint = self.handleSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
+        self.footSpaceConstraint = self.footSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # Constraint outputs
         self.ikgoal_cmpOutConstraint = self.ikgoal_cmpOut.constrainTo(self.heelIKCtrl_footTransform, maintainOffset=False)
@@ -489,7 +489,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # Add Xfo Inputs
 
         self.footRockerKLOp.setInput('pivot', self.pivotCtrl)
-        self.footRockerKLOp.setInput('pivotSpace', self.pivotCtrlSpace)
+        self.footRockerKLOp.setInput('pivotSpace', self.pivotSpace)
         self.footRockerKLOp.setInput('ikCtrl', self.ikGoalRefTransform)
         self.footRockerKLOp.setInput('heelPivot', self.heelPivotTransform)
         self.footRockerKLOp.setInput('ballPivot', self.ballPivotTransform)
@@ -507,8 +507,8 @@ class OSSFootComponentRig(OSSFootComponent):
         self.footRockerKLOp.setOutput('ballJoint', self.footRockerBall_out)
 
 
-        self.ballIKCtrlSpace.setParent(self.footRockerBall_out)
-        self.heelCtrlSpace.setParent(self.footRockerFoot_out)
+        self.ballIKSpace.setParent(self.footRockerBall_out)
+        self.heelSpace.setParent(self.footRockerFoot_out)
 
 
         # Wait, can this be a hier blend op?  Don't like having this explicit OSS_IKFootBlendSolver Op
@@ -567,30 +567,30 @@ class OSSFootComponentRig(OSSFootComponent):
 
 
         self.handleCtrl.xfo = data['handleXfo']
-        self.handleCtrlSpace.xfo = Xfo(self.handleCtrl.xfo)
+        self.handleSpace.xfo = self.handleCtrl.xfo
 
         self.footCtrl.xfo = data['footXfo']
         self.footCtrl.alignOnXAxis()
         self.footCtrl.scalePointsOnAxis(data['footLen'], self.boneAxisStr)
-        self.footCtrlSpace.xfo = Xfo(self.footCtrl.xfo)
+        self.footSpace.xfo = self.footCtrl.xfo
 
         self.pivotCtrl.xfo = data['pivotXfo']
-        self.pivotCtrlSpace.xfo = Xfo(self.pivotCtrl.xfo)
+        self.pivotSpace.xfo = self.pivotCtrl.xfo
 
         self.heelCtrl.xfo = data['heelXfo']
         self.heelCtrl.alignOnXAxis()
         self.heelCtrl.scalePointsOnAxis(-data['footLen'], self.boneAxisStr)
-        self.heelCtrlSpace.xfo = Xfo(self.heelCtrl.xfo)
+        self.heelSpace.xfo = self.heelCtrl.xfo
 
         self.ballFKCtrl.xfo = data['ballXfo']
         self.ballFKCtrl.alignOnXAxis()
         self.ballFKCtrl.scalePointsOnAxis(data['ballLen'], self.boneAxisStr)
-        self.ballFKCtrlSpace.xfo = Xfo(self.ballFKCtrl.xfo)
+        self.ballFKSpace.xfo = self.ballFKCtrl.xfo
 
         self.ballIKCtrl.xfo = data['ballXfo']
         self.ballIKCtrl.alignOnXAxis()
         self.ballIKCtrl.scalePointsOnAxis(data['ballLen'], self.boneAxisStr)
-        self.ballIKCtrlSpace.xfo = Xfo(self.ballIKCtrl.xfo)
+        self.ballIKSpace.xfo = self.ballIKCtrl.xfo
 
         # The foot in relation to the heel control offset
         self.heelIKCtrl_footTransform.xfo = data['footXfo']
@@ -618,7 +618,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
 
             # Mocap Foot
-            self.footMocapCtrl = MCControl('foot', parent=self.footCtrlSpace, shape="cube")
+            self.footMocapCtrl = MCControl('foot', parent=self.footSpace, shape="cube")
             self.footMocapCtrl.alignOnXAxis()
             self.footMocapCtrl.xfo = data['footXfo']
             self.footMocapCtrl.scalePointsOnAxis(data['footLen'], self.boneAxisStr)
@@ -629,7 +629,7 @@ class OSSFootComponentRig(OSSFootComponent):
             self.ballMocapCtrl.xfo = data['ballXfo']
             self.ballMocapCtrl.alignOnXAxis()
             self.ballMocapCtrl.scalePointsOnAxis(data['ballLen'], self.boneAxisStr)
-            self.ballMocapCtrlSpace = self.ballMocapCtrl.insertCtrlSpace()
+            self.ballMocapSpace = self.ballMocapCtrl.insertSpace()
 
 
             # Add Foot Ball HierBlend Solver for Mocap
@@ -656,8 +656,8 @@ class OSSFootComponentRig(OSSFootComponent):
             #Create some nodes just for the oupt of the blend.
             #Wish we could just make direct connections....
 
-            self.footMocapCtrl_link = CtrlSpace('footMocapCtrl_link', parent=self.outputHrcGrp)
-            self.ballMocapCtrl_link = CtrlSpace('ballMocapCtrl_link', parent=self.outputHrcGrp)
+            self.footMocapCtrl_link = Space('footMocapCtrl_link', parent=self.outputHrcGrp)
+            self.ballMocapCtrl_link = Space('ballMocapCtrl_link', parent=self.outputHrcGrp)
 
             self.mocapHierBlendSolver.setOutput('hierOut',
                 [

@@ -18,7 +18,7 @@ from kraken.core.objects.components.component_output import ComponentOutput
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.layer import Layer
 from kraken.core.objects.control import Control
 from kraken.core.objects.locator import Locator
@@ -229,24 +229,24 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Neck
         self.neckCtrl = FKControl('neck', parent=self.ctrlCmpGrp, shape="square", scale=2.5)
         self.neckCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
-        self.neckCtrlSpace = self.neckCtrl.insertCtrlSpace()
+        self.neckSpace = self.neckCtrl.insertSpace()
 
         # Head
         self.headCtrl = FKControl('head', parent=self.neckCtrl, shape="halfCircle", scale=2)
         self.headCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XZY"])  #Set with component settings later
-        self.headCtrlSpace = self.headCtrl.insertCtrlSpace()
+        self.headSpace = self.headCtrl.insertSpace()
 
 
         self.neckMidCtrl = FKControl('neckMid', parent=self.neckCtrl, shape="circle", scale=6)
         self.neckMidCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XZY"])  #Set with component settings later
         #self.headCtrl.rotatePoints(0, 0, 90)
-        self.neckMidCtrlSpace = self.neckMidCtrl.insertCtrlSpace()
+        self.neckMidSpace = self.neckMidCtrl.insertSpace()
 
 
         # Neck handle
-        self.neckHandleCtrlSpace = CtrlSpace('neckHandle', parent=self.neckMidCtrl)
+        self.neckHandleSpace = Space('neckHandle', parent=self.neckMidCtrl)
         # Head handle
-        self.headHandleCtrlSpace = CtrlSpace('headHandle', parent=self.neckMidCtrl)
+        self.headHandleSpace = Space('headHandle', parent=self.neckMidCtrl)
 
 
         # Head Aim
@@ -255,19 +255,19 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.HeadAlignIkSpaceAttr = ScalarAttribute('alignToHeadIK', value=0.0, minValue=0.0, maxValue=1.0, parent=headNeckSettingsAttrGrp)
         self.HeadIKAttr = ScalarAttribute('headIK', value=0.0, minValue=0.0, maxValue=1.0, parent=headNeckSettingsAttrGrp)
 
-        self.headWorldRef = CtrlSpace('headWorldRef', parent=self.ctrlCmpGrp)
-        self.headFKToWorldRef = CtrlSpace('FKToWorldRef', parent=self.ctrlCmpGrp)
-        self.headFKRef = CtrlSpace('headFKRef', parent=self.neckCtrl)
-        self.headIKRef = CtrlSpace('headIKRef', parent=self.ctrlCmpGrp)
-        self.headIKCtrlSpace = CtrlSpace('headIK', parent=self.ctrlCmpGrp)
-        self.headIKCtrl = IKControl('head', parent=self.headIKCtrlSpace, shape="square")
+        self.headWorldRef = Space('headWorldRef', parent=self.ctrlCmpGrp)
+        self.headFKToWorldRef = Space('FKToWorldRef', parent=self.ctrlCmpGrp)
+        self.headFKRef = Space('headFKRef', parent=self.neckCtrl)
+        self.headIKRef = Space('headIKRef', parent=self.ctrlCmpGrp)
+        self.headIKSpace = Space('headIK', parent=self.ctrlCmpGrp)
+        self.headIKCtrl = IKControl('head', parent=self.headIKSpace, shape="square")
         self.headIKCtrl.setColor('red')
         self.headIKCtrl.rotatePoints(90,0,0)
         self.headIKCtrl.scalePoints(Vec3(3,3,3))
         self.headIKCtrl.lockScale(x=True, y=True, z=True)
         self.headIKCtrl.lockRotation(x=True, y=True, z=True)
 
-        self.headIKUpVSpace = CtrlSpace('headUpV', parent=self.globalSRTInputTgt)
+        self.headIKUpVSpace = Space('headUpV', parent=self.globalSRTInputTgt)
         self.headIKUpV = Control('headUpV', parent=self.headIKUpVSpace, shape="circle")
         self.headIKUpV.scalePoints(Vec3(3,3,3))
         self.headIKUpV.lockScale(x=True, y=True, z=True)
@@ -303,7 +303,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.neckCtrlSpaceConstraint = self.neckCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.neckSpaceConstraint = self.neckSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         self.headIKUpVSpaceConstraint = self.headIKUpVSpace.constrainTo(self.headFKRef, constraintType="Position")
 
 
@@ -372,9 +372,9 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             blendScale=0,
             name='alignHeadToWorldOp')
 
-        self.headCtrlSpace.setParent(self.ctrlCmpGrp)
+        self.headSpace.setParent(self.ctrlCmpGrp)
         self.alignHeadToIKOp = self.blend_two_xfos(
-            self.headCtrlSpace,
+            self.headSpace,
             self.headFKToWorldRef, self.headIKRef,
             blendTranslate=0,
             blendRotate=self.HeadAlignIkSpaceAttr,
@@ -450,41 +450,41 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
 
         self.mocap = bool(data["mocap"])
 
-        self.neckCtrlSpace.xfo.tr = neckPosition
+        self.neckSpace.xfo.tr = neckPosition
         self.neckCtrl.xfo.tr = neckPosition
-        self.neckHandleCtrlSpace.xfo.tr = neckHandlePosition
-        self.headHandleCtrlSpace.xfo.tr = headHandlePosition
-        self.headCtrlSpace.xfo.tr = headPosition
+        self.neckHandleSpace.xfo.tr = neckHandlePosition
+        self.headHandleSpace.xfo.tr = headHandlePosition
+        self.headSpace.xfo.tr = headPosition
         self.headCtrl.xfo.tr = headPosition
         self.headIKRef.xfo.tr = headPosition
         self.headFKRef.xfo.tr = headPosition
         self.headFKToWorldRef.xfo.tr = headPosition
         self.headWorldRef.xfo.tr = headPosition
 
-        neckMidXfo = self.neckHandleCtrlSpace.xfo.linearInterpolate(self.headHandleCtrlSpace.xfo, 0.5)
-        self.neckMidCtrlSpace.xfo = neckMidXfo
+        neckMidXfo = self.neckHandleSpace.xfo.linearInterpolate(self.headHandleSpace.xfo, 0.5)
+        self.neckMidSpace.xfo = neckMidXfo
         self.neckMidCtrl.xfo = neckMidXfo
 
         # Head LookAt/Aim Controls
         length = neckPosition.distanceTo(headPosition) * 3
-        self.headIKCtrlSpace.xfo.ori = self.headCtrlSpace.xfo.ori
-        self.headIKCtrlSpace.xfo.tr = self.headCtrlSpace.xfo.tr.add(Vec3(0, 0, length))
-        self.headIKCtrl.xfo = self.headIKCtrlSpace.xfo
+        self.headIKSpace.xfo.ori = self.headSpace.xfo.ori
+        self.headIKSpace.xfo.tr = self.headSpace.xfo.tr.add(Vec3(0, 0, length))
+        self.headIKCtrl.xfo = self.headIKSpace.xfo
 
-        self.headIKUpV.xfo.ori = self.headCtrlSpace.xfo.ori
-        self.headIKUpV.xfo.tr = self.headCtrlSpace.xfo.tr.add(Vec3(0, length, 0))
+        self.headIKUpV.xfo.ori = self.headSpace.xfo.ori
+        self.headIKUpV.xfo.tr = self.headSpace.xfo.tr.add(Vec3(0, length, 0))
 
         # Update number of deformers and outputs
         self.setNumDeformers(numDeformers)
 
         self.controlInputs.append(self.neckCtrl)
-        self.controlInputs.append(self.neckHandleCtrlSpace)
-        self.controlInputs.append(self.headHandleCtrlSpace)
+        self.controlInputs.append(self.neckHandleSpace)
+        self.controlInputs.append(self.headHandleSpace)
         self.controlInputs.append(self.headOutputTgt)
 
         self.controlRestInputs.append(self.neckCtrl.xfo)
-        self.controlRestInputs.append(self.neckHandleCtrlSpace.xfo)
-        self.controlRestInputs.append(self.headHandleCtrlSpace.xfo)
+        self.controlRestInputs.append(self.neckHandleSpace.xfo)
+        self.controlRestInputs.append(self.headHandleSpace.xfo)
         self.controlRestInputs.append(self.headOutputTgt.xfo)
 
         self.rigidMat44s.append(self.controlInputs[0])
@@ -498,11 +498,11 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.mocapInputAttr = self.createInput('mocap', dataType='Float', value=0.0, minValue=0.0, maxValue=1.0, parent=self.cmpInputAttrGrp).getTarget()
 
 
-            self.neckCtrlSpace.xfo.tr = neckPosition
+            self.neckSpace.xfo.tr = neckPosition
             self.neckCtrl.xfo.tr = neckPosition
-            self.neckHandleCtrlSpace.xfo.tr = neckHandlePosition
-            self.headHandleCtrlSpace.xfo.tr = headHandlePosition
-            self.headCtrlSpace.xfo.tr = headPosition
+            self.neckHandleSpace.xfo.tr = neckHandlePosition
+            self.headHandleSpace.xfo.tr = headHandlePosition
+            self.headSpace.xfo.tr = headPosition
             self.headCtrl.xfo.tr = headPosition
 
 
@@ -512,12 +512,12 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.neckMocapCtrl.setColor("mediumpurple")
             self.neckMocapCtrl.xfo.tr = neckPosition
 
-            self.neckMocapCtrlSpace = self.neckMocapCtrl.insertCtrlSpace()
-            self.neckMocapCtrlSpaceConstraint = self.neckMocapCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+            self.neckMocapSpace = self.neckMocapCtrl.insertSpace()
+            self.neckMocapSpaceConstraint = self.neckMocapSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
             # Neck handle
-            self.neckHandleMocapCtrlSpace = CtrlSpace('neckHandle', parent=self.neckMocapCtrlSpace)
-            self.neckHandleMocapCtrlSpace.xfo.tr = neckHandlePosition
+            self.neckHandleMocapSpace = Space('neckHandle', parent=self.neckMocapSpace)
+            self.neckHandleMocapSpace.xfo.tr = neckHandlePosition
 
             # Head
             self.headMocapCtrl = MCControl('head', parent=self.neckMocapCtrl, shape="circle")
@@ -525,11 +525,11 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.headMocapCtrl.setColor("mediumpurple")
             self.headMocapCtrl.xfo.tr = headPosition
 
-            self.headMocapCtrlSpace = self.headMocapCtrl.insertCtrlSpace()
+            self.headMocapSpace = self.headMocapCtrl.insertSpace()
 
             # Head handle
-            self.headHandleMocapCtrlSpace = CtrlSpace('headHandle_mocap', parent=self.headMocapCtrl)
-            self.headHandleMocapCtrlSpace.xfo.tr = headHandlePosition
+            self.headHandleMocapSpace = Space('headHandle_mocap', parent=self.headMocapCtrl)
+            self.headHandleMocapSpace.xfo.tr = headHandlePosition
 
             # Blend anim and mocap together
             self.mocapHierBlendSolver = KLOperator(self.getName()+'mocap_', 'OSS_HierBlendSolver', 'OSS_Kraken')
@@ -542,18 +542,18 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             self.mocapHierBlendSolver.setInput('hierA',
                 [
                 self.neckCtrl,
-                self.neckHandleCtrlSpace,
+                self.neckHandleSpace,
                 self.headCtrl,
-                self.headHandleCtrlSpace,
+                self.headHandleSpace,
                 ],
             )
 
             self.mocapHierBlendSolver.setInput('hierB',
                 [
                 self.neckMocapCtrl,
-                self.neckHandleMocapCtrlSpace,
+                self.neckHandleMocapSpace,
                 self.headMocapCtrl,
-                self.headHandleMocapCtrlSpace
+                self.headHandleMocapSpace
                 ]
             )
             self.mocapHierBlendSolver.setInput('parentIndexes', [-1, 0, 0, 2])
@@ -561,27 +561,27 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
             #Create some nodes just for the oupt of the blend.
             #Wish we could just make direct connections....
 
-            self.neckCtrlSpace_link = CtrlSpace('neckCtrlSpace_link', parent=self.outputHrcGrp)
-            self.neckHandleCtrlSpace_link = CtrlSpace('neckHandleCtrlSpace_link', parent=self.outputHrcGrp)
-            self.headCtrlSpace_link = CtrlSpace('headCtrlSpace_link', parent=self.outputHrcGrp)
-            self.headHandleCtrlSpace_link = CtrlSpace('headHandleCtrlSpace_link', parent=self.outputHrcGrp)
+            self.neckSpace_link = Space('neckSpace_link', parent=self.outputHrcGrp)
+            self.neckHandleSpace_link = Space('neckHandleSpace_link', parent=self.outputHrcGrp)
+            self.headSpace_link = Space('headSpace_link', parent=self.outputHrcGrp)
+            self.headHandleSpace_link = Space('headHandleSpace_link', parent=self.outputHrcGrp)
 
 
             self.mocapHierBlendSolver.setOutput('hierOut',
                 [
-                self.neckCtrlSpace_link,
-                self.neckHandleCtrlSpace_link,
-                self.headCtrlSpace_link,
-                self.headHandleCtrlSpace_link
+                self.neckSpace_link,
+                self.neckHandleSpace_link,
+                self.headSpace_link,
+                self.headHandleSpace_link
                 ]
             )
             self.mocapHierBlendSolver.evaluate()
 
             # Add Xfo Outputs
-            self.NURBSNeckKLOp.setInput('neck', self.neckCtrlSpace_link)
-            self.NURBSNeckKLOp.setInput('head', self.headCtrlSpace_link)
-            self.NURBSNeckKLOp.setInput('neckHandle', self.neckHandleCtrlSpace_link)
-            self.NURBSNeckKLOp.setInput('headHandle', self.headHandleCtrlSpace_link)
+            self.NURBSNeckKLOp.setInput('neck', self.neckSpace_link)
+            self.NURBSNeckKLOp.setInput('head', self.headSpace_link)
+            self.NURBSNeckKLOp.setInput('neckHandle', self.neckHandleSpace_link)
+            self.NURBSNeckKLOp.setInput('headHandle', self.headHandleSpace_link)
 
        # ====================
         # Evaluate Fabric Ops

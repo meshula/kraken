@@ -36,6 +36,7 @@ class OSS_Component(BaseExampleComponent):
         if self.getComponentType() == "Guide":
             self.guideSettingsAttrGrp = AttributeGroup("GuideSettings", parent=self)
             self.singleDeformerGroupAttr = BoolAttribute('SingleDeformerGroup', value=True, parent=self.guideSettingsAttrGrp)
+            self.parentSpaceScaleCompensate = BoolAttribute('ParentSpaceScaleCompensate', value=False, parent=self.guideSettingsAttrGrp)
             self.mocapAttr = BoolAttribute('mocap', value=False, parent=self.guideSettingsAttrGrp)
             self.globalComponentCtrlSizeInputAttr = ScalarAttribute('globalComponentCtrlSize', value=1.0, minValue=0.0,   maxValue=50.0, parent=self.guideSettingsAttrGrp)
             self.tagNamesAttr = StringAttribute('tagNames', value="", parent=self.guideSettingsAttrGrp)
@@ -137,7 +138,7 @@ class OSS_Component(BaseExampleComponent):
 
         partialJointDef = Joint(name, parent=parent)
         partialJointDef.setComponent(self)
-        partialJointDef.xfo = Xfo(joint.xfo)
+        partialJointDef.xfo = joint.xfo
 
         # Should make an orient solver, too or add flags to this one?
         partialBlendSolver = KLOperator(name+'partial', 'OSS_BlendTRSConstraintSolver', 'OSS_Kraken')
@@ -372,41 +373,6 @@ class OSS_Component(BaseExampleComponent):
         offsetOp.setInput('offsets',     [offsetB for o in references])
         offsetOp.setOutput('targets', targets)
         return offsetOp
-
-
-    def insertParentSpace(self, ctrl, name=None):
-        """Adds a CtrlSpace object above this object - inserted here to work on Transforms
-
-        Args:
-            name (string): optional name for this CtrlSpace, default is same as
-                this object
-
-        Returns:
-            object: New CtrlSpace object
-
-        """
-
-        if name is None:
-            name = ctrl.getName()
-
-        newCtrlSpace = CtrlSpace(name, parent=ctrl.getParent())
-        if ctrl.getParent() is not None:
-            ctrl.getParent().removeChild(ctrl)
-
-        if ctrl.getMetaDataItem("altLocation"):
-            newCtrlSpace.setMetaDataItem("altLocation", ctrl.getMetaDataItem("altLocation"))
-
-        ctrl.setParent(newCtrlSpace)
-        newCtrlSpace.addChild(ctrl)
-
-        newCtrlSpace.xfo = Xfo(ctrl.xfo)
-
-        # To ensure that names of control spaces don't clash with controls and
-        # if they do, set's the control space's name back to what it was intended
-        if ctrl.getName() == name:
-            newCtrlSpace.setName(name)
-
-        return newCtrlSpace
 
 
     def insertAttachSpace(self, jnt, name=None):
@@ -712,42 +678,6 @@ class OSS_Component(BaseExampleComponent):
         rbfOp.setOutput('weights', poseAttrs)
 
         return rbfOp
-
-
-    def insertCtrlSpace(self, ctrl, name=None):
-        """Adds a CtrlSpace object above this object - inserted here to work on Transforms
-
-        Args:
-            name (string): optional name for this CtrlSpace, default is same as
-                this object
-
-        Returns:
-            object: New CtrlSpace object
-
-        """
-
-        if name is None:
-            name = ctrl.getName()
-
-        newCtrlSpace = CtrlSpace(name, parent=ctrl.getParent())
-        if ctrl.getParent() is not None:
-            ctrl.getParent().removeChild(ctrl)
-
-        if ctrl.getMetaDataItem("altLocation"):
-            newCtrlSpace.setMetaDataItem("altLocation", ctrl.getMetaDataItem("altLocation"))
-
-        ctrl.setParent(newCtrlSpace)
-        newCtrlSpace.addChild(ctrl)
-
-        newCtrlSpace.xfo = Xfo(ctrl.xfo)
-
-        # To ensure that names of control spaces don't clash with controls and
-        # if they do, set's the control space's name back to what it was intended
-        if ctrl.getName() == name:
-            newCtrlSpace.setName(name)
-
-        return newCtrlSpace
-
 
 
     def fillValues(self, numDefs, minVal=0.0, maxVal=1.0, popFirst=False, popLast=False):

@@ -7,6 +7,8 @@ class OSSConfig(Config):
     def __init__(self):
         super(OSSConfig, self).__init__()
 
+        #self._metaData["UseMayaNativeConstraints"] = True
+
     # ======================
     # Color Mapping Methods
     # ======================
@@ -70,7 +72,8 @@ class OSSConfig(Config):
                                   "Layer": "",
                                   "Locator": "loc",
                                   "Transform": "xfo",
-                                  "CtrlSpace": "space",
+                                  "CtrlSpace": "ctrlspace",
+                                  "Space": "space",
                                   "OrientationConstraint": "oriCns",
                                   "PoseConstraint": "poseCns",
                                   "PositionConstraint": "posCns",
@@ -85,6 +88,7 @@ class OSSConfig(Config):
                                    "Layer"           : ["container", "sep", "name"],
                                    "Control"         : ["location", "sep", "name", "sep", "type"],
                                    "CtrlSpace"       : ["location", "sep", "name", "sep", "type"],
+                                   "Space"           : ["location", "sep", "name", "sep", "type"],
                                    "FKControl"       : ["location", "sep", "name", "sep", "type"],
                                    "IKControl"       : ["location", "sep", "name", "sep", "type"],
                                    "MCControl"       : ["location", "sep", "name", "sep", "type"],

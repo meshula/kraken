@@ -14,7 +14,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.locator import Locator
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
@@ -182,7 +182,7 @@ class OSSSocketRig(OSSSocket):
         self.socketCtrl.xfo = data['socketXfo']
         self.socketCtrl.setColor("pink")
         self.socketCtrl.alignOnYAxis()
-        self.socketCtrlSpace = self.socketCtrl.insertCtrlSpace()
+        self.socketSpace = self.socketCtrl.insertSpace()
 
         self.socket_offsetCtrl = Control(self.getName() + '_offset', parent=self.socketCtrl, shape="null")
         self.socket_offsetCtrl.xfo = data['socketXfo']
@@ -206,7 +206,7 @@ class OSSSocketRig(OSSSocket):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.socketInputConstraint = self.socketCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.socketInputConstraint = self.socketSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         # Constraint outputs
         self.socketOutputTgtConstraint = self.socketOutputTgt.constrainTo(self.socket_offsetCtrl)

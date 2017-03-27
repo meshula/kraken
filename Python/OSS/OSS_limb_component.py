@@ -17,7 +17,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 from kraken.core.objects.locator import Locator
 
@@ -337,35 +337,35 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # Controls
         # =========
         # World and Parent Space for Aligns (add more if needed)
-        self.uplimbWorldSpace = CtrlSpace(self.uplimbName + 'WorldSpace', parent=self.ctrlCmpGrp)
-        self.uplimbParentSpace = CtrlSpace(self.uplimbName + 'ParentSpace', parent=self.ctrlCmpGrp)
+        self.uplimbWorldSpace = Space(self.uplimbName + 'WorldSpace', parent=self.ctrlCmpGrp)
+        self.uplimbParentSpace = Space(self.uplimbName + 'ParentSpace', parent=self.ctrlCmpGrp)
         self.uplimbWorldSpace.xfo  = data['uplimbXfo']
         self.uplimbParentSpace.xfo = data['uplimbXfo']
 
         # uplimb
-        self.uplimbFKCtrlSpace = CtrlSpace(self.uplimbName, parent=self.ctrlCmpGrp)
-        self.uplimbFKCtrl = FKControl(self.uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
+        self.uplimbFKSpace = Space(self.uplimbName, parent=self.ctrlCmpGrp)
+        self.uplimbFKCtrl = FKControl(self.uplimbName, parent=self.uplimbFKSpace, shape="cube")
         self.uplimbFKCtrl.xfo = data['uplimbXfo']
-        self.uplimbFKCtrlSpace.xfo = data['uplimbXfo']
+        self.uplimbFKSpace.xfo = data['uplimbXfo']
         self.uplimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
 
         if self.untwistUplimb:
             # We should be able to insert a space to any kind of 3D object, not just controls
-            self.uplimbUntwistBase = CtrlSpace(name=self.uplimbName+"UntwistBase", parent=self.uplimbParentSpace)
+            self.uplimbUntwistBase = Space(name=self.uplimbName+"UntwistBase", parent=self.uplimbParentSpace)
             self.uplimbUntwistBase.xfo = data['uplimbXfo']
 
         # lolimb
-        self.lolimbFKCtrlSpace = CtrlSpace(self.lolimbName, parent=self.uplimbFKCtrl)
-        self.lolimbFKCtrl = FKControl(self.lolimbName, parent=self.lolimbFKCtrlSpace)
-        self.lolimbFKCtrlSpace.xfo = data['lolimbXfo']
+        self.lolimbFKSpace = Space(self.lolimbName, parent=self.uplimbFKCtrl)
+        self.lolimbFKCtrl = FKControl(self.lolimbName, parent=self.lolimbFKSpace)
+        self.lolimbFKSpace.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
 
 
         # lolimbIK
-        self.lolimbIKCtrlSpace = CtrlSpace(self.lolimbName+'IK', parent=self.ctrlCmpGrp)
-        self.lolimbIKCtrl = FKControl(self.lolimbName+'IK', parent=self.lolimbIKCtrlSpace, shape="circle", scale=globalScale*0.8)
-        self.lolimbIKCtrlSpace.xfo = data['lolimbXfo']
+        self.lolimbIKSpace = Space(self.lolimbName+'IK', parent=self.ctrlCmpGrp)
+        self.lolimbIKCtrl = FKControl(self.lolimbName+'IK', parent=self.lolimbIKSpace, shape="circle", scale=globalScale*0.8)
+        self.lolimbIKSpace.xfo = data['lolimbXfo']
         self.lolimbIKCtrl.xfo = data['lolimbXfo']
         self.lolimbIKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XZY"])  #Set with component settings later
         self.lolimbIKCtrl.lockRotation(x=True, y=True, z=True)
@@ -375,16 +375,16 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # MidCtrls (Bend/Bow) Creation - may need to make this an option
         # uplimbMid
         if self.addMidControls:
-            self.uplimbMidCtrlSpace = CtrlSpace(self.uplimbName+'Mid', parent=self.ctrlCmpGrp)
-            self.uplimbMidCtrl = FKControl(self.uplimbName+'Mid', parent=self.uplimbMidCtrlSpace, shape="circle", scale=globalScale*1.0)
-            self.lolimbMidCtrlSpace = CtrlSpace(self.lolimbName+'Mid', parent=self.ctrlCmpGrp)
-            self.lolimbMidCtrl = FKControl(self.lolimbName+'Mid', parent=self.lolimbMidCtrlSpace, shape="circle", scale=globalScale*0.8)
+            self.uplimbMidSpace = Space(self.uplimbName+'Mid', parent=self.ctrlCmpGrp)
+            self.uplimbMidCtrl = FKControl(self.uplimbName+'Mid', parent=self.uplimbMidSpace, shape="circle", scale=globalScale*1.0)
+            self.lolimbMidSpace = Space(self.lolimbName+'Mid', parent=self.ctrlCmpGrp)
+            self.lolimbMidCtrl = FKControl(self.lolimbName+'Mid', parent=self.lolimbMidSpace, shape="circle", scale=globalScale*0.8)
 
-            for ctrl in [self.uplimbMidCtrl, self.uplimbMidCtrlSpace]:
+            for ctrl in [self.uplimbMidCtrl, self.uplimbMidSpace]:
                 ctrl.xfo = data['uplimbXfo']
                 ctrl.xfo.tr = data['uplimbXfo'].tr.linearInterpolate(data['lolimbXfo'].tr, 0.5)
             # lolimbMid
-            for ctrl in [self.lolimbMidCtrl, self.lolimbMidCtrlSpace]:
+            for ctrl in [self.lolimbMidCtrl, self.lolimbMidSpace]:
                 ctrl.xfo = data['lolimbXfo']
                 ctrl.xfo.tr = data['lolimbXfo'].tr.linearInterpolate(data['handleXfo'].tr, 0.5)
 
@@ -409,14 +409,14 @@ class OSSLimbComponentRig(OSSLimbComponent):
                 ctrl.rotatePoints(0,90,90)
 
 
-        self.limbIKCtrlSpace = CtrlSpace(self.ikHandleName, parent=self.ctrlCmpGrp)
-        self.limbIKCtrlSpace.xfo = data['handleXfo']
+        self.limbIKSpace = Space(self.ikHandleName, parent=self.ctrlCmpGrp)
+        self.limbIKSpace.xfo = data['handleXfo']
 
         # hand
         if self.useOtherIKGoal: #Do not use this as a control, hide it
-            self.limbIKCtrl = Transform(self.ikHandleName, parent=self.limbIKCtrlSpace)
+            self.limbIKCtrl = Transform(self.ikHandleName, parent=self.limbIKSpace)
         else:
-            self.limbIKCtrl = IKControl(self.ikHandleName, parent=self.limbIKCtrlSpace, shape="jack")
+            self.limbIKCtrl = IKControl(self.ikHandleName, parent=self.limbIKSpace, shape="jack")
         self.limbIKCtrl.xfo = data['handleXfo']
 
 
@@ -454,7 +454,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # =========
         if self.mocap:
             # Mocap uplimb
-            self.uplimb_mocap = MCControl(self.uplimbName, parent=self.uplimbFKCtrlSpace, shape="cube")
+            self.uplimb_mocap = MCControl(self.uplimbName, parent=self.uplimbFKSpace, shape="cube")
             #rotation order should stay consistent no matter what ro the controls have
             self.uplimb_mocap.xfo = data['uplimbXfo']
             self.uplimb_mocap.alignOnXAxis()
@@ -466,22 +466,22 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.lolimb_mocap.xfo = data['lolimbXfo']
             self.lolimb_mocap.alignOnXAxis()
             self.lolimb_mocap.scalePointsOnAxis(data['lolimbLen'], self.boneAxisStr)
-            self.lolimb_mocap.insertCtrlSpace()
+            self.lolimb_mocap.insertSpace()
             # Mocap handle
             self.endlimb_mocap = Transform(name+'end', parent=self.lolimb_mocap)
             self.endlimb_mocap.xfo = data['handleXfo']
             self.endlimb_mocap.xfo.ori = self.lolimb_mocap.xfo.ori
-            self.endlimb_mocap.insertCtrlSpace()
+            self.endlimb_mocap.insertSpace()
 
 
         # UpV
         self.limbUpVCtrl = Control(name+'UpV', parent=self.ctrlCmpGrp, shape="triangle")
         self.limbUpVCtrl.xfo = data['upVXfo']
         self.limbUpVCtrl.alignOnZAxis()
-        self.limbUpVCtrlSpace = self.limbUpVCtrl.insertCtrlSpace()
+        self.limbUpVSpace = self.limbUpVCtrl.insertSpace()
 
 
-        self.limbUpVCtrlIKSpace = CtrlSpace(name+'UpVIK', parent=self.ctrlCmpGrp)
+        self.limbUpVCtrlIKSpace = Space(name+'UpVIK', parent=self.ctrlCmpGrp)
         self.limbUpVCtrlIKSpace.xfo = data['upVXfo']
         if self.useOtherIKGoal:
             self.limbUpVCtrlIKSpaceConstraint = self.limbUpVCtrlIKSpace.constrainTo(self.ikgoal_cmpIn, maintainOffset=True)
@@ -489,7 +489,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.limbUpVCtrlIKSpaceConstraint = self.limbUpVCtrlIKSpace.constrainTo(self.limbIKCtrl, maintainOffset=True)
 
 
-        self.limbUpVCtrlMasterSpace = CtrlSpace(name+'IKMaster', parent=self.ctrlCmpGrp)
+        self.limbUpVCtrlMasterSpace = Space(name+'IKMaster', parent=self.ctrlCmpGrp)
         self.limbUpVCtrlMasterSpace.xfo = data['upVXfo']
         self.limbUpVCtrlMasterSpaceConstraint = self.limbUpVCtrlMasterSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
 
@@ -519,7 +519,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        # self.uplimbFKCtrlSpaceConstraint = self.uplimbFKCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        # self.uplimbFKSpaceConstraint = self.uplimbFKSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
         self.uplimbParentSpaceConstraint     = self.uplimbParentSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
         self.uplimbWorldSpaceConstraint      = self.uplimbWorldSpace.constrainTo(self.ctrlCmpGrp, maintainOffset=True)
@@ -537,7 +537,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbUpVSpaceHierBlendSolver.setInput('hierA', [self.limbUpVCtrlMasterSpace])
         self.limbUpVSpaceHierBlendSolver.setInput('hierB', [self.limbUpVCtrlIKSpace])
         # Add Xfo Outputs
-        self.limbUpVSpaceHierBlendSolver.setOutput('hierOut', [self.limbUpVCtrlSpace])
+        self.limbUpVSpaceHierBlendSolver.setOutput('hierOut', [self.limbUpVSpace])
 
 
 
@@ -550,7 +550,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.worldSpaceAttr  = ScalarAttribute('alignToWorld', value=0.0, minValue=0.0, maxValue=1.0, parent=limbSettingsAttrGrp)
 
         self.armAlignOp = self.blend_two_xfos(
-            self.uplimbFKCtrlSpace,
+            self.uplimbFKSpace,
             self.uplimbParentSpace, self.uplimbWorldSpace,
             blendTranslate=0,
             blendRotate=self.worldSpaceAttr,
@@ -571,7 +571,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbIKKLOp.setInput('squash', self.squashAttr)
         self.limbIKKLOp.setInput('stretch', self.stretchAttr)
         # Add Xfo Inputs
-        self.limbIKKLOp.setInput('root', self.uplimbFKCtrlSpace)
+        self.limbIKKLOp.setInput('root', self.uplimbFKSpace)
         self.limbIKKLOp.setInput('bone0FK', self.uplimbFKCtrl)
         self.limbIKKLOp.setInput('bone1FK', self.lolimbFKCtrl)
         self.limbIKKLOp.setInput('upV', self.limbUpVCtrl)
@@ -581,7 +581,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
         # Add lolimb IK
         self.limbIKKLOp.setOutput('bone0Out', self.uplimb_cmpOut)
-        self.limbIKKLOp.setOutput('bone1Out', self.lolimbIKCtrlSpace)
+        self.limbIKKLOp.setOutput('bone1Out', self.lolimbIKSpace)
         self.limbIKKLOp.setOutput('bone2Out', self.endlimb_cmpOut)
 
 
@@ -601,7 +601,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.uplimbMidCtrlRigOp.setInput('constrainerRotateB', sourceB)
             self.uplimbMidCtrlRigOp.setInput('constrainerScaleA', sourceA)
             self.uplimbMidCtrlRigOp.setInput('constrainerScaleB', sourceB)
-            self.uplimbMidCtrlRigOp.setOutput('result', self.uplimbMidCtrlSpace)
+            self.uplimbMidCtrlRigOp.setOutput('result', self.uplimbMidSpace)
 
             sourceA = self.lolimbIKCtrl
             sourceB = self.endlimb_cmpOut
@@ -616,7 +616,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.lolimbMidCtrlRigOp.setInput('constrainerRotateB', sourceB)
             self.lolimbMidCtrlRigOp.setInput('constrainerScaleA', sourceA)
             self.lolimbMidCtrlRigOp.setInput('constrainerScaleB', sourceB)
-            self.lolimbMidCtrlRigOp.setOutput('result', self.lolimbMidCtrlSpace)
+            self.lolimbMidCtrlRigOp.setOutput('result', self.lolimbMidSpace)
 
 
         # Mocap
@@ -642,10 +642,10 @@ class OSSLimbComponentRig(OSSLimbComponent):
             self.limbMocapHierBlendSolver.setInput('hierA', [self.limbIKKLOp_bone0_out, self.limbIKKLOp_bone1_out, self.limbIKKLOp_bone2_out])
             self.limbMocapHierBlendSolver.setInput('hierB', [self.uplimb_mocap, self.lolimb_mocap, self.endlimb_mocap])
             # Add Xfo Outputs
-            self.limbMocapHierBlendSolver.setOutput('hierOut', [self.uplimb_cmpOut, self.lolimbIKCtrlSpace, self.endlimb_cmpOut])
+            self.limbMocapHierBlendSolver.setOutput('hierOut', [self.uplimb_cmpOut, self.lolimbIKSpace, self.endlimb_cmpOut])
         else:
             self.limbIKKLOp.setOutput('bone0Out', self.uplimb_cmpOut)
-            self.limbIKKLOp.setOutput('bone1Out', self.lolimbIKCtrlSpace)
+            self.limbIKKLOp.setOutput('bone1Out', self.lolimbIKSpace)
             self.limbIKKLOp.setOutput('bone2Out', self.endlimb_cmpOut)
 
         if self.untwistUplimb:
@@ -760,12 +760,12 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
 
             uplimbStartTwistXfo = self.createOutput(self.uplimbName+"StartTwist", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-            uplimbStartTwistXfo.xfo = Xfo(self.uplimb_cmpOut.xfo)
+            uplimbStartTwistXfo.xfo = self.uplimb_cmpOut.xfo
             uplimbStartTwistXfo.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
 
             lolimbEndTwistXfo = self.createOutput(self.lolimbName+"EndTwist", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
-            lolimbEndTwistXfo.xfo = Xfo(self.endlimb_cmpOut.xfo)
+            lolimbEndTwistXfo.xfo = self.endlimb_cmpOut.xfo
             if self.useOtherIKGoal:
                 lolimbEndTwistXfo.constrainTo(self.endTwistParent_cmpIn, maintainOffset=True)
             else:
@@ -809,7 +809,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
             if self.untwistUplimb:
                 uplimbBaseRotate = self.uplimbUntwistBase
             else:
-                uplimbBaseRotate = self.uplimbFKCtrlSpace
+                uplimbBaseRotate = self.uplimbFKSpace
 
             uplimbPartialDef = self.createPartialJoint(self.uplimbDef, baseTranslate=self.uplimbDef, baseRotate=uplimbBaseRotate, parent=self.uplimbDef.getParent())
 
@@ -825,7 +825,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
             lolimb_ik_base = Locator(self.lolimbDef.getName()+"_ik_base_null" , parent=self.ctrlCmpGrp)
             lolimb_ik_base.setShapeVisibility(False)
-            lolimb_ik_base.xfo = Xfo(self.lolimb_cmpOut.xfo) #should be up to date by now, keep orientation of lolimb in relation to uplimb
+            lolimb_ik_base.xfo = self.lolimb_cmpOut.xfo #should be up to date by now, keep orientation of lolimb in relation to uplimb
             lolimb_ik_base.constrainTo(lolimbPartialConstrainer, maintainOffset=True)
             lolimbPartialDef = self.createPartialJoint(lolimbTargetDef,
                 name=self.lolimbDef.getName()+"_part",

@@ -21,7 +21,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.transform import Transform
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
@@ -393,23 +393,23 @@ class OSSHandComponentRig(OSSHandComponent):
         # IK Handle
         self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="jack")
         self.handleCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later careful when combining with foot!
-        self.handleCtrlSpace = self.handleCtrl.insertCtrlSpace(name="hand_ik") # To avoid clashes
-        self.handleIKCtrlSpace = CtrlSpace('handIK', parent=self.handleCtrl)
+        self.handleSpace = self.handleCtrl.insertSpace(name="hand_ik") # To avoid clashes
+        self.handleIKSpace = Space('handIK', parent=self.handleCtrl)
 
         # FK Hand
         self.handCtrl = FKControl('hand', parent=self.ctrlCmpGrp, shape="cube")
         self.handCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.handCtrl.alignOnXAxis()
-        self.handCtrlSpace = self.handCtrl.insertCtrlSpace(name="hand_fk")
+        self.handSpace = self.handCtrl.insertSpace(name="hand_fk")
 
         # FK palm
         self.palmCtrl = FKControl('palm', parent=self.handCtrl, shape="cube")
         self.palmCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.palmCtrl.alignOnXAxis()
-        self.palmCtrlSpace = self.palmCtrl.insertCtrlSpace()
+        self.palmSpace = self.palmCtrl.insertSpace()
 
         # IK palm
-        self.palmIKCtrlSpace = CtrlSpace('palmIK', parent=self.handleIKCtrlSpace)
+        self.palmIKSpace = Space('palmIK', parent=self.handleIKSpace)
 
 
         # Rig Ref objects
@@ -456,15 +456,15 @@ class OSSHandComponentRig(OSSHandComponent):
         # ==============
         # Constraint inputs
 
-        self.handCtrlSpaceConstraint = self.handCtrlSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
-        self.handleCtrlSpaceConstraint = self.handleCtrlSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
+        self.handSpaceConstraint = self.handSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        self.handleSpaceConstraint = self.handleSpace.constrainTo(self.globalSRTInputTgt, maintainOffset=True)
         # Constraint outputs
         self.ikgoal_cmpOutConstraint = self.ikgoal_cmpOut.constrainTo(self.handleCtrl, maintainOffset=False)
 
 
 
         # Create IK joints (until footrocker system is integrated)
-        self.ikHandTransform = Transform('ikHand', parent=self.handCtrlSpace)
+        self.ikHandTransform = Transform('ikHand', parent=self.handSpace)
         self.ikPalmTransform = Transform('ikPalm', parent=self.ikHandTransform)
 
 
@@ -481,9 +481,9 @@ class OSSHandComponentRig(OSSHandComponent):
         self.IKHandBlendKLOp.setInput('rigScale', self.rigScaleInputAttr)
         self.IKHandBlendKLOp.setInput('blend', self.handIKInputAttr)
         # Add Xfo Inputs)
-        self.IKHandBlendKLOp.setInput('ikFoot', self.handleIKCtrlSpace)
+        self.IKHandBlendKLOp.setInput('ikFoot', self.handleIKSpace)
         self.IKHandBlendKLOp.setInput('fkFoot', self.handCtrl)
-        self.IKHandBlendKLOp.setInput('ikBall', self.palmIKCtrlSpace)
+        self.IKHandBlendKLOp.setInput('ikBall', self.palmIKSpace)
         self.IKHandBlendKLOp.setInput('fkBall', self.palmCtrl)
         # Add Xfo Outputs
         self.IKHandBlendKLOpHand_out = Transform('IKHandBlendKLOpHand_out', parent=self.outputHrcGrp)
@@ -558,7 +558,7 @@ class OSSHandComponentRig(OSSHandComponent):
                 else:
                     aimAt(digiSegCtrls[j].xfo, aimPos=digiSegCtrls[j+1].xfo.tr, upVector=upVector, aimAxis=self.boneAxis, upAxis=self.upAxis)
 
-                digiSegCtrls[j].insertCtrlSpace()
+                digiSegCtrls[j].insertSpace()
                 digiSegDefs[j].constrainTo(digiSegCtrls[j]).evaluate()
 
                 if self.addPartialJoints:
@@ -606,20 +606,20 @@ class OSSHandComponentRig(OSSHandComponent):
         self.upAxis = AXIS_NAME_TO_TUPLE_MAP[self.upAxisStr]
 
 
-        self.handleCtrlSpace.xfo = data['handleXfo']
-        #aimAt(self.handleCtrlSpace.xfo., aimVector=Vec3(0, 1, 0), upPos=self.palmCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
-        self.handleCtrl.xfo = Xfo(self.handleCtrlSpace.xfo)
+        self.handleSpace.xfo = data['handleXfo']
+        #aimAt(self.handleSpace.xfo., aimVector=Vec3(0, 1, 0), upPos=self.palmCtrl.xfo.tr, aimAxis=(0, 1, 0), upAxis=(0, 0, 1))
+        self.handleCtrl.xfo = self.handleSpace.xfo
 
-        self.handCtrlSpace.xfo = data['handXfo']
+        self.handSpace.xfo = data['handXfo']
         self.handCtrl.xfo = data['handXfo']
         self.handCtrl.scalePointsOnAxis(data['handLen'], self.boneAxisStr)
 
-        self.palmCtrlSpace.xfo = data['palmXfo']
+        self.palmSpace.xfo = data['palmXfo']
         self.palmCtrl.xfo = data['palmXfo']
         self.palmCtrl.scalePointsOnAxis(data['palmLen'] / 5.0, self.boneAxisStr)
 
-        self.handleIKCtrlSpace.xfo = Xfo(self.handCtrl.xfo)
-        self.palmIKCtrlSpace.xfo = Xfo(self.palmCtrl.xfo)
+        self.handleIKSpace.xfo = self.handCtrl.xfo
+        self.palmIKSpace.xfo = self.palmCtrl.xfo
 
         self.ikHandTransform = data['handXfo']
         self.ikPalmTransform = data['palmXfo']

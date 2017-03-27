@@ -15,7 +15,7 @@ from kraken.core.objects.component_group import ComponentGroup
 from kraken.core.objects.hierarchy_group import HierarchyGroup
 from kraken.core.objects.locator import Locator
 from kraken.core.objects.joint import Joint
-from kraken.core.objects.ctrlSpace import CtrlSpace
+from kraken.core.objects.space import Space
 from kraken.core.objects.control import Control
 
 from kraken.core.objects.operators.kl_operator import KLOperator
@@ -184,15 +184,15 @@ class OSSSingleFKRig(OSSSingleFK):
         # Controls
         # =========
         # SingleFK
-        self.SingleFKParentSpace = CtrlSpace(self.getName() + 'ParentSpace', parent=self.ctrlCmpGrp)
-        self.SingleFKCtrlSpace = CtrlSpace(self.getName() + 'CtrlSpace', parent=self.SingleFKParentSpace)
-        self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFKCtrlSpace, shape="cube")
+        self.SingleFKParentSpace = Space(self.getName() + 'ParentSpace', parent=self.ctrlCmpGrp)
+        self.SingleFKSpace = Space(self.getName() + 'Space', parent=self.SingleFKParentSpace)
+        self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFKSpace, shape="cube")
         #self.SingleFKCtrl.setCurveData(data['SingleFKCtrlCrvData'])
 
 
         self.SingleFKEndOutputTgt.xfo = data[self.getName() + 'Xfo']
         self.SingleFKParentSpace.xfo = data[self.getName() + 'Xfo']
-        self.SingleFKCtrlSpace.xfo = data[self.getName() + 'Xfo']
+        self.SingleFKSpace.xfo = data[self.getName() + 'Xfo']
         self.SingleFKCtrl.xfo = data[self.getName() + 'Xfo']
         # ==========
         # Deformers
@@ -238,7 +238,7 @@ class OSSSingleFKRig(OSSSingleFK):
         self.alignSpacesKLOp.setInput('scaleAmt',  0)
         self.alignSpacesKLOp.setInput('rotationAmt',  1)
         self.alignSpacesKLOp.setInput('parent',  self.SingleFKParentSpace)
-        self.alignSpacesKLOp.setOutput('result', self.SingleFKCtrlSpace)
+        self.alignSpacesKLOp.setOutput('result', self.SingleFKSpace)
 
 
 
