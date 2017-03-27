@@ -22,8 +22,14 @@ function KrakenParentConstraint.addConstrainer!(
 function Mat44 KrakenParentConstraint.compute?(
   Mat44 m
 ) {
-  Xfo result = m;
-  result.tr = Vec3();
+
+  Vec3 constrainee_scl;
+  Mat33 constrainee_ori;
+  Vec3 constrainee_pos;
+  m.decompose(constrainee_scl, constrainee_ori, constrainee_pos);
+
+  Xfo result = Xfo();
+  //result.tr = Vec3();
   result.ori = Quat(0.0, 0.0, 0.0, 0.0);
 
   for(Size i=0;i<this.constrainers.size();i++) {
@@ -32,17 +38,23 @@ function Mat44 KrakenParentConstraint.compute?(
     result.ori = result.ori.add(constrainer.ori);
     // todo: scaling is not maintained here!
   }
-
   result.ori.setUnit();
   result.tr *= 1.0 / Float32(this.constrainers.size());
 
-  Mat44 resultMat44 = result.toMat44() * this.offset;
+  Vec3 sc;
+  for(Size i=0;i<this.constrainers.size();i++) {
+    sc += Xfo(this.constrainers[i]).sc;
+  }
+  sc *= 1.0 / Float32(this.constrainers.size());
+
+  Mat44 resultMat44 = result.toMat44();
+  resultMat44 = resultMat44.setScaling(sc) * this.offset;
 
   Vec3 scl;
   Mat33 ori;
   Vec3 pos;
   resultMat44.decompose(scl, ori, pos);
-  resultMat44.set(pos, ori, Vec3(1.0, 1.0, 1.0));
+  resultMat44.set(pos, ori, constrainee_scl);
   return resultMat44;
 
 }
