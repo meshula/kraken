@@ -56,6 +56,7 @@ class OSSSingleFKGuide(OSSSingleFK):
         Profiler.getInstance().push("Construct SingleFK Guide Component:" + name)
         super(OSSSingleFKGuide, self).__init__(name, parent)
 
+        self.spaceScaleCompensate = BoolAttribute('SpaceScaleCompensate', value=False, parent=self.guideSettingsAttrGrp)
 
         # =========
         # Controls
@@ -207,7 +208,11 @@ class OSSSingleFKRig(OSSSingleFK):
         # Constrain I/O
         # ==============
         # Constraint inputs
-        self.SingleFKSpaceConstraint = self.SingleFKParentSpace.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+        if bool(data.get("ParentSpaceScaleCompensate", False)):
+            constraintType = "Parent"
+        else:
+            constraintType = "Pose"
+        self.SingleFKSpaceConstraint = self.SingleFKParentSpace.constrainTo(self.parentSpaceInputTgt, constraintType=constraintType, maintainOffset=True)
         # ==============
         # Constrain I/O
         # ==============
