@@ -19,6 +19,7 @@ from kraken.core.objects.attributes.bool_attribute import BoolAttribute
 
 from kraken.core.objects.constraints.constraint import Constraint
 from kraken.core.objects.constraints.orientation_constraint import OrientationConstraint
+from kraken.core.objects.constraints.parent_constraint import ParentConstraint
 from kraken.core.objects.constraints.pose_constraint import PoseConstraint
 from kraken.core.objects.constraints.position_constraint import PositionConstraint
 from kraken.core.objects.constraints.scale_constraint import ScaleConstraint
@@ -804,6 +805,8 @@ class Object3D(SceneItem):
             constraint = OrientationConstraint(constraintName)
         elif constraintType == "Pose":
             constraint = PoseConstraint(constraintName)
+        elif constraintType == "Parent":
+            constraint = ParentConstraint(constraintName)
         elif constraintType == "Position":
             constraint = PositionConstraint(constraintName)
         elif constraintType == "Scale":

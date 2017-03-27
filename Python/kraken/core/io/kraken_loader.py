@@ -131,6 +131,9 @@ class KrakenLoader(object):
         elif "PoseConstraint" in jsonData['__typeHierarchy__']:
             item = PoseConstraint(jsonData['name'])
 
+        elif "ParentConstraint" in jsonData['__typeHierarchy__']:
+            item = ParentConstraint(jsonData['name'])
+
         elif "PositionConstraint" in jsonData['__typeHierarchy__']:
             item = PositionConstraint(jsonData['name'])
 

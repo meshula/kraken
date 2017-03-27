@@ -218,6 +218,10 @@ class ComponentInputPort(SceneItem):
 
         elif isinstance(target, Object3D):
             target.removeAllConstraints()
-            target.constrainTo(connectedTarget, maintainOffset=False)
+            if target.getScaleCompensate():
+                target.constrainTo(connectedTarget, constraintType="Parent", maintainOffset=False)
+            else:
+                target.constrainTo(connectedTarget, maintainOffset=False)
+
 
         return True

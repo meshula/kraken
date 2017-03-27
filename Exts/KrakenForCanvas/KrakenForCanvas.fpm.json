@@ -24,6 +24,7 @@
 
     "Constraints/KrakenConstraint.kl",
     "Constraints/KrakenPoseConstraint.kl",
+    "Constraints/KrakenParentConstraint.kl",
     "Constraints/KrakenPositionConstraint.kl",
     "Constraints/KrakenOrientationConstraint.kl",
     "Constraints/KrakenScaleConstraint.kl",

@@ -2524,6 +2524,21 @@ class Builder(Builder):
         """
         return self.buildKLConstraint(kConstraint, buildName)
 
+
+    def buildParentConstraint(self, kConstraint, buildName):
+        """Builds an parent constraint represented by the kConstraint.
+
+        Args:
+            kConstraint (Object): Kraken constraint object to build.
+
+        Return:
+            object: dccSceneItem that was created.
+
+        """
+        raise Exception("Todd, do this!")
+        return self.buildKLConstraint(kConstraint, buildName)
+
+
     def buildPositionConstraint(self, kConstraint, buildName):
         """Builds an position constraint represented by the kConstraint.
 

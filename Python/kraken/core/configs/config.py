@@ -316,6 +316,7 @@ class Config(object):
                 "CtrlSpace": "ctrlSpace",
                 "OrientationConstraint": "oriCns",
                 "PoseConstraint": "poseCns",
+                "ParentConstraint": "parCns",
                 "PositionConstraint": "posCns",
                 "ScaleConstraint": "sclCns",
                 "KLOperator": "klOp",

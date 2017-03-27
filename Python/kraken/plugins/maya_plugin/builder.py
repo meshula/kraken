@@ -734,6 +734,41 @@ class Builder(Builder):
 
         return dccSceneItem
 
+
+    def buildParentConstraint(self, kConstraint, buildName):
+        """Builds an parent constraint represented by the kConstraint.
+
+        Args:
+            kConstraint (Object): Kraken constraint object to build.
+
+        Return:
+            bool: True if successful.
+
+        """
+
+        dccSceneItem = None
+        constraineeDCCSceneItem = self.getDCCSceneItem(kConstraint.getConstrainee())
+
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tx', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ty', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'tz', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rx', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'ry', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'rz', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sx', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sy', lock=False)
+        pm.setAttr(constraineeDCCSceneItem.longName() + "." + 'sz', lock=False)
+
+        dccSceneItem = pm.parentConstraint(
+            [self.getDCCSceneItem(x) for x in kConstraint.getConstrainers()],
+            constraineeDCCSceneItem,
+            name=buildName,
+            maintainOffset=kConstraint.getMaintainOffset())
+
+        self._registerSceneItemPair(kConstraint, dccSceneItem)
+
+        return dccSceneItem
+
     def buildPositionConstraint(self, kConstraint, buildName):
         """Builds an position constraint represented by the kConstraint.
 
