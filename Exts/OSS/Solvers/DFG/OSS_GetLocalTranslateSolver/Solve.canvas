@@ -1,0 +1,171 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: OSS_GetLocalTranslateSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  inMatrix: Mat44\n  inBaseMatrix: Mat44\n  localMatrix: Mat44\n  translate: Vec3\n  rotate: Vec3\n  scale: Vec3\n  tx: Scalar\n  ty: Scalar\n  tz: Scalar\n  rx: Scalar\n  ry: Scalar\n  rz: Scalar\n  sx: Scalar\n  sy: Scalar\n  sz: Scalar\n"
+    },
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "OSS_GetLocalTranslateSolver"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "inMatrix",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "inBaseMatrix",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "localMatrix",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "name" : "translate",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "name" : "rotate",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "name" : "scale",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "tx",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "ty",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "tz",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rx",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "ry",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rz",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "sx",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "sy",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "sz",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "9A0081493084504FFD20E6B48F7DCBFF",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  this.solve(drawDebug, rigScale, inMatrix, inBaseMatrix, localMatrix, translate, rotate, scale, tx, ty, tz, rx, ry, rz, sx, sy, sz);
+}
+"
+  }

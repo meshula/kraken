@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  result: OSS_RemapScalarValueSolver\n"
+    },
+  "title" : "OSS_RemapScalarValueSolver",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "OSS_RemapScalarValueSolver"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "54BC539B98761DF2B47FFEA2353935C3",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = OSS_RemapScalarValueSolver();
+}
+"
+  }

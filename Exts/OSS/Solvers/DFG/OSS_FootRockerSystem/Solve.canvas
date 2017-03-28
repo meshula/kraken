@@ -1,0 +1,261 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: OSS_FootRockerSystem\n  drawDebug: Boolean\n  rigScale: Scalar\n  rightSide: Boolean\n  footRocker: Scalar\n  ballBreak: Scalar\n  footBend: Scalar\n  footTilt: Scalar\n  footSwivel: Scalar\n  ballBend: Scalar\n  ballTwist: Scalar\n  ballSwivel: Scalar\n  pivot: Mat44\n  pivotSpace: Mat44\n  heelIK: Mat44\n  heelIKSpace: Mat44\n  ikCtrl: Mat44\n  heelPivot: Mat44\n  ballPivot: Mat44\n  tipPivot: Mat44\n  footJointLoc: Mat44\n  ballJointLoc: Mat44\n  innerPivotLoc: Mat44\n  outerPivotLoc: Mat44\n  footJoint: Mat44\n  ballJoint: Mat44\n  ikGoal: Mat44\n"
+    },
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "OSS_FootRockerSystem"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rightSide",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "footRocker",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "ballBreak",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "footBend",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "footTilt",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "footSwivel",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "ballBend",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "ballTwist",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "ballSwivel",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "pivot",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "pivotSpace",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "heelIK",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "heelIKSpace",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "ikCtrl",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "heelPivot",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "ballPivot",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "tipPivot",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "footJointLoc",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "ballJointLoc",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "innerPivotLoc",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "outerPivotLoc",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "footJoint",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "ballJoint",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "ikGoal",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Mat44"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "4D1700EB6E0C4CB86C159CADCF158E16",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  this.solve(drawDebug, rigScale, rightSide, footRocker, ballBreak, footBend, footTilt, footSwivel, ballBend, ballTwist, ballSwivel, pivot, pivotSpace, heelIK, heelIKSpace, ikCtrl, heelPivot, ballPivot, tipPivot, footJointLoc, ballJointLoc, innerPivotLoc, outerPivotLoc, footJoint, ballJoint, ikGoal);
+}
+"
+  }

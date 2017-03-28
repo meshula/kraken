@@ -7,6 +7,7 @@ Builder -- Base builder object to build objects in DCC.
 
 import os
 import logging
+import traceback
 
 from kraken.log import getLogger
 
@@ -768,9 +769,12 @@ class Builder(object):
             self.__buildSceneItemList(traverser.items,
                                       self._buildPhase_lockTransformAttrs)
 
-        finally:
             self._postBuild(kSceneItem)
 
+        except Exception as e:
+            raise(e, traceback.format_exc())
+
+        finally:
             # Clear Config when finished.
             self.config.clearInstance()
 

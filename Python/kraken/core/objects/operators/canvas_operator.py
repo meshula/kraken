@@ -34,7 +34,6 @@ class CanvasOperator(Operator):
             1: 'IO',
             2: 'Out'
         }
-        print("\nTTPrint: canvas operator: %s" % name)
         # Initialize the inputs and outputs based on the given args.
         for i in xrange(self.node.getExecPortCount()):
             portName = self.node.getExecPortName(i)

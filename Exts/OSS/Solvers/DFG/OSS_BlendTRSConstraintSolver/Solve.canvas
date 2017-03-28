@@ -1,0 +1,139 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: OSS_BlendTRSConstraintSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  blendTranslate: Scalar\n  blendRotate: Scalar\n  blendScale: Scalar\n  constrainerTranslateA: Mat44\n  constrainerTranslateB: Mat44\n  constrainerRotateA: Mat44\n  constrainerRotateB: Mat44\n  constrainerScaleA: Mat44\n  constrainerScaleB: Mat44\n  result: Mat44\n"
+    },
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "OSS_BlendTRSConstraintSolver"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "blendTranslate",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "blendRotate",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "blendScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "constrainerTranslateA",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "constrainerTranslateB",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "constrainerRotateA",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "constrainerRotateB",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "constrainerScaleA",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "constrainerScaleB",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "2BE6B2D96AE84847B87DED29DED30736",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  this.solve(drawDebug, rigScale, blendTranslate, blendRotate, blendScale, constrainerTranslateA, constrainerTranslateB, constrainerRotateA, constrainerRotateB, constrainerScaleA, constrainerScaleB, result);
+}
+"
+  }

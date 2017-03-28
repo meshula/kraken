@@ -1,0 +1,55 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  input: Scalar\n  x: Scalar\n  exponent: SInt32\n  result: Scalar\n"
+    },
+  "title" : "DiminishByExponent",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "input",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "x",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "exponent",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "C58C579E224489235A6BD82BF031DE37",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = diminishByExponent(input, x, exponent);
+}
+"
+  }

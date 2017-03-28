@@ -1,0 +1,85 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: OSS_UntwistSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  inMatrix: Mat44\n  inBaseMatrix: Mat44\n  axis: SInt32\n  untwistedMatrix: Mat44\n"
+    },
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "OSS_UntwistSolver"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "inMatrix",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "inBaseMatrix",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "axis",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "untwistedMatrix",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Mat44"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "727A3AB5531B6CED808544623996A9FD",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  this.solve(drawDebug, rigScale, inMatrix, inBaseMatrix, axis, untwistedMatrix);
+}
+"
+  }

@@ -1,0 +1,76 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: OSS_RemapScalarValueSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  input: Scalar\n  scale: Scalar\n  clamp: Boolean\n  result: Scalar\n"
+    },
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "OSS_RemapScalarValueSolver"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "input",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "scale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "clamp",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "4DCBD8C28022772C84B15D0D984384A0",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  this.solve(drawDebug, rigScale, input, scale, clamp, result);
+}
+"
+  }

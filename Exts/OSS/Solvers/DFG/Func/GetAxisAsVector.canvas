@@ -1,0 +1,44 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  axisIndex: UInt32\n  result: Vec3\n"
+    },
+  "title" : "GetAxisAsVector",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "axisIndex",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "695C8FB8F8C0EE47CF12430BB6F1B1BE",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = getAxisAsVector(axisIndex);
+}
+"
+  }

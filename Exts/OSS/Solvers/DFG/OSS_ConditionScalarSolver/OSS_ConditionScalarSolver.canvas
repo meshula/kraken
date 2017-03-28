@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  result: OSS_ConditionScalarSolver\n"
+    },
+  "title" : "OSS_ConditionScalarSolver",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "OSS_ConditionScalarSolver"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "ED172761CC64E92DD89D3E356283EB44",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = OSS_ConditionScalarSolver();
+}
+"
+  }

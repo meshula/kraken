@@ -1,0 +1,78 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  rootTransform: InlineTransform\n  name: String\n  starts: Vec3[]\n  ends: Vec3[]\n  color: Color\n  result: InlineLinesShape\n"
+    },
+  "title" : "DrawLines",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rootTransform",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "InlineTransform"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "name",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "String"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "name" : "starts",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "name" : "ends",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
+        },
+      "name" : "color",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Color"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "InlineLinesShape"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "8AB056C0E34091EF560A0287CE5C6947",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = drawLines(rootTransform, name, starts, ends, color);
+}
+"
+  }

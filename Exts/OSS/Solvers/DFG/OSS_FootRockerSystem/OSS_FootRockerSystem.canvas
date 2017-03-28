@@ -1,0 +1,44 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  initPose: Xfo[]\n  result: OSS_FootRockerSystem\n"
+    },
+  "title" : "OSS_FootRockerSystem",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "initPose",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Xfo[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "OSS_FootRockerSystem"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "5C96BBBBB19B682085F9FAEFD34D18F7",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  result = OSS_FootRockerSystem(initPose);
+}
+"
+  }

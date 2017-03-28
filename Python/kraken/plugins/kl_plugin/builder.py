@@ -2535,7 +2535,6 @@ class Builder(Builder):
             object: dccSceneItem that was created.
 
         """
-        raise Exception("Todd, do this!")
         return self.buildKLConstraint(kConstraint, buildName)
 
 

@@ -1,0 +1,222 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Align Controls according to main Curve Direction, given the controlAligns Input array\n\nSupported types:\n  this: OSS_NURBSCurveXfoKLSolver\n  drawDebug: Boolean\n  rigScale: Scalar\n  params: Scalar[]\n  degree: SInt32\n  keepArcLength: Scalar\n  followCurveTangent: Scalar\n  useLocalNormal: Scalar\n  followCurveNormal: Scalar\n  alignX: SInt8\n  alignY: SInt8\n  alignZ: SInt8\n  altTangent: Vec3\n  atVec: Mat44\n  parent: Mat44\n  compressionAmt: Scalar\n  controlAligns: Vec3[]\n  controlsRest: Mat44[]\n  rigidIDs: SInt32[]\n  rigidMat44s: Mat44[]\n  rigidAligns: Vec3[]\n  controls: Mat44[]\n  outputs: Mat44[]\n  instance: InlineInstance\n"
+    },
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "OSS_NURBSCurveXfoKLSolver"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "drawDebug",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigScale",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "params",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "degree",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "keepArcLength",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "followCurveTangent",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "useLocalNormal",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "followCurveNormal",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "alignX",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt8"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "alignY",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt8"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "alignZ",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt8"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "name" : "altTangent",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "atVec",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "parent",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "compressionAmt",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "name" : "controlAligns",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "controlsRest",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "rigidIDs",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "SInt32[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "rigidMat44s",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "name" : "rigidAligns",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "controls",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "name" : "outputs",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Mat44[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "instance",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "InlineInstance"
+      }
+    ],
+  "extDeps" : {
+    "OSS_Kraken" : "*"
+    },
+  "presetGUID" : "393F7EF09D13AD46FB4BD1A1EAB3CE0A",
+  "code" : "require OSS_Kraken;
+
+dfgEntry {
+  this.solve(drawDebug, rigScale, params, degree, keepArcLength, followCurveTangent, useLocalNormal, followCurveNormal, alignX, alignY, alignZ, altTangent, atVec, parent, compressionAmt, controlAligns, controlsRest, rigidIDs, rigidMat44s, rigidAligns, controls, outputs, instance);
+}
+"
+  }
