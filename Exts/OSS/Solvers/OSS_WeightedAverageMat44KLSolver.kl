@@ -15,6 +15,7 @@ function OSS_WeightedAverageMat44KLSolver()
   this.defaultValues["translationAmt"] = 0.0;
   this.defaultValues["rotationAmt"] = 0.0;
   this.defaultValues["scaleAmt"] = 0.0;
+  this.defaultValues["restMatParent"] = Mat44();
   this.defaultValues["restMat"] = Mat44();
   this.defaultValues["parent"] = Mat44();
 }
@@ -27,6 +28,7 @@ function KrakenSolverArg[] OSS_WeightedAverageMat44KLSolver.getArguments() {
   args.push(KrakenSolverArg('translationAmt', 'In', 'Scalar'));
   args.push(KrakenSolverArg('scaleAmt', 'In', 'Scalar'));
   args.push(KrakenSolverArg('rotationAmt', 'In', 'Scalar'));
+  args.push(KrakenSolverArg('restMatParent', 'In', 'Mat44'));
   args.push(KrakenSolverArg('restMat', 'In', 'Mat44'));
   args.push(KrakenSolverArg('parent', 'In', 'Mat44'));
   args.push(KrakenSolverArg('result', 'Out', 'Mat44'));
@@ -105,26 +107,31 @@ function OSS_WeightedAverageMat44KLSolver.solve!
   in Scalar scaleAmt,
   in Scalar rotationAmt,
   in Mat44 restMat,
+  in Mat44 restMatParent,
   in Mat44 parent,
   out Mat44 result
 )
 {
-  // get Original Transform
-  Xfo origXfo = restMat;
+  // get Original Transform, casting to Xfo
+  Mat44 restMatLocal = restMatParent.inverse()*restMat;
+  Xfo origXfo = parent*restMat;
   Xfo resultXfo;
-
   Xfo xfos[];
-  xfos.resize(mats.size());
-  for (UInt32 i = 0; i<xfos.size(); i++){
+  xfos.push(origXfo);
+  Scalar weightSum;
+  Scalar clampedWeight;
+  Scalar normMatWeights[];
+  normMatWeights.push(0.0);
+  for (UInt32 i = 0; i<mats.size(); i++){
     // setting up the target matrices, adding offset (original rest position)
-    xfos[i].setFromMat44(mats[i]*restMat);
+    Xfo xfo;
+    xfos.push(xfo.setFromMat44(mats[i]*restMatLocal));
+    clampedWeight = Math_clamp(matWeights[i], 0, 1 );
+    normMatWeights.push(clampedWeight);
+    weightSum += clampedWeight;
   }
 
-  Scalar normMatWeights[];
-  normMatWeights.resize(matWeights.size());
-  for (UInt32 i = 0; i<matWeights.size(); i++){
-    normMatWeights[i] = matWeights[i];
-  }
+  normMatWeights[0] = 1.0 - Math_clamp(weightSum, 0, 1 );
   normMatWeights.normalizeScalarArray();
 
   UInt32 s = xfos.size();
@@ -137,7 +144,7 @@ function OSS_WeightedAverageMat44KLSolver.solve!
   tr.resize(s);
   sc.resize(s);
 
-  for (UInt32 i =0; i<xfos.size(); i++)
+  for (UInt32 i =0; i<s; i++)
   {
     ori[i]= xfos[i].ori;
     tr[i] = xfos[i].tr;
@@ -156,6 +163,3 @@ function OSS_WeightedAverageMat44KLSolver.solve!
   resultXfo = parent.inverse()*resultXfo;
   result = resultXfo.toMat44();
 }
-
-
-

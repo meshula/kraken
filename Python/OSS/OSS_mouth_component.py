@@ -91,10 +91,9 @@ class OSSMouthGuide(OSSMouth):
         self.alignYAttr = IntegerAttribute('alignY', value=-1, minValue=-3, maxValue=3,  parent=self.guideSettingsAttrGrp)
         self.alignZAttr = IntegerAttribute('alignZ', value=3, minValue=-3, maxValue=3,  parent=self.guideSettingsAttrGrp)
 
-
         self.mouthCtrl = Control('mouth', parent=self.ctrlCmpGrp)
 
-        # midLip
+        # midLi
         self.midLipCtrl = Control('midLip', parent=self.lipsCtrl)
         self.midLipCtrl.lockTranslation(x=True, y=False, z=False)
         self.L_midLipHandleCtrl = Control('midLipHandle', parent=self.lipsCtrl, metaData={"altLocation":"L"})
@@ -546,11 +545,11 @@ class OSSMouthRig(OSSMouth):
 
         # Add Controls and parent spaces
         Level1Ctrls   = []
-        Level1Ctrls   = [lRigCorner] + self.createGuideControls(name, "controls", Level1Ctrls, data["lipCtrlNames"]) + [rRigCorner]
+        Level1Ctrls   = [rRigCorner] + self.createGuideControls(name, "controls", Level1Ctrls, data["lipCtrlNames"]) + [lRigCorner]
         rigOutputs = self.insertParentSpaces(Level1Ctrls)
 
         Level1Outputs = []
-        Level1Outputs  = [lDefCorner] + self.createGuideControls(name, "deformers", Level1Outputs, lLevel0Params) + [rDefCorner]
+        Level1Outputs  = [rDefCorner] + self.createGuideControls(name, "deformers", Level1Outputs, lLevel0Params) + [lDefCorner]
 
         # - - - - - - - - - - - - - -
         # Rig OP
@@ -838,11 +837,12 @@ class OSSMouthRig(OSSMouth):
         self.blendLeftCornerOp.setInput('rigScale', self.rigScaleInputAttr)
         self.blendLeftCornerOp.setInput('mats', self.LMouthAlignSpaces)
         self.blendLeftCornerOp.setInput('matWeights', self.LMouthAlignWeights)
-        self.blendLeftCornerOp.setInput('translationAmt',  0)
+        self.blendLeftCornerOp.setInput('translationAmt',  1)
         self.blendLeftCornerOp.setInput('scaleAmt',  0)
         self.blendLeftCornerOp.setInput('rotationAmt',  1)
+        self.blendLeftCornerOp.setInput('parent',  self.L_MouthCornerLoc.getParent())
+        self.blendLeftCornerOp.setInput('restMatParent',  self.L_MouthCornerLoc.getParent().xfo)
         self.blendLeftCornerOp.setOutput('result', self.L_MouthCornerLoc)
-
 
         # Right corner
         self.R_MouthCornerLoc = Locator('mouthCorner', parent=self.ctrlCmpGrp, metaData={"altLocation":"R"})
@@ -859,9 +859,11 @@ class OSSMouthRig(OSSMouth):
         self.blendRightCornerOp.setInput('rigScale', self.rigScaleInputAttr)
         self.blendRightCornerOp.setInput('mats', self.RMouthAlignSpaces)
         self.blendRightCornerOp.setInput('matWeights', self.RMouthAlignWeights)
-        self.blendRightCornerOp.setInput('translationAmt',  0)
+        self.blendRightCornerOp.setInput('translationAmt',  1)
         self.blendRightCornerOp.setInput('scaleAmt',  0)
         self.blendRightCornerOp.setInput('rotationAmt',  1)
+        self.blendRightCornerOp.setInput('parent',  self.R_MouthCornerLoc.getParent())
+        self.blendRightCornerOp.setInput('restMatParent',  self.R_MouthCornerLoc.getParent().xfo)
         self.blendRightCornerOp.setOutput('result', self.R_MouthCornerLoc)
 
         # Add Att Inputs
@@ -929,40 +931,6 @@ class OSSMouthRig(OSSMouth):
 
         #align work
         # self.R_MouthSpace.xfo.sc = Vec3(1.0, 1.0, -1.0)
-
-        # cheek dynamics
-        self.L_cheekDef = Joint('cheek',  parent=self.mouthDef, metaData={"altLocation":"L"})
-        self.lCheekBlendOp = KLOperator('lCheekBlendOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
-        self.addOperator(self.lCheekBlendOp)
-
-        # Add Att Inputs
-        self.lCheekBlendOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.lCheekBlendOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.lCheekBlendOp.setInput('parent', self.L_cheekDef.getParent())
-        self.lCheekBlendOp.setInput('mats', [self.L_cheekBone, self.L_mandible, self.lMouthDef])
-        self.lCheekBlendOp.setInput('matWeights', [0.5,0.5,0.5])
-        self.lCheekBlendOp.setInput('translationAmt',  1)
-        self.lCheekBlendOp.setInput('scaleAmt',  0)
-        self.lCheekBlendOp.setInput('rotationAmt',  0)
-        self.lCheekBlendOp.setOutput('result', self.L_cheekDef)
-
-
-
-        self.R_cheekDef = Joint('cheek',  parent=self.mouthDef, metaData={"altLocation":"R"})
-        self.rCheekBlendOp = KLOperator('rCheekBlendOp', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
-        self.addOperator(self.rCheekBlendOp)
-
-        # Add Att Inputs
-        self.rCheekBlendOp.setInput('drawDebug', self.drawDebugInputAttr)
-        self.rCheekBlendOp.setInput('rigScale', self.rigScaleInputAttr)
-        self.rCheekBlendOp.setInput('parent', self.R_cheekDef.getParent())
-        self.rCheekBlendOp.setInput('mats', [self.R_cheekBone, self.R_mandible, self.rMouthDef])
-        self.rCheekBlendOp.setInput('matWeights', [0.5,0.5,0.5])
-        self.rCheekBlendOp.setInput('translationAmt',  1)
-        self.rCheekBlendOp.setInput('scaleAmt',  0)
-        self.rCheekBlendOp.setInput('rotationAmt',  0)
-        self.rCheekBlendOp.setOutput('result', self.R_cheekDef)
-
 
         mouthAttrGrp    = AttributeGroup("mouthAttrGrp", parent = self.jawCtrl)
 

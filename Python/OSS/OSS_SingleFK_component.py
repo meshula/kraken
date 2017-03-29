@@ -239,13 +239,14 @@ class OSSSingleFKRig(OSSSingleFK):
 
         self.alignSpacesKLOp.setInput('mats', self.alignSpaces)
         self.alignSpacesKLOp.setInput('matWeights', self.alignWeights)
-        self.alignSpacesKLOp.setInput('translationAmt',  0)
-        self.alignSpacesKLOp.setInput('scaleAmt',  0)
+        self.alignSpacesKLOp.setInput('translationAmt',  1)
+        self.alignSpacesKLOp.setInput('scaleAmt',  1)
         self.alignSpacesKLOp.setInput('rotationAmt',  1)
-        self.alignSpacesKLOp.setInput('parent',  self.SingleFKParentSpace)
+        self.alignSpacesKLOp.setInput('restMat', self.SingleFKCtrl.xfo)
         self.alignSpacesKLOp.setOutput('result', self.SingleFKSpace)
 
-
+        self.alignSpacesKLOp.setInput('parent', self.SingleFKParentSpace)
+        self.alignSpacesKLOp.setInput('restMatParent',  self.SingleFKParentSpace.xfo)
 
         Profiler.getInstance().pop()
 

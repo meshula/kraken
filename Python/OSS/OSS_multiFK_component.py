@@ -373,8 +373,9 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
         alignOp.setInput('translationAmt',  1)
         alignOp.setInput('scaleAmt',  1)
         alignOp.setInput('rotationAmt',  1)
+        alignOp.setInput('parent', controlSpaceParent.getParent())
+        alignOp.setInput('restMatParent', controlSpaceParent.xfo)
         alignOp.setInput('restMat', controlSpace.xfo)
-        alignOp.setInput('parent',  controlSpaceParent)
         if not i == 0:
             alignOp.setOutput('result', controlSpace)
 
@@ -415,9 +416,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
 
         if ctrlType == "multiFKControls":
-
             defControlNameList =[]
-
             # Lets build all new handles
             defControlNameList = self.convertToStringList(defNames)
             if not defControlNameList:  # Nothing to build
@@ -463,7 +462,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                     newCtrl = Transform(self.name + defName, parent=parent)
 
                 newCtrl.xfo = data[defName + "Xfo"]
-                newCtrlParent = self.insertCtrlSpace(newCtrl)
+                newCtrlParent = newCtrl.insertSpace()
 
 
                 # align
@@ -742,12 +741,6 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                 self.defBones = self.defCurveJoints
 
         if bool(data['isIKChain']):
-            for i in xrange(len(self.controls)):
-                if i is not len(self.controls):
-                    print self.controls[i]
-                    print self.controls[i].getParent().getParent()
-                    # alignSpacesKLOp = self.createAlignOp(self.controls[i], alignSpaces = [self.controls[i].getParent().getParent(), self.ctrlCmpGrp], alignWeightNames = ["alignToParent","alignToWorld"], alignWeightValues = [1,0])
-                    # alignSpacesKLOp.evaluate()
 
             self.baseOutputTgt.constrainTo(self.nboneOutputsTgt[0])
             self.endOutputTgt.constrainTo(self.IkEndOutputTgt)
