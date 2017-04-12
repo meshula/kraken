@@ -719,6 +719,9 @@ class OSSFootComponentRig(OSSFootComponent):
         self.handleCtrl.scalePoints(globalScale)
         self.handleCtrl.scalePoints(Vec3(data["ikHandleSize"], data["ikHandleSize"], data["ikHandleSize"]))
 
+         # If we remove this, need to update footBlendSolver's translate blend to take leg ikBlend into account
+        self.footCtrl.lockTranslation(True, True, True)
+
         """
         footPlane = Control("TMP", shape="square")
         footPlane.alignOnZAxis()

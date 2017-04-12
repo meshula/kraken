@@ -669,6 +669,9 @@ class OSSHandComponentRig(OSSHandComponent):
         self.handleCtrl.scalePoints(globalScale)
         self.handleCtrl.scalePoints(Vec3(data["ikHandleSize"], data["ikHandleSize"], data["ikHandleSize"]))
 
+        # If we remove this, need to update footBlendSolver's translate blend to take leg ikBlend into account
+        self.handCtrl.lockTranslation(True, True, True)
+
         """
         HandPlane = Control("TMP", shape="square")
         HandPlane.alignOnZAxis()
