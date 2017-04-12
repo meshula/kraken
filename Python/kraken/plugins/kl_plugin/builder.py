@@ -58,6 +58,7 @@ class Builder(Builder):
     __names = None
     __objectIdToUid = None
     __uidToName = None
+    __clashingItemNames = {}
     __itemByUniqueId = None
     __klMembers = None
     __klMaxUniqueId = None
@@ -97,9 +98,9 @@ class Builder(Builder):
     # ========================
     # KL related Methods
     # ========================
-    def getUniqueId(self, item, earlyExit = False):
+    def getUniqueId(self, item, earlyExit=False):
         objectId = id(item)
-        if self.__objectIdToUid.has_key(objectId):
+        if objectId in self.__objectIdToUid:
           return self.__objectIdToUid[objectId]
         if earlyExit:
           return None
@@ -107,9 +108,13 @@ class Builder(Builder):
         self.__klMaxUniqueId = self.__klMaxUniqueId + 1
         return self.__objectIdToUid[objectId]
 
-    def getUniqueName(self, item, earlyExit = False):
+    def getUniqueName(self, item, earlyExit=False, solveClashWithHierarchy=False):
+        """ If using solveClashWithHierarchy flag,
+        getUniqueName() mut be run on all items before KL code generation
+        and then resolveClashingNames() must be run
+        """
         uid = self.getUniqueId(item)
-        if self.__uidToName.has_key(uid):
+        if uid in self.__uidToName:
             return self.__uidToName[uid]
         name = None
 
@@ -130,39 +135,23 @@ class Builder(Builder):
         else:
             name = item.getName()
 
-        expanded_naming =False #Maybe use this option if you rig does not generate unique names already?
-
-        if expanded_naming:
-            component = ''
-            layer = ''
-            if hasattr(item, 'getComponent'):
-                if item.getComponent():
-                    component = item.getComponent().getBuildName().replace('_', '') + '_'
-            if hasattr(item, 'getLayer'):
-                if item.getLayer():
-                    layer = item.getLayer().getName().replace('_', '') + '_'
-
-            if isinstance(item, CtrlSpace) and not name.lower().endswith('space'):
-                name = name + 'Space'
-            elif isinstance(item, ComponentInput) and not name.lower().endswith('in'):
-                name = name + 'In'
-            elif isinstance(item, ComponentOutput) and not name.lower().endswith('out'):
-                name = name + 'Out'
-
-            if layer == '' and component == '':
-                name = item.getDecoratedPath()
-                if name.find('.') > -1:
-                    name = name.partition('.')[2]
-                name = name.replace('.', '_').replace(':', '_')
-            else:
-              name = layer + component + name
-
         if earlyExit:
             return name
 
+        if name in self.__names and solveClashWithHierarchy:
+            # We have a clash
+            # If it's an object3D we want to derive name from hierarchy after all objects are registered
+            # Otherwise, we'll append a number (just like in DCC)
+            if item.isTypeOf("Object3D"):
+                if name not in self.__clashingItemNames:
+                    self.__clashingItemNames[name] = [item]
+                else:
+                    self.__clashingItemNames[name].append(item)
+                return name  # This will change in resolveClashingNames()
+
         namePrefix = name
         nameSuffix = 1
-        while self.__names.has_key(name):
+        while name in self.__names:
             name = namePrefix + str(nameSuffix)
             nameSuffix += 1
 
@@ -171,11 +160,34 @@ class Builder(Builder):
 
         return name
 
+    def resolveClashingNames(self):
+        # This doesn't work yet.  path/decorated paths not quite right for this yet
+        for name, items in self.__clashingItemNames.iteritems():
+            print("TTPrint: items: %s" % items)
+            for item in items:
+                otheritems = list(items)
+                otheritems.remove(item)
+                tokens = item.getDecoratedPath().split('.')
+                newname = tokens.pop()
+                valid = False
+                while (not valid):
+                    valid = True
+                    for other in otheritems:
+                        if other.getDecoratedPath().endswith(newname):
+                            valid = False
+                            break
+
+                    newname = tokens.pop()+'.'+newname
+
+
+
+
+
     def getUniqueArgMember(self, item, arg, argType):
         member = self.getUniqueName(item)
 
         argLookup = member + ' | ' + arg
-        if self.__klArgs['lookup'].has_key(argLookup):
+        if argLookup in self.__klArgs['lookup']:
             return self.__klArgs['lookup'][argLookup]
 
         typedArgs = self.__klArgs['members'].get(argType, [])
@@ -195,7 +207,7 @@ class Builder(Builder):
     def getUniqueObjectMember(self, item, argType):
         name = self.getUniqueName(item)
 
-        if self.__klMembers['lookup'].has_key(name):
+        if name in self.__klMembers['lookup']:
             return self.__klMembers['lookup'][name]
 
         if argType is None:
@@ -601,7 +613,7 @@ class Builder(Builder):
 
     def generateKLCode(self):
 
-        # ensure to generate a unique id for everything
+        # ensure to generate a unique id for everything (except AttributeGroup which are ignored in KL for now)
         allItems = self.__klObjects + self.__klConstraints + self.__klSolvers + self.__klCanvasOps + self.__klAttributes
 
         self.__itemByUniqueId = {}
@@ -609,8 +621,6 @@ class Builder(Builder):
             self.__itemByUniqueId[self.getUniqueId(item['sceneItem'])] = item
             item['targetIds'] = []
             item['sourceIds'] = []
-
-        for item in allItems:
             item['visited'] = False
             item['solveCode'] = []
             item['solveSources'] = []
@@ -619,11 +629,13 @@ class Builder(Builder):
         for item in allItems:
             self.__visitItem(item)
 
+        self.resolveClashingNames()
+
         # create a map of all of the target / source relation ships
         for id in self.__itemByUniqueId:
             item = self.__itemByUniqueId[id]
             for sourceId in item['sourceIds']:
-                if not self.__itemByUniqueId.has_key(sourceId):
+                if not sourceId in self.__itemByUniqueId:
                     continue
                 if self.__debugMode:
                     print '%s (%d) is driven by %s (%d)' % (self.getUniqueName(item['sceneItem']), id, self.getUniqueName(self.__itemByUniqueId[sourceId]['sceneItem']), sourceId)
