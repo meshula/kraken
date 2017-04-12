@@ -139,6 +139,20 @@ class SceneItem(object):
 
         return self.getName()
 
+
+    def getBuildPath(self):
+        """Returns the full hierarchical path to this object.
+
+        Returns:
+            str: Full name of the object.
+
+        """
+
+        if self.getParent() is not None:
+            return self.getParent().getBuildPath() + '.' + self.getBuildName()
+
+        return self.getBuildName()
+
     def getNameDecoration(self):
         """Gets the decorated name of the object.
 
