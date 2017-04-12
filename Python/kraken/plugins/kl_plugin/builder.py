@@ -108,7 +108,7 @@ class Builder(Builder):
         self.__klMaxUniqueId = self.__klMaxUniqueId + 1
         return self.__objectIdToUid[objectId]
 
-    def getUniqueName(self, item, earlyExit=False, solveClashWithHierarchy=False):
+    def getUniqueName(self, item, earlyExit=False, solveClashWithHierarchy=True):
         """ If using solveClashWithHierarchy flag,
         getUniqueName() mut be run on all items before KL code generation
         and then resolveClashingNames() must be run
@@ -143,11 +143,12 @@ class Builder(Builder):
             # If it's an object3D we want to derive name from hierarchy after all objects are registered
             # Otherwise, we'll append a number (just like in DCC)
             if item.isTypeOf("Object3D"):
-                if name not in self.__clashingItemNames:
-                    self.__clashingItemNames[name] = [item]
-                else:
-                    self.__clashingItemNames[name].append(item)
-                return name  # This will change in resolveClashingNames()
+                orig_item = self.__nameToItem[name]
+                if orig_item.getBuildPath() != item.getBuildPath():  # as long as they are different hierarchies
+                    if name not in self.__clashingItemNames:
+                        self.__clashingItemNames[name] = [orig_item, item]
+                    else:
+                        self.__clashingItemNames[name].append(item)
 
         namePrefix = name
         nameSuffix = 1
@@ -157,27 +158,40 @@ class Builder(Builder):
 
         self.__names[name] = item.getDecoratedPath()
         self.__uidToName[uid] = name
+        self.__nameToItem[name] = item
 
         return name
 
     def resolveClashingNames(self):
         # This doesn't work yet.  path/decorated paths not quite right for this yet
         for name, items in self.__clashingItemNames.iteritems():
-            print("TTPrint: items: %s" % items)
+            print("\nTTPrint: name: %s" % name)
             for item in items:
+                print("TTPrint: item.getBuildPath():%s %s" % (id(item), item.getBuildPath()))
+
+            for item in items:
+
                 otheritems = list(items)
                 otheritems.remove(item)
-                tokens = item.getDecoratedPath().split('.')
+                tokens = item.getBuildPath().split('.')
                 newname = tokens.pop()
                 valid = False
                 while (not valid):
                     valid = True
+                    #print("TTPrint: newname: %s" % newname)
                     for other in otheritems:
-                        if other.getDecoratedPath().endswith(newname):
+                        #print("TTPrint: other.getBuildPath(): %s" % other.getBuildPath())
+
+                        if other.getBuildPath().endswith(newname):
                             valid = False
                             break
 
-                    newname = tokens.pop()+'.'+newname
+                    if not valid:
+                        newname = tokens.pop()+'.'+newname
+                print("  newname: %s" % newname)
+
+
+
 
 
 
@@ -2785,6 +2799,7 @@ class Builder(Builder):
         self.__names = {}
         self.__objectIdToUid = {}
         self.__uidToName = {}
+        self.__nameToItem = {}
         self.__itemByUniqueId = None
         self.__klExtensions = []
         self.__klMembers = {'members': {}, 'lookup': {}}
