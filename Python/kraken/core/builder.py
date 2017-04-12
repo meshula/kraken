@@ -771,9 +771,6 @@ class Builder(object):
 
             self._postBuild(kSceneItem)
 
-        except Exception as e:
-            raise(e, traceback.format_exc())
-
         finally:
             # Clear Config when finished.
             self.config.clearInstance()
