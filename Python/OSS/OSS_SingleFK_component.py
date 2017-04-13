@@ -57,6 +57,7 @@ class OSSSingleFKGuide(OSSSingleFK):
         super(OSSSingleFKGuide, self).__init__(name, parent)
 
         self.spaceScaleCompensate = BoolAttribute('SpaceScaleCompensate', value=False, parent=self.guideSettingsAttrGrp)
+        self.ctrlShape = StringAttribute('ctrlShape', value="cube", parent=self.guideSettingsAttrGrp)
 
         # =========
         # Controls
@@ -187,7 +188,7 @@ class OSSSingleFKRig(OSSSingleFK):
         # SingleFK
         self.SingleFKParentSpace = Space(self.getName() + 'ParentSpace', parent=self.ctrlCmpGrp)
         self.SingleFKSpace = Space(self.getName() + 'Space', parent=self.SingleFKParentSpace)
-        self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFKSpace, shape="cube")
+        self.SingleFKCtrl = Control(self.getName(), parent=self.SingleFKSpace, shape=data["ctrlShape"])
         #self.SingleFKCtrl.setCurveData(data['SingleFKCtrlCrvData'])
 
 

@@ -557,9 +557,9 @@ class OSS_Component(BaseExampleComponent):
         # we unfortunately need to structure our dict to be per source node, not source Attr
         remapDict = {}
 
-        hasTransformOp = []
         needsRemapOp = False
         attrGrpName = "customAttr"
+        transformOps = {}
 
         for mapping in attrMappingsData:
             source = mapping["source"]
@@ -598,29 +598,32 @@ class OSS_Component(BaseExampleComponent):
                     transformAttrs = self.isTransformAttribute(srcAttr)
                     # we currently only support transform Attrs
                     if not transformAttrs:
-                        print "Warning: We currently don't support transform attributes"
+                        print "Warning: We currently only support transform attributes"
                         continue
                     else:
                         drivingAttrName = 'local' + srcAttr
-                        drivingAttr  = self.createScalarAttribute(drivingAttrName, customAttrGrp)
+                        drivingAttr  = self.createScalarAttribute(drivingAttrName, customAttrGrp, lock=False)
 
-                    if control not in hasTransformOp:
+                    if controlName not in transformOps.keys():
                         # if we get any transform Attrs, we need to build a LocalTransformSolver to get the local space from the src node
-                        TranslateOp = self.createLocalTransformSolver(controlName, control)
-                        hasTransformOp.append(control)
+                        transformOps[controlName] = self.createLocalTransformSolver(controlName, control)
+                    print "srcAttr: %s"%(srcAttr)
+                    print "drivingAttr %s"%(drivingAttr)
 
-                    try:
-                        TranslateOp.setOutput(srcAttr, drivingAttr)
-                    except:
-                        pass
+
+                    transformOps[controlName].setOutput(srcAttr, drivingAttr)
+                    # try:
+                    #     TranslateOp.setOutput(srcAttr, drivingAttr)
+                    # except Exception, e:
+                    #     print e
 
                     drivingAttrName = 'local' + srcAttr
 
                     target = mapping["target"]
-                    customAttrGrp = control.getAttributeGroupByName(attrGrpName)
+
                     #we should get rid of this
                     toTargetName = target + "_bsShape"
-                    toTargetAttr = self.createScalarAttribute(toTargetName, customAttrGrp)
+                    toTargetAttr = self.createScalarAttribute(toTargetName, customAttrGrp, lock=False)
                     toTargetAttr.setMetaDataItem("SCALAR_OUTPUT", toTargetName)
                     toTargetAttr.appendMetaDataListItem("TAGS", self.getBuildName())
 
@@ -629,6 +632,7 @@ class OSS_Component(BaseExampleComponent):
                     if mapping["operator"]["type"] == "OSS_RemapScalarValueSolver":
                         if not "clamp" in mapping["operator"].keys():
                             mapping["operator"]["clamp"] = True
+                        print "%s, %s"%(drivingAttrName, toTargetName)
                         self.createRemapScalarValueSolver(controlName+srcAttr+target, input = drivingAttr, result = toTargetAttr, scale = mapping["operator"]["scale"], clamp = mapping["operator"]["clamp"] )
                     # else:
                     #     toTargetAttr.connect(drivingAttr)
@@ -742,3 +746,31 @@ class OSS_Component(BaseExampleComponent):
             mathOp.setOutput('result', output)
 
         return mathOp
+
+
+
+    def createWeightedMatrixConstraint(self, source, sourceRest, target, parent=None, translation = 1, scale = 1, rotation = 1, name=None):
+        if not name:
+            name = 'weightedMatrixConstraint'
+        if not parent:
+            parent = source.getParent()
+
+
+        weightedMatrixConstraint = KLOperator(name, 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
+        self.addOperator(weightedMatrixConstraint)
+
+        # Add Att Inputs
+        weightedMatrixConstraint.setInput('drawDebug', self.drawDebugInputAttr)
+        weightedMatrixConstraint.setInput('rigScale', self.rigScaleInputAttr)
+
+        weightedMatrixConstraint.setInput('mats', [sourceRest,target ])
+        weightedMatrixConstraint.setInput('matWeights',[0,1])
+        weightedMatrixConstraint.setInput('translationAmt',  translation)
+        weightedMatrixConstraint.setInput('scaleAmt',  scale)
+        weightedMatrixConstraint.setInput('rotationAmt',  rotation)
+        weightedMatrixConstraint.setInput('parent', parent)
+        weightedMatrixConstraint.setInput('restMatParent', parent.xfo)
+        weightedMatrixConstraint.setInput('restMat', sourceRest.xfo)
+        weightedMatrixConstraint.setOutput('result', source)
+
+        return weightedMatrixConstraint

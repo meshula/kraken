@@ -401,33 +401,46 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     if side != self.getLocation():
                         metaData["altLocation"] = side
 
+                    socketCtrl = Control(handleName+'Socket', parent=parent, shape="cube", metaData=metaData)
+                    socketSpace = socketCtrl.insertSpace()
+                    newSocket = Joint(handleName+'Socket', parent=self.deformersLayer, metaData={"altLocation": side})
+                    newSocketConstraint = newSocket.constrainTo(socketCtrl)
+                    self.parentSpaceInputTgt.childJoints.append(newSocket)
+
                     fkCtrl = Control(handleName, parent=parent, shape="direction", metaData=metaData)
-                    upSpace = fkCtrl.insertSpace()
+                    fkCtrlSpace = fkCtrl.insertSpace()
+                    upSpace = Transform(handleName+"_up", parent=fkCtrlSpace) 
+
                     fkCtrl.setShape("direction")
                     fkCtrl.setColor("yellow")
                     fkCtrl.lockTranslation(x=True, y=True, z=True)
                     fkCtrl.rotatePoints(90,0,0)
                     fkCtrl.translatePoints(Vec3(0,0,1))
                     fkCtrl.scalePoints(Vec3(self.globalScale,self.globalScale,data['EyeRadius']))
-                    newSpace = fkCtrl.insertSpace()
+
+                    # fkCtrlSpace.constrainTo(socketCtrl, constraintType="Position")
+
+                    alignOpt = self.createWeightedMatrixConstraint(fkCtrlSpace, parent, socketCtrl,  translation = 1, scale = 0, rotation = 0, name=handleName + side +'_fkAlign')
+
+
                     # newCtrls.append(fkCtrl)
-                    newRef = Joint(handleName, parent=self.deformersParent, metaData={"altLocation": side, "altType":"RefJoint"})
+                    newRef = Joint(handleName+"Ref", parent=self.deformersLayer, metaData={"altLocation": side, "altType":"RefJoint"})
                     newRef.setComponent(self)
                     newRefConstraint = newRef.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
                     self.parentSpaceInputTgt.childJoints.append(newRef)
 
-                    newLoc = Locator(handleName+"_fk", parent=self.ctrlCmpGrp)
-                    newLoc.setVisibility(False)
 
-                    newDef = Joint(handleName, parent=newRef, metaData={"altLocation": side})
+                    newLoc = Transform(handleName+"_fk", parent=self.ctrlCmpGrp)
+                    newDef = Joint(handleName, parent=self.deformersLayer, metaData={"altLocation": side})
                     newDef.setComponent(self)
                     newDefConstraint = newDef.constrainTo(newLoc)
+
+                    self.parentSpaceInputTgt.childJoints.append(newDef)
 
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
                     self.ikBlendAttr = ScalarAttribute(handleName+'IK', value=0.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
 
                 if segment == "ik":
-
                     metaData = {"altType": "IKControl"}
                     if side != self.getLocation():
                         metaData["altLocation"] = side
@@ -440,7 +453,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     ikCtrl.rotatePoints(90,0,0)
                     ikCtrl.scalePoints(Vec3(.5,.5,.5))
                     # newCtrls.append(ikCtrl)
-                    newSpace = ikCtrl.insertSpace(shareXfo=False)
+                    ikCtrlSpace = ikCtrl.insertSpace(shareXfo=False)
 
                 ctrlListName = "eyesCtrls"
 
@@ -450,8 +463,11 @@ class OSSEyesComponentRig(OSSEyesComponent):
 
                     if (i + j) < len(data["eyesCtrlsXfos"]):
                         if segment == "fk":
+                            newSocket.xfo = data["eyesCtrlsXfos"][index]
                             fkCtrl.xfo = data["eyesCtrlsXfos"][index]
                             newRef.xfo = data["eyesCtrlsXfos"][index]
+                            socketCtrl.xfo = data["eyesCtrlsXfos"][index]
+                            socketSpace.xfo = data["eyesCtrlsXfos"][index]
                             upSpace.xfo = data["eyesCtrlsXfos"][index].multiply(Xfo(Vec3(0.0, 1, 0)))
                         if segment == "ik":
                             ikCtrl.xfo = data["eyesCtrlsXfos"][index]
@@ -472,14 +488,11 @@ class OSSEyesComponentRig(OSSEyesComponent):
             print("OSS_eyes_component: REMOVE THIS REVERSE NODE WHEN WE DO RIG UPDATES !!!:")
             reverse = self.connectReverse(self.ikBlendAttr)
 
-            self.EyeIkFkBlendKLOp.setInput('blend',  reverse.getOutput("result"))
-            self.EyeIkFkBlendKLOp.setInput('rest', fkCtrl)
-            self.EyeIkFkBlendKLOp.setInput('ik', ikCtrl)
-
+            self.EyeIkFkBlendKLOp.setInput('blend',   reverse.getOutput("result"))
+            self.EyeIkFkBlendKLOp.setInput('rest',    fkCtrl)
+            self.EyeIkFkBlendKLOp.setInput('ik',      ikCtrl)
+            self.EyeIkFkBlendKLOp.setInput('up',      upSpace)
             self.EyeIkFkBlendKLOp.setOutput('result', newLoc)
-            # Add Xfo Inputs
-            self.EyeIkFkBlendKLOp.setInput('up', upSpace)
-            # temp now until handles are swapped
 
 
         return True
