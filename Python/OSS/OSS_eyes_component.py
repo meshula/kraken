@@ -485,10 +485,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
 
             # Add Att Inputs
 
-            print("OSS_eyes_component: REMOVE THIS REVERSE NODE WHEN WE DO RIG UPDATES !!!:")
-            reverse = self.connectReverse(self.ikBlendAttr)
-
-            self.EyeIkFkBlendKLOp.setInput('blend',   reverse.getOutput("result"))
+            self.EyeIkFkBlendKLOp.setInput('blend',   self.ikBlendAttr)
             self.EyeIkFkBlendKLOp.setInput('rest',    fkCtrl)
             self.EyeIkFkBlendKLOp.setInput('ik',      ikCtrl)
             self.EyeIkFkBlendKLOp.setInput('up',      upSpace)
