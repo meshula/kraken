@@ -1,7 +1,7 @@
 import re
 
 from kraken.core.maths import Vec3
-from kraken.core.maths.xfo import Xfo
+from kraken.core.maths.xfo import Xfo, xfoFromDirAndUpV
 
 from kraken.core.objects.components.base_example_component import BaseExampleComponent
 
@@ -69,7 +69,7 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         # Guide Controls
 
         self.eyesCtrl = Control('eye', parent=self.ctrlCmpGrp, shape="null")
-        self.eyesEndCtrl = Control('eyeEnd', parent=self.ctrlCmpGrp, shape="square")
+        self.eyesEndCtrl = Control('eyeEnd', parent=self.eyesCtrl, shape="square")
         self.eyesEndCtrl.rotatePoints(0,90,0)
 
         self.eyesCtrls = []
@@ -80,13 +80,13 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         data = {
                 "name": name,
                 "location": "M",
-                "eyesXfo": Xfo(Vec3(0, 15, 0)),
-                "eyesEndXfo": Xfo(Vec3(0, 15, 10))
+                "eyeXfo": Xfo(Vec3(0, 15, 0)),
+                "eyeEndXfo": Xfo(Vec3(0, 15, 10)),
                }
 
         # find out how to properly access data in updateAnControls
-        self.eyesCtrl.xfo = data['eyesXfo']
-        self.eyesEndCtrl.xfo = data['eyesEndXfo']
+        self.eyesCtrl.xfo = data['eyeXfo']
+        self.eyesEndCtrl.xfo = data['eyeEndXfo']
 
 
         self.loadData(data)
@@ -106,7 +106,7 @@ class OSSEyesComponentGuide(OSSEyesComponent):
 
         """
         self.controlXforms = []
-
+        self.controlXfos = {}
 
         # Store current values if guide controls already exist
         current = 0
@@ -154,14 +154,20 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                         metaData["altLocation"] = side
 
                     newCtrl = Control(handleName, parent= self.eyesCtrl, shape="direction", metaData=metaData)
+                    newMidCtrl = Control(handleName+'Mid', parent= newCtrl,  metaData=metaData)
                     newCtrl.setShape("direction")
                     newCtrl.setColor("yellow")
                     newCtrl.rotatePoints(90,0,0)
                     newCtrl.translatePoints(Vec3(0,0,1))
                     newCtrl.scalePoints(Vec3(self.globalScale,self.globalScale,self.EyeRadius.getValue()))
                     newCtrl.xfo = parent.xfo.multiply(Xfo(Vec3(sideIdx*offset, 0, 0)))
+                    newMidCtrl.xfo = newCtrl.xfo.multiply(Xfo(Vec3(0, 0, 5)))
                     parent = newCtrl
 
+                    self.controlXfos[newCtrl.getName()] = newCtrl.xfo
+                    self.controlXfos[newMidCtrl.getName()] = newMidCtrl.xfo
+                    controlsList.append(newCtrl)
+                    # controlsList.append(newMidCtrl)
 
                 else:
                     metaData = {"altType": "IKControl"}
@@ -181,9 +187,9 @@ class OSSEyesComponentGuide(OSSEyesComponent):
                     if side != self.getLocation():
                         newCtrl.setMetaDataItem("altLocation", side)
 
+                    controlsList.append(newCtrl)
                 # parent = newCtrl
-                controlsList.append(newCtrl)
-
+                    self.controlXfos[newCtrl.getName()] = newCtrl.xfo
 
         return True
 
@@ -209,18 +215,11 @@ class OSSEyesComponentGuide(OSSEyesComponent):
 
         data = super(OSSEyesComponentGuide, self).saveData()
 
-        data['eyesXfo'] = self.eyesCtrl.xfo
-        data['eyesEndXfo'] = self.eyesEndCtrl.xfo
+        # this should live in the GuideClase - also should considere Inherited Types
+        data = self.saveAllObjectData(data, "Control")
+        data = self.saveAllObjectData(data, "Transform")
 
-
-        for ctrlListName in ["eyesCtrls"]:
-            ctrls = getattr(self, ctrlListName)
-            xfos = []
-            for i in xrange(len(ctrls)):
-                xfos.append(ctrls[i].xfo)
-            data[ctrlListName+"Xfos"] = xfos
         return data
-
 
     def loadData(self, data):
         """Load a saved guide representation from persisted data.
@@ -233,29 +232,23 @@ class OSSEyesComponentGuide(OSSEyesComponent):
 
         """
         #Reset all shapes, but really we should just recreate all controls from loadData instead of init
+
+
+        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
         for ctrl in self.getHierarchyNodes(classType="Control"):
             ctrl.setShape(ctrl.getShape())
 
-        #Grab the guide settings in case we want to use them here (and are not stored in data arg)
+        #saveData() will grab the guide settings values (and are not stored in data arg)
         existing_data = self.saveData()
         existing_data.update(data)
         data = existing_data
 
         super(OSSEyesComponentGuide, self).loadData( data )
 
-        self.eyesCtrl.xfo = data['eyesXfo']
-        self.eyesEndCtrl.xfo = data['eyesEndXfo']
+        self.loadAllObjectData(data, "Control")
+        self.loadAllObjectData(data, "Transform")
 
-
-        for ctrlListName in ["eyesCtrls"]:
-            ctrls = getattr(self, ctrlListName)
-            if ctrlListName+"Xfos" in data.keys():
-                for i in xrange(len(data[ctrlListName+"Xfos"])):
-                    if i < len(ctrls):
-                        ctrls[i].xfo = data[ctrlListName+"Xfos"][i]
         return True
-
-
 
 
     def getRigBuildData(self):
@@ -271,25 +264,20 @@ class OSSEyesComponentGuide(OSSEyesComponent):
         eyesPosition = self.eyesCtrl.xfo.tr
         eyesEndPosition = self.eyesEndCtrl.xfo.tr
 
-        eyesXfo = Xfo()
+        eyeXfo = Xfo()
 
-        # eyesXfo.setFromVectors(rootToEnd, bone1Normal, bone1ZAxis, eyesPosition)
+        # eyeXfo.setFromVectors(rootToEnd, bone1Normal, bone1ZAxis, eyesPosition)
 
-        eyesLen = eyesPosition.subtract(eyesEndPosition).length()
 
-        # data['eyesXfo'] = eyesXfo
-        data['eyesEndXfo'] = self.eyesEndCtrl.xfo
-        data['eyesXfo'] = self.eyesCtrl.xfo
-        data['eyesLen'] = eyesLen
 
-        for ctrlListName in ["eyesCtrls"]:
-            ctrls = getattr(self, ctrlListName)
-            xfos = []
-            for i in xrange(len(ctrls)):
-                xfos.append(ctrls[i].xfo)
-            data[ctrlListName+"Xfos"] = xfos
+        data = super(OSSEyesComponentGuide, self).getRigBuildData()
 
+        # should include getCurveData
+        data = self.saveAllObjectData(data, "Control")
+        data = self.saveAllObjectData(data, "Transform")
+        data["eyesLen"] =  eyesPosition.subtract(eyesEndPosition).length()
         return data
+
 
 
     # ==============
@@ -401,34 +389,49 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     if side != self.getLocation():
                         metaData["altLocation"] = side
 
-                    socketCtrl = Control(handleName+'Socket', parent=parent, shape="cube", metaData=metaData)
-                    socketSpace = socketCtrl.insertSpace()
-                    newSocket = Joint(handleName+'Socket', parent=self.deformersLayer, metaData={"altLocation": side})
-                    newSocketConstraint = newSocket.constrainTo(socketCtrl)
-                    self.parentSpaceInputTgt.childJoints.append(newSocket)
+                    # socketCtrl = Control(handleName+'Socket', parent=parent, shape="cube", metaData=metaData)
+                    # socketSpace = socketCtrl.insertSpace()
+                    eyeRegionCtrl = Control(handleName+"Region", parent=parent, shape="cube", metaData=metaData)
+                    eyeRegionCtrlSpace = eyeRegionCtrl.insertSpace()
+                    eyeRegionDef = Joint(handleName+'Region', parent=self.deformersLayer, metaData={"altLocation": side})
+                    eyeRegionDef.constrainTo(eyeRegionCtrl)
 
-                    fkCtrl = Control(handleName, parent=parent, shape="direction", metaData=metaData)
+
+                    eyeMidSpace = Control(handleName+'Mid', parent=eyeRegionCtrl, metaData=metaData)
+                    eyeMidCtrlSpace = eyeMidSpace.insertSpace()
+
+                    eyeSocketSpace = Transform(handleName+'Socket', parent=eyeMidSpace, metaData=metaData)
+                    eyeSocketDef = Joint(handleName+'Socket', parent=self.deformersLayer, metaData={"altLocation": side})
+                    eyeSocketDef.constrainTo(eyeSocketSpace)
+
+                    eyeSocketRefSpace = Transform(handleName+'SocketRef', parent=parent, metaData=metaData)
+
+                    # newSocketConstraint = newSocket.constrainTo(socketCtrl)
+                    # self.parentSpaceInputTgt.childJoints.append(newSocket)
+
+                    fkCtrl = Control(handleName, parent=eyeSocketRefSpace, shape="direction", metaData=metaData)
                     fkCtrlSpace = fkCtrl.insertSpace()
-                    upSpace = Transform(handleName+"_up", parent=fkCtrlSpace) 
+                    upSpace = Transform(handleName+"_up", parent=eyeSocketRefSpace) 
+
+                    
 
                     fkCtrl.setShape("direction")
                     fkCtrl.setColor("yellow")
-                    fkCtrl.lockTranslation(x=True, y=True, z=True)
+                    # fkCtrl.lockTranslation(x=True, y=True, z=True)
                     fkCtrl.rotatePoints(90,0,0)
                     fkCtrl.translatePoints(Vec3(0,0,1))
                     fkCtrl.scalePoints(Vec3(self.globalScale,self.globalScale,data['EyeRadius']))
 
                     # fkCtrlSpace.constrainTo(socketCtrl, constraintType="Position")
 
-                    alignOpt = self.createWeightedMatrixConstraint(fkCtrlSpace, parent, socketCtrl,  translation = 1, scale = 0, rotation = 0, name=handleName + side +'_fkAlign')
+                    # alignOpt = self.createWeightedMatrixConstraint(eyeSocketSpace, parent, fkCtrl,  translation = 1, scale = 1, rotation = 0, name=handleName + side +'_fkAlign')
 
 
                     # newCtrls.append(fkCtrl)
                     newRef = Joint(handleName+"Ref", parent=self.deformersLayer, metaData={"altLocation": side, "altType":"RefJoint"})
                     newRef.setComponent(self)
-                    newRefConstraint = newRef.constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
+                    newRef.constrainTo(eyeSocketSpace)
                     self.parentSpaceInputTgt.childJoints.append(newRef)
-
 
                     newLoc = Transform(handleName+"_fk", parent=self.ctrlCmpGrp)
                     newDef = Joint(handleName, parent=self.deformersLayer, metaData={"altLocation": side})
@@ -436,9 +439,23 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     newDefConstraint = newDef.constrainTo(newLoc)
 
                     self.parentSpaceInputTgt.childJoints.append(newDef)
+                    self.parentSpaceInputTgt.childJoints.append(eyeSocketDef)
 
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
                     self.ikBlendAttr = ScalarAttribute(handleName+'IK', value=0.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
+                    
+                    for obj in [eyeSocketSpace, eyeSocketRefSpace,  eyeRegionCtrl, eyeRegionCtrlSpace, fkCtrl, newDef]:
+                        obj.xfo  = data[side + '_' + handleName + 'Xfo']
+                    eyeMidSpace.xfo =  data[side + '_' + handleName + 'MidXfo']
+                    upSpace.xfo = fkCtrl.xfo.multiply(Xfo(Vec3(0.0, 1, 0)))
+
+                    eyeMidSpace.xfo = xfoFromDirAndUpV(eyeMidSpace.xfo.tr, eyeSocketSpace.xfo.tr, upSpace.xfo.tr)
+                    eyeMidSpaceCtrlSpace = eyeMidSpace.insertSpace()
+
+                    # Aligning Head
+                    alignOpt = self.createWeightedMatrixConstraint(eyeSocketRefSpace, parent, eyeSocketSpace,  translation = 1, scale = 1, rotation = 0, name=handleName + side +'fkCtrl2SocketSpace')
+
+
 
                 if segment == "ik":
                     metaData = {"altType": "IKControl"}
@@ -455,24 +472,33 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     # newCtrls.append(ikCtrl)
                     ikCtrlSpace = ikCtrl.insertSpace(shareXfo=False)
 
+
+
+                    ikCtrlSpace.xfo =  data[side + '_' + handleName + 'Xfo'].multiply(Xfo(Vec3(0.0, 0.0, data['eyesLen'])))
+                    ikCtrl.xfo =       data[side + '_' + handleName + 'Xfo'].multiply(Xfo(Vec3(0.0, 0.0, data['eyesLen'])))
+
+
                 ctrlListName = "eyesCtrls"
 
-                # solve this properly
-                if "eyesCtrlsXfos" in data.keys():
-                    index = i*len(segments) + j
+                # # solve this properly
+                # if "eyesCtrlsXfos" in data.keys():
+                #     index = i*len(segments) + j
 
-                    if (i + j) < len(data["eyesCtrlsXfos"]):
-                        if segment == "fk":
-                            newSocket.xfo = data["eyesCtrlsXfos"][index]
-                            fkCtrl.xfo = data["eyesCtrlsXfos"][index]
-                            newRef.xfo = data["eyesCtrlsXfos"][index]
-                            socketCtrl.xfo = data["eyesCtrlsXfos"][index]
-                            socketSpace.xfo = data["eyesCtrlsXfos"][index]
-                            upSpace.xfo = data["eyesCtrlsXfos"][index].multiply(Xfo(Vec3(0.0, 1, 0)))
-                        if segment == "ik":
-                            ikCtrl.xfo = data["eyesCtrlsXfos"][index]
-                            newXfo = data["eyesCtrlsXfos"][index].multiply(Xfo(Vec3(0.0, 0.0, data['eyesLen'])))
-                            ikCtrl.xfo = newXfo
+                #     if (i + j) < len(data["eyesCtrlsXfos"]):
+                #         if segment == "fk":
+                #             print
+                #             # newSocket.xfo = data["eyesCtrlsXfos"][index]
+                #             fkCtrl.xfo = data["eyesCtrlsXfos"][index]
+                #             # eyeMidSpace.xfo = data["eyesCtrlsXfos"][index+1]
+                #             newRef.xfo = data["eyesCtrlsXfos"][index]
+                #             # socketCtrl.xfo = data["eyesCtrlsXfos"][index]
+                #             eyeSocketSpace.xfo = data["eyesCtrlsXfos"][index]
+                #             upSpace.xfo = data["eyesCtrlsXfos"][index].multiply(Xfo(Vec3(0.0, 1, 0)))
+                #         if segment == "ik":
+                #             ikCtrl.xfo = data["eyesCtrlsXfos"][index]
+                #             newXfo = data["eyesCtrlsXfos"][index].multiply(Xfo(Vec3(0.0, 0.0, data['eyesLen'])))
+                #             ikCtrl.xfo = newXfo
+
 
 
 
@@ -509,21 +535,26 @@ class OSSEyesComponentRig(OSSEyesComponent):
         """
 
         super(OSSEyesComponentRig, self).loadData( data )
+        print type(data)
+        for i,v in data.iteritems():
+            print i
+            print v
+            print '\n'
 
         self.LeftRightPairBool = data.get("LeftRightPair", True)
 
         parent = self.eyesSpace
-        self.eyesSpace.xfo = data['eyesXfo']
+        self.eyesSpace.xfo = data['eyeXfo']
         # ============
         # Set IO Xfos
         # ============
-        self.parentSpaceInputTgt.xfo = data['eyesXfo']
-        self.eyesEndOutputTgt.xfo = data['eyesEndXfo']
+        self.parentSpaceInputTgt.xfo = data['eyeXfo']
+        self.eyesEndOutputTgt.xfo = data['eyeEndXfo']
 
-        self.eyeTrackerUpSpace.xfo = data['eyesXfo'].multiply(Xfo(Vec3(0.0, -1, 0)))
-        self.eyeTrackerSpace.xfo = data['eyesEndXfo']
-        self.eyeTracker.xfo = data['eyesEndXfo']
-        self.eyeTrackerIKSpace.xfo = data['eyesEndXfo']
+        self.eyeTrackerUpSpace.xfo = data['eyeXfo'].multiply(Xfo(Vec3(0.0, -1, 0)))
+        self.eyeTrackerSpace.xfo = data['eyeEndXfo']
+        self.eyeTracker.xfo = data['eyeEndXfo']
+        self.eyeTrackerIKSpace.xfo = data['eyeEndXfo']
 
         self.globalScale = data['globalComponentCtrlSize']
         self.globalScaleVec = Vec3(self.globalScale, self.globalScale, self.globalScale)

@@ -169,7 +169,7 @@ class OSSFaceComponentGuide(OSSFaceComponent):
                         else:
                             newCtrl.setShape("square")
                             newCtrl.scalePoints(Vec3(.5,.25,.25))
-                            newCtrl.lockTranslation(x=False, y=False, z=True)
+                            newCtrl.lockTranslation(x=True, y=False, z=True)
 
                     elif anCtrlType==2: # Field
                         if j == 0:
@@ -456,7 +456,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
                         if anCtrlType ==1: # Slider
                             newCtrl.setShape("square")
                             newCtrl.scalePoints(Vec3(.5,.25,.25))
-                            newCtrl.lockTranslation(x=False, y=False, z=True)
+                            newCtrl.lockTranslation(x=True, y=False, z=True)
 
                         elif anCtrlType==2: # Field
                             newCtrl.setShape("square")

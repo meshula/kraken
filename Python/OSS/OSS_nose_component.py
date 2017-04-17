@@ -235,13 +235,10 @@ class OSSNoseComponentRig(OSSNoseComponent):
 
         # NoseTip
         self.noseTipCtrl = FKControl('noseTip', parent=self.noseMidCtrl, shape="circle", scale=2)
+        self.noseTipSpace = self.noseTipCtrl.insertSpace()
         # self.noseTipCtrlAlignSpace = Transform('noseTipCtrlAlignSpace', parent=self.noseMidCtrlAlignSpace)
         self.noseTipSpaceRest = Transform('noseTipSpaceRest', parent=self.ctrlCmpGrp)
-        self.noseTipSpace  = self.noseTipCtrl.insertSpace()
         self.noseTipDef = Joint('noseTip', parent=self.noseMidDef)
-
-        # NoseAimObjects
-        self.noseTipSpace = Space('noseTip', parent=self.globalSRTInputTgt)
 
         self.midLipSpace = Transform('midLipSpace', parent=self.noseAlignSpaces)
 
