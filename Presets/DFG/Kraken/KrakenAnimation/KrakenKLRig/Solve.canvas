@@ -1,4 +1,3 @@
-// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
   "metadata" : {
@@ -7,16 +6,16 @@
   "title" : "Solve",
   "ports" : [
     {
-      "objectType" : "Port",
-      "nodePortType" : "IO",
+      "objectType" : "ExecPort",
       "name" : "exec",
+      "nodePortType" : "IO",
       "execPortType" : "IO",
       "typeSpec" : "Execute"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "IO",
+      "objectType" : "ExecPort",
       "name" : "this",
+      "nodePortType" : "IO",
       "execPortType" : "IO",
       "typeSpec" : "KrakenKLRig"
       }

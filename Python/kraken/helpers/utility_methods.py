@@ -129,6 +129,7 @@ def mirrorData(jsonData, plane):
 
     Args:
         jsonData (dict): The JSON data to be prepared.
+        plane (int): The plane to mirror across.
 
     Returns:
         dict: The prepared JSON hierarchy.
@@ -136,4 +137,3 @@ def mirrorData(jsonData, plane):
     """
 
     return __mirrorData(jsonData, plane)
-

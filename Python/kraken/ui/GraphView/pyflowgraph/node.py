@@ -1,6 +1,6 @@
 
 #
-# Copyright 2015 Horde Software Inc.
+# Copyright 2015-2017 Eric Thivierge
 #
 
 import math
@@ -12,7 +12,7 @@ from port import InputPort, OutputPort, IOPort
 class NodeTitle(QtWidgets.QGraphicsWidget):
 
     __color = QtGui.QColor(25, 25, 25)
-    __font = QtGui.QFont('Decorative', 14)
+    __font = QtGui.QFont('Roboto', 14)
     __font.setLetterSpacing(QtGui.QFont.PercentageSpacing, 115)
     __labelBottomSpacing = 12
 
@@ -138,12 +138,13 @@ class Node(QtWidgets.QGraphicsWidget):
         layout.setAlignment(self.__headerItem, QtCore.Qt.AlignCenter | QtCore.Qt.AlignTop)
 
         self.__ports = []
-        self.__inputPortsHolder = PortList(self)
         self.__ioPortsHolder = PortList(self)
+        self.__inputPortsHolder = PortList(self)
         self.__outputPortsHolder = PortList(self)
+        self.__outputPortsHolder.layout().setContentsMargins(0, 0, 0, 10)
 
-        layout.addItem(self.__inputPortsHolder)
         layout.addItem(self.__ioPortsHolder)
+        layout.addItem(self.__inputPortsHolder)
         layout.addItem(self.__outputPortsHolder)
 
         self.__selected = False
@@ -235,8 +236,7 @@ class Node(QtWidgets.QGraphicsWidget):
 
     def translate(self, x, y):
         self.prepareConnectionGeometryChange()
-        currPos = self.pos()
-        super(Node, self).setPos(currPos.x() + x, currPos.y() + y)
+        super(Node, self).moveBy(x, y)
 
 
     # Prior to moving the node, we need to tell the connections to prepare for a geometry change.
@@ -291,21 +291,18 @@ class Node(QtWidgets.QGraphicsWidget):
 
         painter.setPen(QtGui.QPen(QtGui.QColor(0, 0, 0, 0), 0))
 
-        roundingY = 10
-        roundingX = rect.height() / rect.width() * roundingY
+        roundingY = 8
+        roundingX = 8
 
-        painter.drawRoundRect(rect, roundingX, roundingY)
+        painter.drawRoundedRect(rect, roundingX, roundingY, mode=QtCore.Qt.AbsoluteSize)
 
         # Title BG
         titleHeight = self.__headerItem.size().height() - 3
 
         painter.setBrush(self.__color.darker(125))
         roundingY = rect.width() * roundingX / titleHeight
-        painter.drawRoundRect(0, 0, rect.width(), titleHeight, roundingX, roundingY)
+        painter.drawRoundedRect(0, 0, rect.width(), titleHeight, roundingX, roundingY, mode=QtCore.Qt.AbsoluteSize)
         painter.drawRect(0, titleHeight * 0.5 + 2, rect.width(), titleHeight * 0.5)
-
-        # painter.setPen(self.__linePen)
-        # painter.drawLine(QtCore.QPoint(0, titleHeight), QtCore.QPoint(rect.width(), titleHeight))
 
         painter.setBrush(QtGui.QColor(0, 0, 0, 0))
         if self.__selected:
@@ -313,10 +310,10 @@ class Node(QtWidgets.QGraphicsWidget):
         else:
             painter.setPen(self.__unselectedPen)
 
-        roundingY = 10
-        roundingX = rect.height() / rect.width() * roundingY
+        roundingY = 8
+        roundingX = 8
 
-        painter.drawRoundRect(rect, roundingX, roundingY)
+        painter.drawRoundedRect(rect, roundingX, roundingY, mode=QtCore.Qt.AbsoluteSize)
 
 
     #########################

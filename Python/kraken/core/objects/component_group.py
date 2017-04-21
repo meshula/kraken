@@ -33,7 +33,6 @@ class ComponentGroup(Object3D):
 
         """
 
-
         # During construction of the base class, the name is tested before
         # the component is assigned.
         if self.getComponent() is not None:

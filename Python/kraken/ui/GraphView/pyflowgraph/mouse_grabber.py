@@ -1,6 +1,6 @@
 
 #
-# Copyright 2015 Horde Software Inc.
+# Copyright 2015-2017 Eric Thivierge
 #
 
 from kraken.ui.Qt import QtWidgets, QtGui, QtCore
@@ -50,7 +50,7 @@ class MouseGrabber(PortCircle):
         self.setTransform(QtGui.QTransform.fromTranslate(scenePos.x(), scenePos.y()), False)
 
         collidingItems = self.collidingItems(QtCore.Qt.IntersectsItemBoundingRect)
-        collidingPortItems = filter(lambda item: isinstance(item, (PortCircle, PortLabel)), collidingItems)
+        collidingPortItems = list(filter(lambda item: isinstance(item, (PortCircle, PortLabel)), collidingItems))
 
         def canConnect(item):
             if isinstance(item, PortCircle):
@@ -67,7 +67,7 @@ class MouseGrabber(PortCircle):
             return mouseOverPortCircle.canConnectTo(self.__otherPortItem)
 
 
-        collidingPortItems = filter(lambda port: canConnect(port), collidingPortItems)
+        collidingPortItems = list(filter(lambda port: canConnect(port), collidingPortItems))
         if len(collidingPortItems) > 0:
 
             if isinstance(collidingPortItems[0], PortCircle):

@@ -37,9 +37,9 @@ class Mat44(MathObject):
         """
 
         stringRep = "Mat44("
-        stringRep += str(self.row0) + ","
-        stringRep += str(self.row1) + ","
-        stringRep += str(self.row2) + ","
+        stringRep += str(self.row0) + ", "
+        stringRep += str(self.row1) + ", "
+        stringRep += str(self.row2) + ", "
         stringRep += str(self.row3) + ")"
 
         return stringRep
@@ -55,7 +55,6 @@ class Mat44(MathObject):
         """
 
         return Vec4(self._rtval.row0)
-
 
     @row0.setter
     def row0(self, value):
@@ -85,7 +84,6 @@ class Mat44(MathObject):
 
         return Vec4(self._rtval.row1)
 
-
     @row1.setter
     def row1(self, value):
         """Sets row 1 as the input vector.
@@ -114,7 +112,6 @@ class Mat44(MathObject):
 
         return Vec4(self._rtval.row2)
 
-
     @row2.setter
     def row2(self, value):
         """Sets row 2 as the input vector.
@@ -142,7 +139,6 @@ class Mat44(MathObject):
         """
 
         return Vec4(self._rtval.row3)
-
 
     @row3.setter
     def row3(self, value):
@@ -193,7 +189,6 @@ class Mat44(MathObject):
 
         return mat44
 
-
     def setRows(self, row0, row1, row2, row3):
         """Set from vectors, row-wise.
 
@@ -208,11 +203,10 @@ class Mat44(MathObject):
 
         """
 
-        self._rtval.setRows('', ks.rtVal('Vec4', row0), ks.rtVal('Vec4', row0),
+        self._rtval.setRows('', ks.rtVal('Vec4', row0), ks.rtVal('Vec4', row1),
                             ks.rtVal('Vec4', row2), ks.rtVal('Vec4', row3))
 
         return True
-
 
     def setColumns(self, col0, col1, col2, col3):
         """Setter from vectors, column-wise.
@@ -228,11 +222,10 @@ class Mat44(MathObject):
 
         """
 
-        self._rtval.setColumns('', ks.rtVal('Vec4', col0), ks.rtVal('Vec4', col0),
+        self._rtval.setColumns('', ks.rtVal('Vec4', col0), ks.rtVal('Vec4', col1),
                                ks.rtVal('Vec4', col2), ks.rtVal('Vec4', col3))
 
         return True
-
 
     def setNull(self):
         """Setting all components of the matrix to 0.0.
@@ -246,7 +239,6 @@ class Mat44(MathObject):
 
         return True
 
-
     def setIdentity(self):
         """Sets this matrix to the identity matrix.
 
@@ -258,7 +250,6 @@ class Mat44(MathObject):
         self._rtval.setIdentity('')
 
         return True
-
 
     def setDiagonal(self, v):
         """Sets the diagonal components of this matrix to a scalar.
@@ -275,8 +266,7 @@ class Mat44(MathObject):
 
         return True
 
-
-    def setDiagonal(self, v):
+    def setDiagonalVec3(self, v):
         """Sets the diagonal components of this matrix to the components of a
         vector.
 
@@ -292,6 +282,21 @@ class Mat44(MathObject):
 
         return True
 
+    def setDiagonalVec4(self, v):
+        """Sets the diagonal components of this matrix to the components of a
+        vector.
+
+        Args:
+            v (Vec3): vector to set diagonals to.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._rtval.setDiagonal('', ks.rtVal('Vec4', v))
+
+        return True
 
     def equal(self, other):
         """Checks equality of this Matrix44 with another.
@@ -306,8 +311,7 @@ class Mat44(MathObject):
 
         return self._rtval.equal('Boolean', ks.rtVal('Mat44', other)).getSimpleType()
 
-
-    def almostEqual(self, other, precision):
+    def almostEqualWithPrecision(self, other, precision):
         """Checks almost equality of this Matrix44 with another.
 
         Args:
@@ -321,7 +325,6 @@ class Mat44(MathObject):
 
         return self._rtval.almostEqual('Boolean', ks.rtVal('Mat44', other),
                                        ks.rtVal('Scalar', precision)).getSimpleType()
-
 
     def almostEqual(self, other):
         """Checks almost equality of this Matrix44 with another
@@ -337,7 +340,6 @@ class Mat44(MathObject):
 
         return self._rtval.almostEqual('Boolean', ks.rtVal('Mat44', other)).getSimpleType()
 
-
     def add(self, other):
         """Overload method for the add operator.
 
@@ -350,7 +352,6 @@ class Mat44(MathObject):
         """
 
         return Mat44(self._rtval.add('Mat44', ks.rtVal('Mat44', other)))
-
 
     def subtract(self, other):
         """Overload method for the subtract operator.
@@ -365,7 +366,6 @@ class Mat44(MathObject):
 
         return Mat44(self._rtval.subtract('Mat44', ks.rtVal('Mat44', other)))
 
-
     def multiply(self, other):
         """Overload method for the multiply operator.
 
@@ -378,7 +378,6 @@ class Mat44(MathObject):
         """
 
         return Mat44(self._rtval.multiply('Mat44', ks.rtVal('Mat44', other)))
-
 
     def multiplyScalar(self, other):
         """Product of this matrix and a scalar.
@@ -393,8 +392,7 @@ class Mat44(MathObject):
 
         return Mat44(self._rtval.multiplyScalar('Mat44', ks.rtVal('Scalar', other)))
 
-
-    def multiplyVector(self, other):
+    def multiplyVector3(self, other):
         """Returns the product of this matrix and a vector.
 
         Args:
@@ -405,8 +403,20 @@ class Mat44(MathObject):
 
         """
 
-        return Vec3(self._rtval.multiplyVector('Vec3', ks.rtVal('Vec3', other)))
+        return Vec3(self._rtval.multiplyVector3('Vec3', ks.rtVal('Vec3', other)))
 
+    def multiplyVector4(self, other):
+        """Returns the product of this matrix and a vector.
+
+        Args:
+            other (Vec3): vector to multiply this matrix by.
+
+        Returns:
+            Vec3: product of the multiplication of the Vec3 and this matrix.
+
+        """
+
+        return Vec4(self._rtval.multiplyVector4('Vec4', ks.rtVal('Vec4', other)))
 
     def divideScalar(self, other):
         """Divides this matrix and a scalar.
@@ -421,7 +431,6 @@ class Mat44(MathObject):
 
         return Mat44(self._rtval.divideScalar('Mat44', other))
 
-
     def determinant(self):
         """Gets the determinant of this matrix.
 
@@ -431,7 +440,6 @@ class Mat44(MathObject):
         """
 
         return self._rtval.determinant('Scalar').getSimpleType()
-
 
     def adjoint(self):
         """Gets the adjoint matrix of this matrix.
@@ -443,7 +451,6 @@ class Mat44(MathObject):
 
         return Mat44(self._rtval.adjoint('Mat44'))
 
-
     def inverse(self):
         """Get the inverse matrix of this matrix.
 
@@ -453,7 +460,6 @@ class Mat44(MathObject):
         """
 
         return Mat44(self._rtval.inverse('Mat44'))
-
 
     def inverse_safe(self):
         """Get the inverse matrix of this matrix, always checking the
@@ -466,6 +472,73 @@ class Mat44(MathObject):
 
         return Mat44(self._rtval.inverse_safe('Mat44'))
 
+    def setTranslation(self, vec):
+        """Sets the translation of the matrix by a Vec3.
+
+        Args:
+            vec (Vec3): Vector to set the scaling of the matrix from.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._rtval.setTranslation('', ks.rtVal('Vec3', vec))
+
+        return True
+
+    def setRotation(self, quat):
+        """Sets the rotation of the matrix by a quaternion.
+
+        Args:
+            quat (Quat): Quaternion to use to set the rotation of the matrix by.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._rtval.setRotation('', ks.rtVal('Quat', quat))
+
+    def setScaling(self, vec):
+        """Sets the scaling of the matrix by a Vec3.
+
+        Args:
+            vec (Vec3): Vector to set the scaling of the matrix from.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._rtval.setScaling('', ks.rtVal('Vec3', vec))
+
+        return True
+
+    def setFromMat33(self, mat):
+        """Sets this matrix from a Mat33.
+
+        Args:
+            mat (Mat33): Mat33 to set this matrix by.
+
+        Returns:
+            bool: True if successful.
+
+        """
+
+        self._rtval.setFromMat33('', ks.rtVal('Mat33', mat))
+
+        return True
+
+    def translation(self):
+        """Get the translation values as a Vec3 for this matrix.
+
+        Returns:
+            Vec3: Translation of this matrix.
+
+        """
+
+        return Vec3(self._rtval.translation('Vec3'))
 
     def transpose(self):
         """Get the transposed matrix of this matrix.
@@ -476,3 +549,13 @@ class Mat44(MathObject):
         """
 
         return Mat44(self._rtval.transpose('Mat44'))
+
+    def upperLeft(self):
+        """Get the upper left values of this matrix as a Mat33.
+
+        Returns:
+            Mat33: Upperleft components of this matrix.
+
+        """
+
+        return Mat33(self._rtval.upperLeft('Mat33'))

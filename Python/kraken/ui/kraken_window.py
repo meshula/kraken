@@ -40,6 +40,27 @@ class KrakenWindow(QtWidgets.QMainWindow):
         self._focusInCallbacks = []
         self._focusOutCallbacks = []
 
+        fontPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                               'Fonts')
+
+        fontPathList = [
+            'Roboto' + os.path.sep + 'Roboto-Bold.ttf',
+            'Roboto' + os.path.sep + 'Roboto-BoldItalic.ttf',
+            'Roboto' + os.path.sep + 'Roboto-Italic.ttf',
+            'Roboto' + os.path.sep + 'Roboto-Regular.ttf',
+            'Roboto' + os.path.sep + 'RobotoCondensed-Bold.ttf',
+            'Roboto' + os.path.sep + 'RobotoCondensed-BoldItalic.ttf',
+            'Roboto' + os.path.sep + 'RobotoCondensed-Italic.ttf',
+            'Roboto' + os.path.sep + 'RobotoCondensed-Regular.ttf',
+            'Roboto' + os.path.sep + 'RobotoMono-Bold.ttf',
+            'Roboto' + os.path.sep + 'RobotoMono-BoldItalic.ttf',
+            'Roboto' + os.path.sep + 'RobotoMono-Italic.ttf',
+            'Roboto' + os.path.sep + 'RobotoMono-Regular.ttf',
+        ]
+
+        for fontFilePath in fontPathList:
+            QtGui.QFontDatabase.addApplicationFont(os.path.join(fontPath, fontFilePath))
+
         cssPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                'kraken_ui.css')
 

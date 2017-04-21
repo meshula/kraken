@@ -45,7 +45,9 @@ class BobRig(Rig):
             "location": "M",
             "neckXfo": Xfo(ori=Quat(Vec3(-0.371748030186, -0.601501047611, 0.371748059988), 0.601500988007), tr=Vec3(0.0, 16.0, -0.75), sc=Vec3(1.00000011921, 1.0, 1.00000011921)),
             "neckMidXfo": Xfo(ori=Quat(Vec3(-0.371748030186, -0.601501047611, 0.371748059988), 0.601500988007), tr=Vec3(0.0, 16.5, -0.5), sc=Vec3(1.00000011921, 1.0, 1.00000011921)),
-            "neckEndXfo": Xfo(ori=Quat(Vec3(-0.371748030186, -0.601501047611, 0.371748059988), 0.601500988007), tr=Vec3(0.0, 17.0, -0.25), sc=Vec3(1.0, 1.0, 1.0))
+            "neckEndXfo": Xfo(ori=Quat(Vec3(-0.371748030186, -0.601501047611, 0.371748059988), 0.601500988007), tr=Vec3(0.0, 17.0, -0.25), sc=Vec3(1.0, 1.0, 1.0)),
+            "neckCrvData": neckComponentGuide.neckCtrlShape.getCurveData(),
+            "neckMidCrvData": neckComponentGuide.neckMidCtrlShape.getCurveData()
         })
 
         neckComponent = NeckComponentRig("neck", self)
@@ -54,9 +56,13 @@ class BobRig(Rig):
         headComponent = HeadComponentRig("head", self)
         headComponent.loadData(data={
             "headXfo": Xfo(Vec3(0.0, 17.5, -0.5)),
+            "headCrvData": headComponent.headCtrl.getCurveData(),
             "eyeLeftXfo": Xfo(tr=Vec3(0.375, 18.5, 0.5), ori=Quat(Vec3(-0.0, -0.707106769085, -0.0), 0.707106769085)),
+            "eyeLeftCrvData": headComponent.eyeLeftCtrl.getCurveData(),
             "eyeRightXfo": Xfo(tr=Vec3(-0.375, 18.5, 0.5), ori=Quat(Vec3(-0.0, -0.707106769085, -0.0), 0.707106769085)),
-            "jawXfo": Xfo(Vec3(0.0, 17.875, -0.275))
+            "eyeRightCrvData": headComponent.eyeRightCtrl.getCurveData(),
+            "jawXfo": Xfo(Vec3(0.0, 17.875, -0.275)),
+            "jawCrvData": headComponent.jawCtrl.getCurveData()
         })
 
         clavicleLeftComponentGuide = ClavicleComponentGuide("clavicle")

@@ -1,4 +1,3 @@
-// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
   "metadata" : {
@@ -7,9 +6,16 @@
   "title" : "KrakenStaticClip",
   "ports" : [
     {
-      "objectType" : "Port",
-      "nodePortType" : "In",
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "result",
+      "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "KrakenStaticClip"
       }

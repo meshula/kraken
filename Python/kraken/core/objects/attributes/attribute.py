@@ -136,6 +136,16 @@ class Attribute(SceneItem):
         return True
 
 
+    def getAnimatable(self):
+        """Returns the animatable state of the attribute..
+
+        Returns:
+            bool: True if Animatable state of the attribute.
+
+        """
+
+        return self._animatable
+
     def setAnimatable(self, value):
         """Sets the animatable state of the attribute..
 
@@ -154,16 +164,6 @@ class Attribute(SceneItem):
 
         return True
 
-    def getAnimatable(self):
-        """Returns the animatable state of the attribute..
-
-        Returns:
-            bool: True if Animatable state of the attribute.
-
-        """
-
-        return self._animatable
-
 
     def getRTVal(self):
         """Returns and RTVal object for this attribute.
@@ -179,7 +179,7 @@ class Attribute(SceneItem):
 
         """
 
-        raise NotImplemented("This method should be re-implemented in concrete attribute classes.")
+        raise NotImplementedError("This method should be re-implemented in concrete attribute classes.")
 
 
     def validateValue(self, value):
@@ -199,7 +199,7 @@ class Attribute(SceneItem):
 
         """
 
-        raise NotImplemented("This method should be re-implemented in concrete attribute classes.")
+        raise NotImplementedError("This method should be re-implemented in concrete attribute classes.")
 
 
     # ===================
@@ -283,7 +283,7 @@ class Attribute(SceneItem):
 
         jsonData = {
             '__typeHierarchy__': classHierarchy,
-            'name': self.name,
+            'name': self._name,
             'value': saver.encodeValue(self._value),
             'parent': None
         }
@@ -306,6 +306,6 @@ class Attribute(SceneItem):
         """
 
         self.name = jsonData['name']
-        self._value = loader.decodeValue(jsonData['value'])
+        self._value = jsonData['value']
 
         return True

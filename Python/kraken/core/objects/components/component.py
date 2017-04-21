@@ -189,11 +189,9 @@ class Component(Object3D):
             container = self
 
         layer = container.getChildByName(name)
-        if layer is None or not layer.isTypeOf('Layer'):
-            raise KeyError("Layer '" + name + "' was not found!")
-
-        # TODO: We should be returning None instead of raising an error and users
-        # will be required to test if None.
+        if layer is not None and layer.isTypeOf('Layer') is False:
+            logger.warn("No layer with name '{}' was found.".format(name))
+            layer = None
 
         return layer
 
@@ -216,7 +214,7 @@ class Component(Object3D):
         layer = None
         if container is not None:
             layer = container.getChildByName(name)
-        if layer is None or not layer.isTypeOf('Layer'):
+        if layer is None or layer.isTypeOf('Layer') is False:
             layer = Layer(name, parent=container)
 
         if container is not None:
@@ -274,14 +272,7 @@ class Component(Object3D):
 
         """
 
-        raise Exception("We should not be here. This method is to be deprecated")
-
-        super(Component, self).addChild(child)
-
-        # Assign the child self as the component.
-        child.setComponent(self)
-
-        return True
+        raise NotImplementedError("We should not be here. This method is to be deprecated")
 
 
     def getHierarchyNodes(self, classType='', inheritedClass=False):
@@ -296,8 +287,8 @@ class Component(Object3D):
             list: Nodes that match the class type.
 
         """
-        if not isinstance(classType,str):
-            logger.warning("Warning in Component %s: getHierarchyNodes needs classType to be passed as string" % self._name)
+
+        assert isinstance(classType, str), "Warning in Component {}: getHierarchyNodes needs classType to be passed as string".format(self._name)
 
 
         nodeList = []
@@ -344,7 +335,10 @@ class Component(Object3D):
 
         """
 
-        if index > len(self._inputs):
+        if len(self._inputs) == 0:
+            return False
+
+        if index > len(self._inputs) - 1:
             raise IndexError("'" + str(index) + "' is out of the range of 'inputs' array.")
 
         return True
@@ -380,6 +374,8 @@ class Component(Object3D):
 
         elif dataType.startswith('String'):
             newInputTgt = StringAttribute(name)
+        else:
+            raise NotImplementedError("Datatype: {} is not a supported type for createInput.".format(dataType))
 
         # Handle keyword arguments
         for k, v in kwargs.iteritems():
@@ -541,7 +537,10 @@ class Component(Object3D):
 
         """
 
-        if index > len(self._outputs):
+        if len(self._outputs) == 0:
+            return False
+
+        if index > len(self._outputs) - 1:
             raise IndexError("'" + str(index) + "' is out of the range of 'outputs' array.")
 
         return True
@@ -704,7 +703,7 @@ class Component(Object3D):
 
         """
 
-        if index > len(self._operators):
+        if index > len(self._operators) - 1:
             raise IndexError("'" + str(index) + "' is out of the range of the 'children' array.")
 
         return True
@@ -836,7 +835,7 @@ class Component(Object3D):
 
         childrenOfType = []
         for eachOperator in self._operators:
-            if isinstance(eachOperator, childType):
+            if eachOperator.isTypeOf(childType):
                 childrenOfType.append(eachOperator)
 
         return childrenOfType
@@ -853,8 +852,8 @@ class Component(Object3D):
 
         """
 
-        for index, eachOp in xrange(self.getNumOperators()):
-            if eachOp is operator:
+        for index in xrange(self.getNumOperators()):
+            if self._operators[index] is operator:
                 return index
 
         return None
@@ -873,7 +872,7 @@ class Component(Object3D):
         """
 
         oldIndex = self.getOperatorIndex(operator)
-        self._operators.insert(index, self._operators.pop(oldindex))
+        self._operators.insert(index, self._operators.pop(oldIndex))
 
         return True
 
@@ -903,7 +902,7 @@ class Component(Object3D):
             'name': self.getName(),
             'location': self.getLocation(),
             'graphPos': self._graphPos
-           }
+        }
 
 
         # TODO: AttributeGroup needs to become a hierachy object like all the others.
@@ -945,7 +944,7 @@ class Component(Object3D):
             self.setGraphPos(data['graphPos'])
 
         for i in range(self.getNumAttributeGroups()):
-            grp  = self.getAttributeGroupByIndex(i)
+            grp = self.getAttributeGroupByIndex(i)
             for i in range(grp.getNumAttributes()):
                 attr = grp.getAttributeByIndex(i)
                 if attr.getName() in data:
@@ -967,7 +966,6 @@ class Component(Object3D):
 
         return self.saveData()
 
-
     def pasteData(self, data, setLocation=True):
         """Paste a copied guide representation.
 
@@ -980,12 +978,15 @@ class Component(Object3D):
 
         """
 
-        if not setLocation and data['location'] != self.getLocation():
+        if data['location'] != self.getLocation():
             config = Config.getInstance()
             mirrorMap = config.getNameTemplate()['mirrorMap']
             if mirrorMap[data['location']] != data['location']:
                 data = mirrorData(data, 0)
-                del data['location']
+
+        if setLocation is False:
+            del data['location']
+
 
         self.loadData(data)
 
@@ -1004,15 +1005,14 @@ class Component(Object3D):
             dict: The JSON rig data object.
 
         """
+
         objects = self.getHierarchyNodes(classType=classType, inheritedClass=inheritedClass)
         self.saveObjectData(data, objects)
 
         return data
 
-
     def saveObjectData(self, data, objectList):
-        """
-        Stores the Guide data for component objects in this list.
+        """Stores the Guide data for component objects in this list.
         Guide data is xfo and curve information
 
         Args:
@@ -1023,6 +1023,7 @@ class Component(Object3D):
             dict: The JSON rig data object.
 
         """
+
         for obj in objectList:
             objName = obj.getName()
             if obj.getMetaDataItem("altLocation") is not None:
@@ -1032,8 +1033,6 @@ class Component(Object3D):
                 data[objName + "CurveData"] = obj.getCurveData()
 
         return data
-
-
 
     def loadAllObjectData(self, data, classType="Control", inheritedClass=False):
         """Stores the Guide data for all objects of this type in the component.
@@ -1052,7 +1051,6 @@ class Component(Object3D):
         self.loadObjectData(data, objects)
 
         return data
-
 
     def loadObjectData(self, data, objectList):
         """
@@ -1081,9 +1079,9 @@ class Component(Object3D):
     # ==================
     # Rig Build Methods
     # =================
-
     def getRigBuildData(self):
-        """Returns the Guide data used by the Rig Component to define the layout of the final rig..
+        """Returns the Guide data used by the Rig Component to define the layout
+        of the final rig.
 
         Returns:
             dict: The JSON rig data object.
@@ -1116,8 +1114,7 @@ class Component(Object3D):
 
         """
 
-        raise NotImplemented("This method should be implemented in sub-classes.")
-
+        raise NotImplementedError("This method should be implemented in sub-classes.")
 
     def attach(self, container):
         """Attaches component to container.
@@ -1130,7 +1127,7 @@ class Component(Object3D):
 
         """
 
-        raise NotImplemented("This method should be implemented in sub-classes.")
+        raise NotImplementedError("This method should be implemented in sub-classes.")
 
 
     # ==============
@@ -1149,4 +1146,3 @@ class Component(Object3D):
         """
 
         return 'Base'
-

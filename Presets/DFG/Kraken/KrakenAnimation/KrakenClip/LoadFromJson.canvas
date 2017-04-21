@@ -1,4 +1,3 @@
-// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
   "metadata" : {
@@ -7,16 +6,23 @@
   "title" : "LoadFromJson",
   "ports" : [
     {
-      "objectType" : "Port",
+      "objectType" : "ExecPort",
+      "name" : "exec",
       "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "this",
+      "nodePortType" : "IO",
       "execPortType" : "IO",
       "typeSpec" : "$TYPE$"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
+      "objectType" : "ExecPort",
       "name" : "json",
+      "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "JSONDictValue"
       }

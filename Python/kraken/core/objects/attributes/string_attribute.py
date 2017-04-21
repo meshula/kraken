@@ -49,7 +49,6 @@ class StringAttribute(Attribute):
         return ks.rtVal('String', self._value)
 
 
-
     def getDataType(self):
         """Returns the name of the data type for this attribute.
 
