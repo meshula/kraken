@@ -179,28 +179,19 @@ class Traverser(object):
             itemCallback(item=item, traverser=self)
 
         # Record clashing names
-        if isinstance(item, AttributeGroup):
-            buildName = item.getParent().getBuildName()+'__'+item.getName() # two underscores
-        elif isinstance(item, Attribute):
-            buildName = item.getParent().getParent().getBuildName()+'__'+item.getName() # two underscores
-        elif hasattr(item, 'getBuildName'):
-            buildName = item.getBuildName()
-        else:
-            buildName = item.getName()
 
-        if buildName in self._buildNameToItem:
-            # We have a clash
-            # If it's an object3D we want to derive name from hierarchy after all objects are registered
-            # Otherwise, we'll append a number (just like in DCC)
-            if not item.isTypeOf("Attribute") and not item.isTypeOf("AttributeGroup"):
+        if hasattr(item, 'getBuildName'):
+            buildName = item.getBuildName()
+            if item.getBuildName() in self._buildNameToItem:
+                # We have a clash
                 orig_item = self._buildNameToItem[buildName]
                 if orig_item.getBuildPath() != item.getBuildPath():  # as long as they are different hierarchies
                     if buildName not in self._clashingNameItemDict:
                         self._clashingNameItemDict[buildName] = [orig_item, item]
                     else:
                         self._clashingNameItemDict[buildName].append(item)
-        else:
-            self._buildNameToItem[buildName] = item
+            else:
+                self._buildNameToItem[buildName] = item
 
         self._items.append(item)
 
