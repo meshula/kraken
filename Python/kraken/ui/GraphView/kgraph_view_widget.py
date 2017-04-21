@@ -279,6 +279,17 @@ class KGraphViewWidget(GraphViewWidget):
                     self._guideBuilder.deleteBuildElements()
 
             self._guideBuilder = plugins.getBuilder()
+
+            cur_clash_error_pref = self._guideBuilder.getConfig().getMetaData('ErrorOnClashingNames', False)
+            cur_clash_warning_pref = self._guideBuilder.getConfig().getMetaData('WarningOnClashingNames', False)
+            try:
+                self._guideBuilder.getConfig().setMetaData('ErrorOnClashingNames', self.window().preferences.getPreferenceValue('clashing_names_error'))
+                self._guideBuilder.getConfig().setMetaData('WarningOnClashingNames', self.window().preferences.getPreferenceValue('clashing_names_warning'))
+                self._guideBuilder.build(rig)
+            finally:
+                self._guideBuilder.getConfig().setMetaData('ErrorOnClashingNames', cur_clash_error_pref)
+                self._guideBuilder.getConfig().setMetaData('WarningOnClashingNames', cur_clash_warning_pref)
+
             self._guideBuilder.build(self.guideRig)
 
             logger.inform('Guide Rig Build Success')
@@ -323,7 +334,16 @@ class KGraphViewWidget(GraphViewWidget):
                     self._builder.deleteBuildElements()
 
             self._builder = plugins.getBuilder()
-            self._builder.build(rig)
+
+            cur_clash_error_pref = self._builder.getConfig().getMetaData('ErrorOnClashingNames', False)
+            cur_clash_warning_pref = self._builder.getConfig().getMetaData('WarningOnClashingNames', False)
+            try:
+                self._builder.getConfig().setMetaData('ErrorOnClashingNames', self.window().preferences.getPreferenceValue('clashing_names_error'))
+                self._builder.getConfig().setMetaData('WarningOnClashingNames', self.window().preferences.getPreferenceValue('clashing_names_warning'))
+                self._builder.build(rig)
+            finally:
+                self._builder.getConfig().setMetaData('ErrorOnClashingNames', cur_clash_error_pref)
+                self._builder.getConfig().setMetaData('WarningOnClashingNames', cur_clash_warning_pref)
 
             logger.inform('Rig Build Success')
 

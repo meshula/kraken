@@ -8,6 +8,7 @@ Traverser - Base Traverser.
 from kraken.core.objects.scene_item import SceneItem
 from kraken.core.objects.object_3d import Object3D
 from kraken.core.objects.components.component import Component
+from kraken.core.objects.attributes.attribute import Attribute
 from kraken.core.objects.attributes.attribute_group import AttributeGroup
 from kraken.core.objects.constraints.constraint import Constraint
 from kraken.core.objects.operators.operator import Operator
@@ -23,9 +24,12 @@ class Traverser(object):
 
     """
 
-    def __init__(self, name='Traverser'):
+    def __init__(self, name='Traverser', storeClashingNames=False):
         self._rootItems = []
         self.reset()
+        self._buildNameToItem = {}
+        self._clashingNameItemDict = {}
+        self.storeClashingNames = storeClashingNames
 
     # ==================
     # Property Methods
@@ -108,6 +112,27 @@ class Traverser(object):
 
         return result
 
+
+    def getItemsWithClashingNames(self):
+        """Gets items that have the same build name
+            Does not include Attributes or Attribute Groups as their names depend on their parents
+            and can never be created with clashes on their own.
+
+            The traverse method must be run before this method.
+            This adds as bit of overhead to the traverser (about 0.05 seconds to full body+face biped)
+
+        Returns:
+            dict:   Keys are the clashing names.
+                    Values are lists of items that clash with those corresponding names
+                    Values are always lists with at lest two items
+
+        """
+
+        if not self._items:
+            raise Exception("You must traverse the rig with storeClashingNames flag before gathering clashing items.")
+
+        return self._clashingNameItemDict
+
     # =============
     # Traverse Methods
     # =============
@@ -128,7 +153,6 @@ class Traverser(object):
                 for each item.
 
         """
-
         self.reset()
 
         if discoverCallback is None:
@@ -153,6 +177,21 @@ class Traverser(object):
 
         if itemCallback is not None:
             itemCallback(item=item, traverser=self)
+
+        # Record clashing names
+
+        if hasattr(item, 'getBuildName'):
+            buildName = item.getBuildName()
+            if item.getBuildName() in self._buildNameToItem:
+                # We have a clash
+                orig_item = self._buildNameToItem[buildName]
+                if orig_item.getBuildPath() != item.getBuildPath():  # as long as they are different hierarchies
+                    if buildName not in self._clashingNameItemDict:
+                        self._clashingNameItemDict[buildName] = [orig_item, item]
+                    else:
+                        self._clashingNameItemDict[buildName].append(item)
+            else:
+                self._buildNameToItem[buildName] = item
 
         self._items.append(item)
 
