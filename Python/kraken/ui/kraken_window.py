@@ -59,7 +59,6 @@ class KrakenWindow(QtWidgets.QMainWindow):
         ]
 
         for fontFilePath in fontPathList:
-            print os.path.join(fontPath, fontFilePath)
             QtGui.QFontDatabase.addApplicationFont(os.path.join(fontPath, fontFilePath))
 
         cssPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),
