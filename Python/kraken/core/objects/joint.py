@@ -58,3 +58,5 @@ class Joint(Object3D):
             radius = float(radius)
 
         self._radius = radius
+
+        return True

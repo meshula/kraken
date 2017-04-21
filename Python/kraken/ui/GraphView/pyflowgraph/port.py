@@ -1,6 +1,6 @@
 
 #
-# Copyright 2015 Horde Software Inc.
+# Copyright 2015-2017 Eric Thivierge
 #
 
 import json
@@ -8,7 +8,7 @@ from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 
 class PortLabel(QtWidgets.QGraphicsWidget):
-    __font = QtGui.QFont('Decorative', 12)
+    __font = QtGui.QFont('Roboto', 12)
     __fontMetrics = QtGui.QFontMetrics(__font)
 
     def __init__(self, port, text, hOffset, color, highlightColor):
@@ -25,7 +25,6 @@ class PortLabel(QtWidgets.QGraphicsWidget):
         self.__textItem.document().setDefaultTextOption(option)
         self.__textItem.document().setDocumentMargin(0)
         self.__textItem.adjustSize()
-        self.__textItem.transform().translate(0, self.__fontMetrics.height() * -0.5)
 
         self.setPreferredSize(self.textSize())
         self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))
@@ -111,6 +110,7 @@ class PortCircle(QtWidgets.QGraphicsWidget):
 
         self.__port = port
         self._graph = graph
+        self._hOffset = hOffset
         self._connectionPointType = connectionPointType
         self.__connections = set()
         self._supportsOnlySingleConnections = connectionPointType == 'In'
@@ -120,20 +120,25 @@ class PortCircle(QtWidgets.QGraphicsWidget):
         self.setPreferredSize(size)
         self.setWindowFrameMargins(0, 0, 0, 0)
 
-        self.transform().translate(self.__radius * hOffset, 0)
 
         self.__defaultPen = QtGui.QPen(QtGui.QColor(25, 25, 25), 1.0)
         self.__hoverPen = QtGui.QPen(QtGui.QColor(255, 255, 100), 1.5)
 
         self._ellipseItem = QtWidgets.QGraphicsEllipseItem(self)
         self._ellipseItem.setPen(self.__defaultPen)
-        self._ellipseItem.setPos(size.width()/2, size.height()/2)
+        self._ellipseItem.setPos((self.__radius / 2) + self._hOffset, self.__diameter / 2)
+
+        if connectionPointType == 'In':
+            self._hOffset += -self.__radius
+
+        self.setTransform(self.transform().translate(self.__radius + self._hOffset, 0))
         self._ellipseItem.setRect(
             -self.__radius,
             -self.__radius,
             self.__diameter,
             self.__diameter,
             )
+
         if connectionPointType == 'In':
             self._ellipseItem.setStartAngle(270 * 16)
             self._ellipseItem.setSpanAngle(180 * 16)

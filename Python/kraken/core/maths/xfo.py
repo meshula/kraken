@@ -42,9 +42,9 @@ class Xfo(MathObject):
 
         """
 
-        stringRep = "Xfo(ori=" + str(self.ori)
-        stringRep += ", tr=" + str(self.tr)
-        stringRep += ", sc=" + str(self.sc) + ")"
+        stringRep = "Xfo(" + str(self.tr)
+        stringRep += ", " + str(self.ori)
+        stringRep += ", " + str(self.sc) + ")"
 
         return stringRep
 
@@ -245,21 +245,6 @@ class Xfo(MathObject):
         """
 
         return Vec3(self._rtval.transformVector('Vec3', ks.rtVal('Vec3', v)))
-
-
-    def transformRay(self, ray):
-        """Transforms a ray vector by this transform.
-
-        Args:
-            ray (Vec3): Ray vector to transform.
-
-        Returns:
-            Ray: New ray vector transformed by this transform.
-
-        """
-
-        # return Ray(self._rtval.transformRay('Ray', ks.rtVal('Ray', ray)))
-        raise NotImplementedError('Ray object is not implemented!')
 
 
     def inverse(self):

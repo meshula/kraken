@@ -219,19 +219,18 @@ class Operator(SceneItem):
             bool: True if successful.
 
         """
+        raise DeprecationWarning("Method 'resizeInput' has been deprecated!")
 
-        if name not in self.inputs:
-            raise Exception("Input with name '" + name +
-                            "' was not found in operator: " + self.getName() +
-                            ".")
-
-        if isinstance(self.inputs[name], list):
-            while len(self.inputs[name]) < count:
-                self.inputs[name].append(None)
-        else:
-            raise Exception("Input is not an array input: " + name + ".")
-
-        return True
+        # if name not in self.inputs:
+        #     raise Exception("Input with name '" + name +
+        #                     "' was not found in operator: " + self.getName() +
+        #                     ".")
+        # if isinstance(self.inputs[name], list):
+        #     while len(self.inputs[name]) < count:
+        #         self.inputs[name].append(None)
+        # else:
+        #     raise Exception("Input is not an array input: " + name + ".")
+        # return True
 
     def setInput(self, name, operatorInput, index=0):
         """Sets the input by the given name.
@@ -321,18 +320,20 @@ class Operator(SceneItem):
 
         """
 
-        if name not in self.outputs:
-            raise Exception("Output with name '" + name +
-                            "' was not found in operator: " + self.getName() +
-                            ".")
+        raise DeprecationWarning("Method 'resizeOutput' has been deprecated!")
 
-        if isinstance(self.outputs[name], list):
-            while len(self.outputs[name]) < count:
-                self.outputs[name].append(None)
-        else:
-            raise Exception("Output is not an array output: " + name + ".")
+        # if name not in self.outputs:
+        #     raise Exception("Output with name '" + name +
+        #                     "' was not found in operator: " + self.getName() +
+        #                     ".")
 
-        return True
+        # if isinstance(self.outputs[name], list):
+        #     while len(self.outputs[name]) < count:
+        #         self.outputs[name].append(None)
+        # else:
+        #     raise Exception("Output is not an array output: " + name + ".")
+        # return True
+
 
     def setOutput(self, name, operatorOutput, index=0):
         """Sets the output by the given name.

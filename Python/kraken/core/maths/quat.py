@@ -48,7 +48,7 @@ class Quat(MathObject):
 
         """
 
-        return "Quat(" + str(self.v) + "," + str(self.w) + ")"
+        return "Quat(" + str(self.v) + ", " + str(self.w) + ")"
 
 
     @property
@@ -540,7 +540,7 @@ class Quat(MathObject):
 
         """
 
-        return Quat(self._rtval.alignWith('Quat', ks.rtVal('Quat', other)))
+        return self._rtval.alignWith('Quat', ks.rtVal('Quat', other))
 
 
     def getAngle(self):
@@ -594,11 +594,13 @@ class Quat(MathObject):
             axisIndex (int): 0 for the X axis, 1 for the Y axis, and 2 for the Z axis.
 
         Returns:
-            Quat: Mirrored quaternion.
+            bool: True if mirrored successfully.
 
         """
 
-        return Quat(self._rtval.mirror('Quat', ks.rtVal('Integer', axisIndex)))
+        self._rtval.mirror('Quat', ks.rtVal('Integer', axisIndex))
+
+        return True
 
 
     def toMat33(self):
@@ -691,4 +693,4 @@ class Quat(MathObject):
 
         """
 
-        return Quat(self._rtval.sphericalLinearInterpolate('Quat', ks.rtVal('Quat', q2), ks.rtVal('Scalar', t)))
+        return Quat(self._rtval.sphericalLinearInterpolate('Quat', ks.rtVal('Quat', other), ks.rtVal('Scalar', t)))

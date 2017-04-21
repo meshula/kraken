@@ -33,9 +33,9 @@ class Vec4(MathObject):
             str: String representation of the Vec4 object."""
 
         stringRep = "Vec4("
-        stringRep += str(self.x) + ","
-        stringRep += str(self.y) + ","
-        stringRep += str(self.z) + ","
+        stringRep += str(self.x) + ", "
+        stringRep += str(self.y) + ", "
+        stringRep += str(self.z) + ", "
         stringRep += str(self.t) + ")"
 
         return stringRep
@@ -209,7 +209,7 @@ class Vec4(MathObject):
         return True
 
 
-    def setNull():
+    def setNull(self):
         """Setting all components of the vec4 to 0.0.
 
         Returns:
@@ -236,7 +236,7 @@ class Vec4(MathObject):
         return self._rtval.equal('Boolean', other._rtval).getSimpleType()
 
 
-    def almostEqual(self, other, precision):
+    def almostEqualWithPrecision(self, other, precision):
         """Checks almost equality of this Vec4 with another.
 
         Args:
@@ -267,7 +267,7 @@ class Vec4(MathObject):
         return self._rtval.almostEqual('Boolean', other._rtval).getSimpleType()
 
 
-    def component(self, i ):
+    def component(self, i):
         """Gets the component of this Vec4 by index.
 
         Args:
@@ -281,7 +281,7 @@ class Vec4(MathObject):
         return self._rtval.component('Scalar', ks.rtVal('Size', i)).getSimpleType()
 
 
-    def setComponent(self, i, v ):
+    def setComponent(self, i, v):
         """Sets the component of this Vec4 by index.
 
         Args:
@@ -294,7 +294,7 @@ class Vec4(MathObject):
         """
 
         self._rtval.setComponent('', ks.rtVal('Size', i),
-                                        ks.rtVal('Scalar', v))
+                                 ks.rtVal('Scalar', v))
 
 
     def add(self, other):
@@ -417,20 +417,6 @@ class Vec4(MathObject):
         return self._rtval.dot('Scalar', other._rtval).getSimpleType()
 
 
-    def cross(self, other):
-        """Gets the cross product of this vector and another.
-
-        Args:
-            other (Vec4): other vector.
-
-        Returns:
-            Vec4: Dot product.
-
-        """
-
-        return Vec4(self._rtval.cross('Vec4', other._rtval))
-
-
     def lengthSquared(self):
         """Get the squared length of this vector.
 
@@ -464,18 +450,6 @@ class Vec4(MathObject):
         return Vec4(self._rtval.unit('Vec4'))
 
 
-    def unit_safe(self):
-        """Gets a unit vector of this one, no error reported if cannot be
-        made unit.
-
-        Returns:
-            Vec4: New unit vector.
-
-        """
-
-        return Vec4(self._rtval.unit_safe('Vec4'))
-
-
     def setUnit(self):
         """Sets this vector to a unit vector and returns the previous
         length.
@@ -492,11 +466,13 @@ class Vec4(MathObject):
         """Gets a normalized vector from this vector.
 
         Returns:
-            float: previous length.
+            bool: True if normalized successfully.
 
         """
 
-        return self._rtval.normalize('Scalar').getSimpleType()
+        self._rtval.normalize('')
+
+        return True
 
 
     def clamp(self, min, max):
@@ -571,36 +547,4 @@ class Vec4(MathObject):
 
         """
 
-        return Vec4(self._rtval.linearInterpolate('Vec4', ks.rtVal('Scalar', t)))
-
-
-    def distanceToLine(self, lineP0, lineP1):
-        """Returns the distance of this vector to a line defined by two points
-        on the line.
-
-        Args:
-            lineP0 (Vec4): point 1 of the line.
-            lineP1 (Vec4): point 2 of the line.
-
-        Returns:
-            float: distance to the line.
-
-        """
-
-        return self._rtval.distanceToLine('Scalar', lineP0._rtval, lineP1._rtval).getSimpleType()
-
-
-    def distanceToSegment(self, segmentP0, segmentP1):
-        """Returns the distance of this vector to a line segment defined by the
-        start and end points of the line segment
-
-        Args:
-            segmentP0 (Vec4): point 1 of the segment.
-            segmentP1 (Vec4): point 2 of the segment.
-
-        Returns:
-            float: distance to the segment.
-
-        """
-
-        return self._rtval.distanceToSegment('Scalar', segmentP0._rtval, segmentP1._rtval).getSimpleType()
+        return Vec4(self._rtval.linearInterpolate('Vec4', ks.rtVal('Vec4', other), ks.rtVal('Scalar', t)))

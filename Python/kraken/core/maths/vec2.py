@@ -32,7 +32,7 @@ class Vec2(MathObject):
         Returns:
             str: String representation of the Vec2 object."""
 
-        return "Vec2(" + str(self.x) + "," + str(self.y) + ")"
+        return "Vec2(" + str(self.x) + ", " + str(self.y) + ")"
 
 
     @property
@@ -144,7 +144,7 @@ class Vec2(MathObject):
         return True
 
 
-    def setNull():
+    def setNull(self):
         """Setting all components of the vec2 to 0.0.
 
         Returns:
@@ -171,7 +171,7 @@ class Vec2(MathObject):
         return self._rtval.equal('Boolean', other._rtval).getSimpleType()
 
 
-    def almostEqual(self, other, precision):
+    def almostEqualWithPrecision(self, other, precision):
         """Checks almost equality of this Vec2 with another.
 
         Args:
@@ -432,22 +432,22 @@ class Vec2(MathObject):
 
         """
 
-        return self._rtval.normalize('Scalar').getSimpleType()
+        return self._rtval.normalize('Vec2').getSimpleType()
 
 
-    def clamp(self, min, max):
+    def clamp(self, minVal, maxVal):
         """Clamps this vector per component by a min and max vector.
 
         Args:
-            min (float): Minimum value.
-            max (float): Maximum value.
+            minVal (vec2): Minimum value.
+            maxVal (vec2): Maximum value.
 
         Returns:
             bool: True if successful.
 
         """
 
-        return Vec2(self._rtval.clamp('Vec2', min._rtval, max._rtval))
+        return Vec2(self._rtval.clamp('Vec2', minVal._rtval, maxVal._rtval))
 
 
     def unitsAngleTo(self, other):
@@ -507,7 +507,7 @@ class Vec2(MathObject):
 
         """
 
-        return Vec2(self._rtval.linearInterpolate('Vec2', ks.rtVal('Scalar', t)))
+        return Vec2(self._rtval.linearInterpolate('Vec2', other._rtval, ks.rtVal('Scalar', t)))
 
 
     def distanceToLine(self, lineP0, lineP1):

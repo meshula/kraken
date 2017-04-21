@@ -145,7 +145,7 @@ class NumberAttribute(Attribute):
                 if type(minimum) not in (int, float):
                     raise TypeError(errorStr + "UIMin arg value is not of type 'int', 'float', or None.")
             else:
-                raise ValueError(errorStr + " It is of type " + self.__class__.__name__ + ".  Valid clases are: IntegerAttribute or ScalarAttribute")
+                raise TypeError(errorStr + " It is of type " + self.__class__.__name__ + ".  Valid clases are: IntegerAttribute or ScalarAttribute")
 
             if minimum < self._min:
                 raise ValueError(errorStr + " UiMin value [" + minimum + "] is less than attribute minimum [" + self._min + "]")
@@ -192,7 +192,7 @@ class NumberAttribute(Attribute):
                 if type(maximum) not in (int, float):
                     raise TypeError(errorStr + "UiMax arg value is not of type 'int', 'float', or None.")
             else:
-                raise ValueError(errorStr + " It is of type " + self.__class__.__name__ + ".  Valid clases are: IntegerAttribute or ScalarAttribute")
+                raise TypeError(errorStr + " It is of type " + self.__class__.__name__ + ".  Valid clases are: IntegerAttribute or ScalarAttribute")
 
             if maximum > self._max:
                 raise ValueError(errorStr + " UiMax value [" + maximum + "] is greater than attribute maximum [" + self._max + "]")

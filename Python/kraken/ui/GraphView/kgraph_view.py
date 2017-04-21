@@ -110,7 +110,7 @@ class KGraphView(GraphView):
 
         modifiers = QtWidgets.QApplication.keyboardModifiers()
 
-        if event.button() == QtCore.Qt.MouseButton.RightButton:
+        if event.button() == QtCore.Qt.RightButton:
 
             zoom_with_alt_rmb = self.window().preferences.getPreferenceValue('zoom_with_alt_rmb')
             if zoom_with_alt_rmb and modifiers == QtCore.Qt.AltModifier:
@@ -206,13 +206,13 @@ class KGraphView(GraphView):
                         contextMenu.popup(globalPos)
 
 
-        elif event.button() is QtCore.Qt.MouseButton.LeftButton and self.itemAt(event.pos()) is None:
+        elif event.button() == QtCore.Qt.LeftButton and self.itemAt(event.pos()) is None:
             self.beginNodeSelection.emit()
             self._manipulationMode = MANIP_MODE_SELECT
             self._mouseDownSelection = copy.copy(self.getSelectedNodes())
             self._selectionRect = SelectionRect(graph=self, mouseDownPos=self.mapToScene(event.pos()))
 
-        elif event.button() is QtCore.Qt.MouseButton.MiddleButton:
+        elif event.button() == QtCore.Qt.MidButton:
 
             pan_with_alt = self.window().preferences.getPreferenceValue('pan_with_alt')
             if pan_with_alt is True and modifiers != QtCore.Qt.AltModifier:

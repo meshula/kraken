@@ -1,4 +1,3 @@
-// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
   "metadata" : {
@@ -7,23 +6,30 @@
   "title" : "SetFloat32",
   "ports" : [
     {
-      "objectType" : "Port",
+      "objectType" : "ExecPort",
+      "name" : "exec",
       "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "this",
+      "nodePortType" : "IO",
       "execPortType" : "IO",
       "typeSpec" : "KrakenStaticClip"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
+      "objectType" : "ExecPort",
       "name" : "name",
+      "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "String"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
+      "objectType" : "ExecPort",
       "name" : "value",
+      "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "Float32"
       }

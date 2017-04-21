@@ -1,24 +1,25 @@
-// Created by kl2dfg (processDecomposeFunction)
 {
   "objectType" : "Func",
   "title" : "KrakenClipContext ->",
   "ports" : [
     {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
-      "defaultValues" : {
-        "KrakenClipContext" : {
-          "time" : 0
-          }
-        },
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "value",
+      "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "KrakenClipContext"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "In",
+      "objectType" : "ExecPort",
       "name" : "time",
+      "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "Float64"
       }
@@ -27,6 +28,12 @@
     "KrakenAnimation" : "*"
     },
   "presetGUID" : "2967ABA5FEC1C6A2F3431E41C83A21B1",
+  "loadDiags" : [
+    {
+      "desc" : "'KrakenClipContex...': missing members delta, maxEvalID, matrices, channels",
+      "diagIndex" : 0
+      }
+    ],
   "code" : "require KrakenAnimation;
 
 dfgEntry {

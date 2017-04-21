@@ -34,7 +34,7 @@ class Vec3(MathObject):
 
         """
 
-        return "Vec3(" + str(self.x) + "," + str(self.y) + "," + str(self.z) + ")"
+        return "Vec3(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ")"
 
 
     @property
@@ -175,7 +175,7 @@ class Vec3(MathObject):
         return True
 
 
-    def setNull():
+    def setNull(self):
         """Setting all components of the vec3 to 0.0.
 
         Returns:
@@ -202,7 +202,7 @@ class Vec3(MathObject):
         return self._rtval.equal('Boolean', other._rtval).getSimpleType()
 
 
-    def almostEqual(self, other, precision):
+    def almostEqualWithPrecision(self, other, precision):
         """Checks almost equality of this Vec3 with another.
 
         Args:
@@ -462,7 +462,7 @@ class Vec3(MathObject):
 
         """
 
-        return self._rtval.normalize('Scalar').getSimpleType()
+        return self._rtval.normalize('Vec3').getSimpleType()
 
 
     def clamp(self, min, max):
@@ -538,35 +538,3 @@ class Vec3(MathObject):
         """
 
         return Vec3(self._rtval.linearInterpolate('Vec3', other._rtval, ks.rtVal('Scalar', t)))
-
-
-    def distanceToLine(self, lineP0, lineP1):
-        """Returns the distance of this vector to a line defined by two points
-        on the line.
-
-        Args:
-            lineP0 (Vec3): point 1 of the line.
-            lineP1 (Vec3): point 2 of the line.
-
-        Returns:
-            float: Distance to the line.
-
-        """
-
-        return self._rtval.distanceToLine('Scalar', lineP0._rtval, lineP1._rtval).getSimpleType()
-
-
-    def distanceToSegment(self, segmentP0, segmentP1):
-        """Returns the distance of this vector to a line segment defined by the
-        start and end points of the line segment
-
-        Args:
-            segmentP0 (Vec3): point 1 of the segment.
-            segmentP1 (Vec3): point 2 of the segment.
-
-        Returns:
-            float: Distance to the segment.
-
-        """
-
-        return self._rtval.distanceToSegment('Scalar', segmentP0._rtval, segmentP1._rtval).getSimpleType()

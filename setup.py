@@ -10,7 +10,7 @@ install_requires = []
 
 
 setup(name='Kraken',
-      version='1.1.0',
+      version='1.2.6',
       description='Kraken Rigging Framework',
       author='Eric Thivierge, Phil Taylor',
       author_email='ethivierge@gmail.com',

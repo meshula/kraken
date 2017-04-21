@@ -1,4 +1,3 @@
-// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
   "metadata" : {
@@ -7,16 +6,23 @@
   "title" : "GetClipCount",
   "ports" : [
     {
-      "objectType" : "Port",
-      "nodePortType" : "Out",
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "this",
+      "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "KrakenClipStack"
       },
     {
-      "objectType" : "Port",
-      "nodePortType" : "In",
+      "objectType" : "ExecPort",
       "name" : "result",
+      "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "UInt32"
       }
