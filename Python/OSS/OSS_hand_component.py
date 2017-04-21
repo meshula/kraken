@@ -510,11 +510,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.handCtrl.xfo.ori.getZaxis()
 
-        upVectorAxisStr = self.upAxisStr[-1]
-        upVectorFunction = getattr(self.handCtrl.xfo.ori, "get"+upVectorAxisStr+"axis")
-        upVector = upVectorFunction()
-        if self.upAxisStr.startswith("NEG"):
-            upVector = upVector.negate()
+        
 
 
         for i, digitName in enumerate(digitNameList):
@@ -550,13 +546,19 @@ class OSSHandComponentRig(OSSHandComponent):
                     if (i*numSegments + j) < len(data[ctrlListName+"Xfos"]):
                         digiSegCtrl.xfo = data[ctrlListName+"Xfos"][index]
 
-            #Aim Control at child
+            #Aim Control at ch`ild
             for j in range(len(digiSegCtrls)):
+                if j == 0:
+                    upVectorAxisStr = self.upAxisStr[-1]
+                    upVectorFunction = getattr(digiSegCtrls[j].xfo.ori, "get"+upVectorAxisStr+"axis")
+                    upVector = upVectorFunction()
+                    if self.upAxisStr.startswith("NEG"):
+                        upVector = upVector.negate()
 
-                if j == len(digiSegCtrls) - 1:
-                    digiSegCtrls[j].xfo.ori = digiSegCtrls[j-1].xfo.ori
-                else:
-                    aimAt(digiSegCtrls[j].xfo, aimPos=digiSegCtrls[j+1].xfo.tr, upVector=upVector, aimAxis=self.boneAxis, upAxis=self.upAxis)
+                # if j == len(digiSegCtrls) - 1:
+                #     digiSegCtrls[j].xfo.ori = digiSegCtrls[j-1].xfo.ori
+                # else:
+                #     aimAt(digiSegCtrls[j].xfo, aimPos=digiSegCtrls[j+1].xfo.tr, upVector=upVector, aimAxis=self.boneAxis, upAxis=self.upAxis)
 
                 digiSegCtrls[j].insertSpace()
                 digiSegDefs[j].constrainTo(digiSegCtrls[j]).evaluate()

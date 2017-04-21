@@ -54,7 +54,6 @@ class OSSFootComponent(OSS_Component):
 
         # Declare Output Attrs
         self.ikBlend_cmpOutAttr = self.createOutput('ikBlend', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
-        self.limbMocap_cmpOutAttr = self.createOutput('limbMocap', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.softIK_cmpOutAttr = self.createOutput('softIK', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.squash_cmpOutAttr = self.createOutput('squash', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
         self.stretch_cmpOutAttr = self.createOutput('stretch', dataType='Float', value=0.0, parent=self.cmpOutputAttrGrp).getTarget()
@@ -268,7 +267,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         ballTipXfo = Xfo(self.ballTipCtrl.xfo)
         ballTipXfo.ori = ballXfo.ori
 
-
+        
         ballTipPivotXfo.ori = heelPivotXfo.ori
         innerPivotXfo.ori = heelPivotXfo.ori
         outerPivotXfo.ori = heelPivotXfo.ori
@@ -331,7 +330,6 @@ class OSSFootComponentRig(OSSFootComponent):
         Profiler.getInstance().push("Construct Leg Rig Component:" + name)
         super(OSSFootComponentRig, self).__init__(name, parent)
 
-        self.mocap = False
 
         # =========
         # Controls
@@ -610,66 +608,8 @@ class OSSFootComponentRig(OSSFootComponent):
             #self.legIKCtrl.translatePoints(Vec3(1.0, 0.0, 0.0))
 
 
-        if self.mocap:
-            #attr to drive limb mocap
-            self.limbMocapAttr = ScalarAttribute('limbMocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
-            self.limbMocap_cmpOutAttr.connect(self.limbMocapAttr)
-            self.mocapInputAttr = ScalarAttribute('mocap', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
-
-
-            # Mocap Foot
-            self.footMocapCtrl = MCControl('foot', parent=self.footSpace, shape="cube")
-            self.footMocapCtrl.alignOnXAxis()
-            self.footMocapCtrl.xfo = data['footXfo']
-            self.footMocapCtrl.scalePointsOnAxis(data['footLen'], self.boneAxisStr)
-
-
-            # Mocap Ball
-            self.ballMocapCtrl = MCControl('ball', parent=self.footMocapCtrl, shape="cube")
-            self.ballMocapCtrl.xfo = data['ballXfo']
-            self.ballMocapCtrl.alignOnXAxis()
-            self.ballMocapCtrl.scalePointsOnAxis(data['ballLen'], self.boneAxisStr)
-            self.ballMocapSpace = self.ballMocapCtrl.insertSpace()
-
-
-            # Add Foot Ball HierBlend Solver for Mocap
-            self.mocapHierBlendSolver = KLOperator(self.getName()+"_rocker", 'OSS_HierBlendSolver', 'OSS_Kraken')
-            self.addOperator(self.mocapHierBlendSolver)
-            self.mocapHierBlendSolver.setInput('blend', self.mocapInputAttr)
-            self.mocapHierBlendSolver.setInput('parentIndexes', [-1, 0])
-            # Add Att Inputs
-            self.mocapHierBlendSolver.setInput('drawDebug', self.drawDebugInputAttr)
-            self.mocapHierBlendSolver.setInput('rigScale', self.rigScaleInputAttr)
-            # Add Xfo Inputs
-            self.mocapHierBlendSolver.setInput('hierA',
-                [
-                self.IKFootBlendKLOpFoot_out,
-                self.IKFootBlendKLOpBall_out
-                ],
-            )
-            self.mocapHierBlendSolver.setInput('hierB',
-                [
-                self.footMocapCtrl,
-                self.ballMocapCtrl,
-                ]
-            )
-            #Create some nodes just for the oupt of the blend.
-            #Wish we could just make direct connections....
-
-            self.footMocapCtrl_link = Space('footMocapCtrl_link', parent=self.outputHrcGrp)
-            self.ballMocapCtrl_link = Space('ballMocapCtrl_link', parent=self.outputHrcGrp)
-
-            self.mocapHierBlendSolver.setOutput('hierOut',
-                [
-                self.footMocapCtrl_link,
-                self.ballMocapCtrl_link,
-                ]
-            )
-            self.footOutputTgtConstraint = self.foot_cmpOut.constrainTo(self.footMocapCtrl_link)
-            self.ballOutputTgtConstraint = self.ball_cmpOut.constrainTo(self.ballMocapCtrl_link)
-        else:
-            self.footOutputTgtConstraint = self.foot_cmpOut.constrainTo(self.IKFootBlendKLOpFoot_out)
-            self.ballOutputTgtConstraint = self.ball_cmpOut.constrainTo(self.IKFootBlendKLOpBall_out)
+        self.footOutputTgtConstraint = self.foot_cmpOut.constrainTo(self.IKFootBlendKLOpFoot_out)
+        self.ballOutputTgtConstraint = self.ball_cmpOut.constrainTo(self.IKFootBlendKLOpBall_out)
 
 
 

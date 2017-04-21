@@ -492,13 +492,13 @@ class OSSMouthRig(OSSMouth):
                 except:
                     pass
 
-            for ctrlName in rSideControls:
-                createControl(ctrlName, side="R")
-
-            createControl("Mid")
-
             for ctrlName in lSideControls:
                 createControl(ctrlName, side="L")
+
+            createControl("Mid")
+            
+            for ctrlName in rSideControls:
+                createControl(ctrlName, side="R")
 
 
         # for ctrl in controlsList:
