@@ -683,10 +683,13 @@ class Builder(object):
                 for name, items in clashingNameItems.iteritems():
                     message += "\n%s:" % name
                     for item in items:
+                        componentName = "<no component>"
+                        if item.getComponent():
+                            componentName = item.getComponent().getName() + item.getComponent().getNameDecoration()
                         if item.isTypeOf("Object3D"):
-                            message += "\n    %s: %s: %s" % (item.getBuildPath(), item.getComponent(), item)
+                            message += "\n    %s: %s: %s" % (item.getBuildPath(), componentName, item)
                         else:
-                            message += "\n    %s: %s: %s" % (item.getBuildName(), item.getComponent(), item)
+                            message += "\n    %s: %s: %s" % (item.getBuildName(), componentName, item)
 
             if error:
                 logger.error(message)
