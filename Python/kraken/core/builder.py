@@ -672,6 +672,29 @@ class Builder(object):
             traverser.addRootItem(rootItem)
         traverser.traverse()
 
+        clashingNameItems = traverser.getItemsWithClashingNames()
+
+        if clashingNameItems:
+            error = self.getConfig().getMetaData('ErrorOnClashingNames', False)
+            warning = self.getConfig().getMetaData('WarningOnClashingNames', False)
+
+            if error or warning:
+                message = "Clashing item names:"
+                for name, items in clashingNameItems.iteritems():
+                    message += "\n%s:" % name
+                    for item in items:
+                        if item.isTypeOf("Object3D"):
+                            message += "\n    %s: %s: %s" % (item.getBuildPath(), item.getComponent(), item)
+                        else:
+                            message += "\n    %s: %s: %s" % (item.getBuildName(), item.getComponent(), item)
+
+            if error:
+                logger.error(message)
+                raise Exception("Clashing item names")
+
+            if warning:
+                logger.warning(message)
+
         try:
             self._preBuild(kSceneItem)
 

@@ -44,6 +44,20 @@ class Preferences(object):
                 'description': 'Delete Existing Rigs before Build',
                 'default_value': True,
                 'value': True
+            },
+            'clashing_names_warning': {
+                'type': 'bool',
+                'nice_name': 'Clashing Node Names causes Warning',
+                'description': 'Warning on clashing node names',
+                'default_value': False,
+                'value': False
+            },
+            'clashing_names_error': {
+                'type': 'bool',
+                'nice_name': 'Clashing Node Names causes Error',
+                'description': 'Error on clashing node names',
+                'default_value': False,
+                'value': False
             }
 
         }
