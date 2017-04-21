@@ -394,6 +394,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     eyeRegionCtrl = Control(handleName+"Region", parent=parent, shape="cube", metaData=metaData)
                     eyeRegionCtrlSpace = eyeRegionCtrl.insertSpace()
                     eyeRegionDef = Joint(handleName+'Region', parent=self.deformersLayer, metaData={"altLocation": side})
+                    self.parentSpaceInputTgt.childJoints.append(eyeRegionDef)
                     eyeRegionDef.constrainTo(eyeRegionCtrl)
 
 

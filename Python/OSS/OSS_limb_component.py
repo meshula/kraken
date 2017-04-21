@@ -327,7 +327,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.uplimbFKCtrl = FKControl(self.uplimbName, parent=self.uplimbFKSpace, shape="cube")
         self.uplimbFKCtrl.xfo = data['uplimbXfo']
         self.uplimbFKSpace.xfo = data['uplimbXfo']
-        self.uplimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
+        self.uplimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XYZ"])  #Set with component settings later
 
         if self.untwistUplimb:
             # We should be able to insert a space to any kind of 3D object, not just controls
@@ -339,7 +339,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbFKCtrl = FKControl(self.lolimbName, parent=self.lolimbFKSpace)
         self.lolimbFKSpace.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
-        self.lolimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
+        self.lolimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XYZ"])  #Set with component settings later
 
 
         # lolimbIK
@@ -458,7 +458,7 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbDef = Joint(self.lolimbName, parent=self.uplimbDef)
         self.lolimbDef.setComponent(self)
         # Don't want to change RO for fbx output right now
-        # self.lolimbDef.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
+        # self.lolimbDef.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XYZ"])  #Set with component settings later
 
         self.limbendDef = Joint(name+'end', parent=self.lolimbDef)
         self.limbendDef.setComponent(self)

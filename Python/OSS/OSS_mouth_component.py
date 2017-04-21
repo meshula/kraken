@@ -1146,6 +1146,7 @@ class OSSMouthRig(OSSMouth):
         #self.lipOutputTgtConstraint.evaluate()
         self.mouthOutputTgtConstraint.evaluate()
         self.jawEndOutputTgtConstraint.evaluate()
+        self.jawEndOutputTgt.parentJoint = self.jawDef
 
         self.tagAllComponentJoints([self.getDecoratedName()] + self.tagNames)
 

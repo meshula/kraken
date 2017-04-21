@@ -318,6 +318,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
         self.name = name
         self.defCurveJoints = []
+        self.parentSpaceInputTgt.childJoints = []
 
         self.controls = []
 
@@ -437,6 +438,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                 controlsList.append(newCtrl)
 
                 newDef = Joint(self.name + defName + "_" + ctrlType.replace("Def",""), parent= self.mouthDef)
+                self.parentSpaceInputTgt.childJoints.append(newDef)
                 newDef.setComponent(self)
                 newDef.constrainTo(newCtrl)
 
@@ -459,7 +461,9 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                         newNBoneDefParent = self.defNBoneJoints[i-1]
 
                     # newNBoneDef = Joint(self.name + '_'  + defName, parent=self.deformersParent)
+                    newNBoneDef.setComponent(self)
                     newNBoneDef = Joint(self.name + defName, parent=newNBoneDefParent)
+                    self.parentSpaceInputTgt.childJoints.append(newNBoneDef)
                     newNBoneDef.xfo = data[defName + "Xfo"]
                     self.defNBoneJoints.append(newNBoneDef)
 
@@ -569,6 +573,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                 parent = self.defCurveJoints[-1]
             name = str(i).zfill(2)
             multiFKDef = Joint(self.name + name, parent=parent)
+            self.parentSpaceInputTgt.childJoints.append(multiFKDef)
             multiFKDef.setComponent(self)
             self.defCurveJoints.append(multiFKDef)
 
@@ -823,7 +828,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
         # if not self.controlHierarchy or i ==0:
         self.controls[0].getParent().constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
-        self.parentSpaceInputTgt.childJoints = [self.defBones[0]]
+        self.parentSpaceInputTgt.childJoints = self.defBones
 
 
         if data["contstrainFirstControl"]:

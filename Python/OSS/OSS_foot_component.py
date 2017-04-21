@@ -329,7 +329,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
         Profiler.getInstance().push("Construct Leg Rig Component:" + name)
         super(OSSFootComponentRig, self).__init__(name, parent)
-
+        self.name = name
 
         # =========
         # Controls
@@ -430,18 +430,18 @@ class OSSFootComponentRig(OSSFootComponent):
         # Deformers
         # ==========
 
-        self.footDef = Joint('foot', parent=self.deformersLayer)
+        self.footDef = Joint(self.name, parent=self.deformersLayer)
         self.footDef.setComponent(self)
         self.footDef.constrainTo(self.foot_cmpOut)
         self.foot_cmpOut.parentJoint =  self.footDef
 
 
-        self.ballDef = Joint('ball', parent=self.footDef)
+        self.ballDef = Joint(self.name + 'ball', parent=self.footDef)
         self.ballDef.setComponent(self)
         self.ballDef.constrainTo(self.ball_cmpOut)
         self.ball_cmpOut.parentJoint =  self.ballDef
 
-        self.ballEndDef = Joint('ballend', parent=self.ballDef)
+        self.ballEndDef = Joint(self.name + 'ballend', parent=self.ballDef)
         self.ballEndDef.setComponent(self)
         self.ballEndDef.constrainTo(self.ballEnd_cmpOut)
         self.ballEnd_cmpOut.parentJoint =  self.ballEndDef
