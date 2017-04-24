@@ -285,12 +285,10 @@ class KGraphViewWidget(GraphViewWidget):
             try:
                 self._guideBuilder.getConfig().setMetaData('ErrorOnClashingNames', self.window().preferences.getPreferenceValue('clashing_names_error'))
                 self._guideBuilder.getConfig().setMetaData('WarningOnClashingNames', self.window().preferences.getPreferenceValue('clashing_names_warning'))
-                self._guideBuilder.build(rig)
+                self._guideBuilder.build(self.guideRig)
             finally:
                 self._guideBuilder.getConfig().setMetaData('ErrorOnClashingNames', cur_clash_error_pref)
                 self._guideBuilder.getConfig().setMetaData('WarningOnClashingNames', cur_clash_warning_pref)
-
-            self._guideBuilder.build(self.guideRig)
 
             logger.inform('Guide Rig Build Success')
 
