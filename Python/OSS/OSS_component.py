@@ -607,9 +607,6 @@ class OSS_Component(BaseExampleComponent):
                     if controlName not in transformOps.keys():
                         # if we get any transform Attrs, we need to build a LocalTransformSolver to get the local space from the src node
                         transformOps[controlName] = self.createLocalTransformSolver(controlName, control)
-                    print "srcAttr: %s"%(srcAttr)
-                    print "drivingAttr %s"%(drivingAttr)
-
 
                     transformOps[controlName].setOutput(srcAttr, drivingAttr)
                     # try:

@@ -67,7 +67,6 @@ class OSSFootComponentGuide(OSSFootComponent):
         Profiler.getInstance().push("Construct Foot Guide Component:" + name)
         super(OSSFootComponentGuide, self).__init__(name, parent)
 
-
         # =========
         # Controls
         # ========
@@ -79,6 +78,9 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         # Guide Controls
         # Guide Controls must have a consistent and unique name so that their data can be set and stored regardless of config settings
+        self.ballName = StringAttribute('ballName', value="ball", parent=self.guideSettingsAttrGrp)
+        self.heelName = StringAttribute('heelName', value="heel", parent=self.guideSettingsAttrGrp)
+
         self.footCtrl = Control(self.getName(), parent=self.ctrlCmpGrp, shape="sphere")
         self.pivotCtrl = Control("pivot", parent=self.ctrlCmpGrp, shape="circle")  #don't set metaData here
         self.ballFKCtrl = Control('ball', parent=self.ctrlCmpGrp, shape="sphere")
@@ -104,6 +106,7 @@ class OSSFootComponentGuide(OSSFootComponent):
                 "handleXfo" : Xfo(Vec3(1.85, 0.0, -1.6)),
                }
 
+        
         self.loadData(data)
 
         Profiler.getInstance().pop()
@@ -123,17 +126,12 @@ class OSSFootComponentGuide(OSSFootComponent):
 
         data = super(OSSFootComponentGuide, self).saveData()
 
-        data['footXfo'] = self.footCtrl.xfo
-        data['pivotXfo'] = self.pivotCtrl.xfo
-        data['ballXfo'] = self.ballFKCtrl.xfo
-        data['ballTipXfo'] = self.ballTipCtrl.xfo
-        data['heelPivotXfo'] = self.heelPivotCtrl.xfo
-        data['ballTipPivotXfo'] = self.ballTipPivotCtrl.xfo
-        data['innerPivotXfo'] = self.innerPivotCtrl.xfo
-        data['outerPivotXfo'] = self.outerPivotCtrl.xfo
-        data['handleXfo'] = self.handleCtrl.xfo
+        # this should live in the GuideClase - also should considere Inherited Types
+        data = self.saveAllObjectData(data, "Control")
+        data = self.saveAllObjectData(data, "Transform")
 
         return data
+
 
 
     def loadData(self, data):
@@ -146,53 +144,35 @@ class OSSFootComponentGuide(OSSFootComponent):
         True if successful.
 
         """
-        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
-        for ctrl in self.getHierarchyNodes(classType="Control"):
-            ctrl.setShape(ctrl.getShape())
-
         #Grab the guide settings in case we want to use them here (and are not stored in data arg)
         existing_data = self.saveData()
         existing_data.update(data)
         data = existing_data
 
-        super(OSSFootComponentGuide, self).loadData( data )
-
-        if "footXfo" in data.keys():
-            self.footCtrl.xfo = data['footXfo']
-        if "pivotXfo" in data.keys():
-            self.pivotCtrl.xfo = data['pivotXfo']
-        if "ballXfo" in data.keys():
-            self.ballFKCtrl.xfo = data['ballXfo']
-        if "ballTipXfo" in data.keys():
-            self.ballTipCtrl.xfo = data['ballTipXfo']
-        if "heelPivotXfo" in data.keys():
-            self.heelPivotCtrl.xfo = data['heelPivotXfo']
-        if "ballTipPivotXfo" in data.keys():
-            self.ballTipPivotCtrl.xfo = data['ballTipPivotXfo']
-        if "innerPivotXfo" in data.keys():
-            self.innerPivotCtrl.xfo = data['innerPivotXfo']
-        if "outerPivotXfo" in data.keys():
-            self.outerPivotCtrl.xfo = data['outerPivotXfo']
-        if "handleXfo" in data.keys():
-            self.handleCtrl.xfo = data['handleXfo']
-
 
         globalScale = self.globalComponentCtrlSizeInputAttr.getValue()
         globalScaleVec =Vec3(globalScale, globalScale, globalScale)
 
-        self.footCtrl.scalePoints(globalScaleVec)
-        self.pivotCtrl.scalePoints(globalScaleVec)
-        self.ballFKCtrl.scalePoints(globalScaleVec)
-        self.ballTipCtrl.scalePoints(globalScaleVec)
-        self.heelPivotCtrl.scalePoints(globalScaleVec)
-        self.ballTipPivotCtrl.scalePoints(globalScaleVec)
-        self.innerPivotCtrl.scalePoints(globalScaleVec)
-        self.outerPivotCtrl.scalePoints(globalScaleVec)
-        self.handleCtrl.scalePoints(globalScaleVec)
+        #Reset all shapes, but really we should just recreate all controls from loadData instead of init
+        for ctrl in self.getHierarchyNodes(classType="Control"):
+            ctrl.setShape(ctrl.getShape())
+            ctrl.scalePoints(globalScaleVec)
 
+        #saveData() will grab the guide settings values (and are not stored in data arg)
+        existing_data = self.saveData()
+        existing_data.update(data)
+        data = existing_data
+
+
+        super(OSSFootComponentGuide, self).loadData( data )
+
+        self.loadAllObjectData(data, "Control")
+        self.loadAllObjectData(data, "Transform")
         self.handleCtrl.scalePoints(Vec3(data["ikHandleSize"], data["ikHandleSize"], data["ikHandleSize"]))
 
         return True
+
+
 
 
 
@@ -280,19 +260,28 @@ class OSSFootComponentGuide(OSSFootComponent):
         #if self.getLocation() == 'R':
         #    handleXfo.ori = handleXfo.ori.mirror(0)
 
-        data['footXfo'] = footXfo
-        data['ballXfo'] = ballXfo
-        data['ballTipXfo'] = ballTipXfo
-        data['heelXfo'] = heelXfo #from ball to foot
-        data['pivotXfo'] = pivotXfo #from ball to foot
-        data['footLen'] = footLen
-        data['ballLen'] = ballLen
-        data['heelPivotXfo'] = heelPivotXfo
-        data['ballPivotXfo'] = ballPivotXfo
+        # ===============
+        # Calculate Xfos
+        # ===============
+
+        # setting Values by Object Type
+        data = self.saveAllObjectData(data, "Control")
+        data = self.saveAllObjectData(data, "Transform")
+
+        # setting Values Directly
+        data['footXfo']         = footXfo
+        data['ballXfo']         = ballXfo
+        data['ballTipXfo']      = ballTipXfo
+        data['heelXfo']         = heelXfo #from ball to foot
+        data['pivotXfo']        = pivotXfo #from ball to foot
+        data['footLen']         = footLen
+        data['ballLen']         = ballLen
+        data['heelPivotXfo']    = heelPivotXfo
+        data['ballPivotXfo']    = ballPivotXfo
         data['ballTipPivotXfo'] = ballTipPivotXfo
-        data['innerPivotXfo'] = innerPivotXfo
-        data['outerPivotXfo'] = outerPivotXfo
-        data['handleXfo'] = handleXfo
+        data['innerPivotXfo']   = innerPivotXfo
+        data['outerPivotXfo']   = outerPivotXfo
+        data['handleXfo']       = handleXfo
 
         return data
 
@@ -329,11 +318,32 @@ class OSSFootComponentRig(OSSFootComponent):
 
         Profiler.getInstance().push("Construct Leg Rig Component:" + name)
         super(OSSFootComponentRig, self).__init__(name, parent)
-        self.name = name
+
+    # =============
+    # Data Methods
+    # =============
+    def loadData(self, data=None):
+        """Load a saved guide representation from persisted data.
+
+        Arguments:
+        data -- object, The JSON data object.
+
+        Return:
+        True if successful.
+
+        """
+
+        super(OSSFootComponentRig, self).loadData( data )
+
+        self.ballName = data['ballName']
+        self.heelName = data['heelName']
+
+        self.name = data["name"]
 
         # =========
         # Controls
         # =========
+
 
         # IK Handle
         self.handleCtrl = IKControl(self.getName(), parent=self.ctrlCmpGrp, shape="jack")
@@ -346,21 +356,21 @@ class OSSFootComponentRig(OSSFootComponent):
         self.footSpace = self.footCtrl.insertSpace(name="foot_fk") #avoid name clash with ik spacectrl
 
         # IK Heel
-        self.heelCtrl = IKControl('heel', parent=self.ctrlCmpGrp, shape="cube")
+        self.heelCtrl = IKControl(self.heelName, parent=self.ctrlCmpGrp, shape="cube")
         self.heelCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.heelSpace = self.heelCtrl.insertSpace()
 
         # FK Ball
-        self.ballFKCtrl = FKControl('ball', parent=self.footCtrl, shape="cube")
+        self.ballFKCtrl = FKControl(self.ballName, parent=self.footCtrl, shape="cube")
         self.ballFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.ballFKSpace = self.ballFKCtrl.insertSpace()
 
         # IK Ball
-        self.ballIKCtrl = IKControl('ball', parent=self.footCtrl, shape="cube")
+        self.ballIKCtrl = IKControl(self.ballName, parent=self.footCtrl, shape="cube")
         self.ballIKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.ballIKSpace = self.ballIKCtrl.insertSpace()
 
-        self.heelIKCtrl_footTransform = Transform('heel_foot_transform', parent=self.heelCtrl)
+        self.heelIKCtrl_footTransform = Transform(self.heelName + '_foot_transform', parent=self.heelCtrl)
 
         self.pivotCtrl = Control(self.getName(), parent=self.handleCtrl, shape="circle", metaData={"altType": "PivotControl"})
         self.pivotCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
@@ -381,7 +391,7 @@ class OSSFootComponentRig(OSSFootComponent):
 
         self.footIKAttr = ScalarAttribute('footIK', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         footRockerAttr = ScalarAttribute('footRocker', value=0.0, minValue=-180.0, maxValue=180.0, parent=self.handleCtrlAttrGrp)
-        ballBreakAttr = ScalarAttribute('ballBreak', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
+        ballBreakAttr = ScalarAttribute(self.ballName+ 'Break', value=45.0, minValue=0, maxValue=90.0, parent=self.handleCtrlAttrGrp)
 
         # Add a component setting option to add these channels later...
         #footBendAttr = ScalarAttribute('footBend', value=0.0, minValue=-180, maxValue=180.0, parent=self.handleCtrlAttrGrp)
@@ -417,11 +427,11 @@ class OSSFootComponentRig(OSSFootComponent):
         # =========
         # Nulls for foot pivot
         # =========
-        self.ballJointTransform = Transform('ballJoint', parent=self.handleCtrl)
+        self.ballJointTransform = Transform(self.ballName+ 'Joint', parent=self.handleCtrl)
         self.footJointTransform = Transform('footJoint', parent=self.handleCtrl)
-        self.heelPivotTransform = Transform('heelPivot', parent=self.handleCtrl)
-        self.ballPivotTransform = Transform('ballPivot', parent=self.handleCtrl)
-        self.ballTipPivotTransform = Transform('ballTipPivot', parent=self.handleCtrl)
+        self.heelPivotTransform = Transform(self.heelName + 'Pivot', parent=self.handleCtrl)
+        self.ballPivotTransform = Transform(self.ballName+ 'Pivot', parent=self.handleCtrl)
+        self.ballTipPivotTransform = Transform(self.ballName+ 'TipPivot', parent=self.handleCtrl)
         self.innerPivotTransform = Transform('innerPivot', parent=self.handleCtrl)
         self.outerPivotTransform = Transform('outerPivot', parent=self.handleCtrl)
 
@@ -436,12 +446,12 @@ class OSSFootComponentRig(OSSFootComponent):
         self.foot_cmpOut.parentJoint =  self.footDef
 
 
-        self.ballDef = Joint(self.name + 'ball', parent=self.footDef)
+        self.ballDef = Joint(self.name + 'Ball', parent=self.footDef)
         self.ballDef.setComponent(self)
         self.ballDef.constrainTo(self.ball_cmpOut)
         self.ball_cmpOut.parentJoint =  self.ballDef
 
-        self.ballEndDef = Joint(self.name + 'ballend', parent=self.ballDef)
+        self.ballEndDef = Joint(self.name + 'BallEnd', parent=self.ballDef)
         self.ballEndDef.setComponent(self)
         self.ballEndDef.constrainTo(self.ballEnd_cmpOut)
         self.ballEnd_cmpOut.parentJoint =  self.ballEndDef
@@ -480,9 +490,9 @@ class OSSFootComponentRig(OSSFootComponent):
         #self.footRockerKLOp.setInput('footTilt', footTiltAttr)
         #self.footRockerKLOp.setInput('footSwivel', footSwivelAttr)
 
-        #self.footRockerKLOp.setInput('ballBend', ballBendAttr)
-        #self.footRockerKLOp.setInput('ballTwist', ballTwistAttr)
-        #self.footRockerKLOp.setInput('ballSwivel', ballSwivelAttr)
+        #self.footRockerKLOp.setInput(self.ballName+ 'Bend', ballBendAttr)
+        #self.footRockerKLOp.setInput(self.ballName+ 'Twist', ballTwistAttr)
+        #self.footRockerKLOp.setInput(self.ballName+ 'Swivel', ballSwivelAttr)
 
         # Add Xfo Inputs
 
@@ -532,23 +542,6 @@ class OSSFootComponentRig(OSSFootComponent):
 
 
 
-        Profiler.getInstance().pop()
-
-    # =============
-    # Data Methods
-    # =============
-    def loadData(self, data=None):
-        """Load a saved guide representation from persisted data.
-
-        Arguments:
-        data -- object, The JSON data object.
-
-        Return:
-        True if successful.
-
-        """
-
-        super(OSSFootComponentRig, self).loadData( data )
 
         self.mocap = bool(data["mocap"])
 
