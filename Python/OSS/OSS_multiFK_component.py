@@ -319,7 +319,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
         self.name = name
         self.defCurveJoints = []
         self.parentSpaceInputTgt.childJoints = []
-
+        
         self.controls = []
 
         self.curveBoneOutputs = []
@@ -433,12 +433,11 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                 return True
 
             for i, defName in enumerate(defControlNameList):
-                newCtrl = Locator(self.name + defName + "_" + ctrlType.replace("Def",""), parent= self.ctrlCmpGrp)
+                newCtrl = Locator(defName + "_" + ctrlType.replace("Def",""), parent= self.ctrlCmpGrp)
                 newCtrl.setShapeVisibility(False)
                 controlsList.append(newCtrl)
 
-                newDef = Joint(self.name + defName + "_" + ctrlType.replace("Def",""), parent= self.mouthDef)
-                self.parentSpaceInputTgt.childJoints.append(newDef)
+                newDef = Joint(defName + "_" + ctrlType.replace("Def",""), parent= self.mouthDef)
                 newDef.setComponent(self)
                 newDef.constrainTo(newCtrl)
 
@@ -460,10 +459,9 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                     elif not i > numCtrls-1:
                         newNBoneDefParent = self.defNBoneJoints[i-1]
 
-                    # newNBoneDef = Joint(self.name + '_'  + defName, parent=self.deformersParent)
+                    newNBoneDef = Joint(defName, parent=self.deformersParent)
                     newNBoneDef.setComponent(self)
-                    newNBoneDef = Joint(self.name + defName, parent=newNBoneDefParent)
-                    self.parentSpaceInputTgt.childJoints.append(newNBoneDef)
+                    newNBoneDef = Joint(defName, parent=newNBoneDefParent)
                     newNBoneDef.xfo = data[defName + "Xfo"]
                     self.defNBoneJoints.append(newNBoneDef)
 
@@ -472,14 +470,14 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
                 if self.exposeControls:
                     if bool(data['isIKChain']) and (i == numCtrls-1) and not bool(data["popLastControl"]):
-                        newCtrl = IKControl(self.name + defName, parent=self.ctrlCmpGrp, shape="squarePointed")
+                        newCtrl = IKControl(defName, parent=self.ctrlCmpGrp, shape="squarePointed")
                         newCtrl.setColor("green")
                         newCtrl.setShape("jack")
                     else:
                         if (i==0 and bool(data["popFirstControl"])) or ((i==numCtrls-1) and bool(data["popLastControl"])):
-                            newCtrl = Transform(self.name + defName, parent=parent)
+                            newCtrl = Transform(defName, parent=parent)
                         else:
-                            newCtrl = Control(self.name + defName, parent=parent, shape="squarePointed")
+                            newCtrl = Control(defName, parent=parent, shape="squarePointed")
 
                     try:
                         newCtrl.setColor("gold")
@@ -489,7 +487,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                         print e
 
                 else:
-                    newCtrl = Transform(self.name + defName, parent=parent)
+                    newCtrl = Transform(defName, parent=parent)
 
                 newCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["YXZ"])  #Set with component settings later
                 newCtrl.xfo = data[defName + "Xfo"]
@@ -798,8 +796,8 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
 
         if bool(data['isCurveChain']):
-            self.baseOutputTgt.constrainTo(self.curveBoneOutputs[0])
-            self.endOutputTgt.constrainTo(self.curveBoneOutputs[-1])
+            # self.baseOutputTgt.constrainTo(self.curveBoneOutputs[0])
+            # self.endOutputTgt.constrainTo(self.curveBoneOutputs[-1])
 
             for i in xrange(len(self.curveBoneOutputs)):
                 self.defBones = self.defCurveJoints
@@ -815,8 +813,9 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
 
         if bool(data['isIKChain']):
-            self.baseOutputTgt.constrainTo(self.nboneOutputsTgt[0])
-            self.endOutputTgt.constrainTo(self.nboneOutputsTgt[-1])
+            # self.baseOutputTgt.constrainTo( self.nboneOutputsTgt[0])
+            # self.endOutputTgt.constrainTo( self.nboneOutputsTgt[-1])
+
             for i in xrange(len(self.nboneOutputsTgt)):
                 constraint = self.defNBoneJoints[i].constrainTo(self.nboneOutputsTgt[i])
                 constraint.evaluate()
