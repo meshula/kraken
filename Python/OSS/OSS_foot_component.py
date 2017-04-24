@@ -80,6 +80,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         # Guide Controls must have a consistent and unique name so that their data can be set and stored regardless of config settings
         self.ballName = StringAttribute('ballName', value="ball", parent=self.guideSettingsAttrGrp)
         self.heelName = StringAttribute('heelName', value="heel", parent=self.guideSettingsAttrGrp)
+        self.footName = StringAttribute('footName', value="foot", parent=self.guideSettingsAttrGrp)
 
         self.footCtrl = Control(self.getName(), parent=self.ctrlCmpGrp, shape="sphere")
         self.pivotCtrl = Control("pivot", parent=self.ctrlCmpGrp, shape="circle")  #don't set metaData here
@@ -335,10 +336,10 @@ class OSSFootComponentRig(OSSFootComponent):
 
         super(OSSFootComponentRig, self).loadData( data )
 
+        self.footName = data['footName']
         self.ballName = data['ballName']
         self.heelName = data['heelName']
 
-        self.name = data["name"]
 
         # =========
         # Controls
@@ -440,18 +441,18 @@ class OSSFootComponentRig(OSSFootComponent):
         # Deformers
         # ==========
 
-        self.footDef = Joint(self.name, parent=self.deformersLayer)
+        self.footDef = Joint(self.footName, parent=self.deformersLayer)
         self.footDef.setComponent(self)
         self.footDef.constrainTo(self.foot_cmpOut)
         self.foot_cmpOut.parentJoint =  self.footDef
 
 
-        self.ballDef = Joint(self.name + 'Ball', parent=self.footDef)
+        self.ballDef = Joint(self.ballName, parent=self.footDef)
         self.ballDef.setComponent(self)
         self.ballDef.constrainTo(self.ball_cmpOut)
         self.ball_cmpOut.parentJoint =  self.ballDef
 
-        self.ballEndDef = Joint(self.name + 'BallEnd', parent=self.ballDef)
+        self.ballEndDef = Joint(self.ballName + 'End', parent=self.ballDef)
         self.ballEndDef.setComponent(self)
         self.ballEndDef.constrainTo(self.ballEnd_cmpOut)
         self.ballEnd_cmpOut.parentJoint =  self.ballEndDef
