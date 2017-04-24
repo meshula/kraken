@@ -5,6 +5,7 @@
 
 import os
 import json
+import collections
 
 from kraken.ui.Qt import QtGui, QtWidgets, QtCore
 
@@ -52,7 +53,8 @@ class PreferenceEditor(QtWidgets.QDialog):
         # Add widgets based on type here
         preferences = self.parentWidget().window().preferences.getPreferences()
         i = 0
-        for k, v in preferences.iteritems():
+        sortedPrefs = collections.OrderedDict(sorted(preferences.items(), key=lambda p: p[0]))
+        for k, v in sortedPrefs.iteritems():
             labelFrameWidget = QtWidgets.QFrame()
             labelFrameWidget.setObjectName('prefLabelWidgetFrame')
             labelFrameWidget.setFrameStyle(QtWidgets.QFrame.NoFrame | QtWidgets.QFrame.Plain)
@@ -63,7 +65,7 @@ class PreferenceEditor(QtWidgets.QDialog):
             prefLabel.setProperty('labelClass', 'preferenceLabel')
             prefLabel.setObjectName(k + "_label")
             prefLabel.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
-            prefLabel.setMinimumWidth(200)
+            prefLabel.setMinimumWidth(300)
 
             labelFrameLayout.addWidget(prefLabel)
             labelFrameWidget.setLayout(labelFrameLayout)
