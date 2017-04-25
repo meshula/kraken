@@ -126,12 +126,12 @@ function OSS_WeightedAverageMat44KLSolver.solve!
     // setting up the target matrices, adding offset (original rest position)
     Xfo xfo;
     xfos.push(xfo.setFromMat44(mats[i]*restMatLocal));
-    clampedWeight = Math_clamp(matWeights[i], 0, 1 );
+    clampedWeight = Math_clamp(matWeights[i], 0.0, 1.0 );
     normMatWeights.push(clampedWeight);
     weightSum += clampedWeight;
   }
 
-  normMatWeights[0] = 1.0 - Math_clamp(weightSum, 0, 1 );
+  normMatWeights[0] = 1.0 - Math_clamp(weightSum, 0.0, 1.0 );
   normMatWeights.normalizeScalarArray();
 
   UInt32 s = xfos.size();
