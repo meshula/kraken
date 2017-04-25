@@ -688,9 +688,9 @@ class Builder(object):
                         if item.getComponent():
                             componentName = item.getComponent().getName() + item.getComponent().getNameDecoration()
                         if item.isTypeOf("Object3D"):
-                            message += "\n    %s: %s: %s" % (item.getBuildPath(), componentName, item)
+                            message += "\n    %s  (%s)  %s" % (item.getBuildPath(), componentName, item)
                         else:
-                            message += "\n    %s: %s: %s" % (item.getBuildName(), componentName, item)
+                            message += "\n    %s  (%s)  %s" % (item.getBuildName(), componentName, item)
 
             if error:
                 logger.error(message)
