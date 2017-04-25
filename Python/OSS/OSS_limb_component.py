@@ -343,8 +343,8 @@ class OSSLimbComponentRig(OSSLimbComponent):
 
 
         # lolimbIK
-        self.lolimbIKSpace = Space(self.lolimbName+'IK', parent=self.ctrlCmpGrp)
-        self.lolimbIKCtrl = FKControl(self.lolimbName+'IK', parent=self.lolimbIKSpace, shape="circle", scale=globalScale*0.8)
+        self.lolimbIKCtrl = IKControl(self.lolimbName, parent=self.ctrlCmpGrp, shape="circle", scale=globalScale*0.8)
+        self.lolimbIKSpace = self.lolimbIKCtrl.insertSpace(name=self.lolimbName+"_ik")
         self.lolimbIKSpace.xfo = data['lolimbXfo']
         self.lolimbIKCtrl.xfo = data['lolimbXfo']
         self.lolimbIKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XZY"])  #Set with component settings later

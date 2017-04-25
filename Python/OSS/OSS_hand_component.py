@@ -391,13 +391,13 @@ class OSSHandComponentRig(OSSHandComponent):
         # =========
 
         # IK Handle
-        self.handleCtrl = IKControl("hand", parent=self.ctrlCmpGrp, shape="jack")
+        self.handleCtrl = IKControl(self.getName(), parent=self.ctrlCmpGrp, shape="jack")
         self.handleCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later careful when combining with foot!
         self.handleSpace = self.handleCtrl.insertSpace(name="hand_ik") # To avoid clashes
-        self.handleIKSpace = Space('handIK', parent=self.handleCtrl)
+        self.handleIKSpace = Space('hand_orient_in_ik', parent=self.handleCtrl)  # Not a good way to use ik and space suffixes Hmmm...
 
         # FK Hand
-        self.handCtrl = FKControl('hand', parent=self.ctrlCmpGrp, shape="cube")
+        self.handCtrl = FKControl(self.getName(), parent=self.ctrlCmpGrp, shape="cube")
         self.handCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.handCtrl.alignOnXAxis()
         self.handSpace = self.handCtrl.insertSpace(name="hand_fk")
@@ -409,7 +409,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.palmSpace = self.palmCtrl.insertSpace()
 
         # IK palm
-        self.palmIKSpace = Space('palmIK', parent=self.handleIKSpace)
+        self.palmIKSpace = Space('palmIK', parent=self.handleCtrl)
 
 
         # Rig Ref objects
@@ -431,7 +431,7 @@ class OSSHandComponentRig(OSSHandComponent):
         self.stretchAttr = ScalarAttribute('stretch', value=0.0, minValue=0.0, maxValue=1.0, parent=self.handleCtrlAttrGrp)
         self.stretch_cmpOutAttr.connect(self.stretchAttr)
 
-        self.ikGoalRefTransform = Transform('ikGoalRef', parent=self.handleCtrl)
+        self.ikGoalRefTransform = Transform(self.getName()+'_ikGoalRef', parent=self.handleCtrl)
 
         handDrawDebugInputAttr = BoolAttribute('drawDebug', value=False, parent=self.handleCtrlAttrGrp)
         self.drawDebugInputAttr.connect(handDrawDebugInputAttr)
@@ -439,7 +439,7 @@ class OSSHandComponentRig(OSSHandComponent):
         # Deformers
         # ==========
 
-        self.handDef = Joint('hand', parent=self.deformersParent)
+        self.handDef = Joint(self.getName(), parent=self.deformersParent)
         self.handDef.setComponent(self)
         self.handDef.constrainTo(self.hand_cmpOut, maintainOffset=False)
         self.hand_cmpOut.parentJoint =  self.handDef
@@ -510,7 +510,7 @@ class OSSHandComponentRig(OSSHandComponent):
 
         self.handCtrl.xfo.ori.getZaxis()
 
-        
+
 
 
         for i, digitName in enumerate(digitNameList):

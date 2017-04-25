@@ -106,7 +106,7 @@ class OSSMouthGuide(OSSMouth):
 
         self.L_cheekBone = Control('cheekBone', parent=self.lipsCtrl, metaData={"altLocation":"L"})
         self.R_cheekBone = Control('cheekBone', parent=self.lipsCtrl, metaData={"altLocation":"R"})
-        
+
         self.L_mandible = Control('mandible', parent=self.lipsCtrl, metaData={"altLocation":"L"})
         self.R_mandible = Control('mandible', parent=self.lipsCtrl, metaData={"altLocation":"R"})
 
@@ -496,7 +496,7 @@ class OSSMouthRig(OSSMouth):
                 createControl(ctrlName, side="L")
 
             createControl("Mid")
-            
+
             for ctrlName in rSideControls:
                 createControl(ctrlName, side="R")
 
@@ -606,7 +606,11 @@ class OSSMouthRig(OSSMouth):
 
         Level1CtrlsRot = []
         for c in Level1Ctrls:
-            Level1CtrlsRot.append(Transform(c.getName()+ 'Rot', parent=c))
+            Rot = Transform(c.getName()+ 'Rot', parent=c)
+            side = c.getMetaDataItem("altLocation")
+            if side:
+                Rot.setMetaDataItem("altLocation", side)
+            Level1CtrlsRot.append(Rot)
 
 
         for c in Level1CtrlsRot:
@@ -724,7 +728,7 @@ class OSSMouthRig(OSSMouth):
         self.L_MouthOffsetSpace = Space('MouthOffset', parent=self.midMouthSpace, metaData={"altLocation":"L"})
         self.L_MouthSpace = Space('Mouth', parent=self.midMouthSpace, metaData={"altLocation":"L"})
         self.L_MouthCtrl = Control('Mouth', parent=self.L_MouthSpace, shape="circle", scale=0.5, metaData={"altLocation":"L"})
-        self.L_MouthCornerSpace = Space('Mouth', parent=self.L_MouthCtrl, metaData={"altLocation":"L"})
+        self.L_MouthCornerSpace = Space('MouthCorner', parent=self.L_MouthCtrl, metaData={"altLocation":"L"})
         self.L_MouthCornerCtrl = Control('MouthCorner', parent=self.L_MouthCornerSpace, shape="circle", scale=0.125, metaData={"altLocation":"L"})
         self.L_MouthCtrl.setColor("mediumseagreen")
 
@@ -733,7 +737,7 @@ class OSSMouthRig(OSSMouth):
         self.R_MouthOffsetSpace = Space('MouthOffset', parent=self.midMouthSpace, metaData={"altLocation":"R"})
         self.R_MouthSpace = Space('Mouth', parent=self.midMouthSpace, metaData={"altLocation":"R"})
         self.R_MouthCtrl = Control('Mouth', parent=self.R_MouthSpace, shape="circle", scale=0.5, metaData={"altLocation":"R"})
-        self.R_MouthCornerSpace = Space('Mouth', parent=self.R_MouthCtrl, metaData={"altLocation":"R"})
+        self.R_MouthCornerSpace = Space('MouthCorner', parent=self.R_MouthCtrl, metaData={"altLocation":"R"})
         self.R_MouthCornerCtrl = Control('MouthCorner', parent=self.R_MouthCornerSpace, shape="circle", scale=0.125, metaData={"altLocation":"R"})
         self.R_MouthCtrl.setColor("mediumvioletred")
 

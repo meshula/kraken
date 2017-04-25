@@ -256,7 +256,7 @@ class OSSHeadNeckComponentRig(OSSHeadNeckComponent):
         self.HeadIKAttr = ScalarAttribute('headIK', value=0.0, minValue=0.0, maxValue=1.0, parent=headNeckSettingsAttrGrp)
 
         self.headWorldRef = Space('headWorldRef', parent=self.ctrlCmpGrp)
-        self.headFKToWorldRef = Space('FKToWorldRef', parent=self.ctrlCmpGrp)
+        self.headFKToWorldRef = Space(self.getName()+'FKToWorldRef', parent=self.ctrlCmpGrp)
         self.headFKRef = Space('headFKRef', parent=self.neckCtrl)
         self.headIKRef = Space('headIKRef', parent=self.ctrlCmpGrp)
         self.headIKSpace = Space('headIK', parent=self.ctrlCmpGrp)

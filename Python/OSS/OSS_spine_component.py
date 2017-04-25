@@ -258,7 +258,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
 
 
         self.chestWorldRef = Space('chestWorldRef', parent=self.ctrlCmpGrp)
-        self.chestFKToWorldRef = Space('FKToWorldRef', parent=self.ctrlCmpGrp)
+        self.chestFKToWorldRef = Space(self.getName()+'FKToWorldRef', parent=self.ctrlCmpGrp)
         self.chestFKRef = Space('chestFKRef', parent=self.chestCtrl)
         self.upChestIKRef = Space('upChestIKRef', parent=self.ctrlCmpGrp)
         self.upChestIKSpace = Space('upChestIK', parent=self.ctrlCmpGrp)
@@ -276,8 +276,8 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.upChestIKUpV.lockRotation(x=True, y=True, z=True)
 
         # Neck
-        self.neckSpace = Space('neck', parent=self.ctrlCmpGrp)
-        self.neckSpace.constrainTo(self.upChestCtrlResult, maintainOffset=True)
+        self.spineNeckSpace = Space('spineNeck', parent=self.ctrlCmpGrp)
+        self.spineNeckSpace.constrainTo(self.upChestCtrlResult, maintainOffset=True)
 
 
         # ==========
@@ -435,7 +435,7 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.upChestSpace.xfo.tr = upChestPosition
         self.upChestCtrl.xfo.tr = upChestPosition
 
-        self.neckSpace.xfo.tr = neckPosition
+        self.spineNeckSpace.xfo.tr = neckPosition
         # self.neckCtrl.xfo.tr = neckPosition
 
         # Chest LookAt/Aim Controls
@@ -499,13 +499,13 @@ class OSSSpineComponentRig(OSSSpineComponent):
         self.controlInputs.append(self.torsoCtrl)
         self.controlInputs.append(self.chestCtrl)
         self.controlInputs.append(self.upChestCtrlResult)
-        self.controlInputs.append(self.neckSpace)
+        self.controlInputs.append(self.spineNeckSpace)
 
         self.controlRestInputs.append(self.pelvisSpace.xfo)
         self.controlRestInputs.append(self.torsoCtrl.xfo)
         self.controlRestInputs.append(self.chestCtrl.xfo)
         self.controlRestInputs.append(self.upChestCtrlResult.xfo)
-        self.controlRestInputs.append(self.neckSpace.xfo)
+        self.controlRestInputs.append(self.spineNeckSpace.xfo)
 
         self.rigidMat44s.append(self.controlInputs[0])
         self.rigidMat44s.append(self.controlInputs[-1])

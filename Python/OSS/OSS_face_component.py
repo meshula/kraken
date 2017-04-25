@@ -180,7 +180,7 @@ class OSSFaceComponentGuide(OSSFaceComponent):
                             newCtrl.setShape("circle")
                             newCtrl.scalePoints(Vec3(.5,.5,.5))
                             newCtrl.lockTranslation(x=False, y=False, z=True)
-                            
+
                     elif anCtrlType==3: # Volume
                         if j == 0:
                             newCtrl.setShape("cube")
@@ -383,7 +383,7 @@ class OSSFaceComponentRig(OSSFaceComponent):
         # Controls
         # =========
         # Face
-        self.faceSpace = Space('face', parent=self.ctrlCmpGrp)
+        self.faceSpace = Space(self.getName()+'_face', parent=self.ctrlCmpGrp)
         self.ctrlCmpGrp.setComponent(self)
         # ==========
         # Deformers

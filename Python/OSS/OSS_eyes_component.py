@@ -398,10 +398,9 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     eyeRegionDef.constrainTo(eyeRegionCtrl)
 
 
-                    eyeMidSpace = Control(handleName+'Mid', parent=eyeRegionCtrl, metaData=metaData)
-                    eyeMidCtrlSpace = eyeMidSpace.insertSpace()
+                    eyeMidCtrl = Control(handleName+'Mid', parent=eyeRegionCtrl, metaData=metaData)
 
-                    eyeSocketSpace = Transform(handleName+'Socket', parent=eyeMidSpace, metaData=metaData)
+                    eyeSocketSpace = Transform(handleName+'Socket', parent=eyeMidCtrl, metaData=metaData)
                     eyeSocketDef = Joint(handleName+'Socket', parent=self.deformersLayer, metaData={"altLocation": side})
                     eyeSocketDef.constrainTo(eyeSocketSpace)
 
@@ -412,9 +411,9 @@ class OSSEyesComponentRig(OSSEyesComponent):
 
                     fkCtrl = Control(handleName, parent=eyeSocketRefSpace, shape="direction", metaData=metaData)
                     fkCtrlSpace = fkCtrl.insertSpace()
-                    upSpace = Transform(handleName+"_up", parent=eyeSocketRefSpace) 
+                    upSpace = Transform(handleName+"_up", parent=eyeSocketRefSpace, metaData=metaData)
 
-                    
+
 
                     fkCtrl.setShape("direction")
                     fkCtrl.setColor("yellow")
@@ -444,14 +443,14 @@ class OSSEyesComponentRig(OSSEyesComponent):
 
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
                     self.ikBlendAttr = ScalarAttribute(handleName+'IK', value=0.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
-                    
+
                     for obj in [eyeSocketSpace, eyeSocketRefSpace,  eyeRegionCtrl, eyeRegionCtrlSpace, fkCtrl, newDef]:
                         obj.xfo  = data[side + '_' + handleName + 'Xfo']
-                    eyeMidSpace.xfo =  data[side + '_' + handleName + 'MidXfo']
+                    eyeMidCtrl.xfo =  data[side + '_' + handleName + 'MidXfo']
                     upSpace.xfo = fkCtrl.xfo.multiply(Xfo(Vec3(0.0, 1, 0)))
 
-                    eyeMidSpace.xfo = xfoFromDirAndUpV(eyeMidSpace.xfo.tr, eyeSocketSpace.xfo.tr, upSpace.xfo.tr)
-                    eyeMidSpaceCtrlSpace = eyeMidSpace.insertSpace()
+                    eyeMidCtrl.xfo = xfoFromDirAndUpV(eyeMidCtrl.xfo.tr, eyeSocketSpace.xfo.tr, upSpace.xfo.tr)
+                    eyeMidCtrlSpace = eyeMidCtrl.insertSpace()
 
                     # Aligning Head
                     alignOpt = self.createWeightedMatrixConstraint(eyeSocketRefSpace, parent, eyeSocketSpace,  translation = 1, scale = 1, rotation = 0, name=handleName + side +'fkCtrl2SocketSpace')
@@ -464,14 +463,14 @@ class OSSEyesComponentRig(OSSEyesComponent):
                         metaData["altLocation"] = side
                     # break these out more explicitly
                     ikCtrl = Control(handleName, parent=self.eyeTrackerIKSpace, shape="square", metaData=metaData)
-                    ikCtrlEndSpace = ikCtrl.insertSpace()
+                    ikCtrlEndSpace = ikCtrl.insertSpace(name=handleName+"_ik_end")  # Need way to get multiple type tokens like "ik" and "space"
                     ikCtrl.setShape("square")
                     ikCtrl.setColor("red")
                     ikCtrl.lockRotation(x=True, y=True, z=True)
                     ikCtrl.rotatePoints(90,0,0)
                     ikCtrl.scalePoints(Vec3(.5,.5,.5))
                     # newCtrls.append(ikCtrl)
-                    ikCtrlSpace = ikCtrl.insertSpace(shareXfo=False)
+                    ikCtrlSpace = ikCtrl.insertSpace(name=handleName+"_ik", shareXfo=False)
 
 
 
@@ -490,7 +489,7 @@ class OSSEyesComponentRig(OSSEyesComponent):
                 #             print
                 #             # newSocket.xfo = data["eyesCtrlsXfos"][index]
                 #             fkCtrl.xfo = data["eyesCtrlsXfos"][index]
-                #             # eyeMidSpace.xfo = data["eyesCtrlsXfos"][index+1]
+                #             # eyeMidCtrl.xfo = data["eyesCtrlsXfos"][index+1]
                 #             newRef.xfo = data["eyesCtrlsXfos"][index]
                 #             # socketCtrl.xfo = data["eyesCtrlsXfos"][index]
                 #             eyeSocketSpace.xfo = data["eyesCtrlsXfos"][index]
