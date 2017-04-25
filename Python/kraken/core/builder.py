@@ -50,6 +50,7 @@ class Builder(object):
         super(Builder, self).__init__()
         self._buildElements = []
         self._sceneItemsById = {}
+        self._clashingNameItems = {}
 
         self.config = Config.getInstance()
 
@@ -672,15 +673,15 @@ class Builder(object):
             traverser.addRootItem(rootItem)
         traverser.traverse()
 
-        clashingNameItems = traverser.getItemsWithClashingNames()
+        self._clashingNameItems = traverser.getItemsWithClashingNames()
 
-        if clashingNameItems:
+        if self._clashingNameItems:
             error = self.getConfig().getMetaData('ErrorOnClashingNames', False)
             warning = self.getConfig().getMetaData('WarningOnClashingNames', False)
 
             if error or warning:
                 message = "Clashing item names:"
-                for name, items in clashingNameItems.iteritems():
+                for name, items in self._clashingNameItems.iteritems():
                     message += "\n%s:" % name
                     for item in items:
                         componentName = "<no component>"
