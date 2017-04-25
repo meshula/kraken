@@ -58,7 +58,6 @@ class Builder(Builder):
     __names = None
     __objectIdToUid = None
     __uidToName = None
-    __clashingItemNames = {}
     __itemByUniqueId = None
     __klMembers = None
     __klMaxUniqueId = None
@@ -108,11 +107,9 @@ class Builder(Builder):
         self.__klMaxUniqueId = self.__klMaxUniqueId + 1
         return self.__objectIdToUid[objectId]
 
-    def getUniqueName(self, item, earlyExit=False, solveClashWithHierarchy=True):
-        """ If using solveClashWithHierarchy flag,
-        getUniqueName() mut be run on all items before KL code generation
-        and then resolveClashingNames() must be run
-        """
+    def getUniqueName(self, item, earlyExit=False):
+        """These are going to be KL vairable names.  Only Alphanumeric and underscores"""
+
         uid = self.getUniqueId(item)
         if uid in self.__uidToName:
             return self.__uidToName[uid]
@@ -128,7 +125,7 @@ class Builder(Builder):
             owner = item.getParent().getParent() # get 3d obj, skip attrgroup
             # owner KLItem should already exist as all 3d objects are built before any attributes
             # so getting uniqueId here will get the already exiting one for owner
-            name = self.getUniqueName(owner)+'_'+item.getName()
+            name = self.getUniqueName(owner)+'__DOT__'+item.getName()
 
         elif hasattr(item, 'getBuildName'):
             name = item.getBuildName()
@@ -138,17 +135,31 @@ class Builder(Builder):
         if earlyExit:
             return name
 
-        if name in self.__names and solveClashWithHierarchy:
-            # We have a clash
-            # If it's an object3D we want to derive name from hierarchy after all objects are registered
-            # Otherwise, we'll append a number (just like in DCC)
-            if item.isTypeOf("Object3D"):
-                orig_item = self.__nameToItem[name]
-                if orig_item.getBuildPath() != item.getBuildPath():  # as long as they are different hierarchies
-                    if name not in self.__clashingItemNames:
-                        self.__clashingItemNames[name] = [orig_item, item]
-                    else:
-                        self.__clashingItemNames[name].append(item)
+        if name in self._clashingNameItems and item.isTypeOf("Object3D"):
+
+            clashitems = self._clashingNameItems[name]
+            otheritems = list(clashitems)
+            otheritems.remove(item)
+            tokens = item.getBuildPath().split('.')
+            newBuildname = tokens.pop()
+            valid = False
+            while (not valid):
+                valid = True
+                #print("TTPrint: newBuildname: %s" % newBuildname)
+                for other in otheritems:
+                    #print("TTPrint: other.getBuildPath(): %s" % other.getBuildPath())
+
+                    if other.getBuildPath().endswith(newBuildname):
+                        valid = False
+                        break
+
+                if not valid:
+                    newBuildname = tokens.pop()+'|'+newBuildname  # double underscores for node hier sep
+            print("  Name \"%s\" clashes" % name),
+            name = newBuildname.replace('|', '__PIPE__')
+            print("  -- new buildName name: %s" % name.replace("__PIPE__", "|").replace("__DOT__", ".")),
+            print("  -- new var name: %s" % name)
+
 
         namePrefix = name
         nameSuffix = 1
@@ -156,45 +167,10 @@ class Builder(Builder):
             name = namePrefix + str(nameSuffix)
             nameSuffix += 1
 
-        self.__names[name] = item.getDecoratedPath()
+        self.__names[name] = item.getBuildPath()
         self.__uidToName[uid] = name
-        self.__nameToItem[name] = item
 
         return name
-
-    def resolveClashingNames(self):
-        # This doesn't work yet.  path/decorated paths not quite right for this yet
-        for name, items in self.__clashingItemNames.iteritems():
-            print("\nTTPrint: name: %s" % name)
-            for item in items:
-                print("TTPrint: item.getBuildPath():%s %s" % (id(item), item.getBuildPath()))
-
-            for item in items:
-
-                otheritems = list(items)
-                otheritems.remove(item)
-                tokens = item.getBuildPath().split('.')
-                newname = tokens.pop()
-                valid = False
-                while (not valid):
-                    valid = True
-                    #print("TTPrint: newname: %s" % newname)
-                    for other in otheritems:
-                        #print("TTPrint: other.getBuildPath(): %s" % other.getBuildPath())
-
-                        if other.getBuildPath().endswith(newname):
-                            valid = False
-                            break
-
-                    if not valid:
-                        newname = tokens.pop()+'.'+newname
-                print("  newname: %s" % newname)
-
-
-
-
-
-
 
 
     def getUniqueArgMember(self, item, arg, argType):
@@ -642,8 +618,8 @@ class Builder(Builder):
 
         for item in allItems:
             self.__visitItem(item)
-
-        self.resolveClashingNames()
+            # Now that we've visited items in order and established unique names, convert back to "DCC"-like names
+            item["buildName"] = self.getUniqueName(item['sceneItem']).replace("__PIPE__", "|").replace("__DOT__", ".")
 
         # create a map of all of the target / source relation ships
         for id in self.__itemByUniqueId:
@@ -2268,8 +2244,8 @@ class Builder(Builder):
         if kAttribute.isTypeOf("ScalarAttribute") and kAttribute.getMetaDataItem("SCALAR_OUTPUT") is not None:
             self.__krkScalarOutput.append(attr)
 
-        ownerName = attr['sceneItem'].getParent().getParent().getBuildName()
-        name = "%s.%s" % (ownerName, attr['name'])
+        #ownerName = attr['sceneItem'].getParent().getParent().getBuildName()
+        #name = "%s.%s" % (ownerName, attr['name'])
 
         # By default, add the scalar output attributes to the solve list.
         # They may not have any dependents, so this might be the only way they are solved
@@ -2799,7 +2775,6 @@ class Builder(Builder):
         self.__names = {}
         self.__objectIdToUid = {}
         self.__uidToName = {}
-        self.__nameToItem = {}
         self.__itemByUniqueId = None
         self.__klExtensions = []
         self.__klMembers = {'members': {}, 'lookup': {}}
@@ -2868,11 +2843,11 @@ class Builder(Builder):
 
             controlObj = findKLItemByBuildName(control.get("control"))
             if not controlObj:
-                raise("Cannot find control \"%s\"." % control["control"])
+                raise Exception("Cannot find control \"%s\"." % control["control"])
 
             controlJointObj = findKLItemByBuildName(control["control_joint"])
-            if not controlObj:
-                raise("Cannot find control_joint \"%s\" for control \"%s\"." % (control["control_joint"], control["control"]))
+            if not controlJointObj:
+                raise Exception("Cannot find control_joint \"%s\" for control \"%s\"." % (control["control_joint"], control["control"]))
 
             controlName = controlObj['buildName']
             self.__krkGlueObjectData[controlName] = {}

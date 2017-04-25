@@ -719,9 +719,20 @@ class OSS_Component(BaseExampleComponent):
     def createSimpleMathSolver(self, inputA, inputB, mode="ADD", output=None, name=None):
 
         if not name:
-            name = mode
 
-        mathOp = KLOperator('addVis', 'OSS_SimpleMathSolver', 'OSS_Kraken')
+            try:
+                inputAStr = inputA.getParent().getParent().getBuildName()+'_'+inputA.getName()
+            except:
+                inputAStr = str(inputA)
+
+            try:
+                inputBStr = inputB.getParent().getParent().getBuildName()+'_'+inputB.getName()
+            except:
+                inputBStr = str(inputB)
+
+            name = inputAStr+"_"+mode+"_"+inputBStr
+
+        mathOp = KLOperator(name, 'OSS_SimpleMathSolver', 'OSS_Kraken')
 
         self.addOperator(mathOp)
 

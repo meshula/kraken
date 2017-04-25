@@ -51,6 +51,7 @@ class Builder(object):
         super(Builder, self).__init__()
         self._buildElements = []
         self._sceneItemsById = {}
+        self._clashingNameItems = {}
 
         self.config = Config.getInstance()
 
@@ -731,24 +732,24 @@ class Builder(object):
             traverser.addRootItem(rootItem)
         traverser.traverse()
 
-        clashingNameItems = traverser.getItemsWithClashingNames()
+        self._clashingNameItems = traverser.getItemsWithClashingNames()
 
-        if clashingNameItems:
+        if self._clashingNameItems:
             error = self.getConfig().getMetaData('ErrorOnClashingNames', False)
             warning = self.getConfig().getMetaData('WarningOnClashingNames', False)
 
             if error or warning:
                 message = "Clashing item names:"
-                for name, items in clashingNameItems.iteritems():
+                for name, items in self._clashingNameItems.iteritems():
                     message += "\n%s:" % name
                     for item in items:
                         componentName = "<no component>"
                         if item.getComponent():
                             componentName = item.getComponent().getName() + item.getComponent().getNameDecoration()
                         if item.isTypeOf("Object3D"):
-                            message += "\n    %s: %s: %s" % (item.getBuildPath(), componentName, item)
+                            message += "\n    %s  (%s)  %s" % (item.getBuildPath(), componentName, item)
                         else:
-                            message += "\n    %s: %s: %s" % (item.getBuildName(), componentName, item)
+                            message += "\n    %s  (%s)  %s" % (item.getBuildName(), componentName, item)
 
             if error:
                 logger.error(message)
