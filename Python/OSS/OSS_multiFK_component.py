@@ -424,6 +424,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
 
         if ctrlType == "multiFKDeformers":
+
             return True
             defControlNameList = []
 
@@ -432,12 +433,19 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
             if not defControlNameList:  # Nothing to build
                 return True
 
+            numCtrls = len(defControlNameList)
             for i, defName in enumerate(defControlNameList):
+
+                if i == 0:
+                    newNBoneDefParent = self.deformersParent
+                elif not i > numCtrls-1:
+                    newNBoneDefParent = self.defNBoneJoints[i-1]
+
                 newCtrl = Locator(defName + "_" + ctrlType.replace("Def",""), parent= self.ctrlCmpGrp)
                 newCtrl.setShapeVisibility(False)
                 controlsList.append(newCtrl)
 
-                newDef = Joint(defName + "_" + ctrlType.replace("Def",""), parent= self.mouthDef)
+                newDef = Joint(defName + "_" + ctrlType.replace("Def",""), parent= newNBoneDefParent)
                 newDef.setComponent(self)
                 newDef.constrainTo(newCtrl)
 
@@ -456,12 +464,11 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                 if bool(data['isIKChain']):
                     if i == 0:
                         newNBoneDefParent = self.deformersParent
-                    elif not i > numCtrls-1:
-                        newNBoneDefParent = self.defNBoneJoints[i-1]
+                    else:
+                        newNBoneDefParent = self.defNBoneJoints[-1]
 
-                    newNBoneDef = Joint(defName, parent=self.deformersParent)
-                    newNBoneDef.setComponent(self)
                     newNBoneDef = Joint(defName, parent=newNBoneDefParent)
+                    newNBoneDef.setComponent(self)
                     newNBoneDef.xfo = data[defName + "Xfo"]
                     self.defNBoneJoints.append(newNBoneDef)
 
@@ -571,9 +578,9 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                 parent = self.defCurveJoints[-1]
             name = str(i).zfill(2)
             multiFKDef = Joint(self.name + name, parent=parent)
-            self.parentSpaceInputTgt.childJoints.append(multiFKDef)
             multiFKDef.setComponent(self)
             self.defCurveJoints.append(multiFKDef)
+
 
         if hasattr(self, 'NURBSmultiFKKLOp'):  # Check in case this is ever called from Guide callback
             self.NURBSmultiFKKLOp.setInput('params',  self.params)
@@ -796,8 +803,8 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
 
         if bool(data['isCurveChain']):
-            # self.baseOutputTgt.constrainTo(self.curveBoneOutputs[0])
-            # self.endOutputTgt.constrainTo(self.curveBoneOutputs[-1])
+            self.baseOutputTgt.constrainTo(self.curveBoneOutputs[0])
+            self.endOutputTgt.constrainTo(self.curveBoneOutputs[-1])
 
             for i in xrange(len(self.curveBoneOutputs)):
                 self.defBones = self.defCurveJoints
@@ -813,8 +820,8 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
 
         if bool(data['isIKChain']):
-            # self.baseOutputTgt.constrainTo( self.nboneOutputsTgt[0])
-            # self.endOutputTgt.constrainTo( self.nboneOutputsTgt[-1])
+            self.baseOutputTgt.constrainTo( self.nboneOutputsTgt[0])
+            self.endOutputTgt.constrainTo( self.nboneOutputsTgt[-1])
 
             for i in xrange(len(self.nboneOutputsTgt)):
                 constraint = self.defNBoneJoints[i].constrainTo(self.nboneOutputsTgt[i])
@@ -827,8 +834,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
         # if not self.controlHierarchy or i ==0:
         self.controls[0].getParent().constrainTo(self.parentSpaceInputTgt, maintainOffset=True)
 
-        self.parentSpaceInputTgt.childJoints = self.defBones
-
+        self.parentSpaceInputTgt.childJoints = [self.defBones[0]]
 
         if data["contstrainFirstControl"]:
             self.contstrainFirstControl_cmpIn = self.createInput('firstControlXfo', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
