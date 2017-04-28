@@ -231,8 +231,7 @@ class Node(QtWidgets.QGraphicsWidget):
     def setGraphPos(self, graphPos):
         self.prepareConnectionGeometryChange()
         size = self.size()
-        self.setTransform(QtGui.QTransform.fromTranslate(graphPos.x()-(size.width()*0.5), graphPos.y()-(size.height()*0.5)), False)
-
+        self.setTransform(QtGui.QTransform.fromTranslate(graphPos.x(), graphPos.y()), False)
 
     def translate(self, x, y):
         self.prepareConnectionGeometryChange()
