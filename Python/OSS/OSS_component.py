@@ -67,7 +67,7 @@ class OSS_Component(BaseExampleComponent):
 
 
 
-    def convertToStringList(self, inputString):
+    def convertToStringList(self, inputString, prefix = '', suffix = '', camelCase = True, joinStr = '_'):
         """ tokenizes string argument, returns a list"""
         stringList = re.split(r'[ ,:;]+', inputString)
 
@@ -77,7 +77,7 @@ class OSS_Component(BaseExampleComponent):
                 # Eventaully specific exception just for component class that display component name, etc.
                 raise ValueError("inputString \""+name+"\" contains non-alphanumeric characters in component \""+self.getName()+"\"")
 
-        stringList = [x for x in stringList if x != ""]
+        stringList = [joinStr.join(filter(None, [prefix, x, suffix])) for x in stringList if x != ""]
 
         if len(stringList) > len(set(stringList)):
             raise ValueError("Duplicate names in inputString in component \""+self.getName()+"\"")

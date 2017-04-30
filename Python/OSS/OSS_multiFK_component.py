@@ -75,6 +75,7 @@ class OSSmultiFKComponentGuide(OSSmultiFKComponent):
         # Controls
         # ========
         self.name = name
+        self.addPartialJoints = BoolAttribute('addPartialJoints', value=False, parent=self.guideSettingsAttrGrp)
         self.multiFKCtrlNames = StringAttribute('multiFKCtrlNames', value="A B C D", parent=self.guideSettingsAttrGrp)
         self.numDeformersAttr = IntegerAttribute('numDeformers', value=6, minValue=0, maxValue=99, parent=self.guideSettingsAttrGrp)
         self.popFirstControl = BoolAttribute('popFirstControl', value=False, parent=self.guideSettingsAttrGrp)
@@ -84,6 +85,7 @@ class OSSmultiFKComponentGuide(OSSmultiFKComponent):
         self.exposeControls = BoolAttribute('exposeControls', value=True, parent=self.guideSettingsAttrGrp)
         self.isCurveChain = BoolAttribute('isCurveChain', value=True, parent=self.guideSettingsAttrGrp)
         self.isIKChain = BoolAttribute('isIKChain', value=False, parent=self.guideSettingsAttrGrp)
+        self.rootIKIndexAttr = IntegerAttribute('rootIKIndex', value=0, minValue=0, maxValue=10, parent=self.guideSettingsAttrGrp)
         self.tweakControls = BoolAttribute('tweakControls', value=False, parent=self.guideSettingsAttrGrp)
         self.useOtherIKGoalInput = BoolAttribute('useOtherIKGoal', value=False, parent=self.guideSettingsAttrGrp)
         self.controlSizeTaper = ScalarAttribute('controlSizeTaper', 0.0, maxValue=1.0, minValue=-1.0, parent=self.guideSettingsAttrGrp)
@@ -113,6 +115,7 @@ class OSSmultiFKComponentGuide(OSSmultiFKComponent):
                 "name": name,
                 "location": "M"
                }
+
         self.loadData(data)
 
         Profiler.getInstance().pop()
@@ -132,7 +135,7 @@ class OSSmultiFKComponentGuide(OSSmultiFKComponent):
             defControlNameList =[]
 
             # Lets build all new handles
-            controls = self.convertToStringList(defNames)
+            controls = self.convertToStringList(defNames, prefix = self.name)
             defControlNameList = controls
             if not defControlNameList:  # Nothing to build
                 return True
@@ -147,13 +150,8 @@ class OSSmultiFKComponentGuide(OSSmultiFKComponent):
         return True
 
 
-    def updateDefNames(self, defNames):
-        self.createGuideControls("multiFKDeformers", self.defCtrls, defNames)
-
-
     def updatemultiFKCtrls(self, defNames):
         self.createGuideControls("multiFKControls", self.controls, defNames)
-
 
 
     # =============
@@ -216,7 +214,7 @@ class OSSmultiFKComponentGuide(OSSmultiFKComponent):
         if useOtherIKGoal:
             if self.ikgoal_cmpIn is None:
                 self.ikgoal_cmpIn = self.createInput('ikGoalInput', dataType='Xfo', parent=self.inputHrcGrp).getTarget()
-                self.ikBlendAttr = self.createInput('ikBlend', dataType='Float', parent=self.cmpInputAttrGrp)
+                self.ikBlendAttr = self.createInput(self.name  + 'ikBlend', dataType='Float', parent=self.cmpInputAttrGrp)
                 self.softIKAttr = self.createInput('softIK', dataType='Float', parent=self.cmpInputAttrGrp)
                 self.squashhAttr = self.createInput('squash', dataType='Float', parent=self.cmpInputAttrGrp)
                 self.stretchAttr = self.createInput('stretch', dataType='Float', parent=self.cmpInputAttrGrp)
@@ -315,11 +313,9 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
         # ==========
         # Deformers
         # ==========
-
         self.name = name
         self.defCurveJoints = []
         self.parentSpaceInputTgt.childJoints = []
-        
         self.controls = []
 
         self.curveBoneOutputs = []
@@ -349,7 +345,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
             self.rigControlAligns.append(Vec3(1,2,3))
             self.controlRestInputs.append(self.controls[i].xfo)
 
-        self.NURBSmultiFKKLOp = KLOperator('multiFK', 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
+        self.NURBSmultiFKKLOp = KLOperator(self.component_name, 'OSS_NURBSCurveXfoKLSolver', 'OSS_Kraken')
         self.addOperator(self.NURBSmultiFKKLOp)
 
         self.NURBSmultiFKKLOp.setInput('drawDebug', self.drawDebugInputAttr)
@@ -388,7 +384,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
             alignWeights.append(ScalarAttribute(alignWeightNames[i], value=alignWeightValues[i], minValue=0.0, maxValue=1.0, parent=alignAttrGrp))
 
         # Add Spine Canvas Op
-        alignOp = KLOperator(control.getName() +'_Align', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
+        alignOp = KLOperator(self.component_name +'_Align', 'OSS_WeightedAverageMat44KLSolver', 'OSS_Kraken')
         self.addOperator(alignOp)
 
         # Add Att Inputs
@@ -423,52 +419,31 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
         self.controlHierarchy = bool(data['controlHierarchy'])  #This should be a simple method instead
 
 
-        if ctrlType == "multiFKDeformers":
-
-            return True
-            defControlNameList = []
-
-            #Build Deformer Names
-            defControlNameList = self.convertToStringList(defNames)
-            if not defControlNameList:  # Nothing to build
-                return True
-
-            numCtrls = len(defControlNameList)
-            for i, defName in enumerate(defControlNameList):
-
-                if i == 0:
-                    newNBoneDefParent = self.deformersParent
-                elif not i > numCtrls-1:
-                    newNBoneDefParent = self.defNBoneJoints[i-1]
-
-                newCtrl = Locator(defName + "_" + ctrlType.replace("Def",""), parent= self.ctrlCmpGrp)
-                newCtrl.setShapeVisibility(False)
-                controlsList.append(newCtrl)
-
-                newDef = Joint(defName + "_" + ctrlType.replace("Def",""), parent= newNBoneDefParent)
-                newDef.setComponent(self)
-                newDef.constrainTo(newCtrl)
-
 
         if ctrlType == "multiFKControls":
             defControlNameList =[]
             # Lets build all new handles
-            defControlNameList = self.convertToStringList(defNames)
+            defControlNameList = self.convertToStringList(defNames, prefix = self.name)
             if not defControlNameList:  # Nothing to build
                 return True
 
             numCtrls = len(defControlNameList)
             taperRatio = float(data['controlSizeTaper'])/(numCtrls-1)
             for i, defName in enumerate(defControlNameList):
-
                 if bool(data['isIKChain']):
                     if i == 0:
                         newNBoneDefParent = self.deformersParent
                     else:
                         newNBoneDefParent = self.defNBoneJoints[-1]
 
-                    newNBoneDef = Joint(defName, parent=newNBoneDefParent)
-                    newNBoneDef.setComponent(self)
+                    if (i==0 and bool(data["popFirst"])) or ((i==numCtrls-1) and bool(data["popLast"])):
+                        newNBoneDef = Transform(defName, parent=parent)
+                    else:
+                        newNBoneDef = Joint(defName, parent= newNBoneDefParent)
+                        newNBoneDef.setComponent(self)
+                        # newNBoneDef.constrainTo(newCtrl)
+                    # newNBoneDef = Joint(defName, parent=newNBoneDefParent)
+                    # newNBoneDef.setComponent(self)
                     newNBoneDef.xfo = data[defName + "Xfo"]
                     self.defNBoneJoints.append(newNBoneDef)
 
@@ -484,7 +459,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                         if (i==0 and bool(data["popFirstControl"])) or ((i==numCtrls-1) and bool(data["popLastControl"])):
                             newCtrl = Transform(defName, parent=parent)
                         else:
-                            newCtrl = Control(defName, parent=parent, shape="squarePointed")
+                            newCtrl = FKControl(defName, parent=parent, shape="squarePointed")
 
                     try:
                         newCtrl.setColor("gold")
@@ -504,10 +479,18 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                 # align
                 if bool(data['isIKChain']) and (i == numCtrls-1):
                     newCtrlAttrGrp  = AttributeGroup("DisplayInfo_Settings", parent=newCtrl)
-                    self.ikBlendAttr = ScalarAttribute('ikBlend', value=1.0, minValue=0.0, maxValue=1.0, parent=newCtrlAttrGrp)
+                    self.ikBlendAttr = ScalarAttribute(self.name + 'ikBlend', value=0.0, minValue=0.0, maxValue=1.0, parent=newCtrlAttrGrp)
                     newCtrl.setParent(self.ctrlCmpGrp)
                 
                 controlsList.append(newCtrl)    
+
+
+        # if self.addPartialJoints:
+        #               twistXfo = self.createOutput(digiSegDefs[j].getName()+"_partial", dataType='Xfo', parent=self.outputHrcGrp).getTarget()
+        #               twistXfo.xfo = digiSegDefs[j].xfo
+        #               twistXfo.constrainTo(digiSegDefs[j].getParent(), maintainOffset=True)
+        #               self.createPartialJoint(digiSegDefs[j], baseTranslate=twistXfo, baseRotate=twistXfo, parent=digiSegDefs[j].getParent())
+
 
 
         controlXfos = [ctrl.xfo for ctrl in controlsList]
@@ -547,6 +530,9 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                 
 
         return controlsList
+
+
+
 
 
     def setNumDeformers(self, numDeformers, data):
@@ -632,16 +618,16 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
         return xfo
 
     def createIKAttrs(self, data):
+        defName = self.convertToStringList(data["multiFKCtrlNames"], prefix = self.name)[-1]
         self.useOtherIKGoal = bool(data['useOtherIKGoal'])
-        self.ikHandleName = self.convertToStringList(data["multiFKCtrlNames"])[-1]
-        self.limbIKSpace = Space(self.ikHandleName, parent=self.ctrlCmpGrp)
-        self.limbIKSpace.xfo = data[self.ikHandleName + 'Xfo']
+        self.limbIKSpace = Space(defName, parent=self.ctrlCmpGrp)
+        self.limbIKSpace.xfo = data[defName + 'Xfo']
         # hand
         if self.useOtherIKGoal: #Do not use this as a control, hide it
             self.limbIKCtrl = self.controls[-1] #Transform(self.ikHandleName, parent=self.limbIKSpace)
         else:
             self.limbIKCtrl = self.controls[-1] #IKControl(self.ikHandleName, parent=self.limbIKSpace, shape="jack")
-        self.limbIKCtrl.xfo = data[self.ikHandleName + 'Xfo']
+        self.limbIKCtrl.xfo = data[defName + 'Xfo']
 
 
         # Add Component Params to IK control
@@ -673,6 +659,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
         super(OSSmultiFKComponentRig, self).loadData( data )
 
+        self.component_name = data["name"]
         numDeformers = data['numDeformers']
 
         self.globalScaleVec = Vec3(data['globalComponentCtrlSize'], data['globalComponentCtrlSize'], data['globalComponentCtrlSize'])
@@ -699,7 +686,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
             self.numJoints = numControls
             self.nboneOutputsTgt= []
 
-            self.IkEndOutputTgt = Transform('IKEnd', parent=self.ctrlCmpGrp)
+            self.IkEndOutputTgt = Transform(self.component_name+ 'IKEnd', parent=self.ctrlCmpGrp)
 
 
             for i in xrange(self.numJoints):
@@ -725,8 +712,8 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
             # self.chainBase.xfo = 
             
             # Create Upvector
-            self.upVSpace = Space('UpV', parent=self.ctrlCmpGrp)
-            self.upVCtrl = Control('UpV', parent=self.upVSpace, shape="triangle")
+            self.upVSpace = Space(self.component_name + 'UpV', parent=self.ctrlCmpGrp)
+            self.upVCtrl = Control(self.component_name + 'UpV', parent=self.upVSpace, shape="triangle")
             self.upVCtrl.alignOnXAxis()
 
             endXfo = self.controls[-1].xfo
@@ -746,7 +733,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
             self.nboneOutputs.setTarget(self.nboneOutputsTgt)
 
             # Add Canvas Op
-            self.nBoneSolverKLOp = KLOperator('leg', 'OSS_NBoneIKSolver', 'OSS_Kraken')
+            self.nBoneSolverKLOp = KLOperator(self.component_name, 'OSS_NBoneIKSolver', 'OSS_Kraken')
             self.addOperator(self.nBoneSolverKLOp)
 
             # # Add Att Inputs
@@ -754,7 +741,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
             self.nBoneSolverKLOp.setInput('rigScale', self.rigScaleInputAttr)
             self.nBoneSolverKLOp.setInput('useInitPose', 1)
             self.nBoneSolverKLOp.setInput('ikblend', self.ikBlendAttr)
-            self.nBoneSolverKLOp.setInput('rootIndex', 0)
+            self.nBoneSolverKLOp.setInput('rootIndex',  data["rootIKIndex"])
             self.nBoneSolverKLOp.setInput('tipBoneLen', self.tipBoneLenInputAttr)
 
             # Add Xfo Inputs
@@ -817,12 +804,9 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                     constraint = self.defBones[i].constrainTo(self.curveBoneOutputs[i])
                 constraint.evaluate()
 
-
-
         if bool(data['isIKChain']):
             self.baseOutputTgt.constrainTo( self.nboneOutputsTgt[0])
             self.endOutputTgt.constrainTo( self.nboneOutputsTgt[-1])
-
             for i in xrange(len(self.nboneOutputsTgt)):
                 constraint = self.defNBoneJoints[i].constrainTo(self.nboneOutputsTgt[i])
                 constraint.evaluate()
