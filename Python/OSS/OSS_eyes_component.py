@@ -36,7 +36,7 @@ class OSSEyesComponent(OSS_Component):
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
         super(OSSEyesComponent, self).__init__(name, parent)
-
+        
         # ===========
         # Declare IO
         # ===========
@@ -535,11 +535,6 @@ class OSSEyesComponentRig(OSSEyesComponent):
         """
 
         super(OSSEyesComponentRig, self).loadData( data )
-        print type(data)
-        for i,v in data.iteritems():
-            print i
-            print v
-            print '\n'
 
         self.LeftRightPairBool = data.get("LeftRightPair", True)
 

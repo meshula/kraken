@@ -77,7 +77,17 @@ class OSS_Component(BaseExampleComponent):
                 # Eventaully specific exception just for component class that display component name, etc.
                 raise ValueError("inputString \""+name+"\" contains non-alphanumeric characters in component \""+self.getName()+"\"")
 
-        stringList = [joinStr.join(filter(None, [prefix, x, suffix])) for x in stringList if x != ""]
+        concatList = []
+        for x in stringList:
+            if x != "":
+                if camelCase and suffix:
+                    suffix = suffix.capitalize()
+                if camelCase and prefix:
+                    x = x.capitalize()
+                x = joinStr.join(filter(None, [prefix, x, suffix]))
+                concatList.append(x)
+
+        stringList = concatList
 
         if len(stringList) > len(set(stringList)):
             raise ValueError("Duplicate names in inputString in component \""+self.getName()+"\"")

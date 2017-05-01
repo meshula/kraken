@@ -81,6 +81,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         self.ballName = StringAttribute('ballName', value="ball", parent=self.guideSettingsAttrGrp)
         self.heelName = StringAttribute('heelName', value="heel", parent=self.guideSettingsAttrGrp)
         self.footName = StringAttribute('footName', value="foot", parent=self.guideSettingsAttrGrp)
+        self.FKIKComponent = StringAttribute('FKIKComponent', value="limb", parent=self.guideSettingsAttrGrp)
 
         self.ComponentCtrl = Control(self.getName() + 'Component', parent=self.ctrlCmpGrp, shape="cube")
 
@@ -354,25 +355,59 @@ class OSSFootComponentRig(OSSFootComponent):
         self.handleCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZXY"])  #Set with component settings later careful when combining with foot!
         self.handleSpace = self.handleCtrl.insertSpace(name=self.getName() + "_ik")
 
+        #adding FK IK matching Attributes
+        self.handleCtrlAttrGrp = AttributeGroup('handleCtrlAttrGrp', parent=self.handleCtrl)
+        BoolAttribute('isIKHandle', value=True, parent=self.handleCtrlAttrGrp)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.handleCtrlAttrGrp)
+        StringAttribute('match_FK_source', value='0', parent=self.handleCtrlAttrGrp)
+        StringAttribute('match_IK_source', value='2', parent=self.handleCtrlAttrGrp)
+        StringAttribute('IK_attr', value='{ "ikBlend": 1,  "%sIK": 1 }'%self.footName, parent=self.handleCtrlAttrGrp)
+        StringAttribute('FK_attr', value='{ "ikBlend": 0,  "%sIK": 0 }'%self.footName, parent=self.handleCtrlAttrGrp)
+
+
         # FK Foot
         self.footCtrl = FKControl(self.getName(), parent=self.ctrlCmpGrp, shape="cube")
         self.footCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.footSpace = self.footCtrl.insertSpace(name=self.getName() + "_fk") #avoid name clash with ik spacectrl
+
+        #adding FK IK matching Attributes
+        self.footCtrlAttrGrp = AttributeGroup('loLimbAttrGrp', parent=self.footCtrl)
+        BoolAttribute('isFKHandle', value=True, parent=self.footCtrlAttrGrp)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.footCtrlAttrGrp)
+        StringAttribute('match_FK_target', value='0 3', parent=self.footCtrlAttrGrp)
+        StringAttribute('match_IK_source', value='2', parent=self.footCtrlAttrGrp)
 
         # IK Heel
         self.heelCtrl = IKControl(self.heelName, parent=self.ctrlCmpGrp, shape="cube")
         self.heelCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.heelSpace = self.heelCtrl.insertSpace()
 
+        #adding FK IK matching Attributes
+        self.heelCtrlAttrGrp = AttributeGroup('heelCtrlAttrGrp', parent=self.heelCtrl)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.heelCtrlAttrGrp)
+        StringAttribute('match_FK_source', value='3', parent=self.heelCtrlAttrGrp)
+
         # FK Ball
         self.ballFKCtrl = FKControl(self.ballName, parent=self.footCtrl, shape="cube")
         self.ballFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.ballFKSpace = self.ballFKCtrl.insertSpace()
 
+        #adding FK IK matching Attributes
+        self.ballFKCtrlAttrGrp = AttributeGroup('loLimbAttrGrp', parent=self.ballFKCtrl)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.ballFKCtrlAttrGrp)
+        StringAttribute('match_FK_target', value='4', parent=self.ballFKCtrlAttrGrp)
+        StringAttribute('match_IK_source', value='4', parent=self.ballFKCtrlAttrGrp)
+
         # IK Ball
         self.ballIKCtrl = IKControl(self.ballName, parent=self.footCtrl, shape="cube")
         self.ballIKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["ZYX"])  #Set with component settings later
         self.ballIKSpace = self.ballIKCtrl.insertSpace()
+
+        #adding FK IK matching Attributes
+        self.ballIKCtrlAttrGrp = AttributeGroup('heelCtrlAttrGrp', parent=self.ballIKCtrl)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.ballIKCtrlAttrGrp)
+        StringAttribute('match_FK_source', value='4', parent=self.ballIKCtrlAttrGrp)
+
 
         self.heelIKCtrl_footTransform = Transform(self.heelName + '_' + self.footName + '_transform', parent=self.heelCtrl)
 
@@ -431,7 +466,7 @@ class OSSFootComponentRig(OSSFootComponent):
         # =========
         # Nulls for foot pivot
         # =========
-        self.ballJointTransform = Transform(self.ballName+ 'Joint', parent=self.handleCtrl)
+        self.ballJointTransform = Transform(self.ballName + 'Joint', parent=self.handleCtrl)
         self.footJointTransform = Transform(self.footName + 'Joint', parent=self.handleCtrl)
         self.heelPivotTransform = Transform(self.heelName + 'Pivot', parent=self.handleCtrl)
         self.ballPivotTransform = Transform(self.ballName+ 'Pivot', parent=self.handleCtrl)
@@ -439,6 +474,12 @@ class OSSFootComponentRig(OSSFootComponent):
         self.innerPivotTransform = Transform('innerPivot', parent=self.handleCtrl)
         self.outerPivotTransform = Transform('outerPivot', parent=self.handleCtrl)
 
+
+        #adding FK IK matching Attributes
+        self.footJointTransformAttrGrp = AttributeGroup('footJointTransformAttrGrp', parent=self.footJointTransform)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.footJointTransformAttrGrp)
+        StringAttribute('match_IK_target', value='2', parent=self.footJointTransformAttrGrp)
+        BoolAttribute('isIKToFKOffset', value=True, parent=self.footJointTransformAttrGrp)
 
         # ==========
         # Deformers

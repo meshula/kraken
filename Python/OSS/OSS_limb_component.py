@@ -79,6 +79,7 @@ class OSSLimbComponentGuide(OSSLimbComponent):
         self.uplimbName = StringAttribute('uplimbName', value="uplimb", parent=self.guideSettingsAttrGrp)
         self.lolimbName = StringAttribute('lolimbName', value="lolimb", parent=self.guideSettingsAttrGrp)
         self.ikHandleName = StringAttribute('ikHandleName', value="limbIK", parent=self.guideSettingsAttrGrp)
+        self.FKIKComponent = StringAttribute('FKIKComponent', value="limb", parent=self.guideSettingsAttrGrp)
         self.addTwistJoints = BoolAttribute('addTwistJoints', value=False, parent=self.guideSettingsAttrGrp)
         self.uplimbNumTwistJoints = IntegerAttribute('uplimbNumTwistJoints', value=5, minValue=2, maxValue=20, parent=self.guideSettingsAttrGrp)
         self.lolimbNumTwistJoints = IntegerAttribute('lolimbNumTwistJoints', value=5, minValue=2, maxValue=20, parent=self.guideSettingsAttrGrp)
@@ -329,6 +330,13 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.uplimbFKSpace.xfo = data['uplimbXfo']
         self.uplimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XYZ"])  #Set with component settings later
 
+        #adding FK IK matching Attributes
+        self.upLimbAttrGrp = AttributeGroup('loLimbAttrGrp', parent=self.uplimbFKCtrl)
+        BoolAttribute('isFKRoot', value=True, parent=self.upLimbAttrGrp)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.upLimbAttrGrp)
+        StringAttribute('match_FK_target', value='1', parent=self.upLimbAttrGrp)
+        StringAttribute('match_IK_source', value='0', parent=self.upLimbAttrGrp)
+
         if self.untwistUplimb:
             # We should be able to insert a space to any kind of 3D object, not just controls
             self.uplimbUntwistBase = Space(name=self.uplimbName+"UntwistBase", parent=self.uplimbParentSpace)
@@ -341,6 +349,12 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.lolimbFKCtrl.xfo = data['lolimbXfo']
         self.lolimbFKCtrl.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XYZ"])  #Set with component settings later
 
+        #adding FK IK matching Attributes
+        self.loLimbAttrGrp = AttributeGroup('loLimbAttrGrp', parent=self.lolimbFKCtrl)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.loLimbAttrGrp)
+        StringAttribute('match_FK_target', value='1', parent=self.loLimbAttrGrp)
+        StringAttribute('match_IK_source', value='1', parent=self.loLimbAttrGrp)
+        BoolAttribute('isFKUpVec', value=True, parent=self.loLimbAttrGrp)
 
         # lolimbIK
         self.lolimbIKCtrl = IKControl(self.lolimbName, parent=self.ctrlCmpGrp, shape="circle", scale=globalScale*0.8)
@@ -431,6 +445,10 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.limbUpVCtrl.alignOnZAxis()
         self.limbUpVSpace = self.limbUpVCtrl.insertSpace()
 
+        #adding FK IK matching Attributes
+        self.limbUpVAttrGrp = AttributeGroup('limbUpAttrGrp', parent=self.limbUpVCtrl)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.limbUpVAttrGrp)
+        BoolAttribute('isUpVec', value=True, parent=self.limbUpVAttrGrp)
 
         self.limbUpVCtrlIKSpace = Space(name+'UpVIK', parent=self.ctrlCmpGrp)
         self.limbUpVCtrlIKSpace.xfo = data['upVXfo']
@@ -455,13 +473,31 @@ class OSSLimbComponentRig(OSSLimbComponent):
         self.uplimbDef = Joint(self.uplimbName, parent=self.deformersParent)
         self.uplimbDef.setComponent(self)
 
+        #adding FK IK matching Attributes
+        self.uplimbDefAttrGrp = AttributeGroup('uplimbDefAttrGrp', parent=self.uplimbDef)
+        BoolAttribute('isIKRoot', value=True, parent=self.upLimbAttrGrp)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.uplimbDefAttrGrp)
+        StringAttribute('match_IK_target', value='0', parent=self.uplimbDefAttrGrp)
+
         self.lolimbDef = Joint(self.lolimbName, parent=self.uplimbDef)
         self.lolimbDef.setComponent(self)
         # Don't want to change RO for fbx output right now
         # self.lolimbDef.ro = RotationOrder(ROT_ORDER_STR_TO_INT_MAP["XYZ"])  #Set with component settings later
 
+        #adding FK IK matching Attributes
+        self.lolimbDefAttrGrp = AttributeGroup('lolimbDefAttrGrp', parent=self.lolimbDef)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.lolimbDefAttrGrp)
+        StringAttribute('match_FK_source', value='2', parent=self.lolimbDefAttrGrp)
+        StringAttribute('match_IK_target', value='1', parent=self.lolimbDefAttrGrp)
+
+
         self.limbendDef = Joint(name+'end', parent=self.lolimbDef)
         self.limbendDef.setComponent(self)
+        
+        #adding FK IK matching Attributes
+        self.limbendDefAttrGrp = AttributeGroup('lolimbDefAttrGrp', parent=self.limbendDef)
+        StringAttribute('FKIKComponent', value=data['FKIKComponent'], parent=self.limbendDefAttrGrp)
+        StringAttribute('match_FK_source', value='2', parent=self.limbendDefAttrGrp)
 
         self.parentSpaceInputTgt.childJoints = [self.uplimbDef]
 
