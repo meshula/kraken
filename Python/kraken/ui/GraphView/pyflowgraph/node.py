@@ -225,8 +225,8 @@ class Node(QtWidgets.QGraphicsWidget):
     def getGraphPos(self):
         transform = self.transform()
         size = self.size()
-        return QtCore.QPointF(transform.dx()+(size.width()*0.5), transform.dy()+(size.height()*0.5))
 
+        return QtCore.QPointF(transform.dx()+(size.width()*0.5), transform.dy()+(size.height()*0.5))
 
     def setGraphPos(self, graphPos):
         self.prepareConnectionGeometryChange()
@@ -376,6 +376,7 @@ class Node(QtWidgets.QGraphicsWidget):
             self.__graph.moveSelectedNodes(delta)
             self._lastDragPoint = newPos
             self._nodesMoved = True
+            
         else:
             super(Node, self).mouseMoveEvent(event)
 
