@@ -9,6 +9,8 @@ from kraken.ui.Qt import QtWidgets, QtGui, QtCore
 
 from kraken.ui.backdrop_inspector import BackdropInspector
 
+from kraken.core.maths import Vec2
+
 
 class KBackdropTitle(QtWidgets.QGraphicsWidget):
 
@@ -256,16 +258,14 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
     # Graph Pos
     # ==========
     def getGraphPos(self):
-        transform = self.transform()
-        size = self.size()
-        return QtCore.QPointF(transform.dx()+(size.width()*0.5), transform.dy()+(size.height()*0.5))
+        return self.scenePos()
 
     def setGraphPos(self, graphPos):
-        size = self.size()
-        self.setTransform(QtGui.QTransform.fromTranslate(graphPos.x()-(size.width()*0.5), graphPos.y()-(size.height()*0.5)), False)
+        self.setTransform(QtGui.QTransform.fromTranslate(graphPos.x(), graphPos.y()), False)
 
     def translate(self, x, y):
-        super(KBackdrop, self).moveBy(x, y)
+        super(KBackdrop, self).translate(x, y)
+        self.setGraphPos( self.scenePos() )
 
     def paint(self, painter, option, widget):
         rect = self.windowFrameRect()
