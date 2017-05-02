@@ -6,7 +6,7 @@
 
 
 require Math, FabricStatistics;
-require Geometry, Color;
+require Geometry;
 
 const UInt32 NURBSCurve_StandardResolution = 16;
 const UInt32 NURBSCurve_MaxDegree = 16;
