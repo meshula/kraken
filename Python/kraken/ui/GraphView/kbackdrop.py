@@ -264,8 +264,7 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
         self.setTransform(QtGui.QTransform.fromTranslate(graphPos.x(), graphPos.y()), False)
 
     def translate(self, x, y):
-        super(KBackdrop, self).translate(x, y)
-        self.setGraphPos( self.scenePos() )
+        super(KBackdrop, self).moveBy(x, y)
 
     def paint(self, painter, option, widget):
         rect = self.windowFrameRect()
@@ -382,6 +381,7 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
             newWidth = self._initBoundingRect.width()
             newHeight = self._initBoundingRect.height()
 
+            # Top Left
             if self.__resizeCorner == 0:
 
                 newWidth = self._initBoundingRect.width() + (delta.x() * -1.0)
@@ -397,6 +397,7 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
                 else:
                     newPosY = self._initPos.y() + delta.y()
 
+            # Top Right
             elif self.__resizeCorner == 1:
 
                 newWidth = self._initBoundingRect.width() + delta.x()
@@ -412,6 +413,7 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
                 else:
                     newPosY = self._initPos.y() + delta.y()
 
+            # Bottom Left
             elif self.__resizeCorner == 2:
 
                 newWidth = self._initBoundingRect.width() + (delta.x() * -1.0)
@@ -427,6 +429,7 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
                 else:
                     newPosY = self._initPos.y()
 
+            # Bottom Right
             elif self.__resizeCorner == 3:
                 newPosX = self._initPos.x()
                 newPosY = self._initPos.y()
@@ -439,9 +442,11 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
                 if newHeight <= self.minimumHeight():
                     newHeight = self.minimumHeight()
 
+            # Top
             elif self.__resizeEdge == 0:
                 pass
 
+            # Right
             elif self.__resizeEdge == 1:
                 newWidth = self._initBoundingRect.width() + delta.x()
                 newHeight = self._initBoundingRect.height()
@@ -453,6 +458,7 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
                 else:
                     newPosX = self._initPos.x()
 
+            # Bottom
             elif self.__resizeEdge == 2:
                 newWidth = self._initBoundingRect.width()
                 newHeight = self._initBoundingRect.height() + delta.y()
@@ -464,6 +470,7 @@ class KBackdrop(QtWidgets.QGraphicsWidget):
                 else:
                     newPosY = self._initPos.y()
 
+            # Left
             elif self.__resizeEdge == 3:
                 newWidth = self._initBoundingRect.width() + (delta.x() * -1.0)
                 newHeight = self._initBoundingRect.height()
