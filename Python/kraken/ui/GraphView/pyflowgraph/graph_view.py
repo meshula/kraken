@@ -255,7 +255,7 @@ class GraphView(QtWidgets.QGraphicsView):
 
         nodesRect = None
         for node in nodes:
-            nodeRectF = node.transform().mapRect(node.rect())
+            nodeRectF = node.sceneTransform().mapRect(node.rect())
             nodeRect = QtCore.QRect(nodeRectF.x(), nodeRectF.y(), nodeRectF.width(), nodeRectF.height())
             if nodesRect is None:
                 nodesRect = nodeRect
