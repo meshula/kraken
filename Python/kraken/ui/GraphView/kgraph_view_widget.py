@@ -439,6 +439,11 @@ class KGraphViewWidget(GraphViewWidget):
         backdropNode = KBackdrop(graphView, name)
         graphView.addNode(backdropNode)
 
+        pos = self.mapFromGlobal(QtGui.QCursor.pos())
+        scenepos = self.graphView.mapToScene(pos) - QtCore.QPointF(15.0, 15.0)
+
+        backdropNode.setGraphPos(scenepos)
+
         graphView.selectNode(backdropNode, clearSelection=True)
 
         return backdropNode

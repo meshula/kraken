@@ -138,8 +138,7 @@ class KNode(Node):
 
     def translate(self, x, y):
         super(KNode, self).translate(x, y)
-        graphPos = self.getGraphPos()
-        self.__component.setGraphPos( Vec2(graphPos.x(), graphPos.y()) )
+        self.__component.setGraphPos( Vec2(self.scenePos().x(), self.scenePos().y()) )
 
 
     #########################

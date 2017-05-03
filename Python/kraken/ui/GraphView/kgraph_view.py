@@ -316,16 +316,17 @@ class KGraphView(GraphView):
         for componentData in clipboardData['components']:
             componentClass = krakenSystem.getComponentClass(componentData['class'])
             component = componentClass(parent=self.__rig)
-            decoratedName = componentData['name'] + component.getNameDecoration()
-            nameMapping[decoratedName] = decoratedName
+
             if mirrored:
                 config = Config.getInstance()
                 mirrorMap = config.getNameTemplate()['mirrorMap']
                 component.setLocation(mirrorMap[componentData['location']])
-                nameMapping[decoratedName] = componentData['name'] + component.getNameDecoration()
                 component.pasteData(componentData, setLocation=False)
             else:
                 component.pasteData(componentData, setLocation=True)
+
+            decoratedName = component.getName() + component.getDecoratedName()
+            nameMapping[componentData['name'] + ":" + componentData['location']] = decoratedName
 
             graphPos = component.getGraphPos()
             component.setGraphPos(Vec2(graphPos.x + delta.x(), graphPos.y + delta.y()))
@@ -335,7 +336,7 @@ class KGraphView(GraphView):
             self.selectNode(node, False)
 
             # save a dict of the nodes using the orignal names
-            pastedComponents[nameMapping[decoratedName]] = component
+            pastedComponents[nameMapping[componentData['name'] + ":" + componentData['location']]] = component
 
         # Create Connections
         for connectionData in clipboardData['connections']:
