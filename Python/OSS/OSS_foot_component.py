@@ -83,9 +83,9 @@ class OSSFootComponentGuide(OSSFootComponent):
         self.footName = StringAttribute('footName', value="foot", parent=self.guideSettingsAttrGrp)
         self.FKIKComponent = StringAttribute('FKIKComponent', value="limb", parent=self.guideSettingsAttrGrp)
 
-        self.ComponentCtrl = Control(self.getName() + 'Component', parent=self.ctrlCmpGrp, shape="cube")
+        self.ComponentCtrl = Control(self.getName() + 'Component', parent=self.ctrlCmpGrp, shape="cube", metaData={"dataKeyName":  "footParent"})
 
-        self.footCtrl = Control(self.getName(), parent=self.ComponentCtrl, shape="sphere")
+        self.footCtrl = Control(self.getName(), parent=self.ComponentCtrl, shape="sphere", metaData={"dataKeyName":  "foot"})
         self.pivotCtrl = Control("pivot", parent=self.ComponentCtrl, shape="circle")  #don't set metaData here
         self.ballFKCtrl = Control('ball', parent=self.ComponentCtrl, shape="sphere")
         self.ballTipCtrl = Control('ballTip', parent=self.ComponentCtrl, shape="sphere")

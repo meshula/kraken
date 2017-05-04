@@ -132,17 +132,16 @@ class OSSmultiFKComponentGuide(OSSmultiFKComponent):
 
         if ctrlType == "multiFKControls":
             parent = self.ctrlCmpGrp
-            defControlNameList =[]
+            controls =[]
 
             # Lets build all new handles
-            controls = self.convertToStringList(defNames, prefix = self.name, joinStr = '', camelCase = True)
-            defControlNameList = controls
-            if not defControlNameList:  # Nothing to build
+            controls = self.convertToStringList(defNames)
+            if not controls:  # Nothing to build
                 return True
 
 
-            for i, defName in enumerate(defControlNameList):
-                newCtrl = Control(defName, parent=parent, shape="circle")
+            for i, defName in enumerate(controls):
+                newCtrl = Control(self.name + defName.capitalize(), parent=parent, shape="circle", metaData={"dataKeyName":  defName})
                 newCtrl.setColor("brown")
                 newCtrl.xfo = parent.xfo.multiply(Xfo(tr=Vec3(0, i , 0)))
                 newCtrl.scalePoints(self.globalScaleVec)
@@ -423,7 +422,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
         if ctrlType == "multiFKControls":
             defControlNameList =[]
             # Lets build all new handles
-            defControlNameList = self.convertToStringList(defNames, prefix = self.name, joinStr = '', camelCase = True)
+            defControlNameList = self.convertToStringList(defNames, camelCase = True)
             if not defControlNameList:  # Nothing to build
                 return True
 
@@ -437,9 +436,9 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
                         newNBoneDefParent = self.defNBoneJoints[-1]
 
                     if (i==0 and bool(data["popFirstJoint"])) or ((i==numCtrls-1) and bool(data["popLastJoint"])):
-                        newNBoneDef = Transform(defName, parent=parent)
+                        newNBoneDef = Transform(self.name + defName.capitalize(), parent=parent)
                     else:
-                        newNBoneDef = Joint(defName, parent= newNBoneDefParent)
+                        newNBoneDef = Joint(self.name + defName.capitalize(), parent= newNBoneDefParent)
                         newNBoneDef.setComponent(self)
                         # newNBoneDef.constrainTo(newCtrl)
                     # newNBoneDef = Joint(defName, parent=newNBoneDefParent)
@@ -452,14 +451,14 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
 
                 if self.exposeControls:
                     if not bool(data['isCurveChain']) and (i == numCtrls-1) and not bool(data["popLastControl"]) and bool(data["IK"]) :
-                        newCtrl = IKControl(defName, parent=self.ctrlCmpGrp, shape="squarePointed")
+                        newCtrl = IKControl(self.name + defName.capitalize(), parent=self.ctrlCmpGrp, shape="squarePointed")
                         newCtrl.setColor("green")
                         newCtrl.setShape("jack")
                     else:
                         if (i==0 and bool(data["popFirstControl"])) or ((i==numCtrls-1) and bool(data["popLastControl"])):
-                            newCtrl = Transform(defName, parent=parent)
+                            newCtrl = Transform(self.name + defName.capitalize(), parent=parent)
                         else:
-                            newCtrl = FKControl(defName, parent=parent, shape="squarePointed")
+                            newCtrl = FKControl(self.name + defName.capitalize(), parent=parent, shape="squarePointed")
 
                     try:
                         newCtrl.setColor("gold")
@@ -563,7 +562,7 @@ class OSSmultiFKComponentRig(OSSmultiFKComponent):
             if i != 0:
                 parent = self.defCurveJoints[-1]
             name = str(i).zfill(2)
-            multiFKDef = Joint(self.name + name, parent=parent)
+            multiFKDef = Joint(self.name + name.capitalize(), parent=parent)
             multiFKDef.setComponent(self)
             self.defCurveJoints.append(multiFKDef)
 

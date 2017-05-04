@@ -1025,7 +1025,10 @@ class Component(Object3D):
         """
 
         for obj in objectList:
-            objName = obj.getName()
+            if obj.getMetaDataItem("dataKeyName") is not None:
+                objName = obj.getMetaDataItem("dataKeyName")
+            else:
+                objName = obj.getName()
             if obj.getMetaDataItem("altLocation") is not None:
                 objName = obj.getMetaDataItem("altLocation") + "_" + objName
             data[objName + "Xfo"] = obj.xfo
@@ -1064,7 +1067,10 @@ class Component(Object3D):
         """
              # this should probably live in the GuideClase
         for obj in objectList:
-            objName = obj.getName()
+            if obj.getMetaDataItem("dataKeyName") is not None:
+                objName = obj.getMetaDataItem("dataKeyName")
+            else:
+                objName = obj.getName()
             if obj.getMetaDataItem("altLocation") is not None:
                 objName = obj.getMetaDataItem("altLocation") + "_" + objName
 
