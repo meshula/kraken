@@ -36,7 +36,7 @@ class OSSEyesComponent(OSS_Component):
 
     def __init__(self, name=COMPONENT_NAME, parent=None):
         super(OSSEyesComponent, self).__init__(name, parent)
-        
+
         # ===========
         # Declare IO
         # ===========
@@ -389,25 +389,29 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     if side != self.getLocation():
                         metaData["altLocation"] = side
 
+                    baseDef = Joint(handleName+"Base", parent=self.deformersLayer, metaData={"altLocation": side})
+                    baseDef.setComponent(self)
+                    self.parentSpaceInputTgt.childJoints.append(baseDef)
+
                     # socketCtrl = Control(handleName+'Socket', parent=parent, shape="cube", metaData=metaData)
                     # socketSpace = socketCtrl.insertSpace()
                     eyeRegionCtrl = Control(handleName+"Region", parent=parent, shape="cube", metaData=metaData)
                     eyeRegionCtrlSpace = eyeRegionCtrl.insertSpace()
-                    eyeRegionDef = Joint(handleName+'Region', parent=self.deformersLayer, metaData={"altLocation": side})
-                    self.parentSpaceInputTgt.childJoints.append(eyeRegionDef)
+                    eyeRegionDef = Joint(handleName+'Region', parent=baseDef, metaData={"altLocation": side})
                     eyeRegionDef.constrainTo(eyeRegionCtrl)
 
 
                     eyeMidCtrl = Control(handleName+'Mid', parent=eyeRegionCtrl, metaData=metaData)
 
+
+
                     eyeSocketSpace = Transform(handleName+'Socket', parent=eyeMidCtrl, metaData=metaData)
-                    eyeSocketDef = Joint(handleName+'Socket', parent=self.deformersLayer, metaData={"altLocation": side})
+                    eyeSocketDef = Joint(handleName+'Socket', parent=baseDef, metaData={"altLocation": side})
                     eyeSocketDef.constrainTo(eyeSocketSpace)
 
                     eyeSocketRefSpace = Transform(handleName+'SocketRef', parent=parent, metaData=metaData)
 
                     # newSocketConstraint = newSocket.constrainTo(socketCtrl)
-                    # self.parentSpaceInputTgt.childJoints.append(newSocket)
 
                     fkCtrl = Control(handleName, parent=eyeSocketRefSpace, shape="direction", metaData=metaData)
                     fkCtrlSpace = fkCtrl.insertSpace()
@@ -427,24 +431,22 @@ class OSSEyesComponentRig(OSSEyesComponent):
                     # alignOpt = self.createWeightedMatrixConstraint(eyeSocketSpace, parent, fkCtrl,  translation = 1, scale = 1, rotation = 0, name=handleName + side +'_fkAlign')
 
 
+
+
                     # newCtrls.append(fkCtrl)
-                    newRef = Joint(handleName+"Ref", parent=self.deformersLayer, metaData={"altLocation": side, "altType":"RefJoint"})
+                    newRef = Joint(handleName+"Ref", parent=baseDef, metaData={"altLocation": side, "altType":"RefJoint"})
                     newRef.setComponent(self)
                     newRef.constrainTo(eyeSocketSpace)
-                    self.parentSpaceInputTgt.childJoints.append(newRef)
 
                     newLoc = Transform(handleName+"_fk", parent=self.ctrlCmpGrp)
-                    newDef = Joint(handleName, parent=self.deformersLayer, metaData={"altLocation": side})
+                    newDef = Joint(handleName, parent=baseDef, metaData={"altLocation": side})
                     newDef.setComponent(self)
                     newDefConstraint = newDef.constrainTo(newLoc)
-
-                    self.parentSpaceInputTgt.childJoints.append(newDef)
-                    self.parentSpaceInputTgt.childJoints.append(eyeSocketDef)
 
                     nameSettingsAttrGrp = AttributeGroup(handleName+"DisplayInfo_nameSettingsAttrGrp", parent=fkCtrl)
                     self.ikBlendAttr = ScalarAttribute(handleName+'IK', value=0.0, minValue=0.0, maxValue=1.0, parent=nameSettingsAttrGrp)
 
-                    for obj in [eyeSocketSpace, eyeSocketRefSpace,  eyeRegionCtrl, eyeRegionCtrlSpace, fkCtrl, newDef]:
+                    for obj in [eyeSocketSpace, eyeSocketRefSpace,  eyeRegionCtrl, eyeRegionCtrlSpace, fkCtrl, newDef, baseDef]:
                         obj.xfo  = data[side + '_' + handleName + 'Xfo']
                     eyeMidCtrl.xfo =  data[side + '_' + handleName + 'MidXfo']
                     upSpace.xfo = fkCtrl.xfo.multiply(Xfo(Vec3(0.0, 1, 0)))
