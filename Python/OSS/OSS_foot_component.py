@@ -111,7 +111,7 @@ class OSSFootComponentGuide(OSSFootComponent):
                 "handleXfo" : Xfo(Vec3(1.85, 0.0, -1.6)),
                }
 
-        
+
         self.loadData(data)
 
         Profiler.getInstance().pop()
@@ -252,7 +252,7 @@ class OSSFootComponentGuide(OSSFootComponent):
         ballTipXfo = Xfo(self.ballTipCtrl.xfo)
         ballTipXfo.ori = ballXfo.ori
 
-        
+
         ballTipPivotXfo.ori = heelPivotXfo.ori
         innerPivotXfo.ori = heelPivotXfo.ori
         outerPivotXfo.ori = heelPivotXfo.ori
@@ -461,7 +461,7 @@ class OSSFootComponentRig(OSSFootComponent):
         self.pivotCtrl.getVisibilityAttr().connect(self.footIKAttr)
 
 
-        self.ikGoalRefTransform = Transform('ikGoalRef', parent=self.handleCtrl)
+        self.ikGoalRefTransform = Transform(self.footName + 'ikGoalRef', parent=self.handleCtrl)
 
         # =========
         # Nulls for foot pivot
@@ -471,8 +471,8 @@ class OSSFootComponentRig(OSSFootComponent):
         self.heelPivotTransform = Transform(self.heelName + 'Pivot', parent=self.handleCtrl)
         self.ballPivotTransform = Transform(self.ballName+ 'Pivot', parent=self.handleCtrl)
         self.ballTipPivotTransform = Transform(self.ballName+ 'TipPivot', parent=self.handleCtrl)
-        self.innerPivotTransform = Transform('innerPivot', parent=self.handleCtrl)
-        self.outerPivotTransform = Transform('outerPivot', parent=self.handleCtrl)
+        self.innerPivotTransform = Transform(self.footName + 'innerPivot', parent=self.handleCtrl)
+        self.outerPivotTransform = Transform(self.footName + 'outerPivot', parent=self.handleCtrl)
 
 
         #adding FK IK matching Attributes
@@ -578,8 +578,8 @@ class OSSFootComponentRig(OSSFootComponent):
         self.IKFootBlendKLOp.setInput('ikBall', self.ballIKCtrl)
         self.IKFootBlendKLOp.setInput('fkBall', self.ballFKCtrl)
         # Add Xfo Outputs
-        self.IKFootBlendKLOpFoot_out = Transform('IKFootBlendKLOpFoot_out', parent=self.outputHrcGrp)
-        self.IKFootBlendKLOpBall_out = Transform('IKFootBlendKLOpBall_out', parent=self.outputHrcGrp)
+        self.IKFootBlendKLOpFoot_out = Transform(self.footName + 'IKFootBlendKLOpFoot_out', parent=self.outputHrcGrp)
+        self.IKFootBlendKLOpBall_out = Transform(self.footName + 'IKFootBlendKLOpBall_out', parent=self.outputHrcGrp)
         self.IKFootBlendKLOp.setOutput('foot', self.IKFootBlendKLOpFoot_out)
         self.IKFootBlendKLOp.setOutput('ball', self.IKFootBlendKLOpBall_out)
 
